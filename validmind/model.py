@@ -10,9 +10,9 @@ class ModelAttributes:
     Model attributes definition
     """
 
-    architecture: str
-    framework: str
-    framework_version: str
+    architecture: str = None
+    framework: str = None
+    framework_version: str = None
 
 
 @dataclass()
@@ -22,8 +22,8 @@ class Model:
     """
 
     attributes: ModelAttributes
-    task: str
-    subtask: str
+    task: str = None
+    subtask: str = None
     params: dict = None
     model_id: str = "main"
 

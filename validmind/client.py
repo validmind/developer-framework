@@ -5,7 +5,8 @@ import os
 
 import requests
 
-from .model import Model
+from .model import Model, ModelAttributes
+from .model_utils import get_info_from_model_instance, get_params_from_model_instance
 
 
 API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
@@ -48,10 +49,28 @@ def init(project, api_key=None, api_secret=None):
     return __ping()
 
 
-def log_model(model):
-    r = api_session.post(f"{API_HOST}/log_model", json=model.serialize())
+def log_model(model_instance, vm_model=None):
+    if vm_model is None:
+        vm_model = Model(
+            attributes=ModelAttributes(),
+        )
+
+    model_info = get_info_from_model_instance(model_instance)
+
+    if vm_model.task is None:
+        vm_model.task = model_info["task"]
+    if vm_model.subtask is None:
+        vm_model.subtask = model_info["subtask"]
+    if vm_model.attributes.framework is None:
+        vm_model.attributes.framework = model_info["framework"]
+    if vm_model.attributes.framework_version is None:
+        vm_model.attributes.framework_version = model_info["framework_version"]
+    if vm_model.attributes.architecture is None:
+        vm_model.attributes.architecture = model_info["architecture"]
+
+    vm_model.params = get_params_from_model_instance(model_instance)
+
+    r = api_session.post(f"{API_HOST}/log_model", json=vm_model.serialize())
     assert r.status_code == 200
 
-    response = r.json()
-    model = Model.create_from_dict(response)
-    return model
+    return True
