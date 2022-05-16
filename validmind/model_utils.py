@@ -36,6 +36,8 @@ def get_info_from_model_instance(model):
         subtask = get_xgboost_objective(model)
         framework = "XGBoost"
         framework_version = get_xgboost_version()
+    else:
+        raise ValueError("Only XGBoost models are supported at the moment.")
 
     return {
         "architecture": architecture,
