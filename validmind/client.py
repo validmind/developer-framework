@@ -1,8 +1,10 @@
 """
 API Client
 """
+import json
 import os
 
+import numpy as np
 import requests
 
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
@@ -20,6 +22,17 @@ vm_api_key = None
 vm_api_secret = None
 
 api_session = requests.Session()
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 
 def __ping():
@@ -70,13 +83,17 @@ def log_dataset(
     vm_dataset = init_vm_dataset(dataset, dataset_type, targets)
 
     if analyze:
-        analyze_results = analyze_vm_dataset(dataset, analyze_opts)
+        analyze_results = analyze_vm_dataset(dataset, vm_dataset.fields, analyze_opts)
         if "statistics" in analyze_results:
             vm_dataset.statistics = analyze_results["statistics"]
         if "correlations" in analyze_results:
             vm_dataset.correlations = analyze_results["correlations"]
 
-    r = api_session.post(f"{API_HOST}/log_dataset", json=vm_dataset.serialize())
+    r = api_session.post(
+        f"{API_HOST}/log_dataset",
+        data=json.dumps(vm_dataset.serialize(), cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
     assert r.status_code == 200
 
     return True
@@ -110,7 +127,11 @@ def log_model(model_instance, vm_model=None):
 
     vm_model.params = get_params_from_model_instance(model_instance)
 
-    r = api_session.post(f"{API_HOST}/log_model", json=vm_model.serialize())
+    r = api_session.post(
+        f"{API_HOST}/log_model",
+        data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
     assert r.status_code == 200
 
     return True

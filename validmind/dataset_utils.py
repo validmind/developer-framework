@@ -1,15 +1,38 @@
 """
 Utilities for inspecting and extracting statistics from client datasets
 """
-
+import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
 
 from .dataset import Dataset
 
+DEFAULT_HISTOGRAM_BINS = 10
 
-def _analyze_pd_dataset(df, analyze_opts=None):
+
+def _get_histogram(df, field, type_):
+    """
+    Returns a histogram for a numerical or categorical field
+    """
+    # Set the minimum number of bins to nunique if it's less than the default
+    if type_ == "Numeric":
+        unique = df[field].nunique()
+        num_bins = min(unique, DEFAULT_HISTOGRAM_BINS)
+        hist = np.histogram(df[field].to_numpy(), bins=num_bins)
+        return {
+            "bin_edges": hist[1].tolist(),
+            "counts": hist[0].tolist(),
+        }
+    elif type_ == "Categorical":
+        return df[field].value_counts().to_dict()
+    else:
+        raise ValueError(
+            f"Unsupported field type found when computing its histogram: {type_}"
+        )
+
+
+def _analyze_pd_dataset(df, fields, analyze_opts=None):
     """
     Runs basic analysis tasks on a Pandas dataset:
 
@@ -19,6 +42,18 @@ def _analyze_pd_dataset(df, analyze_opts=None):
     """
     # TODO - accept analyze_opts to configure how to extract different metrics
     statistics = df.describe().to_dict(orient="dict")
+
+    for field in fields:
+        field_type = field["type"]
+        statistics[field["id"]]["histogram"] = _get_histogram(
+            df, field["id"], field_type
+        )
+
+        statistics[field["id"]]["n_missing"] = df[field["id"]].isna().sum()
+        statistics[field["id"]]["missing"] = statistics[field["id"]]["n_missing"] / len(
+            df[field["id"]]
+        )
+
     correlation_matrix = df.corr().to_dict(orient="records")
     # Transform to the current format expected by the UI
     correlations = [
@@ -91,14 +126,14 @@ def init_from_pd_dataset(df, targets=None):
     )
 
 
-def analyze_vm_dataset(dataset, analyze_opts=None):
+def analyze_vm_dataset(dataset, fields, analyze_opts=None):
     """
-    Initializes a validmind.Dataset by extracting metadata from a dataset instance
+    Analyzes a dataset instance and extracts different metrics from it
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        analyze_results = _analyze_pd_dataset(dataset, analyze_opts)
+        analyze_results = _analyze_pd_dataset(dataset, fields, analyze_opts)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
