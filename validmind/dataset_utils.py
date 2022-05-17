@@ -2,6 +2,10 @@
 Utilities for inspecting and extracting statistics from client datasets
 """
 
+from pandas_profiling.config import Settings
+from pandas_profiling.model.typeset import ProfilingTypeSet
+
+
 from .dataset import Dataset
 
 
@@ -53,7 +57,13 @@ def _validate_pd_dataset_targets(df, targets):
 
 
 def init_from_pd_dataset(df, targets=None):
-    fields = [{"id": field} for field in df.columns.tolist()]
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df)
+
+    fields = [
+        {"id": field, "type": str(dataset_types[field])}
+        for field in df.columns.tolist()
+    ]
     shape = {
         "rows": df.shape[0],
         "columns": df.shape[1],
