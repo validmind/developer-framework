@@ -23,6 +23,7 @@ class Dataset:
     fields: list
     sample: list
     shape: dict
+    correlations: dict = None
     dataset_type: str = None
     statistics: dict = None
     targets: dict = None
@@ -32,6 +33,7 @@ class Dataset:
         Serializes the model to a dictionary so it can be sent to the API
         """
         return {
+            "correlations": self.correlations,
             "fields": self.fields,
             "sample": self.sample,
             "shape": self.shape,

@@ -5,7 +5,7 @@ import os
 
 import requests
 
-from .dataset_utils import init_vm_dataset
+from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .model import Model, ModelAttributes
 from .model_utils import get_info_from_model_instance, get_params_from_model_instance
 
@@ -55,7 +55,9 @@ def init(project, api_key=None, api_secret=None):
 def log_dataset(
     dataset,
     dataset_type,
-    dataset_targets=None,
+    analyze=False,
+    analyze_opts=None,
+    targets=None,
 ):
     """
     Logs metadata and statistics about a dataset to ValidMind API.
@@ -65,7 +67,14 @@ def log_dataset(
     :param dataset_targets: A list of targets for the dataset.
     :type dataset_targets: validmind.DatasetTargets, optional
     """
-    vm_dataset = init_vm_dataset(dataset, dataset_type, dataset_targets)
+    vm_dataset = init_vm_dataset(dataset, dataset_type, targets)
+
+    if analyze:
+        analyze_results = analyze_vm_dataset(dataset, analyze_opts)
+        if "statistics" in analyze_results:
+            vm_dataset.statistics = analyze_results["statistics"]
+        if "correlations" in analyze_results:
+            vm_dataset.correlations = analyze_results["correlations"]
 
     r = api_session.post(f"{API_HOST}/log_dataset", json=vm_dataset.serialize())
     assert r.status_code == 200
