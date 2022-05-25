@@ -21,6 +21,8 @@ scipy = "1.8.0"
 xgboost = "^1.5.2"
 pandas-profiling = "^3.2.0"
 pydantic = "^1.9.1"
+tqdm = "^4.64.0"
+tabulate = "^0.8.9"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

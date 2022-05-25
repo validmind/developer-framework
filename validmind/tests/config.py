@@ -6,21 +6,37 @@ add per-project support on the backend.
 """
 from typing import List, Optional
 
+import numpy as np
+
 from pydantic import conint, BaseModel, BaseSettings
 
 
-class TestResult(BaseModel):
+class BaseResultModel(BaseModel):
+    class Config:
+        json_encoders = {
+            np.ndarray: lambda obj: obj.tolist(),
+            np.integer: lambda obj: int(obj),
+            np.floating: lambda obj: float(obj),
+        }
+
+
+class TestResult(BaseResultModel):
     column: Optional[str]  # Optionally track the results for an individual column
     passed: Optional[bool]  # Optionally per-result pass/fail
     values: dict
 
 
-class TestResults(BaseModel):
+class TestResults(BaseResultModel):
     category: str
     test_name: str
     params: dict
     passed: bool
     results: List[TestResult]
+
+
+class DuplicatesConfig(BaseModel):
+    # A single duplicate should fail the test
+    min_threshold: int = 1
 
 
 class HighCardinalityConfig(BaseModel):
@@ -29,8 +45,8 @@ class HighCardinalityConfig(BaseModel):
     threshold_type: str = "percent"  # or "num"
 
 
-class DuplicatesConfig(BaseModel):
-    # A single duplicate should raise
+class MissingValuesConfig(BaseModel):
+    # A single missing value should fail the test
     min_threshold: int = 1
 
 
@@ -38,10 +54,16 @@ class PearsonCorrelationConfig(BaseModel):
     max_threshold: int = 0.3
 
 
+class SkewnessConfig(BaseModel):
+    max_threshold: int = 2
+
+
 class Settings(BaseSettings):
     class Config:
         env_prefix = "VM_TESTS_"
 
-    high_cardinality: HighCardinalityConfig = HighCardinalityConfig()
     duplicates: DuplicatesConfig = DuplicatesConfig()
+    high_cardinality: HighCardinalityConfig = HighCardinalityConfig()
+    missing_values: MissingValuesConfig = MissingValuesConfig()
     pearson_correlation: PearsonCorrelationConfig = PearsonCorrelationConfig()
+    skewness: SkewnessConfig = SkewnessConfig()

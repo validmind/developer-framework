@@ -11,11 +11,7 @@ from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .model import Model, ModelAttributes
 from .model_utils import get_info_from_model_instance, get_params_from_model_instance
 
-
 API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
-ENV_API_KEY = os.environ.get("VM_API_KEY")
-ENV_API_SECRET = os.environ.get("VM_API_SECRET")
-
 VALID_DATASET_TYPES = ["training", "test", "validation"]
 
 vm_api_key = None
@@ -46,6 +42,10 @@ def init(project, api_key=None, api_secret=None):
     Initializes the API client instances and /pings the API
     to ensure the provided credentials are valid.
     """
+
+    ENV_API_KEY = os.environ.get("VM_API_KEY")
+    ENV_API_SECRET = os.environ.get("VM_API_SECRET")
+
     vm_api_key = api_key or ENV_API_KEY
     vm_api_secret = api_secret or ENV_API_SECRET
 

@@ -3,10 +3,67 @@ Generates data quality metrics for a given dataset.
 """
 import numpy as np
 
+from pandas_profiling.config import Settings
+from pandas_profiling.model.typeset import ProfilingTypeSet
+
 from .config import TestResult, TestResults
 
 
+def duplicates(df, config):
+    rows = df.shape[0]
+
+    test_params = {
+        "min_threshold": config.duplicates.min_threshold,
+    }
+
+    n_duplicates = len(df[df.duplicated(keep=False)])
+    p_duplicates = n_duplicates / rows
+    passed = n_duplicates < config.duplicates.min_threshold
+
+    return TestResults(
+        category="data_quality",
+        test_name="duplicates",
+        params=test_params,
+        passed=passed,
+        results=[
+            TestResult(
+                passed=True,
+                values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
+            )
+        ],
+    )
+
+
+def missing_values(df, config):
+    rows = df.shape[0]
+
+    test_params = {
+        "min_threshold": config.missing_values.min_threshold,
+    }
+
+    missing = df.isna().sum()
+    results = [
+        TestResult(
+            column=col,
+            passed=missing[col] < config.missing_values.min_threshold,
+            values={"n_missing": missing[col], "p_missing": missing[col] / rows},
+        )
+        for col in missing.index
+    ]
+
+    return TestResults(
+        category="data_quality",
+        test_name="missing",
+        params=test_params,
+        passed=all([r.passed for r in results]),
+        results=results,
+    )
+
+
 def high_cardinality(df, config):
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df)
+
     results = []
     rows = df.shape[0]
 
@@ -21,9 +78,10 @@ def high_cardinality(df, config):
         num_threshold = int(config.high_cardinality.percent_threshold * rows)
 
     for col in df.columns:
-        # Run it for all data types for now
-        # if df[col].dtype == np.object:
-        passed = True
+        # Only calculate high cardinality for categorical columns
+        if str(dataset_types[col]) != "Categorical":
+            continue
+
         n_distinct = df[col].nunique()
         p_distinct = n_distinct / rows
 
@@ -46,30 +104,6 @@ def high_cardinality(df, config):
         params=test_params,
         passed=all([r.passed for r in results]),
         results=results,
-    )
-
-
-def duplicates(df, config):
-    rows = df.shape[0]
-
-    test_params = {
-        "min_threshold": config.duplicates.min_threshold,
-    }
-
-    n_duplicates = len(df[df.duplicated(keep=False)])
-    p_duplicates = n_duplicates / rows
-    passed = n_duplicates < config.duplicates.min_threshold
-
-    return TestResults(
-        category="data_quality",
-        test_name="duplicates",
-        params=test_params,
-        passed=passed,
-        results=[
-            TestResult(
-                values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
-            )
-        ],
     )
 
 
@@ -133,4 +167,41 @@ def pearson_correlation(df, config):
             )
             for col, correlations in res.items()
         ],
+    )
+
+
+def skewness(df, config):
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df)
+
+    test_params = {
+        "max_threshold": config.skewness.max_threshold,
+    }
+
+    skewness = df.skew(numeric_only=True)
+    passed = all(abs(skewness) < test_params["max_threshold"])
+    results = []
+
+    for col in skewness.index:
+        # Only calculate skewness for numerical columns
+        if str(dataset_types[col]) != "Numerical":
+            continue
+
+        col_skewness = skewness[col]
+        results.append(
+            TestResult(
+                column=col,
+                passed=abs(col_skewness) > test_params["max_threshold"],
+                values={
+                    "skewness": col_skewness,
+                },
+            )
+        )
+
+    return TestResults(
+        category="data_quality",
+        test_name="skewness",
+        params=test_params,
+        passed=passed,
+        results=results,
     )
