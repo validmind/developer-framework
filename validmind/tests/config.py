@@ -34,9 +34,14 @@ class DuplicatesConfig(BaseModel):
     min_threshold: int = 1
 
 
+class PearsonCorrelationConfig(BaseModel):
+    max_threshold: int = 0.3
+
+
 class Settings(BaseSettings):
     class Config:
         env_prefix = "VM_TESTS_"
 
     high_cardinality: HighCardinalityConfig = HighCardinalityConfig()
     duplicates: DuplicatesConfig = DuplicatesConfig()
+    pearson_correlation: PearsonCorrelationConfig = PearsonCorrelationConfig()
