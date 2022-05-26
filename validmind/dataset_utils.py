@@ -45,6 +45,10 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
 
     for field in fields:
         field_type = field["type"]
+        # Temporary hack until histograms are separated from statistics
+        if field["id"] not in statistics:
+            statistics[field["id"]] = {}
+
         statistics[field["id"]]["histogram"] = _get_histogram(
             df, field["id"], field_type
         )
