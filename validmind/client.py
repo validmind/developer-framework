@@ -33,6 +33,7 @@ class NumpyEncoder(json.JSONEncoder):
 
 def __ping():
     r = api_session.get(f"{API_HOST}/ping")
+    # TODO - don't use assertions on the client code
     assert r.status_code == 200
     return True
 
@@ -135,3 +136,35 @@ def log_model(model_instance, vm_model=None):
     assert r.status_code == 200
 
     return True
+
+
+def log_test_results(results, test_run_cuid, dataset_type):
+    """
+    Logs test results information. This method will be called automatically be run_tests
+    but can also be called directly if the user wants to run tests on their own.
+
+    :param results: A list of TestResults objects
+    """
+    # TBD - parallelize API requests
+    for result in results:
+        r = api_session.post(
+            f"{API_HOST}/log_test_results?test_run_cuid={test_run_cuid}&dataset_type={dataset_type}",
+            data=json.dumps(result.dict(), cls=NumpyEncoder),
+            headers={"Content-Type": "application/json"},
+        )
+        assert r.status_code == 200
+        print(f"Successfully logged test results for test: {result.test_name}")
+
+    return True
+
+
+def start_run():
+    """
+    Starts a new test run. This method will return a test run CUID that needs to be
+    passed to any functions logging test results to the ValidMind API.
+    """
+    r = api_session.post(f"{API_HOST}/start_run")
+    assert r.status_code == 200
+
+    test_run = r.json()
+    return test_run["cuid"]

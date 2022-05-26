@@ -12,6 +12,7 @@ from .data_quality_pandas import (
     pearson_correlation,
     skewness,
 )
+from ..client import log_test_results, start_run
 
 config = Settings()
 
@@ -45,11 +46,13 @@ def _summarize_results(results):
     )
 
 
-def run_tests(df, send=False):
+def run_tests(df, dataset_type, send=False):
     """
-    Run all or a subset of tests on the given dataframe
+    Run all or a subset of tests on the given dataframe. For now we allow this
+    function to automatically start a run for us.
     """
-    print("Running data quality tests...\n")
+    print(f'Running data quality tests for "{dataset_type}" dataset...\n')
+    test_run_cuid = start_run()
 
     tests = [
         duplicates,
@@ -63,7 +66,14 @@ def run_tests(df, send=False):
     for test in tqdm(tests):
         results.append(test(df, config))
 
-    print("\nTest suite has completed. Summary of results:\n")
+    print("\nTest suite has completed.")
+    if send:
+        print("Sending results to ValidMind...")
+        log_test_results(
+            results, test_run_cuid=test_run_cuid, dataset_type=dataset_type
+        )
+
+    print("\nSummary of results:\n")
     print(_summarize_results(results))
     print()
 
