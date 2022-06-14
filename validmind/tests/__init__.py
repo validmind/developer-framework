@@ -6,11 +6,14 @@ from tqdm import tqdm
 
 from .config import Settings
 from .data_quality_pandas import (
+    class_imbalance,
     duplicates,
     high_cardinality,
     missing_values,
     pearson_correlation,
     skewness,
+    unique,
+    zeros,
 )
 from ..client import log_test_results, start_run
 
@@ -46,7 +49,7 @@ def _summarize_results(results):
     )
 
 
-def run_tests(df, dataset_type, send=False):
+def run_tests(df, dataset_type, target_column, send=False):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
@@ -55,14 +58,18 @@ def run_tests(df, dataset_type, send=False):
     test_run_cuid = start_run()
 
     tests = [
+        class_imbalance,
         duplicates,
         high_cardinality,
         missing_values,
         pearson_correlation,
         skewness,
+        unique,
+        zeros,
     ]
     results = []
 
+    config.target_column = target_column
     for test in tqdm(tests):
         results.append(test(df, config))
 

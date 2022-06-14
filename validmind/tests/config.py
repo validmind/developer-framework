@@ -34,6 +34,12 @@ class TestResults(BaseResultModel):
     results: List[TestResult]
 
 
+class ClassImbalanceConfig(BaseModel):
+    # A minimum of 20% of minority class must
+    # be represented in the dataset
+    min_percent_threshold: float = 0.2
+
+
 class DuplicatesConfig(BaseModel):
     # A single duplicate should fail the test
     min_threshold: int = 1
@@ -51,19 +57,41 @@ class MissingValuesConfig(BaseModel):
 
 
 class PearsonCorrelationConfig(BaseModel):
-    max_threshold: int = 0.3
+    max_threshold: float = 0.3
 
 
 class SkewnessConfig(BaseModel):
-    max_threshold: int = 2
+    max_threshold: float = 1
+
+
+class UniqueConfig(BaseModel):
+    """
+    Determine which columns are full of distinct values.
+    Our default threshold is 1: 100% of rows.
+    """
+
+    min_percent_threshold: int = 1
+
+
+class ZerosConfig(BaseModel):
+    """
+    Determine how many values in a numeric column are zero.
+    """
+
+    max_percent_threshold: int = 0.03
 
 
 class Settings(BaseSettings):
     class Config:
         env_prefix = "VM_TESTS_"
 
+    target_column: Optional[str]
+
+    class_imbalance: ClassImbalanceConfig = ClassImbalanceConfig()
     duplicates: DuplicatesConfig = DuplicatesConfig()
     high_cardinality: HighCardinalityConfig = HighCardinalityConfig()
     missing_values: MissingValuesConfig = MissingValuesConfig()
     pearson_correlation: PearsonCorrelationConfig = PearsonCorrelationConfig()
     skewness: SkewnessConfig = SkewnessConfig()
+    unique: UniqueConfig = UniqueConfig()
+    zeros: ZerosConfig = ZerosConfig()

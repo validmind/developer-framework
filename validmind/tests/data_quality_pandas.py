@@ -9,6 +9,32 @@ from pandas_profiling.model.typeset import ProfilingTypeSet
 from .config import TestResult, TestResults
 
 
+def class_imbalance(df, config):
+    test_params = {
+        "min_percent_threshold": config.class_imbalance.min_percent_threshold,
+    }
+
+    target_column = config.target_column
+    imbalance_percentages = df[target_column].value_counts(normalize=True)
+
+    # Is the smallest number less than our threshold?
+    passed = imbalance_percentages.min() < test_params["min_percent_threshold"]
+
+    return TestResults(
+        category="data_quality",
+        test_name="class_imbalance",
+        params=test_params,
+        passed=passed,
+        results=[
+            TestResult(
+                column=target_column,
+                passed=passed,
+                values=imbalance_percentages.to_dict(),
+            )
+        ],
+    )
+
+
 def duplicates(df, config):
     rows = df.shape[0]
 
@@ -27,7 +53,7 @@ def duplicates(df, config):
         passed=passed,
         results=[
             TestResult(
-                passed=True,
+                passed=passed,
                 values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
             )
         ],
@@ -164,6 +190,7 @@ def pearson_correlation(df, config):
             TestResult(
                 column=col,
                 values={"correlations": correlations},
+                passed=False,
             )
             for col, correlations in res.items()
         ],
@@ -184,14 +211,14 @@ def skewness(df, config):
 
     for col in skewness.index:
         # Only calculate skewness for numerical columns
-        if str(dataset_types[col]) != "Numerical":
+        if str(dataset_types[col]) != "Numeric":
             continue
 
         col_skewness = skewness[col]
         results.append(
             TestResult(
                 column=col,
-                passed=abs(col_skewness) > test_params["max_threshold"],
+                passed=abs(col_skewness) < test_params["max_threshold"],
                 values={
                     "skewness": col_skewness,
                 },
@@ -203,5 +230,77 @@ def skewness(df, config):
         test_name="skewness",
         params=test_params,
         passed=passed,
+        results=results,
+    )
+
+
+def unique(df, config):
+    rows = df.shape[0]
+
+    test_params = {
+        "min_percent_threshold": config.unique.min_percent_threshold,
+    }
+
+    unique_rows = df.nunique()
+    results = [
+        TestResult(
+            column=col,
+            passed=(unique_rows[col] / rows) < test_params["min_percent_threshold"],
+            values={
+                "n_unique": unique_rows[col],
+                "p_unique": unique_rows[col] / rows,
+            },
+        )
+        for col in unique_rows.index
+    ]
+
+    return TestResults(
+        category="data_quality",
+        test_name="unique",
+        params=test_params,
+        passed=all([r.passed for r in results]),
+        results=results,
+    )
+
+
+def zeros(df, config):
+    rows = df.shape[0]
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df)
+    results = []
+
+    test_params = {
+        "max_percent_threshold": config.zeros.max_percent_threshold,
+    }
+
+    for col in df.columns:
+        # Only calculate zeros for numerical columns
+        if str(dataset_types[col]) != "Numeric":
+            continue
+
+        value_counts = df[col].value_counts()
+
+        if 0 not in value_counts.index:
+            continue
+
+        n_zeros = value_counts[0]
+        p_zeros = n_zeros / rows
+
+        results.append(
+            TestResult(
+                column=col,
+                passed=p_zeros < test_params["max_percent_threshold"],
+                values={
+                    "n_zeros": n_zeros,
+                    "p_zeros": p_zeros,
+                },
+            )
+        )
+
+    return TestResults(
+        category="data_quality",
+        test_name="zeros",
+        params=test_params,
+        passed=all([r.passed for r in results]),
         results=results,
     )
