@@ -9,7 +9,11 @@ import requests
 
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .model import Model, ModelAttributes
-from .model_utils import get_info_from_model_instance, get_params_from_model_instance
+from .model_utils import (
+    get_info_from_model_instance,
+    get_params_from_model_instance,
+    get_training_metrics,
+)
 
 API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
@@ -138,7 +142,29 @@ def log_model(model_instance, vm_model=None):
     return True
 
 
-def log_test_results(results, test_run_cuid, dataset_type):
+def log_training_metrics(model, x_train, y_train):
+    """
+    Logs training metrics to ValidMind API.
+
+    :param model: A model instance. Only supports XGBoost at the moment.
+    :param x_train: The training dataset.
+    :param y_train: The training dataset targets.
+    """
+    run_cuid = start_run()
+    training_metrics = get_training_metrics(model, x_train, y_train)
+
+    r = api_session.post(
+        f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
+        data=json.dumps(training_metrics, cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
+    assert r.status_code == 200
+    print("Successfully logged training metrics")
+
+    return True
+
+
+def log_test_results(results, run_cuid, dataset_type):
     """
     Logs test results information. This method will be called automatically be run_tests
     but can also be called directly if the user wants to run tests on their own.
@@ -148,7 +174,7 @@ def log_test_results(results, test_run_cuid, dataset_type):
     # TBD - parallelize API requests
     for result in results:
         r = api_session.post(
-            f"{API_HOST}/log_test_results?test_run_cuid={test_run_cuid}&dataset_type={dataset_type}",
+            f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
             data=json.dumps(result.dict(), cls=NumpyEncoder),
             headers={"Content-Type": "application/json"},
         )

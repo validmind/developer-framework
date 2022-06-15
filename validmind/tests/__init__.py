@@ -55,7 +55,7 @@ def run_tests(df, dataset_type, target_column, send=False):
     function to automatically start a run for us.
     """
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
-    test_run_cuid = start_run()
+    run_cuid = start_run()
 
     tests = [
         class_imbalance,
@@ -76,9 +76,7 @@ def run_tests(df, dataset_type, target_column, send=False):
     print("\nTest suite has completed.")
     if send:
         print("Sending results to ValidMind...")
-        log_test_results(
-            results, test_run_cuid=test_run_cuid, dataset_type=dataset_type
-        )
+        log_test_results(results, run_cuid=run_cuid, dataset_type=dataset_type)
 
     print("\nSummary of results:\n")
     print(_summarize_results(results))
