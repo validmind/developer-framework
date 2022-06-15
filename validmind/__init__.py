@@ -2,7 +2,7 @@
 Exports
 """
 
-from .client import init, log_dataset, log_model, start_run
+from .client import init, log_dataset, log_model, log_training_metrics, start_run
 from .dataset import DatasetTargets
 from .model import Model, ModelAttributes
 from .tests import run_tests
@@ -12,6 +12,7 @@ __all__ = [
     "init",
     "log_dataset",
     "log_model",
+    "log_training_metrics",
     "run_tests",
     "start_run",
     "DatasetTargets",
