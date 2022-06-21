@@ -42,6 +42,8 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
     """
     # TODO - accept analyze_opts to configure how to extract different metrics
     statistics = df.describe().to_dict(orient="dict")
+    # TODO - fix statistics to be consistent since it doesn't operate on categorical fields
+    rows = df.shape[0]
 
     for field in fields:
         field_type = field["type"]
@@ -53,6 +55,7 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
             df, field["id"], field_type
         )
 
+        statistics[field["id"]]["count"] = rows
         statistics[field["id"]]["n_missing"] = df[field["id"]].isna().sum()
         statistics[field["id"]]["missing"] = statistics[field["id"]]["n_missing"] / len(
             df[field["id"]]

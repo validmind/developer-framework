@@ -64,7 +64,7 @@ def run_tests(df, dataset_type, target_column, send=False):
         missing_values,
         pearson_correlation,
         skewness,
-        unique,
+        # unique, # ignore unique for now
         zeros,
     ]
     results = []
