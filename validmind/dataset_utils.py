@@ -24,7 +24,7 @@ def _get_histogram(df, field, type_):
             "bin_edges": hist[1].tolist(),
             "counts": hist[0].tolist(),
         }
-    elif type_ == "Categorical":
+    elif type_ == "Categorical" or type_ == "Boolean":
         return df[field].value_counts().to_dict()
     else:
         raise ValueError(

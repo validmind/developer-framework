@@ -17,8 +17,8 @@ def class_imbalance(df, config):
     target_column = config.target_column
     imbalance_percentages = df[target_column].value_counts(normalize=True)
 
-    # Is the smallest number less than our threshold?
-    passed = imbalance_percentages.min() < test_params["min_percent_threshold"]
+    # Does the minority class represent more than our threshold?
+    passed = imbalance_percentages.min() > test_params["min_percent_threshold"]
 
     return TestResults(
         category="data_quality",
