@@ -19,7 +19,9 @@ def _get_histogram(df, field, type_):
     if type_ == "Numeric":
         unique = df[field].nunique()
         num_bins = min(unique, DEFAULT_HISTOGRAM_BINS)
-        hist = np.histogram(df[field].to_numpy(), bins=num_bins)
+        values = df[field].to_numpy()
+        values_cleaned = values[~np.isnan(values)]
+        hist = np.histogram(values_cleaned, bins=num_bins)
         return {
             "bin_edges": hist[1].tolist(),
             "counts": hist[0].tolist(),

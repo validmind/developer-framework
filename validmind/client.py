@@ -2,6 +2,7 @@
 API Client
 """
 import json
+import math
 import os
 
 import numpy as np
@@ -24,6 +25,16 @@ vm_api_secret = None
 api_session = requests.Session()
 
 
+def nan_to_none(obj):
+    if isinstance(obj, dict):
+        return {k: nan_to_none(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [nan_to_none(v) for v in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    return obj
+
+
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -32,7 +43,15 @@ class NumpyEncoder(json.JSONEncoder):
             return float(obj)
         if isinstance(obj, np.ndarray):
             return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
+        return super().default(obj)
+
+    def encode(self, obj):
+        obj = nan_to_none(obj)
+        return super().encode(obj)
+
+    def iterencode(self, obj, _one_shot: bool = ...):
+        obj = nan_to_none(obj)
+        return super().iterencode(obj, _one_shot)
 
 
 def __ping():
@@ -94,9 +113,10 @@ def log_dataset(
         if "correlations" in analyze_results:
             vm_dataset.correlations = analyze_results["correlations"]
 
+    payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder)
     r = api_session.post(
         f"{API_HOST}/log_dataset",
-        data=json.dumps(vm_dataset.serialize(), cls=NumpyEncoder),
+        data=payload,
         headers={"Content-Type": "application/json"},
     )
     assert r.status_code == 200
