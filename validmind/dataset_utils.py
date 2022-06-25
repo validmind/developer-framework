@@ -62,6 +62,10 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
         statistics[field["id"]]["missing"] = statistics[field["id"]]["n_missing"] / len(
             df[field["id"]]
         )
+        statistics[field["id"]]["n_distinct"] = df[field["id"]].nunique()
+        statistics[field["id"]]["distinct"] = statistics[field["id"]][
+            "n_distinct"
+        ] / len(df[field["id"]])
 
     correlation_matrix = df.corr().to_dict(orient="records")
     # Transform to the current format expected by the UI
