@@ -56,22 +56,29 @@ class NumpyEncoder(json.JSONEncoder):
 
 def __ping():
     r = api_session.get(f"{API_HOST}/ping")
-    # TODO - don't use assertions on the client code
-    assert r.status_code == 200
+
+    if r.status_code != 200:
+        print("Unsuccessful ping to ValidMind API")
+        raise Exception(r.text)
+
     return True
 
 
-def init(project, api_key=None, api_secret=None):
+def init(project, api_key=None, api_secret=None, api_host=None):
     """
     Initializes the API client instances and /pings the API
     to ensure the provided credentials are valid.
     """
+    global API_HOST
 
     ENV_API_KEY = os.environ.get("VM_API_KEY")
     ENV_API_SECRET = os.environ.get("VM_API_SECRET")
 
     vm_api_key = api_key or ENV_API_KEY
     vm_api_secret = api_secret or ENV_API_SECRET
+
+    if api_host is not None:
+        API_HOST = api_host
 
     if vm_api_key is None or vm_api_secret is None:
         raise ValueError(
@@ -119,7 +126,10 @@ def log_dataset(
         data=payload,
         headers={"Content-Type": "application/json"},
     )
-    assert r.status_code == 200
+
+    if r.status_code != 200:
+        print("Could not log dataset to ValidMind API")
+        raise Exception(r.text)
 
     return True
 
@@ -157,7 +167,10 @@ def log_model(model_instance, vm_model=None):
         data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
         headers={"Content-Type": "application/json"},
     )
-    assert r.status_code == 200
+
+    if r.status_code != 200:
+        print("Could not log model to ValidMind API")
+        raise Exception(r.text)
 
     return True
 
@@ -178,7 +191,11 @@ def log_training_metrics(model, x_train, y_train):
         data=json.dumps(training_metrics, cls=NumpyEncoder),
         headers={"Content-Type": "application/json"},
     )
-    assert r.status_code == 200
+
+    if r.status_code != 200:
+        print("Could not log training metrics to ValidMind API")
+        raise Exception(r.text)
+
     print("Successfully logged training metrics")
 
     return True
@@ -198,7 +215,12 @@ def log_test_results(results, run_cuid, dataset_type):
             data=json.dumps(result.dict(), cls=NumpyEncoder),
             headers={"Content-Type": "application/json"},
         )
-        assert r.status_code == 200
+
+        # Exit on the first error
+        if r.status_code != 200:
+            print("Could not log test results to ValidMind API")
+            raise Exception(r.text)
+
         print(f"Successfully logged test results for test: {result.test_name}")
 
     return True
@@ -210,7 +232,10 @@ def start_run():
     passed to any functions logging test results to the ValidMind API.
     """
     r = api_session.post(f"{API_HOST}/start_run")
-    assert r.status_code == 200
+
+    if r.status_code != 200:
+        print("Could not stat data logging run with ValidMind API")
+        raise Exception(r.text)
 
     test_run = r.json()
     return test_run["cuid"]
