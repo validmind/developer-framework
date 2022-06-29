@@ -203,8 +203,8 @@ def log_training_metrics(model, x_train, y_train):
 
 def log_test_results(results, run_cuid, dataset_type):
     """
-    Logs test results information. This method will be called automatically be run_tests
-    but can also be called directly if the user wants to run tests on their own.
+    Logs test results information. This method will be called automatically be any function
+    running tests but can also be called directly if the user wants to run tests on their own.
 
     :param results: A list of TestResults objects
     """

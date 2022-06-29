@@ -49,10 +49,16 @@ def _summarize_results(results):
     )
 
 
-def run_tests(df, dataset_type, target_column, send=False):
+def run_dataset_tests(df, dataset_type, target_column, send=False):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
+
+    :param pd.DataFrame df: Dataframe for a dataset. Should contain dependent and independent variables
+    :param str dataset_type: The dataset type is necessary for mapping and relating multiple datasets together.
+        Can be one of training, validation, test or generic
+    :param str target_column: The name of the target column
+    :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
     run_cuid = start_run()
@@ -83,3 +89,7 @@ def run_tests(df, dataset_type, target_column, send=False):
     print()
 
     return results
+
+
+def run_model_tests(model, x_test, y_test, target_column=None, send=False):
+    print("test")
