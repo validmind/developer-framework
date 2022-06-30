@@ -266,24 +266,24 @@ def start_run():
     return test_run["cuid"]
 
 
-def log_figure(data_or_path, key, metadata):
+def log_figure(run_cuid, data_or_path, key, metadata):
     """
     Logs a figure
 
+    :param run_cuid: run cuid from start_run
     :param data_or_path: the path of the image or the data of the plot
-    :param key: identifier for creating, updating or deleting the plot, for the latter use data_or_path as None
+    :param key: identifier of the figure
     :param metadata: python data structure
     """
-    url = f"{API_HOST}/log_figure"
-    #url = 'https://eoccmm2t9064bz1.m.pipedream.net'
-    type = ""
+    url = f"{API_HOST}/log_figure?run_cuid={run_cuid}"
+    #url = 'https://eoccmm2t9064bz1.m.pipedream.net?run_cuid={run_cuid}'
 
     if isinstance(data_or_path, str):
-        type = "file_path"
+        type_ = "file_path"
         _, extension = os.path.splitext(data_or_path)
         files = {'image': (f"{key}{extension}", open(data_or_path, 'rb'))}
     elif is_matplotlib_typename(get_full_typename(data_or_path)):
-        type = "plot"
+        type_ = "plot"
         buffer = BytesIO()
         data_or_path.savefig(buffer)
         buffer.seek(0)
@@ -292,11 +292,10 @@ def log_figure(data_or_path, key, metadata):
         raise ValueError(f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
                          f"Available supported types: string path or matplotlib")
 
-    metadata_json = "{}"
     try:
         metadata_json = json.dumps(metadata)
     except TypeError:
         raise
 
-    res = api_session.post(url, files=files, data={"key": key, "type": type, "metadata": metadata_json})
-    return res
+    res = api_session.post(url, files=files, data={"key": key, "type": type_, "metadata": metadata_json})
+    return res.json()
