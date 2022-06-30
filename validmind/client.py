@@ -134,6 +134,38 @@ def log_dataset(
     return True
 
 
+def log_metadata(content_id, text=None, extra_json=None):
+    """
+    Logs free-form metadata to ValidMind API.
+
+    :param content_id: Unique content identifier for the metadata
+    :param text: Free-form text to assign to the metadata
+    :param extra_json: Free-form key-value pairs to assign to the metadata
+    """
+    metadata_dict = {
+        "content_id": content_id,
+    }
+
+    if text is not None:
+        metadata_dict["text"] = text
+    if extra_json is not None:
+        metadata_dict["json"] = extra_json
+
+    r = api_session.post(
+        f"{API_HOST}/log_metadata",
+        data=json.dumps(metadata_dict, cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
+
+    if r.status_code != 200:
+        print("Could not log metadata to ValidMind API")
+        raise Exception(r.text)
+
+    print("Successfully logged metadata")
+
+    return True
+
+
 def log_model(model_instance, vm_model=None):
     """
     Logs model metadata and hyperparameters to ValidMind API.
