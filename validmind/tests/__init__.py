@@ -1,6 +1,10 @@
 """
 Entrypoint to any validation test exposed by the SDK
 """
+import matplotlib.pyplot as plt
+import numpy as np
+
+from sklearn.metrics import ConfusionMatrixDisplay
 from tabulate import tabulate
 from tqdm import tqdm
 
@@ -12,15 +16,25 @@ from .data_quality_pandas import (
     missing_values,
     pearson_correlation,
     skewness,
-    unique,
     zeros,
 )
-from ..client import log_test_results, start_run
+from .model_evaluation import (
+    confusion_matrix,
+    get_x_and_y,
+    accuracy_score,
+    precision_recall_curve,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+    roc_curve,
+    f1_score,
+)
+from ..client import log_evaluation_metrics, log_test_results, start_run
 
 config = Settings()
 
 
-def _summarize_results(results):
+def _summarize_data_quality_results(results):
     """
     Summarize the results of the data quality test suite
     """
@@ -49,10 +63,128 @@ def _summarize_results(results):
     )
 
 
-def run_tests(df, dataset_type, target_column, send=False):
+def _get_roc_curve_plot(results):
+    roc_auc_score = None
+    roc_curve = None
+
+    for result in results:
+        if result["key"] == "roc_curve":
+            roc_curve = result["value"]
+            continue
+        elif result["key"] == "roc_auc":
+            roc_auc_score = result["value"]
+            continue
+
+    if roc_auc_score is None and roc_curve is None:
+        return None
+
+    _, ax = plt.subplots()
+
+    ax.plot(
+        roc_curve["fpr"],
+        roc_curve["tpr"],
+        color="darkorange",
+        label="ROC curve (area = %0.2f)" % roc_auc_score[0],
+    )
+    ax.plot([0, 1], [0, 1], color="navy", linestyle="--")
+    ax.axis(xmin=0.0, xmax=1.0, ymin=0.0, ymax=1.05)
+
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title("Receiver operating characteristic example")
+    ax.legend(loc="lower right")
+
+
+def _get_pr_curve_plot(results):
+    pr_curve = None
+
+    for result in results:
+        if result["key"] == "pr_curve":
+            pr_curve = result["value"]
+            continue
+
+    if pr_curve is None:
+        return None
+
+    _, ax = plt.subplots()
+
+    ax.plot(
+        pr_curve["recall"],
+        pr_curve["precision"],
+        color="darkorange",
+    )
+    ax.axis(xmin=0.0, xmax=1.0, ymin=0.0, ymax=1.05)
+
+    ax.set_xlabel("Recall")
+    ax.set_ylabel("Precision")
+    ax.set_title("Precision Recall Curve")
+
+
+def _get_confusion_matrix_plot(results):
+    """
+    Get the confusion matrix plot from the results of the model evaluation test suite
+    """
+    cfm = None
+    for result in results:
+        if result["key"] == "confusion_matrix":
+            cfm = np.asarray(
+                [
+                    [result["value"]["tn"], result["value"]["fp"]],
+                    [result["value"]["fn"], result["value"]["tp"]],
+                ]
+            )
+            break
+
+    if cfm is None:
+        return None
+
+    cfm_plot = ConfusionMatrixDisplay(confusion_matrix=cfm)
+
+    return cfm_plot
+
+
+def _summarize_model_evaluation_results(results):
+    """
+    Summarize the results of the model evaluation test suite
+    """
+    test_results = []
+
+    for result in results:
+        # Not optimal to display confusion matrix or ROC curve inside a table
+        if (
+            result["key"] == "confusion_matrix"
+            or result["key"] == "roc_curve"
+            or result["key"] == "pr_curve"
+        ):
+            continue
+
+        test_results.append(
+            [
+                result["key"],
+                result["value"][0],
+                "Validation with default Test dataset",
+            ]
+        )
+
+    table = tabulate(
+        test_results,
+        headers=["Test", "Score", "Scenario"],
+        numalign="right",
+    )
+
+    return table
+
+
+def run_dataset_tests(df, dataset_type, target_column, send=False):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
+
+    :param pd.DataFrame df: Dataframe for a dataset. Should contain dependent and independent variables
+    :param str dataset_type: The dataset type is necessary for mapping and relating multiple datasets together.
+        Can be one of training, validation, test or generic
+    :param str target_column: The name of the target column
+    :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
     run_cuid = start_run()
@@ -79,7 +211,57 @@ def run_tests(df, dataset_type, target_column, send=False):
         log_test_results(results, run_cuid=run_cuid, dataset_type=dataset_type)
 
     print("\nSummary of results:\n")
-    print(_summarize_results(results))
+    print(_summarize_data_quality_results(results))
     print()
+
+    return results
+
+
+def run_model_tests(model, df, y_test=None, target_column=None, send=False):
+    """
+    Run a suite of model evaluation tests and log their results to the API
+    """
+    if y_test is None and target_column is None:
+        raise Exception("Either y_test or target_column must be provided")
+    elif target_column is not None and y_test is None:
+        x_test, y_test = get_x_and_y(df, target_column)
+    else:
+        x_test = df
+
+    run_cuid = start_run()
+
+    print("Generating model predictions on test dataset...")
+    y_pred = model.predict_proba(x_test)[:, -1]
+    predictions = [round(value) for value in y_pred]
+
+    tests = [
+        accuracy_score,
+        precision_score,
+        recall_score,
+        f1_score,
+        roc_auc_score,
+        roc_curve,
+        confusion_matrix,
+        precision_recall_curve,
+    ]
+    results = []
+
+    for test in tqdm(tests):
+        results.append(test(y_test, y_pred, rounded_y_pred=predictions))
+
+    print("\nModel evaluation tests have completed.")
+    if send:
+        print("Sending results to ValidMind...")
+        log_evaluation_metrics(results, run_cuid=run_cuid)
+
+    print("\nSummary of results:\n")
+    table = _summarize_model_evaluation_results(results)
+    print(table)
+
+    print("\nPlotting model evaluation results...")
+    cfm_plot = _get_confusion_matrix_plot(results)
+    cfm_plot.plot()
+    _get_roc_curve_plot(results)
+    _get_pr_curve_plot(results)
 
     return results
