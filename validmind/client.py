@@ -201,6 +201,29 @@ def log_training_metrics(model, x_train, y_train):
     return True
 
 
+def log_evaluation_metrics(metrics, run_cuid):
+    """
+    Logs evaluation metrics to ValidMind API.
+
+    :param model: A model instance. Only supports XGBoost at the moment.
+    :param x_train: The training dataset.
+    :param y_train: The training dataset targets.
+    """
+    r = api_session.post(
+        f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
+        data=json.dumps(metrics, cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
+
+    if r.status_code != 200:
+        print("Could not log evaluation metrics to ValidMind API")
+        raise Exception(r.text)
+
+    print("Successfully logged evaluation metrics")
+
+    return True
+
+
 def log_test_results(results, run_cuid, dataset_type):
     """
     Logs test results information. This method will be called automatically be any function

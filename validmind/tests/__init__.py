@@ -29,7 +29,7 @@ from .model_evaluation import (
     roc_curve,
     f1_score,
 )
-from ..client import log_test_results, start_run
+from ..client import log_evaluation_metrics, log_test_results, start_run
 
 config = Settings()
 
@@ -228,6 +228,8 @@ def run_model_tests(model, df, y_test=None, target_column=None, send=False):
     else:
         x_test = df
 
+    run_cuid = start_run()
+
     print("Generating model predictions on test dataset...")
     y_pred = model.predict_proba(x_test)[:, -1]
     predictions = [round(value) for value in y_pred]
@@ -250,6 +252,7 @@ def run_model_tests(model, df, y_test=None, target_column=None, send=False):
     print("\nModel evaluation tests have completed.")
     if send:
         print("Sending results to ValidMind...")
+        log_evaluation_metrics(results, run_cuid=run_cuid)
 
     print("\nSummary of results:\n")
     table = _summarize_model_evaluation_results(results)

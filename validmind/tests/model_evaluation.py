@@ -24,6 +24,8 @@ def accuracy_score(y_true, y_pred=None, rounded_y_pred=None):
     Compute accuracy score metric from sklearn.
     """
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "accuracy",
         "value": [metrics.accuracy_score(y_true, rounded_y_pred)],
     }
@@ -34,6 +36,8 @@ def precision_score(y_true, y_pred=None, rounded_y_pred=None):
     Compute precision score metric from sklearn.
     """
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "precision",
         "value": [metrics.precision_score(y_true, rounded_y_pred)],
     }
@@ -43,14 +47,24 @@ def recall_score(y_true, y_pred=None, rounded_y_pred=None):
     """
     Compute recall score metric from sklearn.
     """
-    return {"key": "recall", "value": [metrics.recall_score(y_true, rounded_y_pred)]}
+    return {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "recall",
+        "value": [metrics.recall_score(y_true, rounded_y_pred)],
+    }
 
 
 def f1_score(y_true, y_pred=None, rounded_y_pred=None):
     """
     Compute f1 score metric from sklearn.
     """
-    return {"key": "f1_score", "value": [metrics.f1_score(y_true, rounded_y_pred)]}
+    return {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "f1_score",
+        "value": [metrics.f1_score(y_true, rounded_y_pred)],
+    }
 
 
 def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
@@ -62,6 +76,8 @@ def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
 
     tn, fp, fn, tp = cfm_sklearn(y_true, rounded_y_pred, labels=y_labels).ravel()
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "confusion_matrix",
         "value": {
             "tn": tn,
@@ -77,6 +93,8 @@ def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None):
     Compute ROC AUC score metric from sklearn.
     """
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "roc_auc",
         "value": [metrics.roc_auc_score(y_true, rounded_y_pred)],
     }
@@ -88,6 +106,8 @@ def roc_curve(y_true, y_pred=None, rounded_y_pred=None):
     """
     fpr, tpr, roc_thresholds = roc_curve_sklearn(y_true, y_pred, drop_intermediate=True)
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "roc_curve",
         "value": {
             "fpr": fpr,
@@ -103,6 +123,8 @@ def precision_recall_curve(y_true, y_pred=None, rounded_y_pred=None):
     """
     precision, recall, pr_thresholds = prc_sklearn(y_true, y_pred)
     return {
+        "type": "evaluation",
+        "scope": "test",
         "key": "pr_curve",
         "value": {
             "precision": precision,
