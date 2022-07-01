@@ -276,7 +276,6 @@ def log_figure(run_cuid, data_or_path, key, metadata):
     :param metadata: python data structure
     """
     url = f"{API_HOST}/log_figure?run_cuid={run_cuid}"
-    #url = 'https://eoccmm2t9064bz1.m.pipedream.net?run_cuid={run_cuid}'
 
     if isinstance(data_or_path, str):
         type_ = "file_path"
