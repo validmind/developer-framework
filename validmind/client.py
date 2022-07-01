@@ -207,7 +207,7 @@ def log_model(model_instance, vm_model=None):
     return True
 
 
-def log_training_metrics(model, x_train, y_train):
+def log_training_metrics(model, x_train, y_train, run_cuid=None):
     """
     Logs training metrics to ValidMind API.
 
@@ -215,7 +215,9 @@ def log_training_metrics(model, x_train, y_train):
     :param x_train: The training dataset.
     :param y_train: The training dataset targets.
     """
-    run_cuid = start_run()
+    if run_cuid is None:
+        run_cuid = start_run()
+
     training_metrics = get_training_metrics(model, x_train, y_train)
 
     r = api_session.post(

@@ -175,7 +175,7 @@ def _summarize_model_evaluation_results(results):
     return table
 
 
-def run_dataset_tests(df, dataset_type, target_column, send=False):
+def run_dataset_tests(df, dataset_type, target_column, send=False, run_cuid=None):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
@@ -187,7 +187,8 @@ def run_dataset_tests(df, dataset_type, target_column, send=False):
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
-    run_cuid = start_run()
+    if run_cuid is None:
+        run_cuid = start_run()
 
     tests = [
         class_imbalance,
@@ -217,7 +218,9 @@ def run_dataset_tests(df, dataset_type, target_column, send=False):
     return results
 
 
-def run_model_tests(model, df, y_test=None, target_column=None, send=False):
+def run_model_tests(
+    model, df, y_test=None, target_column=None, send=False, run_cuid=None
+):
     """
     Run a suite of model evaluation tests and log their results to the API
     """
@@ -228,7 +231,8 @@ def run_model_tests(model, df, y_test=None, target_column=None, send=False):
     else:
         x_test = df
 
-    run_cuid = start_run()
+    if run_cuid is None:
+        run_cuid = start_run()
 
     print("Generating model predictions on test dataset...")
     y_pred = model.predict_proba(x_test)[:, -1]
