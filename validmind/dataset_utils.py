@@ -34,6 +34,40 @@ def _get_histogram(df, field, type_):
         )
 
 
+def _add_field_statistics(df, field, analyze_opts=None):
+    """
+    We're moving the statistics to the `fields` attribute of the dataset
+    in order to be more consistent, but still keeping the old statistics
+    with `histogram`s until they are migrated as well
+    """
+    field_type = field["type"]
+
+    # - When we call describe on one field at a time, Pandas will
+    #   know if it needs to report on numerical or categorical statistics
+    # - Boolean (binary) fields should be reported as categorical
+    #       (force to categorical when nunique == 2)
+    if field_type == ["Boolean"] or df[field["id"]].nunique() == 2:
+        top_value = df[field["id"]].value_counts().nlargest(1)
+
+        field["statistics"] = {
+            "count": df[field["id"]].count(),
+            "unique": df[field["id"]].nunique(),
+            "top": top_value.index[0],
+            "freq": top_value.values[0],
+        }
+    elif field_type == "Numeric" or field_type == "Categorical":
+        field["statistics"] = df[field["id"]].describe().to_dict()
+
+    field["statistics"]["n_missing"] = df[field["id"]].isna().sum()
+    field["statistics"]["missing"] = field["statistics"]["n_missing"] / len(
+        df[field["id"]]
+    )
+    field["statistics"]["n_distinct"] = df[field["id"]].nunique()
+    field["statistics"]["distinct"] = field["statistics"]["n_distinct"] / len(
+        df[field["id"]]
+    )
+
+
 def _analyze_pd_dataset(df, fields, analyze_opts=None):
     """
     Runs basic analysis tasks on a Pandas dataset:
@@ -44,8 +78,6 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
     """
     # TODO - accept analyze_opts to configure how to extract different metrics
     statistics = df.describe().to_dict(orient="dict")
-    # TODO - fix statistics to be consistent since it doesn't operate on categorical fields
-    rows = df.shape[0]
 
     for field in fields:
         field_type = field["type"]
@@ -57,15 +89,7 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
             df, field["id"], field_type
         )
 
-        statistics[field["id"]]["count"] = rows
-        statistics[field["id"]]["n_missing"] = df[field["id"]].isna().sum()
-        statistics[field["id"]]["missing"] = statistics[field["id"]]["n_missing"] / len(
-            df[field["id"]]
-        )
-        statistics[field["id"]]["n_distinct"] = df[field["id"]].nunique()
-        statistics[field["id"]]["distinct"] = statistics[field["id"]][
-            "n_distinct"
-        ] / len(df[field["id"]])
+        _add_field_statistics(df, field, analyze_opts)
 
     correlation_matrix = df.corr().to_dict(orient="records")
     # Transform to the current format expected by the UI
@@ -104,6 +128,10 @@ def _validate_pd_dataset_targets(df, targets):
     return True
 
 
+# 1. Accept descriptions from SDK
+# 2. Accept type overrides from SDK
+# 3. Run df.describe() for numerical and categorical fields
+#       df[df.columns].astype('category')
 def init_from_pd_dataset(df, targets=None):
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df)
