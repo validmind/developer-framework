@@ -9,7 +9,9 @@ from .client import (
     log_model,
     log_training_metrics,
     start_run,
+    log_figure
 )
+
 from .dataset import DatasetTargets
 from .model import Model, ModelAttributes
 from .tests import run_dataset_tests, run_model_tests

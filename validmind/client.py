@@ -4,6 +4,7 @@ API Client
 import json
 import math
 import os
+from io import BytesIO
 
 import numpy as np
 import requests
@@ -15,6 +16,7 @@ from .model_utils import (
     get_params_from_model_instance,
     get_training_metrics,
 )
+from .type_utils import get_full_typename, is_matplotlib_typename
 
 API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
@@ -296,3 +298,37 @@ def start_run():
 
     test_run = r.json()
     return test_run["cuid"]
+
+
+def log_figure(run_cuid, data_or_path, key, metadata):
+    """
+    Logs a figure
+
+    :param run_cuid: run cuid from start_run
+    :param data_or_path: the path of the image or the data of the plot
+    :param key: identifier of the figure
+    :param metadata: python data structure
+    """
+    url = f"{API_HOST}/log_figure?run_cuid={run_cuid}"
+
+    if isinstance(data_or_path, str):
+        type_ = "file_path"
+        _, extension = os.path.splitext(data_or_path)
+        files = {'image': (f"{key}{extension}", open(data_or_path, 'rb'))}
+    elif is_matplotlib_typename(get_full_typename(data_or_path)):
+        type_ = "plot"
+        buffer = BytesIO()
+        data_or_path.savefig(buffer)
+        buffer.seek(0)
+        files = {'image': (f"{key}.png", buffer, "image/png")}
+    else:
+        raise ValueError(f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
+                         f"Available supported types: string path or matplotlib")
+
+    try:
+        metadata_json = json.dumps(metadata)
+    except TypeError:
+        raise
+
+    res = api_session.post(url, files=files, data={"key": key, "type": type_, "metadata": metadata_json})
+    return res.json()
