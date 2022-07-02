@@ -139,7 +139,7 @@ def pearson_correlation(df, config):
         "max_threshold": config.pearson_correlation.max_threshold,
     }
 
-    corr = df.corr(method="spearman")
+    corr = df.corr()
     cols = corr.columns
 
     # Matrix of True/False where True means the correlation is above the threshold
