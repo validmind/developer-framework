@@ -16,13 +16,19 @@ import validmind as vm
 print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
-vm.init(project="cl1jyvh2c000909lg1rk0a0zb")
+vm.init(
+    api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+    project="cl1jyvh2c000909lg1rk0a0zb",
+)
 
 # Load model_overview.md markdown file and call log_metadata with its text
 print("2. Logging model metadata...")
 with open("./scripts/lending_club_metadata/model_overview.md", "r") as f:
     # TODO - read metadata from file (check markdown extension)
     vm.log_metadata(content_id="model_overview", text=f.read())
+
+with open("./scripts/lending_club_metadata/model_selection.md", "r") as f:
+    vm.log_metadata(content_id="model_selection", text=f.read())
 
 print("3. Loading dataset...")
 
