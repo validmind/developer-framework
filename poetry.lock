@@ -313,6 +313,26 @@ scipy = "*"
 six = "*"
 
 [[package]]
+name = "imbalanced-learn"
+version = "0.8.1"
+description = "Toolbox for imbalanced dataset in machine learning."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+joblib = ">=0.11"
+numpy = ">=1.13.3"
+scikit-learn = ">=0.24"
+scipy = ">=0.19.1"
+
+[package.extras]
+dev = ["black", "flake8"]
+docs = ["sphinx", "sphinx-gallery", "pydata-sphinx-theme", "sphinxcontrib-bibtex", "numpydoc", "matplotlib", "pandas", "seaborn"]
+optional = ["keras", "tensorflow"]
+tests = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "importlib-metadata"
 version = "4.2.0"
 description = "Read metadata from Python packages"
@@ -1592,7 +1612,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.11"
-content-hash = "3f39af13c0586f169d23e955a70a84c03a4f7aa234e35a4c9755fbfe528f7a72"
+content-hash = "6b3e31bc40014b66abae012c2348425151215f5d0d617b073e5368d3fb7f7d8a"
 
 [metadata.files]
 appnope = [
@@ -1804,6 +1824,10 @@ idna = [
 ]
 imagehash = [
     {file = "ImageHash-4.2.1.tar.gz", hash = "sha256:a4af957814bc9832d9241247ff03f76e778f890c18147900b4540af124e93011"},
+]
+imbalanced-learn = [
+    {file = "imbalanced-learn-0.8.1.tar.gz", hash = "sha256:eaf576b1ba3523a0facf3aaa483ca17e326301e53e7678c54d73b7e0250edd43"},
+    {file = "imbalanced_learn-0.8.1-py3-none-any.whl", hash = "sha256:fcd4a54618d118998933d7366133889d2ba6508cca209de27a22b3205d82a3f9"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-4.2.0-py3-none-any.whl", hash = "sha256:057e92c15bc8d9e8109738a48db0ccb31b4d9d5cfbee5a8670879a30be66304b"},

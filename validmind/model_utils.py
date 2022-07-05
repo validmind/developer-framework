@@ -66,7 +66,9 @@ def get_xgb_train_metrics(model, x_train, y_train):
                     }
                 )
 
-    pfi_values = permutation_importance(model, x_train, y_train, random_state=0)
+    pfi_values = permutation_importance(
+        model, x_train, y_train, random_state=0, n_jobs=-2
+    )
     pfi = {}
     for i, column in enumerate(x_train.columns):
         pfi[column] = [pfi_values["importances_mean"][i]], [

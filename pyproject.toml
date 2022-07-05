@@ -2,7 +2,7 @@
 authors = ["Andres Rodriguez <andres@validmind.ai>"]
 description = "ValidMind SDK"
 name = "validmind"
-version = "0.2.0"
+version = "0.2.1"
 
 [tool.poetry.dependencies]
 click = "^8.0.4"
@@ -26,6 +26,7 @@ xgboost = "^1.5.2"
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 flake8 = "^4.0.1"
+imbalanced-learn = "0.8.1"
 pytest = "^5.2"
 
 [build-system]
