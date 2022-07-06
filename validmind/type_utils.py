@@ -18,4 +18,3 @@ def is_matplotlib_typename(typename: str) -> bool:
 
 def is_plotly_typename(typename: str) -> bool:
     return typename.startswith("plotly.")
-

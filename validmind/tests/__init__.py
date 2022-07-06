@@ -19,15 +19,16 @@ from .data_quality_pandas import (
     zeros,
 )
 from .model_evaluation import (
-    confusion_matrix,
-    get_x_and_y,
     accuracy_score,
+    confusion_matrix,
+    f1_score,
+    get_x_and_y,
+    permutation_importance,
     precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
     roc_curve,
-    f1_score,
 )
 from ..client import log_evaluation_metrics, log_test_results, start_run
 
@@ -61,6 +62,35 @@ def _summarize_data_quality_results(results):
         headers=["Test", "Passed", "# Passed", "# Errors", "% Passed"],
         numalign="right",
     )
+
+
+def _get_pfi_plot(results):
+    pfi_values = None
+    for result in results:
+        if result["key"] == "pfi":
+            pfi_values = result["value"]
+            break
+
+    if pfi_values is None:
+        return None
+
+    pfi_bar_values = []
+    for feature, values in pfi_values.items():
+        pfi_bar_values.append({"feature": feature, "value": values[0][0]})
+
+    pfi_bar_values = sorted(pfi_bar_values, key=lambda d: d["value"], reverse=True)
+    pfi_x_values = [d["value"] for d in pfi_bar_values]
+    pfi_y_values = [d["feature"] for d in pfi_bar_values]
+
+    # Plot a bar plot with horizontal bars
+    _, ax = plt.subplots()
+    ax.barh(pfi_y_values, pfi_x_values, color="darkorange")
+    ax.set_xlabel("Importance")
+    ax.set_ylabel("Feature")
+    ax.set_title("Permutation Feature Importance")
+    ax.set_yticks(np.arange(len(pfi_y_values)))
+    ax.set_yticklabels(pfi_y_values)
+    ax.invert_yaxis()
 
 
 def _get_roc_curve_plot(results):
@@ -101,7 +131,7 @@ def _get_pr_curve_plot(results):
     for result in results:
         if result["key"] == "pr_curve":
             pr_curve = result["value"]
-            continue
+            break
 
     if pr_curve is None:
         return None
@@ -155,6 +185,7 @@ def _summarize_model_evaluation_results(results):
             result["key"] == "confusion_matrix"
             or result["key"] == "roc_curve"
             or result["key"] == "pr_curve"
+            or result["key"] == "pfi"
         ):
             continue
 
@@ -238,6 +269,7 @@ def run_model_tests(
     y_pred = model.predict_proba(x_test)[:, -1]
     predictions = [round(value) for value in y_pred]
 
+    print("Running evaluation tests...")
     tests = [
         accuracy_score,
         precision_score,
@@ -250,8 +282,14 @@ def run_model_tests(
     ]
     results = []
 
-    for test in tqdm(tests):
-        results.append(test(y_test, y_pred, rounded_y_pred=predictions))
+    # 1) All tests that take y_true, y_pred as input and 2) permutation_importance
+    with tqdm(total=len(tests) + 1) as pbar:
+        for test in tests:
+            results.append(test(y_test, y_pred, rounded_y_pred=predictions))
+            pbar.update(1)
+
+        results.append(permutation_importance(model, x_test, y_test))
+        pbar.update(1)
 
     print("\nModel evaluation tests have completed.")
     if send:
@@ -267,5 +305,6 @@ def run_model_tests(
     cfm_plot.plot()
     _get_roc_curve_plot(results)
     _get_pr_curve_plot(results)
+    _get_pfi_plot(results)
 
     return results
