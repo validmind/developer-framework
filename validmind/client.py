@@ -314,21 +314,25 @@ def log_figure(run_cuid, data_or_path, key, metadata):
     if isinstance(data_or_path, str):
         type_ = "file_path"
         _, extension = os.path.splitext(data_or_path)
-        files = {'image': (f"{key}{extension}", open(data_or_path, 'rb'))}
+        files = {"image": (f"{key}{extension}", open(data_or_path, "rb"))}
     elif is_matplotlib_typename(get_full_typename(data_or_path)):
         type_ = "plot"
         buffer = BytesIO()
         data_or_path.savefig(buffer)
         buffer.seek(0)
-        files = {'image': (f"{key}.png", buffer, "image/png")}
+        files = {"image": (f"{key}.png", buffer, "image/png")}
     else:
-        raise ValueError(f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
-                         f"Available supported types: string path or matplotlib")
+        raise ValueError(
+            f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
+            f"Available supported types: string path or matplotlib"
+        )
 
     try:
         metadata_json = json.dumps(metadata)
     except TypeError:
         raise
 
-    res = api_session.post(url, files=files, data={"key": key, "type": type_, "metadata": metadata_json})
+    res = api_session.post(
+        url, files=files, data={"key": key, "type": type_, "metadata": metadata_json}
+    )
     return res.json()
