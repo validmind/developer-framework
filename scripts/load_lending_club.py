@@ -20,7 +20,7 @@ print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 vm.init(
-    api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+    # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
     project="cl1jyvh2c000909lg1rk0a0zb",
 )
 

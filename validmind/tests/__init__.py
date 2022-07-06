@@ -269,6 +269,7 @@ def run_model_tests(
     y_pred = model.predict_proba(x_test)[:, -1]
     predictions = [round(value) for value in y_pred]
 
+    print("Running evaluation tests...")
     tests = [
         accuracy_score,
         precision_score,
