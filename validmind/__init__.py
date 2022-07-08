@@ -9,7 +9,7 @@ from .client import (
     log_model,
     log_training_metrics,
     start_run,
-    log_figure
+    log_figure,
 )
 
 from .dataset import DatasetTargets
@@ -26,6 +26,7 @@ __all__ = [
     "run_dataset_tests",
     "run_model_tests",
     "start_run",
+    "log_figure",
     "DatasetTargets",
     "Model",
     "ModelAttributes",
