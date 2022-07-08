@@ -66,6 +66,16 @@ def __ping():
     return True
 
 
+def _get_or_create_run_cuid():
+    """
+    Get the run cuid from the api_session headers.
+    Create it when not found.
+    """
+    if "X-RUN-CUID" in api_session.headers:
+        return api_session.headers["X-RUN-CUID"]
+    return start_run()
+
+
 def init(project, api_key=None, api_secret=None, api_host=None):
     """
     Initializes the API client instances and /pings the API
@@ -114,6 +124,7 @@ def log_dataset(
     :type dataset_targets: validmind.DatasetTargets, optional
     """
     vm_dataset = init_vm_dataset(dataset, dataset_type, targets)
+    analyze_results = None
 
     if analyze:
         analyze_results = analyze_vm_dataset(dataset, vm_dataset.fields, analyze_opts)
@@ -132,6 +143,10 @@ def log_dataset(
     if r.status_code != 200:
         print("Could not log dataset to ValidMind API")
         raise Exception(r.text)
+
+    if analyze_results:
+        for corr_plot in analyze_results["correlations_plots"]["pearson"]:
+            log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
 
     return True
 
@@ -297,18 +312,23 @@ def start_run():
         raise Exception(r.text)
 
     test_run = r.json()
-    return test_run["cuid"]
+    test_run_cuid = test_run["cuid"]
+    api_session.headers.update({"X-RUN-CUID": test_run_cuid})
+    return test_run_cuid
 
 
-def log_figure(run_cuid, data_or_path, key, metadata):
+def log_figure(data_or_path, key, metadata, run_cuid=None):
     """
     Logs a figure
 
-    :param run_cuid: run cuid from start_run
     :param data_or_path: the path of the image or the data of the plot
     :param key: identifier of the figure
     :param metadata: python data structure
+    :param run_cuid: run cuid from start_run
     """
+    if not run_cuid:
+        run_cuid = _get_or_create_run_cuid()
+
     url = f"{API_HOST}/log_figure?run_cuid={run_cuid}"
 
     if isinstance(data_or_path, str):

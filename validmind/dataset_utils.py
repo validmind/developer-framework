@@ -1,10 +1,10 @@
 """
 Utilities for inspecting and extracting statistics from client datasets
 """
+import matplotlib.pyplot as plt
 import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
-
 
 from .dataset import Dataset
 
@@ -68,6 +68,42 @@ def _add_field_statistics(df, field, analyze_opts=None):
     )
 
 
+def _generate_correlation_plots(df, correlation_matrix, n_top=15):
+    correlation_matrix = correlation_matrix.abs()
+    corr_matrix_abs_us = correlation_matrix.unstack()
+    sorted_correlated_features = corr_matrix_abs_us.sort_values(
+        kind="quicksort", ascending=False
+    ).reset_index()
+
+    # Remove comparisons of the same feature
+    sorted_correlated_features = sorted_correlated_features[
+        (sorted_correlated_features.level_0 != sorted_correlated_features.level_1)
+    ]
+
+    # Remove duplicates
+    sorted_correlated_features = sorted_correlated_features.iloc[:-2:2]
+
+    sorted_correlated_features = sorted_correlated_features[:n_top]
+
+    plots = []
+    for fields in sorted_correlated_features.values:
+        x, y, value = fields
+        fields = ":".join(sorted([x, y]))
+        key = f"corr:{fields}"
+        subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+        # avoid drawing on notebooks
+        plt.close()
+        plots.append(
+            {
+                "type": "correlation-pearson",
+                "figure": subplot.figure,
+                "key": key,
+                "metadata": {"x": x, "y": y, "value": value},
+            }
+        )
+    return plots
+
+
 def _analyze_pd_dataset(df, fields, analyze_opts=None):
     """
     Runs basic analysis tasks on a Pandas dataset:
@@ -91,7 +127,7 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
 
         _add_field_statistics(df, field, analyze_opts)
 
-    correlation_matrix = df.corr().to_dict(orient="records")
+    correlation_matrix = df.corr()
     # Transform to the current format expected by the UI
     correlations = [
         [
@@ -101,12 +137,17 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
             }
             for key, value in correlation_row.items()
         ]
-        for correlation_row in correlation_matrix
+        for correlation_row in correlation_matrix.to_dict(orient="records")
     ]
+
+    correlation_plots = _generate_correlation_plots(df, correlation_matrix, n_top=15)
 
     return {
         "correlations": {
             "pearson": correlations,
+        },
+        "correlations_plots": {
+            "pearson": correlation_plots,
         },
         "statistics": statistics,
     }
