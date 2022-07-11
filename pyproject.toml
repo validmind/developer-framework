@@ -2,7 +2,7 @@
 authors = ["Andres Rodriguez <andres@validmind.ai>"]
 description = "ValidMind SDK"
 name = "validmind"
-version = "0.2.2"
+version = "0.3.0"
 
 [tool.poetry.dependencies]
 click = "^8.0.4"
@@ -28,6 +28,7 @@ black = "^22.1.0"
 flake8 = "^4.0.1"
 imbalanced-learn = "0.8.1"
 pytest = "^5.2"
+jupyterlab = "^3.4.3"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
