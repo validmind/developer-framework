@@ -129,7 +129,7 @@ def log_dataset(
     analyze_results = None
 
     if analyze:
-        analyze_results = analyze_vm_dataset(dataset, vm_dataset.fields, analyze_opts)
+        analyze_results = analyze_vm_dataset(dataset, vm_dataset, analyze_opts)
         if "statistics" in analyze_results:
             vm_dataset.statistics = analyze_results["statistics"]
         if "correlations" in analyze_results:

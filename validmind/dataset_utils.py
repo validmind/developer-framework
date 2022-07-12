@@ -41,9 +41,15 @@ def _add_field_statistics(df, field, analyze_opts=None):
     with `histogram`s until they are migrated as well
     """
     field_type = field["type"]
+    field_type_options = field.get("type_options", dict())
+
+    # Force a categorical field when it's declared as a primary key
+    if field_type_options.get("primary_key", False):
+        field_type = "Categorical"
+        field["type"] = "Categorical"
 
     # - When we call describe on one field at a time, Pandas will
-    #   know if it needs to report on numerical or categorical statistics
+    #   know better if it needs to report on numerical or categorical statistics
     # - Boolean (binary) fields should be reported as categorical
     #       (force to categorical when nunique == 2)
     if field_type == ["Boolean"] or df[field["id"]].nunique() == 2:
@@ -55,8 +61,10 @@ def _add_field_statistics(df, field, analyze_opts=None):
             "top": top_value.index[0],
             "freq": top_value.values[0],
         }
-    elif field_type == "Numeric" or field_type == "Categorical":
+    elif field_type == "Numeric":
         field["statistics"] = df[field["id"]].describe().to_dict()
+    elif field_type == "Categorical":
+        field["statistics"] = df[field["id"]].astype("category").describe().to_dict()
 
     field["statistics"]["n_missing"] = df[field["id"]].isna().sum()
     field["statistics"]["missing"] = field["statistics"]["n_missing"] / len(
@@ -104,7 +112,7 @@ def _generate_correlation_plots(df, correlation_matrix, n_top=15):
     return plots
 
 
-def _analyze_pd_dataset(df, fields, analyze_opts=None):
+def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
     """
     Runs basic analysis tasks on a Pandas dataset:
 
@@ -112,6 +120,7 @@ def _analyze_pd_dataset(df, fields, analyze_opts=None):
     - Pearson correlation matrix
     - Histograms for distribution of values
     """
+    fields = vm_dataset.fields
     # TODO - accept analyze_opts to configure how to extract different metrics
     statistics = df.describe().to_dict(orient="dict")
 
@@ -235,14 +244,18 @@ def init_from_pd_dataset(df, targets=None, features=None):
     )
 
 
-def analyze_vm_dataset(dataset, fields, analyze_opts=None):
+def analyze_vm_dataset(dataset, vm_dataset, analyze_opts=None):
     """
     Analyzes a dataset instance and extracts different metrics from it
+
+    :param dataset: A full input dataset. Only supports Pandas datasets at the moment.
+    :param vm_dataset: VM Dataset metadata
+    :param analyze_opts: Additional analyze options (not used yet)
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        analyze_results = _analyze_pd_dataset(dataset, fields, analyze_opts)
+        analyze_results = _analyze_pd_dataset(dataset, vm_dataset, analyze_opts)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
