@@ -114,6 +114,7 @@ def log_dataset(
     analyze=False,
     analyze_opts=None,
     targets=None,
+    features=None,
 ):
     """
     Logs metadata and statistics about a dataset to ValidMind API.
@@ -121,9 +122,10 @@ def log_dataset(
     :param dataset: A dataset. Only supports Pandas datasets at the moment.
     :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
     :param dataset_targets: A list of targets for the dataset.
+    :param features: Optional. A list of features metadata.
     :type dataset_targets: validmind.DatasetTargets, optional
     """
-    vm_dataset = init_vm_dataset(dataset, dataset_type, targets)
+    vm_dataset = init_vm_dataset(dataset, dataset_type, targets, features)
     analyze_results = None
 
     if analyze:

@@ -169,18 +169,45 @@ def _validate_pd_dataset_targets(df, targets):
     return True
 
 
+def _validate_dataset_features(df, features):
+    """
+    Validates that the features list that was manually passed is valid and returns
+    a feature map so the full dataset features list can be built by merging from
+    df.columns. A faeture should at least have an "id" field.
+    Validation for other fields TBD
+    """
+    feature_map = {}
+
+    for feature in features:
+        if "id" not in feature:
+            raise ValueError(f"Feature {feature.__dict__} does not have an 'id' field")
+        if feature["id"] not in df:
+            raise ValueError(f"Feature {feature['id']} does not exist in the dataset")
+
+        feature_map[feature["id"]] = feature
+
+    return feature_map
+
+
 # 1. Accept descriptions from SDK
 # 2. Accept type overrides from SDK
 # 3. Run df.describe() for numerical and categorical fields
 #       df[df.columns].astype('category')
-def init_from_pd_dataset(df, targets=None):
+def init_from_pd_dataset(df, targets=None, features=None):
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df)
 
-    fields = [
-        {"id": field, "type": str(dataset_types[field])}
-        for field in df.columns.tolist()
-    ]
+    feature_map = _validate_dataset_features(df, features or [])
+    dataset_features = []
+
+    # Iterate through df.columns to preserve order
+    for column in df.columns.tolist():
+        inferred_feature = {"id": column, "type": str(dataset_types[column])}
+        # Check if feature exists in features list and merge with inferred_feature
+        if column in feature_map:
+            inferred_feature.update(feature_map[column])
+        dataset_features.append(inferred_feature)
+
     shape = {
         "rows": df.shape[0],
         "columns": df.shape[1],
@@ -192,7 +219,7 @@ def init_from_pd_dataset(df, targets=None):
         _validate_pd_dataset_targets(df, targets)
 
     return Dataset(
-        fields=fields,
+        fields=dataset_features,  # TODO - deprecate naming in favor of features
         sample=[
             {
                 "id": "head",
@@ -222,14 +249,14 @@ def analyze_vm_dataset(dataset, fields, analyze_opts=None):
     return analyze_results
 
 
-def init_vm_dataset(dataset, dataset_type, targets=None):
+def init_vm_dataset(dataset, dataset_type, targets=None, features=None):
     """
     Initializes a validmind.Dataset by extracting metadata from a dataset instance
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        vm_dataset = init_from_pd_dataset(dataset, targets)
+        vm_dataset = init_from_pd_dataset(dataset, targets, features)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
