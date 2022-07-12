@@ -150,7 +150,7 @@ def log_dataset(
         for corr_plot in analyze_results["correlations_plots"]["pearson"]:
             log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
 
-    return True
+    return vm_dataset
 
 
 def log_metadata(content_id, text=None, extra_json=None):
