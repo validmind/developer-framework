@@ -3,10 +3,20 @@ Utilities for inspecting and extracting statistics from client datasets
 """
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
+import seaborn as sns
+
+from matplotlib.axes._axes import _log as matplotlib_axes_logger
+
+# Silence this warning: *c* argument looks like a single numeric RGB or
+# RGBA sequence, which should be avoided
+matplotlib_axes_logger.setLevel("ERROR")
 
 from .dataset import Dataset
+
+sns.set(rc={"figure.figsize": (20, 10)})
 
 DEFAULT_HISTOGRAM_BINS = 10
 
@@ -76,7 +86,70 @@ def _add_field_statistics(df, field, analyze_opts=None):
     )
 
 
-def _generate_correlation_plots(df, correlation_matrix, n_top=15):
+def _get_scatter_plot(df, x, y):
+    """
+    Returns a scatter plot for a pair of features
+    """
+    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+    # avoid drawing on notebooks
+    plt.close()
+    return subplot
+
+
+def _get_box_plot(df, x, y):
+    """
+    Returns a box plot for a pair of features
+    """
+    subplot = sns.boxplot(x=x, y=y, data=df)
+    # avoid drawing on notebooks
+    plt.close()
+    return subplot
+
+
+def _get_crosstab_plot(df, vm_dataset, x, y):
+    """
+    Returns a crosstab plot for a pair of features. If one of the features
+    is the target column, we should not use it as an index
+    """
+    target_column = vm_dataset.targets.target_column
+    if target_column == x:
+        x = y
+        y = target_column
+    elif target_column == y:
+        y = target_column
+        x = y
+
+    crosstab = pd.crosstab(index=df[x], columns=df[y])
+    subplot = crosstab.plot.bar(rot=0)
+    # avoid drawing on notebooks
+    plt.close()
+    return subplot
+
+
+def _get_plot_for_feature_pair(df, vm_dataset, x, y):
+    """
+    Checks the data types for each feature pair and creates the
+    appropriate plot to represent their relationship
+    """
+    x_type = vm_dataset.get_feature_type(x)
+    y_type = vm_dataset.get_feature_type(y)
+
+    # Easy case when we just need a scatter plot
+    if x_type == "Numeric" and y_type == "Numeric":
+        return _get_scatter_plot(df, x, y)
+
+    # When one feature is numerical, it needs to be plotted as a box plot
+    # where X is the category and Y is the distribution of numerical values
+    if x_type == "Numeric":
+        return _get_box_plot(df, y, x)
+    elif y_type == "Numeric":
+        return _get_box_plot(df, x, y)
+
+    # Now each feature is either categorical or Boolean
+    return _get_crosstab_plot(df, vm_dataset, x, y)
+
+
+def _generate_correlation_plots(df, vm_dataset, correlation_matrix, n_top=15):
     correlation_matrix = correlation_matrix.abs()
     corr_matrix_abs_us = correlation_matrix.unstack()
     sorted_correlated_features = corr_matrix_abs_us.sort_values(
@@ -98,9 +171,7 @@ def _generate_correlation_plots(df, correlation_matrix, n_top=15):
         x, y, value = fields
         fields = ":".join(sorted([x, y]))
         key = f"corr:{fields}"
-        subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
-        # avoid drawing on notebooks
-        plt.close()
+        subplot = _get_plot_for_feature_pair(df, vm_dataset, x, y)
         plots.append(
             {
                 "type": "correlation-pearson",
@@ -149,7 +220,9 @@ def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
         for correlation_row in correlation_matrix.to_dict(orient="records")
     ]
 
-    correlation_plots = _generate_correlation_plots(df, correlation_matrix, n_top=15)
+    correlation_plots = _generate_correlation_plots(
+        df, vm_dataset, correlation_matrix, n_top=15
+    )
 
     return {
         "correlations": {
