@@ -206,7 +206,7 @@ def _summarize_model_evaluation_results(results):
     return table
 
 
-def run_dataset_tests(df, dataset_type, target_column, send=False, run_cuid=None):
+def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
@@ -214,7 +214,7 @@ def run_dataset_tests(df, dataset_type, target_column, send=False, run_cuid=None
     :param pd.DataFrame df: Dataframe for a dataset. Should contain dependent and independent variables
     :param str dataset_type: The dataset type is necessary for mapping and relating multiple datasets together.
         Can be one of training, validation, test or generic
-    :param str target_column: The name of the target column
+    :param vm_dataset: VM Dataset metadata
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
@@ -233,9 +233,9 @@ def run_dataset_tests(df, dataset_type, target_column, send=False, run_cuid=None
     ]
     results = []
 
-    config.target_column = target_column
+    config.target_column = vm_dataset.targets.target_column
     for test in tqdm(tests):
-        results.append(test(df, config))
+        results.append(test(df, vm_dataset, config))
 
     print("\nTest suite has completed.")
     if send:

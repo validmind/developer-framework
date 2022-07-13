@@ -20,7 +20,7 @@ class Dataset:
     Model class wrapper
     """
 
-    fields: list
+    fields: list  # TODO - deprecate naming in favor of features
     sample: list
     shape: dict
     correlations: dict = None
