@@ -9,7 +9,7 @@ from pandas_profiling.model.typeset import ProfilingTypeSet
 from .config import TestResult, TestResults
 
 
-def class_imbalance(df, config):
+def class_imbalance(df, vm_dataset, config):
     test_params = {
         "min_percent_threshold": config.class_imbalance.min_percent_threshold,
     }
@@ -35,7 +35,7 @@ def class_imbalance(df, config):
     )
 
 
-def duplicates(df, config):
+def duplicates(df, vm_dataset, config):
     rows = df.shape[0]
 
     test_params = {
@@ -46,21 +46,46 @@ def duplicates(df, config):
     p_duplicates = n_duplicates / rows
     passed = n_duplicates < config.duplicates.min_threshold
 
+    results = [
+        TestResult(
+            passed=passed,
+            values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
+        )
+    ]
+
+    # Additionally, run duplicates test on fields that are primary keys
+    primary_keys = []
+    for field in vm_dataset.fields:
+        if field.get("type_options", None) and field.get("type_options").get(
+            "primary_key", False
+        ):
+            primary_keys.append(field["id"])
+
+    for col in primary_keys:
+        col_n_duplicates = len(df[df[col].duplicated(keep=False)])
+        col_p_duplicates = col_n_duplicates / rows
+        col_passed = col_n_duplicates < config.duplicates.min_threshold
+        results.append(
+            TestResult(
+                column=col,
+                passed=col_passed,
+                values={
+                    "n_duplicates": col_n_duplicates,
+                    "p_duplicates": col_p_duplicates,
+                },
+            )
+        )
+
     return TestResults(
         category="data_quality",
         test_name="duplicates",
         params=test_params,
-        passed=passed,
-        results=[
-            TestResult(
-                passed=passed,
-                values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
-            )
-        ],
+        passed=all([r.passed for r in results]),
+        results=results,
     )
 
 
-def missing_values(df, config):
+def missing_values(df, vm_dataset, config):
     rows = df.shape[0]
 
     test_params = {
@@ -86,7 +111,7 @@ def missing_values(df, config):
     )
 
 
-def high_cardinality(df, config):
+def high_cardinality(df, vm_dataset, config):
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df)
 
@@ -134,7 +159,7 @@ def high_cardinality(df, config):
 
 
 # Inspired by: https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py
-def pearson_correlation(df, config):
+def pearson_correlation(df, vm_dataset, config):
     test_params = {
         "max_threshold": config.pearson_correlation.max_threshold,
     }
@@ -197,7 +222,7 @@ def pearson_correlation(df, config):
     )
 
 
-def skewness(df, config):
+def skewness(df, vm_dataset, config):
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df)
 
@@ -234,7 +259,7 @@ def skewness(df, config):
     )
 
 
-def unique(df, config):
+def unique(df, vm_dataset, config):
     rows = df.shape[0]
 
     test_params = {
@@ -263,7 +288,7 @@ def unique(df, config):
     )
 
 
-def zeros(df, config):
+def zeros(df, vm_dataset, config):
     rows = df.shape[0]
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df)

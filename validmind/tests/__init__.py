@@ -235,7 +235,7 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
 
     config.target_column = vm_dataset.targets.target_column
     for test in tqdm(tests):
-        results.append(test(df, config))
+        results.append(test(df, vm_dataset, config))
 
     print("\nTest suite has completed.")
     if send:
