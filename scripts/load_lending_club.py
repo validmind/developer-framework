@@ -20,7 +20,7 @@ print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 vm.init(
-    # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+    api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
     project="cl1jyvh2c000909lg1rk0a0zb",
 )
 
@@ -33,40 +33,41 @@ content_ids = [
     "model_overview",
     "model_selection",
     "dataset_split",
+    "feature_selection",
 ]
 
 for content_id in content_ids:
     with open(f"./scripts/lending_club_metadata/{content_id}.md") as f:
         vm.log_metadata(content_id, f.read())
 
-print("3. Loading dataset...")
+# print("3. Loading dataset...")
 
 # df = pd.read_pickle("./notebooks/datasets/_temp/df_loans_cleaned.pickle")
 # This dataset has been cleaned up much more after df_loans_cleaned
-train_df = pd.read_pickle("./notebooks/datasets/_temp/df_loans_fe.pickle")
+# train_df = pd.read_pickle("./notebooks/datasets/_temp/df_loans_fe.pickle")
 
-targets = vm.DatasetTargets(
-    target_column="loan_status",
-    class_labels={
-        "0": "Fully Paid",
-        "1": "Charged Off",
-    },
-)
+# targets = vm.DatasetTargets(
+#     target_column="loan_status",
+#     class_labels={
+#         "0": "Fully Paid",
+#         "1": "Charged Off",
+#     },
+# )
 
-print("4. Logging dataset metadata and statistics...")
+# print("4. Logging dataset metadata and statistics...")
 
-vm_dataset = vm.log_dataset(train_df, "training", analyze=True, targets=targets)
+# vm_dataset = vm.log_dataset(train_df, "training", analyze=True, targets=targets)
 
 
-print("5. Running data quality tests...")
+# print("5. Running data quality tests...")
 
-results = vm.run_dataset_tests(
-    train_df,
-    dataset_type="training",
-    vm_dataset=vm_dataset,
-    send=True,
-    run_cuid=run_cuid,
-)
+# results = vm.run_dataset_tests(
+#     train_df,
+#     dataset_type="training",
+#     vm_dataset=vm_dataset,
+#     send=True,
+#     run_cuid=run_cuid,
+# )
 
 
 # print("6. Loading and preparing dataset for training...")

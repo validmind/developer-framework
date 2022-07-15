@@ -7,8 +7,8 @@ does not have any predictive value and is therefore dropped.
 
 # Encoding the `Gender` Column
 
-The `Gender` column has values "Male" and "Gender" and so they have been encoded as numbers
-using the following mapping:
+The `Gender` column has values "Male" and "Female" and so they have been encoded as binary
+values using the following mapping:
 
 - 0: Male
 - 1: Female
