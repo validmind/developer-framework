@@ -2,6 +2,9 @@
 Model Evaluation Tests. Currently we only support
 models that have a sklearn compatible metrics interface
 """
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance as pfi_sklearn
 from sklearn.metrics import (
@@ -151,3 +154,56 @@ def permutation_importance(model, x_test, y_test):
         "key": "pfi",
         "value": pfi,
     }
+
+
+def _generate_shap_plot(type_, shap_values, x_test):
+    # preserve styles
+    mpl.rcParams["grid.color"] = "#CCC"
+    ax = plt.axes()
+    ax.set_facecolor("white")
+
+    if type_ == "summary":
+        shap.summary_plot(shap_values, x_test, show=False)
+    elif type_ == "mean":
+        shap.summary_plot(
+            shap_values, x_test, plot_type="bar", color="#DE257E", show=False
+        )
+    else:
+        raise ValueError(f"unknown shap plot type '{type_}'")
+
+    figure = plt.gcf()
+    # avoid displaying on notebooks and clears the canvas for the next plot
+    plt.close()
+
+    return {
+        "figure": figure,
+        "key": f"shap:{type_}",
+        "metadata": {"type": type_},
+    }
+
+
+def shap_global_importance(model, x_test, generate_plots=True):
+    """
+    Compute shap global importance (SHAP).
+    :param model:
+    :param x_test:
+    :param generate_plots: when True, the returning dict contains the key "plots" with
+    dict of the figure, key and metadata for the plot.
+    """
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(x_test)
+
+    results = {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "shap",
+        "value": shap_values.tolist(),
+    }
+
+    if generate_plots:
+        results["plots"] = [
+            _generate_shap_plot("mean", shap_values, x_test),
+            _generate_shap_plot("summary", shap_values, x_test),
+        ]
+
+    return results
