@@ -4,6 +4,7 @@ models that have a sklearn compatible metrics interface
 """
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy
 import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance as pfi_sklearn
@@ -157,20 +158,22 @@ def permutation_importance(model, x_test, y_test):
 
 
 def _generate_shap_plot(type_, shap_values, x_test):
+    """
+    Plots two types of SHAP global importance (SHAP).
+    :params type: mean, summary
+    :params shap_values: a matrix
+    :params x_test:
+    """
     # preserve styles
     mpl.rcParams["grid.color"] = "#CCC"
     ax = plt.axes()
     ax.set_facecolor("white")
 
-    if type_ == "summary":
-        shap.summary_plot(shap_values, x_test, show=False)
-    elif type_ == "mean":
-        shap.summary_plot(
-            shap_values, x_test, plot_type="bar", color="#DE257E", show=False
-        )
-    else:
-        raise ValueError(f"unknown shap plot type '{type_}'")
+    summary_plot_extra_args = {}
+    if type_ == "mean":
+        summary_plot_extra_args = {"plot_type": "bar", "color": "#DE257E"}
 
+    shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
     figure = plt.gcf()
     # avoid displaying on notebooks and clears the canvas for the next plot
     plt.close()
@@ -193,11 +196,19 @@ def shap_global_importance(model, x_test, generate_plots=True):
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(x_test)
 
+    # For models with a single output this returns a numpy.ndarray of SHAP values
+    if type(shap_values) is numpy.ndarray:
+        result_values = shap_values.tolist()
+    else:
+        # For models with vector outputs this returns a list of matrices of SHAP values
+        shap_values = shap_values[0]
+        result_values = shap_values
+
     results = {
         "type": "evaluation",
         "scope": "test",
         "key": "shap",
-        "value": shap_values.tolist(),
+        "value": result_values,
     }
 
     if generate_plots:
