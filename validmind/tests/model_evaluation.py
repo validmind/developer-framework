@@ -194,7 +194,7 @@ def shap_global_importance(model, x_test, generate_plots=True):
     dict of the figure, key and metadata for the plot.
     """
     explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(x_test)
+    shap_values = explainer.shap_values(x_test, from_call=True)
 
     # For models with a single output this returns a numpy.ndarray of SHAP values
     if type(shap_values) is numpy.ndarray:
