@@ -29,8 +29,9 @@ from .model_evaluation import (
     recall_score,
     roc_auc_score,
     roc_curve,
+    shap_global_importance,
 )
-from ..client import log_evaluation_metrics, log_test_results, start_run
+from ..client import log_evaluation_metrics, log_test_results, start_run, log_figure
 
 config = Settings()
 
@@ -186,6 +187,7 @@ def _summarize_model_evaluation_results(results):
             or result["key"] == "roc_curve"
             or result["key"] == "pr_curve"
             or result["key"] == "pfi"
+            or result["key"] == "shap"
         ):
             continue
 
@@ -282,7 +284,7 @@ def run_model_tests(
     ]
     results = []
 
-    # 1) All tests that take y_true, y_pred as input and 2) permutation_importance
+    # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
     with tqdm(total=len(tests) + 1) as pbar:
         for test in tests:
             results.append(test(y_test, y_pred, rounded_y_pred=predictions))
@@ -291,10 +293,19 @@ def run_model_tests(
         results.append(permutation_importance(model, x_test, y_test))
         pbar.update(1)
 
+        shap_results = shap_global_importance(model, x_test)
+        figures = shap_results.pop("plots")
+        results.append(shap_results)
+        pbar.update(1)
+
     print("\nModel evaluation tests have completed.")
     if send:
-        print("Sending results to ValidMind...")
+        print(f"Sending {len(results)} results to ValidMind...")
         log_evaluation_metrics(results, run_cuid=run_cuid)
+
+        print(f"Sending {len(figures)} figures to ValidMind...")
+        for figure in figures:
+            log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
 
     print("\nSummary of results:\n")
     table = _summarize_model_evaluation_results(results)
