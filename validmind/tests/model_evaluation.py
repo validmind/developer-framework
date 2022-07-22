@@ -14,17 +14,42 @@ from sklearn.metrics import (
     precision_recall_curve as prc_sklearn,
 )
 
+from .config import TestResult, TestResults
 
-def accuracy_score(y_true, y_pred=None, rounded_y_pred=None):
+
+def accuracy_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     """
     Compute accuracy score metric from sklearn.
     """
-    return {
+    score = metrics.accuracy_score(y_true, rounded_y_pred)
+    evaluation_metrics = {
         "type": "evaluation",
         "scope": "test",
         "key": "accuracy",
-        "value": [metrics.accuracy_score(y_true, rounded_y_pred)],
+        "value": [score],
     }
+
+    test_params = {
+        "min_percent_threshold": config.accuracy_score.min_percent_threshold,
+    }
+
+    passed = score > test_params["min_percent_threshold"]
+
+    test_result = TestResults(
+        category="model_performance",
+        test_name="accuracy_score",
+        params=test_params,
+        passed=passed,
+        results=[
+            TestResult(
+                column="min_percent_threshold",
+                passed=passed,
+                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+            )
+        ]
+    )
+
+    return evaluation_metrics, test_result
 
 
 def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
@@ -48,16 +73,43 @@ def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
     }
 
 
-def f1_score(y_true, y_pred=None, rounded_y_pred=None):
+def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     """
     Compute f1 score metric from sklearn.
     """
-    return {
+
+    score = metrics.f1_score(y_true, rounded_y_pred)
+
+    evaluation_metrics = {
         "type": "evaluation",
         "scope": "test",
         "key": "f1_score",
-        "value": [metrics.f1_score(y_true, rounded_y_pred)],
+        "value": [score],
     }
+
+    test_params = {
+        "min_percent_threshold": config.f1_score.min_percent_threshold,
+    }
+
+    passed = score > test_params["min_percent_threshold"]
+
+    test_result = TestResults(
+        category="model_performance",
+        test_name="f1_score",
+        params=test_params,
+        passed=passed,
+        results=[
+            TestResult(
+                column="min_percent_threshold",
+                passed=passed,
+                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+            )
+        ]
+    )
+
+    return evaluation_metrics, test_result
+
+
 
 
 def get_x_and_y(df, target_column):
@@ -110,16 +162,41 @@ def recall_score(y_true, y_pred=None, rounded_y_pred=None):
     }
 
 
-def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None):
+def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     """
     Compute ROC AUC score metric from sklearn.
     """
-    return {
+
+    score = metrics.roc_auc_score(y_true, rounded_y_pred)
+
+    evaluation_metrics = {
         "type": "evaluation",
         "scope": "test",
         "key": "roc_auc",
-        "value": [metrics.roc_auc_score(y_true, rounded_y_pred)],
+        "value": [score],
     }
+
+    test_params = {
+        "min_percent_threshold": config.roc_auc_score.min_percent_threshold,
+    }
+
+    passed = score > test_params["min_percent_threshold"]
+
+    test_result = TestResults(
+        category="model_performance",
+        test_name="roc_auc_score",
+        params=test_params,
+        passed=passed,
+        results=[
+            TestResult(
+                column="min_percent_threshold",
+                passed=passed,
+                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+            )
+        ]
+    )
+
+    return evaluation_metrics, test_result
 
 
 def roc_curve(y_true, y_pred=None, rounded_y_pred=None):

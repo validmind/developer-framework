@@ -81,6 +81,27 @@ class ZerosConfig(BaseModel):
     max_percent_threshold: int = 0.03
 
 
+class AccuracyScoreConfig(BaseModel):
+    """
+
+    """
+    min_percent_threshold: float = 0.7
+
+
+class F1ScoreConfig(BaseModel):
+    """
+
+    """
+    min_percent_threshold: float = 0.5
+
+
+class RocAucScoreConfig(BaseModel):
+    """
+
+    """
+    min_percent_threshold: float = 0.5
+
+
 class Settings(BaseSettings):
     class Config:
         env_prefix = "VM_TESTS_"
@@ -95,3 +116,7 @@ class Settings(BaseSettings):
     skewness: SkewnessConfig = SkewnessConfig()
     unique: UniqueConfig = UniqueConfig()
     zeros: ZerosConfig = ZerosConfig()
+
+    accuracy_score: AccuracyScoreConfig = AccuracyScoreConfig()
+    f1_score: F1ScoreConfig = F1ScoreConfig()
+    roc_auc_score: RocAucScoreConfig = RocAucScoreConfig()
