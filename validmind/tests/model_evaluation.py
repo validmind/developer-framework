@@ -42,11 +42,13 @@ def accuracy_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
         passed=passed,
         results=[
             TestResult(
-                column="min_percent_threshold",
                 passed=passed,
-                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+                values={
+                    "score": score,
+                    "threshold": test_params["min_percent_threshold"],
+                },
             )
-        ]
+        ],
     )
 
     return evaluation_metrics, test_result
@@ -88,10 +90,10 @@ def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     }
 
     test_params = {
-        "min_percent_threshold": config.f1_score.min_percent_threshold,
+        "min_threshold": config.f1_score.min_threshold,
     }
 
-    passed = score > test_params["min_percent_threshold"]
+    passed = score > test_params["min_threshold"]
 
     test_result = TestResults(
         category="model_performance",
@@ -100,16 +102,13 @@ def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
         passed=passed,
         results=[
             TestResult(
-                column="min_percent_threshold",
                 passed=passed,
-                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+                values={"score": score, "threshold": test_params["min_threshold"]},
             )
-        ]
+        ],
     )
 
     return evaluation_metrics, test_result
-
-
 
 
 def get_x_and_y(df, target_column):
@@ -177,10 +176,10 @@ def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     }
 
     test_params = {
-        "min_percent_threshold": config.roc_auc_score.min_percent_threshold,
+        "min_threshold": config.roc_auc_score.min_threshold,
     }
 
-    passed = score > test_params["min_percent_threshold"]
+    passed = score > test_params["min_threshold"]
 
     test_result = TestResults(
         category="model_performance",
@@ -189,11 +188,10 @@ def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
         passed=passed,
         results=[
             TestResult(
-                column="min_percent_threshold",
                 passed=passed,
-                values={'score': score, 'threshold': test_params["min_percent_threshold"]}
+                values={"score": score, "threshold": test_params["min_threshold"]},
             )
-        ]
+        ],
     )
 
     return evaluation_metrics, test_result

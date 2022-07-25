@@ -82,24 +82,21 @@ class ZerosConfig(BaseModel):
 
 
 class AccuracyScoreConfig(BaseModel):
-    """
+    """ """
 
-    """
     min_percent_threshold: float = 0.7
 
 
 class F1ScoreConfig(BaseModel):
-    """
+    """ """
 
-    """
-    min_percent_threshold: float = 0.5
+    min_threshold: float = 0.5
 
 
 class RocAucScoreConfig(BaseModel):
-    """
+    """ """
 
-    """
-    min_percent_threshold: float = 0.5
+    min_threshold: float = 0.5
 
 
 class Settings(BaseSettings):
