@@ -318,7 +318,7 @@ def run_model_tests(
         log_test_results(
             test_results,
             run_cuid=run_cuid,
-            dataset_type="training" #TODO: Not sure at all this is the type of dataset for this workload
+            dataset_type="test"
         )
 
         print(f"Sending {len(figures)} figures to ValidMind...")
