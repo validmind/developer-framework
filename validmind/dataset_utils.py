@@ -317,18 +317,6 @@ def init_from_pd_dataset(df, targets=None, features=None):
     )
 
 
-def filter_dataset(df, options=dict()):
-    """
-    Filters a dataset by:
-    - A specific query/filter (TBD)
-    - Subset of rows (TBD)
-    - Subset of columns
-    """
-    remove_criteria = options.get("remove", dict())
-
-    return df
-
-
 def analyze_vm_dataset(dataset, vm_dataset, analyze_opts=None):
     """
     Analyzes a dataset instance and extracts different metrics from it
