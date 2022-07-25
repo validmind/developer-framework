@@ -296,7 +296,9 @@ def run_model_tests(
             pbar.update(1)
 
         for test in tests_with_test_results:
-            evaluation_metric_result, test_result = test(y_test, y_pred, config=config, rounded_y_pred=predictions)
+            evaluation_metric_result, test_result = test(
+                y_test, y_pred, config=config, rounded_y_pred=predictions
+            )
             evaluation_metrics_results.append(evaluation_metric_result)
             test_results.append(test_result)
             pbar.update(1)
@@ -311,14 +313,16 @@ def run_model_tests(
 
     print("\nModel evaluation tests have completed.")
     if send:
-        print(f"Sending {len(evaluation_metrics_results)} metrics results to ValidMind...")
+        print(
+            f"Sending {len(evaluation_metrics_results)} metrics results to ValidMind..."
+        )
         log_evaluation_metrics(evaluation_metrics_results, run_cuid=run_cuid)
 
         print(f"Sending {len(test_results)} test results to ValidMind...")
         log_test_results(
             test_results,
             run_cuid=run_cuid,
-            dataset_type="test"
+            dataset_type="training",  # TBD: need to support registering test dataset
         )
 
         print(f"Sending {len(figures)} figures to ValidMind...")
