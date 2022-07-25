@@ -272,50 +272,68 @@ def run_model_tests(
     predictions = [round(value) for value in y_pred]
 
     print("Running evaluation tests...")
-    tests = [
+    tests_with_test_results = [
         accuracy_score,
-        precision_score,
-        recall_score,
         f1_score,
         roc_auc_score,
+    ]
+
+    tests = [
+        precision_score,
+        recall_score,
         roc_curve,
         confusion_matrix,
         precision_recall_curve,
     ]
-    results = []
+    evaluation_metrics_results = []
+    test_results = []
 
     # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
     with tqdm(total=len(tests) + 1) as pbar:
         for test in tests:
-            results.append(test(y_test, y_pred, rounded_y_pred=predictions))
+            evaluation_metric_result = test(y_test, y_pred, rounded_y_pred=predictions)
+            evaluation_metrics_results.append(evaluation_metric_result)
             pbar.update(1)
 
-        results.append(permutation_importance(model, x_test, y_test))
+        for test in tests_with_test_results:
+            evaluation_metric_result, test_result = test(y_test, y_pred, config=config, rounded_y_pred=predictions)
+            evaluation_metrics_results.append(evaluation_metric_result)
+            test_results.append(test_result)
+            pbar.update(1)
+
+        evaluation_metrics_results.append(permutation_importance(model, x_test, y_test))
         pbar.update(1)
 
         shap_results = shap_global_importance(model, x_test)
         figures = shap_results.pop("plots")
-        results.append(shap_results)
+        evaluation_metrics_results.append(shap_results)
         pbar.update(1)
 
     print("\nModel evaluation tests have completed.")
     if send:
-        print(f"Sending {len(results)} results to ValidMind...")
-        log_evaluation_metrics(results, run_cuid=run_cuid)
+        print(f"Sending {len(evaluation_metrics_results)} metrics results to ValidMind...")
+        log_evaluation_metrics(evaluation_metrics_results, run_cuid=run_cuid)
+
+        print(f"Sending {len(test_results)} test results to ValidMind...")
+        log_test_results(
+            test_results,
+            run_cuid=run_cuid,
+            dataset_type="test"
+        )
 
         print(f"Sending {len(figures)} figures to ValidMind...")
         for figure in figures:
             log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
 
     print("\nSummary of results:\n")
-    table = _summarize_model_evaluation_results(results)
+    table = _summarize_model_evaluation_results(evaluation_metrics_results)
     print(table)
 
     print("\nPlotting model evaluation results...")
-    cfm_plot = _get_confusion_matrix_plot(results)
+    cfm_plot = _get_confusion_matrix_plot(evaluation_metrics_results)
     cfm_plot.plot()
-    _get_roc_curve_plot(results)
-    _get_pr_curve_plot(results)
-    _get_pfi_plot(results)
+    _get_roc_curve_plot(evaluation_metrics_results)
+    _get_pr_curve_plot(evaluation_metrics_results)
+    _get_pfi_plot(evaluation_metrics_results)
 
-    return results
+    return evaluation_metrics_results
