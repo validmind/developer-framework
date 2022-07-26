@@ -272,18 +272,18 @@ def shap_global_importance(model, x_test, generate_plots=True):
     shap_values = explainer.shap_values(x_test, from_call=True)
 
     # For models with a single output this returns a numpy.ndarray of SHAP values
-    if type(shap_values) is numpy.ndarray:
-        result_values = shap_values.tolist()
-    else:
-        # For models with vector outputs this returns a list of matrices of SHAP values
-        shap_values = shap_values[0]
-        result_values = shap_values
+    # if type(shap_values) is numpy.ndarray:
+    #     result_values = shap_values.tolist()
+    # else:
+    #     # For models with vector outputs this returns a list of matrices of SHAP values
+    #     shap_values = shap_values[0]
+    #     result_values = shap_values
 
     results = {
         "type": "evaluation",
         "scope": "test",
         "key": "shap",
-        "value": result_values,
+        # "value": result_values,
     }
 
     if generate_plots:
