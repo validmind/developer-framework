@@ -54,15 +54,20 @@ class Dataset:
         """
         Serializes the model to a dictionary so it can be sent to the API
         """
-        return {
+        dataset_dict = {
             "correlations": self.correlations,
             "fields": self.fields,
             "sample": self.sample,
             "shape": self.shape,
             "statistics": self.statistics,
-            "targets": self.targets.__dict__,
             "type": self.dataset_type,
         }
+
+        # Dataset with no targets can be logged
+        if self.targets:
+            dataset_dict["targets"] = self.targets.__dict__
+
+        return dataset_dict
 
     @classmethod
     def create_from_dict(cls, dict_):

@@ -38,6 +38,8 @@ def _get_histogram(df, field, type_):
         }
     elif type_ == "Categorical" or type_ == "Boolean":
         return df[field].value_counts().to_dict()
+    elif type_ == "Null":
+        print(f"Ignoring histogram generation for null column {field}")
     else:
         raise ValueError(
             f"Unsupported field type found when computing its histogram: {type_}"
@@ -76,6 +78,10 @@ def _add_field_statistics(df, field, analyze_opts=None):
     elif field_type == "Categorical":
         field["statistics"] = df[field["id"]].astype("category").describe().to_dict()
 
+    # Initialize statistics object for non-numeric or categorical fields
+    if "statistics" not in field:
+        field["statistics"] = {}
+
     field["statistics"]["n_missing"] = df[field["id"]].isna().sum()
     field["statistics"]["missing"] = field["statistics"]["n_missing"] / len(
         df[field["id"]]
@@ -111,13 +117,15 @@ def _get_crosstab_plot(df, vm_dataset, x, y):
     Returns a crosstab plot for a pair of features. If one of the features
     is the target column, we should not use it as an index
     """
-    target_column = vm_dataset.targets.target_column
-    if target_column == x:
-        x = y
-        y = target_column
-    elif target_column == y:
-        y = target_column
-        x = y
+    # If dataset targets were specified we try to use the target column as y
+    if vm_dataset.targets:
+        target_column = vm_dataset.targets.target_column
+        if target_column == x:
+            x = y
+            y = target_column
+        elif target_column == y:
+            y = target_column
+            x = y
 
     crosstab = pd.crosstab(index=df[x], columns=df[y])
     subplot = crosstab.plot.bar(rot=0)
@@ -271,13 +279,35 @@ def _validate_dataset_features(df, features):
     return feature_map
 
 
+def infer_pd_dataset_types(df):
+    """
+    Infers the data types for each column using pandas_profiling's
+    typeset from visions library.
+
+    When a type is inferred as Unsupported we check if it's a null column
+    and mark it appropriately.
+    """
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df)
+
+    for column, type in dataset_types.items():
+        if str(type) == "Unsupported":
+            if df[column].isnull().all():
+                dataset_types[column] = "Null"
+            else:
+                raise ValueError(
+                    f"Unsupported type for column {column}. Please review all values in this dataset column."
+                )
+
+    return dataset_types
+
+
 # 1. Accept descriptions from SDK
 # 2. Accept type overrides from SDK
 # 3. Run df.describe() for numerical and categorical fields
 #       df[df.columns].astype('category')
 def init_from_pd_dataset(df, targets=None, features=None):
-    typeset = ProfilingTypeSet(Settings())
-    dataset_types = typeset.infer_type(df)
+    dataset_types = infer_pd_dataset_types(df)
 
     feature_map = _validate_dataset_features(df, features or [])
     dataset_features = []
