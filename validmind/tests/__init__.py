@@ -228,16 +228,17 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
         duplicates,
         high_cardinality,
         missing_values,
-        pearson_correlation,
+        # pearson_correlation, # Skipping this test for now
         skewness,
         # unique, # ignore unique for now
         zeros,
     ]
     results = []
 
-    config.target_column = vm_dataset.targets.target_column
     for test in tqdm(tests):
-        results.append(test(df, vm_dataset, config))
+        test_results = test(df, vm_dataset, config)
+        if test_results is not None:
+            results.append(test_results)
 
     print("\nTest suite has completed.")
     if send:

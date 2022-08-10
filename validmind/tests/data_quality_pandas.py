@@ -10,11 +10,15 @@ from .config import TestResult, TestResults
 
 
 def class_imbalance(df, vm_dataset, config):
+    if vm_dataset.targets is None:
+        print("Skipping class_imbalance test because no target column is defined")
+        return
+
     test_params = {
         "min_percent_threshold": config.class_imbalance.min_percent_threshold,
     }
 
-    target_column = config.target_column
+    target_column = vm_dataset.targets.target_column
     imbalance_percentages = df[target_column].value_counts(normalize=True)
 
     # Does the minority class represent more than our threshold?
