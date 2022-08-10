@@ -41,17 +41,94 @@ print("2. Logging model metadata...")
 
 print("3. Loading dataset...")
 
+# Do some preprocessing on the dataset before we log it:
+#
+# 1) We want to load only loans that have defaulted
+# 2) Generate our target column (CCF)
+# 3) Select the actual columns we need for training
+
 df = pd.read_csv("./notebooks/datasets/_temp/loan_data_2007_2014_preprocessed.csv")
+
+loan_data_defaults = df[
+    df["loan_status"].isin(
+        ["Charged Off", "Does not meet the credit policy. Status:Charged Off"]
+    )
+]
+loan_data_defaults["mths_since_last_delinq"].fillna(0, inplace=True)
+loan_data_defaults["mths_since_last_record"].fillna(0, inplace=True)
+
+# - CCF is the proportion of the original amount of the loan that is still
+# outstanding when the borrower defaulted
+# - EAD is the oustanding amount so, EAD = CCF * loan amount
+ccf = (
+    loan_data_defaults["funded_amnt"] - loan_data_defaults["total_rec_prncp"]
+) / loan_data_defaults["funded_amnt"]
+
+# Independent variables needed for model training
+features_all = [
+    "grade:A",
+    "grade:B",
+    "grade:C",
+    "grade:D",
+    "grade:E",
+    "grade:F",
+    "grade:G",
+    "home_ownership:MORTGAGE",
+    "home_ownership:NONE",
+    "home_ownership:OTHER",
+    "home_ownership:OWN",
+    "home_ownership:RENT",
+    "verification_status:Not Verified",
+    "verification_status:Source Verified",
+    "verification_status:Verified",
+    "purpose:car",
+    "purpose:credit_card",
+    "purpose:debt_consolidation",
+    "purpose:educational",
+    "purpose:home_improvement",
+    "purpose:house",
+    "purpose:major_purchase",
+    "purpose:medical",
+    "purpose:moving",
+    "purpose:other",
+    "purpose:renewable_energy",
+    "purpose:small_business",
+    "purpose:vacation",
+    "purpose:wedding",
+    "initial_list_status:f",
+    "initial_list_status:w",
+    "term_int",
+    "emp_length_int",
+    "mths_since_issue_d",
+    "mths_since_earliest_cr_line",
+    "funded_amnt",
+    "int_rate",
+    "installment",
+    "annual_inc",
+    "dti",
+    "delinq_2yrs",
+    "inq_last_6mths",
+    "mths_since_last_delinq",
+    "mths_since_last_record",
+    "open_acc",
+    "pub_rec",
+    "total_acc",
+    "acc_now_delinq",
+    "total_rev_hi_lim",
+]
+
+loan_data_defaults = loan_data_defaults[features_all]
+loan_data_defaults["ccf"] = ccf
 
 print("4. Logging dataset metadata and statistics...")
 
-vm_dataset = vm.log_dataset(df, "training", analyze=True)
+vm_dataset = vm.log_dataset(loan_data_defaults, "training", analyze=True)
 
 
 print("5. Running data quality tests...")
 
 results = vm.run_dataset_tests(
-    df,
+    loan_data_defaults,
     dataset_type="training",
     vm_dataset=vm_dataset,
     send=True,
