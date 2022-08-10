@@ -31,6 +31,7 @@ from .model_evaluation import (
     shap_global_importance,
 )
 from ..client import log_evaluation_metrics, log_test_results, start_run, log_figure
+from ..dataset_utils import get_transformed_dataset
 
 config = Settings()
 
@@ -234,8 +235,11 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
     ]
     results = []
 
+    print("Preparing dataset for tests...")
+    transformed_df = get_transformed_dataset(df, vm_dataset)
+
     for test in tqdm(tests):
-        test_results = test(df, vm_dataset, config)
+        test_results = test(transformed_df, vm_dataset, config)
         if test_results is not None:
             results.append(test_results)
 

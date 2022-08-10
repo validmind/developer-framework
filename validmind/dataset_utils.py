@@ -191,13 +191,14 @@ def _generate_correlation_plots(df, vm_dataset, correlation_matrix, n_top=15):
     return plots
 
 
-def _get_transformed_dataset(df, vm_dataset, dataset_options=None):
+def get_transformed_dataset(df, vm_dataset):
     """
     Returns a transformed dataset that uses the features from vm_dataset.
     Some of the features in vm_dataset are of type Dummy so we need to
     reverse the one hot encoding and drop the individual dummy columns
     """
     # Get the list of features that are of type Dummy
+    dataset_options = vm_dataset.dataset_options
     dummy_variables = (
         dataset_options.get("dummy_variables", []) if dataset_options else []
     )
@@ -225,7 +226,7 @@ def _get_transformed_dataset(df, vm_dataset, dataset_options=None):
     return transformed_df
 
 
-def _analyze_pd_dataset(df, vm_dataset, dataset_options=None):
+def _analyze_pd_dataset(df, vm_dataset):
     """
     Runs basic analysis tasks on a Pandas dataset:
 
@@ -234,7 +235,7 @@ def _analyze_pd_dataset(df, vm_dataset, dataset_options=None):
     - Histograms for distribution of values
     """
     fields = vm_dataset.fields
-    transformed_df = _get_transformed_dataset(df, vm_dataset, dataset_options)
+    transformed_df = get_transformed_dataset(df, vm_dataset)
 
     # TODO - accept dataset_options to configure how to extract different metrics
     statistics = transformed_df.describe().to_dict(orient="dict")
@@ -249,7 +250,7 @@ def _analyze_pd_dataset(df, vm_dataset, dataset_options=None):
             transformed_df, field["id"], field_type
         )
 
-        _add_field_statistics(transformed_df, field, dataset_options)
+        _add_field_statistics(transformed_df, field, vm_dataset.dataset_options)
 
     correlation_matrix = transformed_df.corr()
     # Transform to the current format expected by the UI
@@ -405,21 +406,21 @@ def init_from_pd_dataset(df, dataset_options=None, targets=None, features=None):
         ],
         shape=shape,
         targets=targets,
+        dataset_options=dataset_options,
     )
 
 
-def analyze_vm_dataset(dataset, vm_dataset, dataset_options=None):
+def analyze_vm_dataset(dataset, vm_dataset):
     """
     Analyzes a dataset instance and extracts different metrics from it
 
     :param dataset: A full input dataset. Only supports Pandas datasets at the moment.
     :param vm_dataset: VM Dataset metadata
-    :param dataset_options: Additional dataset options for analysis
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        analyze_results = _analyze_pd_dataset(dataset, vm_dataset, dataset_options)
+        analyze_results = _analyze_pd_dataset(dataset, vm_dataset)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 

@@ -18,7 +18,7 @@ from .model_utils import (
 )
 from .type_utils import get_full_typename, is_matplotlib_typename
 
-API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
+API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
 
 vm_api_key = None
@@ -132,7 +132,7 @@ def log_dataset(
     analyze_results = None
 
     if analyze:
-        analyze_results = analyze_vm_dataset(dataset, vm_dataset, dataset_options)
+        analyze_results = analyze_vm_dataset(dataset, vm_dataset)
         if "statistics" in analyze_results:
             vm_dataset.statistics = analyze_results["statistics"]
         if "correlations" in analyze_results:

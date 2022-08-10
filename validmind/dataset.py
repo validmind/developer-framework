@@ -25,6 +25,7 @@ class Dataset:
     shape: dict
     correlations: dict = None
     dataset_type: str = None
+    dataset_options: dict = None
     statistics: dict = None
     targets: dict = None
     __feature_lookup: dict = field(default_factory=dict)
