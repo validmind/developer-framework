@@ -47,6 +47,8 @@ print("3. Loading dataset...")
 # 2) Generate our target column (CCF)
 # 3) Select the actual columns we need for training
 
+# TODO - support dummy variables for data description
+
 df = pd.read_csv("./notebooks/datasets/_temp/loan_data_2007_2014_preprocessed.csv")
 
 loan_data_defaults = df[
@@ -122,7 +124,21 @@ loan_data_defaults["ccf"] = ccf
 
 print("4. Logging dataset metadata and statistics...")
 
-vm_dataset = vm.log_dataset(loan_data_defaults, "training", analyze=True)
+dataset_options = {
+    "dummy_variables": [
+        "grade",
+        "home_ownership",
+        "verification_status",
+        "purpose",
+        "initial_list_status",
+    ],
+}
+
+vm_dataset = vm.log_dataset(
+    dataset=loan_data_defaults,
+    dataset_type="training",
+    dataset_options=dataset_options,
+)
 
 
 print("5. Running data quality tests...")

@@ -14,7 +14,6 @@ from .data_quality_pandas import (
     duplicates,
     high_cardinality,
     missing_values,
-    pearson_correlation,
     skewness,
     zeros,
 )

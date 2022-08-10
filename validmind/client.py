@@ -111,8 +111,8 @@ def init(project, api_key=None, api_secret=None, api_host=None):
 def log_dataset(
     dataset,
     dataset_type,
-    analyze=False,
-    analyze_opts=None,
+    dataset_options=None,
+    analyze=True,
     targets=None,
     features=None,
 ):
@@ -121,15 +121,18 @@ def log_dataset(
 
     :param dataset: A dataset. Only supports Pandas datasets at the moment.
     :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
+    :param dataset_options: Additional dataset options for analysis
     :param dataset_targets: A list of targets for the dataset.
     :param features: Optional. A list of features metadata.
     :type dataset_targets: validmind.DatasetTargets, optional
     """
-    vm_dataset = init_vm_dataset(dataset, dataset_type, targets, features)
+    vm_dataset = init_vm_dataset(
+        dataset, dataset_type, dataset_options, targets, features
+    )
     analyze_results = None
 
     if analyze:
-        analyze_results = analyze_vm_dataset(dataset, vm_dataset, analyze_opts)
+        analyze_results = analyze_vm_dataset(dataset, vm_dataset, dataset_options)
         if "statistics" in analyze_results:
             vm_dataset.statistics = analyze_results["statistics"]
         if "correlations" in analyze_results:

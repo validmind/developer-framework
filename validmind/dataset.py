@@ -1,7 +1,7 @@
 """
 Dataset class wrapper
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 
 @dataclass()

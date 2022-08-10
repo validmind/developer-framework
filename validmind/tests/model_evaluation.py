@@ -4,7 +4,6 @@ models that have a sklearn compatible metrics interface
 """
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy
 import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance as pfi_sklearn
