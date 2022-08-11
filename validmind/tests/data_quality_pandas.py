@@ -10,7 +10,7 @@ from .config import TestResult, TestResults
 
 
 def class_imbalance(df, vm_dataset, config):
-    if vm_dataset.targets is None:
+    if vm_dataset.targets is None or vm_dataset.targets.class_labels is None:
         print("Skipping class_imbalance test because no target column is defined")
         return
 
