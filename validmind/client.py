@@ -229,18 +229,22 @@ def log_model(model_instance, vm_model=None):
     return True
 
 
-def log_training_metrics(model, x_train, y_train, run_cuid=None):
+def log_training_metrics(
+    model, x_train, y_train, x_val=None, y_val=None, run_cuid=None
+):
     """
     Logs training metrics to ValidMind API.
 
     :param model: A model instance. Only supports XGBoost at the moment.
     :param x_train: The training dataset.
     :param y_train: The training dataset targets.
+    :param x_val: The validation dataset.
+    :param y_val: The validation dataset targets.
     """
     if run_cuid is None:
         run_cuid = start_run()
 
-    training_metrics = get_training_metrics(model, x_train, y_train)
+    training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
 
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",

@@ -281,6 +281,9 @@ def _analyze_pd_dataset(df, vm_dataset):
 
 
 def _validate_pd_dataset_targets(df, targets):
+    if targets.class_labels is None:
+        return True
+
     unique_targets = df[targets.target_column].unique()
     if len(unique_targets) != len(targets.class_labels):
         raise ValueError(

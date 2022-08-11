@@ -144,7 +144,7 @@ xgb_model.fit(
 print("10. Logging model parameters and training metrics...")
 
 vm.log_model(xgb_model)
-vm.log_training_metrics(xgb_model, X_train, y_train, run_cuid=run_cuid)
+vm.log_training_metrics(xgb_model, X_train, y_train)
 
 y_pred = xgb_model.predict_proba(X_test)[:, -1]
 predictions = [round(value) for value in y_pred]
@@ -154,6 +154,4 @@ print(f"Accuracy: {accuracy}")
 
 print("11. Running model evaluation tests...")
 
-eval_results = vm.run_model_tests(
-    xgb_model, X_test, y_test, send=True, run_cuid=run_cuid
-)
+eval_results = vm.run_model_tests(xgb_model, X_test, y_test, send=True)

@@ -11,6 +11,7 @@ class DatasetTargets:
     """
 
     target_column: str
+    description: str = None
     class_labels: dict = None
 
 

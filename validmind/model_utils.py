@@ -5,15 +5,26 @@ import sys
 
 from sklearn.inspection import permutation_importance
 
+from .model_metrics import mae, mse, r2, DEFAULT_REGRESSION_METRICS
+
 XGBOOST_EVAL_METRICS = {
     "binary": ["error", "logloss", "auc"],
     "multiclass": ["merror", "mlogloss", "auc"],
 }
 
+SUPPORTED_MODEL_TYPES = ["XGBClassifier", "LinearRegression"]
+
 
 def get_xgboost_version():
     if "xgboost" in sys.modules:
         return sys.modules["xgboost"].__version__
+
+    return "n/a"
+
+
+def get_sklearn_version():
+    if "sklearn" in sys.modules:
+        return sys.modules["sklearn"].__version__
 
     return "n/a"
 
@@ -30,7 +41,7 @@ def get_xgboost_objective(model):
     return "n/a"
 
 
-def get_xgb_train_metrics(model, x_train, y_train):
+def get_xgb_classification_metrics(model, x_train, y_train):
     """
     Converts XGBoost evals_result to our standard
     """
@@ -39,14 +50,14 @@ def get_xgb_train_metrics(model, x_train, y_train):
     xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
     evals_result = model.evals_result_
 
-    metrics = []
+    vm_metrics = []
 
     # When passing eval_metrics to xgboost, we expect validation_0 to be
     # the training dataset metrics and validation_1 to be validation dataset metrics
     if "validation_0" in evals_result:
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_0"]:
-                metrics.append(
+                vm_metrics.append(
                     {
                         "type": "training",
                         "scope": "training_dataset",
@@ -57,7 +68,7 @@ def get_xgb_train_metrics(model, x_train, y_train):
     if "validation_1" in evals_result:
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_1"]:
-                metrics.append(
+                vm_metrics.append(
                     {
                         "type": "training",
                         "scope": "validation_dataset",
@@ -75,7 +86,7 @@ def get_xgb_train_metrics(model, x_train, y_train):
             pfi_values["importances_std"][i]
         ]
 
-    metrics.append(
+    vm_metrics.append(
         {
             "type": "training",
             "scope": "training_dataset",
@@ -84,7 +95,77 @@ def get_xgb_train_metrics(model, x_train, y_train):
         }
     )
 
-    return metrics
+    return vm_metrics
+
+
+def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
+    """
+    Attempts to extract model training metrics from a model object instance
+    """
+    # TODO: support overriding metrics
+    metric_names = DEFAULT_REGRESSION_METRICS
+
+    vm_metrics = []
+
+    # Log training and validation dataset metrics separately
+    dataset_tuples = (
+        (x_train, y_train, "training_dataset"),
+        (x_val, y_val, "validation_dataset"),
+    )
+
+    for x, y, dataset_scope in dataset_tuples:
+        for metric_name in metric_names:
+            if metric_name == "mae":
+                metric_value = mae(model, x, y)
+            elif metric_name == "mse":
+                metric_value = mse(model, x, y)
+            elif metric_name == "r2":
+                metric_value = r2(model, x, y)
+
+            vm_metrics.append(
+                {
+                    "type": "training",
+                    "scope": dataset_scope,
+                    "key": metric_name,
+                    "value": [metric_value],
+                }
+            )
+
+    pfi_values = permutation_importance(
+        model, x_train, y_train, random_state=0, n_jobs=-2
+    )
+    pfi = {}
+    for i, column in enumerate(x_train.columns):
+        pfi[column] = [pfi_values["importances_mean"][i]], [
+            pfi_values["importances_std"][i]
+        ]
+
+    vm_metrics.append(
+        {
+            "type": "training",
+            "scope": "training_dataset",
+            "key": "pfi",
+            "value": pfi,
+        }
+    )
+
+    # Linear model coefficients
+    coef = model.coef_
+    coefficients = {
+        feature_name: coef[i] for i, feature_name in enumerate(x_train.columns)
+    }
+    coefficients["intercept"] = model.intercept_
+
+    vm_metrics.append(
+        {
+            "type": "training",
+            "scope": "training_dataset",
+            "key": "coefficients",
+            "value": coefficients,
+        }
+    )
+
+    return vm_metrics
 
 
 def get_info_from_model_instance(model):
@@ -93,15 +174,23 @@ def get_info_from_model_instance(model):
     """
     model_class = model.__class__.__name__
 
-    # Only supports xgboot classifiers at the moment
+    if model_class not in SUPPORTED_MODEL_TYPES:
+        raise ValueError(
+            "Model type {} is not supported at the moment.".format(model_class)
+        )
+
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
         subtask = get_xgboost_objective(model)
         framework = "XGBoost"
         framework_version = get_xgboost_version()
-    else:
-        raise ValueError("Only XGBoost models are supported at the moment.")
+    elif model_class == "LinearRegression":
+        architecture = "Ordinary least squares Linear Regression"
+        task = "regression"
+        subtask = "regression"
+        framework = "Scikit-learn"
+        framework_version = get_sklearn_version()
 
     return {
         "architecture": architecture,
@@ -118,25 +207,35 @@ def get_params_from_model_instance(model):
     """
     model_class = model.__class__.__name__
 
+    if model_class not in SUPPORTED_MODEL_TYPES:
+        raise ValueError(
+            "Model type {} is not supported at the moment.".format(model_class)
+        )
+
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier":
         params = model.get_xgb_params()
     else:
-        raise ValueError("Only XGBoost models are supported at the moment.")
+        params = model.get_params()
 
     return params
 
 
-def get_training_metrics(model, x_train, y_train):
+def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
     """
     Attempts to extract model training metrics from a model object instance
     """
     model_class = model.__class__.__name__
 
+    if model_class not in SUPPORTED_MODEL_TYPES:
+        raise ValueError(
+            "Model type {} is not supported at the moment.".format(model_class)
+        )
+
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier":
-        metrics = get_xgb_train_metrics(model, x_train, y_train)
-    else:
-        raise ValueError("Only XGBoost models are supported at the moment.")
+        metrics = get_xgb_classification_metrics(model, x_train, y_train)
+    elif model_class == "LinearRegression":
+        metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
 
     return metrics

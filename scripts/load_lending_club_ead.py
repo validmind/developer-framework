@@ -7,13 +7,52 @@ load_dotenv()
 import pandas as pd
 import xgboost as xgb
 
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.over_sampling import SMOTE
-
+import numpy as np
+import scipy.stats as stat
 from sklearn import linear_model
-from sklearn.decomposition import PCA
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
+
+# Custom LinearRegression with p-values
+class LinearRegression(linear_model.LinearRegression):
+    """
+    LinearRegression class after sklearn's, but calculate t-statistics
+    and p-values for model coefficients (betas).
+    Additional attributes available after .fit()
+    are `t` and `p` which are of the shape (y.shape[1], X.shape[1])
+    which is (n_features, n_coefs)
+    This class sets the intercept to 0 by default, since usually we include it
+    in X.
+    """
+
+    # nothing changes in __init__
+    def __init__(
+        self, fit_intercept=True, normalize=False, copy_X=True, n_jobs=1, positive=False
+    ):
+        self.fit_intercept = fit_intercept
+        self.normalize = normalize
+        self.copy_X = copy_X
+        self.n_jobs = n_jobs
+        self.positive = positive
+
+    def fit(self, X, y, n_jobs=1):
+        self = super(LinearRegression, self).fit(X, y, n_jobs)
+
+        # Calculate SSE (sum of squared errors)
+        # and SE (standard error)
+        sse = np.sum((self.predict(X) - y) ** 2, axis=0) / float(
+            X.shape[0] - X.shape[1]
+        )
+        se = np.array([np.sqrt(np.diagonal(sse * np.linalg.inv(np.dot(X.T, X))))])
+
+        # compute the t-statistic for each feature
+        self.t = self.coef_ / se
+        # find the p-value for each feature
+        self.p = np.squeeze(
+            2 * (1 - stat.t.cdf(np.abs(self.t), y.shape[0] - X.shape[1]))
+        )
+        return self
+
 
 # Initialize ValidMind SDK
 import validmind as vm
@@ -25,19 +64,13 @@ vm.init(
     project="cl6laq3ys0000tp8hiawa7e4m",
 )
 
-# Load model_overview.md markdown file and call log_metadata with its text
 print("2. Logging model metadata...")
 
-# content_ids = [
-#     "model_overview",
-#     "model_selection",
-#     "dataset_split",
-#     "feature_selection",
-# ]
+with open(f"./scripts/lending_club_metadata/model_overview.md") as f:
+    vm.log_metadata("model_overview", f.read())
 
-# for content_id in content_ids:
-#     with open(f"./scripts/lending_club_metadata/{content_id}.md") as f:
-#         vm.log_metadata(content_id, f.read())
+with open(f"./scripts/lending_club_metadata/dataset_split_regression.md") as f:
+    vm.log_metadata("dataset_split", f.read())
 
 print("3. Loading dataset...")
 
@@ -119,6 +152,15 @@ features_all = [
     "total_rev_hi_lim",
 ]
 
+# Remove reference variables before training
+features_reference_cat = [
+    "grade:G",
+    "home_ownership:RENT",
+    "verification_status:Verified",
+    "purpose:credit_card",
+    "initial_list_status:f",
+]
+
 loan_data_defaults = loan_data_defaults[features_all]
 loan_data_defaults["ccf"] = ccf
 
@@ -134,10 +176,19 @@ dataset_options = {
     ],
 }
 
+targets = vm.DatasetTargets(
+    target_column="ccf",
+    description="""Credit Conversion Factor is the proportion of the original
+    amount of the loan that is still outstanding when the borrower defaulted.
+    Exposure at Default (EAD) is calculated by multiplying CCF
+    by the loan amount (EAD = CCF * loan amount).""",
+)
+
 vm_dataset = vm.log_dataset(
     dataset=loan_data_defaults,
     dataset_type="training",
     dataset_options=dataset_options,
+    targets=targets,
 )
 
 
@@ -151,59 +202,55 @@ results = vm.run_dataset_tests(
 )
 
 
-print("6. Loading and preparing dataset for training...")
+print("6. Splitting dataset into training and validation sets...")
 
-# COLS_CORRELATED = [
-#     "num_actv_rev_tl",
-#     "open_il_12m",
-#     "open_rv_12m",
-#     "avg_cur_bal",
-#     "num_bc_tl",
-#     "mo_sin_old_rev_tl_op",
-# ]
+loan_data_defaults = loan_data_defaults.drop(features_reference_cat, axis=1)
 
-# train_df.drop(COLS_CORRELATED, axis=1, inplace=True)
-# print("The following features  were removed.", COLS_CORRELATED)
+# Generate training and test sets, training set is split into train/validation
+#   80%/20% split
+(
+    ead_inputs_train,
+    ead_inputs_test,
+    ead_targets_train,
+    ead_targets_test,
+) = train_test_split(
+    loan_data_defaults.drop(["ccf"], axis=1),
+    loan_data_defaults["ccf"],
+    test_size=0.2,
+    random_state=42,
+)
 
-# df_categories = train_df.select_dtypes("object")
-# train_df = pd.get_dummies(
-#     train_df, columns=list(df_categories.columns), drop_first=False
-# )
+# Generate training and validation set for training
+#   75%/25% split
+#   Training set ends up with 60% of rows
+#   Validation set ends up with 20% of rows, same as test set
+(x_train, x_val, y_train, y_val) = train_test_split(
+    ead_inputs_train,
+    ead_targets_train,
+    test_size=0.25,
+    random_state=42,
+)
 
-# print("7. Splitting dataset into training and validation sets...")
+print("7. Training model...")
 
-# X, Y = train_df[train_df.columns.difference(["loan_status"])], train_df["loan_status"]
+reg_ead = LinearRegression()
+reg_ead.fit(x_train, y_train)
 
-# X_train, X_test, y_train, y_test = train_test_split(
-#     X, Y, test_size=0.3, stratify=Y, random_state=10
-# )
+feature_names = x_train.columns.values
+summary_table = pd.DataFrame(columns=["Feature name"], data=feature_names)
+summary_table["Coefficients"] = np.transpose(reg_ead.coef_)
+summary_table.index = summary_table.index + 1
+# Insert intercept as first row
+summary_table.loc[0] = ["Intercept", reg_ead.intercept_]
+summary_table = summary_table.sort_index()
 
-# train_ds, val_ds = train_test_split(train_df, test_size=0.3)
+p_values = reg_ead.p
+p_values = np.append(np.nan, np.array(p_values))
+summary_table["p_values"] = p_values
+print(summary_table)
 
-# # For training
-# X_train = train_ds.drop("loan_status", axis=1)
-# y_train = train_ds.loc[:, "loan_status"].astype(int)
-# X_test = val_ds.drop("loan_status", axis=1)
-# y_test = val_ds.loc[:, "loan_status"].astype(int)
-
-# print("8. Balancing training dataset...")
-
-# X_train_subset = X_train[:1000]
-# y_train_subset = y_train[:1000]
-# pca = PCA(n_components=2)
-# X_train_subset = pca.fit_transform(X_train_subset)
-
-# over = SMOTE(sampling_strategy=0.5, k_neighbors=10)
-# under = RandomUnderSampler(sampling_strategy=1.0)
-# X_train_subset_o, y_train_subset_o = over.fit_resample(X_train_subset, y_train_subset)
-# X_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
-#     X_train_subset_o, y_train_subset_o
-# )
-
-# X_train, y_train = over.fit_resample(X_train, y_train)
-# X_train, y_train = under.fit_resample(X_train, y_train)
-
-# print("9. Training model...")
+vm.log_model(reg_ead)
+vm.log_training_metrics(reg_ead, x_train, y_train, x_val, y_val)
 
 # xgb_model = xgb.XGBClassifier(
 #     early_stopping_rounds=10,
