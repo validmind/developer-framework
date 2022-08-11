@@ -2,13 +2,13 @@
 Utilities for inspecting and extracting statistics from client datasets
 """
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
-import seaborn as sns
-
-from matplotlib.axes._axes import _log as matplotlib_axes_logger
 
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
@@ -91,6 +91,16 @@ def _get_scatter_plot(df, x, y):
     Returns a scatter plot for a pair of features
     """
     subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+
+    label_format = "{:,.0f}"
+    ticks_loc = subplot.get_yticks().tolist()
+    subplot.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+    subplot.set_yticklabels([label_format.format(v) for v in ticks_loc])
+
+    ticks_loc = subplot.get_xticks().tolist()
+    subplot.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+    subplot.set_xticklabels([label_format.format(v) for v in ticks_loc])
+
     # avoid drawing on notebooks
     plt.close()
     return subplot
