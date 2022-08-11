@@ -2,13 +2,13 @@
 Utilities for inspecting and extracting statistics from client datasets
 """
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
+import seaborn as sns
+from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
-import seaborn as sns
-
-from matplotlib.axes._axes import _log as matplotlib_axes_logger
 
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
@@ -86,11 +86,24 @@ def _add_field_statistics(df, field, analyze_opts=None):
     )
 
 
+def _format_axes(subplot):
+    label_format = "{:,.0f}"
+    ticks_loc = subplot.get_yticks().tolist()
+    subplot.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+    subplot.set_yticklabels([label_format.format(v) for v in ticks_loc])
+
+    ticks_loc = subplot.get_xticks().tolist()
+    subplot.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+    subplot.set_xticklabels([label_format.format(v) for v in ticks_loc])
+
+
 def _get_scatter_plot(df, x, y):
     """
     Returns a scatter plot for a pair of features
     """
     subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+    _format_axes(subplot)
+
     # avoid drawing on notebooks
     plt.close()
     return subplot
@@ -101,6 +114,7 @@ def _get_box_plot(df, x, y):
     Returns a box plot for a pair of features
     """
     subplot = sns.boxplot(x=x, y=y, data=df)
+    _format_axes(subplot)
     # avoid drawing on notebooks
     plt.close()
     return subplot
@@ -121,6 +135,7 @@ def _get_crosstab_plot(df, vm_dataset, x, y):
 
     crosstab = pd.crosstab(index=df[x], columns=df[y])
     subplot = crosstab.plot.bar(rot=0)
+    _format_axes(subplot)
     # avoid drawing on notebooks
     plt.close()
     return subplot
