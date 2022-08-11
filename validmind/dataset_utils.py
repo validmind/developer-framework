@@ -86,12 +86,7 @@ def _add_field_statistics(df, field, analyze_opts=None):
     )
 
 
-def _get_scatter_plot(df, x, y):
-    """
-    Returns a scatter plot for a pair of features
-    """
-    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
-
+def _format_axes(subplot):
     label_format = "{:,.0f}"
     ticks_loc = subplot.get_yticks().tolist()
     subplot.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
@@ -100,6 +95,14 @@ def _get_scatter_plot(df, x, y):
     ticks_loc = subplot.get_xticks().tolist()
     subplot.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
     subplot.set_xticklabels([label_format.format(v) for v in ticks_loc])
+
+
+def _get_scatter_plot(df, x, y):
+    """
+    Returns a scatter plot for a pair of features
+    """
+    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+    _format_axes(subplot)
 
     # avoid drawing on notebooks
     plt.close()
@@ -111,6 +114,7 @@ def _get_box_plot(df, x, y):
     Returns a box plot for a pair of features
     """
     subplot = sns.boxplot(x=x, y=y, data=df)
+    _format_axes(subplot)
     # avoid drawing on notebooks
     plt.close()
     return subplot
@@ -131,6 +135,7 @@ def _get_crosstab_plot(df, vm_dataset, x, y):
 
     crosstab = pd.crosstab(index=df[x], columns=df[y])
     subplot = crosstab.plot.bar(rot=0)
+    _format_axes(subplot)
     # avoid drawing on notebooks
     plt.close()
     return subplot
