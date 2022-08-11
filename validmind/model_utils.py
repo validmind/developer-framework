@@ -10,9 +10,12 @@ from .model_metrics import mae, mse, r2, DEFAULT_REGRESSION_METRICS
 XGBOOST_EVAL_METRICS = {
     "binary": ["error", "logloss", "auc"],
     "multiclass": ["merror", "mlogloss", "auc"],
+    "regression": [
+        "mean_squared_error"
+    ],  # TBD - how to compute more than one metric for regression?
 }
 
-SUPPORTED_MODEL_TYPES = ["XGBClassifier", "LinearRegression"]
+SUPPORTED_MODEL_TYPES = ["XGBClassifier", "XGBRegressor", "LinearRegression"]
 
 
 def get_xgboost_version():
@@ -41,15 +44,12 @@ def get_xgboost_objective(model):
     return "n/a"
 
 
-def get_xgb_classification_metrics(model, x_train, y_train):
+def _get_metrics_from_evals_result(model, xgboost_metrics):
     """
-    Converts XGBoost evals_result to our standard
+    Generic function to extra a given list of metrics
+    from an XGBoost evals_result object
     """
-    num_class = y_train.nunique()
-    predict_problem = "binary" if num_class == 2 else "multi-class"
-    xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
     evals_result = model.evals_result_
-
     vm_metrics = []
 
     # When passing eval_metrics to xgboost, we expect validation_0 to be
@@ -77,6 +77,19 @@ def get_xgb_classification_metrics(model, x_train, y_train):
                     }
                 )
 
+    return vm_metrics
+
+
+def get_xgb_classification_metrics(model, x_train, y_train):
+    """
+    Converts XGBoost evals_result to our standard metrics format
+    """
+    num_class = y_train.nunique()
+    predict_problem = "binary" if num_class == 2 else "multi-class"
+    xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
+
+    vm_metrics = _get_metrics_from_evals_result(model, xgboost_metrics)
+
     pfi_values = permutation_importance(
         model, x_train, y_train, random_state=0, n_jobs=-2
     )
@@ -93,6 +106,21 @@ def get_xgb_classification_metrics(model, x_train, y_train):
             "key": "pfi",
             "value": pfi,
         }
+    )
+
+    return vm_metrics
+
+
+def get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val):
+    """
+    Converts XGBoost evals_result to our standard metrics format
+    """
+    xgboost_metrics = XGBOOST_EVAL_METRICS["regression"]
+
+    vm_metrics = _get_metrics_from_evals_result(model, xgboost_metrics)
+    # Our xgb model is sklearn compatible, so we can use sklearn's metrics
+    vm_metrics.extend(
+        get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
     )
 
     return vm_metrics
@@ -185,6 +213,12 @@ def get_info_from_model_instance(model):
         subtask = get_xgboost_objective(model)
         framework = "XGBoost"
         framework_version = get_xgboost_version()
+    elif model_class == "XGBRegressor":
+        architecture = "Extreme Gradient Boosting"
+        task = "regression"
+        subtask = "regression"
+        framework = "XGBoost"
+        framework_version = get_xgboost_version()
     elif model_class == "LinearRegression":
         architecture = "Ordinary least squares Linear Regression"
         task = "regression"
@@ -213,8 +247,9 @@ def get_params_from_model_instance(model):
         )
 
     # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier":
+    if model_class == "XGBClassifier" or model_class == "XGBRegressor":
         params = model.get_xgb_params()
+    # SKLearn models at the moment
     else:
         params = model.get_params()
 
@@ -235,6 +270,8 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier":
         metrics = get_xgb_classification_metrics(model, x_train, y_train)
+    elif model_class == "XGBRegressor":
+        metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
     elif model_class == "LinearRegression":
         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
 

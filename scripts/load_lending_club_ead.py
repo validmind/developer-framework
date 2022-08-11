@@ -61,7 +61,8 @@ print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 vm.init(
-    project="cl6laq3ys0000tp8hiawa7e4m",
+    # project="cl6laq3ys0000tp8hiawa7e4m",
+    project="cl6ojsc8c0072ou8hf4p6s1q4",  # xgboost
 )
 
 print("2. Logging model metadata...")
@@ -233,48 +234,30 @@ loan_data_defaults = loan_data_defaults.drop(features_reference_cat, axis=1)
 
 print("7. Training model...")
 
-reg_ead = LinearRegression()
-reg_ead.fit(x_train, y_train)
+# reg_ead = LinearRegression()
+# reg_ead.fit(x_train, y_train)
 
-feature_names = x_train.columns.values
-summary_table = pd.DataFrame(columns=["Feature name"], data=feature_names)
-summary_table["Coefficients"] = np.transpose(reg_ead.coef_)
-summary_table.index = summary_table.index + 1
-# Insert intercept as first row
-summary_table.loc[0] = ["Intercept", reg_ead.intercept_]
-summary_table = summary_table.sort_index()
+xgb_model = xgb.XGBRegressor()
+xgb_model.set_params(
+    booster="gblinear",
+    eval_metric=mean_squared_error,
+)
+xgb_model.fit(
+    x_train,
+    y_train,
+    eval_set=[
+        (x_train, y_train),
+        (x_val, y_val),
+    ],
+)
 
-p_values = reg_ead.p
-p_values = np.append(np.nan, np.array(p_values))
-summary_table["p_values"] = p_values
-print(summary_table)
+print("8. Logging model parameters and training metrics...")
 
-vm.log_model(reg_ead)
-vm.log_training_metrics(reg_ead, x_train, y_train, x_val, y_val)
+# vm.log_model(reg_ead)
+# vm.log_training_metrics(reg_ead, x_train, y_train, x_val, y_val)
 
-# xgb_model = xgb.XGBClassifier(
-#     early_stopping_rounds=10,
-#     # n_estimators=5,
-# )
-# xgb_model.set_params(
-#     eval_metric=["error", "logloss", "auc"],
-# )
-# xgb_model.fit(
-#     X_train,
-#     y_train,
-#     eval_set=[(X_train, y_train), (X_test, y_test)],
-# )
-
-# print("10. Logging model parameters and training metrics...")
-
-# vm.log_model(xgb_model)
-# vm.log_training_metrics(xgb_model, X_train, y_train, run_cuid=run_cuid)
-
-# y_pred = xgb_model.predict_proba(X_test)[:, -1]
-# predictions = [round(value) for value in y_pred]
-# accuracy = accuracy_score(y_test, predictions)
-
-# print(f"Accuracy: {accuracy}")
+vm.log_model(xgb_model)
+vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
 
 # print("11. Running model evaluation tests...")
 
