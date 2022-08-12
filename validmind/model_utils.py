@@ -4,8 +4,13 @@ Utilities for inspecting client models
 import sys
 
 from sklearn.inspection import permutation_importance
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .model_metrics import mae, mse, r2, DEFAULT_REGRESSION_METRICS
+DEFAULT_REGRESSION_METRICS = [
+    "mae",
+    "mse",
+    "r2",
+]
 
 XGBOOST_EVAL_METRICS = {
     "binary": ["error", "logloss", "auc"],
@@ -142,13 +147,15 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     )
 
     for x, y, dataset_scope in dataset_tuples:
+        y_pred = model.predict(x)
+
         for metric_name in metric_names:
             if metric_name == "mae":
-                metric_value = mae(model, x, y)
+                metric_value = mean_absolute_error(y, y_pred)
             elif metric_name == "mse":
-                metric_value = mse(model, x, y)
+                metric_value = mean_squared_error(y, y_pred)
             elif metric_name == "r2":
-                metric_value = r2(model, x, y)
+                metric_value = r2_score(y, y_pred)
 
             vm_metrics.append(
                 {

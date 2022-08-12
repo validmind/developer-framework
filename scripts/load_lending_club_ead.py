@@ -259,8 +259,7 @@ print("8. Logging model parameters and training metrics...")
 vm.log_model(xgb_model)
 vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
 
-# print("11. Running model evaluation tests...")
+print("9. Running model evaluation tests...")
 
-# eval_results = vm.run_model_tests(
-#     xgb_model, X_test, y_test, send=True, run_cuid=run_cuid
-# )
+eval_results = vm.run_model_tests(xgb_model, ead_inputs_test, ead_targets_test)
+# eval_results = vm.run_model_tests(reg_ead, ead_inputs_test, ead_targets_test)
