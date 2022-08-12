@@ -1,4 +1,5 @@
 # Load API key and secret from environment variables
+from random import random
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -95,36 +96,34 @@ train_df = pd.get_dummies(
 
 print("7. Splitting dataset into training and validation sets...")
 
-X, Y = train_df[train_df.columns.difference(["loan_status"])], train_df["loan_status"]
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, Y, test_size=0.3, stratify=Y, random_state=10
+train_inputs, x_test, train_targets, y_test = train_test_split(
+    train_df.drop(["loan_status"], axis=1),
+    train_df["loan_status"],
+    test_size=0.2,
+    stratify=train_df["loan_status"],
+    random_state=10,
 )
 
-train_ds, val_ds = train_test_split(train_df, test_size=0.3)
-
-# For training
-X_train = train_ds.drop("loan_status", axis=1)
-y_train = train_ds.loc[:, "loan_status"].astype(int)
-X_test = val_ds.drop("loan_status", axis=1)
-y_test = val_ds.loc[:, "loan_status"].astype(int)
+(x_train, x_val, y_train, y_val) = train_test_split(
+    train_inputs, train_targets, test_size=0.25, random_state=10
+)
 
 print("8. Balancing training dataset...")
 
-X_train_subset = X_train[:1000]
+x_train_subset = x_train[:1000]
 y_train_subset = y_train[:1000]
 pca = PCA(n_components=2)
-X_train_subset = pca.fit_transform(X_train_subset)
+x_train_subset = pca.fit_transform(x_train_subset)
 
 over = SMOTE(sampling_strategy=0.5, k_neighbors=10)
 under = RandomUnderSampler(sampling_strategy=1.0)
-X_train_subset_o, y_train_subset_o = over.fit_resample(X_train_subset, y_train_subset)
-X_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
-    X_train_subset_o, y_train_subset_o
+x_train_subset_o, y_train_subset_o = over.fit_resample(x_train_subset, y_train_subset)
+x_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
+    x_train_subset_o, y_train_subset_o
 )
 
-X_train, y_train = over.fit_resample(X_train, y_train)
-X_train, y_train = under.fit_resample(X_train, y_train)
+x_train, y_train = over.fit_resample(x_train, y_train)
+x_train, y_train = under.fit_resample(x_train, y_train)
 
 print("9. Training model...")
 
@@ -136,17 +135,17 @@ xgb_model.set_params(
     eval_metric=["error", "logloss", "auc"],
 )
 xgb_model.fit(
-    X_train,
+    x_train,
     y_train,
-    eval_set=[(X_train, y_train), (X_test, y_test)],
+    eval_set=[(x_train, y_train), (x_test, y_test)],
 )
 
 print("10. Logging model parameters and training metrics...")
 
 vm.log_model(xgb_model)
-vm.log_training_metrics(xgb_model, X_train, y_train, run_cuid=run_cuid)
+vm.log_training_metrics(xgb_model, x_train, y_train)
 
-y_pred = xgb_model.predict_proba(X_test)[:, -1]
+y_pred = xgb_model.predict_proba(x_test)[:, -1]
 predictions = [round(value) for value in y_pred]
 accuracy = accuracy_score(y_test, predictions)
 
@@ -154,6 +153,4 @@ print(f"Accuracy: {accuracy}")
 
 print("11. Running model evaluation tests...")
 
-eval_results = vm.run_model_tests(
-    xgb_model, X_test, y_test, send=True, run_cuid=run_cuid
-)
+eval_results = vm.run_model_tests(xgb_model, x_test, y_test, send=True)

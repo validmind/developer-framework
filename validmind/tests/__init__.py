@@ -14,7 +14,6 @@ from .data_quality_pandas import (
     duplicates,
     high_cardinality,
     missing_values,
-    pearson_correlation,
     skewness,
     zeros,
 )
@@ -23,15 +22,20 @@ from .model_evaluation import (
     confusion_matrix,
     f1_score,
     get_x_and_y,
+    mae_score,
+    mse_score,
     permutation_importance,
     precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
     roc_curve,
+    r2_score,
     shap_global_importance,
 )
 from ..client import log_evaluation_metrics, log_test_results, start_run, log_figure
+from ..dataset_utils import get_transformed_dataset
+from ..model_utils import SUPPORTED_MODEL_TYPES
 
 config = Settings()
 
@@ -208,7 +212,7 @@ def _summarize_model_evaluation_results(results):
     return table
 
 
-def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
+def run_dataset_tests(df, dataset_type, vm_dataset, send=True, run_cuid=None):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
@@ -228,16 +232,20 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
         duplicates,
         high_cardinality,
         missing_values,
-        pearson_correlation,
+        # pearson_correlation, # Skipping this test for now
         skewness,
         # unique, # ignore unique for now
         zeros,
     ]
     results = []
 
-    config.target_column = vm_dataset.targets.target_column
+    print("Preparing dataset for tests...")
+    transformed_df = get_transformed_dataset(df, vm_dataset)
+
     for test in tqdm(tests):
-        results.append(test(df, vm_dataset, config))
+        test_results = test(transformed_df, vm_dataset, config)
+        if test_results is not None:
+            results.append(test_results)
 
     print("\nTest suite has completed.")
     if send:
@@ -251,7 +259,7 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=False, run_cuid=None):
     return results
 
 
-def run_model_tests(
+def run_classification_model_tests(
     model, df, y_test=None, target_column=None, send=False, run_cuid=None
 ):
     """
@@ -341,3 +349,86 @@ def run_model_tests(
     _get_pfi_plot(evaluation_metrics_results)
 
     return evaluation_metrics_results
+
+
+def run_regression_model_tests(
+    model, df, y_test=None, target_column=None, send=False, run_cuid=None
+):
+    """
+    Run a suite of model evaluation tests and log their results to the API
+    """
+    if y_test is None and target_column is None:
+        raise Exception("Either y_test or target_column must be provided")
+    elif target_column is not None and y_test is None:
+        x_test, y_test = get_x_and_y(df, target_column)
+    else:
+        x_test = df
+
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    print("Generating model predictions on test dataset...")
+    y_pred = model.predict(x_test)
+
+    print("Running evaluation tests...")
+
+    tests = [
+        mae_score,
+        mse_score,
+        r2_score,
+    ]
+    evaluation_metrics_results = []
+
+    with tqdm(total=len(tests) + 1) as pbar:
+        for test in tests:
+            evaluation_metric_result = test(y_test, y_pred)
+            evaluation_metrics_results.append(evaluation_metric_result)
+            pbar.update(1)
+
+        evaluation_metrics_results.append(permutation_importance(model, x_test, y_test))
+        pbar.update(1)
+
+        shap_results = shap_global_importance(model, x_test, linear=True)
+        figures = shap_results.pop("plots")
+        evaluation_metrics_results.append(shap_results)
+        pbar.update(1)
+
+    print("\nModel evaluation tests have completed.")
+    if send:
+        print(
+            f"Sending {len(evaluation_metrics_results)} metrics results to ValidMind..."
+        )
+        log_evaluation_metrics(evaluation_metrics_results, run_cuid=run_cuid)
+
+        print(f"Sending {len(figures)} figures to ValidMind...")
+        for figure in figures:
+            log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
+
+    print("\nSummary of results:\n")
+    table = _summarize_model_evaluation_results(evaluation_metrics_results)
+    print(table)
+
+    print("\nPlotting model evaluation results...")
+    # _get_roc_curve_plot(evaluation_metrics_results)
+    return evaluation_metrics_results
+
+
+def run_model_tests(
+    model, df, y_test=None, target_column=None, send=True, run_cuid=None
+):
+    model_class = model.__class__.__name__
+
+    if model_class not in SUPPORTED_MODEL_TYPES:
+        raise ValueError(
+            "Model type {} is not supported at the moment.".format(model_class)
+        )
+
+    # Only supports xgboot classifiers at the moment
+    if model_class == "XGBClassifier":
+        return run_classification_model_tests(
+            model, df, y_test, target_column, send, run_cuid
+        )
+    elif model_class == "XGBRegressor" or model_class == "LinearRegression":
+        return run_regression_model_tests(
+            model, df, y_test, target_column, send, run_cuid
+        )

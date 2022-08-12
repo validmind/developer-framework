@@ -10,11 +10,11 @@ from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
+from .dataset import Dataset
+
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
 matplotlib_axes_logger.setLevel("ERROR")
-
-from .dataset import Dataset
 
 sns.set(rc={"figure.figsize": (20, 10)})
 
@@ -36,15 +36,17 @@ def _get_histogram(df, field, type_):
             "bin_edges": hist[1].tolist(),
             "counts": hist[0].tolist(),
         }
-    elif type_ == "Categorical" or type_ == "Boolean":
+    elif type_ == "Categorical" or type_ == "Boolean" or type_ == "Dummy":
         return df[field].value_counts().to_dict()
+    elif type_ == "Null":
+        print(f"Ignoring histogram generation for null column {field}")
     else:
         raise ValueError(
             f"Unsupported field type found when computing its histogram: {type_}"
         )
 
 
-def _add_field_statistics(df, field, analyze_opts=None):
+def _add_field_statistics(df, field, dataset_options=None):
     """
     We're moving the statistics to the `fields` attribute of the dataset
     in order to be more consistent, but still keeping the old statistics
@@ -73,8 +75,12 @@ def _add_field_statistics(df, field, analyze_opts=None):
         }
     elif field_type == "Numeric":
         field["statistics"] = df[field["id"]].describe().to_dict()
-    elif field_type == "Categorical":
+    elif field_type == "Categorical" or field_type == "Dummy":
         field["statistics"] = df[field["id"]].astype("category").describe().to_dict()
+
+    # Initialize statistics object for non-numeric or categorical fields
+    if "statistics" not in field:
+        field["statistics"] = {}
 
     field["statistics"]["n_missing"] = df[field["id"]].isna().sum()
     field["statistics"]["missing"] = field["statistics"]["n_missing"] / len(
@@ -125,13 +131,15 @@ def _get_crosstab_plot(df, vm_dataset, x, y):
     Returns a crosstab plot for a pair of features. If one of the features
     is the target column, we should not use it as an index
     """
-    target_column = vm_dataset.targets.target_column
-    if target_column == x:
-        x = y
-        y = target_column
-    elif target_column == y:
-        y = target_column
-        x = y
+    # If dataset targets were specified we try to use the target column as y
+    if vm_dataset.targets:
+        target_column = vm_dataset.targets.target_column
+        if target_column == x:
+            x = y
+            y = target_column
+        elif target_column == y:
+            y = target_column
+            x = y
 
     crosstab = pd.crosstab(index=df[x], columns=df[y])
     subplot = crosstab.plot.bar(rot=0)
@@ -198,7 +206,42 @@ def _generate_correlation_plots(df, vm_dataset, correlation_matrix, n_top=15):
     return plots
 
 
-def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
+def get_transformed_dataset(df, vm_dataset):
+    """
+    Returns a transformed dataset that uses the features from vm_dataset.
+    Some of the features in vm_dataset are of type Dummy so we need to
+    reverse the one hot encoding and drop the individual dummy columns
+    """
+    # Get the list of features that are of type Dummy
+    dataset_options = vm_dataset.dataset_options
+    dummy_variables = (
+        dataset_options.get("dummy_variables", []) if dataset_options else []
+    )
+    # Exclude columns that have prefixes that are in the dummy feature list
+    dummy_column_names = [
+        column_name
+        for column_name in df.columns
+        if any(
+            column_name.startswith(dummy_variable) for dummy_variable in dummy_variables
+        )
+    ]
+    transformed_df = df.drop(dummy_column_names, axis=1)
+
+    # Add reversed dummy features to the transformed dataset
+    for dummy_variable in dummy_variables:
+        columns_with_dummy_prefix = [
+            col for col in df.columns if col.startswith(dummy_variable)
+        ]
+        transformed_df[dummy_variable] = (
+            df[columns_with_dummy_prefix]
+            .idxmax(axis=1)
+            .replace(f"{dummy_variable}[-_:]", "", regex=True)
+        )
+
+    return transformed_df
+
+
+def _analyze_pd_dataset(df, vm_dataset):
     """
     Runs basic analysis tasks on a Pandas dataset:
 
@@ -207,8 +250,10 @@ def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
     - Histograms for distribution of values
     """
     fields = vm_dataset.fields
-    # TODO - accept analyze_opts to configure how to extract different metrics
-    statistics = df.describe().to_dict(orient="dict")
+    transformed_df = get_transformed_dataset(df, vm_dataset)
+
+    # TODO - accept dataset_options to configure how to extract different metrics
+    statistics = transformed_df.describe().to_dict(orient="dict")
 
     for field in fields:
         field_type = field["type"]
@@ -217,12 +262,12 @@ def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
             statistics[field["id"]] = {}
 
         statistics[field["id"]]["histogram"] = _get_histogram(
-            df, field["id"], field_type
+            transformed_df, field["id"], field_type
         )
 
-        _add_field_statistics(df, field, analyze_opts)
+        _add_field_statistics(transformed_df, field, vm_dataset.dataset_options)
 
-    correlation_matrix = df.corr()
+    correlation_matrix = transformed_df.corr()
     # Transform to the current format expected by the UI
     correlations = [
         [
@@ -236,7 +281,7 @@ def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
     ]
 
     correlation_plots = _generate_correlation_plots(
-        df, vm_dataset, correlation_matrix, n_top=15
+        transformed_df, vm_dataset, correlation_matrix, n_top=15
     )
 
     return {
@@ -251,6 +296,9 @@ def _analyze_pd_dataset(df, vm_dataset, analyze_opts=None):
 
 
 def _validate_pd_dataset_targets(df, targets):
+    if targets.class_labels is None:
+        return True
+
     unique_targets = df[targets.target_column].unique()
     if len(unique_targets) != len(targets.class_labels):
         raise ValueError(
@@ -278,32 +326,79 @@ def _validate_dataset_features(df, features):
     for feature in features:
         if "id" not in feature:
             raise ValueError(f"Feature {feature.__dict__} does not have an 'id' field")
-        if feature["id"] not in df:
-            raise ValueError(f"Feature {feature['id']} does not exist in the dataset")
+        # Skip validating this while we add full support for dummy features
+        # if feature["id"] not in df:
+        #     raise ValueError(f"Feature {feature['id']} does not exist in the dataset")
 
         feature_map[feature["id"]] = feature
 
     return feature_map
 
 
+def infer_pd_dataset_types(df, dataset_options=None, features=None):
+    """
+    Infers the data types for each column using pandas_profiling's
+    typeset from visions library.
+
+    If dummy variables were specified with dataset_options, we will
+    not inter the types for these columns since they need to be described
+    as a group of columns (e.g. dummy_a, dummy_b, dummy_c, etc.)
+
+    When a type is inferred as Unsupported we check if it's a null column
+    and mark it appropriately.
+    """
+    df_columns = df.columns
+    vm_dataset_features = {}
+
+    # Load extra feature options for features that were passed manually
+    extra_feature_map = _validate_dataset_features(df, features or [])
+
+    # Exclude dummy variables from type inference
+    dummy_variables = (
+        dataset_options.get("dummy_variables", []) if dataset_options else []
+    )
+    # Check for each df column if any of the dummy variables is a prefix of it
+    df_columns = [
+        column
+        for column in df_columns
+        if not any(column.startswith(dummy) for dummy in dummy_variables)
+    ]
+
+    print(
+        f"Excluding the following dummy variables from type inference: {dummy_variables}"
+    )
+
+    typeset = ProfilingTypeSet(Settings())
+    dataset_types = typeset.infer_type(df[df_columns])
+
+    for column, type in dataset_types.items():
+        if str(type) == "Unsupported":
+            if df[column].isnull().all():
+                vm_dataset_features[column] = {"id": column, "type": "Null"}
+            else:
+                raise ValueError(
+                    f"Unsupported type for column {column}. Please review all values in this dataset column."
+                )
+        else:
+            vm_dataset_features[column] = {"id": column, "type": str(type)}
+
+    # Set dataset_types to Dummy for each dummy variable
+    for dummy in dummy_variables:
+        vm_dataset_features[dummy] = {"id": dummy, "type": "Dummy"}
+
+    # Finally, add the extra feature options that were passed manually if any
+    for column, feature in extra_feature_map.items():
+        vm_dataset_features[column].update(feature)
+
+    return list(vm_dataset_features.values())
+
+
 # 1. Accept descriptions from SDK
 # 2. Accept type overrides from SDK
 # 3. Run df.describe() for numerical and categorical fields
 #       df[df.columns].astype('category')
-def init_from_pd_dataset(df, targets=None, features=None):
-    typeset = ProfilingTypeSet(Settings())
-    dataset_types = typeset.infer_type(df)
-
-    feature_map = _validate_dataset_features(df, features or [])
-    dataset_features = []
-
-    # Iterate through df.columns to preserve order
-    for column in df.columns.tolist():
-        inferred_feature = {"id": column, "type": str(dataset_types[column])}
-        # Check if feature exists in features list and merge with inferred_feature
-        if column in feature_map:
-            inferred_feature.update(feature_map[column])
-        dataset_features.append(inferred_feature)
+def init_from_pd_dataset(df, dataset_options=None, targets=None, features=None):
+    vm_dataset_features = infer_pd_dataset_types(df, dataset_options, features)
 
     shape = {
         "rows": df.shape[0],
@@ -316,7 +411,7 @@ def init_from_pd_dataset(df, targets=None, features=None):
         _validate_pd_dataset_targets(df, targets)
 
     return Dataset(
-        fields=dataset_features,  # TODO - deprecate naming in favor of features
+        fields=vm_dataset_features,  # TODO - deprecate naming in favor of features
         sample=[
             {
                 "id": "head",
@@ -329,35 +424,37 @@ def init_from_pd_dataset(df, targets=None, features=None):
         ],
         shape=shape,
         targets=targets,
+        dataset_options=dataset_options,
     )
 
 
-def analyze_vm_dataset(dataset, vm_dataset, analyze_opts=None):
+def analyze_vm_dataset(dataset, vm_dataset):
     """
     Analyzes a dataset instance and extracts different metrics from it
 
     :param dataset: A full input dataset. Only supports Pandas datasets at the moment.
     :param vm_dataset: VM Dataset metadata
-    :param analyze_opts: Additional analyze options (not used yet)
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        analyze_results = _analyze_pd_dataset(dataset, vm_dataset, analyze_opts)
+        analyze_results = _analyze_pd_dataset(dataset, vm_dataset)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
     return analyze_results
 
 
-def init_vm_dataset(dataset, dataset_type, targets=None, features=None):
+def init_vm_dataset(
+    dataset, dataset_type, dataset_options=None, targets=None, features=None
+):
     """
     Initializes a validmind.Dataset by extracting metadata from a dataset instance
     """
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
-        vm_dataset = init_from_pd_dataset(dataset, targets, features)
+        vm_dataset = init_from_pd_dataset(dataset, dataset_options, targets, features)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 

@@ -4,7 +4,6 @@ models that have a sklearn compatible metrics interface
 """
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy
 import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance as pfi_sklearn
@@ -12,6 +11,9 @@ from sklearn.metrics import (
     confusion_matrix as cfm_sklearn,
     roc_curve as roc_curve_sklearn,
     precision_recall_curve as prc_sklearn,
+    mean_absolute_error as mean_absolute_error_sklearn,
+    mean_squared_error as mean_squared_error_sklearn,
+    r2_score as r2_score_sklearn,
 )
 
 from .config import TestResult, TestResults
@@ -120,6 +122,48 @@ def get_x_and_y(df, target_column):
     return x, y
 
 
+def mae_score(y_true, y_pred):
+    """
+    Compute Mean Absolute Error score metric from sklearn.
+    """
+    return {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "mae",
+        "value": [mean_absolute_error_sklearn(y_true, y_pred)],
+    }
+
+
+def mse_score(y_true, y_pred):
+    """
+    Compute Mean Squared Error score metric from sklearn.
+    """
+    return {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "mse",
+        "value": [mean_squared_error_sklearn(y_true, y_pred)],
+    }
+
+
+def permutation_importance(model, x_test, y_test):
+    """
+    Compute permutation feature importance (PFI) values from sklearn.
+    """
+    r = pfi_sklearn(model, x_test, y_test, random_state=0)
+    pfi = {}
+
+    for i, column in enumerate(x_test.columns):
+        pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
+
+    return {
+        "type": "evaluation",
+        "scope": "test",
+        "key": "pfi",
+        "value": pfi,
+    }
+
+
 def precision_recall_curve(y_true, y_pred=None, rounded_y_pred=None):
     """
     Compute precision recall curve values from sklearn.
@@ -214,21 +258,15 @@ def roc_curve(y_true, y_pred=None, rounded_y_pred=None):
     }
 
 
-def permutation_importance(model, x_test, y_test):
+def r2_score(y_true, y_pred):
     """
-    Compute permutation feature importance (PFI) values from sklearn.
+    Compute R-Squared score metric from sklearn.
     """
-    r = pfi_sklearn(model, x_test, y_test, random_state=0)
-    pfi = {}
-
-    for i, column in enumerate(x_test.columns):
-        pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
-
     return {
         "type": "evaluation",
         "scope": "test",
-        "key": "pfi",
-        "value": pfi,
+        "key": "r2",
+        "value": [r2_score_sklearn(y_true, y_pred)],
     }
 
 
@@ -260,16 +298,19 @@ def _generate_shap_plot(type_, shap_values, x_test):
     }
 
 
-def shap_global_importance(model, x_test, generate_plots=True):
+def shap_global_importance(model, x_test, generate_plots=True, linear=False):
     """
     Compute shap global importance (SHAP).
     :param model:
     :param x_test:
     :param generate_plots: when True, the returning dict contains the key "plots" with
+    :param linear: when True, use a LinearExplainer instead
     dict of the figure, key and metadata for the plot.
     """
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(x_test, from_call=True)
+    explainer = (
+        shap.TreeExplainer(model) if not linear else shap.LinearExplainer(model, x_test)
+    )
+    shap_values = explainer.shap_values(x_test)
 
     # For models with a single output this returns a numpy.ndarray of SHAP values
     # if type(shap_values) is numpy.ndarray:

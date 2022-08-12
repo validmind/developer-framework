@@ -1,7 +1,7 @@
 """
 Dataset class wrapper
 """
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 
 @dataclass()
@@ -11,6 +11,7 @@ class DatasetTargets:
     """
 
     target_column: str
+    description: str = None
     class_labels: dict = None
 
 
@@ -25,6 +26,7 @@ class Dataset:
     shape: dict
     correlations: dict = None
     dataset_type: str = None
+    dataset_options: dict = None
     statistics: dict = None
     targets: dict = None
     __feature_lookup: dict = field(default_factory=dict)
@@ -54,15 +56,20 @@ class Dataset:
         """
         Serializes the model to a dictionary so it can be sent to the API
         """
-        return {
+        dataset_dict = {
             "correlations": self.correlations,
             "fields": self.fields,
             "sample": self.sample,
             "shape": self.shape,
             "statistics": self.statistics,
-            "targets": self.targets.__dict__,
             "type": self.dataset_type,
         }
+
+        # Dataset with no targets can be logged
+        if self.targets:
+            dataset_dict["targets"] = self.targets.__dict__
+
+        return dataset_dict
 
     @classmethod
     def create_from_dict(cls, dict_):

@@ -18,7 +18,7 @@ from .model_utils import (
 )
 from .type_utils import get_full_typename, is_matplotlib_typename
 
-API_HOST = os.environ.get("API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
+API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
 
 vm_api_key = None
@@ -111,8 +111,8 @@ def init(project, api_key=None, api_secret=None, api_host=None):
 def log_dataset(
     dataset,
     dataset_type,
-    analyze=False,
-    analyze_opts=None,
+    dataset_options=None,
+    analyze=True,
     targets=None,
     features=None,
 ):
@@ -121,15 +121,18 @@ def log_dataset(
 
     :param dataset: A dataset. Only supports Pandas datasets at the moment.
     :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
+    :param dataset_options: Additional dataset options for analysis
     :param dataset_targets: A list of targets for the dataset.
     :param features: Optional. A list of features metadata.
     :type dataset_targets: validmind.DatasetTargets, optional
     """
-    vm_dataset = init_vm_dataset(dataset, dataset_type, targets, features)
+    vm_dataset = init_vm_dataset(
+        dataset, dataset_type, dataset_options, targets, features
+    )
     analyze_results = None
 
     if analyze:
-        analyze_results = analyze_vm_dataset(dataset, vm_dataset, analyze_opts)
+        analyze_results = analyze_vm_dataset(dataset, vm_dataset)
         if "statistics" in analyze_results:
             vm_dataset.statistics = analyze_results["statistics"]
         if "correlations" in analyze_results:
@@ -226,18 +229,22 @@ def log_model(model_instance, vm_model=None):
     return True
 
 
-def log_training_metrics(model, x_train, y_train, run_cuid=None):
+def log_training_metrics(
+    model, x_train, y_train, x_val=None, y_val=None, run_cuid=None
+):
     """
     Logs training metrics to ValidMind API.
 
     :param model: A model instance. Only supports XGBoost at the moment.
     :param x_train: The training dataset.
     :param y_train: The training dataset targets.
+    :param x_val: The validation dataset.
+    :param y_val: The validation dataset targets.
     """
     if run_cuid is None:
         run_cuid = start_run()
 
-    training_metrics = get_training_metrics(model, x_train, y_train)
+    training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
 
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",

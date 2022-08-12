@@ -1,7 +1,8 @@
-The dataset was split in two parts:
+The dataset was split in three parts:
 
-- Training set: 70% of the data
-- Validation set: 30% of the data
+- Training set: 60% of the data
+- Validation set: 20% of the data
+- Test set: hold-out set with 20% of the data
 
 Using the following criteria:
 
