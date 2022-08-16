@@ -24,6 +24,7 @@ wheel = "^0.37.1"
 xgboost = "^1.5.2"
 seaborn = "^0.11.2"
 shap = "^0.41.0"
+dython = "^0.7.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

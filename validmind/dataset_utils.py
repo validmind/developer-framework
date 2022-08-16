@@ -1,6 +1,7 @@
 """
 Utilities for inspecting and extracting statistics from client datasets
 """
+import matplotlib
 import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -8,6 +9,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+from dython.nominal import associations
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
@@ -18,6 +20,7 @@ from .dataset import Dataset
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
 matplotlib_axes_logger.setLevel("ERROR")
+matplotlib.rcParams["savefig.dpi"] = 1000
 
 sns.set(rc={"figure.figsize": (20, 10)})
 
@@ -138,7 +141,6 @@ def _get_scatter_plot(df, x, y):
     )
     subplot.legend()
     subplot.set_title("R2 Score: " + "{:.4f}".format(r2), fontsize=20)
-
     _format_axes(subplot)
 
     # avoid drawing on notebooks
@@ -152,6 +154,7 @@ def _get_box_plot(df, x, y):
     """
     subplot = sns.boxplot(x=x, y=y, data=df)
     _format_axes(subplot)
+
     # avoid drawing on notebooks
     plt.close()
     return subplot
@@ -169,12 +172,13 @@ def _get_crosstab_plot(df, vm_dataset, x, y):
             x = y
             y = target_column
         elif target_column == y:
-            y = target_column
-            x = y
+            y = x
+            x = target_column
 
     crosstab = pd.crosstab(index=df[x], columns=df[y])
     subplot = crosstab.plot.bar(rot=0)
     _format_axes(subplot)
+
     # avoid drawing on notebooks
     plt.close()
     return subplot
@@ -285,6 +289,8 @@ def _analyze_pd_dataset(df, vm_dataset):
 
     # TODO - accept dataset_options to configure how to extract different metrics
     statistics = transformed_df.describe().to_dict(orient="dict")
+    # Ignore fields that have very high cardinality
+    fields_for_correlation = []
 
     for field in fields:
         field_type = field["type"]
@@ -297,8 +303,14 @@ def _analyze_pd_dataset(df, vm_dataset):
         )
 
         _add_field_statistics(transformed_df, field, vm_dataset.dataset_options)
+        # Fields with more than 10% distinct values should not be used for correlation
+        if field["statistics"]["distinct"] < 0.1:
+            fields_for_correlation.append(field["id"])
 
-    correlation_matrix = transformed_df.corr()
+    correlation_matrix = associations(
+        transformed_df[fields_for_correlation], compute_only=True, plot=False
+    )["corr"]
+
     # Transform to the current format expected by the UI
     correlations = [
         [
