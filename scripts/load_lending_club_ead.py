@@ -61,8 +61,10 @@ print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 vm.init(
+    api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+    project="cl6r0hpt200001gmlnjp9eifs",
     # project="cl6laq3ys0000tp8hiawa7e4m",
-    project="cl6ojsc8c0072ou8hf4p6s1q4",  # xgboost
+    # project="cl6ojsc8c0072ou8hf4p6s1q4",  # xgboost
 )
 
 print("2. Logging model metadata...")
