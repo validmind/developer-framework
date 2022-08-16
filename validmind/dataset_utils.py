@@ -20,7 +20,6 @@ from .dataset import Dataset
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
 matplotlib_axes_logger.setLevel("ERROR")
-matplotlib.rcParams["savefig.dpi"] = 1000
 
 sns.set(rc={"figure.figsize": (20, 10)})
 
@@ -232,7 +231,7 @@ def _generate_correlation_plots(df, vm_dataset, correlation_matrix, n_top=15):
         subplot = _get_plot_for_feature_pair(df, vm_dataset, x, y)
         plots.append(
             {
-                "type": "correlation-pearson",
+                "type": "correlation-pearson",  # Now using dython which generates multiple correlation types
                 "figure": subplot.figure,
                 "key": key,
                 "metadata": {"x": x, "y": y, "value": value},

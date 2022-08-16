@@ -347,9 +347,9 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     elif is_matplotlib_typename(get_full_typename(data_or_path)):
         type_ = "plot"
         buffer = BytesIO()
-        data_or_path.savefig(buffer, bbox_inches="tight", format="svg")
+        data_or_path.savefig(buffer, bbox_inches="tight")
         buffer.seek(0)
-        files = {"image": (f"{key}.svg", buffer, "image/svg+xml")}
+        files = {"image": (f"{key}.png", buffer, "image/png)")}
     else:
         raise ValueError(
             f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
