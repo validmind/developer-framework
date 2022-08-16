@@ -119,16 +119,19 @@ def _get_scatter_plot(df, x, y):
     """
     Returns a scatter plot for a pair of features
     """
-    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10), color="#DE257E", alpha=0.5)
+    df_with_no_nan = df.dropna(subset=[x, y])
+    subplot = df_with_no_nan.plot.scatter(
+        x=x, y=y, figsize=(20, 10), color="#DE257E", alpha=0.5
+    )
 
     # Generate a 1d least squares fit to show a trend line
-    z = np.polyfit(df[x], df[y], 1)
+    z = np.polyfit(df_with_no_nan[x], df_with_no_nan[y], 1)
     p = np.poly1d(z)
-    r2 = r2_score(df[y], p(df[x]))
+    r2 = r2_score(df_with_no_nan[y], p(df_with_no_nan[x]))
 
     subplot.plot(
-        df[x],
-        p(df[x]),
+        df_with_no_nan[x],
+        p(df_with_no_nan[x]),
         color="gray",
         linewidth=2,
         label="Trendline",
