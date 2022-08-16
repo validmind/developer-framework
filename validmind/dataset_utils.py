@@ -1,14 +1,17 @@
 """
 Utilities for inspecting and extracting statistics from client datasets
 """
+import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
+from sklearn.metrics import r2_score
 
 from .dataset import Dataset
 
@@ -17,6 +20,15 @@ from .dataset import Dataset
 matplotlib_axes_logger.setLevel("ERROR")
 
 sns.set(rc={"figure.figsize": (20, 10)})
+
+params = {
+    "legend.fontsize": "x-large",
+    "axes.labelsize": "x-large",
+    "axes.titlesize": "x-large",
+    "xtick.labelsize": "x-large",
+    "ytick.labelsize": "x-large",
+}
+pylab.rcParams.update(params)
 
 DEFAULT_HISTOGRAM_BINS = 10
 
@@ -107,7 +119,23 @@ def _get_scatter_plot(df, x, y):
     """
     Returns a scatter plot for a pair of features
     """
-    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10))
+    subplot = df.plot.scatter(x=x, y=y, figsize=(20, 10), color="#DE257E", alpha=0.5)
+
+    # Generate a 1d least squares fit to show a trend line
+    z = np.polyfit(df[x], df[y], 1)
+    p = np.poly1d(z)
+    r2 = r2_score(df[y], p(df[x]))
+
+    subplot.plot(
+        df[x],
+        p(df[x]),
+        color="gray",
+        linewidth=2,
+        label="Trendline",
+    )
+    subplot.legend()
+    subplot.set_title("R2 Score: " + "{:.4f}".format(r2), fontsize=20)
+
     _format_axes(subplot)
 
     # avoid drawing on notebooks
@@ -364,9 +392,10 @@ def infer_pd_dataset_types(df, dataset_options=None, features=None):
         if not any(column.startswith(dummy) for dummy in dummy_variables)
     ]
 
-    print(
-        f"Excluding the following dummy variables from type inference: {dummy_variables}"
-    )
+    if len(dummy_variables) > 0:
+        print(
+            f"Excluding the following dummy variables from type inference: {dummy_variables}"
+        )
 
     typeset = ProfilingTypeSet(Settings())
     dataset_types = typeset.infer_type(df[df_columns])
