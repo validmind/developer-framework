@@ -75,16 +75,22 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
         }
     )
 
-    # Compute PSI for training/validation pair
-    y_train_prob = model.predict_proba(x_train)[:, 1]
-    y_val_prob = model.predict_proba(x_val)[:, 1]
+    # Check if model is a classification or regression model by
+    # checking if it has a predict_proba method
+    predict_fn = getattr(model, "predict_proba", None)
+    if callable(predict_fn):
+        y_train_predict = model.predict_proba(x_train)[:, 1]
+        y_val_predict = model.predict_proba(x_val)[:, 1]
+    else:
+        y_train_predict = model.predict(x_train)
+        y_val_predict = model.predict(x_val)
 
     metrics.append(
         {
             "type": "training",
             "scope": "training:validation",
             "key": "psi",
-            "value": psi(y_train_prob, y_val_prob, as_dict=True),
+            "value": psi(y_train_predict, y_val_predict, as_dict=True),
         }
     )
 
@@ -200,24 +206,6 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 }
             )
 
-    pfi_values = permutation_importance(
-        model, x_train, y_train, random_state=0, n_jobs=-2
-    )
-    pfi = {}
-    for i, column in enumerate(x_train.columns):
-        pfi[column] = [pfi_values["importances_mean"][i]], [
-            pfi_values["importances_std"][i]
-        ]
-
-    vm_metrics.append(
-        {
-            "type": "training",
-            "scope": "training_dataset",
-            "key": "pfi",
-            "value": pfi,
-        }
-    )
-
     # Linear model coefficients
     coef = model.coef_
     coefficients = {
@@ -233,6 +221,8 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
             "value": coefficients,
         }
     )
+
+    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
