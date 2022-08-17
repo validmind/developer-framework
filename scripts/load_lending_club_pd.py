@@ -22,7 +22,7 @@ print("1. Initializing SDK...")
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 # Staging project ID=cl5qyzlup00001mmf5xox0ptp
 vm.init(
-    # api_host="https://api.staging.vm.validmind.ai/api/v1/tracking",
+    # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
     project="cl1jyvh2c000909lg1rk0a0zb",
     # project="cl5qyzlup00001mmf5xox0ptp",
     # api_key="ddeff6b7b68b6c6346dcfad49d62a2e2",
@@ -64,93 +64,93 @@ print("4. Logging dataset metadata and statistics...")
 vm_dataset = vm.log_dataset(train_df, "training", analyze=True, targets=targets)
 
 
-print("5. Running data quality tests...")
+# print("5. Running data quality tests...")
 
-results = vm.run_dataset_tests(
-    train_df,
-    dataset_type="training",
-    vm_dataset=vm_dataset,
-    send=True,
-    run_cuid=run_cuid,
-)
+# results = vm.run_dataset_tests(
+#     train_df,
+#     dataset_type="training",
+#     vm_dataset=vm_dataset,
+#     send=True,
+#     run_cuid=run_cuid,
+# )
 
 
-print("6. Loading and preparing dataset for training...")
+# print("6. Loading and preparing dataset for training...")
 
-COLS_CORRELATED = [
-    "num_actv_rev_tl",
-    "open_il_12m",
-    "open_rv_12m",
-    "avg_cur_bal",
-    "num_bc_tl",
-    "mo_sin_old_rev_tl_op",
-]
+# COLS_CORRELATED = [
+#     "num_actv_rev_tl",
+#     "open_il_12m",
+#     "open_rv_12m",
+#     "avg_cur_bal",
+#     "num_bc_tl",
+#     "mo_sin_old_rev_tl_op",
+# ]
 
-train_df.drop(COLS_CORRELATED, axis=1, inplace=True)
-print("The following features  were removed.", COLS_CORRELATED)
+# train_df.drop(COLS_CORRELATED, axis=1, inplace=True)
+# print("The following features  were removed.", COLS_CORRELATED)
 
-df_categories = train_df.select_dtypes("object")
-train_df = pd.get_dummies(
-    train_df, columns=list(df_categories.columns), drop_first=False
-)
+# df_categories = train_df.select_dtypes("object")
+# train_df = pd.get_dummies(
+#     train_df, columns=list(df_categories.columns), drop_first=False
+# )
 
-print("7. Splitting dataset into training and validation sets...")
+# print("7. Splitting dataset into training and validation sets...")
 
-train_inputs, x_test, train_targets, y_test = train_test_split(
-    train_df.drop(["loan_status"], axis=1),
-    train_df["loan_status"],
-    test_size=0.2,
-    stratify=train_df["loan_status"],
-    random_state=10,
-)
+# train_inputs, x_test, train_targets, y_test = train_test_split(
+#     train_df.drop(["loan_status"], axis=1),
+#     train_df["loan_status"],
+#     test_size=0.2,
+#     stratify=train_df["loan_status"],
+#     random_state=10,
+# )
 
-(x_train, x_val, y_train, y_val) = train_test_split(
-    train_inputs, train_targets, test_size=0.25, random_state=10
-)
+# (x_train, x_val, y_train, y_val) = train_test_split(
+#     train_inputs, train_targets, test_size=0.25, random_state=10
+# )
 
-print("8. Balancing training dataset...")
+# print("8. Balancing training dataset...")
 
-x_train_subset = x_train[:1000]
-y_train_subset = y_train[:1000]
-pca = PCA(n_components=2)
-x_train_subset = pca.fit_transform(x_train_subset)
+# x_train_subset = x_train[:1000]
+# y_train_subset = y_train[:1000]
+# pca = PCA(n_components=2)
+# x_train_subset = pca.fit_transform(x_train_subset)
 
-over = SMOTE(sampling_strategy=0.5, k_neighbors=10)
-under = RandomUnderSampler(sampling_strategy=1.0)
-x_train_subset_o, y_train_subset_o = over.fit_resample(x_train_subset, y_train_subset)
-x_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
-    x_train_subset_o, y_train_subset_o
-)
+# over = SMOTE(sampling_strategy=0.5, k_neighbors=10)
+# under = RandomUnderSampler(sampling_strategy=1.0)
+# x_train_subset_o, y_train_subset_o = over.fit_resample(x_train_subset, y_train_subset)
+# x_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
+#     x_train_subset_o, y_train_subset_o
+# )
 
-x_train, y_train = over.fit_resample(x_train, y_train)
-x_train, y_train = under.fit_resample(x_train, y_train)
+# x_train, y_train = over.fit_resample(x_train, y_train)
+# x_train, y_train = under.fit_resample(x_train, y_train)
 
-print("9. Training model...")
+# print("9. Training model...")
 
-xgb_model = xgb.XGBClassifier(
-    early_stopping_rounds=10,
-    # n_estimators=5,
-)
-xgb_model.set_params(
-    eval_metric=["error", "logloss", "auc"],
-)
-xgb_model.fit(
-    x_train,
-    y_train,
-    eval_set=[(x_train, y_train), (x_test, y_test)],
-)
+# xgb_model = xgb.XGBClassifier(
+#     early_stopping_rounds=10,
+#     # n_estimators=5,
+# )
+# xgb_model.set_params(
+#     eval_metric=["error", "logloss", "auc"],
+# )
+# xgb_model.fit(
+#     x_train,
+#     y_train,
+#     eval_set=[(x_train, y_train), (x_test, y_test)],
+# )
 
-print("10. Logging model parameters and training metrics...")
+# print("10. Logging model parameters and training metrics...")
 
-vm.log_model(xgb_model)
-vm.log_training_metrics(xgb_model, x_train, y_train)
+# vm.log_model(xgb_model)
+# vm.log_training_metrics(xgb_model, x_train, y_train)
 
-y_pred = xgb_model.predict_proba(x_test)[:, -1]
-predictions = [round(value) for value in y_pred]
-accuracy = accuracy_score(y_test, predictions)
+# y_pred = xgb_model.predict_proba(x_test)[:, -1]
+# predictions = [round(value) for value in y_pred]
+# accuracy = accuracy_score(y_test, predictions)
 
-print(f"Accuracy: {accuracy}")
+# print(f"Accuracy: {accuracy}")
 
-print("11. Running model evaluation tests...")
+# print("11. Running model evaluation tests...")
 
-eval_results = vm.run_model_tests(xgb_model, x_test, y_test, send=True)
+# eval_results = vm.run_model_tests(xgb_model, x_test, y_test, send=True)

@@ -1,7 +1,6 @@
 """
 Utilities for inspecting and extracting statistics from client datasets
 """
-import matplotlib
 import matplotlib.pylab as pylab
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -123,7 +122,7 @@ def _get_scatter_plot(df, x, y):
     """
     df_with_no_nan = df.dropna(subset=[x, y])
     subplot = df_with_no_nan.plot.scatter(
-        x=x, y=y, figsize=(20, 10), color="#DE257E", alpha=0.5
+        x=x, y=y, figsize=(20, 10), color="#DE257E", alpha=0.2
     )
 
     # Generate a 1d least squares fit to show a trend line

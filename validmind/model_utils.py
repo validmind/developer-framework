@@ -6,6 +6,8 @@ import sys
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
+from .custom_metrics import csi, psi
+
 DEFAULT_REGRESSION_METRICS = [
     "mae",
     "mse",
@@ -49,6 +51,55 @@ def get_xgboost_objective(model):
     return "n/a"
 
 
+def _get_common_metrics(model, x_train, y_train, x_val, y_val):
+    """
+    Computes metrics that are common to any type of model being trained
+    """
+    metrics = []
+
+    pfi_values = permutation_importance(
+        model, x_train, y_train, random_state=0, n_jobs=-2
+    )
+    pfi = {}
+    for i, column in enumerate(x_train.columns):
+        pfi[column] = [pfi_values["importances_mean"][i]], [
+            pfi_values["importances_std"][i]
+        ]
+
+    metrics.append(
+        {
+            "type": "training",
+            "scope": "training_dataset",
+            "key": "pfi",
+            "value": pfi,
+        }
+    )
+
+    # Compute PSI for training/validation pair
+    y_train_prob = model.predict_proba(x_train)[:, 1]
+    y_val_prob = model.predict_proba(x_val)[:, 1]
+
+    metrics.append(
+        {
+            "type": "training",
+            "scope": "training:validation",
+            "key": "psi",
+            "value": psi(y_train_prob, y_val_prob, as_dict=True),
+        }
+    )
+
+    metrics.append(
+        {
+            "type": "training",
+            "scope": "training:validation",
+            "key": "csi",
+            "value": csi(x_train, x_val),
+        }
+    )
+
+    return metrics
+
+
 def _get_metrics_from_evals_result(model, xgboost_metrics):
     """
     Generic function to extra a given list of metrics
@@ -85,7 +136,7 @@ def _get_metrics_from_evals_result(model, xgboost_metrics):
     return vm_metrics
 
 
-def get_xgb_classification_metrics(model, x_train, y_train):
+def get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val):
     """
     Converts XGBoost evals_result to our standard metrics format
     """
@@ -94,24 +145,7 @@ def get_xgb_classification_metrics(model, x_train, y_train):
     xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
 
     vm_metrics = _get_metrics_from_evals_result(model, xgboost_metrics)
-
-    pfi_values = permutation_importance(
-        model, x_train, y_train, random_state=0, n_jobs=-2
-    )
-    pfi = {}
-    for i, column in enumerate(x_train.columns):
-        pfi[column] = [pfi_values["importances_mean"][i]], [
-            pfi_values["importances_std"][i]
-        ]
-
-    vm_metrics.append(
-        {
-            "type": "training",
-            "scope": "training_dataset",
-            "key": "pfi",
-            "value": pfi,
-        }
-    )
+    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
@@ -276,7 +310,7 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
 
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier":
-        metrics = get_xgb_classification_metrics(model, x_train, y_train)
+        metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
     elif model_class == "XGBRegressor":
         metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
     elif model_class == "LinearRegression":
