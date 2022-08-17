@@ -229,9 +229,7 @@ def log_model(model_instance, vm_model=None):
     return True
 
 
-def log_training_metrics(
-    model, x_train, y_train, x_val=None, y_val=None, run_cuid=None
-):
+def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
     """
     Logs training metrics to ValidMind API.
 
