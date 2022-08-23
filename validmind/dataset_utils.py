@@ -87,7 +87,9 @@ def _add_field_statistics(df, field, dataset_options=None):
             "freq": top_value.values[0],
         }
     elif field_type == "Numeric":
-        field["statistics"] = df[field["id"]].describe().to_dict()
+        field["statistics"] = (
+            df[field["id"]].describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.95]).to_dict()
+        )
     elif field_type == "Categorical" or field_type == "Dummy":
         field["statistics"] = df[field["id"]].astype("category").describe().to_dict()
 
