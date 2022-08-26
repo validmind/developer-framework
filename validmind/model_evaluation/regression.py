@@ -5,15 +5,16 @@ from tqdm import tqdm
 
 from .utils import summarize_evaluation_results
 from ..client import log_evaluation_metrics, log_figure
-from ..tests.config import Settings
-
-from ..tests.model_evaluation import (
-    mae_score,
-    mse_score,
+from ..metrics.generic import (
     permutation_importance,
-    r2_score,
     shap_global_importance,
 )
+from ..metrics.regression import (
+    mae_score,
+    mse_score,
+    r2_score,
+)
+from ..tests.config import Settings
 
 config = Settings()
 

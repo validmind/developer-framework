@@ -9,18 +9,25 @@ from tqdm import tqdm
 
 from .utils import summarize_evaluation_results
 from ..client import log_evaluation_metrics, log_figure, log_test_results
-from ..tests.config import Settings
-from ..tests.model_evaluation import (
+from ..metrics.classification import (
     accuracy_score,
     confusion_matrix,
     f1_score,
-    permutation_importance,
     precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
     roc_curve,
+)
+from ..metrics.generic import (
+    permutation_importance,
     shap_global_importance,
+)
+from ..tests.config import Settings
+from ..tests.model_evaluation import (
+    base_accuracy_test,
+    base_f1_score_test,
+    base_roc_auc_score_test,
 )
 
 config = Settings()
@@ -151,9 +158,12 @@ def get_model_metrics(
     x_test, y_test = test_set
     y_pred, class_pred = test_preds
 
-    tests = [
+    metrics = [
+        accuracy_score,
+        f1_score,
         precision_score,
         recall_score,
+        roc_auc_score,
         roc_curve,
         confusion_matrix,
         precision_recall_curve,
@@ -163,8 +173,8 @@ def get_model_metrics(
     evaluation_plots = []
 
     # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
-    with tqdm(total=len(tests) + 1) as pbar:
-        for test in tests:
+    with tqdm(total=len(metrics) + 1) as pbar:
+        for test in metrics:
             evaluation_metric_result = test(model, test_set, test_preds)
 
             if evaluation_metric_result.get("metric", False):
@@ -201,6 +211,49 @@ def get_model_metrics(
     return evaluation_metrics
 
 
+def run_model_tests(
+    model,
+    test_set,
+    test_preds,
+    train_set=None,
+    train_preds=None,
+    send=True,
+    run_cuid=None,
+):
+    """
+    Run all available (TBD via configuration) model tests
+    """
+    x_test, y_test = test_set
+    y_pred, class_pred = test_preds
+
+    print("Running evaluation tests...")
+    tests = [
+        base_accuracy_test,
+        base_f1_score_test,
+        base_roc_auc_score_test,
+    ]
+
+    test_results = []
+
+    # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
+    with tqdm(total=len(tests)) as pbar:
+        for test in tests:
+            test_result = test(model, test_set, test_preds, config=config)
+            test_results.append(test_result)
+            pbar.update(1)
+
+    print("\nModel evaluation tests have completed.")
+    if send:
+        print(f"Sending {len(test_results)} test results to ValidMind...")
+        log_test_results(
+            test_results,
+            run_cuid=run_cuid,
+            dataset_type="training",  # TBD: need to support registering test dataset
+        )
+
+    return test_results
+
+
 def evaluate_classification_model(
     model, test_set, train_set=None, send=True, run_cuid=None
 ):
@@ -214,37 +267,16 @@ def evaluate_classification_model(
     # TBD: support class threshold
     class_pred = [round(value) for value in y_pred]
 
-    print("Running evaluation tests...")
-    tests_with_test_results = [
-        accuracy_score,
-        f1_score,
-        roc_auc_score,
-    ]
-
-    get_model_metrics(
-        model, test_set, (y_pred, class_pred), send=send, run_cuid=run_cuid
-    )
-    evaluation_metrics_results = []
-    test_results = []
-
-    # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
-    with tqdm(total=len(tests_with_test_results)) as pbar:
-
-        for test in tests_with_test_results:
-            evaluation_metric_result, test_result = test(
-                y_test, y_pred, config=config, class_pred=class_pred
-            )
-            evaluation_metrics_results.append(evaluation_metric_result)
-            test_results.append(test_result)
-            pbar.update(1)
-
-    print("\nModel evaluation tests have completed.")
-    if send:
-        print(f"Sending {len(test_results)} test results to ValidMind...")
-        log_test_results(
-            test_results,
-            run_cuid=run_cuid,
-            dataset_type="training",  # TBD: need to support registering test dataset
+    results = []
+    results.extend(
+        get_model_metrics(
+            model, test_set, (y_pred, class_pred), send=send, run_cuid=run_cuid
         )
+    )
+    results.extend(
+        run_model_tests(
+            model, test_set, (y_pred, class_pred), send=send, run_cuid=run_cuid
+        )
+    )
 
-    return evaluation_metrics_results
+    return results
