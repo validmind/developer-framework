@@ -113,15 +113,6 @@ def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     return evaluation_metrics, test_result
 
 
-def get_x_and_y(df, target_column):
-    """
-    Get the X and Y dataframes from the input dataset.
-    """
-    x = df.drop(target_column, axis=1)
-    y = df[target_column]
-    return x, y
-
-
 def mae_score(y_true, y_pred):
     """
     Compute Mean Absolute Error score metric from sklearn.
@@ -334,3 +325,8 @@ def shap_global_importance(model, x_test, generate_plots=True, linear=False):
         ]
 
     return results
+
+
+def trainining_better_than_test():
+    """ """
+    return True

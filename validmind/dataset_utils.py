@@ -276,6 +276,15 @@ def get_transformed_dataset(df, vm_dataset):
     return transformed_df
 
 
+def get_x_and_y(df, target_column):
+    """
+    Get the X and Y dataframes from the input dataset.
+    """
+    x = df.drop(target_column, axis=1)
+    y = df[target_column]
+    return x, y
+
+
 def _analyze_pd_dataset(df, vm_dataset):
     """
     Runs basic analysis tasks on a Pandas dataset:

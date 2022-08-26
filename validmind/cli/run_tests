@@ -111,6 +111,6 @@ vm.log_training_metrics(xgb_model, x_train, y_train)
 print("* Running model evaluation tests...")
 sleep(2 * random())
 
-eval_results = vm.run_model_tests(xgb_model, x_test, y_test, send=True)
+eval_results = vm.evaluate_model(xgb_model, x_test, y_test)
 
 print("All test results have been sent to your ValidMind account.")
