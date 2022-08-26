@@ -19,11 +19,11 @@ from sklearn.metrics import (
 from .config import TestResult, TestResults
 
 
-def accuracy_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
+def accuracy_score(y_true, y_pred=None, class_pred=None, config=None):
     """
     Compute accuracy score metric from sklearn.
     """
-    score = metrics.accuracy_score(y_true, rounded_y_pred)
+    score = metrics.accuracy_score(y_true, class_pred)
     evaluation_metrics = {
         "type": "evaluation",
         "scope": "test",
@@ -56,14 +56,17 @@ def accuracy_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     return evaluation_metrics, test_result
 
 
-def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
+def confusion_matrix(model, test_set, test_preds):
     """
     Compute confusion matrix values from sklearn.
     """
+    _, y_true = test_set
+    _, class_pred = test_preds
+
     y_labels = list(map(lambda x: x.item(), y_true.unique()))
     y_labels.sort()
 
-    tn, fp, fn, tp = cfm_sklearn(y_true, rounded_y_pred, labels=y_labels).ravel()
+    tn, fp, fn, tp = cfm_sklearn(y_true, class_pred, labels=y_labels).ravel()
     return {
         "type": "evaluation",
         "scope": "test",
@@ -77,12 +80,12 @@ def confusion_matrix(y_true, y_pred=None, rounded_y_pred=None):
     }
 
 
-def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
+def f1_score(y_true, y_pred=None, class_pred=None, config=None):
     """
     Compute f1 score metric from sklearn.
     """
 
-    score = metrics.f1_score(y_true, rounded_y_pred)
+    score = metrics.f1_score(y_true, class_pred)
 
     evaluation_metrics = {
         "type": "evaluation",
@@ -113,34 +116,46 @@ def f1_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     return evaluation_metrics, test_result
 
 
-def mae_score(y_true, y_pred):
+def mae_score(model, test_set, test_preds):
     """
     Compute Mean Absolute Error score metric from sklearn.
     """
+    _, y_true = test_set
+    y_pred, _ = test_preds
+
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "mae",
-        "value": [mean_absolute_error_sklearn(y_true, y_pred)],
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "mae",
+            "value": [mean_absolute_error_sklearn(y_true, y_pred)],
+        }
     }
 
 
-def mse_score(y_true, y_pred):
+def mse_score(model, test_set, test_preds):
     """
     Compute Mean Squared Error score metric from sklearn.
     """
+    _, y_true = test_set
+    y_pred, _ = test_preds
+
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "mse",
-        "value": [mean_squared_error_sklearn(y_true, y_pred)],
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "mse",
+            "value": [mean_squared_error_sklearn(y_true, y_pred)],
+        }
     }
 
 
-def permutation_importance(model, x_test, y_test):
+def permutation_importance(model, test_set, test_preds):
     """
     Compute permutation feature importance (PFI) values from sklearn.
     """
+    x_test, y_test = test_set
+
     r = pfi_sklearn(model, x_test, y_test, random_state=0)
     pfi = {}
 
@@ -148,60 +163,77 @@ def permutation_importance(model, x_test, y_test):
         pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
 
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "pfi",
-        "value": pfi,
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "pfi",
+            "value": pfi,
+        }
     }
 
 
-def precision_recall_curve(y_true, y_pred=None, rounded_y_pred=None):
+def precision_recall_curve(model, test_set, test_preds):
     """
     Compute precision recall curve values from sklearn.
     """
+    _, y_true = test_set
+    y_pred, _ = test_preds
+
     precision, recall, pr_thresholds = prc_sklearn(y_true, y_pred)
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "pr_curve",
-        "value": {
-            "precision": precision,
-            "recall": recall,
-            "thresholds": pr_thresholds,
-        },
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "pr_curve",
+            "value": {
+                "precision": precision,
+                "recall": recall,
+                "thresholds": pr_thresholds,
+            },
+        }
     }
 
 
-def precision_score(y_true, y_pred=None, rounded_y_pred=None):
+def precision_score(model, test_set, test_preds):
     """
     Compute precision score metric from sklearn.
     """
+    _, y_true = test_set
+    _, class_pred = test_preds
+
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "precision",
-        "value": [metrics.precision_score(y_true, rounded_y_pred)],
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "precision",
+            "value": [metrics.precision_score(y_true, class_pred)],
+        }
     }
 
 
-def recall_score(y_true, y_pred=None, rounded_y_pred=None):
+def recall_score(model, test_set, test_preds):
     """
     Compute recall score metric from sklearn.
     """
+    _, y_true = test_set
+    _, class_pred = test_preds
+
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "recall",
-        "value": [metrics.recall_score(y_true, rounded_y_pred)],
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "recall",
+            "value": [metrics.recall_score(y_true, class_pred)],
+        }
     }
 
 
-def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
+def roc_auc_score(y_true, y_pred=None, class_pred=None, config=None):
     """
     Compute ROC AUC score metric from sklearn.
     """
 
-    score = metrics.roc_auc_score(y_true, rounded_y_pred)
+    score = metrics.roc_auc_score(y_true, class_pred)
 
     evaluation_metrics = {
         "type": "evaluation",
@@ -232,32 +264,42 @@ def roc_auc_score(y_true, y_pred=None, rounded_y_pred=None, config=None):
     return evaluation_metrics, test_result
 
 
-def roc_curve(y_true, y_pred=None, rounded_y_pred=None):
+def roc_curve(model, test_set, test_preds):
     """
     Compute ROC curve values from sklearn.
     """
+    _, y_true = test_set
+    y_pred, _ = test_preds
+
     fpr, tpr, roc_thresholds = roc_curve_sklearn(y_true, y_pred, drop_intermediate=True)
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "roc_curve",
-        "value": {
-            "fpr": fpr,
-            "tpr": tpr,
-            "thresholds": roc_thresholds,
-        },
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "roc_curve",
+            "value": {
+                "fpr": fpr,
+                "tpr": tpr,
+                "thresholds": roc_thresholds,
+            },
+        }
     }
 
 
-def r2_score(y_true, y_pred):
+def r2_score(model, test_set, test_preds):
     """
     Compute R-Squared score metric from sklearn.
     """
+    _, y_true = test_set
+    y_pred, _ = test_preds
+
     return {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "r2",
-        "value": [r2_score_sklearn(y_true, y_pred)],
+        "metric": {
+            "type": "evaluation",
+            "scope": "test",
+            "key": "r2",
+            "value": [r2_score_sklearn(y_true, y_pred)],
+        }
     }
 
 
@@ -328,5 +370,4 @@ def shap_global_importance(model, x_test, generate_plots=True, linear=False):
 
 
 def trainining_better_than_test():
-    """ """
     return True

@@ -4,7 +4,7 @@ Evaluation Functions for Regression Models
 from tqdm import tqdm
 
 from .utils import summarize_evaluation_results
-from ..client import log_evaluation_metrics, log_figure, log_test_results, start_run
+from ..client import log_evaluation_metrics, log_figure
 from ..tests.config import Settings
 
 from ..tests.model_evaluation import (
@@ -18,13 +18,13 @@ from ..tests.model_evaluation import (
 config = Settings()
 
 
-def evaluate_regression_model(model, x_test, y_test, send=False, run_cuid=None):
+def evaluate_regression_model(
+    model, test_set, train_set=None, send=False, run_cuid=None
+):
     """
     Run a suite of model evaluation tests and log their results to the API
     """
-
-    if run_cuid is None:
-        run_cuid = start_run()
+    x_test, y_test = test_set
 
     print("Generating model predictions on test dataset...")
     y_pred = model.predict(x_test)
