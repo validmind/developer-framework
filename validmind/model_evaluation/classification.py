@@ -1,31 +1,25 @@
 """
-Model Evaluation API
+Evaluation Functions for Classification Models
 """
 import matplotlib.pyplot as plt
 import numpy as np
 
 from sklearn.metrics import ConfusionMatrixDisplay
-from tabulate import tabulate
 from tqdm import tqdm
 
-from .client import log_evaluation_metrics, log_figure, log_test_results, start_run
-from .tests.config import Settings
-from .dataset_utils import get_x_and_y
-from .model_utils import SUPPORTED_MODEL_TYPES
-
-from .tests.model_evaluation import (
+from .utils import summarize_evaluation_results
+from ..client import log_evaluation_metrics, log_figure, log_test_results, start_run
+from ..tests.config import Settings
+from ..tests.model_evaluation import (
     accuracy_score,
     confusion_matrix,
     f1_score,
-    mae_score,
-    mse_score,
     permutation_importance,
     precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
     roc_curve,
-    r2_score,
     shap_global_importance,
 )
 
@@ -141,40 +135,6 @@ def _get_roc_curve_plot(results):
     ax.legend(loc="lower right")
 
 
-def _summarize_model_evaluation_results(results):
-    """
-    Summarize the results of the model evaluation test suite
-    """
-    test_results = []
-
-    for result in results:
-        # Not optimal to display confusion matrix or ROC curve inside a table
-        if (
-            result["key"] == "confusion_matrix"
-            or result["key"] == "roc_curve"
-            or result["key"] == "pr_curve"
-            or result["key"] == "pfi"
-            or result["key"] == "shap"
-        ):
-            continue
-
-        test_results.append(
-            [
-                result["key"],
-                result["value"][0],
-                "Validation with default Test dataset",
-            ]
-        )
-
-    table = tabulate(
-        test_results,
-        headers=["Test", "Score", "Scenario"],
-        numalign="right",
-    )
-
-    return table
-
-
 def evaluate_classification_model(model, x_test, y_test, send=False, run_cuid=None):
     """
     Run a suite of model evaluation tests and log their results to the API
@@ -246,7 +206,7 @@ def evaluate_classification_model(model, x_test, y_test, send=False, run_cuid=No
             log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
 
     print("\nSummary of results:\n")
-    table = _summarize_model_evaluation_results(evaluation_metrics_results)
+    table = summarize_evaluation_results(evaluation_metrics_results)
     print(table)
 
     print("\nPlotting model evaluation results...")
@@ -257,81 +217,3 @@ def evaluate_classification_model(model, x_test, y_test, send=False, run_cuid=No
     _get_pfi_plot(evaluation_metrics_results)
 
     return evaluation_metrics_results
-
-
-def evaluate_regression_model(model, x_test, y_test, send=False, run_cuid=None):
-    """
-    Run a suite of model evaluation tests and log their results to the API
-    """
-
-    if run_cuid is None:
-        run_cuid = start_run()
-
-    print("Generating model predictions on test dataset...")
-    y_pred = model.predict(x_test)
-
-    print("Running evaluation tests...")
-
-    tests = [
-        mae_score,
-        mse_score,
-        r2_score,
-    ]
-    evaluation_metrics_results = []
-
-    with tqdm(total=len(tests) + 1) as pbar:
-        for test in tests:
-            evaluation_metric_result = test(y_test, y_pred)
-            evaluation_metrics_results.append(evaluation_metric_result)
-            pbar.update(1)
-
-        evaluation_metrics_results.append(permutation_importance(model, x_test, y_test))
-        pbar.update(1)
-
-        shap_results = shap_global_importance(model, x_test, linear=True)
-        figures = shap_results.pop("plots")
-        evaluation_metrics_results.append(shap_results)
-        pbar.update(1)
-
-    print("\nModel evaluation tests have completed.")
-    if send:
-        print(
-            f"Sending {len(evaluation_metrics_results)} metrics results to ValidMind..."
-        )
-        log_evaluation_metrics(evaluation_metrics_results, run_cuid=run_cuid)
-
-        print(f"Sending {len(figures)} figures to ValidMind...")
-        for figure in figures:
-            log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
-
-    print("\nSummary of results:\n")
-    table = _summarize_model_evaluation_results(evaluation_metrics_results)
-    print(table)
-
-    print("\nPlotting model evaluation results...")
-    # _get_roc_curve_plot(evaluation_metrics_results)
-    return evaluation_metrics_results
-
-
-def evaluate_model(
-    model, test_df, y_test=None, target_column=None, send=True, run_cuid=None
-):
-    model_class = model.__class__.__name__
-
-    if model_class not in SUPPORTED_MODEL_TYPES:
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
-
-    if y_test is None and target_column is None:
-        raise Exception("Either y_test or target_column must be provided")
-    elif target_column is not None and y_test is None:
-        x_test, y_test = get_x_and_y(test_df, target_column)
-    else:
-        x_test = test_df
-
-    # Only supports xgboost classifiers at the moment
-    if model_class == "XGBClassifier":
-        return evaluate_classification_model(model, x_test, y_test, send, run_cuid)
-    elif model_class == "XGBRegressor" or model_class == "LinearRegression":
-        return evaluate_regression_model(model, x_test, y_test, send, run_cuid)
