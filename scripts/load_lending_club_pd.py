@@ -22,7 +22,7 @@ print("1. Initializing SDK...")
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 # Staging project ID=cl5qyzlup00001mmf5xox0ptp
 vm.init(
-    # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+    # api_host="https://api.staging.vm.validmind.ai/api/v1/tracking",
     project="cl1jyvh2c000909lg1rk0a0zb",
     # project="cl5qyzlup00001mmf5xox0ptp",
     # api_key="ddeff6b7b68b6c6346dcfad49d62a2e2",
@@ -153,4 +153,4 @@ print(f"Accuracy: {accuracy}")
 
 print("11. Running model evaluation tests...")
 
-eval_results = vm.run_model_tests(xgb_model, x_test, y_test, send=True)
+eval_results = vm.evaluate_model(xgb_model, test_set=(x_test, y_test))

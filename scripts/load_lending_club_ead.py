@@ -60,11 +60,18 @@ import validmind as vm
 print("1. Initializing SDK...")
 
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
+# vm.init(
+#     # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
+#     # project="cl6r0hpt200001gmlnjp9eifs",
+#     project="cl70x3dpc002pya8h07xktpvc",
+#     # project="cl6ojsc8c0072ou8hf4p6s1q4",  # xgboost
+# )
+
 vm.init(
-    # api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
-    # project="cl6r0hpt200001gmlnjp9eifs",
-    project="cl6laq3ys0000tp8hiawa7e4m",
-    # project="cl6ojsc8c0072ou8hf4p6s1q4",  # xgboost
+    # api_host="https://api.staging.vm.validmind.ai/api/v1/tracking",
+    project="cl7bi2zf1032zih8h483kvn45",
+    # api_key="ddeff6b7b68b6c6346dcfad49d62a2e2",
+    # api_secret="dc7fb85e3aefd1675f68cfee091339a9c62a2f05097b89393a8d044228214188",
 )
 
 print("2. Logging model metadata...")
@@ -263,5 +270,7 @@ vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
 
 print("9. Running model evaluation tests...")
 
-eval_results = vm.run_model_tests(xgb_model, ead_inputs_test, ead_targets_test)
-# eval_results = vm.run_model_tests(reg_ead, ead_inputs_test, ead_targets_test)
+eval_results = vm.evaluate_model(
+    xgb_model, test_set=(ead_inputs_test, ead_targets_test)
+)
+# eval_results = vm.evaluate_model(reg_ead, test_set=(ead_inputs_test, ead_targets_test))
