@@ -18,8 +18,6 @@ def evaluate_model(
             "Model type {} is not supported at the moment.".format(model_class)
         )
 
-    x_test, y_test = test_set
-
     if run_cuid is None:
         run_cuid = start_run()
 

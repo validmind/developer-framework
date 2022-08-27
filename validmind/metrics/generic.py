@@ -7,6 +7,9 @@ import shap
 
 from sklearn.inspection import permutation_importance as pfi_sklearn
 
+from .metric_result import MetricResult
+from .plots import get_pfi_plot
+
 
 def _generate_shap_plot(type_, shap_values, x_test):
     """
@@ -15,6 +18,8 @@ def _generate_shap_plot(type_, shap_values, x_test):
     :params shap_values: a matrix
     :params x_test:
     """
+    plt.close("all")
+
     # preserve styles
     mpl.rcParams["grid.color"] = "#CCC"
     ax = plt.axes()
@@ -48,17 +53,18 @@ def permutation_importance(model, test_set, test_preds):
     for i, column in enumerate(x_test.columns):
         pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
 
-    return {
-        "metric": {
+    return MetricResult(
+        api_metric={
             "type": "evaluation",
             "scope": "test",
             "key": "pfi",
             "value": pfi,
-        }
-    }
+        },
+        plots=[get_pfi_plot(pfi)],
+    )
 
 
-def shap_global_importance(model, x_test, generate_plots=True, linear=False):
+def shap_global_importance(model, test_set, test_preds, linear=False):
     """
     Compute shap global importance (SHAP).
     :param model:
@@ -67,6 +73,8 @@ def shap_global_importance(model, x_test, generate_plots=True, linear=False):
     :param linear: when True, use a LinearExplainer instead
     dict of the figure, key and metadata for the plot.
     """
+    x_test, _ = test_set
+
     explainer = (
         shap.TreeExplainer(model) if not linear else shap.LinearExplainer(model, x_test)
     )
@@ -80,17 +88,16 @@ def shap_global_importance(model, x_test, generate_plots=True, linear=False):
     #     shap_values = shap_values[0]
     #     result_values = shap_values
 
-    results = {
+    api_metric = {
         "type": "evaluation",
         "scope": "test",
         "key": "shap",
-        # "value": result_values,
     }
 
-    if generate_plots:
-        results["plots"] = [
+    return MetricResult(
+        api_metric=api_metric,
+        api_figures=[
             _generate_shap_plot("mean", shap_values, x_test),
             _generate_shap_plot("summary", shap_values, x_test),
-        ]
-
-    return results
+        ],
+    )
