@@ -30,6 +30,7 @@ from ..tests.model_evaluation import (
     training_better_than_test,
     training_test_degradation_test,
 )
+from ..utils import is_notebook
 
 config = Settings()
 
@@ -100,15 +101,15 @@ def get_model_metrics(  # noqa: C901
     table = summarize_evaluation_metrics(evaluation_metrics)
     print(table)
 
-    if len(report_figures):
+    if len(report_figures) and is_notebook():
         print("\nPlotting model evaluation metrics...")
 
-    for figure in report_figures:
-        if hasattr(figure, "canvas"):
-            display(figure)
-        elif hasattr(figure, "plot"):
-            figure.plot()
-            plt.show()
+        for figure in report_figures:
+            if hasattr(figure, "canvas"):
+                display(figure)
+            elif hasattr(figure, "plot"):
+                figure.plot()
+                plt.show()
 
     return evaluation_metrics
 
@@ -147,7 +148,9 @@ def run_model_tests(
                 train_preds=train_preds,
                 config=config,
             )
-            test_results.append(test_result)
+            if test_result:
+                test_results.append(test_result)
+
             pbar.update(1)
 
     print("\nModel evaluation tests have completed.")

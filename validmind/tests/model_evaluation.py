@@ -121,6 +121,7 @@ def training_better_than_test(
     """
     if train_preds[0] is None:
         print("Skipping training_better_than_test because train_preds was not passed")
+        return
 
     # TBD: drive this via config
     metrics_to_compare = [
@@ -176,6 +177,7 @@ def training_test_degradation_test(
         print(
             "Skipping training_test_degradation_test because train_preds was not passed"
         )
+        return
 
     # TBD: drive this via config
     metrics_to_compare = [

@@ -16,7 +16,7 @@ from .model_utils import (
     get_params_from_model_instance,
     get_training_metrics,
 )
-from .type_utils import get_full_typename, is_matplotlib_typename
+from .utils import get_full_typename, is_matplotlib_typename
 
 API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
