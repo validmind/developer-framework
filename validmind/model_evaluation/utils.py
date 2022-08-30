@@ -11,17 +11,21 @@ def summarize_evaluation_results(results):
     test_results = []
 
     for result in results:
-        test_results.append(
-            [
-                result.test_name,
-                result.results[0].values["score"],
-                "Validation with default Test dataset",
-            ]
-        )
+        for test_result in result.results:
+            result_tuples = [(k, v) for k, v in test_result.values.items()]
+            scenario = test_result.test_name or "Validation with default Test dataset"
+            test_results.append(
+                [
+                    result.test_name,
+                    scenario,
+                    result_tuples,
+                    test_result.passed,
+                ]
+            )
 
     table = tabulate(
         test_results,
-        headers=["Test", "Score", "Scenario"],
+        headers=["Test", "Scenario", "Results", "Acceptable"],
         numalign="right",
     )
 

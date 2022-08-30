@@ -271,6 +271,8 @@ vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
 print("9. Running model evaluation tests...")
 
 eval_results = vm.evaluate_model(
-    xgb_model, test_set=(ead_inputs_test, ead_targets_test)
+    xgb_model,
+    test_set=(ead_inputs_test, ead_targets_test),
+    train_set=(x_train, y_train),
 )
 # eval_results = vm.evaluate_model(reg_ead, test_set=(ead_inputs_test, ead_targets_test))
