@@ -27,6 +27,8 @@ from ..tests.model_evaluation import (
     base_accuracy_test,
     base_f1_score_test,
     base_roc_auc_score_test,
+    training_better_than_test,
+    training_test_degradation_test,
 )
 
 config = Settings()
@@ -128,6 +130,8 @@ def run_model_tests(
         base_accuracy_test,
         base_f1_score_test,
         base_roc_auc_score_test,
+        training_better_than_test,
+        training_test_degradation_test,
     ]
 
     test_results = []
@@ -135,7 +139,14 @@ def run_model_tests(
     # 1) All tests that take y_true, y_pred as input and 2) permutation_importance and shap_global_importance
     with tqdm(total=len(tests)) as pbar:
         for test in tests:
-            test_result = test(model, test_set, test_preds, config=config)
+            test_result = test(
+                model,
+                test_set,
+                test_preds,
+                train_set=train_set,
+                train_preds=train_preds,
+                config=config,
+            )
             test_results.append(test_result)
             pbar.update(1)
 
@@ -145,7 +156,9 @@ def run_model_tests(
         log_test_results(
             test_results,
             run_cuid=run_cuid,
-            dataset_type="training",  # TBD: need to support registering test dataset
+            # TBD: test results can be associated with anything but right now we're
+            # requiring a dataset_type on the API
+            dataset_type="training",
         )
 
     print("\nSummary of evaluation tests:\n")
@@ -168,15 +181,36 @@ def evaluate_classification_model(
     # TBD: support class threshold
     class_pred = [round(value) for value in y_pred]
 
+    y_train_pred = None
+    train_class_pred = None
+
+    if train_set is not None:
+        x_train, _ = train_set
+        print("Generating model predictions on training dataset...")
+        y_train_pred = model.predict_proba(x_train)[:, -1]
+        train_class_pred = [round(value) for value in y_train_pred]
+
     results = []
     results.extend(
         get_model_metrics(
-            model, test_set, (y_pred, class_pred), send=send, run_cuid=run_cuid
+            model,
+            test_set,
+            test_preds=(y_pred, class_pred),
+            train_set=train_set,
+            train_preds=(y_train_pred, train_class_pred),
+            send=send,
+            run_cuid=run_cuid,
         )
     )
     results.extend(
         run_model_tests(
-            model, test_set, (y_pred, class_pred), send=send, run_cuid=run_cuid
+            model,
+            test_set,
+            test_preds=(y_pred, class_pred),
+            train_set=train_set,
+            train_preds=(y_train_pred, train_class_pred),
+            send=send,
+            run_cuid=run_cuid,
         )
     )
 

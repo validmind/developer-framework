@@ -153,4 +153,6 @@ print(f"Accuracy: {accuracy}")
 
 print("11. Running model evaluation tests...")
 
-eval_results = vm.evaluate_model(xgb_model, test_set=(x_test, y_test))
+eval_results = vm.evaluate_model(
+    xgb_model, test_set=(x_test, y_test), train_set=(x_train, y_train)
+)

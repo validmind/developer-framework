@@ -21,6 +21,7 @@ class BaseResultModel(BaseModel):
 
 
 class TestResult(BaseResultModel):
+    test_name: Optional[str]  # Optionally allow a name for an individual test
     column: Optional[str]  # Optionally track the results for an individual column
     passed: Optional[bool]  # Optionally per-result pass/fail
     values: dict
@@ -99,6 +100,12 @@ class RocAucScoreConfig(BaseModel):
     min_threshold: float = 0.5
 
 
+class TrainTestDegradationConfig(BaseModel):
+    """ """
+
+    max_threshold: float = 0.1
+
+
 class Settings(BaseSettings):
     class Config:
         env_prefix = "VM_TESTS_"
@@ -117,3 +124,4 @@ class Settings(BaseSettings):
     accuracy_score: AccuracyScoreConfig = AccuracyScoreConfig()
     f1_score: F1ScoreConfig = F1ScoreConfig()
     roc_auc_score: RocAucScoreConfig = RocAucScoreConfig()
+    train_test_degradation: TrainTestDegradationConfig = TrainTestDegradationConfig()
