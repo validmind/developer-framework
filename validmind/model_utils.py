@@ -6,7 +6,7 @@ import sys
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .custom_metrics import csi, psi
+from .metrics.custom_metrics import csi, psi
 from .models import APIMetric
 
 DEFAULT_REGRESSION_METRICS = [

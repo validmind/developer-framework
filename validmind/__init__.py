@@ -12,8 +12,7 @@ from .client import (
     log_figure,
 )
 
-from .dataset import DatasetTargets
-from .model import Model, ModelAttributes
+from .models import DatasetTargets, Model, ModelAttributes
 from .model_evaluation import evaluate_model
 from .tests import run_dataset_tests
 from .tests.config import TestResult, TestResults

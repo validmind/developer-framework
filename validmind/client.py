@@ -12,7 +12,7 @@ import requests
 from dataclasses import asdict
 
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
-from .model import Model, ModelAttributes
+from .models import Model, ModelAttributes
 from .model_utils import (
     get_info_from_model_instance,
     get_params_from_model_instance,
