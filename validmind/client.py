@@ -262,7 +262,7 @@ def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
     return True
 
 
-def log_evaluation_metrics(metrics, run_cuid):
+def log_metrics(metrics, run_cuid):
     """
     Logs evaluation metrics to ValidMind API.
 

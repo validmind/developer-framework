@@ -7,9 +7,9 @@ from typing import List, Optional, Union
 
 
 @dataclass()
-class APIMetric:
+class Metric:
     """
-    APIMetric objects track the schema supported by the ValidMind API
+    Metric objects track the schema supported by the ValidMind API
     """
 
     type: str
@@ -19,7 +19,7 @@ class APIMetric:
 
     def serialize(self):
         """
-        Serializes the APIMetric to a dictionary so it can be sent to the API
+        Serializes the Metric to a dictionary so it can be sent to the API
         """
         return {
             "type": self.type,
@@ -30,9 +30,9 @@ class APIMetric:
 
 
 @dataclass()
-class APIFigure:
+class Figure:
     """
-    APIFigure objects track the schema supported by the ValidMind API
+    Figure objects track the schema supported by the ValidMind API
     """
 
     key: str
@@ -41,7 +41,7 @@ class APIFigure:
 
     def serialize(self):
         """
-        Serializes the APIFigure to a dictionary so it can be sent to the API
+        Serializes the Figure to a dictionary so it can be sent to the API
         """
         return {
             "key": self.key,
@@ -54,11 +54,11 @@ class APIFigure:
 class MetricResult:
     """
     MetricResult class definition. A MetricResult is returned by any internal method
-    that extracts metrics from a dataset or model, and returns 1) APIMetric and APIFigure
+    that extracts metrics from a dataset or model, and returns 1) Metric and Figure
     objects that can be sent to the API and 2) and plots and metadata for display purposes
     """
 
-    api_metric: APIMetric
-    api_figures: Optional[List[APIFigure]] = None
+    api_metric: Metric
+    api_figures: Optional[List[Figure]] = None
     plots: Optional[List[object]] = None
     metadata: Optional[dict] = None

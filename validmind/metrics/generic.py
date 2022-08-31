@@ -7,7 +7,7 @@ import shap
 
 from sklearn.inspection import permutation_importance as pfi_sklearn
 
-from ..models import APIFigure, APIMetric, MetricResult
+from ..models import Figure, Metric, MetricResult
 from .plots import get_pfi_plot
 
 
@@ -34,7 +34,7 @@ def _generate_shap_plot(type_, shap_values, x_test):
     # avoid displaying on notebooks and clears the canvas for the next plot
     plt.close()
 
-    return APIFigure(
+    return Figure(
         figure=figure,
         key=f"shap:{type_}",
         metadata={"type": type_},
@@ -54,7 +54,7 @@ def permutation_importance(model, test_set, test_preds):
         pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="pfi",
@@ -89,7 +89,7 @@ def shap_global_importance(model, test_set, test_preds, linear=False):
     #     result_values = shap_values
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="shap",

@@ -9,7 +9,7 @@ from sklearn.metrics import (
 )
 
 from .plots import get_confusion_matrix_plot, get_pr_curve_plot, get_roc_curve_plot
-from ..models import APIMetric, MetricResult
+from ..models import Metric, MetricResult
 
 
 def accuracy_score(model, test_set, test_preds):
@@ -20,7 +20,7 @@ def accuracy_score(model, test_set, test_preds):
     _, class_pred = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="accuracy",
@@ -42,7 +42,7 @@ def confusion_matrix(model, test_set, test_preds):
     tn, fp, fn, tp = cfm_sklearn(y_true, class_pred, labels=y_labels).ravel()
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="confusion_matrix",
@@ -65,7 +65,7 @@ def f1_score(model, test_set, test_preds):
     _, class_pred = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="f1_score",
@@ -84,7 +84,7 @@ def precision_recall_curve(model, test_set, test_preds):
     precision, recall, pr_thresholds = prc_sklearn(y_true, y_pred)
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="pr_curve",
@@ -106,7 +106,7 @@ def recall_score(model, test_set, test_preds):
     _, class_pred = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="recall",
@@ -123,7 +123,7 @@ def roc_auc_score(model, test_set, test_preds):
     _, class_pred = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="roc_auc",
@@ -140,7 +140,7 @@ def precision_score(model, test_set, test_preds):
     _, class_pred = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="precision",
@@ -160,7 +160,7 @@ def roc_curve(model, test_set, test_preds):
     auc = metrics.roc_auc_score(y_true, class_pred)
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="roc_curve",

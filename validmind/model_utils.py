@@ -7,7 +7,7 @@ from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from .metrics.custom_metrics import csi, psi
-from .models import APIMetric
+from .models import Metric
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",
@@ -68,7 +68,7 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
         ]
 
     metrics.append(
-        APIMetric(
+        Metric(
             type="training",
             scope="training_dataset",
             key="pfi",
@@ -87,7 +87,7 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
         y_val_predict = model.predict(x_val)
 
     metrics.append(
-        APIMetric(
+        Metric(
             type="training",
             scope="training:validation",
             key="psi",
@@ -96,7 +96,7 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
     )
 
     metrics.append(
-        APIMetric(
+        Metric(
             type="training",
             scope="training:validation",
             key="csi",
@@ -121,7 +121,7 @@ def _get_metrics_from_evals_result(model, xgboost_metrics):
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_0"]:
                 vm_metrics.append(
-                    APIMetric(
+                    Metric(
                         type="training",
                         scope="training_dataset",
                         key=metric_name,
@@ -132,7 +132,7 @@ def _get_metrics_from_evals_result(model, xgboost_metrics):
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_1"]:
                 vm_metrics.append(
-                    APIMetric(
+                    Metric(
                         type="training",
                         scope="validation_dataset",
                         key=metric_name,
@@ -199,7 +199,7 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 metric_value = r2_score(y, y_pred)
 
             vm_metrics.append(
-                APIMetric(
+                Metric(
                     type="training",
                     scope=dataset_scope,
                     key=metric_name,
@@ -215,7 +215,7 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     coefficients["intercept"] = model.intercept_
 
     vm_metrics.append(
-        APIMetric(
+        Metric(
             type="training",
             scope="training_dataset",
             key="coefficients",

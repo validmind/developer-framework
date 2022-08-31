@@ -4,13 +4,13 @@ Models entrypoint
 
 from .dataset import Dataset, DatasetTargets
 from .model import Model, ModelAttributes
-from .metric_result import APIFigure, APIMetric, MetricResult
+from .metrics import Figure, Metric, MetricResult
 
 __all__ = [
-    "APIMetric",
-    "APIFigure",
     "Dataset",
     "DatasetTargets",
+    "Figure",
+    "Metric",
     "MetricResult",
     "Model",
     "ModelAttributes",

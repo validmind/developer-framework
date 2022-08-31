@@ -7,7 +7,7 @@ from IPython.display import display
 from tqdm import tqdm
 
 from .utils import summarize_evaluation_metrics, summarize_evaluation_results
-from ..client import log_evaluation_metrics, log_figure, log_test_results
+from ..client import log_metrics, log_figure, log_test_results
 from ..metrics.classification import (
     accuracy_score,
     confusion_matrix,
@@ -91,7 +91,7 @@ def get_model_metrics(  # noqa: C901
 
     if send:
         print(f"Sending {len(evaluation_metrics)} metrics results to ValidMind...")
-        log_evaluation_metrics(evaluation_metrics, run_cuid=run_cuid)
+        log_metrics(evaluation_metrics, run_cuid=run_cuid)
 
         print(f"Sending {len(evaluation_figures)} figures to ValidMind...")
         for figure in evaluation_figures:

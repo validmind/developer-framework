@@ -7,7 +7,7 @@ from sklearn.metrics import (
     r2_score as r2_score_sklearn,
 )
 
-from ..models import APIMetric, MetricResult
+from ..models import Metric, MetricResult
 
 
 def mae_score(model, test_set, test_preds):
@@ -18,7 +18,7 @@ def mae_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="mae",
@@ -35,7 +35,7 @@ def mse_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="mse",
@@ -52,7 +52,7 @@ def r2_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric=APIMetric(
+        api_metric=Metric(
             type="evaluation",
             scope="test",
             key="r2",
