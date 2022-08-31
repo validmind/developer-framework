@@ -7,6 +7,7 @@ from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from .custom_metrics import csi, psi
+from .models import APIMetric
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",
@@ -67,12 +68,12 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
         ]
 
     metrics.append(
-        {
-            "type": "training",
-            "scope": "training_dataset",
-            "key": "pfi",
-            "value": pfi,
-        }
+        APIMetric(
+            type="training",
+            scope="training_dataset",
+            key="pfi",
+            value=pfi,
+        )
     )
 
     # Check if model is a classification or regression model by
@@ -86,21 +87,21 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
         y_val_predict = model.predict(x_val)
 
     metrics.append(
-        {
-            "type": "training",
-            "scope": "training:validation",
-            "key": "psi",
-            "value": psi(y_train_predict, y_val_predict, as_dict=True),
-        }
+        APIMetric(
+            type="training",
+            scope="training:validation",
+            key="psi",
+            value=psi(y_train_predict, y_val_predict, as_dict=True),
+        )
     )
 
     metrics.append(
-        {
-            "type": "training",
-            "scope": "training:validation",
-            "key": "csi",
-            "value": csi(x_train, x_val),
-        }
+        APIMetric(
+            type="training",
+            scope="training:validation",
+            key="csi",
+            value=csi(x_train, x_val),
+        )
     )
 
     return metrics
@@ -120,23 +121,23 @@ def _get_metrics_from_evals_result(model, xgboost_metrics):
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_0"]:
                 vm_metrics.append(
-                    {
-                        "type": "training",
-                        "scope": "training_dataset",
-                        "key": metric_name,
-                        "value": evals_result["validation_0"][metric_name],
-                    }
+                    APIMetric(
+                        type="training",
+                        scope="training_dataset",
+                        key=metric_name,
+                        value=evals_result["validation_0"][metric_name],
+                    )
                 )
     if "validation_1" in evals_result:
         for metric_name in xgboost_metrics:
             if metric_name in evals_result["validation_1"]:
                 vm_metrics.append(
-                    {
-                        "type": "training",
-                        "scope": "validation_dataset",
-                        "key": metric_name,
-                        "value": evals_result["validation_1"][metric_name],
-                    }
+                    APIMetric(
+                        type="training",
+                        scope="validation_dataset",
+                        key=metric_name,
+                        value=evals_result["validation_1"][metric_name],
+                    )
                 )
 
     return vm_metrics
@@ -198,12 +199,12 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 metric_value = r2_score(y, y_pred)
 
             vm_metrics.append(
-                {
-                    "type": "training",
-                    "scope": dataset_scope,
-                    "key": metric_name,
-                    "value": [metric_value],
-                }
+                APIMetric(
+                    type="training",
+                    scope=dataset_scope,
+                    key=metric_name,
+                    value=[metric_value],
+                )
             )
 
     # Linear model coefficients
@@ -214,12 +215,12 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     coefficients["intercept"] = model.intercept_
 
     vm_metrics.append(
-        {
-            "type": "training",
-            "scope": "training_dataset",
-            "key": "coefficients",
-            "value": coefficients,
-        }
+        APIMetric(
+            type="training",
+            scope="training_dataset",
+            key="coefficients",
+            value=coefficients,
+        )
     )
 
     vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))

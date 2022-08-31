@@ -9,6 +9,8 @@ from io import BytesIO
 import numpy as np
 import requests
 
+from dataclasses import asdict
+
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .model import Model, ModelAttributes
 from .model_utils import (
@@ -243,10 +245,11 @@ def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
         run_cuid = start_run()
 
     training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
+    serialized_metrics = [asdict(m) for m in training_metrics]
 
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
-        data=json.dumps(training_metrics, cls=NumpyEncoder),
+        data=json.dumps(serialized_metrics, cls=NumpyEncoder),
         headers={"Content-Type": "application/json"},
     )
 
@@ -267,9 +270,11 @@ def log_evaluation_metrics(metrics, run_cuid):
     :param x_train: The training dataset.
     :param y_train: The training dataset targets.
     """
+    serialized_metrics = [asdict(m) for m in metrics]
+
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
-        data=json.dumps(metrics, cls=NumpyEncoder),
+        data=json.dumps(serialized_metrics, cls=NumpyEncoder),
         headers={"Content-Type": "application/json"},
     )
 

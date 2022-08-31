@@ -41,18 +41,18 @@ def summarize_evaluation_metrics(metrics):
     for metric in metrics:
         # Not optimal to display confusion matrix or ROC curve inside a table
         if (
-            metric["key"] == "confusion_matrix"
-            or metric["key"] == "roc_curve"
-            or metric["key"] == "pr_curve"
-            or metric["key"] == "pfi"
-            or metric["key"] == "shap"
+            metric.key == "confusion_matrix"
+            or metric.key == "roc_curve"
+            or metric.key == "pr_curve"
+            or metric.key == "pfi"
+            or metric.key == "shap"
         ):
             continue
 
         metrics_rows.append(
             [
-                metric["key"],
-                metric["value"][0],
+                metric.key,
+                metric.value[0],
             ]
         )
 
