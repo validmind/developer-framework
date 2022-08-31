@@ -7,7 +7,7 @@ from IPython.display import display
 from tqdm import tqdm
 
 from .utils import summarize_evaluation_metrics, summarize_evaluation_results
-from ..client import log_evaluation_metrics, log_figure, log_test_results
+from ..client import log_metrics, log_figure, log_test_results
 from ..metrics.classification import (
     accuracy_score,
     confusion_matrix,
@@ -82,7 +82,7 @@ def get_model_metrics(  # noqa: C901
                 # we can also display the figures that are going to be
                 # sent to the ValidMind API
                 for api_figure in evaluation_metric_result.api_figures:
-                    report_figures.append(api_figure["figure"])
+                    report_figures.append(api_figure.figure)
 
             if evaluation_metric_result.plots:
                 report_figures.extend(evaluation_metric_result.plots)
@@ -91,11 +91,11 @@ def get_model_metrics(  # noqa: C901
 
     if send:
         print(f"Sending {len(evaluation_metrics)} metrics results to ValidMind...")
-        log_evaluation_metrics(evaluation_metrics, run_cuid=run_cuid)
+        log_metrics(evaluation_metrics, run_cuid=run_cuid)
 
         print(f"Sending {len(evaluation_figures)} figures to ValidMind...")
         for figure in evaluation_figures:
-            log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
+            log_figure(figure.figure, key=figure.key, metadata=figure.metadata)
 
     print("\nSummary of metrics:\n")
     table = summarize_evaluation_metrics(evaluation_metrics)

@@ -14,7 +14,7 @@ from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from sklearn.metrics import r2_score
 
-from .dataset import Dataset
+from .models import Dataset
 
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided

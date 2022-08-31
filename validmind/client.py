@@ -9,8 +9,10 @@ from io import BytesIO
 import numpy as np
 import requests
 
+from dataclasses import asdict
+
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
-from .model import Model, ModelAttributes
+from .models import Model, ModelAttributes
 from .model_utils import (
     get_info_from_model_instance,
     get_params_from_model_instance,
@@ -238,57 +240,54 @@ def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
     :param y_train: The training dataset targets.
     :param x_val: The validation dataset.
     :param y_val: The validation dataset targets.
+    :param run_cuid: The run CUID. If not provided, a new run will be created.
     """
     if run_cuid is None:
         run_cuid = start_run()
 
     training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
 
+    return log_metrics(training_metrics, run_cuid)
+
+
+def log_metrics(metrics, run_cuid=None):
+    """
+    Logs metrics to ValidMind API.
+
+    :param metrics: A list of Metric objects.
+    :param run_cuid: The run CUID. If not provided, a new run will be created.
+    """
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    serialized_metrics = [asdict(m) for m in metrics]
+
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
-        data=json.dumps(training_metrics, cls=NumpyEncoder),
+        data=json.dumps(serialized_metrics, cls=NumpyEncoder),
         headers={"Content-Type": "application/json"},
     )
 
     if r.status_code != 200:
-        print("Could not log training metrics to ValidMind API")
+        print("Could not log metrics to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged training metrics")
+    print("Successfully logged metrics")
 
     return True
 
 
-def log_evaluation_metrics(metrics, run_cuid):
-    """
-    Logs evaluation metrics to ValidMind API.
-
-    :param model: A model instance. Only supports XGBoost at the moment.
-    :param x_train: The training dataset.
-    :param y_train: The training dataset targets.
-    """
-    r = api_session.post(
-        f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
-        data=json.dumps(metrics, cls=NumpyEncoder),
-        headers={"Content-Type": "application/json"},
-    )
-
-    if r.status_code != 200:
-        print("Could not log evaluation metrics to ValidMind API")
-        raise Exception(r.text)
-
-    print("Successfully logged evaluation metrics")
-
-    return True
-
-
-def log_test_results(results, run_cuid, dataset_type):
+def log_test_results(results, run_cuid=None, dataset_type="training"):
     """
     Logs test results information. This method will be called automatically be any function
     running tests but can also be called directly if the user wants to run tests on their own.
 
     :param results: A list of TestResults objects
+    :param run_cuid: The run CUID. If not provided, a new run will be created.
     """
+    if run_cuid is None:
+        run_cuid = start_run()
+
     # TBD - parallelize API requests
     for result in results:
         r = api_session.post(

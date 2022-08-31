@@ -7,7 +7,7 @@ from sklearn.metrics import (
     r2_score as r2_score_sklearn,
 )
 
-from .metric_result import MetricResult
+from ..models import Metric, MetricResult
 
 
 def mae_score(model, test_set, test_preds):
@@ -18,12 +18,12 @@ def mae_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric={
-            "type": "evaluation",
-            "scope": "test",
-            "key": "mae",
-            "value": [mean_absolute_error_sklearn(y_true, y_pred)],
-        }
+        api_metric=Metric(
+            type="evaluation",
+            scope="test",
+            key="mae",
+            value=[mean_absolute_error_sklearn(y_true, y_pred)],
+        )
     )
 
 
@@ -35,12 +35,12 @@ def mse_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric={
-            "type": "evaluation",
-            "scope": "test",
-            "key": "mse",
-            "value": [mean_squared_error_sklearn(y_true, y_pred)],
-        }
+        api_metric=Metric(
+            type="evaluation",
+            scope="test",
+            key="mse",
+            value=[mean_squared_error_sklearn(y_true, y_pred)],
+        )
     )
 
 
@@ -52,10 +52,10 @@ def r2_score(model, test_set, test_preds):
     y_pred, _ = test_preds
 
     return MetricResult(
-        api_metric={
-            "type": "evaluation",
-            "scope": "test",
-            "key": "r2",
-            "value": [r2_score_sklearn(y_true, y_pred)],
-        }
+        api_metric=Metric(
+            type="evaluation",
+            scope="test",
+            key="r2",
+            value=[r2_score_sklearn(y_true, y_pred)],
+        )
     )

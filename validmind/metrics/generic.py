@@ -7,7 +7,7 @@ import shap
 
 from sklearn.inspection import permutation_importance as pfi_sklearn
 
-from .metric_result import MetricResult
+from ..models import Figure, Metric, MetricResult
 from .plots import get_pfi_plot
 
 
@@ -34,11 +34,11 @@ def _generate_shap_plot(type_, shap_values, x_test):
     # avoid displaying on notebooks and clears the canvas for the next plot
     plt.close()
 
-    return {
-        "figure": figure,
-        "key": f"shap:{type_}",
-        "metadata": {"type": type_},
-    }
+    return Figure(
+        figure=figure,
+        key=f"shap:{type_}",
+        metadata={"type": type_},
+    )
 
 
 def permutation_importance(model, test_set, test_preds):
@@ -54,12 +54,12 @@ def permutation_importance(model, test_set, test_preds):
         pfi[column] = [r["importances_mean"][i]], [r["importances_std"][i]]
 
     return MetricResult(
-        api_metric={
-            "type": "evaluation",
-            "scope": "test",
-            "key": "pfi",
-            "value": pfi,
-        },
+        api_metric=Metric(
+            type="evaluation",
+            scope="test",
+            key="pfi",
+            value=pfi,
+        ),
         plots=[get_pfi_plot(pfi)],
     )
 
@@ -88,14 +88,12 @@ def shap_global_importance(model, test_set, test_preds, linear=False):
     #     shap_values = shap_values[0]
     #     result_values = shap_values
 
-    api_metric = {
-        "type": "evaluation",
-        "scope": "test",
-        "key": "shap",
-    }
-
     return MetricResult(
-        api_metric=api_metric,
+        api_metric=Metric(
+            type="evaluation",
+            scope="test",
+            key="shap",
+        ),
         api_figures=[
             _generate_shap_plot("mean", shap_values, x_test),
             _generate_shap_plot("summary", shap_values, x_test),
