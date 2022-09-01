@@ -179,7 +179,10 @@ def evaluate_classification_model(
     """
     Run a suite of model evaluation tests and log their results to the API
     """
-    decision_threshold = eval_opts.get("decision_threshold", DEFAULT_DECISION_THRESHOLD)
+    decision_threshold = (
+        eval_opts and eval_opts.get("decision_threshold", DEFAULT_DECISION_THRESHOLD)
+    ) or DEFAULT_DECISION_THRESHOLD
+
     x_test, _ = test_set
 
     print("Generating model predictions on test dataset...")
