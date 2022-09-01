@@ -34,6 +34,8 @@ from ..utils import is_notebook
 
 config = Settings()
 
+DEFAULT_DECISION_THRESHOLD = 0.5
+
 
 # TODO: same function as classification and regression, refactor
 # TODO: refactor this function since C901 means it's too complex
@@ -172,17 +174,23 @@ def run_model_tests(
 
 
 def evaluate_classification_model(
-    model, test_set, train_set=None, send=True, run_cuid=None
+    model, test_set, train_set=None, eval_opts=None, send=True, run_cuid=None
 ):
     """
     Run a suite of model evaluation tests and log their results to the API
     """
+    decision_threshold = eval_opts.get("decision_threshold", DEFAULT_DECISION_THRESHOLD)
     x_test, _ = test_set
 
     print("Generating model predictions on test dataset...")
     y_pred = model.predict_proba(x_test)[:, -1]
-    # TBD: support class threshold
-    class_pred = [round(value) for value in y_pred]
+
+    if decision_threshold != DEFAULT_DECISION_THRESHOLD:
+        print(f"Using custom decision threshold for evaluation: {decision_threshold}")
+    else:
+        print("Using default decision threshold for evaluation: 0.5")
+
+    class_pred = (y_pred > decision_threshold).astype(int)
 
     y_train_pred = None
     train_class_pred = None
@@ -191,7 +199,7 @@ def evaluate_classification_model(
         x_train, _ = train_set
         print("Generating model predictions on training dataset...")
         y_train_pred = model.predict_proba(x_train)[:, -1]
-        train_class_pred = [round(value) for value in y_train_pred]
+        train_class_pred = (y_train_pred > decision_threshold).astype(int)
 
     results = []
     results.extend(

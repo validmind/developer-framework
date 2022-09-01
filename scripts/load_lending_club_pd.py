@@ -10,8 +10,9 @@ import xgboost as xgb
 
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
+from numpy import argmax
 from sklearn.decomposition import PCA
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_recall_curve
 from sklearn.model_selection import train_test_split
 
 # Initialize ValidMind SDK
@@ -151,8 +152,31 @@ accuracy = accuracy_score(y_test, predictions)
 
 print(f"Accuracy: {accuracy}")
 
+# # Find an optimal threshold for the model before we evaluate it
+# # We want to focus on a threshold that maximizes the F1 score since
+# # we are interested in optimizing performance for the minority class
+# y_pred_val = xgb_model.predict_proba(x_val)[:, -1]
+
+# precision, recall, thresholds = precision_recall_curve(y_val, y_pred_val)
+# fscore = (2 * precision * recall) / (precision + recall)
+# # Get the index of the largest F1 Score
+# ix = argmax(fscore)
+# threshold = thresholds[ix]
+# print("Optimal threshold=%f, F1 Score=%.3f" % (threshold, fscore[ix]))
+
+# threshold_metric = vm.Metric(
+#     type="evaluation", scope="test", key="decision_threshold", value=[threshold]
+# )
+
+# vm.log_metrics([threshold_metric])
+
 print("11. Running model evaluation tests...")
 
 eval_results = vm.evaluate_model(
-    xgb_model, test_set=(x_test, y_test), train_set=(x_train, y_train)
+    xgb_model,
+    test_set=(x_test, y_test),
+    train_set=(x_train, y_train),
+    # eval_opts={
+    #     "decision_threshold": threshold,
+    # },
 )

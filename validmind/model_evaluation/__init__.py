@@ -9,7 +9,7 @@ from ..model_utils import SUPPORTED_MODEL_TYPES
 
 
 def evaluate_model(
-    model, test_set, train_set=None, target_column=None, send=True, run_cuid=None
+    model, test_set, train_set=None, eval_opts=None, send=True, run_cuid=None
 ):
     model_class = model.__class__.__name__
 
@@ -23,6 +23,10 @@ def evaluate_model(
 
     # Only supports xgboost classifiers at the moment
     if model_class == "XGBClassifier":
-        return evaluate_classification_model(model, test_set, train_set, send, run_cuid)
+        return evaluate_classification_model(
+            model, test_set, train_set, eval_opts, send, run_cuid
+        )
     elif model_class == "XGBRegressor" or model_class == "LinearRegression":
-        return evaluate_regression_model(model, test_set, train_set, send, run_cuid)
+        return evaluate_regression_model(
+            model, test_set, train_set, eval_opts, send, run_cuid
+        )
