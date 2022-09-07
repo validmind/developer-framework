@@ -140,7 +140,7 @@ def _get_scatter_plot(df, x, y):
         label="Trendline",
     )
     subplot.legend()
-    subplot.set_title("R2 Score: " + "{:.4f}".format(r2), fontsize=20)
+    subplot.set_title("R-Squared Score: " + "{:.4f}".format(r2), fontsize=20)
     _format_axes(subplot)
 
     # avoid drawing on notebooks
