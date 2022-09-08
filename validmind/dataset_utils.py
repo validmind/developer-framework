@@ -43,12 +43,12 @@ def _get_numerical_histograms(df, field):
     values = df[field].to_numpy()
     values_cleaned = values[~np.isnan(values)]
 
-    # bins='auto': Maximum of the 'sturges' and 'fd' estimators
-    # 'fd' (Freedman Diaconis Estimator). Robust (resilient to outliers) estimator
-    #   that takes into account data variability and data size.
-    # 'rice' Estimator does not take variability into account, only data size.
-    #   Commonly overestimates number of bins required.
-    default_hist = np.histogram(values_cleaned, bins="auto")
+    # bins='sturges'. Cannot use 'auto' until we review and fix its performance
+    #  on datasets with too many unique values
+    #
+    # 'sturges': R’s default method, only accounts for data size. Only optimal
+    # for gaussian data and underestimates number of bins for large non-gaussian datasets.
+    default_hist = np.histogram(values_cleaned, bins="sturges")
 
     histograms = {
         "default": {
