@@ -32,6 +32,71 @@ params = {
 pylab.rcParams.update(params)
 
 DEFAULT_HISTOGRAM_BINS = 10
+DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
+
+
+def _get_numerical_histograms(df, field):
+    """
+    Returns a collection of histograms for a numerical field, each one
+    with a different bin size
+    """
+    values = df[field].to_numpy()
+    values_cleaned = values[~np.isnan(values)]
+
+    # bins='auto': Maximum of the 'sturges' and 'fd' estimators
+    # 'fd' (Freedman Diaconis Estimator). Robust (resilient to outliers) estimator
+    #   that takes into account data variability and data size.
+    # 'rice' Estimator does not take variability into account, only data size.
+    #   Commonly overestimates number of bins required.
+    default_hist = np.histogram(values_cleaned, bins="auto")
+
+    histograms = {
+        "default": {
+            "bin_size": len(default_hist[0]),
+            "histogram": {
+                "bin_edges": default_hist[1].tolist(),
+                "counts": default_hist[0].tolist(),
+            },
+        }
+    }
+
+    for bin_size in DEFAULT_HISTOGRAM_BIN_SIZES:
+        hist = np.histogram(values_cleaned, bins=bin_size)
+        histograms[f"bins_{bin_size}"] = {
+            "bin_size": bin_size,
+            "histogram": {
+                "bin_edges": hist[1].tolist(),
+                "counts": hist[0].tolist(),
+            },
+        }
+
+    return histograms
+
+
+def _get_histograms(df, field, type_):
+    """
+    Returns a collection of histograms for a numerical or categorical fields.
+    We store different combinations of bin sizes to allow analyzing the data better
+
+    Will be used in favor of _get_histogram in the future
+    """
+    # Set the minimum number of bins to nunique if it's less than the default
+    if type_ == "Numeric":
+        return _get_numerical_histograms(df, field)
+    elif type_ == "Categorical" or type_ == "Boolean" or type_ == "Dummy":
+        value_counts = df[field].value_counts()
+        return {
+            "default": {
+                "bin_size": len(value_counts),
+                "histogram": value_counts.to_dict(),
+            }
+        }
+    elif type_ == "Null":
+        print(f"Ignoring histogram generation for null column {field}")
+    else:
+        raise ValueError(
+            f"Unsupported field type found when computing its histogram: {type_}"
+        )
 
 
 def _get_histogram(df, field, type_):
@@ -105,6 +170,8 @@ def _add_field_statistics(df, field, dataset_options=None):
     field["statistics"]["distinct"] = field["statistics"]["n_distinct"] / len(
         df[field["id"]]
     )
+
+    field["histograms"] = _get_histograms(df, field["id"], field_type)
 
 
 def _format_axes(subplot):
@@ -247,6 +314,8 @@ def get_transformed_dataset(df, vm_dataset):
     Some of the features in vm_dataset are of type Dummy so we need to
     reverse the one hot encoding and drop the individual dummy columns
     """
+    print("Preparing in-memory dataset copy...")
+
     # Get the list of features that are of type Dummy
     dataset_options = vm_dataset.dataset_options
     dummy_variables = (
@@ -301,6 +370,8 @@ def _analyze_pd_dataset(df, vm_dataset):
     # Ignore fields that have very high cardinality
     fields_for_correlation = []
 
+    print("Calculating field statistics...")
+
     for field in fields:
         field_type = field["type"]
         # Temporary hack until histograms are separated from statistics
@@ -316,6 +387,7 @@ def _analyze_pd_dataset(df, vm_dataset):
         if field["statistics"]["distinct"] < 0.1:
             fields_for_correlation.append(field["id"])
 
+    print("Calculating feature correlations...")
     correlation_matrix = associations(
         transformed_df[fields_for_correlation], compute_only=True, plot=False
     )["corr"]
@@ -332,6 +404,7 @@ def _analyze_pd_dataset(df, vm_dataset):
         for correlation_row in correlation_matrix.to_dict(orient="records")
     ]
 
+    print("Generating correlation plots...")
     correlation_plots = _generate_correlation_plots(
         transformed_df, vm_dataset, correlation_matrix, n_top=15
     )
@@ -451,6 +524,7 @@ def infer_pd_dataset_types(df, dataset_options=None, features=None):
 # 3. Run df.describe() for numerical and categorical fields
 #       df[df.columns].astype('category')
 def init_from_pd_dataset(df, dataset_options=None, targets=None, features=None):
+    print("Inferring dataset types...")
     vm_dataset_features = infer_pd_dataset_types(df, dataset_options, features)
 
     shape = {
@@ -507,6 +581,7 @@ def init_vm_dataset(
     dataset_class = dataset.__class__.__name__
 
     if dataset_class == "DataFrame":
+        print("Pandas dataset detected.")
         vm_dataset = init_from_pd_dataset(dataset, dataset_options, targets, features)
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
