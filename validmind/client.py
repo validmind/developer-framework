@@ -312,11 +312,16 @@ def start_run():
     """
     Starts a new test run. This method will return a test run CUID that needs to be
     passed to any functions logging test results to the ValidMind API.
+
+    If "X-RUN-CUID" was already set as an HTTP header to the session, we reuse it
     """
+    if api_session.headers.get("X-RUN-CUID") is not None:
+        return api_session.headers.get("X-RUN-CUID")
+
     r = api_session.post(f"{API_HOST}/start_run")
 
     if r.status_code != 200:
-        print("Could not stat data logging run with ValidMind API")
+        print("Could not start data logging run with ValidMind API")
         raise Exception(r.text)
 
     test_run = r.json()

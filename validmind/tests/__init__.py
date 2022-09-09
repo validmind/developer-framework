@@ -48,7 +48,7 @@ def _summarize_data_quality_results(results):
     )
 
 
-def run_dataset_tests(df, dataset_type, vm_dataset, send=True, run_cuid=None):
+def run_dataset_tests(dataset, dataset_type, vm_dataset, send=True, run_cuid=None):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
     function to automatically start a run for us.
@@ -62,6 +62,9 @@ def run_dataset_tests(df, dataset_type, vm_dataset, send=True, run_cuid=None):
     print(f'Running data quality tests for "{dataset_type}" dataset...\n')
     if run_cuid is None:
         run_cuid = start_run()
+
+    # TODO: standardize the way we pass in the dataset object
+    df = dataset
 
     tests = [
         class_imbalance,
