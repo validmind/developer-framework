@@ -23,14 +23,12 @@ print("1. Initializing SDK...")
 # For test environment use api_host="https://api.test.vm.validmind.ai/api/v1/tracking"
 # Staging project ID=cl5qyzlup00001mmf5xox0ptp
 vm.init(
-    # api_host="https://api.staging.vm.validmind.ai/api/v1/tracking",
+    api_host="https://api.test.vm.validmind.ai/api/v1/tracking",
     project="cl1jyvh2c000909lg1rk0a0zb",
     # project="cl5qyzlup00001mmf5xox0ptp",
     # api_key="ddeff6b7b68b6c6346dcfad49d62a2e2",
     # api_secret="dc7fb85e3aefd1675f68cfee091339a9c62a2f05097b89393a8d044228214188",
 )
-
-run_cuid = vm.start_run()
 
 # Load model_overview.md markdown file and call log_metadata with its text
 print("2. Logging model metadata...")
@@ -60,23 +58,15 @@ targets = vm.DatasetTargets(
     },
 )
 
-print("4. Logging dataset metadata and statistics...")
+print("4. Analyzing dataset...")
 
-vm_dataset = vm.log_dataset(train_df, "training", analyze=True, targets=targets)
-
-
-print("5. Running data quality tests...")
-
-results = vm.run_dataset_tests(
-    train_df,
+analyze_results = vm.analyze_dataset(
+    dataset=train_df,
     dataset_type="training",
-    vm_dataset=vm_dataset,
-    send=True,
-    run_cuid=run_cuid,
+    targets=targets,
 )
 
-
-print("6. Loading and preparing dataset for training...")
+print("5. Loading and preparing dataset for training...")
 
 COLS_CORRELATED = [
     "num_actv_rev_tl",
@@ -95,7 +85,7 @@ train_df = pd.get_dummies(
     train_df, columns=list(df_categories.columns), drop_first=False
 )
 
-print("7. Splitting dataset into training and validation sets...")
+print("6. Splitting dataset into training and validation sets...")
 
 train_inputs, x_test, train_targets, y_test = train_test_split(
     train_df.drop(["loan_status"], axis=1),
@@ -109,7 +99,7 @@ train_inputs, x_test, train_targets, y_test = train_test_split(
     train_inputs, train_targets, test_size=0.25, random_state=10
 )
 
-print("8. Balancing training dataset...")
+print("7. Balancing training dataset...")
 
 x_train_subset = x_train[:1000]
 y_train_subset = y_train[:1000]
@@ -126,7 +116,7 @@ x_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
 x_train, y_train = over.fit_resample(x_train, y_train)
 x_train, y_train = under.fit_resample(x_train, y_train)
 
-print("9. Training model...")
+print("8. Training model...")
 
 xgb_model = xgb.XGBClassifier(
     early_stopping_rounds=10,
@@ -141,16 +131,20 @@ xgb_model.fit(
     eval_set=[(x_train, y_train), (x_test, y_test)],
 )
 
-print("10. Logging model parameters and training metrics...")
-
-vm.log_model(xgb_model)
-vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
+print("10. Evaluating model performance...")
 
 y_pred = xgb_model.predict_proba(x_test)[:, -1]
 predictions = [round(value) for value in y_pred]
 accuracy = accuracy_score(y_test, predictions)
 
 print(f"Accuracy: {accuracy}")
+
+eval_results = vm.evaluate_model(
+    xgb_model,
+    train_set=(x_train, y_train),
+    val_set=(x_val, y_val),
+    test_set=(x_test, y_test),
+)
 
 # # Find an optimal threshold for the model before we evaluate it
 # # We want to focus on a threshold that maximizes the F1 score since
@@ -169,14 +163,3 @@ print(f"Accuracy: {accuracy}")
 # )
 
 # vm.log_metrics([threshold_metric])
-
-print("11. Running model evaluation tests...")
-
-eval_results = vm.evaluate_model(
-    xgb_model,
-    test_set=(x_test, y_test),
-    train_set=(x_train, y_train),
-    # eval_opts={
-    #     "decision_threshold": threshold,
-    # },
-)

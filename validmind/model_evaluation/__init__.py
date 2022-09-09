@@ -8,6 +8,7 @@ from ..client import start_run
 from ..model_utils import SUPPORTED_MODEL_TYPES
 
 
+# TODO: rename once we extract metrics to its own function
 def evaluate_model(
     model, test_set, train_set=None, eval_opts=None, send=True, run_cuid=None
 ):
