@@ -212,7 +212,9 @@ def training_test_degradation_test(
         score_train = metric_fn(y_train_true, train_class_pred)
         score_test = metric_fn(y_test_true, test_class_pred)
 
-        degradation = (score_train - score_test) / score_train
+        degradation = (
+            (score_train - score_test) / score_train if score_train > 0 else -1
+        )
         passed = degradation < test_params["max_threshold"]
 
         test_results.append(
