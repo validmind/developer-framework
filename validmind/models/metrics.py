@@ -5,6 +5,10 @@ data for display and reporting purposes
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
+from pandas import DataFrame
+
+from ..utils import format_records, format_key_values
+
 
 @dataclass()
 class Metric:
@@ -15,17 +19,38 @@ class Metric:
     type: str
     scope: str
     key: str
-    value: Union[dict, list] = None
+    value: Union[dict, list, DataFrame] = None
+    value_formatter: Optional[str] = None
 
     def serialize(self):
         """
         Serializes the Metric to a dictionary so it can be sent to the API
         """
+        if self.value_formatter == "records":
+            value = format_records(self.value)
+        elif self.value_formatter == "key_values":
+            value = format_key_values(self.value)
+        elif self.value_formatter is not None:
+            raise ValueError(
+                f"Invalid value_formatter: {self.value_formatter}. "
+                "Must be one of 'records' or 'key_values'"
+            )
+        else:
+            value = self.value
+
+        # print(type(value))
+        # print(value)
+        # raise (value)
+        if isinstance(value, DataFrame):
+            raise ValueError(
+                "A DataFrame value was provided but no value_formatter was specified."
+            )
+
         return {
             "type": self.type,
             "scope": self.scope,
             "key": self.key,
-            "value": self.value,
+            "value": value,
         }
 
 
