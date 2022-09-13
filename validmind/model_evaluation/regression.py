@@ -70,7 +70,7 @@ def get_model_metrics(  # noqa: C901
                 # we can also display the figures that are going to be
                 # sent to the ValidMind API
                 for api_figure in evaluation_metric_result.api_figures:
-                    report_figures.append(api_figure["figure"])
+                    report_figures.append(api_figure.figure)
 
             if evaluation_metric_result.plots:
                 report_figures.extend(evaluation_metric_result.plots)
@@ -83,7 +83,7 @@ def get_model_metrics(  # noqa: C901
 
         print(f"Sending {len(evaluation_figures)} figures to ValidMind...")
         for figure in evaluation_figures:
-            log_figure(figure["figure"], key=figure["key"], metadata=figure["metadata"])
+            log_figure(figure.figure, key=figure.key, metadata=figure.metadata)
 
     print("\nSummary of metrics:\n")
     table = summarize_evaluation_metrics(evaluation_metrics)
@@ -103,7 +103,7 @@ def get_model_metrics(  # noqa: C901
 
 
 def evaluate_regression_model(
-    model, test_set, train_set=None, send=True, run_cuid=None
+    model, test_set, train_set=None, eval_opts=None, send=True, run_cuid=None
 ):
     """
     Run a suite of model evaluation tests and log their results to the API

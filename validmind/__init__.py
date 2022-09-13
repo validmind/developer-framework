@@ -49,7 +49,13 @@ def analyze_dataset(
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
     print("Analyzing dataset...")
-    vm_dataset = log_dataset(dataset, dataset_type, targets=targets, features=features)
+    vm_dataset = log_dataset(
+        dataset,
+        dataset_type,
+        dataset_options=dataset_options,
+        targets=targets,
+        features=features,
+    )
 
     print("Running data quality tests...")
     results = run_dataset_tests(

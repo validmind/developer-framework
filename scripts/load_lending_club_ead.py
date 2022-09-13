@@ -69,7 +69,7 @@ print("1. Initializing SDK...")
 
 vm.init(
     # api_host="https://api.staging.vm.validmind.ai/api/v1/tracking",
-    project="cl7bi2zf1032zih8h483kvn45",
+    project="cl7zf0v4j00lhum8h34oeg23m",
     # api_key="ddeff6b7b68b6c6346dcfad49d62a2e2",
     # api_secret="dc7fb85e3aefd1675f68cfee091339a9c62a2f05097b89393a8d044228214188",
 )
@@ -174,7 +174,7 @@ features_reference_cat = [
 loan_data_defaults = loan_data_defaults[features_all]
 loan_data_defaults["ccf"] = ccf
 
-print("4. Logging dataset metadata and statistics...")
+print("4. Analyzing dataset...")
 
 dataset_options = {
     "dummy_variables": [
@@ -194,7 +194,7 @@ targets = vm.DatasetTargets(
     by the loan amount (EAD = CCF * loan amount).""",
 )
 
-vm_dataset = vm.log_dataset(
+results = vm.analyze_dataset(
     dataset=loan_data_defaults,
     dataset_type="training",
     dataset_options=dataset_options,
@@ -202,17 +202,7 @@ vm_dataset = vm.log_dataset(
 )
 
 
-print("5. Running data quality tests...")
-
-results = vm.run_dataset_tests(
-    loan_data_defaults,
-    dataset_type="training",
-    vm_dataset=vm_dataset,
-    send=True,
-)
-
-
-print("6. Splitting dataset into training and validation sets...")
+print("5. Splitting dataset into training and validation sets...")
 
 loan_data_defaults = loan_data_defaults.drop(features_reference_cat, axis=1)
 
@@ -241,7 +231,7 @@ loan_data_defaults = loan_data_defaults.drop(features_reference_cat, axis=1)
     random_state=42,
 )
 
-print("7. Training model...")
+print("6. Training model...")
 
 # reg_ead = LinearRegression()
 # reg_ead.fit(x_train, y_train)
@@ -260,19 +250,12 @@ xgb_model.fit(
     ],
 )
 
-print("8. Logging model parameters and training metrics...")
-
-# vm.log_model(reg_ead)
-# vm.log_training_metrics(reg_ead, x_train, y_train, x_val, y_val)
-
-vm.log_model(xgb_model)
-vm.log_training_metrics(xgb_model, x_train, y_train, x_val, y_val)
-
-print("9. Running model evaluation tests...")
+print("7. Running model evaluation tests...")
 
 eval_results = vm.evaluate_model(
     xgb_model,
     test_set=(ead_inputs_test, ead_targets_test),
     train_set=(x_train, y_train),
+    val_set=(x_val, y_val),
 )
 # eval_results = vm.evaluate_model(reg_ead, test_set=(ead_inputs_test, ead_targets_test))

@@ -9,8 +9,6 @@ from io import BytesIO
 import numpy as np
 import requests
 
-from dataclasses import asdict
-
 from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .models import Model, ModelAttributes
 from .model_utils import (
@@ -262,7 +260,7 @@ def log_metrics(metrics, run_cuid=None):
     if run_cuid is None:
         run_cuid = start_run()
 
-    serialized_metrics = [asdict(m) for m in metrics]
+    serialized_metrics = [m.serialize() for m in metrics]
 
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",

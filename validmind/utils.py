@@ -1,4 +1,11 @@
+import math
+
 from typing import Any
+
+from numpy import ndarray
+
+DEFAULT_BIG_NUMBER_DECIMALS = 2
+DEFAULT_SMALL_NUMBER_DECIMALS = 6
 
 
 def get_full_typename(o: Any) -> Any:
@@ -36,3 +43,80 @@ def is_notebook() -> bool:
             return False  # Other type (?)
     except NameError:
         return False  # Probably standard Python interpreter
+
+
+def precision_and_scale(x):
+    """
+    https://stackoverflow.com/questions/3018758/determine-precision-and-scale-of-particular-number-in-python
+
+    Returns a (precision, scale) tuple for a given number.
+    """
+    max_digits = 14
+    int_part = int(abs(x))
+    magnitude = 1 if int_part == 0 else int(math.log10(int_part)) + 1
+    if magnitude >= max_digits:
+        return (magnitude, 0)
+    frac_part = abs(x) - int_part
+    multiplier = 10 ** (max_digits - magnitude)
+    frac_digits = multiplier + int(multiplier * frac_part + 0.5)
+    while frac_digits % 10 == 0:
+        frac_digits /= 10
+    scale = int(math.log10(frac_digits))
+    return (magnitude + scale, scale)
+
+
+def format_records(df):
+    """
+    Round the values on each dataframe's column to a given number of decimal places.
+    The returned value is converted to a dict in "records" with Pandas's to_dict() function.
+
+    We do this for display purposes before sending data to ValidMind. Rules:
+
+    - Check if we are rendering "big" numbers greater than 10 or just numbers between 0 and 1
+    - If the column's smallest number has more decimals 6, use that number's precision
+      so we can avoid rendering a 0 instead
+    - If the column's smallest number has less decimals than 6, use 6 decimal places
+    """
+    for col in df.columns:
+        min_number = df[col].min()
+        _, min_scale = precision_and_scale(min_number)
+
+        if min_number >= 10:
+            df[col] = df[col].round(DEFAULT_BIG_NUMBER_DECIMALS)
+        elif min_scale > DEFAULT_SMALL_NUMBER_DECIMALS:
+            df[col] = df[col].round(DEFAULT_SMALL_NUMBER_DECIMALS)
+        else:
+            df[col] = df[col].round(min_scale)
+
+    return df.to_dict("records")
+
+
+def format_key_values(key_values):
+    """
+    Round the values on each dict's value to a given number of decimal places.
+
+    We do this for display purposes before sending data to ValidMind. Rules:
+
+    - Assume the dict is in this form: {key1: value1, key2: value2, ...}
+    - Check if we are rendering "big" numbers greater than 10 or just numbers between 0 and 1
+    - If the column's smallest number has more decimals 6, use that number's precision
+      so we can avoid rendering a 0 instead
+    - If the column's smallest number has less decimals than 6, use 6 decimal places
+    """
+    min_number = min(key_values.values())
+    _, min_scale = precision_and_scale(min_number)
+
+    for key, value in key_values.items():
+        # Some key values could be a single item ndarray, assert this
+        if isinstance(value, ndarray):
+            assert len(value) == 1, "Expected a single item ndarray"
+            value = value[0]
+
+        if min_number >= 10:
+            key_values[key] = round(value, DEFAULT_BIG_NUMBER_DECIMALS)
+        elif min_scale > DEFAULT_SMALL_NUMBER_DECIMALS:
+            key_values[key] = round(value, DEFAULT_SMALL_NUMBER_DECIMALS)
+        else:
+            key_values[key] = round(value, min_scale)
+
+    return key_values

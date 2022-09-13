@@ -91,7 +91,8 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
             type="training",
             scope="training:validation",
             key="psi",
-            value=psi(y_train_predict, y_val_predict, as_dict=True),
+            value=psi(y_train_predict, y_val_predict),
+            value_formatter="records",
         )
     )
 
@@ -101,6 +102,7 @@ def _get_common_metrics(model, x_train, y_train, x_val, y_val):
             scope="training:validation",
             key="csi",
             value=csi(x_train, x_val),
+            value_formatter="key_values",
         )
     )
 
@@ -220,6 +222,7 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
             scope="training_dataset",
             key="coefficients",
             value=coefficients,
+            value_formatter="key_values",
         )
     )
 
