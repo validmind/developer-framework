@@ -1,6 +1,4 @@
 # Load API key and secret from environment variables
-from email.policy import default
-import tarfile
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -165,8 +163,6 @@ def load_dataset(vm):
 
     loan_data_defaults = loan_data_defaults[features_all]
     loan_data_defaults["ccf"] = ccf
-
-    print("4. Analyzing dataset...")
 
     dataset_options = {
         "dummy_variables": [
