@@ -41,7 +41,9 @@ def _generate_shap_plot(type_, shap_values, x_test):
     )
 
 
-def permutation_importance(model, test_set, test_preds):
+def permutation_importance(
+    model, test_set, test_preds, train_set=None, train_preds=None
+):
     """
     Compute permutation feature importance (PFI) values from sklearn.
     """

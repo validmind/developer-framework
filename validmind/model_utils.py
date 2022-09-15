@@ -3,6 +3,9 @@ Utilities for inspecting client models
 """
 import sys
 
+import numpy as np
+
+from scipy import stats
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
@@ -50,6 +53,99 @@ def get_xgboost_objective(model):
         return "binary"
 
     return "n/a"
+
+
+def _get_ols_summary_variable_metrics(model, x_train, y_train):
+    """
+    Builds an OLS summary table for the model's coefficients, similart
+    to statsmodels. We log each metric as a separate ValidMind metric.
+
+    We assumed the trained model is a linear regression model that
+    exposes its coefficients as a .coef_ attribute
+
+    https://stackoverflow.com/questions/27928275/find-p-value-significance-in-scikit-learn-linearregression
+    """
+    metrics = []
+
+    # TODO: all utility functions should access the predicted values scope
+    # that is passed to evaluate_model()
+    predictions = model.predict(x_train)
+
+    params = np.append(model.intercept_, model.coef_)
+
+    # Add a column of ones for the intercept
+    newX = np.append(np.ones((len(x_train), 1)), x_train, axis=1)
+
+    MSE = (sum((y_train - predictions) ** 2)) / (len(newX) - len(newX[0]))
+
+    var_b = MSE * (np.linalg.inv(np.dot(newX.T, newX)).diagonal())
+    sd_b = np.sqrt(var_b)
+    ts_b = params / sd_b
+
+    p_val = [2 * (1 - stats.t.cdf(np.abs(i), (len(newX) - len(newX[0])))) for i in ts_b]
+
+    # Extract coefficients, std err, t-stats and p-values
+    coefficients = {
+        feature_name: model.coef_[i] for i, feature_name in enumerate(x_train.columns)
+    }
+    coefficients["intercept"] = model.intercept_
+
+    std_errors = {
+        feature_name: sd_b[i + 1] for i, feature_name in enumerate(x_train.columns)
+    }
+    std_errors["intercept"] = sd_b[0]
+
+    t_statistics = {
+        feature_name: ts_b[i + 1] for i, feature_name in enumerate(x_train.columns)
+    }
+    t_statistics["intercept"] = ts_b[0]
+
+    p_values = {
+        feature_name: p_val[i + 1] for i, feature_name in enumerate(x_train.columns)
+    }
+    p_values["intercept"] = p_val[0]
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="coefficients",
+            value=coefficients,
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="std_errors",
+            value=std_errors,
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="t_statistics",
+            value=t_statistics,
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="p_values",
+            value=p_values,
+            value_formatter="key_values",
+        )
+    )
+
+    return metrics
 
 
 def _get_common_metrics(model, x_train, y_train, x_val, y_val):
@@ -209,24 +305,8 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 )
             )
 
-    # Linear model coefficients
-    coef = model.coef_
-    coefficients = {
-        feature_name: coef[i] for i, feature_name in enumerate(x_train.columns)
-    }
-    coefficients["intercept"] = model.intercept_
-
-    vm_metrics.append(
-        Metric(
-            type="training",
-            scope="training_dataset",
-            key="coefficients",
-            value=coefficients,
-            value_formatter="key_values",
-        )
-    )
-
     vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
+    vm_metrics.extend(_get_ols_summary_variable_metrics(model, x_train, y_train))
 
     return vm_metrics
 

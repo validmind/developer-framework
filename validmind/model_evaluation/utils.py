@@ -52,13 +52,14 @@ def summarize_evaluation_metrics(metrics):
         metrics_rows.append(
             [
                 metric.key,
+                metric.scope,
                 metric.value[0],
             ]
         )
 
     table = tabulate(
         metrics_rows,
-        headers=["Metric", "Value"],
+        headers=["Metric", "Scope", "Value"],
         numalign="right",
     )
 

@@ -78,7 +78,8 @@ def format_records(df):
     - If the column's smallest number has less decimals than 6, use 6 decimal places
     """
     for col in df.columns:
-        min_number = df[col].min()
+        not_zero = df[col][df[col] != 0]
+        min_number = not_zero.min()
         _, min_scale = precision_and_scale(min_number)
 
         if min_number >= 10:
@@ -103,7 +104,7 @@ def format_key_values(key_values):
       so we can avoid rendering a 0 instead
     - If the column's smallest number has less decimals than 6, use 6 decimal places
     """
-    min_number = min(key_values.values())
+    min_number = min([v for v in key_values.values() if v != 0])
     _, min_scale = precision_and_scale(min_number)
 
     for key, value in key_values.items():
