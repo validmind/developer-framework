@@ -10,7 +10,13 @@ from ..model_utils import SUPPORTED_MODEL_TYPES
 
 # TODO: rename once we extract metrics to its own function
 def evaluate_model(
-    model, test_set, train_set=None, eval_opts=None, send=True, run_cuid=None
+    model,
+    test_set,
+    train_set=None,
+    val_set=None,
+    eval_opts=None,
+    send=True,
+    run_cuid=None,
 ):
     model_class = model.__class__.__name__
 

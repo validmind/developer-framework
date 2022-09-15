@@ -88,13 +88,15 @@ def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=Tru
     x_train, y_train = train_set
     x_val, y_val = val_set
 
-    log_training_metrics(model, x_train, y_train, x_val, y_val)
+    log_training_metrics(
+        model, x_train.copy(), y_train.copy(), x_val.copy(), y_val.copy()
+    )
 
     print("Running model evaluation tests...")
     eval_results = mod_evaluate_model(
         model,
-        test_set,
-        train_set,
+        test_set=test_set,
+        train_set=train_set,
         eval_opts=eval_opts,
         send=send,
     )

@@ -38,9 +38,6 @@ class Metric:
         else:
             value = self.value
 
-        # print(type(value))
-        # print(value)
-        # raise (value)
         if isinstance(value, DataFrame):
             raise ValueError(
                 "A DataFrame value was provided but no value_formatter was specified."

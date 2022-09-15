@@ -13,6 +13,7 @@ from ..metrics.generic import (
     shap_global_importance,
 )
 from ..metrics.regression import (
+    adjusted_r2_score,
     mae_score,
     mse_score,
     r2_score,
@@ -40,6 +41,7 @@ def get_model_metrics(  # noqa: C901
     print("Computing model evaluation metrics...")
 
     metrics = [
+        adjusted_r2_score,
         mae_score,
         mse_score,
         permutation_importance,
@@ -59,21 +61,31 @@ def get_model_metrics(  # noqa: C901
                     model, test_set, test_preds, linear=True
                 )
             else:
-                evaluation_metric_result = metric_fn(model, test_set, test_preds)
+                evaluation_metric_result = metric_fn(
+                    model, test_set, test_preds, train_set, train_preds
+                )
 
-            if evaluation_metric_result.api_metric:
-                evaluation_metrics.append(evaluation_metric_result.api_metric)
+            # TBD: make sure the test functions always return a list
+            evaluation_metric_result = (
+                [evaluation_metric_result]
+                if not isinstance(evaluation_metric_result, list)
+                else evaluation_metric_result
+            )
 
-            if evaluation_metric_result.api_figures:
-                evaluation_figures.extend(evaluation_metric_result.api_figures)
-                # extract plots from "figure" key on each api_figure so
-                # we can also display the figures that are going to be
-                # sent to the ValidMind API
-                for api_figure in evaluation_metric_result.api_figures:
-                    report_figures.append(api_figure.figure)
+            for result in evaluation_metric_result:
+                if result.api_metric:
+                    evaluation_metrics.append(result.api_metric)
 
-            if evaluation_metric_result.plots:
-                report_figures.extend(evaluation_metric_result.plots)
+                if result.api_figures:
+                    evaluation_figures.extend(result.api_figures)
+                    # extract plots from "figure" key on each api_figure so
+                    # we can also display the figures that are going to be
+                    # sent to the ValidMind API
+                    for api_figure in result.api_figures:
+                        report_figures.append(api_figure.figure)
+
+                if result.plots:
+                    report_figures.extend(result.plots)
 
             pbar.update(1)
 
@@ -113,10 +125,21 @@ def evaluate_regression_model(
     print("Generating model predictions on test dataset...")
     y_pred = model.predict(x_test)
 
+    if train_set is not None:
+        x_train, _ = train_set
+        print("Generating model predictions on training dataset...")
+        y_train_pred = model.predict(x_train)
+
     results = []
     results.extend(
         get_model_metrics(
-            model, test_set, test_preds=(y_pred, None), send=send, run_cuid=run_cuid
+            model,
+            test_set,
+            test_preds=(y_pred, None),
+            train_set=train_set,
+            train_preds=(y_train_pred, None),
+            send=send,
+            run_cuid=run_cuid,
         )
     )
 
