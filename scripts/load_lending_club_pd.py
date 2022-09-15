@@ -15,7 +15,13 @@ from imblearn.over_sampling import SMOTE
 from numpy import argmax
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, precision_recall_curve
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
+
+from jeffreys_test import (
+    calculate_and_return,
+    get_calibrated_pds,
+    process_observations,
+)
 
 
 def log_metadata(vm):
@@ -33,14 +39,15 @@ def log_metadata(vm):
             vm.log_metadata(content_id, f.read())
 
 
-def load_dataset(vm):
+def load_dataset(vm, fast=False):
     print("* Loading dataset...")
 
     # df = pd.read_pickle("./notebooks/datasets/_temp/df_loans_cleaned.pickle")
     # This dataset has been cleaned up much more after df_loans_cleaned
     train_df = pd.read_pickle("./notebooks/datasets/_temp/df_loans_fe.pickle")
-    # Temporary for testing
-    train_df = train_df[0:100000]
+    if fast:
+        print("Fast flag was passed, using only 100k rows of data")
+        train_df = train_df.sample(100000)
 
     targets = vm.DatasetTargets(
         target_column="loan_status",
@@ -119,6 +126,46 @@ def prepare_datasets(vm, df):
 # x_train, y_train = under.fit_resample(x_train, y_train)
 
 
+def grid_search(model_type, train_set):
+    """
+    Only train a model to find an optimal set of parameters
+
+    https://machinelearningmastery.com/tune-number-size-decision-trees-xgboost-python/
+    """
+    print("Grid search was passed, running grid search to find best model...")
+
+    (x_train, y_train) = train_set
+
+    # TODO: allow grid search according to model type
+    model = xgb.XGBClassifier()
+    model.set_params(
+        eval_metric=["error", "logloss", "auc"],
+    )
+
+    # n_estimators = range(50, 250, 50)
+    # param_grid = dict(n_estimators=n_estimators)
+    # max_delta_step = range(1, 10, 2)
+    # param_grid = dict(max_delta_step=max_delta_step)
+    # weights = [1, 5, 10, 20, 25]
+    # param_grid = dict(scale_pos_weight=weights)
+    # colsample_bytree = [0.1, 0.2, 0.5, 0.75, 1]
+    # param_grid = dict(colsample_bytree=colsample_bytree)
+    subsample = [0.1, 0.2, 0.5, 0.75, 1]
+    param_grid = dict(subsample=subsample)
+    kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    grid_search = GridSearchCV(
+        model, param_grid, scoring="f1", n_jobs=-1, cv=kfold, verbose=2
+    )
+    grid_result = grid_search.fit(x_train, y_train)
+
+    print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+    means = grid_result.cv_results_["mean_test_score"]
+    stds = grid_result.cv_results_["std_test_score"]
+    params = grid_result.cv_results_["params"]
+    for mean, stdev, param in zip(means, stds, params):
+        print("%f (%f) with: %r" % (mean, stdev, param))
+
+
 def train_model(vm, model_type, train_set, val_set, test_set):
     print("* Training model...")
 
@@ -126,17 +173,22 @@ def train_model(vm, model_type, train_set, val_set, test_set):
     (x_val, y_val) = val_set
     (x_test, y_test) = test_set
 
-    model = xgb.XGBClassifier(
-        early_stopping_rounds=10,
-        # n_estimators=5,
-    )
+    model = xgb.XGBClassifier()
+    # Values obtained from grid search above
     model.set_params(
+        n_estimators=200,
+        max_delta_step=3,
+        scale_pos_weight=5,
+        colsample_bytree=0.75,
+        subsample=0.5,
         eval_metric=["error", "logloss", "auc"],
     )
+
     model.fit(
         x_train,
         y_train,
         eval_set=[(x_train, y_train), (x_val, y_val)],
+        verbose=False,
     )
 
     y_pred = model.predict_proba(x_test)[:, -1]
@@ -144,10 +196,6 @@ def train_model(vm, model_type, train_set, val_set, test_set):
     accuracy = accuracy_score(y_test, predictions)
 
     print(f"Accuracy on test data: {accuracy}")
-
-    import joblib
-
-    joblib.dump(model, "./notebooks/datasets/_temp/lc_model.pickle")
 
     return model
 
@@ -180,6 +228,81 @@ def evaluate_model(vm, model, train_set, val_set, test_set):
 # vm.log_metrics([threshold_metric])
 
 
+def run_jeffreys_test(vm, model, train_set, val_set, test_set):
+    segments = [
+        {
+            "name": "Grade",
+            "segments": [
+                {"name": "Grade A", "query": "grade_A == 1"},
+                {"name": "Grade B", "query": "grade_B == 1"},
+                {"name": "Grade C", "query": "grade_C == 1"},
+                {"name": "Grade D", "query": "grade_D == 1"},
+                {"name": "Grade E", "query": "grade_E == 1"},
+                {"name": "Grade F", "query": "grade_F == 1"},
+                {"name": "Grade G", "query": "grade_G == 1"},
+            ],
+        },
+        {
+            "name": "Delinquency",
+            "segments": [
+                {"name": "Delinquency: None", "query": "acc_now_delinq == 0"},
+                {"name": "Delinquency: 1 Account", "query": "acc_now_delinq == 1"},
+                {"name": "Delinquency: 2 Accounts", "query": "acc_now_delinq == 2"},
+            ],
+        },
+    ]
+
+    segment_names = [segment["name"] for segment in segments]
+    print(f"* Running Jeffrey's test on the following segments: {segment_names}")
+
+    # Get calibrated PDs from training dataset
+    calibrated_pds = get_calibrated_pds(train_set[0], model, segments)
+
+    # Create observations DataFrame to match the format expected by the provided functions
+    observations = process_observations(test_set[0], model, segments)
+
+    # Define parameters for the test, for now only threshold
+    jeffreys_params = {"threshold": 0.85}
+
+    results = calculate_and_return(
+        observations,
+        cal_pd=calibrated_pds,
+        pool="Segment",
+        obs="Observed",
+        threshold=jeffreys_params["threshold"],
+    )
+
+    # Test passed only if all values for 'Outcome' are 'Satisfactory'
+    test_passed = results["Outcome"].all() == "Satisfactory"
+
+    # Build a vm.TestResult object for each row in the results dataframe
+    test_results = []
+    for _, row in results.iterrows():
+        test_results.append(
+            vm.TestResult(
+                passed=row["Outcome"] == "Satisfactory",
+                values={
+                    "segment": row["Segment"],
+                    "defaults": row["Defaults"],
+                    "observations": row["Observations"],
+                    "default_rate": row["Default Rate"],
+                    "calibrated_pd": row["Calibrated PD"],
+                    "p_value": row["P-value"],
+                },
+            )
+        )
+
+    jeffreys_test_result = vm.TestResults(
+        category="model_performance",
+        test_name="jeffreys_test",
+        params=jeffreys_params,
+        passed=test_passed,
+        results=test_results,
+    )
+
+    vm.log_test_results([jeffreys_test_result])
+
+
 @click.command()
 @click.option(
     "--model",
@@ -191,7 +314,9 @@ def evaluate_model(vm, model, train_set, val_set, test_set):
     type=click.Choice(["local", "dev", "staging"], case_sensitive=False),
     default="local",
 )
-def run(model, env):
+@click.option("--fast", is_flag=True, default=False)
+@click.option("--grid", is_flag=True, default=False)
+def run(model, env, fast, grid):
     project_id = "cl1jyvh2c000909lg1rk0a0zb"
     vm_init_opts = {
         "project": project_id,
@@ -201,11 +326,17 @@ def run(model, env):
     vm.init(**vm_init_opts)
 
     log_metadata(vm)
-    df = load_dataset(vm)
+    df = load_dataset(vm, fast)
 
     train_set, val_set, test_set = prepare_datasets(vm, df)
+
+    if grid:
+        grid_search(model, train_set)
+        return
+
     model = train_model(vm, model, train_set, val_set, test_set)
     evaluate_model(vm, model, train_set=train_set, val_set=val_set, test_set=test_set)
+    run_jeffreys_test(vm, model, train_set, val_set, test_set)
 
 
 if __name__ == "__main__":
