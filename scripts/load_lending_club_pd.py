@@ -57,11 +57,11 @@ def load_dataset(vm, fast=False):
         },
     )
 
-    # vm.analyze_dataset(
-    #     dataset=train_df,
-    #     dataset_type="training",
-    #     targets=targets,
-    # )
+    vm.analyze_dataset(
+        dataset=train_df,
+        dataset_type="training",
+        targets=targets,
+    )
 
     COLS_CORRELATED = [
         "num_actv_rev_tl",
@@ -318,6 +318,9 @@ def run_jeffreys_test(vm, model, train_set, val_set, test_set):
 @click.option("--grid", is_flag=True, default=False)
 def run(model, env, fast, grid):
     project_id = "cl1jyvh2c000909lg1rk0a0zb"
+    if env == "dev":
+        env = "test"
+
     vm_init_opts = {
         "project": project_id,
     }

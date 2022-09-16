@@ -4,6 +4,8 @@ Metrics that are not provided by a common library
 import numpy as np
 import pandas as pd
 
+from scipy.stats import t
+
 
 def psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
     """
@@ -80,3 +82,19 @@ def csi(x_train, x_val):
         csi_values[col] = csi_value
 
     return csi_values
+
+
+def correlation_significance(r, n):
+    """
+    Calculates the significance of a Pearson correlation coefficient
+
+    :param r: Pearson correlation coefficient
+    :param n: Number of samples
+    """
+    if r == 1:
+        return -1
+
+    t_stat = r * np.sqrt((n - 2) / (1 - r**2))
+    p_val = t.sf(np.abs(t_stat), n - 2) * 2
+
+    return p_val

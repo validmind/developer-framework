@@ -14,6 +14,7 @@ from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from sklearn.metrics import r2_score
 
+from .metrics.custom_metrics import correlation_significance
 from .models import Dataset
 
 # Silence this warning: *c* argument looks like a single numeric RGB or
@@ -393,11 +394,15 @@ def _analyze_pd_dataset(df, vm_dataset):
     )["corr"]
 
     # Transform to the current format expected by the UI
+    n = len(df)
     correlations = [
         [
             {
                 "field": key,
                 "value": value,
+                # For simplicity we calculate it for every pair but
+                # it only applies to Pearson correlation
+                "p_value": correlation_significance(value, n),
             }
             for key, value in correlation_row.items()
         ]
