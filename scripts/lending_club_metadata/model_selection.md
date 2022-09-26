@@ -1,6 +1,6 @@
 This use case was modeled as a supervised classification problem where the model needs to classify existing loans as "Fully Paid" or "Charged Off" based on existing data. To solve this problem, two state of the art techniques for binary classification will be evaluated: Logistic Regression and Decision Tree-Based models.
 
-## Logistic Regression
+# Logistic Regression
 
 Logistic regression is commonly used for prediction and classification problems where interpretability is very important. Its simplicity and speed allows for training benchmark models in use cases such as churn prediction and fraud detection. The strength of logistic regression models include:
 
@@ -9,7 +9,7 @@ Logistic regression is commonly used for prediction and classification problems 
 - Model coefficients provide a natural interpretation of feature importance
 - Good accuracy for simpler datasets
 
-## Tree-Based Models
+# Tree-Based Models
 
 The use of tree-based models for classification problems with similar dataset size has been established in the industry and literature. The strength of tree-based models include:
 

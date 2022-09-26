@@ -18,6 +18,7 @@ from sklearn.model_selection import train_test_split
 project_ids = {
     "xgb": "cl7zf0v4j00lhum8h34oeg23m",
     "ols": "cl80k7sph0096ui8hxia5ra62",
+    # "ols": "cl6r0hpt200001gmlnjp9eifs",
 }
 
 # Custom LinearRegression with p-values
@@ -271,7 +272,7 @@ def evaluate_model(vm, model, train_set, val_set, test_set):
 )
 @click.option(
     "--env",
-    type=click.Choice(["local", "dev", "staging"], case_sensitive=False),
+    type=click.Choice(["local", "test", "staging"], case_sensitive=False),
     default="local",
 )
 def run(model, env):

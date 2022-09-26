@@ -205,10 +205,10 @@ def _get_scatter_plot(df, x, y):
         p(df_with_no_nan[x]),
         color="gray",
         linewidth=2,
-        label="Trendline",
+        linestyle="dashed",
+        label="Trendline - R-Squared Score: " + "{:.4f}".format(r2),
     )
     subplot.legend()
-    subplot.set_title("R-Squared Score: " + "{:.4f}".format(r2), fontsize=20)
     _format_axes(subplot)
 
     # avoid drawing on notebooks

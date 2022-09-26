@@ -57,12 +57,6 @@ def load_dataset(vm, fast=False):
         },
     )
 
-    vm.analyze_dataset(
-        dataset=train_df,
-        dataset_type="training",
-        targets=targets,
-    )
-
     COLS_CORRELATED = [
         "num_actv_rev_tl",
         "open_il_12m",
@@ -70,10 +64,26 @@ def load_dataset(vm, fast=False):
         "avg_cur_bal",
         "num_bc_tl",
         "mo_sin_old_rev_tl_op",
+        "sub_grade",
+        "il_util",
+        "num_bc_sats",
+        "num_rev_accts",
+        "mths_since_recent_revol_delinq",
+        "acc_open_past_24mths",
+        "percent_bc_gt_75",
+        "open_acc",
+        "tax_liens",
+        "num_tl_30dpd",
     ]
 
     train_df.drop(COLS_CORRELATED, axis=1, inplace=True)
     print("The following features  were removed.", COLS_CORRELATED)
+
+    vm.analyze_dataset(
+        dataset=train_df,
+        dataset_type="training",
+        targets=targets,
+    )
 
     df_categories = train_df.select_dtypes("object")
     train_df = pd.get_dummies(
@@ -154,13 +164,19 @@ def grid_search(model_type, train_set):
     param_grid = dict(subsample=subsample)
     kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
     grid_search = GridSearchCV(
-        model, param_grid, scoring="f1", n_jobs=-1, cv=kfold, verbose=2
+        model,
+        param_grid,
+        scoring={"AUC": "roc_auc", "F1": "f1"},
+        refit="AUC",
+        n_jobs=-1,
+        cv=kfold,
+        verbose=2,
     )
     grid_result = grid_search.fit(x_train, y_train)
 
     print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
-    means = grid_result.cv_results_["mean_test_score"]
-    stds = grid_result.cv_results_["std_test_score"]
+    means = grid_result.cv_results_["mean_test_AUC"]
+    stds = grid_result.cv_results_["std_test_AUC"]
     params = grid_result.cv_results_["params"]
     for mean, stdev, param in zip(means, stds, params):
         print("%f (%f) with: %r" % (mean, stdev, param))
@@ -176,11 +192,11 @@ def train_model(vm, model_type, train_set, val_set, test_set):
     model = xgb.XGBClassifier()
     # Values obtained from grid search above
     model.set_params(
-        n_estimators=200,
-        max_delta_step=3,
-        scale_pos_weight=5,
-        colsample_bytree=0.75,
-        subsample=0.5,
+        n_estimators=50,
+        max_delta_step=1,
+        scale_pos_weight=1,
+        colsample_bytree=0.1,
+        subsample=1,
         eval_metric=["error", "logloss", "auc"],
     )
 
@@ -311,15 +327,13 @@ def run_jeffreys_test(vm, model, train_set, val_set, test_set):
 )
 @click.option(
     "--env",
-    type=click.Choice(["local", "dev", "staging"], case_sensitive=False),
+    type=click.Choice(["local", "test", "staging"], case_sensitive=False),
     default="local",
 )
 @click.option("--fast", is_flag=True, default=False)
 @click.option("--grid", is_flag=True, default=False)
 def run(model, env, fast, grid):
     project_id = "cl1jyvh2c000909lg1rk0a0zb"
-    if env == "dev":
-        env = "test"
 
     vm_init_opts = {
         "project": project_id,
