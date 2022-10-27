@@ -13,6 +13,7 @@ import xgboost as xgb
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
 from numpy import argmax
+from sklearn import linear_model
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, precision_recall_curve
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
@@ -189,16 +190,26 @@ def train_model(vm, model_type, train_set, val_set, test_set):
     (x_val, y_val) = val_set
     (x_test, y_test) = test_set
 
-    model = xgb.XGBClassifier()
-    # Values obtained from grid search above
-    model.set_params(
-        n_estimators=50,
-        max_delta_step=1,
-        scale_pos_weight=1,
-        colsample_bytree=0.1,
-        subsample=1,
-        eval_metric=["error", "logloss", "auc"],
-    )
+    if model_type == "lr":
+        # TBD: model is not converging
+        # penalty='l2'
+        # ,fit_intercept=True
+        # ,solver='newton-cg'
+        # ,max_iter=10000
+        # ,tol=10
+        model = linear_model.LogisticRegression(solver="saga", max_iter=100000)
+        model.fit(x_train, y_train)
+    elif model_type == "xgb":
+        model = xgb.XGBClassifier()
+        # Values obtained from grid search above
+        model.set_params(
+            n_estimators=50,
+            max_delta_step=1,
+            scale_pos_weight=1,
+            colsample_bytree=0.1,
+            subsample=1,
+            eval_metric=["error", "logloss", "auc"],
+        )
 
     model.fit(
         x_train,
@@ -321,7 +332,7 @@ def run_jeffreys_test(vm, model, train_set, val_set, test_set):
 
 @click.command()
 @click.option(
-    "--model",
+    "--model-type",
     type=click.Choice(["xgb", "lr"], case_sensitive=False),
     default="xgb",
 )
@@ -332,8 +343,9 @@ def run_jeffreys_test(vm, model, train_set, val_set, test_set):
 )
 @click.option("--fast", is_flag=True, default=False)
 @click.option("--grid", is_flag=True, default=False)
-def run(model, env, fast, grid):
+def run(model_type, env, fast, grid):
     project_id = "cl1jyvh2c000909lg1rk0a0zb"
+    # project_id = "cl9dh2utr00001fmptchso49c"
 
     vm_init_opts = {
         "project": project_id,
@@ -351,7 +363,7 @@ def run(model, env, fast, grid):
         grid_search(model, train_set)
         return
 
-    model = train_model(vm, model, train_set, val_set, test_set)
+    model = train_model(vm, model_type, train_set, val_set, test_set)
     evaluate_model(vm, model, train_set=train_set, val_set=val_set, test_set=test_set)
     run_jeffreys_test(vm, model, train_set, val_set, test_set)
 

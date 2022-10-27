@@ -26,7 +26,12 @@ XGBOOST_EVAL_METRICS = {
     ],  # TBD - how to compute more than one metric for regression?
 }
 
-SUPPORTED_MODEL_TYPES = ["XGBClassifier", "XGBRegressor", "LinearRegression"]
+SUPPORTED_MODEL_TYPES = [
+    "XGBClassifier",
+    "XGBRegressor",
+    "LogisticRegression",
+    "LinearRegression",
+]
 
 
 def get_xgboost_version():
@@ -270,6 +275,16 @@ def get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val):
     return vm_metrics
 
 
+def get_sklearn_classification_metrics(model, x_train, y_train, x_val, y_val):
+    """
+    Attempts to extract model training metrics from a model object instance
+    """
+    vm_metrics = []
+    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
+
+    return vm_metrics
+
+
 def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     """
     Attempts to extract model training metrics from a model object instance
@@ -334,6 +349,12 @@ def get_info_from_model_instance(model):
         subtask = "regression"
         framework = "XGBoost"
         framework_version = get_xgboost_version()
+    elif model_class == "LogisticRegression":
+        architecture = "Linear Regression"
+        task = "classification"
+        subtask = "binary"
+        framework = "Scikit-learn"
+        framework_version = get_sklearn_version()
     elif model_class == "LinearRegression":
         architecture = "Ordinary least squares Linear Regression"
         task = "regression"
@@ -389,5 +410,9 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
         metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
     elif model_class == "LinearRegression":
         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
+    elif model_class == "LogisticRegression":
+        metrics = get_sklearn_classification_metrics(
+            model, x_train, y_train, x_val, y_val
+        )
 
     return metrics

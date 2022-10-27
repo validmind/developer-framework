@@ -29,7 +29,7 @@ def evaluate_model(
         run_cuid = start_run()
 
     # Only supports xgboost classifiers at the moment
-    if model_class == "XGBClassifier":
+    if model_class == "XGBClassifier" or model_class == "LogisticRegression":
         return evaluate_classification_model(
             model, test_set, train_set, eval_opts, send, run_cuid
         )
