@@ -77,9 +77,20 @@ def shap_global_importance(model, test_set, test_preds, linear=False):
     """
     x_test, _ = test_set
 
-    explainer = (
-        shap.TreeExplainer(model) if not linear else shap.LinearExplainer(model, x_test)
-    )
+    model_class = model.__class__.__name__
+
+    # RandomForestClassifier applies here too
+    if model_class == "XGBClassifier":
+        explainer = shap.TreeExplainer(model)
+    elif (
+        model_class == "LogisticRegression"
+        or model_class == "XGBRegressor"
+        or model_class == "LinearRegression"
+    ):
+        explainer = shap.LinearExplainer(model, x_test)
+    else:
+        raise ValueError(f"Model {model_class} not supported for SHAP importance.")
+
     shap_values = explainer.shap_values(x_test)
 
     # For models with a single output this returns a numpy.ndarray of SHAP values

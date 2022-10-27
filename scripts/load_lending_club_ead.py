@@ -268,15 +268,19 @@ def evaluate_model(vm, model, train_set, val_set, test_set):
 
 @click.command()
 @click.option(
-    "--model", type=click.Choice(["xgb", "ols"], case_sensitive=False), required=True
+    "--model-type",
+    type=click.Choice(["xgb", "ols"], case_sensitive=False),
+    required=True,
 )
 @click.option(
     "--env",
     type=click.Choice(["local", "test", "staging"], case_sensitive=False),
     default="local",
 )
-def run(model, env):
-    project_id = project_ids[model]
+def run(model_type, env):
+    # project_id = project_ids[model]
+    project_id = "cl9dh50dt000f1fmpo6h6222r"
+
     vm_init_opts = {
         "project": project_id,
     }
@@ -288,7 +292,7 @@ def run(model, env):
     df = load_dataset(vm)
 
     train_set, val_set, test_set = prepare_datasets(vm, df)
-    model = train_model(vm, model, train_set, val_set)
+    model = train_model(vm, model_type, train_set, val_set)
     evaluate_model(vm, model, train_set=train_set, val_set=val_set, test_set=test_set)
 
 
