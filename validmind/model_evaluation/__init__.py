@@ -37,3 +37,9 @@ def evaluate_model(
         return evaluate_regression_model(
             model, test_set, train_set, eval_opts, send, run_cuid
         )
+    elif model_class == "GLMResultsWrapper":
+        # Refitting again, need a big refactor for statsmodels support
+        refitted = model.model.fit()
+        return evaluate_regression_model(
+            refitted, test_set, train_set, eval_opts, send, run_cuid
+        )

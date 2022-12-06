@@ -26,6 +26,7 @@ config = Settings()
 # TODO: same function as classification and regression, refactor
 # TODO: shap requires an extra arg
 # TODO: refactor this function since C901 means it's too complex
+# TODO: does not support non-sklearn models
 def get_model_metrics(  # noqa: C901
     model,
     test_set,

@@ -27,11 +27,22 @@ XGBOOST_EVAL_METRICS = {
 }
 
 SUPPORTED_MODEL_TYPES = [
+    "GLMResultsWrapper",
     "XGBClassifier",
     "XGBRegressor",
     "LogisticRegression",
     "LinearRegression",
 ]
+
+SUPPORTED_STATSMODELS_FAMILIES = {
+    "statsmodels.genmod.families.family.Poisson": "poisson",
+    "statsmodels.genmod.families.family.Gaussian": "gaussian",
+}
+
+SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
+    "statsmodels.genmod.families.links.log": "log",
+    "statsmodels.genmod.families.links.identity": "identity",
+}
 
 
 def get_xgboost_version():
@@ -44,6 +55,13 @@ def get_xgboost_version():
 def get_sklearn_version():
     if "sklearn" in sys.modules:
         return sys.modules["sklearn"].__version__
+
+    return "n/a"
+
+
+def get_statsmodels_version():
+    if "statsmodels" in sys.modules:
+        return sys.modules["statsmodels"].__version__
 
     return "n/a"
 
@@ -146,6 +164,61 @@ def _get_ols_summary_variable_metrics(model, x_train, y_train):
             scope="training_dataset",
             key="p_values",
             value=p_values,
+            value_formatter="key_values",
+        )
+    )
+
+    return metrics
+
+
+def _get_statsmodels_summary_variable_metrics(model, x_train, y_train):
+    """
+    Builds an summary table for the model's coefficients for a statsmodels
+    model instance. We log each metric as a separate ValidMind metric.
+
+    https://stackoverflow.com/questions/51734180/converting-statsmodels-summary-object-to-pandas-dataframe
+    """
+    metrics = []
+
+    summary_table = model.summary2().tables[1]
+    summary_table_dict = summary_table.to_dict()
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="coefficients",
+            value=summary_table_dict["Coef."],
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="std_errors",
+            value=summary_table_dict["Std.Err."],
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="t_statistics",
+            value=summary_table_dict["z"],
+            value_formatter="key_values",
+        )
+    )
+
+    metrics.append(
+        Metric(
+            type="training",
+            scope="training_dataset",
+            key="p_values",
+            value=summary_table_dict["P>|z|"],
             value_formatter="key_values",
         )
     )
@@ -326,6 +399,67 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     return vm_metrics
 
 
+def get_statsmodels_regression_metrics(model, x_train, y_train, x_val, y_val):
+    """
+    Attempts to extract model training metrics from a statsmodels model instance
+    """
+    # TODO: support overriding metrics
+    metric_names = DEFAULT_REGRESSION_METRICS
+
+    vm_metrics = []
+
+    # Log training and validation dataset metrics separately
+    dataset_tuples = (
+        (x_train, y_train, "training_dataset"),
+        (x_val, y_val, "validation_dataset"),
+    )
+
+    for x, y, dataset_scope in dataset_tuples:
+        y_pred = model.predict(x)
+
+        for metric_name in metric_names:
+            if metric_name == "mae":
+                metric_value = mean_absolute_error(y, y_pred)
+            elif metric_name == "mse":
+                metric_value = mean_squared_error(y, y_pred)
+            elif metric_name == "r2":
+                metric_value = r2_score(y, y_pred)
+
+            vm_metrics.append(
+                Metric(
+                    type="training",
+                    scope=dataset_scope,
+                    key=metric_name,
+                    value=[metric_value],
+                )
+            )
+
+    # vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
+    vm_metrics.extend(
+        _get_statsmodels_summary_variable_metrics(model, x_train, y_train)
+    )
+
+    return vm_metrics
+
+
+def get_statsmodels_model_params(model):
+    """
+    Extracts the fit() method's parametesr from a
+    statsmodels model object instance
+    """
+    model_instance = model.model
+    family_class = model_instance.family.__class__.__name__
+    link_class = model_instance.family.link.__class__.__name__
+
+    return {
+        "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
+        "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
+        "formula": model_instance.formula,
+        "method": model.method,
+        "cov_type": model.cov_type,
+    }
+
+
 def get_info_from_model_instance(model):
     """
     Attempts to extract all model info from a model object instance
@@ -361,6 +495,12 @@ def get_info_from_model_instance(model):
         subtask = "regression"
         framework = "Scikit-learn"
         framework_version = get_sklearn_version()
+    elif model_class == "GLMResultsWrapper":
+        architecture = "Generalized Linear Model (GLM)"
+        task = "regression"
+        subtask = "regression"
+        framework = "statsmodels"
+        framework_version = get_statsmodels_version()
 
     return {
         "architecture": architecture,
@@ -385,7 +525,9 @@ def get_params_from_model_instance(model):
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier" or model_class == "XGBRegressor":
         params = model.get_xgb_params()
-    # SKLearn models at the moment
+    elif model_class == "GLMResultsWrapper":
+        params = get_statsmodels_model_params(model)
+    # Default to SKLearn models at the moment
     else:
         params = model.get_params()
 
@@ -413,6 +555,12 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
     elif model_class == "LogisticRegression":
         metrics = get_sklearn_classification_metrics(
             model, x_train, y_train, x_val, y_val
+        )
+    elif model_class == "GLMResultsWrapper":
+        print("Refitting model...")
+        refitted = model.model.fit()
+        metrics = get_statsmodels_regression_metrics(
+            refitted, x_train, y_train, x_val, y_val
         )
 
     return metrics
