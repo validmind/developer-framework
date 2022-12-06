@@ -27,11 +27,22 @@ XGBOOST_EVAL_METRICS = {
 }
 
 SUPPORTED_MODEL_TYPES = [
+    "GLMResultsWrapper",
     "XGBClassifier",
     "XGBRegressor",
     "LogisticRegression",
     "LinearRegression",
 ]
+
+SUPPORTED_STATSMODELS_FAMILIES = {
+    "statsmodels.genmod.families.family.Poisson": "poisson",
+    "statsmodels.genmod.families.family.Gaussian": "gaussian",
+}
+
+SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
+    "statsmodels.genmod.families.links.log": "log",
+    "statsmodels.genmod.families.links.identity": "identity",
+}
 
 
 def get_xgboost_version():
@@ -44,6 +55,13 @@ def get_xgboost_version():
 def get_sklearn_version():
     if "sklearn" in sys.modules:
         return sys.modules["sklearn"].__version__
+
+    return "n/a"
+
+
+def get_statsmodels_version():
+    if "statsmodels" in sys.modules:
+        return sys.modules["statsmodels"].__version__
 
     return "n/a"
 
@@ -326,6 +344,24 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
     return vm_metrics
 
 
+def get_statsmodels_model_params(model):
+    """
+    Extracts the fit() method's parametesr from a
+    statsmodels model object instance
+    """
+    model_instance = model.model
+    family_class = model_instance.family.__class__.__name__
+    link_class = model_instance.family.link.__class__.__name__
+
+    return {
+        "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
+        "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
+        "formula": model_instance.formula,
+        "method": model.method,
+        "cov_type": model.cov_type,
+    }
+
+
 def get_info_from_model_instance(model):
     """
     Attempts to extract all model info from a model object instance
@@ -361,6 +397,12 @@ def get_info_from_model_instance(model):
         subtask = "regression"
         framework = "Scikit-learn"
         framework_version = get_sklearn_version()
+    elif model_class == "GLMResultsWrapper":
+        architecture = "Generalized Linear Model (GLM)"
+        task = "regression"
+        subtask = "regression"
+        framework = "statsmodels"
+        framework_version = get_statsmodels_version()
 
     return {
         "architecture": architecture,
@@ -385,7 +427,9 @@ def get_params_from_model_instance(model):
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier" or model_class == "XGBRegressor":
         params = model.get_xgb_params()
-    # SKLearn models at the moment
+    elif model_class == "GLMResultsWrapper":
+        params = get_statsmodels_model_params(model)
+    # Default to SKLearn models at the moment
     else:
         params = model.get_params()
 

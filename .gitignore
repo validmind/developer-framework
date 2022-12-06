@@ -158,3 +158,9 @@ profile_report.html
 
 notebooks/_temp
 notebooks/datasets/_temp
+
+
+# Ignore insurance mortality demo data
+notebooks/insurance_mortality/**/*.csv
+notebooks/insurance_mortality/**/*.pickle
+notebooks/insurance_mortality/**/*.zip
