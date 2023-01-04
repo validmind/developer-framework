@@ -1,11 +1,11 @@
-# ValidMind SDK
+# ValidMind Python Client
 
-## Integrating the ValidMind SDK to your development environment
+## Integrating the ValidMind Developer Framework to your development environment
 
 Run `make build` to build a new Python package for the SDK. Pushing
 to a PyPI repository is work in progress.
 
-## Contributing to ValidMind SDK
+## Contributing to ValidMind Developer Framework
 
 ### Install dependencies
 
