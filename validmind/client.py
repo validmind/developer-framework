@@ -59,6 +59,7 @@ class NumpyEncoder(json.JSONEncoder):
 def __ping():
     r = api_session.get(f"{API_HOST}/ping")
 
+    # TODO: handle 401
     if r.status_code != 200:
         print("Unsuccessful ping to ValidMind API")
         raise Exception(r.text)
