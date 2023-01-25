@@ -1,7 +1,5 @@
 """
-Regression Metrics
-
-TODO: compute the same metric for training and test sets
+Regression functions from the sklearn interface
 """
 from sklearn.metrics import (
     mean_absolute_error as mean_absolute_error_sklearn,
@@ -9,7 +7,7 @@ from sklearn.metrics import (
     r2_score as r2_score_sklearn,
 )
 
-from ..models import Metric, MetricResult
+from ....vm_models import Metric, MetricResult
 
 
 def mae_score(model, test_set, test_preds, train_set, train_preds):

@@ -4,7 +4,7 @@ Entrypoint to Model Evaluation API
 from .classification import evaluate_classification_model
 from .regression import evaluate_regression_model
 
-from ..client import start_run
+from ..api_client import start_run
 from ..model_utils import SUPPORTED_MODEL_TYPES
 
 

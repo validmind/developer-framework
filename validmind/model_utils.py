@@ -9,8 +9,8 @@ from scipy import stats
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .metrics.custom_metrics import csi, psi
-from .models import Metric
+from .data_validation.metrics import csi, psi
+from .vm_models import Metric
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",

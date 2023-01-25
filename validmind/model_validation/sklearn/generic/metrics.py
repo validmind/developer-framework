@@ -1,44 +1,11 @@
 """
-Generic Metrics
+Generic metrics functions from the sklearn interface
 """
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import shap
-
 from sklearn.inspection import permutation_importance as pfi_sklearn
 
-from ..models import Figure, Metric, MetricResult
-from .plots import get_pfi_plot
-
-
-def _generate_shap_plot(type_, shap_values, x_test):
-    """
-    Plots two types of SHAP global importance (SHAP).
-    :params type: mean, summary
-    :params shap_values: a matrix
-    :params x_test:
-    """
-    plt.close("all")
-
-    # preserve styles
-    mpl.rcParams["grid.color"] = "#CCC"
-    ax = plt.axes()
-    ax.set_facecolor("white")
-
-    summary_plot_extra_args = {}
-    if type_ == "mean":
-        summary_plot_extra_args = {"plot_type": "bar", "color": "#DE257E"}
-
-    shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
-    figure = plt.gcf()
-    # avoid displaying on notebooks and clears the canvas for the next plot
-    plt.close()
-
-    return Figure(
-        figure=figure,
-        key=f"shap:{type_}",
-        metadata={"type": type_},
-    )
+from .plots import get_pfi_plot, get_shap_plot
+from ....vm_models import Metric, MetricResult
 
 
 def permutation_importance(
@@ -108,7 +75,7 @@ def shap_global_importance(model, test_set, test_preds, linear=False):
             key="shap",
         ),
         api_figures=[
-            _generate_shap_plot("mean", shap_values, x_test),
-            _generate_shap_plot("summary", shap_values, x_test),
+            get_shap_plot("mean", shap_values, x_test),
+            get_shap_plot("summary", shap_values, x_test),
         ],
     )

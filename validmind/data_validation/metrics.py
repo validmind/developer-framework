@@ -1,5 +1,5 @@
 """
-Metrics that are not provided by a common library
+Metrics functions for any dataset
 """
 import numpy as np
 import pandas as pd

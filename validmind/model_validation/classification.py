@@ -7,8 +7,8 @@ from IPython.display import display
 from tqdm import tqdm
 
 from .utils import summarize_evaluation_metrics, summarize_evaluation_results
-from ..client import log_metrics, log_figure, log_test_results
-from ..metrics.classification import (
+from ..api_client import log_metrics, log_figure, log_test_results
+from .sklearn.binary_classification.metrics import (
     accuracy_score,
     confusion_matrix,
     f1_score,
@@ -18,7 +18,7 @@ from ..metrics.classification import (
     roc_auc_score,
     roc_curve,
 )
-from ..metrics.generic import (
+from .sklearn.generic.metrics import (
     permutation_importance,
     shap_global_importance,
 )

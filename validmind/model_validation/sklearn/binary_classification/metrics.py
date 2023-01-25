@@ -1,5 +1,5 @@
 """
-Classification Metrics
+Binary classification functions from the sklearn interface
 """
 from sklearn import metrics
 from sklearn.metrics import (
@@ -9,7 +9,7 @@ from sklearn.metrics import (
 )
 
 from .plots import get_confusion_matrix_plot, get_pr_curve_plot, get_roc_curve_plot
-from ..models import Metric, MetricResult
+from ....vm_models import Metric, MetricResult
 
 
 def accuracy_score(model, test_set, test_preds):

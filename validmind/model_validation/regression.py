@@ -7,12 +7,12 @@ from IPython.display import display
 from tqdm import tqdm
 
 from .utils import summarize_evaluation_metrics
-from ..client import log_metrics, log_figure
-from ..metrics.generic import (
+from ..api_client import log_metrics, log_figure
+from .sklearn.generic.metrics import (
     permutation_importance,
     shap_global_importance,
 )
-from ..metrics.regression import (
+from .sklearn.regression.metrics import (
     adjusted_r2_score,
     mae_score,
     mse_score,

@@ -13,7 +13,7 @@ from .data_quality_pandas import (
     skewness,
     zeros,
 )
-from ..client import log_test_results, start_run
+from ..api_client import log_test_results, start_run
 from ..dataset_utils import get_transformed_dataset
 
 config = Settings()

@@ -1,5 +1,5 @@
 """
-Utilities to create plots for metrics that are formatteed for ValidMind
+Binary classification plotting functions from the sklearn interface
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -21,30 +21,6 @@ def get_confusion_matrix_plot(tn, fp, fn, tp):
     cfm_plot = ConfusionMatrixDisplay(confusion_matrix=cfm)
 
     return cfm_plot
-
-
-def get_pfi_plot(pfi_values):
-    plt.close("all")
-
-    pfi_bar_values = []
-    for feature, values in pfi_values.items():
-        pfi_bar_values.append({"feature": feature, "value": values[0][0]})
-
-    pfi_bar_values = sorted(pfi_bar_values, key=lambda d: d["value"], reverse=True)
-    pfi_x_values = [d["value"] for d in pfi_bar_values]
-    pfi_y_values = [d["feature"] for d in pfi_bar_values]
-
-    # Plot a bar plot with horizontal bars
-    figure, ax = plt.subplots()
-    ax.barh(pfi_y_values, pfi_x_values, color="darkorange")
-    ax.set_xlabel("Importance")
-    ax.set_ylabel("Feature")
-    ax.set_title("Permutation Feature Importance")
-    ax.set_yticks(np.arange(len(pfi_y_values)))
-    ax.set_yticklabels(pfi_y_values)
-    ax.invert_yaxis()
-
-    return figure
 
 
 def get_pr_curve_plot(precision, recall):
