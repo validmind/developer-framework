@@ -38,7 +38,7 @@ class Dataset:
     shape: dict
     correlation_matrix: object = None
     correlations: dict = None
-    split: str = None
+    type: str = None
     options: dict = None
     statistics: dict = None
     targets: dict = None
@@ -71,12 +71,15 @@ class Dataset:
         Serializes the model to a dictionary so it can be sent to the API
         """
         dataset_dict = {
-            "correlations": self.correlations,
+            "correlations": {
+                # TODO: generalize this
+                "pearson": self.correlations,
+            },
             "fields": self.fields,
             "sample": self.sample,
             "shape": self.shape,
             "statistics": self.statistics,
-            "split": self.split,
+            "type": self.type,
         }
 
         # Dataset with no targets can be logged
@@ -98,12 +101,17 @@ class Dataset:
         """
         Extracts correlations for each field in the dataset
         """
-        # TODO: Ignore fields that have very high cardinality
-        #   if field["statistics"]["distinct"] < 0.1:
-        fields_for_correlation = [field["id"] for field in self.fields]
+        # Ignore fields that have very high cardinality
+        fields_for_correlation = []
+        for field in self.fields:
+            if "statistics" in field and "distinct" in field["statistics"]:
+                if field["statistics"]["distinct"] < 0.1:
+                    fields_for_correlation.append(field["id"])
 
         self.correlation_matrix = associations(
-            self.transformed_df[fields_for_correlation], compute_only=True, plot=False
+            self.transformed_dataset[fields_for_correlation],
+            compute_only=True,
+            plot=False,
         )["corr"]
 
         # Transform to the current format expected by the UI

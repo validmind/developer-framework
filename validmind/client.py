@@ -31,7 +31,7 @@ config = Settings()
 
 def init_dataset(
     dataset,
-    split,
+    type,
     options=None,
     targets=None,
 ):
@@ -42,7 +42,7 @@ def init_dataset(
     DataFrames at the moment.
 
     :param pd.DataFrame dataset: We only support Pandas DataFrames at the moment
-    :param str split: The dataset split is necessary for mapping and relating multiple
+    :param str type: The dataset split type is necessary for mapping and relating multiple
         datasets together. Can be one of training, validation, test or generic
     :param dict options: A dictionary of options for the dataset
     :param vm.vm.DatasetTargets targets: A list of target variables
@@ -56,11 +56,11 @@ def init_dataset(
     else:
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
-    vm_dataset.split = split
+    vm_dataset.type = type
     return vm_dataset
 
 
-def analyze_dataset(vm_dataset, send=True):
+def analyze_dataset(vm_dataset):
     """
     Analyzes a dataset by extracting summary statistics and running data quality tests
     on it. Results are logged to the ValidMind API
@@ -93,7 +93,7 @@ def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
     :param vm_dataset: VM Dataset metadata
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
-    print(f'Running data quality tests for "{vm_dataset.split}" dataset...\n')
+    print(f'Running data quality tests for "{vm_dataset.type}" dataset...\n')
     if run_cuid is None:
         run_cuid = start_run()
 
@@ -119,7 +119,7 @@ def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
     print("\nTest suite has completed.")
     if send:
         print("Sending results to ValidMind...")
-        log_test_results(results, run_cuid=run_cuid, dataset_type=vm_dataset.split)
+        log_test_results(results, run_cuid=run_cuid, dataset_type=vm_dataset.type)
 
     print("\nSummary of results:\n")
     print(summarize_data_quality_results(results))
