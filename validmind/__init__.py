@@ -14,10 +14,9 @@ from .api_client import (
     log_figure,
 )
 
-from .client import analyze_dataset, evaluate_model
+from .client import analyze_dataset, evaluate_model, run_dataset_tests
 
 from .vm_models import DatasetTargets, Figure, Metric, Model, ModelAttributes
-from .tests import run_dataset_tests
 from .tests.config import TestResult, TestResults
 
 __all__ = [

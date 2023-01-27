@@ -1,52 +1,129 @@
 """
 Client interface for all data and model validation functions
 """
+from tqdm import tqdm
+
 from .api_client import (
     log_dataset,
+    log_figure,
     log_model,
+    log_test_results,
     log_training_metrics,
+    start_run,
+)
+
+from .tests.config import Settings
+from .tests.data_quality_pandas import (
+    class_imbalance,
+    duplicates,
+    high_cardinality,
+    missing_values,
+    skewness,
+    zeros,
 )
 
 from .model_validation import evaluate_model as mod_evaluate_model
-from .tests import run_dataset_tests
+from .utils import summarize_data_quality_results
+from .vm_models import Dataset
+
+config = Settings()
 
 
-def analyze_dataset(
+def init_dataset(
     dataset,
-    dataset_type,
-    dataset_options=None,
+    split,
+    options=None,
     targets=None,
-    features=None,
-    send=True,
 ):
+    """
+    Initialies a VM Dataset, which can then be passed to other functions
+    that can perform additional analysis and tests on the data. This function
+    also ensures we are reading a valid dataset type. We only support Pandas
+    DataFrames at the moment.
+
+    :param pd.DataFrame dataset: We only support Pandas DataFrames at the moment
+    :param str split: The dataset split is necessary for mapping and relating multiple
+        datasets together. Can be one of training, validation, test or generic
+    :param dict options: A dictionary of options for the dataset
+    :param vm.vm.DatasetTargets targets: A list of target variables
+    """
+    dataset_class = dataset.__class__.__name__
+
+    # TODO: when we accept numpy datasets we can convert them to/from pandas
+    if dataset_class == "DataFrame":
+        print("Pandas dataset detected. Initializing VM Dataset instance...")
+        vm_dataset = Dataset.init_from_pd_dataset(dataset, options, targets)
+    else:
+        raise ValueError("Only Pandas datasets are supported at the moment.")
+
+    vm_dataset.split = split
+    return vm_dataset
+
+
+def analyze_dataset(vm_dataset, send=True):
     """
     Analyzes a dataset by extracting summary statistics and running data quality tests
     on it. Results are logged to the ValidMind API
 
-    :param pd.DataFrame dataset: We only support Pandas DataFrames at the moment
-    :param str dataset_type: The dataset type is necessary for mapping and relating multiple datasets together.
-        Can be one of training, validation, test or generic
-    :param dict dataset_options: A dictionary of options for the dataset
-    :param vm.vm.DatasetTargets targets: A list of target variables
-    :param list features: An optional list of extra attributes for any feature
+    :param pd.DataFrame vm_dataset: VM Dataset instance
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     """
-    print("Analyzing dataset...")
-    vm_dataset = log_dataset(
-        dataset,
-        dataset_type,
-        dataset_options=dataset_options,
-        targets=targets,
-        features=features,
-    )
+    print("Calculating decriptive statistics...")
+    vm_dataset.describe()
 
-    print("Running data quality tests...")
-    results = run_dataset_tests(
-        dataset=dataset,
-        dataset_type=dataset_type,
-        vm_dataset=vm_dataset,
-        send=send,
-    )
+    print("Calculating feature correlations...")
+    vm_dataset.get_correlations()
+
+    print("Logging dataset metadata to ValidMind...")
+    log_dataset(vm_dataset)
+
+    print("Generating correlation plots...")
+    correlation_plots = vm_dataset.get_correlation_plots()
+    for corr_plot in correlation_plots:
+        log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
+
+
+# TODO: move all of this to test_plans
+def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
+    """
+    Run all or a subset of tests on the given dataframe. For now we allow this
+    function to automatically start a run for us.
+
+    :param pd.DataFrame df: Dataframe for a dataset. Should contain dependent and independent variables
+    :param vm_dataset: VM Dataset metadata
+    :param bool send: Whether to post the test results to the API. send=False is useful for testing
+    """
+    print(f'Running data quality tests for "{vm_dataset.split}" dataset...\n')
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    tests = [
+        class_imbalance,
+        duplicates,
+        high_cardinality,
+        missing_values,
+        # pearson_correlation, # Skipping this test for now
+        skewness,
+        # unique, # ignore unique for now
+        zeros,
+    ]
+    results = []
+
+    transformed_df = vm_dataset.transformed_dataset
+
+    for test in tqdm(tests):
+        test_results = test(transformed_df, vm_dataset, config)
+        if test_results is not None:
+            results.append(test_results)
+
+    print("\nTest suite has completed.")
+    if send:
+        print("Sending results to ValidMind...")
+        log_test_results(results, run_cuid=run_cuid, dataset_type=vm_dataset.split)
+
+    print("\nSummary of results:\n")
+    print(summarize_data_quality_results(results))
+    print()
 
     return results
 

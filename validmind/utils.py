@@ -1,5 +1,6 @@
 import math
 
+from tabulate import tabulate
 from typing import Any
 
 from numpy import ndarray
@@ -121,3 +122,32 @@ def format_key_values(key_values):
             key_values[key] = round(value, min_scale)
 
     return key_values
+
+
+def summarize_data_quality_results(results):
+    """
+    Summarize the results of the data quality test suite
+    """
+    test_results = []
+    for result in results:
+        num_passed = len([r for r in result.results if r.passed])
+        num_failed = len([r for r in result.results if not r.passed])
+
+        percent_passed = (
+            1 if len(result.results) == 0 else num_passed / len(result.results)
+        )
+        test_results.append(
+            [
+                result.test_name,
+                result.passed,
+                num_passed,
+                num_failed,
+                percent_passed * 100,
+            ]
+        )
+
+    return tabulate(
+        test_results,
+        headers=["Test", "Passed", "# Passed", "# Errors", "% Passed"],
+        numalign="right",
+    )

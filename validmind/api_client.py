@@ -9,7 +9,6 @@ from io import BytesIO
 import numpy as np
 import requests
 
-from .dataset_utils import analyze_vm_dataset, init_vm_dataset
 from .vm_models import Model, ModelAttributes
 from .model_utils import (
     get_info_from_model_instance,
@@ -109,36 +108,17 @@ def init(project, api_key=None, api_secret=None, api_host=None):
     return __ping()
 
 
-def log_dataset(
-    dataset,
-    dataset_type,
-    dataset_options=None,
-    analyze=True,
-    targets=None,
-    features=None,
-):
+def log_dataset(vm_dataset):
     """
     Logs metadata and statistics about a dataset to ValidMind API.
 
-    :param dataset: A dataset. Only supports Pandas datasets at the moment.
+    :param dataset: A VM dataset object
     :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
     :param dataset_options: Additional dataset options for analysis
     :param dataset_targets: A list of targets for the dataset.
     :param features: Optional. A list of features metadata.
     :type dataset_targets: validmind.DatasetTargets, optional
     """
-    vm_dataset = init_vm_dataset(
-        dataset, dataset_type, dataset_options, targets, features
-    )
-    analyze_results = None
-
-    if analyze:
-        analyze_results = analyze_vm_dataset(dataset, vm_dataset)
-        if "statistics" in analyze_results:
-            vm_dataset.statistics = analyze_results["statistics"]
-        if "correlations" in analyze_results:
-            vm_dataset.correlations = analyze_results["correlations"]
-
     payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder)
     r = api_session.post(
         f"{API_HOST}/log_dataset",
@@ -149,10 +129,6 @@ def log_dataset(
     if r.status_code != 200:
         print("Could not log dataset to ValidMind API")
         raise Exception(r.text)
-
-    if analyze_results:
-        for corr_plot in analyze_results["correlations_plots"]["pearson"]:
-            log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
 
     print("Successfully logged dataset metadata and statistics.")
 
