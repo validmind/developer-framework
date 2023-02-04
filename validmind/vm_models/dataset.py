@@ -103,10 +103,10 @@ class Dataset:
         """
         # Ignore fields that have very high cardinality
         fields_for_correlation = []
-        for field in self.fields:
-            if "statistics" in field and "distinct" in field["statistics"]:
-                if field["statistics"]["distinct"] < 0.1:
-                    fields_for_correlation.append(field["id"])
+        for ds_field in self.fields:
+            if "statistics" in ds_field and "distinct" in ds_field["statistics"]:
+                if ds_field["statistics"]["distinct"] < 0.1:
+                    fields_for_correlation.append(ds_field["id"])
 
         self.correlation_matrix = associations(
             self.transformed_dataset[fields_for_correlation],

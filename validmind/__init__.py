@@ -1,6 +1,7 @@
 """
 Exports
 """
+from .data_validation import *
 
 from .api_client import (
     init,
@@ -15,12 +16,12 @@ from .api_client import (
 )
 
 from .client import analyze_dataset, evaluate_model, init_dataset, run_dataset_tests
-
 from .vm_models import DatasetTargets, Figure, Metric, Model, ModelAttributes
-from .tests.config import TestResult, TestResults
+from .vm_models import TestResult, TestResults
 
 __all__ = [
     "analyze_dataset",
+    "data_validation",
     "evaluate_model",
     "init",
     "init_dataset",

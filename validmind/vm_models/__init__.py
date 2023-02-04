@@ -5,6 +5,8 @@ Models entrypoint
 from .dataset import Dataset, DatasetTargets
 from .model import Model, ModelAttributes
 from .metrics import Figure, Metric, MetricResult
+from .test_result import TestResult, TestResults
+from .threshold_test import ThresholdTest
 
 __all__ = [
     "Dataset",
@@ -14,4 +16,7 @@ __all__ = [
     "MetricResult",
     "Model",
     "ModelAttributes",
+    "TestResult",
+    "TestResults",
+    "ThresholdTest",
 ]

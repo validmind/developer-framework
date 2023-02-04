@@ -8,7 +8,7 @@ each test as functional and independent as possible?
 """
 from sklearn import metrics
 
-from .config import TestResult, TestResults
+from ..vm_models import TestResult, TestResults
 
 
 def base_accuracy_test(

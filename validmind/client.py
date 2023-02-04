@@ -13,14 +13,6 @@ from .api_client import (
 )
 
 from .tests.config import Settings
-from .tests.data_quality_pandas import (
-    class_imbalance,
-    duplicates,
-    high_cardinality,
-    missing_values,
-    skewness,
-    zeros,
-)
 
 from .model_validation import evaluate_model as mod_evaluate_model
 from .utils import summarize_data_quality_results
@@ -36,7 +28,7 @@ def init_dataset(
     targets=None,
 ):
     """
-    Initialies a VM Dataset, which can then be passed to other functions
+    Initializes a VM Dataset, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
     also ensures we are reading a valid dataset type. We only support Pandas
     DataFrames at the moment.
@@ -84,6 +76,7 @@ def analyze_dataset(vm_dataset):
 
 
 # TODO: move all of this to test_plans
+# TODO: move correlations to test plans too
 def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
     """
     Run all or a subset of tests on the given dataframe. For now we allow this
@@ -97,16 +90,7 @@ def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
     if run_cuid is None:
         run_cuid = start_run()
 
-    tests = [
-        class_imbalance,
-        duplicates,
-        high_cardinality,
-        missing_values,
-        # pearson_correlation, # Skipping this test for now
-        skewness,
-        # unique, # ignore unique for now
-        zeros,
-    ]
+    tests = []
     results = []
 
     transformed_df = vm_dataset.transformed_dataset

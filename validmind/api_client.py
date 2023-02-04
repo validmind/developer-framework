@@ -254,6 +254,33 @@ def log_metrics(metrics, run_cuid=None):
     return True
 
 
+def log_test_result(result, run_cuid=None, dataset_type="training"):
+    """
+    Logs test results information. This method will be called automatically be any function
+    running tests but can also be called directly if the user wants to run tests on their own.
+
+    :param result: A TestResults object
+    :param run_cuid: The run CUID. If not provided, a new run will be created.
+    """
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    r = api_session.post(
+        f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
+        data=json.dumps(result.dict(), cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Exit on the first error
+    if r.status_code != 200:
+        print("Could not log test results to ValidMind API")
+        raise Exception(r.text)
+
+    print(f"Successfully logged test results for test: {result.test_name}")
+
+    return True
+
+
 def log_test_results(results, run_cuid=None, dataset_type="training"):
     """
     Logs test results information. This method will be called automatically be any function
@@ -267,18 +294,7 @@ def log_test_results(results, run_cuid=None, dataset_type="training"):
 
     # TBD - parallelize API requests
     for result in results:
-        r = api_session.post(
-            f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
-            data=json.dumps(result.dict(), cls=NumpyEncoder),
-            headers={"Content-Type": "application/json"},
-        )
-
-        # Exit on the first error
-        if r.status_code != 200:
-            print("Could not log test results to ValidMind API")
-            raise Exception(r.text)
-
-        print(f"Successfully logged test results for test: {result.test_name}")
+        log_test_result(result, run_cuid, dataset_type)
 
     return True
 
