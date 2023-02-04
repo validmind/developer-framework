@@ -1,21 +1,17 @@
 """
 Client interface for all data and model validation functions
 """
-from tqdm import tqdm
 
 from .api_client import (
     log_dataset,
     log_figure,
     log_model,
-    log_test_results,
     log_training_metrics,
-    start_run,
 )
 
 from .tests.config import Settings
 
 from .model_validation import evaluate_model as mod_evaluate_model
-from .utils import summarize_data_quality_results
 from .vm_models import Dataset
 
 config = Settings()
@@ -73,43 +69,6 @@ def analyze_dataset(vm_dataset):
     correlation_plots = vm_dataset.get_correlation_plots()
     for corr_plot in correlation_plots:
         log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
-
-
-# TODO: move all of this to test_plans
-# TODO: move correlations to test plans too
-def run_dataset_tests(vm_dataset, send=True, run_cuid=None):
-    """
-    Run all or a subset of tests on the given dataframe. For now we allow this
-    function to automatically start a run for us.
-
-    :param pd.DataFrame df: Dataframe for a dataset. Should contain dependent and independent variables
-    :param vm_dataset: VM Dataset metadata
-    :param bool send: Whether to post the test results to the API. send=False is useful for testing
-    """
-    print(f'Running data quality tests for "{vm_dataset.type}" dataset...\n')
-    if run_cuid is None:
-        run_cuid = start_run()
-
-    tests = []
-    results = []
-
-    transformed_df = vm_dataset.transformed_dataset
-
-    for test in tqdm(tests):
-        test_results = test(transformed_df, vm_dataset, config)
-        if test_results is not None:
-            results.append(test_results)
-
-    print("\nTest suite has completed.")
-    if send:
-        print("Sending results to ValidMind...")
-        log_test_results(results, run_cuid=run_cuid, dataset_type=vm_dataset.type)
-
-    print("\nSummary of results:\n")
-    print(summarize_data_quality_results(results))
-    print()
-
-    return results
 
 
 def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):

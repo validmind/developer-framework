@@ -126,6 +126,8 @@ def format_key_values(key_values):
 
 def summarize_data_quality_results(results):
     """
+    TODO: generalize this to work with metrics and test results
+
     Summarize the results of the data quality test suite
     """
     test_results = []

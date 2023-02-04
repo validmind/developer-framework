@@ -2,25 +2,18 @@
 Test Plans entry point
 """
 
+from .tabular_datasets import GenericTabularDatasetTestPlan
+from .test_plan import TestPlan
 
-class TestPlan:
+
+def get_by_name(name: str):
     """
-    Base class for test plans. Test plans are used to define any
-    arbitrary grouping of tests that will be run on a dataset or model.
+    Returns the test plan by name
     """
+    if name == "generic_tabular_dataset":
+        return GenericTabularDatasetTestPlan
 
-    def __init__(self, client, config=None, **kwargs):
-        """
-        :param client: ValidMind client instance
-        :param config: The test plan configuration
-        :param dict kwargs: Additional keyword arguments
-        """
-        self.client = client
-        self.config = config
-        self.kwargs = kwargs
+    raise ValueError(f"Test plan with name: '{name}' not found")
 
-    def run():
-        """
-        Runs the test plan
-        """
-        raise NotImplementedError
+
+__all__ = ["TestPlan", "tabular_datasets"]

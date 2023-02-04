@@ -2,7 +2,6 @@
 Dataset class wrapper
 """
 from dataclasses import dataclass, field, fields
-from dython.nominal import associations
 
 from .dataset_utils import (
     describe_dataset_field,
@@ -10,8 +9,6 @@ from .dataset_utils import (
     parse_dataset_variables,
     validate_pd_dataset_targets,
 )
-
-from ..data_validation.metrics import correlation_significance
 
 
 @dataclass()
@@ -97,38 +94,38 @@ class Dataset:
         for ds_field in self.fields:
             describe_dataset_field(transformed_df, ds_field)
 
-    def get_correlations(self):
-        """
-        Extracts correlations for each field in the dataset
-        """
-        # Ignore fields that have very high cardinality
-        fields_for_correlation = []
-        for ds_field in self.fields:
-            if "statistics" in ds_field and "distinct" in ds_field["statistics"]:
-                if ds_field["statistics"]["distinct"] < 0.1:
-                    fields_for_correlation.append(ds_field["id"])
+    # def get_correlations(self):
+    #     """
+    #     Extracts correlations for each field in the dataset
+    #     """
+    #     # Ignore fields that have very high cardinality
+    #     fields_for_correlation = []
+    #     for ds_field in self.fields:
+    #         if "statistics" in ds_field and "distinct" in ds_field["statistics"]:
+    #             if ds_field["statistics"]["distinct"] < 0.1:
+    #                 fields_for_correlation.append(ds_field["id"])
 
-        self.correlation_matrix = associations(
-            self.transformed_dataset[fields_for_correlation],
-            compute_only=True,
-            plot=False,
-        )["corr"]
+    #     self.correlation_matrix = associations(
+    #         self.transformed_dataset[fields_for_correlation],
+    #         compute_only=True,
+    #         plot=False,
+    #     )["corr"]
 
-        # Transform to the current format expected by the UI
-        n = len(self.raw_dataset)
-        self.correlations = [
-            [
-                {
-                    "field": key,
-                    "value": value,
-                    # For simplicity we calculate it for every pair but
-                    # it only applies to Pearson correlation
-                    "p_value": correlation_significance(value, n),
-                }
-                for key, value in correlation_row.items()
-            ]
-            for correlation_row in self.correlation_matrix.to_dict(orient="records")
-        ]
+    #     # Transform to the current format expected by the UI
+    #     n = len(self.raw_dataset)
+    #     self.correlations = [
+    #         [
+    #             {
+    #                 "field": key,
+    #                 "value": value,
+    #                 # For simplicity we calculate it for every pair but
+    #                 # it only applies to Pearson correlation
+    #                 "p_value": correlation_significance(value, n),
+    #             }
+    #             for key, value in correlation_row.items()
+    #         ]
+    #         for correlation_row in self.correlation_matrix.to_dict(orient="records")
+    #     ]
 
     def get_correlation_plots(self, n_top=15):
         """
