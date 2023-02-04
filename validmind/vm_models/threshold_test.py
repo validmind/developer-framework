@@ -8,7 +8,7 @@ TODO: Test definitions should be supported in the API too
 import pandas as pd
 
 from dataclasses import dataclass
-from typing import List, Union
+from typing import ClassVar, List, Union
 
 from .dataset import Dataset
 from .test_result import TestResult, TestResults
@@ -22,12 +22,23 @@ class ThresholdTest:
     us to determine whether the metric/plot passes or fails.
     """
 
+    # Class Variables
+    category: ClassVar[str] = ""
+    name: ClassVar[str] = ""
+    default_params: ClassVar[dict] = {}
+
+    # Instance Variables
     dataset: Union[pd.DataFrame, Dataset] = None
     params: dict = None
-    category: str = ""
-    name: str = ""
     model: object = None
     test_results: TestResults = None
+
+    def __post_init__(self):
+        """
+        Set default params if not provided
+        """
+        if self.params is None:
+            self.params = self.default_params
 
     @property
     def df(self):

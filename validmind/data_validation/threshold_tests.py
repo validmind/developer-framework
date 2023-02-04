@@ -18,10 +18,9 @@ class ClassImbalanceTest(ThresholdTest):
     of the total number of examples
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "class_imbalance"
-        self.params = {"min_percent_threshold": 0.2}
+    category = "data_quality"
+    name = "class_imbalance"
+    default_params = {"min_percent_threshold": 0.2}
 
     def run(self):
         # Can only run this test if we have a Dataset object
@@ -61,10 +60,9 @@ class DuplicatesTest(ThresholdTest):
     Test that the number of duplicates is less than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "duplicates"
-        self.params = {"min_threshold": 1}
+    category = "data_quality"
+    name = "duplicates"
+    default_params = {"min_threshold": 1}
 
     def run(self):
         rows = self.df.shape[0]
@@ -114,14 +112,13 @@ class HighCardinalityTest(ThresholdTest):
     Test that the number of unique values in a column is less than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "cardinality"
-        self.params = {
-            "num_threshold": 100,
-            "percent_threshold": 0.1,
-            "threshold_type": "percent",  # or "num"
-        }
+    category = "data_quality"
+    name = "cardinality"
+    default_params = {
+        "num_threshold": 100,
+        "percent_threshold": 0.1,
+        "threshold_type": "percent",  # or "num"
+    }
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
@@ -168,10 +165,9 @@ class HighPearsonCorrelationTest(ThresholdTest):
     Inspired by: https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "pearson_correlation"
-        self.params = {"max_threshold": 0.3}
+    category = "data_quality"
+    name = "pearson_correlation"
+    default_params = {"max_threshold": 0.3}
 
     def run(self):
         corr = self.df.corr()
@@ -236,10 +232,9 @@ class MissingValuesTest(ThresholdTest):
     Test that the number of missing values is less than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "missing"
-        self.params = {"min_threshold": 1}
+    category = "data_quality"
+    name = "missing"
+    default_params = {"min_threshold": 1}
 
     def run(self):
         rows = self.df.shape[0]
@@ -265,10 +260,9 @@ class SkewnessTest(ThresholdTest):
     Test that the skewness of a column is less than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "skewness"
-        self.params = {"max_threshold": 1}
+    category = "data_quality"
+    name = "skewness"
+    default_params = {"max_threshold": 1}
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
@@ -305,10 +299,9 @@ class UniqueRowsTest(ThresholdTest):
     Test that the number of unique rows is greater than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "unique"
-        self.params = {"min_percent_threshold": 1}
+    category = "data_quality"
+    name = "unique"
+    default_params = {"min_percent_threshold": 1}
 
     def run(self):
         rows = self.df.shape[0]
@@ -337,10 +330,9 @@ class ZerosTest(ThresholdTest):
     Test that the number of zeros is less than a threshold
     """
 
-    def __post_init__(self):
-        self.category = "data_quality"
-        self.name = "zeros"
-        self.params = {"max_percent_threshold": 0.03}
+    category = "data_quality"
+    name = "zeros"
+    default_params = {"max_percent_threshold": 0.03}
 
     def run(self):
         rows = self.df.shape[0]
