@@ -1,7 +1,7 @@
 """
 Exports
 """
-from .data_validation import *
+from .data_validation import *  # noqa
 
 from .api_client import (
     init,
@@ -19,7 +19,7 @@ from .client import analyze_dataset, evaluate_model, init_dataset, run_dataset_t
 from .vm_models import DatasetTargets, Figure, Metric, Model, ModelAttributes
 from .vm_models import TestResult, TestResults
 
-__all__ = [
+__all__ = [  # noqa
     "analyze_dataset",
     "data_validation",
     "evaluate_model",
