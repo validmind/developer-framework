@@ -12,7 +12,7 @@ from .api_client import (
 from .tests.config import Settings
 
 from .model_validation import evaluate_model as mod_evaluate_model
-from .vm_models import Dataset
+from .vm_models import Dataset, Model
 
 config = Settings()
 
@@ -46,6 +46,27 @@ def init_dataset(
 
     vm_dataset.type = type
     return vm_dataset
+
+
+def init_model(model):
+    """
+    Initializes a VM Model, which can then be passed to other functions
+    that can perform additional analysis and tests on the data. This function
+    also ensures we are reading a supported model type.
+
+    :param model: A trained model instance
+    """
+
+    if not Model.is_supported_model(model):
+        raise ValueError(
+            "Model type {} is not supported at the moment.".format(
+                model.__class__.__name__
+            )
+        )
+
+    vm_model = Model(model)
+
+    return vm_model
 
 
 def analyze_dataset(vm_dataset):

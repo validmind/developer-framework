@@ -8,6 +8,8 @@ from typing import List
 from ..api_client import log_test_result
 from ..vm_models import Dataset, Model
 
+# A test plan can have 1 or more test plans
+
 
 class TestPlan:
     """
@@ -21,7 +23,10 @@ class TestPlan:
         config: dict() = None,
         dataset: Dataset = None,
         model: Model = None,
+        train_ds: Dataset = None,
+        test_ds: Dataset = None,
         tests: List[object] = [],
+        test_plans: List[object] = [],
         results: List[object] = [],  # Results can hold  Metric, Figure, TestResults
     ):
         """
@@ -34,8 +39,16 @@ class TestPlan:
         self.config = config
         self.name = name
         self.tests = tests
+
+        # Single dataset for dataset-only tests
         self.dataset = dataset
+
+        # Model and corresponding datasets for model related tests
         self.model = model
+        self.train_ds = train_ds
+        self.test_ds = test_ds
+
+        self.test_plans = test_plans
         self.results = results
 
     def run(self, send=True):

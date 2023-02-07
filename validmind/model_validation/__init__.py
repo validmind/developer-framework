@@ -5,7 +5,7 @@ from .classification import evaluate_classification_model
 from .regression import evaluate_regression_model
 
 from ..api_client import start_run
-from ..model_utils import SUPPORTED_MODEL_TYPES
+from ..vm_models import Model
 
 
 # TODO: rename once we extract metrics to its own function
@@ -20,7 +20,7 @@ def evaluate_model(
 ):
     model_class = model.__class__.__name__
 
-    if model_class not in SUPPORTED_MODEL_TYPES:
+    if Model.is_supported_model_type(model):
         raise ValueError(
             "Model type {} is not supported at the moment.".format(model_class)
         )

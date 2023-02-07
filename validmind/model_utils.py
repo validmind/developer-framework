@@ -6,11 +6,9 @@ import sys
 import numpy as np
 
 from scipy import stats
-from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .data_validation.metrics import csi, psi
-from .vm_models import Metric
+from .vm_models import Metric, Model
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",
@@ -25,14 +23,6 @@ XGBOOST_EVAL_METRICS = {
         "mean_squared_error"
     ],  # TBD - how to compute more than one metric for regression?
 }
-
-SUPPORTED_MODEL_TYPES = [
-    "GLMResultsWrapper",
-    "XGBClassifier",
-    "XGBRegressor",
-    "LogisticRegression",
-    "LinearRegression",
-]
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -226,63 +216,6 @@ def _get_statsmodels_summary_variable_metrics(model, x_train, y_train):
     return metrics
 
 
-def _get_common_metrics(model, x_train, y_train, x_val, y_val):
-    """
-    Computes metrics that are common to any type of model being trained
-    """
-    metrics = []
-
-    pfi_values = permutation_importance(
-        model, x_train, y_train, random_state=0, n_jobs=-2
-    )
-    pfi = {}
-    for i, column in enumerate(x_train.columns):
-        pfi[column] = [pfi_values["importances_mean"][i]], [
-            pfi_values["importances_std"][i]
-        ]
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training_dataset",
-            key="pfi",
-            value=pfi,
-        )
-    )
-
-    # Check if model is a classification or regression model by
-    # checking if it has a predict_proba method
-    predict_fn = getattr(model, "predict_proba", None)
-    if callable(predict_fn):
-        y_train_predict = model.predict_proba(x_train)[:, 1]
-        y_val_predict = model.predict_proba(x_val)[:, 1]
-    else:
-        y_train_predict = model.predict(x_train)
-        y_val_predict = model.predict(x_val)
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training:validation",
-            key="psi",
-            value=psi(y_train_predict, y_val_predict),
-            value_formatter="records",
-        )
-    )
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training:validation",
-            key="csi",
-            value=csi(x_train, x_val),
-            value_formatter="key_values",
-        )
-    )
-
-    return metrics
-
-
 def _get_metrics_from_evals_result(model, xgboost_metrics):
     """
     Generic function to extra a given list of metrics
@@ -328,7 +261,6 @@ def get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val):
     xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
 
     vm_metrics = _get_metrics_from_evals_result(model, xgboost_metrics)
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
@@ -344,16 +276,6 @@ def get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val):
     vm_metrics.extend(
         get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
     )
-
-    return vm_metrics
-
-
-def get_sklearn_classification_metrics(model, x_train, y_train, x_val, y_val):
-    """
-    Attempts to extract model training metrics from a model object instance
-    """
-    vm_metrics = []
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
@@ -393,7 +315,6 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 )
             )
 
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
     vm_metrics.extend(_get_ols_summary_variable_metrics(model, x_train, y_train))
 
     return vm_metrics
@@ -434,7 +355,6 @@ def get_statsmodels_regression_metrics(model, x_train, y_train, x_val, y_val):
                 )
             )
 
-    # vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
     vm_metrics.extend(
         _get_statsmodels_summary_variable_metrics(model, x_train, y_train)
     )
@@ -466,7 +386,7 @@ def get_info_from_model_instance(model):
     """
     model_class = model.__class__.__name__
 
-    if model_class not in SUPPORTED_MODEL_TYPES:
+    if not Model.is_supported_model(model):
         raise ValueError(
             "Model type {} is not supported at the moment.".format(model_class)
         )
@@ -517,7 +437,7 @@ def get_params_from_model_instance(model):
     """
     model_class = model.__class__.__name__
 
-    if model_class not in SUPPORTED_MODEL_TYPES:
+    if not Model.is_supported_model(model):
         raise ValueError(
             "Model type {} is not supported at the moment.".format(model_class)
         )
@@ -540,7 +460,7 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
     """
     model_class = model.__class__.__name__
 
-    if model_class not in SUPPORTED_MODEL_TYPES:
+    if not Model.is_supported_model(model):
         raise ValueError(
             "Model type {} is not supported at the moment.".format(model_class)
         )
@@ -553,9 +473,7 @@ def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
     elif model_class == "LinearRegression":
         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
     elif model_class == "LogisticRegression":
-        metrics = get_sklearn_classification_metrics(
-            model, x_train, y_train, x_val, y_val
-        )
+        metrics = []
     elif model_class == "GLMResultsWrapper":
         print("Refitting model...")
         refitted = model.model.fit()

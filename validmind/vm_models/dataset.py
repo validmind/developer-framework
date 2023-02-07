@@ -38,7 +38,12 @@ class Dataset:
     type: str = None
     options: dict = None
     statistics: dict = None
+
+    # Specify targets via DatasetTargets or via target_column and class_labels
     targets: dict = None
+    target_column: str = ""
+    class_labels: dict = None
+
     __feature_lookup: dict = field(default_factory=dict)
     __transformed_df: object = None
 
@@ -82,6 +87,11 @@ class Dataset:
         # Dataset with no targets can be logged
         if self.targets:
             dataset_dict["targets"] = self.targets.__dict__
+        else:
+            dataset_dict["targets"] = {
+                "target_column": self.target_column,
+                "class_labels": self.class_labels,
+            }
 
         return dataset_dict
 

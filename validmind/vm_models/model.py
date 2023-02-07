@@ -3,6 +3,14 @@ Model class wrapper
 """
 from dataclasses import dataclass, fields
 
+SUPPORTED_MODEL_TYPES = [
+    "GLMResultsWrapper",
+    "XGBClassifier",
+    "XGBRegressor",
+    "LogisticRegression",
+    "LinearRegression",
+]
+
 
 @dataclass()
 class ModelAttributes:
@@ -26,6 +34,7 @@ class Model:
     subtask: str = None
     params: dict = None
     model_id: str = "main"
+    model: object = None  # Trained model instance
 
     def serialize(self):
         """
@@ -38,6 +47,32 @@ class Model:
             "subtask": self.subtask,
             "params": self.params,
         }
+
+    @property
+    def predict(self, *args, **kwargs):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        predict_proba (for classification) or predict (for regression) method
+
+        NOTE: This only works for sklearn or xgboost models at the moment
+        """
+        predict_fn = getattr(self.model, "predict_proba", None)
+        if callable(predict_fn):
+            return self.model.predict_proba(args, kwargs)[:, 1]
+        else:
+            return self.model.predict(*args, **kwargs)
+
+    @classmethod
+    def is_supported_model(cls, model):
+        """
+        Checks if the model is supported by the API
+        """
+        model_class = model.__class__.__name__
+
+        if model_class not in SUPPORTED_MODEL_TYPES:
+            return False
+
+        return True
 
     @classmethod
     def create_from_dict(cls, dict_):
