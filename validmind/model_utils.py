@@ -8,7 +8,7 @@ import numpy as np
 from scipy import stats
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .vm_models import Metric, Model
+from .vm_models import Metric
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",
@@ -380,105 +380,105 @@ def get_statsmodels_model_params(model):
     }
 
 
-def get_info_from_model_instance(model):
-    """
-    Attempts to extract all model info from a model object instance
-    """
-    model_class = model.__class__.__name__
+# def get_info_from_model_instance(model):
+#     """
+#     Attempts to extract all model info from a model object instance
+#     """
+#     model_class = model.__class__.__name__
 
-    if not Model.is_supported_model(model):
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
+#     if not Model.is_supported_model(model):
+#         raise ValueError(
+#             "Model type {} is not supported at the moment.".format(model_class)
+#         )
 
-    if model_class == "XGBClassifier":
-        architecture = "Extreme Gradient Boosting"
-        task = "classification"
-        subtask = get_xgboost_objective(model)
-        framework = "XGBoost"
-        framework_version = get_xgboost_version()
-    elif model_class == "XGBRegressor":
-        architecture = "Extreme Gradient Boosting"
-        task = "regression"
-        subtask = "regression"
-        framework = "XGBoost"
-        framework_version = get_xgboost_version()
-    elif model_class == "LogisticRegression":
-        architecture = "Linear Regression"
-        task = "classification"
-        subtask = "binary"
-        framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
-    elif model_class == "LinearRegression":
-        architecture = "Ordinary least squares Linear Regression"
-        task = "regression"
-        subtask = "regression"
-        framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
-    elif model_class == "GLMResultsWrapper":
-        architecture = "Generalized Linear Model (GLM)"
-        task = "regression"
-        subtask = "regression"
-        framework = "statsmodels"
-        framework_version = get_statsmodels_version()
+#     if model_class == "XGBClassifier":
+#         architecture = "Extreme Gradient Boosting"
+#         task = "classification"
+#         subtask = get_xgboost_objective(model)
+#         framework = "XGBoost"
+#         framework_version = get_xgboost_version()
+#     elif model_class == "XGBRegressor":
+#         architecture = "Extreme Gradient Boosting"
+#         task = "regression"
+#         subtask = "regression"
+#         framework = "XGBoost"
+#         framework_version = get_xgboost_version()
+#     elif model_class == "LogisticRegression":
+#         architecture = "Linear Regression"
+#         task = "classification"
+#         subtask = "binary"
+#         framework = "Scikit-learn"
+#         framework_version = get_sklearn_version()
+#     elif model_class == "LinearRegression":
+#         architecture = "Ordinary least squares Linear Regression"
+#         task = "regression"
+#         subtask = "regression"
+#         framework = "Scikit-learn"
+#         framework_version = get_sklearn_version()
+#     elif model_class == "GLMResultsWrapper":
+#         architecture = "Generalized Linear Model (GLM)"
+#         task = "regression"
+#         subtask = "regression"
+#         framework = "statsmodels"
+#         framework_version = get_statsmodels_version()
 
-    return {
-        "architecture": architecture,
-        "task": task,
-        "subtask": subtask,
-        "framework": framework,
-        "framework_version": framework_version,
-    }
-
-
-def get_params_from_model_instance(model):
-    """
-    Attempts to extract model hyperparameters from a model object instance
-    """
-    model_class = model.__class__.__name__
-
-    if not Model.is_supported_model(model):
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
-
-    # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier" or model_class == "XGBRegressor":
-        params = model.get_xgb_params()
-    elif model_class == "GLMResultsWrapper":
-        params = get_statsmodels_model_params(model)
-    # Default to SKLearn models at the moment
-    else:
-        params = model.get_params()
-
-    return params
+#     return {
+#         "architecture": architecture,
+#         "task": task,
+#         "subtask": subtask,
+#         "framework": framework,
+#         "framework_version": framework_version,
+#     }
 
 
-def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
-    """
-    Attempts to extract model training metrics from a model object instance
-    """
-    model_class = model.__class__.__name__
+# def get_params_from_model_instance(model):
+#     """
+#     Attempts to extract model hyperparameters from a model object instance
+#     """
+#     model_class = model.__class__.__name__
 
-    if not Model.is_supported_model(model):
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
+#     if not Model.is_supported_model(model):
+#         raise ValueError(
+#             "Model type {} is not supported at the moment.".format(model_class)
+#         )
 
-    # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier":
-        metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "XGBRegressor":
-        metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "LinearRegression":
-        metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "LogisticRegression":
-        metrics = []
-    elif model_class == "GLMResultsWrapper":
-        print("Refitting model...")
-        refitted = model.model.fit()
-        metrics = get_statsmodels_regression_metrics(
-            refitted, x_train, y_train, x_val, y_val
-        )
+#     # Only supports xgboot classifiers at the moment
+#     if model_class == "XGBClassifier" or model_class == "XGBRegressor":
+#         params = model.get_xgb_params()
+#     elif model_class == "GLMResultsWrapper":
+#         params = get_statsmodels_model_params(model)
+#     # Default to SKLearn models at the moment
+#     else:
+#         params = model.get_params()
 
-    return metrics
+#     return params
+
+
+# def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
+#     """
+#     Attempts to extract model training metrics from a model object instance
+#     """
+#     model_class = model.__class__.__name__
+
+#     if not Model.is_supported_model(model):
+#         raise ValueError(
+#             "Model type {} is not supported at the moment.".format(model_class)
+#         )
+
+#     # Only supports xgboot classifiers at the moment
+#     if model_class == "XGBClassifier":
+#         metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "XGBRegressor":
+#         metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "LinearRegression":
+#         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "LogisticRegression":
+#         metrics = []
+#     elif model_class == "GLMResultsWrapper":
+#         print("Refitting model...")
+#         refitted = model.model.fit()
+#         metrics = get_statsmodels_regression_metrics(
+#             refitted, x_train, y_train, x_val, y_val
+#         )
+
+#     return metrics

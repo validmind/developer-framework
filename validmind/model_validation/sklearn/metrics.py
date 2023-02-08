@@ -8,9 +8,10 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Metric, Model
+from ...vm_models import Metric
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -78,6 +79,76 @@ def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False)
 
 
 @dataclass
+class AccuracyScore(Metric):
+    """
+    Accuracy Score
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "accuracy"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = np.argmax(self.y_test_predict, axis=1)
+        accuracy_score = metrics.accuracy_score(y_true, class_pred)
+
+        self.cache_results(accuracy_score)
+        return accuracy_score
+
+
+@dataclass
+class ConfusionMatrix(Metric):
+    """
+    Confusion Matrix
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "confusion_matrix"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        y_labels = list(map(lambda x: x.item(), y_true.unique()))
+        y_labels.sort()
+
+        class_pred = np.argmax(self.y_test_predict, axis=1)
+
+        tn, fp, fn, tp = metrics.confusion_matrix(
+            y_true, class_pred, labels=y_labels
+        ).ravel()
+
+        cfm = {
+            "tn": tn,
+            "fp": fp,
+            "fn": fn,
+            "tp": tp,
+        }
+        self.cache_results(cfm)
+        # TODO: plots=[get_confusion_matrix_plot(tn, fp, fn, tp)],
+        return cfm
+
+
+@dataclass
+class F1Score(Metric):
+    """
+    F1 Score
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "f1_score"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = np.argmax(self.y_test_predict, axis=1)
+        f1_score = metrics.f1_score(y_true, class_pred)
+
+        self.cache_results(f1_score)
+        return f1_score
+
+
+@dataclass
 class PermutationFeatureImportance(Metric):
     """
     Permutation Feature Importance
@@ -87,11 +158,14 @@ class PermutationFeatureImportance(Metric):
     scope = "training_dataset"
     key = "pfi"
 
-    def run(self, vm_model: Model, x, y):
-        model = vm_model.model
+    def run(self):
+        x = self.train_ds.raw_dataset.drop(self.train_ds.target_column, axis=1)
+        y = self.train_ds.raw_dataset[self.train_ds.target_column]
+
+        model_instance = self.model.model
 
         pfi_values = permutation_importance(
-            model.model, x, y, random_state=0, n_jobs=-2
+            model_instance, x, y, random_state=0, n_jobs=-2
         )
         pfi = {}
         for i, column in enumerate(x.columns):
@@ -113,12 +187,12 @@ class CharacteristicStabilityIndex(Metric):
     key = "csi"
     value_formatter = "key_values"
 
-    def run(self, train_ds, test_ds):
+    def run(self):
         """
         Calculates PSI for each of the dataset features
         """
-        x_train = train_ds.raw_dataset.drop(columns=train_ds.target_column)
-        x_test = test_ds.raw_dataset.drop(columns=test_ds.target_column)
+        x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
+        x_test = self.test_ds.raw_dataset.drop(columns=self.test_ds.target_column)
 
         csi_values = {}
         for col in x_train.columns:
@@ -141,8 +215,8 @@ class PopulationStabilityIndex(Metric):
     key = "psi"
     value_formatter = "records"
 
-    def run(self, y_train_predict, y_test_predict):
-        psi_df = _get_psi(y_train_predict, y_test_predict)
+    def run(self):
+        psi_df = _get_psi(self.y_train_predict, self.y_test_predict)
 
         self.cache_results(psi_df)
         return psi_df

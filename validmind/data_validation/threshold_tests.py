@@ -27,11 +27,11 @@ class ClassImbalanceTest(ThresholdTest):
         if not isinstance(self.dataset, Dataset):
             raise ValueError("ClassImbalanceTest requires a validmind Dataset object")
 
-        if self.dataset.targets is None or self.dataset.targets.class_labels is None:
+        if self.dataset.target_column is None:
             print("Skipping class_imbalance test because no target column is defined")
             return
 
-        target_column = self.dataset.targets.target_column
+        target_column = self.dataset.target_column
         imbalance_percentages = self.df[target_column].value_counts(normalize=True)
 
         # Does the minority class represent more than our threshold?

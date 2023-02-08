@@ -9,6 +9,7 @@ import pandas as pd
 from pandas import DataFrame
 
 from .dataset import Dataset
+from .test_context import TestContext
 from ..utils import format_records, format_key_values
 
 
@@ -18,6 +19,9 @@ class Metric:
     Metric objects track the schema supported by the ValidMind API
     """
 
+    # Test Context
+    test_context: TestContext
+
     # Class Variables
     type: str = ""  # type of metric: "training", "evaluation", etc.
     scope: str = ""  # scope of metric: "training_dataset", "test_dataset", etc.
@@ -26,9 +30,7 @@ class Metric:
     default_params: ClassVar[dict] = {}
 
     # Instance Variables
-    dataset: Union[pd.DataFrame, Dataset] = None
     params: dict = None
-    model: object = None
     value: Union[dict, list, DataFrame] = None
 
     def __post_init__(self):
@@ -37,6 +39,30 @@ class Metric:
         """
         if self.params is None:
             self.params = self.default_params
+
+    @property
+    def dataset(self):
+        return self.test_context.dataset
+
+    @property
+    def model(self):
+        return self.test_context.model
+
+    @property
+    def train_ds(self):
+        return self.test_context.train_ds
+
+    @property
+    def test_ds(self):
+        return self.test_context.test_ds
+
+    @property
+    def y_train_predict(self):
+        return self.test_context.y_train_predict
+
+    @property
+    def y_test_predict(self):
+        return self.test_context.y_test_predict
 
     def serialize(self):
         """

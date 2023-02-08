@@ -10,11 +10,12 @@ import numpy as np
 import requests
 
 from .vm_models import Model, ModelAttributes
-from .model_utils import (
-    get_info_from_model_instance,
-    get_params_from_model_instance,
-    get_training_metrics,
-)
+
+# from .model_utils import (
+#     # get_info_from_model_instance,
+#     # get_params_from_model_instance,
+#     # get_training_metrics,
+# )
 from .utils import get_full_typename, is_matplotlib_typename
 
 API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
@@ -167,64 +168,64 @@ def log_metadata(content_id, text=None, extra_json=None):
     return True
 
 
-def log_model(model_instance, vm_model=None):
-    """
-    Logs model metadata and hyperparameters to ValidMind API.
+# def log_model(model_instance, vm_model=None):
+#     """
+#     Logs model metadata and hyperparameters to ValidMind API.
 
-    :param model_instance: A model instance. Only supports XGBoost at the moment.
-    :param vm_model: A ValidMind Model wrapper instance.
-    :type vm_model: validmind.Model, optional
-    """
-    if vm_model is None:
-        vm_model = Model(
-            attributes=ModelAttributes(),
-        )
+#     :param model_instance: A model instance. Only supports XGBoost at the moment.
+#     :param vm_model: A ValidMind Model wrapper instance.
+#     :type vm_model: validmind.Model, optional
+#     """
+#     if vm_model is None:
+#         vm_model = Model(
+#             attributes=ModelAttributes(),
+#         )
 
-    model_info = get_info_from_model_instance(model_instance)
+#     model_info = get_info_from_model_instance(model_instance)
 
-    if vm_model.task is None:
-        vm_model.task = model_info["task"]
-    if vm_model.subtask is None:
-        vm_model.subtask = model_info["subtask"]
-    if vm_model.attributes.framework is None:
-        vm_model.attributes.framework = model_info["framework"]
-    if vm_model.attributes.framework_version is None:
-        vm_model.attributes.framework_version = model_info["framework_version"]
-    if vm_model.attributes.architecture is None:
-        vm_model.attributes.architecture = model_info["architecture"]
+#     if vm_model.task is None:
+#         vm_model.task = model_info["task"]
+#     if vm_model.subtask is None:
+#         vm_model.subtask = model_info["subtask"]
+#     if vm_model.attributes.framework is None:
+#         vm_model.attributes.framework = model_info["framework"]
+#     if vm_model.attributes.framework_version is None:
+#         vm_model.attributes.framework_version = model_info["framework_version"]
+#     if vm_model.attributes.architecture is None:
+#         vm_model.attributes.architecture = model_info["architecture"]
 
-    vm_model.params = get_params_from_model_instance(model_instance)
+#     vm_model.params = get_params_from_model_instance(model_instance)
 
-    r = api_session.post(
-        f"{API_HOST}/log_model",
-        data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
-        headers={"Content-Type": "application/json"},
-    )
+#     r = api_session.post(
+#         f"{API_HOST}/log_model",
+#         data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
+#         headers={"Content-Type": "application/json"},
+#     )
 
-    if r.status_code != 200:
-        print("Could not log model to ValidMind API")
-        raise Exception(r.text)
+#     if r.status_code != 200:
+#         print("Could not log model to ValidMind API")
+#         raise Exception(r.text)
 
-    return True
+#     return True
 
 
-def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
-    """
-    Logs training metrics to ValidMind API.
+# def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
+#     """
+#     Logs training metrics to ValidMind API.
 
-    :param model: A model instance. Only supports XGBoost at the moment.
-    :param x_train: The training dataset.
-    :param y_train: The training dataset targets.
-    :param x_val: The validation dataset.
-    :param y_val: The validation dataset targets.
-    :param run_cuid: The run CUID. If not provided, a new run will be created.
-    """
-    if run_cuid is None:
-        run_cuid = start_run()
+#     :param model: A model instance. Only supports XGBoost at the moment.
+#     :param x_train: The training dataset.
+#     :param y_train: The training dataset targets.
+#     :param x_val: The validation dataset.
+#     :param y_val: The validation dataset targets.
+#     :param run_cuid: The run CUID. If not provided, a new run will be created.
+#     """
+#     if run_cuid is None:
+#         run_cuid = start_run()
 
-    training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
+#     training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
 
-    return log_metrics(training_metrics, run_cuid)
+#     return log_metrics(training_metrics, run_cuid)
 
 
 def log_metrics(metrics, run_cuid=None):

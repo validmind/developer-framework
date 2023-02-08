@@ -47,6 +47,14 @@ class Dataset:
     __feature_lookup: dict = field(default_factory=dict)
     __transformed_df: object = None
 
+    def __post_init__(self):
+        """
+        Set target_column and class_labels from DatasetTargets
+        """
+        if self.targets:
+            self.target_column = self.targets.target_column
+            self.class_labels = self.targets.class_labels
+
     def get_feature_by_id(self, feature_id):
         """
         Returns the feature with the given id. We also build a lazy
@@ -195,7 +203,9 @@ class Dataset:
     # TODO: Accept variable descriptions from framework
     # TODO: Accept type overrides from framework
     @classmethod
-    def init_from_pd_dataset(cls, df, options=None, targets=None):
+    def init_from_pd_dataset(
+        cls, df, options=None, targets=None, target_column=None, class_labels=None
+    ):
         print("Inferring dataset types...")
         vm_dataset_variables = parse_dataset_variables(df, options)
 
@@ -206,6 +216,7 @@ class Dataset:
         df_head = df.head().to_dict(orient="records")
         df_tail = df.tail().to_dict(orient="records")
 
+        # TODO: validate with target_column and class_labels
         if targets:
             validate_pd_dataset_targets(df, targets)
 
@@ -225,5 +236,7 @@ class Dataset:
             ],
             shape=shape,
             targets=targets,
+            target_column=target_column,
+            class_labels=class_labels,
             options=options,
         )

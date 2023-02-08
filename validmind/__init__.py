@@ -19,14 +19,14 @@ from .api_client import (
     log_dataset,
     log_metadata,
     log_metrics,
-    log_model,
+    # log_model,
     log_test_results,
-    log_training_metrics,
+    # log_training_metrics,
     start_run,
     log_figure,
 )
 
-from .client import analyze_dataset, evaluate_model, init_dataset
+from .client import analyze_dataset, init_dataset
 
 # TODO: need to fix this import * situation
 from .data_validation import *  # noqa
@@ -36,7 +36,7 @@ __all__ = [  # noqa
     # Framework High Level API
     "analyze_dataset",
     "data_validation",
-    "evaluate_model",
+    # "evaluate_model",
     "init",
     "init_dataset",
     "start_run",
@@ -46,9 +46,9 @@ __all__ = [  # noqa
     "log_figure",
     "log_metadata",
     "log_metrics",
-    "log_model",
+    # "log_model",
     "log_test_results",
-    "log_training_metrics",
+    # "log_training_metrics",
     # Models
     "Dataset",
     "DatasetTargets",
