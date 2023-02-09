@@ -6,8 +6,11 @@ from tqdm import tqdm
 from typing import ClassVar, List
 
 
-from ..api_client import log_test_result
-from ..vm_models import Dataset, Model, TestContext
+from ..api_client import log_metrics, log_test_result
+from .dataset import Dataset
+from .model import Model
+from .test_context import TestContext
+from .test_plan_result import TestPlanResult
 
 # A test plan can have 1 or more test plans
 
@@ -30,34 +33,16 @@ class TestPlan:
 
     # Instance Variables
     config: dict() = None
+
+    # Single dataset for dataset-only tests
     dataset: Dataset = None
+
+    # Model and corresponding datasets for model related tests
     model: Model = None
     train_ds: Dataset = None
     test_ds: Dataset = None
 
     def __post_init__(self):
-        """
-        :param config: The test plan configuration
-        :param dataset: The dataset to run the tests on
-        :param model: The model to run the tests on
-        :param tests: The list of tests to run
-        :param dict kwargs: Additional keyword arguments
-        """
-        # self.config = config
-        # self.name = name
-        # self.tests = tests
-
-        # # Single dataset for dataset-only tests
-        # self.dataset = dataset
-
-        # # Model and corresponding datasets for model related tests
-        # self.model = model
-        # self.train_ds = train_ds
-        # self.test_ds = test_ds
-
-        # self.test_plans = test_plans
-        # self.results = results
-        print("validate_context")
         self.validate_context()
 
     def validate_context(self):
@@ -66,8 +51,6 @@ class TestPlan:
         in the instance so that the test plan can be run
         """
         for element in self.required_context:
-            print("element", element)
-            print("self.element", getattr(self, element))
             if not hasattr(self, element):
                 raise ValueError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
@@ -82,8 +65,7 @@ class TestPlan:
         Runs the test plan
         """
         print(f"Running test plan '{self.name}'...")
-        # Empty the results cache on every run
-        self.results = []
+        self.results = []  # Empty the results cache on every run
         test_context = TestContext(
             dataset=self.dataset,
             model=self.model,
@@ -93,20 +75,36 @@ class TestPlan:
 
         for test in tqdm(self.tests):
             test_instance = test(test_context)
+            print(f"Running test - {test.test_type} : {test_instance.name}")
             result = test_instance.run()
 
-            if result:
-                self.results.append(result)
+            if result is None:
+                print("Test returned None, skipping...")
+                continue
+
+            if not isinstance(result, TestPlanResult):
+                raise ValueError(
+                    f"Test '{test_instance.name}' must return a TestPlanResult"
+                )
+
+            self.results.append(result)
 
         if send:
             self.log_results()
 
     def log_results(self):
         print(f"Sending results of test plan execution '{self.name}' to ValidMind...")
-
+        # API accepts metrics as a list, we need to do the same for test results
+        metrics = []
         for result in self.results:
             result_class = result.__class__.__name__
-            if result_class == "TestResults":
-                log_test_result(result)
+            if result.test_results is not None:
+                log_test_result(result.test_results)
+            elif result.metric is not None:
+                metrics.append(result.metric)
             else:
-                raise ValueError("Only TestResults are supported at the moment")
+                print(result_class)
+                raise ValueError(f"Invalid result type: {result_class}")
+
+        if len(metrics) > 0:
+            log_metrics(metrics)

@@ -8,6 +8,8 @@ from .model import Model, ModelAttributes
 from .metric import Metric
 from .metric_result import MetricResult
 from .test_context import TestContext
+from .test_plan import TestPlan
+from .test_plan_result import TestPlanResult
 from .test_result import TestResult, TestResults
 from .threshold_test import ThresholdTest
 
@@ -20,6 +22,8 @@ __all__ = [
     "Model",
     "ModelAttributes",
     "TestContext",
+    "TestPlan",
+    "TestPlanResult",
     "TestResult",
     "TestResults",
     "ThresholdTest",

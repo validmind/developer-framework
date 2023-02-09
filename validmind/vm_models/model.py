@@ -23,13 +23,13 @@ class ModelAttributes:
     framework_version: str = None
 
 
-@dataclass()
+@dataclass
 class Model:
     """
     Model class wrapper
     """
 
-    attributes: ModelAttributes
+    attributes: ModelAttributes = None
     task: str = None
     subtask: str = None
     params: dict = None
@@ -48,7 +48,6 @@ class Model:
             "params": self.params,
         }
 
-    @property
     def predict(self, *args, **kwargs):
         """
         Predict method for the model. This is a wrapper around the model's
@@ -58,7 +57,7 @@ class Model:
         """
         predict_fn = getattr(self.model, "predict_proba", None)
         if callable(predict_fn):
-            return self.model.predict_proba(args, kwargs)[:, 1]
+            return self.model.predict_proba(*args, **kwargs)[:, 1]
         else:
             return self.model.predict(*args, **kwargs)
 

@@ -11,8 +11,9 @@ from dataclasses import dataclass
 from typing import ClassVar, List
 
 from .dataset import Dataset
-from .test_result import TestResult, TestResults
 from .test_context import TestContext
+from .test_plan_result import TestPlanResult
+from .test_result import TestResult, TestResults
 
 
 @dataclass
@@ -27,6 +28,7 @@ class ThresholdTest:
     test_context: TestContext
 
     # Class Variables
+    test_type: ClassVar[str] = "ThresholdTest"
     category: ClassVar[str] = ""
     name: ClassVar[str] = ""
     default_params: ClassVar[dict] = {}
@@ -73,10 +75,13 @@ class ThresholdTest:
         """
         Cache the individual results of the threshold test as a list of TestResult objects
         """
-        self.test_results = TestResults(
-            category=self.category,
-            test_name=self.name,
-            params=self.params,
-            passed=passed,
-            results=results,
+        self.test_results = TestPlanResult(
+            test_results=TestResults(
+                category=self.category,
+                test_name=self.name,
+                params=self.params,
+                passed=passed,
+                results=results,
+            )
         )
+        return self.test_results

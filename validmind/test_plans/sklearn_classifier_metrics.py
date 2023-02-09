@@ -5,9 +5,7 @@ Ideal setup is to have the API client to read a
 custom test plan from the project's configuration
 """
 
-from typing import List
-
-from .test_plan import TestPlan
+from ..vm_models import TestPlan
 from ..model_validation.sklearn.metrics import (
     AccuracyScore,
     ConfusionMatrix,

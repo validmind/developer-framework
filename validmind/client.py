@@ -19,7 +19,7 @@ config = Settings()
 
 def init_dataset(
     dataset,
-    type,
+    type="training",
     options=None,
     targets=None,
     target_column=None,
@@ -70,7 +70,7 @@ def init_model(model):
             )
         )
 
-    vm_model = Model(model)
+    vm_model = Model(model=model)
 
     return vm_model
 

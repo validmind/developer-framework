@@ -55,6 +55,20 @@ class Dataset:
             self.target_column = self.targets.target_column
             self.class_labels = self.targets.class_labels
 
+    @property
+    def x(self):
+        """
+        Returns the dataset's features
+        """
+        return self.raw_dataset.drop(self.target_column, axis=1)
+
+    @property
+    def y(self):
+        """
+        Returns the dataset's target column
+        """
+        return self.raw_dataset[self.target_column]
+
     def get_feature_by_id(self, feature_id):
         """
         Returns the feature with the given id. We also build a lazy

@@ -36,22 +36,15 @@ class ClassImbalanceTest(ThresholdTest):
 
         # Does the minority class represent more than our threshold?
         passed = imbalance_percentages.min() > self.params["min_percent_threshold"]
+        results = [
+            TestResult(
+                column=target_column,
+                passed=passed,
+                values=imbalance_percentages.to_dict(),
+            )
+        ]
 
-        self.test_results = TestResults(
-            category=self.category,
-            test_name=self.name,
-            params=self.params,
-            passed=passed,
-            results=[
-                TestResult(
-                    column=target_column,
-                    passed=passed,
-                    values=imbalance_percentages.to_dict(),
-                )
-            ],
-        )
-
-        return self.test_results
+        return self.cache_results(results, passed=passed)
 
 
 @dataclass
@@ -101,9 +94,7 @@ class DuplicatesTest(ThresholdTest):
                 )
             )
 
-        self.cache_results(results, passed=all([r.passed for r in results]))
-
-        return self.test_results
+        return self.cache_results(results, passed=all([r.passed for r in results]))
 
 
 @dataclass
@@ -152,9 +143,7 @@ class HighCardinalityTest(ThresholdTest):
                 )
             )
 
-        self.cache_results(results, passed=all([r.passed for r in results]))
-
-        return self.test_results
+        return self.cache_results(results, passed=all([r.passed for r in results]))
 
 
 @dataclass
@@ -221,9 +210,7 @@ class HighPearsonCorrelationTest(ThresholdTest):
             for col, correlations in res.items()
         ]
 
-        self.cache_results(results, passed=passed)
-
-        return self.test_results
+        return self.cache_results(results, passed=passed)
 
 
 @dataclass
@@ -249,9 +236,7 @@ class MissingValuesTest(ThresholdTest):
             for col in missing.index
         ]
 
-        self.cache_results(results, passed=all([r.passed for r in results]))
-
-        return self.test_results
+        return self.cache_results(results, passed=all([r.passed for r in results]))
 
 
 @dataclass
@@ -288,9 +273,7 @@ class SkewnessTest(ThresholdTest):
                 )
             )
 
-        self.cache_results(results, passed=passed)
-
-        return self.test_results
+        return self.cache_results(results, passed=passed)
 
 
 @dataclass
@@ -319,9 +302,7 @@ class UniqueRowsTest(ThresholdTest):
             for col in unique_rows.index
         ]
 
-        self.cache_results(results, passed=all([r.passed for r in results]))
-
-        return self.test_results
+        return self.cache_results(results, passed=all([r.passed for r in results]))
 
 
 @dataclass
@@ -364,6 +345,4 @@ class ZerosTest(ThresholdTest):
                 )
             )
 
-        self.cache_results(results, passed=all([r.passed for r in results]))
-
-        return self.test_results
+        return self.cache_results(results, passed=all([r.passed for r in results]))

@@ -4,7 +4,6 @@ Test Plans entry point
 
 from .sklearn_classifier_metrics import SKLearnClassifierMetricsTestPlan
 from .tabular_datasets import GenericTabularDatasetTestPlan
-from .test_plan import TestPlan
 
 
 def get_by_name(name: str):
@@ -19,4 +18,4 @@ def get_by_name(name: str):
     raise ValueError(f"Test plan with name: '{name}' not found")
 
 
-__all__ = ["TestPlan", "tabular_datasets"]
+__all__ = ["tabular_datasets"]
