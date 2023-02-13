@@ -173,6 +173,111 @@ class PermutationFeatureImportance(Metric):
 
 
 @dataclass
+class PrecisionRecallCurve(Metric):
+    """
+    Precision Recall Curve
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "pr_curve"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        precision, recall, pr_thresholds = metrics.precision_recall_curve(
+            y_true, self.y_test_predict
+        )
+
+        return self.cache_results(
+            {
+                "precision": precision,
+                "recall": recall,
+                "thresholds": pr_thresholds,
+            }
+        )
+
+
+@dataclass
+class PrecisionScore(Metric):
+    """
+    Precision Score
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "precision"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = self.class_predictions(self.y_test_predict)
+        precision = metrics.precision_score(y_true, class_pred)
+
+        return self.cache_results(precision)
+
+
+@dataclass
+class RecallScore(Metric):
+    """
+    Recall Score
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "recall"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = self.class_predictions(self.y_test_predict)
+        recall = metrics.recall_score(y_true, class_pred)
+
+        return self.cache_results(recall)
+
+
+@dataclass
+class ROCAUCScore(Metric):
+    """
+    ROC AUC Score
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "roc_auc"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = self.class_predictions(self.y_test_predict)
+        roc_auc = metrics.roc_auc_score(y_true, class_pred)
+
+        return self.cache_results(roc_auc)
+
+
+@dataclass
+class ROCCurve(Metric):
+    """
+    ROC Curve
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "roc_curve"
+
+    def run(self):
+        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        class_pred = self.class_predictions(self.y_test_predict)
+        fpr, tpr, roc_thresholds = metrics.roc_curve(y_true, class_pred)
+        auc = metrics.roc_auc_score(y_true, class_pred)
+
+        return self.cache_results(
+            {
+                "auc": auc,
+                "fpr": fpr,
+                "tpr": tpr,
+                "thresholds": roc_thresholds,
+            }
+        )
+
+
+@dataclass
 class CharacteristicStabilityIndex(Metric):
     """
     Characteristic Stability Index between two datasets
