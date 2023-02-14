@@ -19,6 +19,12 @@ from ..model_validation.sklearn.metrics import (
     CharacteristicStabilityIndex,
     PopulationStabilityIndex,
 )
+from ..model_validation.sklearn.threshold_tests import (
+    AccuracyTest,
+    F1ScoreTest,
+    ROCAUCScoreTest,
+    TrainingTestDegradationTest,
+)
 
 
 class SKLearnClassifierMetricsTestPlan(TestPlan):
@@ -41,3 +47,24 @@ class SKLearnClassifierMetricsTestPlan(TestPlan):
         CharacteristicStabilityIndex,
         PopulationStabilityIndex,
     ]
+
+
+class SKLearnClassifierValidationTestPlan(TestPlan):
+    """
+    Test plan for sklearn classifier models
+    """
+
+    name = "sklearn_classifier_validation"
+    required_context = ["model", "train_ds", "test_ds"]
+    tests = [AccuracyTest, F1ScoreTest, ROCAUCScoreTest, TrainingTestDegradationTest]
+
+
+class SKLearnClassifierTestPlan(TestPlan):
+    """
+    Test plan for sklearn classifier models that includes
+    both metrics and validation tests
+    """
+
+    name = "sklearn_classifier"
+    required_context = ["model", "train_ds", "test_ds"]
+    test_plans = [SKLearnClassifierMetricsTestPlan, SKLearnClassifierValidationTestPlan]

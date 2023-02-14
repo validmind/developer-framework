@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
-from ..vm_models import Dataset, TestResult, TestResults, ThresholdTest
+from ..vm_models import Dataset, TestResult, ThresholdTest
 
 
 @dataclass

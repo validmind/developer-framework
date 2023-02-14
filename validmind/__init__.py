@@ -22,7 +22,6 @@ from .api_client import (
     # log_model,
     log_test_results,
     # log_training_metrics,
-    start_run,
     log_figure,
 )
 
@@ -40,7 +39,6 @@ __all__ = [  # noqa
     "init",
     "init_dataset",
     "init_model",
-    "start_run",
     "test_plans",
     # Framework Logging API
     "log_dataset",

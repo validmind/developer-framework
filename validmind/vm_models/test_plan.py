@@ -2,7 +2,7 @@
 TestPlan class
 """
 from dataclasses import dataclass
-from tqdm import tqdm
+from tqdm.autonotebook import tqdm
 from typing import ClassVar, List
 
 
@@ -33,6 +33,7 @@ class TestPlan:
 
     # Instance Variables
     config: dict() = None
+    test_context: TestContext = None
 
     # Single dataset for dataset-only tests
     dataset: Dataset = None
@@ -43,6 +44,12 @@ class TestPlan:
     test_ds: Dataset = None
 
     def __post_init__(self):
+        if self.test_context is not None:
+            self.dataset = self.test_context.dataset
+            self.model = self.test_context.model
+            self.train_ds = self.test_context.train_ds
+            self.test_ds = self.test_context.test_ds
+
         self.validate_context()
 
     def validate_context(self):
@@ -66,16 +73,18 @@ class TestPlan:
         """
         print(f"Running test plan '{self.name}'...")
         self.results = []  # Empty the results cache on every run
-        test_context = TestContext(
-            dataset=self.dataset,
-            model=self.model,
-            train_ds=self.train_ds,
-            test_ds=self.test_ds,
-        )
+
+        if self.test_context is None:
+            self.test_context = TestContext(
+                dataset=self.dataset,
+                model=self.model,
+                train_ds=self.train_ds,
+                test_ds=self.test_ds,
+            )
 
         for test in tqdm(self.tests):
-            test_instance = test(test_context)
-            print(f"Running test - {test.test_type} : {test_instance.name}")
+            test_instance = test(self.test_context)
+            print(f"Running {test.test_type}: {test_instance.name}")
             result = test_instance.run()
 
             if result is None:
@@ -91,6 +100,13 @@ class TestPlan:
 
         if send:
             self.log_results()
+
+        for test_plan in self.test_plans:
+            print(f"|-- Running sub test plan - {test_plan.name}")
+            test_plan_instance = test_plan(
+                test_context=self.test_context,
+            )
+            test_plan_instance.run(send=send)
 
     def log_results(self):
         print(f"Sending results of test plan execution '{self.name}' to ValidMind...")

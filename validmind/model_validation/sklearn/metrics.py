@@ -264,7 +264,9 @@ class ROCCurve(Metric):
     def run(self):
         y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
         class_pred = self.class_predictions(self.y_test_predict)
-        fpr, tpr, roc_thresholds = metrics.roc_curve(y_true, class_pred)
+        fpr, tpr, roc_thresholds = metrics.roc_curve(
+            y_true, self.y_test_predict, drop_intermediate=True
+        )
         auc = metrics.roc_auc_score(y_true, class_pred)
 
         return self.cache_results(

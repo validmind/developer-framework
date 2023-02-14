@@ -5,19 +5,17 @@ avoid confusion with the "tests" in the general data science/modeling sense.
 
 TODO: Test definitions should be supported in the API too
 """
-import pandas as pd
 
 from dataclasses import dataclass
 from typing import ClassVar, List
 
-from .dataset import Dataset
-from .test_context import TestContext
+from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanResult
 from .test_result import TestResult, TestResults
 
 
 @dataclass
-class ThresholdTest:
+class ThresholdTest(TestContextUtils):
     """
     A threshold test is a combination of a metric/plot we track and a
     corresponding set of parameters and thresholds values that allow
@@ -43,27 +41,6 @@ class ThresholdTest:
         """
         if self.params is None:
             self.params = self.default_params
-
-    @property
-    def dataset(self):
-        return self.test_context.dataset
-
-    @property
-    def df(self):
-        """
-        Returns a Pandas DataFrame for the dataset, first checking if
-        we passed in a Dataset or a DataFrame
-        """
-        if self.dataset is None:
-            raise ValueError("dataset must be set")
-        elif isinstance(self.dataset, Dataset):
-            return self.dataset.raw_dataset
-        elif isinstance(self.dataset, pd.DataFrame):
-            return self.dataset
-        else:
-            raise ValueError(
-                "dataset must be a Pandas DataFrame or a validmind Dataset object"
-            )
 
     def run(self, *args, **kwargs):
         """

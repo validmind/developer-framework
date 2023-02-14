@@ -9,7 +9,7 @@ from io import BytesIO
 import numpy as np
 import requests
 
-from .vm_models import Model, ModelAttributes
+# from .vm_models import Model, ModelAttributes
 
 # from .model_utils import (
 #     # get_info_from_model_instance,

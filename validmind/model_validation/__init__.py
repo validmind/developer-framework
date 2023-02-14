@@ -4,8 +4,8 @@ Entrypoint to Model Evaluation API
 # from .classification import evaluate_classification_model
 # from .regression import evaluate_regression_model
 
-from ..api_client import start_run
-from ..vm_models import Model
+# from ..api_client import start_run
+# from ..vm_models import Model
 
 
 # TODO: rename once we extract metrics to its own function

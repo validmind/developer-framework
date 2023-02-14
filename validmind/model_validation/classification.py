@@ -8,26 +8,7 @@ from tqdm import tqdm
 
 from .utils import summarize_evaluation_metrics, summarize_evaluation_results
 from ..api_client import log_metrics, log_figure, log_test_results
-from .sklearn.binary_classification.metrics import (
-    f1_score,
-    precision_recall_curve,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-    roc_curve,
-)
-from .sklearn.generic.metrics import (
-    permutation_importance,
-    shap_global_importance,
-)
 from ..tests.config import Settings
-from ..tests.model_evaluation import (
-    base_accuracy_test,
-    base_f1_score_test,
-    base_roc_auc_score_test,
-    training_better_than_test,
-    training_test_degradation_test,
-)
 from ..utils import is_notebook
 
 config = Settings()
@@ -52,14 +33,7 @@ def get_model_metrics(  # noqa: C901
     print("Computing model evaluation metrics...")
 
     metrics = [
-        f1_score,
-        precision_score,
-        recall_score,
-        roc_auc_score,
-        roc_curve,
-        precision_recall_curve,
-        permutation_importance,
-        shap_global_importance,
+        # shap_global_importance,
     ]
     evaluation_metrics = []
     evaluation_figures = []
@@ -125,13 +99,7 @@ def run_model_tests(
     Run all available (TBD via configuration) model tests
     """
     print("Running evaluation tests...")
-    tests = [
-        base_accuracy_test,
-        base_f1_score_test,
-        base_roc_auc_score_test,
-        training_better_than_test,
-        training_test_degradation_test,
-    ]
+    tests = []
 
     test_results = []
 

@@ -9,12 +9,8 @@ from .api_client import (
     # log_training_metrics,
 )
 
-from .tests.config import Settings
-
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .vm_models import Dataset, Model
-
-config = Settings()
 
 
 def init_dataset(
@@ -51,6 +47,23 @@ def init_dataset(
         raise ValueError("Only Pandas datasets are supported at the moment.")
 
     vm_dataset.type = type
+
+    # WIP - moving this to metrics
+    print("Calculating decriptive statistics...")
+    vm_dataset.describe()
+
+    print("Calculating feature correlations...")
+    vm_dataset.get_correlations()
+
+    print("Logging dataset metadata to ValidMind...")
+    log_dataset(vm_dataset)
+
+    print("Generating correlation plots...")
+    correlation_plots = vm_dataset.get_correlation_plots()
+    for corr_plot in correlation_plots:
+        log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
+    # WIP - moving this to metrics
+
     return vm_dataset
 
 

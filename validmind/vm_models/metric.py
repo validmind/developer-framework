@@ -8,12 +8,12 @@ from typing import ClassVar, Optional, Union
 import pandas as pd
 
 from .metric_result import MetricResult
-from .test_context import TestContext
+from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanResult
 
 
 @dataclass
-class Metric:
+class Metric(TestContextUtils):
     """
     Metric objects track the schema supported by the ValidMind API
     """
@@ -43,37 +43,6 @@ class Metric:
     @property
     def name(self):
         return self.key
-
-    @property
-    def dataset(self):
-        return self.test_context.dataset
-
-    @property
-    def model(self):
-        return self.test_context.model
-
-    @property
-    def train_ds(self):
-        return self.test_context.train_ds
-
-    @property
-    def test_ds(self):
-        return self.test_context.test_ds
-
-    @property
-    def y_train_predict(self):
-        return self.test_context.y_train_predict
-
-    @property
-    def y_test_predict(self):
-        return self.test_context.y_test_predict
-
-    def class_predictions(self, y_predict):
-        """
-        Converts a set of probability predictions to class predictions
-        """
-        # TODO: parametrize at some point
-        return (y_predict > 0.5).astype(int)
 
     def run(self, *args, **kwargs):
         """
