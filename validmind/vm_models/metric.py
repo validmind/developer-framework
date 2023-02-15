@@ -31,7 +31,7 @@ class Metric(TestContextUtils):
 
     # Instance Variables
     params: dict = None
-    result: MetricResult = None
+    result: TestPlanResult = None
 
     def __post_init__(self):
         """

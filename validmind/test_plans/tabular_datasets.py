@@ -6,6 +6,7 @@ custom test plan from the project's configuration
 """
 
 from ..vm_models import TestPlan
+from ..data_validation.metrics import DatasetDescription, DatasetMetadata
 from ..data_validation.threshold_tests import (
     ClassImbalanceTest,
     DuplicatesTest,
@@ -18,12 +19,26 @@ from ..data_validation.threshold_tests import (
 )
 
 
-class GenericTabularDatasetTestPlan(TestPlan):
+class TabularDatasetDescription(TestPlan):
     """
-    Test plan for generic tabular datasets
+    Test plan to extract metadata and descriptive
+    statistics from a tabular dataset
     """
 
-    name = "generic_tabular_dataset"
+    name = "tabular_dataset_description"
+    required_context = ["dataset"]
+    tests = [
+        DatasetMetadata,
+        DatasetDescription,
+    ]
+
+
+class TabularDataQuality(TestPlan):
+    """
+    Test plan for data quality on tabular datasets
+    """
+
+    name = "tabular_data_quality"
     required_context = ["dataset"]
     tests = [
         ClassImbalanceTest,
@@ -34,4 +49,17 @@ class GenericTabularDatasetTestPlan(TestPlan):
         SkewnessTest,
         UniqueRowsTest,
         ZerosTest,
+    ]
+
+
+class TabularDataset(TestPlan):
+    """
+    Test plan for generic tabular datasets
+    """
+
+    name = "tabular_dataset"
+    required_context = ["dataset"]
+    test_plans = [
+        TabularDatasetDescription,
+        TabularDataQuality,
     ]

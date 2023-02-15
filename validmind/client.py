@@ -49,19 +49,19 @@ def init_dataset(
     vm_dataset.type = type
 
     # WIP - moving this to metrics
-    print("Calculating decriptive statistics...")
-    vm_dataset.describe()
+    # print("Calculating decriptive statistics...")
+    # vm_dataset.describe()
 
-    print("Calculating feature correlations...")
-    vm_dataset.get_correlations()
+    # print("Calculating feature correlations...")
+    # vm_dataset.get_correlations()
 
-    print("Logging dataset metadata to ValidMind...")
-    log_dataset(vm_dataset)
+    # print("Logging dataset metadata to ValidMind...")
+    # log_dataset(vm_dataset)
 
-    print("Generating correlation plots...")
-    correlation_plots = vm_dataset.get_correlation_plots()
-    for corr_plot in correlation_plots:
-        log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
+    # print("Generating correlation plots...")
+    # correlation_plots = vm_dataset.get_correlation_plots()
+    # for corr_plot in correlation_plots:
+    #     log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
     # WIP - moving this to metrics
 
     return vm_dataset

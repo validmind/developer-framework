@@ -2,12 +2,12 @@
 API Client
 """
 import json
-import math
 import os
 from io import BytesIO
 
-import numpy as np
 import requests
+
+from .utils import NumpyEncoder
 
 # from .vm_models import Model, ModelAttributes
 
@@ -25,35 +25,6 @@ vm_api_key = None
 vm_api_secret = None
 
 api_session = requests.Session()
-
-
-def nan_to_none(obj):
-    if isinstance(obj, dict):
-        return {k: nan_to_none(v) for k, v in obj.items()}
-    elif isinstance(obj, list):
-        return [nan_to_none(v) for v in obj]
-    elif isinstance(obj, float) and math.isnan(obj):
-        return None
-    return obj
-
-
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super().default(obj)
-
-    def encode(self, obj):
-        obj = nan_to_none(obj)
-        return super().encode(obj)
-
-    def iterencode(self, obj, _one_shot: bool = ...):
-        obj = nan_to_none(obj)
-        return super().iterencode(obj, _one_shot)
 
 
 def __ping():

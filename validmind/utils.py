@@ -1,12 +1,45 @@
+import json
 import math
 
-from tabulate import tabulate
 from typing import Any
 
+import numpy as np
+
 from numpy import ndarray
+from tabulate import tabulate
+
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 6
+
+
+def nan_to_none(obj):
+    if isinstance(obj, dict):
+        return {k: nan_to_none(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [nan_to_none(v) for v in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    return obj
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+    def encode(self, obj):
+        obj = nan_to_none(obj)
+        return super().encode(obj)
+
+    def iterencode(self, obj, _one_shot: bool = ...):
+        obj = nan_to_none(obj)
+        return super().iterencode(obj, _one_shot)
 
 
 def get_full_typename(o: Any) -> Any:

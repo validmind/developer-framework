@@ -3,25 +3,33 @@ Test Plans entry point
 """
 
 from .sklearn_classifier import (
-    SKLearnClassifierMetricsTestPlan,
-    SKLearnClassifierTestPlan,
-    SKLearnClassifierValidationTestPlan,
+    SKLearnClassifierMetrics,
+    SKLearnClassifier,
+    SKLearnClassifierValidation,
 )
-from .tabular_datasets import GenericTabularDatasetTestPlan
+from .tabular_datasets import (
+    TabularDataset,
+    TabularDataQuality,
+    TabularDatasetDescription,
+)
+
+core_test_plans = {
+    "sklearn_classifier_metrics": SKLearnClassifierMetrics,
+    "sklearn_classifier_validation": SKLearnClassifierValidation,
+    "sklearn_classifier": SKLearnClassifier,
+    "tabular_dataset": TabularDataset,
+    "tabular_dataset_description": TabularDatasetDescription,
+    "tabular_data_quality": TabularDataQuality,
+}
 
 
 def get_by_name(name: str):
     """
     Returns the test plan by name
     """
-    if name == "generic_tabular_dataset":
-        return GenericTabularDatasetTestPlan
-    elif name == "sklearn_classifier_metrics":
-        return SKLearnClassifierMetricsTestPlan
-    elif name == "sklearn_classifier_validation":
-        return SKLearnClassifierValidationTestPlan
-    elif name == "sklearn_classifier":
-        return SKLearnClassifierTestPlan
+
+    if name in core_test_plans:
+        return core_test_plans[name]
 
     raise ValueError(f"Test plan with name: '{name}' not found")
 

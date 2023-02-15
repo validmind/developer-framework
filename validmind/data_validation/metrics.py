@@ -1,22 +1,54 @@
 """
-Metrics functions for any dataset
+Metrics functions for any Pandas-compatible datasets
 """
-import numpy as np
 
-from scipy.stats import t
+from dataclasses import dataclass
+from typing import ClassVar
 
 
-def correlation_significance(r, n):
+from ..vm_models import Metric, TestContext, TestContextUtils, TestPlanResult
+
+
+@dataclass
+class DatasetMetadata(TestContextUtils):
     """
-    Calculates the significance of a Pearson correlation coefficient
-
-    :param r: Pearson correlation coefficient
-    :param n: Number of samples
+    Custom class to collect a set of descriptive statistics for a dataset.
+    This class will log dataset metadata via `log_dataset` instead of a metric.
+    Dataset metadat is necessary to initialize dataset object that can be related
+    to different metrics and test results
     """
-    if r == 1:
-        return -1
 
-    t_stat = r * np.sqrt((n - 2) / (1 - r**2))
-    p_val = t.sf(np.abs(t_stat), n - 2) * 2
+    test_type: ClassVar[str] = "DatasetMetadata"
 
-    return p_val
+    # Test Context
+    test_context: TestContext
+
+    name = "dataset_metadata"
+    result: TestPlanResult = None
+
+    def run(self):
+        """
+        Just set the dataset to the result attribute of the test plan result
+        and it will be logged via the `log_dataset` function
+        """
+        self.result = TestPlanResult(dataset=self.dataset)
+
+        return self.result
+
+
+@dataclass
+class DatasetDescription(Metric):
+    """
+    Collects a set of descriptive statistics for a dataset
+    """
+
+    type = "dataset"
+    key = "dataset_description"
+
+    def __post_init__(self):
+        self.scope = self.dataset.type
+
+    def run(self):
+        # This will populate the "fields" attribute in the dataset object
+        self.dataset.describe()
+        return self.cache_results(self.dataset.fields)

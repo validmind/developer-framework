@@ -27,7 +27,7 @@ from ..model_validation.sklearn.threshold_tests import (
 )
 
 
-class SKLearnClassifierMetricsTestPlan(TestPlan):
+class SKLearnClassifierMetrics(TestPlan):
     """
     Test plan for sklearn classifier metrics
     """
@@ -49,7 +49,7 @@ class SKLearnClassifierMetricsTestPlan(TestPlan):
     ]
 
 
-class SKLearnClassifierValidationTestPlan(TestPlan):
+class SKLearnClassifierValidation(TestPlan):
     """
     Test plan for sklearn classifier models
     """
@@ -59,7 +59,7 @@ class SKLearnClassifierValidationTestPlan(TestPlan):
     tests = [AccuracyTest, F1ScoreTest, ROCAUCScoreTest, TrainingTestDegradationTest]
 
 
-class SKLearnClassifierTestPlan(TestPlan):
+class SKLearnClassifier(TestPlan):
     """
     Test plan for sklearn classifier models that includes
     both metrics and validation tests
@@ -67,4 +67,4 @@ class SKLearnClassifierTestPlan(TestPlan):
 
     name = "sklearn_classifier"
     required_context = ["model", "train_ds", "test_ds"]
-    test_plans = [SKLearnClassifierMetricsTestPlan, SKLearnClassifierValidationTestPlan]
+    test_plans = [SKLearnClassifierMetrics, SKLearnClassifierValidation]

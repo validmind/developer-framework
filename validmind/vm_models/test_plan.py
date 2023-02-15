@@ -6,7 +6,7 @@ from tqdm.autonotebook import tqdm
 from typing import ClassVar, List
 
 
-from ..api_client import log_metrics, log_test_result
+from ..api_client import log_dataset, log_metrics, log_test_result
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -110,7 +110,7 @@ class TestPlan:
 
     def log_results(self):
         print(f"Sending results of test plan execution '{self.name}' to ValidMind...")
-        # API accepts metrics as a list, we need to do the same for test results
+
         metrics = []
         for result in self.results:
             result_class = result.__class__.__name__
@@ -118,9 +118,12 @@ class TestPlan:
                 log_test_result(result.test_results)
             elif result.metric is not None:
                 metrics.append(result.metric)
+            elif result.dataset is not None:
+                log_dataset(result.dataset)
             else:
                 print(result_class)
                 raise ValueError(f"Invalid result type: {result_class}")
 
         if len(metrics) > 0:
+            # API accepts metrics as a list, we need to do the same for test results
             log_metrics(metrics)
