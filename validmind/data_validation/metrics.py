@@ -37,6 +37,28 @@ class DatasetMetadata(TestContextUtils):
 
 
 @dataclass
+class DatasetCorrelations(Metric):
+    """
+    Extracts the correlation matrix for a dataset. The following coefficients
+    are calculated:
+    - Pearson's R for numerical variables
+    - Cramer's V for categorical variables
+    - Correlation ratios for categorical-numerical variables
+    """
+
+    type = "dataset"
+    key = "dataset_correlations"
+
+    def __post_init__(self):
+        self.scope = self.dataset.type
+
+    def run(self):
+        # This will populate the "correlations" attribute in the dataset object
+        self.dataset.get_correlations()
+        return self.cache_results(self.dataset.correlations)
+
+
+@dataclass
 class DatasetDescription(Metric):
     """
     Collects a set of descriptive statistics for a dataset

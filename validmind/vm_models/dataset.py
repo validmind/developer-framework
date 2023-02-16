@@ -97,14 +97,7 @@ class Dataset:
         Serializes the model to a dictionary so it can be sent to the API
         """
         dataset_dict = {
-            "correlations": {
-                # TODO: generalize this
-                "pearson": self.correlations,
-            },
-            "fields": self.fields,
-            "sample": self.sample,
             "shape": self.shape,
-            "statistics": self.statistics,
             "type": self.type,
         }
 

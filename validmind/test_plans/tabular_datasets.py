@@ -6,7 +6,11 @@ custom test plan from the project's configuration
 """
 
 from ..vm_models import TestPlan
-from ..data_validation.metrics import DatasetDescription, DatasetMetadata
+from ..data_validation.metrics import (
+    DatasetCorrelations,
+    DatasetDescription,
+    DatasetMetadata,
+)
 from ..data_validation.threshold_tests import (
     ClassImbalanceTest,
     DuplicatesTest,
@@ -30,6 +34,7 @@ class TabularDatasetDescription(TestPlan):
     tests = [
         DatasetMetadata,
         DatasetDescription,
+        DatasetCorrelations,
     ]
 
 

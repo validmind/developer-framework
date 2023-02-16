@@ -49,7 +49,7 @@ class SKLearnClassifierMetrics(TestPlan):
     ]
 
 
-class SKLearnClassifierValidation(TestPlan):
+class SKLearnClassifierPerformance(TestPlan):
     """
     Test plan for sklearn classifier models
     """
@@ -67,4 +67,4 @@ class SKLearnClassifier(TestPlan):
 
     name = "sklearn_classifier"
     required_context = ["model", "train_ds", "test_ds"]
-    test_plans = [SKLearnClassifierMetrics, SKLearnClassifierValidation]
+    test_plans = [SKLearnClassifierMetrics, SKLearnClassifierPerformance]

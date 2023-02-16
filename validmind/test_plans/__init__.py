@@ -5,7 +5,7 @@ Test Plans entry point
 from .sklearn_classifier import (
     SKLearnClassifierMetrics,
     SKLearnClassifier,
-    SKLearnClassifierValidation,
+    SKLearnClassifierPerformance,
 )
 from .tabular_datasets import (
     TabularDataset,
@@ -15,7 +15,7 @@ from .tabular_datasets import (
 
 core_test_plans = {
     "sklearn_classifier_metrics": SKLearnClassifierMetrics,
-    "sklearn_classifier_validation": SKLearnClassifierValidation,
+    "sklearn_classifier_validation": SKLearnClassifierPerformance,
     "sklearn_classifier": SKLearnClassifier,
     "tabular_dataset": TabularDataset,
     "tabular_dataset_description": TabularDatasetDescription,
