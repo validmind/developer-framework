@@ -50,11 +50,15 @@ class Metric(TestContextUtils):
         """
         raise NotImplementedError
 
-    def cache_results(self, metric_value: Union[dict, list, pd.DataFrame]):
+    def cache_results(
+        self,
+        metric_value: Union[dict, list, pd.DataFrame],
+        figures: Optional[object] = None,
+    ):
         """
         Cache the results of the metric calculation and do any post-processing if needed
         """
-        self.result = TestPlanResult(
+        test_plan_result = TestPlanResult(
             metric=MetricResult(
                 type=self.type,
                 scope=self.scope,
@@ -63,5 +67,11 @@ class Metric(TestContextUtils):
                 value_formatter=self.value_formatter,
             )
         )
+
+        # Allow metrics to attach figures to the test plan result
+        if figures:
+            test_plan_result.figures = figures
+
+        self.result = test_plan_result
 
         return self.result

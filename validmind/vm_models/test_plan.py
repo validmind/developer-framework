@@ -6,7 +6,7 @@ from tqdm.autonotebook import tqdm
 from typing import ClassVar, List
 
 
-from ..api_client import log_dataset, log_metrics, log_test_result
+from ..api_client import log_dataset, log_figure, log_metrics, log_test_result
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -122,7 +122,15 @@ class TestPlan:
                 log_dataset(result.dataset)
             else:
                 print(result_class)
-                raise ValueError(f"Invalid result type: {result_class}")
+                raise ValueError(
+                    f"Invalid result type: {result_class}. Either \
+                        test_results, metric, or dataset must be present."
+                )
+
+            # Figures are optional and can be included in the results
+            if result.figures is not None:
+                for figure in result.figures:
+                    log_figure(figure["figure"], figure["key"], figure["metadata"])
 
         if len(metrics) > 0:
             # API accepts metrics as a list, we need to do the same for test results
