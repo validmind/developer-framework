@@ -25,7 +25,7 @@ from .api_client import (
     log_figure,
 )
 
-from .client import analyze_dataset, init_dataset, init_model
+from .client import init_dataset, init_model
 
 # TODO: need to fix this import * situation
 from .data_validation import *  # noqa
@@ -33,7 +33,6 @@ from .test_plans import *  # noqa
 
 __all__ = [  # noqa
     # Framework High Level API
-    "analyze_dataset",
     "data_validation",
     # "evaluate_model",
     "init",

@@ -6,7 +6,13 @@ from tqdm.autonotebook import tqdm
 from typing import ClassVar, List
 
 
-from ..api_client import log_dataset, log_figure, log_metrics, log_test_result
+from ..api_client import (
+    log_dataset,
+    log_figure,
+    log_metrics,
+    log_model,
+    log_test_result,
+)
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -120,6 +126,8 @@ class TestPlan:
                 metrics.append(result.metric)
             elif result.dataset is not None:
                 log_dataset(result.dataset)
+            elif result.model is not None:
+                log_model(result.model)
             else:
                 print(result_class)
                 raise ValueError(

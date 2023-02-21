@@ -2,15 +2,8 @@
 Client interface for all data and model validation functions
 """
 
-from .api_client import (
-    log_dataset,
-    log_figure,
-    # log_model,
-    # log_training_metrics,
-)
-
 # from .model_validation import evaluate_model as mod_evaluate_model
-from .vm_models import Dataset, Model
+from .vm_models import Dataset, Model, ModelAttributes
 
 
 def init_dataset(
@@ -48,22 +41,6 @@ def init_dataset(
 
     vm_dataset.type = type
 
-    # WIP - moving this to metrics
-    # print("Calculating decriptive statistics...")
-    # vm_dataset.describe()
-
-    # print("Calculating feature correlations...")
-    # vm_dataset.get_correlations()
-
-    # print("Logging dataset metadata to ValidMind...")
-    # log_dataset(vm_dataset)
-
-    # print("Generating correlation plots...")
-    # correlation_plots = vm_dataset.get_correlation_plots()
-    # for corr_plot in correlation_plots:
-    #     log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
-    # WIP - moving this to metrics
-
     return vm_dataset
 
 
@@ -83,32 +60,9 @@ def init_model(model):
             )
         )
 
-    vm_model = Model(model=model)
+    vm_model = Model(model=model, attributes=ModelAttributes())
 
     return vm_model
-
-
-def analyze_dataset(vm_dataset):
-    """
-    Analyzes a dataset by extracting summary statistics and running data quality tests
-    on it. Results are logged to the ValidMind API
-
-    :param pd.DataFrame vm_dataset: VM Dataset instance
-    :param bool send: Whether to post the test results to the API. send=False is useful for testing
-    """
-    print("Calculating decriptive statistics...")
-    vm_dataset.describe()
-
-    print("Calculating feature correlations...")
-    vm_dataset.get_correlations()
-
-    print("Logging dataset metadata to ValidMind...")
-    log_dataset(vm_dataset)
-
-    print("Generating correlation plots...")
-    correlation_plots = vm_dataset.get_correlation_plots()
-    for corr_plot in correlation_plots:
-        log_figure(corr_plot["figure"], corr_plot["key"], corr_plot["metadata"])
 
 
 # def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):

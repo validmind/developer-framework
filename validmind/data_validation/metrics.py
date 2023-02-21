@@ -54,10 +54,7 @@ class DatasetCorrelations(Metric):
 
     def run(self):
         # This will populate the "correlations" attribute in the dataset object
-        print("Calculating feature correlations...")
         self.dataset.get_correlations()
-
-        print("Generating correlation plots...")
         correlation_plots = self.dataset.get_correlation_plots()
         return self.cache_results(self.dataset.correlations, figures=correlation_plots)
 

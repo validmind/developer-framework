@@ -139,45 +139,22 @@ def log_metadata(content_id, text=None, extra_json=None):
     return True
 
 
-# def log_model(model_instance, vm_model=None):
-#     """
-#     Logs model metadata and hyperparameters to ValidMind API.
+def log_model(vm_model):
+    """
+    Logs model metadata and hyperparameters to ValidMind API.
+    :param vm_model: A ValidMind Model wrapper instance.
+    """
+    r = api_session.post(
+        f"{API_HOST}/log_model",
+        data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
+        headers={"Content-Type": "application/json"},
+    )
 
-#     :param model_instance: A model instance. Only supports XGBoost at the moment.
-#     :param vm_model: A ValidMind Model wrapper instance.
-#     :type vm_model: validmind.Model, optional
-#     """
-#     if vm_model is None:
-#         vm_model = Model(
-#             attributes=ModelAttributes(),
-#         )
+    if r.status_code != 200:
+        print("Could not log model to ValidMind API")
+        raise Exception(r.text)
 
-#     model_info = get_info_from_model_instance(model_instance)
-
-#     if vm_model.task is None:
-#         vm_model.task = model_info["task"]
-#     if vm_model.subtask is None:
-#         vm_model.subtask = model_info["subtask"]
-#     if vm_model.attributes.framework is None:
-#         vm_model.attributes.framework = model_info["framework"]
-#     if vm_model.attributes.framework_version is None:
-#         vm_model.attributes.framework_version = model_info["framework_version"]
-#     if vm_model.attributes.architecture is None:
-#         vm_model.attributes.architecture = model_info["architecture"]
-
-#     vm_model.params = get_params_from_model_instance(model_instance)
-
-#     r = api_session.post(
-#         f"{API_HOST}/log_model",
-#         data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
-#         headers={"Content-Type": "application/json"},
-#     )
-
-#     if r.status_code != 200:
-#         print("Could not log model to ValidMind API")
-#         raise Exception(r.text)
-
-#     return True
+    return True
 
 
 # def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):

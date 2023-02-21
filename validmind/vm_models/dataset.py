@@ -167,8 +167,6 @@ class Dataset:
         if self.__transformed_df is not None and force_refresh is False:
             return self.__transformed_df
 
-        print("Preparing in-memory dataset copy...")
-
         # Get the list of features that are of type Dummy
         dataset_options = self.options
         dummy_variables = (

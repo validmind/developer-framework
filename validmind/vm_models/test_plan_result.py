@@ -14,6 +14,7 @@ class TestPlanResult:
 
     dataset: Optional[object] = None
     metric: Optional[object] = None
+    model: Optional[object] = None
     test_results: Optional[object] = None
     figures: Optional[object] = None
     plots: Optional[List[object]] = None
