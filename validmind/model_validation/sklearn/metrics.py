@@ -13,6 +13,14 @@ from sklearn.inspection import permutation_importance
 
 from ...vm_models import Metric
 
+# TBD - for regression:
+# metrics = [
+#     adjusted_r2_score,
+#     mae_score,
+#     mse_score,
+#     r2_score,
+# ]
+
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
     """
