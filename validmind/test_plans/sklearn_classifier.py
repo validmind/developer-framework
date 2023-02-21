@@ -19,6 +19,7 @@ from ..model_validation.sklearn.metrics import (
     ROCCurve,
     CharacteristicStabilityIndex,
     PopulationStabilityIndex,
+    SHAPGlobalImportance,
 )
 from ..model_validation.sklearn.threshold_tests import (
     AccuracyTest,
@@ -48,6 +49,7 @@ class SKLearnClassifierMetrics(TestPlan):
         ROCCurve,
         CharacteristicStabilityIndex,
         PopulationStabilityIndex,
+        SHAPGlobalImportance,
     ]
 
 

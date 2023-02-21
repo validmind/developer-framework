@@ -119,7 +119,6 @@ class TestPlan:
 
         metrics = []
         for result in self.results:
-            result_class = result.__class__.__name__
             if result.test_results is not None:
                 log_test_result(result.test_results)
             elif result.metric is not None:
@@ -128,12 +127,6 @@ class TestPlan:
                 log_dataset(result.dataset)
             elif result.model is not None:
                 log_model(result.model)
-            else:
-                print(result_class)
-                raise ValueError(
-                    f"Invalid result type: {result_class}. Either \
-                        test_results, metric, or dataset must be present."
-                )
 
             # Figures are optional and can be included in the results
             if result.figures is not None:

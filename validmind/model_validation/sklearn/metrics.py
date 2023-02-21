@@ -2,16 +2,20 @@
 Metrics functions models trained with sklearn or that provide
 a sklearn-like API
 """
+from typing import ClassVar
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+import shap
 
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Metric
+from ...vm_models import Figure, Metric, TestContext, TestContextUtils, TestPlanResult
 
 # TBD - for regression:
 # metrics = [
@@ -20,6 +24,36 @@ from ...vm_models import Metric
 #     mse_score,
 #     r2_score,
 # ]
+
+
+def _generate_shap_plot(type_, shap_values, x_test):
+    """
+    Plots two types of SHAP global importance (SHAP).
+    :params type: mean, summary
+    :params shap_values: a matrix
+    :params x_test:
+    """
+    plt.close("all")
+
+    # preserve styles
+    mpl.rcParams["grid.color"] = "#CCC"
+    ax = plt.axes()
+    ax.set_facecolor("white")
+
+    summary_plot_extra_args = {}
+    if type_ == "mean":
+        summary_plot_extra_args = {"plot_type": "bar", "color": "#DE257E"}
+
+    shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
+    figure = plt.gcf()
+    # avoid displaying on notebooks and clears the canvas for the next plot
+    plt.close()
+
+    return {
+        "figure": figure,
+        "key": f"shap:{type_}",
+        "metadata": {"type": type_},
+    }
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -102,6 +136,33 @@ class AccuracyScore(Metric):
         accuracy_score = metrics.accuracy_score(y_true, class_pred)
 
         return self.cache_results(accuracy_score)
+
+
+@dataclass
+class CharacteristicStabilityIndex(Metric):
+    """
+    Characteristic Stability Index between two datasets
+    """
+
+    type = "training"
+    scope = "training:validation"  # should be set when running test plan
+    key = "csi"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates PSI for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
+        x_test = self.test_ds.raw_dataset.drop(columns=self.test_ds.target_column)
+
+        csi_values = {}
+        for col in x_train.columns:
+            psi_df = _get_psi(x_train[col].values, x_test[col].values)
+            csi_value = np.mean(psi_df["psi"])
+            csi_values[col] = csi_value
+
+        return self.cache_results(csi_values)
 
 
 @dataclass
@@ -288,30 +349,53 @@ class ROCCurve(Metric):
 
 
 @dataclass
-class CharacteristicStabilityIndex(Metric):
+class SHAPGlobalImportance(TestContextUtils):
     """
-    Characteristic Stability Index between two datasets
+    SHAP Global Importance. Custom metric
     """
 
-    type = "training"
-    scope = "training:validation"  # should be set when running test plan
-    key = "csi"
-    value_formatter = "key_values"
+    test_type: ClassVar[str] = "SHAPGlobalImportance"
+
+    # Test Context
+    test_context: TestContext
+
+    name = "shap"
+    result: TestPlanResult = None
 
     def run(self):
-        """
-        Calculates PSI for each of the dataset features
-        """
-        x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
-        x_test = self.test_ds.raw_dataset.drop(columns=self.test_ds.target_column)
+        trained_model = self.model.model
+        model_class = trained_model.__class__.__name__
 
-        csi_values = {}
-        for col in x_train.columns:
-            psi_df = _get_psi(x_train[col].values, x_test[col].values)
-            csi_value = np.mean(psi_df["psi"])
-            csi_values[col] = csi_value
+        # RandomForestClassifier applies here too
+        if model_class == "XGBClassifier":
+            explainer = shap.TreeExplainer(trained_model)
+        elif (
+            model_class == "LogisticRegression"
+            or model_class == "XGBRegressor"
+            or model_class == "LinearRegression"
+        ):
+            explainer = shap.LinearExplainer(trained_model, self.test_ds.x)
+        else:
+            raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
-        return self.cache_results(csi_values)
+        shap_values = explainer.shap_values(self.test_ds.x)
+
+        # For models with a single output this returns a numpy.ndarray of SHAP values
+        # if type(shap_values) is numpy.ndarray:
+        #     result_values = shap_values.tolist()
+        # else:
+        #     # For models with vector outputs this returns a list of matrices of SHAP values
+        #     shap_values = shap_values[0]
+        #     result_values = shap_values
+
+        self.result = TestPlanResult(
+            figures=[
+                _generate_shap_plot("mean", shap_values, self.test_ds.x),
+                _generate_shap_plot("summary", shap_values, self.test_ds.x),
+            ]
+        )
+
+        return self.result
 
 
 @dataclass
