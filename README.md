@@ -1,10 +1,5 @@
 # ValidMind Python Client
 
-## Integrating the ValidMind Developer Framework to your development environment
-
-Run `make build` to build a new Python package for the SDK. Pushing
-to a PyPI repository is work in progress.
-
 ## Contributing to ValidMind Developer Framework
 
 ### Install dependencies
@@ -27,3 +22,12 @@ make version tag=prerelease
 ```
 
 The value of `tag` corresponds to one of the options provided by Poetry: https://python-poetry.org/docs/cli/#version
+
+## Integrating the ValidMind Developer Framework to your development environment
+
+If you want to integate the `validmind` package to your development environment, you must build the package
+wheel first, since we have not pushed the package to a public PyPI repository yet. Steps:
+
+- Run `make build` to build a new Python package for the developer framework
+- This will create a new wheel file in the `dist` folder
+- Run `pip install <path-to-wheel>` to install the newly built package in your environment

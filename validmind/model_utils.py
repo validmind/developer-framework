@@ -1,16 +1,14 @@
 """
+TODO: move this to new test plan based structure.
+
 Utilities for inspecting client models
 """
-import sys
-
 import numpy as np
 
 from scipy import stats
-from sklearn.inspection import permutation_importance
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-from .metrics.custom_metrics import csi, psi
-from .models import Metric
+from .vm_models import Metric
 
 DEFAULT_REGRESSION_METRICS = [
     "mae",
@@ -25,57 +23,6 @@ XGBOOST_EVAL_METRICS = {
         "mean_squared_error"
     ],  # TBD - how to compute more than one metric for regression?
 }
-
-SUPPORTED_MODEL_TYPES = [
-    "GLMResultsWrapper",
-    "XGBClassifier",
-    "XGBRegressor",
-    "LogisticRegression",
-    "LinearRegression",
-]
-
-SUPPORTED_STATSMODELS_FAMILIES = {
-    "statsmodels.genmod.families.family.Poisson": "poisson",
-    "statsmodels.genmod.families.family.Gaussian": "gaussian",
-}
-
-SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
-    "statsmodels.genmod.families.links.log": "log",
-    "statsmodels.genmod.families.links.identity": "identity",
-}
-
-
-def get_xgboost_version():
-    if "xgboost" in sys.modules:
-        return sys.modules["xgboost"].__version__
-
-    return "n/a"
-
-
-def get_sklearn_version():
-    if "sklearn" in sys.modules:
-        return sys.modules["sklearn"].__version__
-
-    return "n/a"
-
-
-def get_statsmodels_version():
-    if "statsmodels" in sys.modules:
-        return sys.modules["statsmodels"].__version__
-
-    return "n/a"
-
-
-def get_xgboost_objective(model):
-    """
-    Attempts to extract the model subtask (binary, multi-class, etc.)
-    from the model's objective. Only binary classification is supported
-    at the moment
-    """
-    if model.objective == "binary:logistic":
-        return "binary"
-
-    return "n/a"
 
 
 def _get_ols_summary_variable_metrics(model, x_train, y_train):
@@ -226,63 +173,6 @@ def _get_statsmodels_summary_variable_metrics(model, x_train, y_train):
     return metrics
 
 
-def _get_common_metrics(model, x_train, y_train, x_val, y_val):
-    """
-    Computes metrics that are common to any type of model being trained
-    """
-    metrics = []
-
-    pfi_values = permutation_importance(
-        model, x_train, y_train, random_state=0, n_jobs=-2
-    )
-    pfi = {}
-    for i, column in enumerate(x_train.columns):
-        pfi[column] = [pfi_values["importances_mean"][i]], [
-            pfi_values["importances_std"][i]
-        ]
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training_dataset",
-            key="pfi",
-            value=pfi,
-        )
-    )
-
-    # Check if model is a classification or regression model by
-    # checking if it has a predict_proba method
-    predict_fn = getattr(model, "predict_proba", None)
-    if callable(predict_fn):
-        y_train_predict = model.predict_proba(x_train)[:, 1]
-        y_val_predict = model.predict_proba(x_val)[:, 1]
-    else:
-        y_train_predict = model.predict(x_train)
-        y_val_predict = model.predict(x_val)
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training:validation",
-            key="psi",
-            value=psi(y_train_predict, y_val_predict),
-            value_formatter="records",
-        )
-    )
-
-    metrics.append(
-        Metric(
-            type="training",
-            scope="training:validation",
-            key="csi",
-            value=csi(x_train, x_val),
-            value_formatter="key_values",
-        )
-    )
-
-    return metrics
-
-
 def _get_metrics_from_evals_result(model, xgboost_metrics):
     """
     Generic function to extra a given list of metrics
@@ -328,7 +218,6 @@ def get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val):
     xgboost_metrics = XGBOOST_EVAL_METRICS[predict_problem]
 
     vm_metrics = _get_metrics_from_evals_result(model, xgboost_metrics)
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
@@ -344,16 +233,6 @@ def get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val):
     vm_metrics.extend(
         get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
     )
-
-    return vm_metrics
-
-
-def get_sklearn_classification_metrics(model, x_train, y_train, x_val, y_val):
-    """
-    Attempts to extract model training metrics from a model object instance
-    """
-    vm_metrics = []
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
 
     return vm_metrics
 
@@ -393,7 +272,6 @@ def get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val):
                 )
             )
 
-    vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
     vm_metrics.extend(_get_ols_summary_variable_metrics(model, x_train, y_train))
 
     return vm_metrics
@@ -434,7 +312,6 @@ def get_statsmodels_regression_metrics(model, x_train, y_train, x_val, y_val):
                 )
             )
 
-    # vm_metrics.extend(_get_common_metrics(model, x_train, y_train, x_val, y_val))
     vm_metrics.extend(
         _get_statsmodels_summary_variable_metrics(model, x_train, y_train)
     )
@@ -442,125 +319,31 @@ def get_statsmodels_regression_metrics(model, x_train, y_train, x_val, y_val):
     return vm_metrics
 
 
-def get_statsmodels_model_params(model):
-    """
-    Extracts the fit() method's parametesr from a
-    statsmodels model object instance
-    """
-    model_instance = model.model
-    family_class = model_instance.family.__class__.__name__
-    link_class = model_instance.family.link.__class__.__name__
+# def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
+#     """
+#     Attempts to extract model training metrics from a model object instance
+#     """
+#     model_class = model.__class__.__name__
 
-    return {
-        "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
-        "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
-        "formula": model_instance.formula,
-        "method": model.method,
-        "cov_type": model.cov_type,
-    }
+#     if not Model.is_supported_model(model):
+#         raise ValueError(
+#             "Model type {} is not supported at the moment.".format(model_class)
+#         )
 
+#     # Only supports xgboot classifiers at the moment
+#     if model_class == "XGBClassifier":
+#         metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "XGBRegressor":
+#         metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "LinearRegression":
+#         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
+#     elif model_class == "LogisticRegression":
+#         metrics = []
+#     elif model_class == "GLMResultsWrapper":
+#         print("Refitting model...")
+#         refitted = model.model.fit()
+#         metrics = get_statsmodels_regression_metrics(
+#             refitted, x_train, y_train, x_val, y_val
+#         )
 
-def get_info_from_model_instance(model):
-    """
-    Attempts to extract all model info from a model object instance
-    """
-    model_class = model.__class__.__name__
-
-    if model_class not in SUPPORTED_MODEL_TYPES:
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
-
-    if model_class == "XGBClassifier":
-        architecture = "Extreme Gradient Boosting"
-        task = "classification"
-        subtask = get_xgboost_objective(model)
-        framework = "XGBoost"
-        framework_version = get_xgboost_version()
-    elif model_class == "XGBRegressor":
-        architecture = "Extreme Gradient Boosting"
-        task = "regression"
-        subtask = "regression"
-        framework = "XGBoost"
-        framework_version = get_xgboost_version()
-    elif model_class == "LogisticRegression":
-        architecture = "Linear Regression"
-        task = "classification"
-        subtask = "binary"
-        framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
-    elif model_class == "LinearRegression":
-        architecture = "Ordinary least squares Linear Regression"
-        task = "regression"
-        subtask = "regression"
-        framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
-    elif model_class == "GLMResultsWrapper":
-        architecture = "Generalized Linear Model (GLM)"
-        task = "regression"
-        subtask = "regression"
-        framework = "statsmodels"
-        framework_version = get_statsmodels_version()
-
-    return {
-        "architecture": architecture,
-        "task": task,
-        "subtask": subtask,
-        "framework": framework,
-        "framework_version": framework_version,
-    }
-
-
-def get_params_from_model_instance(model):
-    """
-    Attempts to extract model hyperparameters from a model object instance
-    """
-    model_class = model.__class__.__name__
-
-    if model_class not in SUPPORTED_MODEL_TYPES:
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
-
-    # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier" or model_class == "XGBRegressor":
-        params = model.get_xgb_params()
-    elif model_class == "GLMResultsWrapper":
-        params = get_statsmodels_model_params(model)
-    # Default to SKLearn models at the moment
-    else:
-        params = model.get_params()
-
-    return params
-
-
-def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
-    """
-    Attempts to extract model training metrics from a model object instance
-    """
-    model_class = model.__class__.__name__
-
-    if model_class not in SUPPORTED_MODEL_TYPES:
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
-
-    # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier":
-        metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "XGBRegressor":
-        metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "LinearRegression":
-        metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
-    elif model_class == "LogisticRegression":
-        metrics = get_sklearn_classification_metrics(
-            model, x_train, y_train, x_val, y_val
-        )
-    elif model_class == "GLMResultsWrapper":
-        print("Refitting model...")
-        refitted = model.model.fit()
-        metrics = get_statsmodels_regression_metrics(
-            refitted, x_train, y_train, x_val, y_val
-        )
-
-    return metrics
+#     return metrics

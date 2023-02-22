@@ -2,7 +2,7 @@
 authors = ["Andres Rodriguez <andres@validmind.ai>"]
 description = "ValidMind SDK"
 name = "validmind"
-version = "0.10.0"
+version = "1.0.0"
 
 [tool.poetry.dependencies]
 click = "^8.0.4"
@@ -26,6 +26,8 @@ tqdm = "^4.64.0"
 wheel = "^0.37.1"
 xgboost = "^1.5.2"
 statsmodels = "^0.13.5"
+pypmml = "^0.9.17"
+rpy2 = "^3.5.7"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

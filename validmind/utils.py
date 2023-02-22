@@ -1,11 +1,45 @@
+import json
 import math
 
 from typing import Any
 
+import numpy as np
+
 from numpy import ndarray
+from tabulate import tabulate
+
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 6
+
+
+def nan_to_none(obj):
+    if isinstance(obj, dict):
+        return {k: nan_to_none(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [nan_to_none(v) for v in obj]
+    elif isinstance(obj, float) and math.isnan(obj):
+        return None
+    return obj
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)
+
+    def encode(self, obj):
+        obj = nan_to_none(obj)
+        return super().encode(obj)
+
+    def iterencode(self, obj, _one_shot: bool = ...):
+        obj = nan_to_none(obj)
+        return super().iterencode(obj, _one_shot)
 
 
 def get_full_typename(o: Any) -> Any:
@@ -121,3 +155,34 @@ def format_key_values(key_values):
             key_values[key] = round(value, min_scale)
 
     return key_values
+
+
+def summarize_data_quality_results(results):
+    """
+    TODO: generalize this to work with metrics and test results
+
+    Summarize the results of the data quality test suite
+    """
+    test_results = []
+    for result in results:
+        num_passed = len([r for r in result.results if r.passed])
+        num_failed = len([r for r in result.results if not r.passed])
+
+        percent_passed = (
+            1 if len(result.results) == 0 else num_passed / len(result.results)
+        )
+        test_results.append(
+            [
+                result.test_name,
+                result.passed,
+                num_passed,
+                num_failed,
+                percent_passed * 100,
+            ]
+        )
+
+    return tabulate(
+        test_results,
+        headers=["Test", "Passed", "# Passed", "# Errors", "% Passed"],
+        numalign="right",
+    )
