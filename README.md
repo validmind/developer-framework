@@ -8,7 +8,7 @@
 
 - After cloning this repo run:
 
-```
+```bash
 poetry shell
 poetry install
 ```
@@ -22,7 +22,7 @@ to a PyPI repository is work in progress.
 
 Make sure you bump the package version before merging a PR with the following command:
 
-```
+```bash
 make version tag=prerelease
 ```
 
