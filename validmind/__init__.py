@@ -19,9 +19,8 @@ from .api_client import (
     log_dataset,
     log_metadata,
     log_metrics,
-    # log_model,
+    log_model,
     log_test_results,
-    # log_training_metrics,
     log_figure,
 )
 
@@ -34,7 +33,6 @@ from .test_plans import *  # noqa
 __all__ = [  # noqa
     # Framework High Level API
     "data_validation",
-    # "evaluate_model",
     "init",
     "init_dataset",
     "init_model",
@@ -44,9 +42,8 @@ __all__ = [  # noqa
     "log_figure",
     "log_metadata",
     "log_metrics",
-    # "log_model",
+    "log_model",
     "log_test_results",
-    # "log_training_metrics",
     # Models
     "Dataset",
     "DatasetTargets",
