@@ -1,0 +1,95 @@
+"""
+TestContext
+"""
+import pandas as pd
+
+from dataclasses import dataclass
+
+from .dataset import Dataset
+from .model import Model
+
+
+@dataclass
+class TestContext:
+    """
+    Holds context that can be used by tests to run.
+    Allows us to store data that needs to be reused
+    across different tests/metrics such as model predictions,
+    shared dataset metrics, etc.
+    """
+
+    dataset: Dataset = None
+    model: Model = None
+    train_ds: Dataset = None
+    test_ds: Dataset = None
+
+    # These variables can be generated dynamically if not passed
+    y_train_predict: object = None
+    y_test_predict: object = None
+
+    def __post_init__(self):
+        if self.model and self.train_ds:
+            print("Generating predictions train dataset...")
+            self.y_train_predict = self.model.predict(self.train_ds.x)
+        if self.model and self.test_ds:
+            print("Generating predictions test dataset...")
+            self.y_test_predict = self.model.predict(self.test_ds.x)
+
+
+class TestContextUtils:
+    """
+    Utility methods for classes that receive a TestContext
+
+    TODO: more validation
+    """
+
+    # Test Context
+    test_context: TestContext
+
+    @property
+    def dataset(self):
+        return self.test_context.dataset
+
+    @property
+    def model(self):
+        return self.test_context.model
+
+    @property
+    def train_ds(self):
+        return self.test_context.train_ds
+
+    @property
+    def test_ds(self):
+        return self.test_context.test_ds
+
+    @property
+    def y_train_predict(self):
+        return self.test_context.y_train_predict
+
+    @property
+    def y_test_predict(self):
+        return self.test_context.y_test_predict
+
+    def class_predictions(self, y_predict):
+        """
+        Converts a set of probability predictions to class predictions
+        """
+        # TODO: parametrize at some point
+        return (y_predict > 0.5).astype(int)
+
+    @property
+    def df(self):
+        """
+        Returns a Pandas DataFrame for the dataset, first checking if
+        we passed in a Dataset or a DataFrame
+        """
+        if self.dataset is None:
+            raise ValueError("dataset must be set")
+        elif isinstance(self.dataset, Dataset):
+            return self.dataset.raw_dataset
+        elif isinstance(self.dataset, pd.DataFrame):
+            return self.dataset
+        else:
+            raise ValueError(
+                "dataset must be a Pandas DataFrame or a validmind Dataset object"
+            )

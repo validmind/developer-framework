@@ -63,12 +63,7 @@ vm_dataset = vm.log_dataset(
 
 print("* Running data quality tests...")
 
-results = vm.run_dataset_tests(
-    df,
-    dataset_type="training",
-    vm_dataset=vm_dataset,
-    send=True,
-)
+results = vm.run_dataset_tests(vm_dataset=vm_dataset, send=True)
 
 # Run these as part of data quality tests
 df.drop(["RowNumber", "CustomerId", "Surname", "CreditScore"], axis=1, inplace=True)

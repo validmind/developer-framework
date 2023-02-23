@@ -1,0 +1,77 @@
+"""
+Class for storing ValidMind metric objects and associated
+data for display and reporting purposes
+"""
+from dataclasses import dataclass
+from typing import ClassVar, Optional, Union
+
+import pandas as pd
+
+from .metric_result import MetricResult
+from .test_context import TestContext, TestContextUtils
+from .test_plan_result import TestPlanResult
+
+
+@dataclass
+class Metric(TestContextUtils):
+    """
+    Metric objects track the schema supported by the ValidMind API
+    """
+
+    # Test Context
+    test_context: TestContext
+
+    # Class Variables
+    test_type: ClassVar[str] = "Metric"
+    type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
+    scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
+    key: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
+    value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
+    default_params: ClassVar[dict] = {}
+
+    # Instance Variables
+    params: dict = None
+    result: TestPlanResult = None
+
+    def __post_init__(self):
+        """
+        Set default params if not provided
+        """
+        if self.params is None:
+            self.params = self.default_params
+
+    @property
+    def name(self):
+        return self.key
+
+    def run(self, *args, **kwargs):
+        """
+        Run the metric calculation and cache its results
+        """
+        raise NotImplementedError
+
+    def cache_results(
+        self,
+        metric_value: Union[dict, list, pd.DataFrame],
+        figures: Optional[object] = None,
+    ):
+        """
+        Cache the results of the metric calculation and do any post-processing if needed
+        """
+        test_plan_result = TestPlanResult(
+            metric=MetricResult(
+                type=self.type,
+                scope=self.scope,
+                key=self.key,
+                value=metric_value,
+                value_formatter=self.value_formatter,
+            )
+        )
+
+        # Allow metrics to attach figures to the test plan result
+        if figures:
+            test_plan_result.figures = figures
+
+        self.result = test_plan_result
+
+        return self.result

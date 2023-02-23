@@ -15,6 +15,9 @@ lint:
 build:
 	poetry build
 
+test:
+	poetry run python -m unittest discover tests
+
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
 	poetry version $(tag)
