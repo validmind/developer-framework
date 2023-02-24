@@ -10,12 +10,8 @@ import click
 import pandas as pd
 import xgboost as xgb
 
-from imblearn.under_sampling import RandomUnderSampler
-from imblearn.over_sampling import SMOTE
-from numpy import argmax
 from sklearn import linear_model
-from sklearn.decomposition import PCA
-from sklearn.metrics import accuracy_score, precision_recall_curve
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, StratifiedKFold, train_test_split
 
 from jeffreys_test import (
@@ -50,14 +46,6 @@ def load_dataset(vm, fast=False):
         print("Fast flag was passed, using only 100k rows of data")
         train_df = train_df.sample(100000)
 
-    targets = vm.DatasetTargets(
-        target_column="loan_status",
-        class_labels={
-            "0": "Fully Paid",
-            "1": "Charged Off",
-        },
-    )
-
     COLS_CORRELATED = [
         "num_actv_rev_tl",
         "open_il_12m",
@@ -80,11 +68,20 @@ def load_dataset(vm, fast=False):
     train_df.drop(COLS_CORRELATED, axis=1, inplace=True)
     print("The following features  were removed.", COLS_CORRELATED)
 
-    vm.analyze_dataset(
+    vm_dataset = vm.init_dataset(
         dataset=train_df,
-        dataset_type="training",
-        targets=targets,
+        target_column="loan_status",
+        class_labels={
+            "0": "Fully Paid",
+            "1": "Charged Off",
+        },
     )
+
+    dataset_tests = vm.test_plans.TabularDataset(
+        dataset=vm_dataset,
+    )
+
+    dataset_tests.run()
 
     df_categories = train_df.select_dtypes("object")
     train_df = pd.get_dummies(
@@ -117,24 +114,6 @@ def prepare_datasets(vm, df):
         (x_val, y_val),
         (x_test, y_test),
     )
-
-
-# print("7. Balancing training dataset...")
-
-# x_train_subset = x_train[:1000]
-# y_train_subset = y_train[:1000]
-# pca = PCA(n_components=2)
-# x_train_subset = pca.fit_transform(x_train_subset)
-
-# over = SMOTE(sampling_strategy=0.5, k_neighbors=10)
-# under = RandomUnderSampler(sampling_strategy=1.0)
-# x_train_subset_o, y_train_subset_o = over.fit_resample(x_train_subset, y_train_subset)
-# x_train_subset_o_u, y_train_subset_o_u = under.fit_resample(
-#     x_train_subset_o, y_train_subset_o
-# )
-
-# x_train, y_train = over.fit_resample(x_train, y_train)
-# x_train, y_train = under.fit_resample(x_train, y_train)
 
 
 def grid_search(model_type, train_set):
@@ -228,31 +207,28 @@ def train_model(vm, model_type, train_set, val_set, test_set):
 
 
 def evaluate_model(vm, model, train_set, val_set, test_set):
-    vm.evaluate_model(
-        model,
-        train_set=train_set,
-        val_set=val_set,
-        test_set=test_set,
+    vm_model = vm.init_model(model)
+
+    (x_train, y_train) = train_set
+    (x_test, y_test) = test_set
+
+    train_set = pd.concat([x_train, y_train], axis=1)
+    test_set = pd.concat([x_test, y_test], axis=1)
+
+    vm_train_ds = vm.init_dataset(
+        dataset=train_set, type="generic", target_column="loan_status"
+    )
+    vm_test_ds = vm.init_dataset(
+        dataset=test_set, type="generic", target_column="loan_status"
     )
 
+    model_metrics = vm.test_plans.SKLearnClassifier(
+        model=vm_model,
+        train_ds=vm_train_ds,
+        test_ds=vm_test_ds,
+    )
 
-# # Find an optimal threshold for the model before we evaluate it
-# # We want to focus on a threshold that maximizes the F1 score since
-# # we are interested in optimizing performance for the minority class
-# y_pred_val = xgb_model.predict_proba(x_val)[:, -1]
-
-# precision, recall, thresholds = precision_recall_curve(y_val, y_pred_val)
-# fscore = (2 * precision * recall) / (precision + recall)
-# # Get the index of the largest F1 Score
-# ix = argmax(fscore)
-# threshold = thresholds[ix]
-# print("Optimal threshold=%f, F1 Score=%.3f" % (threshold, fscore[ix]))
-
-# threshold_metric = vm.Metric(
-#     type="evaluation", scope="test", key="decision_threshold", value=[threshold]
-# )
-
-# vm.log_metrics([threshold_metric])
+    model_metrics.run()
 
 
 def run_jeffreys_test(vm, model, train_set, val_set, test_set):
@@ -344,8 +320,8 @@ def run_jeffreys_test(vm, model, train_set, val_set, test_set):
 @click.option("--fast", is_flag=True, default=False)
 @click.option("--grid", is_flag=True, default=False)
 def run(model_type, env, fast, grid):
-    project_id = "cl1jyvh2c000909lg1rk0a0zb"
-    # project_id = "cl9dh2utr00001fmptchso49c"
+    # Pick project ID from the UI
+    project_id = "cl9dh2utr00001fmptchso49c"
 
     vm_init_opts = {
         "project": project_id,
