@@ -66,38 +66,34 @@ def init_model(model):
     return vm_model
 
 
-def run_test_plan(test_plan_id, send=True, **kwargs):
+def run_test_plan(test_plan_name, send=True, **kwargs):
     """High Level function for running a test plan
 
     This function provides a high level interface for running a test plan. It removes the need
     to manually initialize a TestPlan instance and run it. This function will automatically
-    find the correct test plan class based on the test_plan_id, initialize the test plan, and
+    find the correct test plan class based on the test_plan_name, initialize the test plan, and
     run it.
 
-    :param str test_plan_id: The test plan id
+    :param str test_plan_name: The test plan name (e.g. 'sklearn_classifier')
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     :param dict kwargs: Additional keyword arguments to pass to the test plan. These will provide
         the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-
-    :return: A TestPlan results object
     """
     try:
-        Plan = get_by_name(test_plan_id)
-    except ValueError:
+        Plan = get_by_name(test_plan_name)
+    except ValueError as exc:
         raise ValueError(
-            "Test plan with id {} does not exist. Please check the test plan id.".format(
-                test_plan_id
-            )
+            "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
         )
 
     try:
         plan = Plan(**kwargs)
     except ValueError as exc:
         raise ValueError(
-            "Error initializing test plan {}. {}".format(test_plan_id, str(exc))
+            "Error initializing test plan {}. {}".format(test_plan_name, str(exc))
         )
 
-    return plan.run(send=send)
+    plan.run(send=send)
 
 
 # def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):
