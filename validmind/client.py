@@ -78,6 +78,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     :param bool send: Whether to post the test results to the API. send=False is useful for testing
     :param dict kwargs: Additional keyword arguments to pass to the test plan. These will provide
         the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
+        See the documentation for the specific test plan for more details.
     """
     try:
         Plan = get_by_name(test_plan_name)
