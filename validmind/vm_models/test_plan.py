@@ -2,8 +2,9 @@
 TestPlan class
 """
 from dataclasses import dataclass
-from tqdm.autonotebook import tqdm
+from tqdm import tqdm
 from typing import ClassVar, List
+import time
 
 
 from ..api_client import (
@@ -49,6 +50,9 @@ class TestPlan:
     train_ds: Dataset = None
     test_ds: Dataset = None
 
+    # tqdm progress bar
+    pbar: tqdm = None
+
     def __post_init__(self):
         if self.test_context is not None:
             self.dataset = self.test_context.dataset
@@ -77,9 +81,8 @@ class TestPlan:
         """
         Runs the test plan
         """
-        print(f"Running test plan '{self.name}'...")
         self.results = []  # Empty the results cache on every run
-
+  
         if self.test_context is None:
             self.test_context = TestContext(
                 dataset=self.dataset,
@@ -88,13 +91,27 @@ class TestPlan:
                 test_ds=self.test_ds,
             )
 
-        for test in tqdm(self.tests):
+        if self.pbar is None:
+            self.pbar = tqdm(
+                total=len(self.tests),
+                desc=f"Running test plan: '{self.name}'",
+                leave=False,
+            )
+        else:
+            # if already initiated (meaning we are in a sub test plan), reset it
+            self.pbar.reset(total=len(self.tests))
+            self.pbar.set_description(f"Running sub test plan: '{self.name}'")
+
+        for test in self.tests:
             test_instance = test(self.test_context)
-            print(f"Running {test.test_type}: {test_instance.name}")
+
+            self.pbar.set_description(f"Running {test.test_type}: {test_instance.name}")
+
             result = test_instance.run()
 
             if result is None:
-                print("Test returned None, skipping...")
+                self.pbar.set_description("Test returned None, skipping...")
+                self.pbar.update(1)
                 continue
 
             if not isinstance(result, TestPlanResult):
@@ -104,35 +121,54 @@ class TestPlan:
 
             self.results.append(result)
 
+            self.pbar.update(1)            
+
         if send:
             self.log_results()
 
         for test_plan in self.test_plans:
-            print(f"|-- Running sub test plan - {test_plan.name}")
             test_plan_instance = test_plan(
                 test_context=self.test_context,
+                pbar=self.pbar,
             )
             test_plan_instance.run(send=send)
 
+        self.pbar.close()
+
     def log_results(self):
-        print(f"Sending results of test plan execution '{self.name}' to ValidMind...")
+        """
+        Logs the results of the test plan to ValidMind
+        """
+        self.pbar.reset(total=len(self.results))
+        self.pbar.set_description(
+            f"Sending results of test plan execution '{self.name}' to ValidMind..."
+        )
 
         metrics = []
         for result in self.results:
-            if result.test_results is not None:
-                log_test_result(result.test_results)
-            elif result.metric is not None:
+            if result.metric is not None:
                 metrics.append(result.metric)
+            elif result.test_results is not None:
+                self.pbar.set_description(
+                    f"Logging test results for test: {result.test_results.test_name}"
+                )
+                log_test_result(result.test_results)
             elif result.dataset is not None:
+                self.pbar.set_description("Logging dataset metadata and statistics...")
                 log_dataset(result.dataset)
             elif result.model is not None:
+                self.pbar.set_description("Logging model metadata and statistics...")
                 log_model(result.model)
 
             # Figures are optional and can be included in the results
             if result.figures is not None:
                 for figure in result.figures:
+                    self.pbar.set_description(f'Logging figure: {figure["key"]}')
                     log_figure(figure["figure"], figure["key"], figure["metadata"])
+
+            self.pbar.update(1)
 
         if len(metrics) > 0:
             # API accepts metrics as a list, we need to do the same for test results
+            self.pbar.set_description("Logging metrics...")
             log_metrics(metrics)
