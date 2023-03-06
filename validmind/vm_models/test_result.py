@@ -23,6 +23,12 @@ class TestResult(BaseResultModel):
     passed: Optional[bool]  # Optionally per-result pass/fail
     values: dict
 
+    def display(self):
+        """
+        Display results
+        """
+        pass
+
 
 class TestResults(BaseResultModel):
     category: str

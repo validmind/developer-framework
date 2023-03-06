@@ -4,7 +4,6 @@ TestPlan class
 from dataclasses import dataclass
 from tqdm import tqdm
 from typing import ClassVar, List
-import time
 
 
 from ..api_client import (
@@ -134,10 +133,13 @@ class TestPlan:
             test_plan_instance.run(send=send)
 
         self.pbar.close()
+        self.summarize()
 
     def log_results(self):
-        """
-        Logs the results of the test plan to ValidMind
+        """Logs the results of the test plan to ValidMind
+
+        This method will be called after the test plan has been run and all results have been
+        collected. This method will log the results to ValidMind.
         """
         self.pbar.reset(total=len(self.results))
         self.pbar.set_description(
@@ -172,3 +174,48 @@ class TestPlan:
             # API accepts metrics as a list, we need to do the same for test results
             self.pbar.set_description("Logging metrics...")
             log_metrics(metrics)
+
+    def summarize(self):
+        """Summarizes the results of the test plan
+
+        This method will be called after the test plan has been run and all results have been
+        logged to ValidMind. It will summarize the results of the test plan by creating an
+        html table with the results of each test. This html table will be displayed in an
+        ipython notebook or in a jupyter notebook.
+        """
+        import ipywidgets as widgets
+        from IPython.display import display, HTML
+
+        if len(self.results) == 0:
+            return
+
+        html = f"<h2>Test Plan Results for {self.name}</h2>"
+
+        for result in self.results:
+            print(type(result))
+            if result.metric is not None:
+                print("Has metric")
+            if result.test_results is not None:
+                print(f"Has test results: {result.test_results.test_name} : {type(result.test_results)} : {len(result.test_results.results)}")
+                for test_result in result.test_results.results:
+                    print(f"\t{type(test_result)}")
+            if result.dataset is not None:
+                print("Has dataset")
+            if result.model is not None:
+                print("Has model")
+            if result.figures is not None:
+                print("Has figures")
+            # html += f"<h3>{result.test_name}</h3>"
+            # table = "<table><tr><th>Test Name</th><th>Column</th><th>Passed</th><th>Values</th></tr>"
+            # if result.test_results is not None:
+            #     for test_result in result.test_results.results:
+            #         table += "<tr>"
+            #         table += f"<td>{test_result.test_name}</td>"
+            #         table += f"<td>{test_result.column}</td>"
+            #         table += f"<td>{test_result.passed}</td>"
+            #         table += f"<td>{test_result.values}</td>"
+            #         table += "</tr>"
+            # table += "</table>"
+            # html += table
+
+        display(HTML(html))
