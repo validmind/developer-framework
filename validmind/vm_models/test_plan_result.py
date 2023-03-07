@@ -130,6 +130,7 @@ class TestPlanTestResult(TestPlanResult):
 
     def _to_html(self):
         html = "<h4>Logged the following test results to the ValidMind platform:</h4>"
+        # TODO: probably want to move this into an html template file
         html += """
         <div class="test-result">
             <div class="test-result-header">
