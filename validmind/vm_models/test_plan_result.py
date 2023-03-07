@@ -82,7 +82,7 @@ class TestPlanMetricResult(TestPlanResult):
             """
         else:
             html = f"""
-            <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""} 
+            <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""}
             to the ValidMind platform:</h4>
             """
 
