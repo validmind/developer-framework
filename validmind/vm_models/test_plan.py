@@ -5,14 +5,6 @@ from dataclasses import dataclass
 from tqdm import tqdm
 from typing import ClassVar, List
 
-
-from ..api_client import (
-    log_dataset,
-    log_figure,
-    log_metrics,
-    log_model,
-    log_test_result,
-)
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
