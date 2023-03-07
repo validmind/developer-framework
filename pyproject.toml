@@ -27,7 +27,6 @@ xgboost = "^1.5.2"
 statsmodels = "^0.13.5"
 pypmml = "^0.9.17"
 rpy2 = "^3.5.7"
-plotly = "^5.13.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
