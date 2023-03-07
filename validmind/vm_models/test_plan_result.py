@@ -80,15 +80,17 @@ class TestPlanMetricResult(TestPlanResult):
             <h4>Logged the following {self.metric.type} metrics to the ValidMind platform:</h4>
             """
             data = self.metric.serialize()
-            data["value"] = "value"  # TODO: convert value to string so it can be displayed
+            data[
+                "value"
+            ] = "value"  # TODO: convert value to string so it can be displayed
             html += json2html.convert(json=data)
 
         if self.figures:
             html += f"<h4>Logged the following figures to the ValidMind platform:</h4>"
             for fig in self.figures:
                 tmpfile = BytesIO()
-                fig.figure.savefig(tmpfile, format='png')
-                encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+                fig.figure.savefig(tmpfile, format="png")
+                encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
                 html += f'<img src="data:image/png;base64,{encoded}"/>'
 
         return html

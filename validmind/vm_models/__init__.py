@@ -9,7 +9,7 @@ from .metric import Metric
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
-from .test_plan_result import(
+from .test_plan_result import (
     TestPlanDatasetResult,
     TestPlanMetricResult,
     TestPlanModelResult,

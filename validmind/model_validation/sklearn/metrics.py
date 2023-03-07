@@ -15,7 +15,13 @@ import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Figure, Metric, TestContext, TestContextUtils, TestPlanMetricResult
+from ...vm_models import (
+    Figure,
+    Metric,
+    TestContext,
+    TestContextUtils,
+    TestPlanMetricResult,
+)
 
 # TBD - for regression:
 # metrics = [

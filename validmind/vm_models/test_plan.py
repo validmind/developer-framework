@@ -71,7 +71,7 @@ class TestPlan:
         Runs the test plan
         """
         self.results = []  # Empty the results cache on every run
-  
+
         if self.test_context is None:
             self.test_context = TestContext(
                 dataset=self.dataset,
@@ -110,7 +110,7 @@ class TestPlan:
 
             self.results.append(result)
 
-            self.pbar.update(1)            
+            self.pbar.update(1)
 
         if send:
             self.log_results()
@@ -160,6 +160,8 @@ class TestPlan:
             result_html = result._to_html()
             # wrap the html in a div and indent the div to make it look as part of a section
             # add scrollable class to the div to make it scrollable
-            html += f"<div style='margin-left: 20px; overflow: auto;'>{result_html}</div>"
+            html += (
+                f"<div style='margin-left: 20px; overflow: auto;'>{result_html}</div>"
+            )
 
         display(HTML(html))

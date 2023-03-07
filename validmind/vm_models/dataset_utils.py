@@ -230,7 +230,9 @@ def generate_correlation_plots(vm_dataset, n_top=15):
                 figure=subplot.figure,
                 key=key,
                 metadata={"x": x, "y": y, "value": value},
-                extras={"type": "correlation-pearson"}, # Now using dython which generates multiple correlation types
+                extras={
+                    "type": "correlation-pearson"
+                },  # Now using dython which generates multiple correlation types
             )
         )
     return plots
