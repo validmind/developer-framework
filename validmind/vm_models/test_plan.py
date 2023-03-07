@@ -7,6 +7,7 @@ from typing import ClassVar, List
 from IPython.display import display, HTML
 from tqdm import tqdm
 
+from ..utils import is_notebook
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -150,8 +151,11 @@ class TestPlan:
         This method will be called after the test plan has been run and all results have been
         logged to ValidMind. It will summarize the results of the test plan by creating an
         html table with the results of each test. This html table will be displayed in an
-        ipython notebook or in a jupyter notebook.
+        VS Code, Jupyter or other notebook environment.
         """
+        if not is_notebook():
+            return
+
         if len(self.results) == 0:
             return
 

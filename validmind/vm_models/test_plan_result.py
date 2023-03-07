@@ -278,7 +278,7 @@ class TestPlanTestResult(TestPlanResult):
     test_results: TestResults = None
 
     def _to_html(self):
-        html = "<h4>Logged the following test results to the ValidMind platform:</h4>"
+        html = "<h4>Logged the following test result to the ValidMind platform:</h4>"
         # TODO: probably want to move this into an html template file
         html += f"""
         <div class="test-result">
