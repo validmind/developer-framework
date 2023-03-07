@@ -159,28 +159,13 @@ class TestPlan:
 
         for result in self.results:
             result_html = result._to_html()
-            # wrap the html in a div and indent the div to make it look as part of a section
-            # add scrollable class to the div to make it scrollable
-            # wrap this div in another div which is expandable and add a button to expand it
-            # this is to make the results collapsible (should be collapsed by default)
-            html += f"""
-            <div class='expandable'>
-                <div class='expandable-content'>
-                    <div class='result'>
-                        {result_html}
-                    </div>
-                </div>
-            </div>
-            """
+            if result_html:
+                html += f'<div class="result">{result_html}</div>'
 
-        # add css to make the expandable div have a border and a nice background color
-        # to set it apart from the rest of the notebook
         html += """
         <style>
-            .expandable {
-                margin: 10px 0;
-            }
             .result {
+                margin: 10px 0;
                 padding: 10px;
                 background-color: #f1f1f1;
                 border: 1px solid #ccc;
@@ -188,53 +173,5 @@ class TestPlan:
             }
         </style>
         """
-
-        # html += """
-        # <style>
-        #     .expandable {
-        #         margin: 10px 0;
-        #     }
-        #     .expandable-button {
-        #         background-color: #eee;
-        #         color: #444;
-        #         cursor: pointer;
-        #         padding: 18px;
-        #         width: 100%;
-        #         border: none;
-        #         text-align: left;
-        #         outline: none;
-        #         font-size: 15px;
-        #         transition: 0.4s;
-        #     }
-        #     .expandable-button.active, .expandable-button:hover {
-        #         background-color: #ccc;
-        #     }
-        #     .expandable-content {
-        #         padding: 0 18px;
-        #         background-color: #f1f1f1;
-        #     }
-        #     .expandable-content.active {
-        #         display: block;
-        #     }
-        #     .result {
-        #         margin-left: 20px;
-        #         overflow: auto;
-        #     }
-        # </style>
-        # <script>
-        #     var expandableButtons = document.getElementsByClassName('expandable-button');
-        #     for (var i = 0; i < expandableButtons.length; i++) {
-        #         expandableButtons[i].addEventListener('click', function() {
-        #             this.classList.toggle('active');
-        #             var content = this.nextElementSibling;
-        #             if (content.style.display === 'block') {
-        #                 content.style.display = 'none';
-        #             } else {
-        #                 content.style.display = 'block';
-        #             }
-        #         });
-        #     }
-        # </script>
-        # """
 
         display(HTML(html))

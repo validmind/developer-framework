@@ -74,15 +74,16 @@ class TestPlanMetricResult(TestPlanResult):
     metric: Optional[MetricResult] = None
 
     def _to_html(self):
-        html = ""
+        if self.metric and self.metric.key == "dataset_description":
+            return ""
 
         if self.metric:
-            html += f"""
+            html = f"""
             <h4>Logged the following {self.metric.type} metric to the ValidMind platform:</h4>
             """
         else:
-            html += f"""
-            <h4>Logged the following figure{"s" if len(self.figures) > 1 else ""} 
+            html = f"""
+            <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""} 
             to the ValidMind platform:</h4>
             """
 
@@ -92,9 +93,7 @@ class TestPlanMetricResult(TestPlanResult):
                 <div class="metric-result-body">
                     <div class="metric-body-column">
                         <div class="metric-body-column-title">Metric Name</div>
-                        <div class="metric-body-column-value">
-                            {" ".join(self.metric.key.split("_")).title()}
-                        </div>
+                        <div class="metric-body-column-value">{self.metric.key}</div>
                     </div>
                     <div class="metric-body-column">
                         <div class="metric-body-column-title">Metric Type</div>
@@ -105,22 +104,38 @@ class TestPlanMetricResult(TestPlanResult):
                         <div class="metric-body-column-value">{self.metric.scope}</div>
                     </div>
                 </div>
-                <div class="metric-value">
-                    <div class="metric-value-title">Metric Value</div>
-                    <div class="metric-value-value">
             """
 
         if self.figures:
+            html += """
+                <div class="metric-value">
+                    <div class="metric-value-title">Metric Plots</div>
+                    <div class="metric-value-value">
+            """
+
             for fig in self.figures:
                 tmpfile = BytesIO()
                 fig.figure.savefig(tmpfile, format="png")
                 encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
                 html += f'<img src="data:image/png;base64,{encoded}"/>'
+
+            html += """
+                    </div>
+                </div>
+            """
+
         else:
-            html += f"<pre>{self.metric.value}</pre>"
+            html += f"""
+            <div class="metric-value">
+                <div class="metric-value-title">Metric Value</div>
+                <div class="metric-value-value">
+                    <pre>{self.metric.value}</pre>
+                </div>
+            </div>
+            """
 
         html += """
-        </div></div>
+        </div>
         <style>
             .metric-result {
                 border: 1px solid #e0e0e0;
