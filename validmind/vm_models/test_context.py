@@ -91,4 +91,6 @@ class TestContextUtils:
         elif isinstance(self.dataset, pd.DataFrame):
             return self.dataset
 
-        raise ValueError("dataset must be a Pandas DataFrame or a validmind Dataset object")
+        raise ValueError(
+            "dataset must be a Pandas DataFrame or a validmind Dataset object"
+        )
