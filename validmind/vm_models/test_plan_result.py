@@ -56,7 +56,7 @@ class TestPlanDatasetResult(TestPlanResult):
     dataset: Dataset = None
 
     def _to_html(self):
-        html = f"<h4>Logged the following dataset to the ValidMind platform:</h4>"
+        html = "<h4>Logged the following dataset to the ValidMind platform:</h4>"
         return html + self.dataset.raw_dataset.describe().to_html()
 
     def log(self):
@@ -86,7 +86,7 @@ class TestPlanMetricResult(TestPlanResult):
             html += json2html.convert(json=data)
 
         if self.figures:
-            html += f"<h4>Logged the following figures to the ValidMind platform:</h4>"
+            html += "<h4>Logged the following figures to the ValidMind platform:</h4>"
             for fig in self.figures:
                 tmpfile = BytesIO()
                 fig.figure.savefig(tmpfile, format="png")
@@ -113,7 +113,7 @@ class TestPlanModelResult(TestPlanResult):
     model: object = None
 
     def _to_html(self):
-        html = f"<h4>Logged the following model to the ValidMind platform:</h4>"
+        html = "<h4>Logged the following model to the ValidMind platform:</h4>"
         return html + str(self.model)
 
     def log(self):

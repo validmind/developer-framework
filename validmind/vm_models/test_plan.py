@@ -2,8 +2,10 @@
 TestPlan class
 """
 from dataclasses import dataclass
-from tqdm import tqdm
 from typing import ClassVar, List
+
+from IPython.display import display, HTML
+from tqdm import tqdm
 
 from .dataset import Dataset
 from .model import Model
@@ -61,7 +63,8 @@ class TestPlan:
                 raise ValueError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
-            elif getattr(self, element) is None:
+
+            if getattr(self, element) is None:
                 raise ValueError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
@@ -149,8 +152,6 @@ class TestPlan:
         html table with the results of each test. This html table will be displayed in an
         ipython notebook or in a jupyter notebook.
         """
-        from IPython.display import display, HTML
-
         if len(self.results) == 0:
             return
 

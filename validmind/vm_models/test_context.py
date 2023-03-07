@@ -1,9 +1,9 @@
 """
 TestContext
 """
-import pandas as pd
-
 from dataclasses import dataclass
+
+import pandas as pd
 
 from .dataset import Dataset
 from .model import Model
@@ -85,11 +85,10 @@ class TestContextUtils:
         """
         if self.dataset is None:
             raise ValueError("dataset must be set")
-        elif isinstance(self.dataset, Dataset):
+
+        if isinstance(self.dataset, Dataset):
             return self.dataset.raw_dataset
         elif isinstance(self.dataset, pd.DataFrame):
             return self.dataset
-        else:
-            raise ValueError(
-                "dataset must be a Pandas DataFrame or a validmind Dataset object"
-            )
+
+        raise ValueError("dataset must be a Pandas DataFrame or a validmind Dataset object")

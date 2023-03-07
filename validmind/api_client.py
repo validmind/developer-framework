@@ -53,7 +53,6 @@ def init(project, api_key=None, api_secret=None, api_host=None):
     Initializes the API client instances and /pings the API
     to ensure the provided credentials are valid.
     """
-    return True
     global API_HOST
 
     ENV_API_KEY = os.environ.get("VM_API_KEY")
