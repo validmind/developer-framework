@@ -29,10 +29,8 @@ class TestContext:
 
     def __post_init__(self):
         if self.model and self.train_ds:
-            print("Generating predictions train dataset...")
             self.y_train_predict = self.model.predict(self.train_ds.x)
         if self.model and self.test_ds:
-            print("Generating predictions test dataset...")
             self.y_test_predict = self.model.predict(self.test_ds.x)
 
 
