@@ -155,7 +155,7 @@ class TestPlan:
         if len(self.results) == 0:
             return
 
-        html = f"<h2>Test Plan Results for {self.name}:</h2><hr>"
+        html = f"<h2>Results for <i>{self.name}</i> Test Plan:</h2><hr>"
 
         for result in self.results:
             result_html = result._to_html()
