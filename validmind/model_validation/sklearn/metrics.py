@@ -205,7 +205,7 @@ class ConfusionMatrix(Metric):
                 Figure(
                     key="confusion_matrix",
                     figure=plot.figure_,
-                    metadata=cfm,
+                    metadata={},
                 )
             ],
         )
