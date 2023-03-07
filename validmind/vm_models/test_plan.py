@@ -157,13 +157,17 @@ class TestPlan:
         html table with the results of each test. This html table will be displayed in an
         ipython notebook or in a jupyter notebook.
         """
-        import ipywidgets as widgets
         from IPython.display import display, HTML
 
         if len(self.results) == 0:
             return
 
-        display(HTML(f"<h2>Test Plan Results for {self.name}:</h2>"))
+        html = f"<h2>Test Plan Results for {self.name}:</h2><hr>"
 
         for result in self.results:
-            result.display()
+            result_html = result._to_html()
+            # wrap the html in a div and indent the div to make it look as part of a section
+            # add scrollable class to the div to make it scrollable
+            html += f"<div style='margin-left: 20px; overflow: auto;'>{result_html}</div>"
+
+        display(HTML(html))

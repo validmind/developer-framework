@@ -4,10 +4,11 @@ TestPlanResult
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from io import BytesIO
 from typing import List, Optional
-import json
+import base64
 
-from IPython.display import display, display_javascript, HTML
+from IPython.display import display, HTML
 from json2html import json2html
 
 from ..api_client import (
@@ -32,9 +33,13 @@ class TestPlanResult(ABC):
         return self.__class__.__name__
 
     @abstractmethod
-    def display(self):
-        """Display the result... Must be overridden by subclasses"""
+    def _to_html(self):
+        """Create an html representation of the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+    def show(self):
+        """Display the result... May be overridden by subclasses"""
+        display(HTML(self._to_html()))
 
     @abstractmethod
     def log(self):
@@ -50,11 +55,9 @@ class TestPlanDatasetResult(TestPlanResult):
 
     dataset: Dataset = None
 
-    def display(self):
-        display(
-            HTML(f"<h4>Logged the following dataset to the ValidMind platform:</h4>")
-        )
-        display(self.dataset.raw_dataset.describe())
+    def _to_html(self):
+        html = f"<h4>Logged the following dataset to the ValidMind platform:</h4>"
+        return html + self.dataset.raw_dataset.describe().to_html()
 
     def log(self):
         log_dataset(self.dataset)
@@ -69,34 +72,26 @@ class TestPlanMetricResult(TestPlanResult):
     figures: Optional[List[Figure]] = None
     metric: Optional[MetricResult] = None
 
-    def display(self):
+    def _to_html(self):
+        html = ""
+
         if self.metric:
-            display(
-                HTML(
-                    f"<h4>Logged the following {self.metric.type} metrics to the ValidMind platform:</h4>"
-                )
-            )
-            # convert metric to html and display
-            # display(HTML(json2html.convert(json=self.metric.value)))
-            # print(dir(self.metric))
-            # display(HTML(f'<div id="myjson" style="height: 100%; width:100%;"></div>'))
-            # display_javascript(
-            #     """
-            # require(["https://rawgit.com/caldwell/renderjson/master/renderjson.js"], function() {
-            # document.getElementById('myjson').appendChild(renderjson(%s))
-            # });
-            # """
-            #     % (self.metric.value),
-            #     raw=True,
-            # )
-            # print(self.metric.serialize())
+            html += f"""
+            <h4>Logged the following {self.metric.type} metrics to the ValidMind platform:</h4>
+            """
             data = self.metric.serialize()
-            data["value"] = "value"  # convert value to string so it can be displayed
-            display(HTML(json2html.convert(json=data)))
+            data["value"] = "value"  # TODO: convert value to string so it can be displayed
+            html += json2html.convert(json=data)
+
         if self.figures:
-            print(f"Logged the following figures to the ValidMind platform:")
+            html += f"<h4>Logged the following figures to the ValidMind platform:</h4>"
             for fig in self.figures:
-                display(fig.figure)
+                tmpfile = BytesIO()
+                fig.figure.savefig(tmpfile, format='png')
+                encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+                html += f'<img src="data:image/png;base64,{encoded}"/>'
+
+        return html
 
     def log(self):
         if self.metric:
@@ -115,8 +110,9 @@ class TestPlanModelResult(TestPlanResult):
 
     model: object = None
 
-    def display(self):
-        display(self.model)
+    def _to_html(self):
+        html = f"<h4>Logged the following model to the ValidMind platform:</h4>"
+        return html + str(self.model)
 
     def log(self):
         log_model(self.model)
@@ -130,19 +126,9 @@ class TestPlanTestResult(TestPlanResult):
 
     test_results: TestResults = None
 
-    def display(self):
-        # right now the output looks like this:
-        # TestResults(category='data_quality', test_name='class_imbalance', params={'min_percent_threshold': 0.2}, passed=True, results=[TestResult(test_name=None, column='Exited', passed=True, values={0: 0.798, 1: 0.202})])
-        # make this look clean and nice
-        display(
-            HTML(
-                "<h4>Logged the following test results to the ValidMind platform:</h4>"
-            )
-        )
-        # display(HTML(json2html.convert(json=self.test_results.__dict__)))
-        # create an expandable html element that shows the test result with a green checkmark if it passed and a red x if it failed
-        # add a button to expand the test result
-        html = """
+    def _to_html(self):
+        html = "<h4>Logged the following test results to the ValidMind platform:</h4>"
+        html += """
         <div class="test-result">
             <div class="test-result-header">
                 <div class="test-result-header-title">
@@ -150,7 +136,8 @@ class TestPlanTestResult(TestPlanResult):
                     <span class="test-result-header-title-icon">%s</span>
                 </div>
                 <div class="test-result-header-button">
-                    <button id="expand-results-%s">See Results</button>
+                    <a id="expand-results-%s">See Results</a>
+                    <span>(double click)</span>
                 </div>
             </div>
             <div class="test-result-body">
@@ -259,7 +246,8 @@ class TestPlanTestResult(TestPlanResult):
             json2html.convert(json=self.test_results.results),
             self.test_results.test_name,
         )
-        display(HTML(html))
+
+        return html
 
     def log(self):
         log_test_result(self.test_results)
