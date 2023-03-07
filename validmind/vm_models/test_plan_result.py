@@ -9,7 +9,6 @@ from typing import List, Optional
 import base64
 
 from IPython.display import display, HTML
-from json2html import json2html
 
 from ..api_client import (
     log_dataset,
@@ -316,7 +315,7 @@ class TestPlanTestResult(TestPlanResult):
             </div>
             <div class="test-result-results">
                 <div class="test-result-results-title">Results</div>
-                <div class="test-result-results-body">{json2html.convert(json=self.test_results.results)}</div>
+                <div class="test-result-results-body">{self.test_results.results}</div>
             </div>
         </div>
         <style>

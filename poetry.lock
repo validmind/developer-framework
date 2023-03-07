@@ -1077,17 +1077,6 @@ files = [
 ]
 
 [[package]]
-name = "json2html"
-version = "1.3.0"
-description = "JSON to HTML Table Representation"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "json2html-1.3.0.tar.gz", hash = "sha256:8951a53662ae9cfd812685facdba693fc950ffc1c1fd1a8a2d3cf4c34600689c"},
-]
-
-[[package]]
 name = "json5"
 version = "0.9.11"
 description = "A Python implementation of the JSON5 data format."
@@ -4021,4 +4010,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "f9747c87ebea94b7506d17a6dfc4dba2223499f0434ff5991599076937a8f434"
+content-hash = "77dab8463de311a0dac399915d1a85c01b264a718181ac1539ac0857a28443cc"
