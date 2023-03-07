@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import ClassVar, List
 
 from .test_context import TestContext, TestContextUtils
-from .test_plan_result import TestPlanResult
+from .test_plan_result import TestPlanTestResult
 from .test_result import TestResult, TestResults
 
 
@@ -52,7 +52,7 @@ class ThresholdTest(TestContextUtils):
         """
         Cache the individual results of the threshold test as a list of TestResult objects
         """
-        self.test_results = TestPlanResult(
+        self.test_results = TestPlanTestResult(
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,

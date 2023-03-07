@@ -33,9 +33,7 @@ class TestPlan:
     required_context: ClassVar[List[str]]
     tests: ClassVar[List[object]] = []
     test_plans: ClassVar[List[object]] = []
-    results: ClassVar[
-        List[object]
-    ] = []  # Results can hold  Metric, Figure, TestResults
+    results: ClassVar[List[TestPlanResult]] = []
 
     # Instance Variables
     config: dict() = None
@@ -115,7 +113,7 @@ class TestPlan:
 
             if not isinstance(result, TestPlanResult):
                 raise ValueError(
-                    f"Test '{test_instance.name}' must return a TestPlanResult"
+                    f"'{test_instance.name}' must return an instance of TestPlanResult Base Class"
                 )
 
             self.results.append(result)
@@ -146,34 +144,10 @@ class TestPlan:
             f"Sending results of test plan execution '{self.name}' to ValidMind..."
         )
 
-        metrics = []
         for result in self.results:
-            if result.metric is not None:
-                metrics.append(result.metric)
-            elif result.test_results is not None:
-                self.pbar.set_description(
-                    f"Logging test results for test: {result.test_results.test_name}"
-                )
-                log_test_result(result.test_results)
-            elif result.dataset is not None:
-                self.pbar.set_description("Logging dataset metadata and statistics...")
-                log_dataset(result.dataset)
-            elif result.model is not None:
-                self.pbar.set_description("Logging model metadata and statistics...")
-                log_model(result.model)
-
-            # Figures are optional and can be included in the results
-            if result.figures is not None:
-                for figure in result.figures:
-                    self.pbar.set_description(f'Logging figure: {figure["key"]}')
-                    log_figure(figure["figure"], figure["key"], figure["metadata"])
-
+            self.pbar.set_description(f"Logging result: {result}")
+            result.log()
             self.pbar.update(1)
-
-        if len(metrics) > 0:
-            # API accepts metrics as a list, we need to do the same for test results
-            self.pbar.set_description("Logging metrics...")
-            log_metrics(metrics)
 
     def summarize(self):
         """Summarizes the results of the test plan
@@ -189,33 +163,7 @@ class TestPlan:
         if len(self.results) == 0:
             return
 
-        html = f"<h2>Test Plan Results for {self.name}</h2>"
+        display(HTML(f"<h2>Test Plan Results for {self.name}:</h2>"))
 
         for result in self.results:
-            print(type(result))
-            if result.metric is not None:
-                print("Has metric")
-            if result.test_results is not None:
-                print(f"Has test results: {result.test_results.test_name} : {type(result.test_results)} : {len(result.test_results.results)}")
-                for test_result in result.test_results.results:
-                    print(f"\t{type(test_result)}")
-            if result.dataset is not None:
-                print("Has dataset")
-            if result.model is not None:
-                print("Has model")
-            if result.figures is not None:
-                print("Has figures")
-            # html += f"<h3>{result.test_name}</h3>"
-            # table = "<table><tr><th>Test Name</th><th>Column</th><th>Passed</th><th>Values</th></tr>"
-            # if result.test_results is not None:
-            #     for test_result in result.test_results.results:
-            #         table += "<tr>"
-            #         table += f"<td>{test_result.test_name}</td>"
-            #         table += f"<td>{test_result.column}</td>"
-            #         table += f"<td>{test_result.passed}</td>"
-            #         table += f"<td>{test_result.values}</td>"
-            #         table += "</tr>"
-            # table += "</table>"
-            # html += table
-
-        display(HTML(html))
+            result.display()

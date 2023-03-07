@@ -1077,6 +1077,17 @@ files = [
 ]
 
 [[package]]
+name = "json2html"
+version = "1.3.0"
+description = "JSON to HTML Table Representation"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "json2html-1.3.0.tar.gz", hash = "sha256:8951a53662ae9cfd812685facdba693fc950ffc1c1fd1a8a2d3cf4c34600689c"},
+]
+
+[[package]]
 name = "json5"
 version = "0.9.11"
 description = "A Python implementation of the JSON5 data format."
@@ -1521,30 +1532,6 @@ files = [
     {file = "kiwisolver-1.4.4-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:36dafec3d6d6088d34e2de6b85f9d8e2324eb734162fba59d2ba9ed7a2043d5b"},
     {file = "kiwisolver-1.4.4.tar.gz", hash = "sha256:d41997519fcba4a1e46eb4a2fe31bc12f0ff957b2b81bac28db24744f333e955"},
 ]
-
-[[package]]
-name = "lightgbm"
-version = "3.3.5"
-description = "LightGBM Python Package"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "lightgbm-3.3.5-py3-none-macosx_10_15_x86_64.macosx_11_6_x86_64.macosx_12_0_x86_64.whl", hash = "sha256:843dd37c00a1096a8898b80e368b3eef7f5a5d327d1fd9eb770b6f3c2e1edc49"},
-    {file = "lightgbm-3.3.5-py3-none-manylinux1_x86_64.whl", hash = "sha256:044f65664c1a32c98cb619bafa97d8cd9d93c2c2d5053376aadfe509a3a3e7fa"},
-    {file = "lightgbm-3.3.5-py3-none-manylinux2014_aarch64.whl", hash = "sha256:ef01e46939293a0a36729350a7384dc17a36880176d0f17d82b738bbe77e4528"},
-    {file = "lightgbm-3.3.5-py3-none-win_amd64.whl", hash = "sha256:02a40745c1972cf4a2cde764c7739228f45178c2237af2df40fde7063a58ac6a"},
-    {file = "lightgbm-3.3.5.tar.gz", hash = "sha256:10b8fbdcf851e4f68a1f02f38d99bdc44c7c7fb9b1a62dcf924a0d29ff73395c"},
-]
-
-[package.dependencies]
-numpy = "*"
-scikit-learn = "!=0.22.0"
-scipy = "*"
-wheel = "*"
-
-[package.extras]
-dask = ["dask[array] (>=2.0.0)", "dask[dataframe] (>=2.0.0)", "dask[distributed] (>=2.0.0)", "pandas"]
 
 [[package]]
 name = "llvmlite"
@@ -4004,4 +3991,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "a151ee8360aefa564b2fe145cf8459c6a0a65d7c047728bb11f86e6ddd1ba59a"
+content-hash = "d17726dda767215f95fb1897586747670acd5a792b92af01489897c2d03663cb"

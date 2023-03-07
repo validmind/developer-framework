@@ -15,7 +15,7 @@ import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Metric, TestContext, TestContextUtils, TestPlanResult
+from ...vm_models import Figure, Metric, TestContext, TestContextUtils, TestPlanMetricResult
 
 # TBD - for regression:
 # metrics = [
@@ -49,11 +49,7 @@ def _generate_shap_plot(type_, shap_values, x_test):
     # avoid displaying on notebooks and clears the canvas for the next plot
     plt.close()
 
-    return {
-        "figure": figure,
-        "key": f"shap:{type_}",
-        "metadata": {"type": type_},
-    }
+    return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -360,7 +356,7 @@ class SHAPGlobalImportance(TestContextUtils):
     test_context: TestContext
 
     name = "shap"
-    result: TestPlanResult = None
+    result: TestPlanMetricResult = None
 
     def run(self):
         trained_model = self.model.model
@@ -388,7 +384,7 @@ class SHAPGlobalImportance(TestContextUtils):
         #     shap_values = shap_values[0]
         #     result_values = shap_values
 
-        self.result = TestPlanResult(
+        self.result = TestPlanMetricResult(
             figures=[
                 _generate_shap_plot("mean", shap_values, self.test_ds.x),
                 _generate_shap_plot("summary", shap_values, self.test_ds.x),

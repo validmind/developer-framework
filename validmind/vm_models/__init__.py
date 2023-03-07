@@ -9,7 +9,12 @@ from .metric import Metric
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
-from .test_plan_result import TestPlanResult
+from .test_plan_result import(
+    TestPlanDatasetResult,
+    TestPlanMetricResult,
+    TestPlanModelResult,
+    TestPlanTestResult,
+)
 from .test_result import TestResult, TestResults
 from .threshold_test import ThresholdTest
 
@@ -24,7 +29,10 @@ __all__ = [
     "TestContext",
     "TestContextUtils",
     "TestPlan",
-    "TestPlanResult",
+    "TestPlanDatasetResult",
+    "TestPlanMetricResult",
+    "TestPlanModelResult",
+    "TestPlanTestResult",
     "TestResult",
     "TestResults",
     "ThresholdTest",

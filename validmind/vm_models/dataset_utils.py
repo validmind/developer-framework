@@ -6,6 +6,7 @@ import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
+from .figure import Figure
 from .plot_utils import get_plot_for_feature_pair
 
 DEFAULT_HISTOGRAM_BINS = 10
@@ -225,11 +226,11 @@ def generate_correlation_plots(vm_dataset, n_top=15):
         key = f"corr:{fields}"
         subplot = get_plot_for_feature_pair(vm_dataset, x, y)
         plots.append(
-            {
-                "type": "correlation-pearson",  # Now using dython which generates multiple correlation types
-                "figure": subplot.figure,
-                "key": key,
-                "metadata": {"x": x, "y": y, "value": value},
-            }
+            Figure(
+                figure=subplot.figure,
+                key=key,
+                metadata={"x": x, "y": y, "value": value},
+                extras={"type": "correlation-pearson"}, # Now using dython which generates multiple correlation types
+            )
         )
     return plots
