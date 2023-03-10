@@ -3,7 +3,7 @@ import sys
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ..vm_models import Model, TestContext, TestContextUtils, TestPlanResult
+from ..vm_models import Model, TestContext, TestContextUtils, TestPlanModelResult
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -156,7 +156,7 @@ class ModelMetadata(TestContextUtils):
     test_context: TestContext
 
     name = "model_metadata"
-    result: TestPlanResult = None
+    result: TestPlanModelResult = None
 
     def run(self):
         """
@@ -178,6 +178,6 @@ class ModelMetadata(TestContextUtils):
             self.model.attributes.architecture = model_info["architecture"]
 
         self.model.params = get_params_from_model_instance(trained_model)
-        self.result = TestPlanResult(model=self.model)
+        self.result = TestPlanModelResult(model=self.model)
 
         return self.result

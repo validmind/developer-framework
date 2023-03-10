@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 
-from ..vm_models import Metric, TestContext, TestContextUtils, TestPlanResult
+from ..vm_models import Metric, TestContext, TestContextUtils, TestPlanDatasetResult
 
 
 @dataclass
@@ -24,14 +24,14 @@ class DatasetMetadata(TestContextUtils):
     test_context: TestContext
 
     name = "dataset_metadata"
-    result: TestPlanResult = None
+    result: TestPlanDatasetResult = None
 
     def run(self):
         """
         Just set the dataset to the result attribute of the test plan result
         and it will be logged via the `log_dataset` function
         """
-        self.result = TestPlanResult(dataset=self.dataset)
+        self.result = TestPlanDatasetResult(dataset=self.dataset)
 
         return self.result
 
