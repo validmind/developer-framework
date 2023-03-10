@@ -128,7 +128,7 @@ class TestPlanMetricResult(TestPlanResult):
                 <div class="metric-value">
                     <div class="metric-value-title">
                         <span>Metric Plots</span>
-                        <a href="javascript:void(0)" onclick="showMetricPlots(this)">
+                        <a onclick="showMetricPlots(this)" style="cursor: pointer;">
                             Show All Plots
                         </a>
                     </div>
@@ -337,7 +337,7 @@ class TestPlanTestResult(TestPlanResult):
                         {"✅" if self.test_results.passed else "❌"}
                     </span>
                 </div>
-                <a href="#" class="expand-test-results" onclick="toggleTestResults(this)">
+                <a onclick="toggleTestResults(this)" style="cursor: pointer;">
                     See Result Details
                 </a>
             </div>
