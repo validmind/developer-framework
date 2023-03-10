@@ -107,21 +107,60 @@ class TestPlanMetricResult(TestPlanResult):
 
         if self.figures:
             html += """
-                <div class="metric-value">
-                    <div class="metric-value-title">Metric Plots</div>
-                    <div class="metric-value-value">
             """
+
+            plot_htmls = []
 
             for fig in self.figures:
                 tmpfile = BytesIO()
                 fig.figure.savefig(tmpfile, format="png")
                 encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-                html += f'<img src="data:image/png;base64,{encoded}"/>'
+                plot_htmls.append(f"""
+                <div class="metric-plot">
+                    <img src="data:image/png;base64,{encoded}"/>
+                </div>
+                """)
 
-            html += """
+            if len(plot_htmls) > 2:
+                # if theres a lot of plots, we want to only show the first
+                # one and then have an expand button to show the rest
+                html += f"""
+                <div class="metric-value">
+                    <div class="metric-value-title">
+                        <span>Metric Plots</span>
+                        <a href="javascript:void(0)" onclick="showMetricPlots(this)">
+                            Show All Plots
+                        </a>
+                    </div>
+                    <div class="metric-value-value">
+                        {plot_htmls[0]}
+                        <div class="allplots" style="display: none;">
+                            {"".join(plot_htmls[1:])}
+                        </div>
                     </div>
                 </div>
-            """
+                <script>
+                    function showMetricPlots(btn) {{
+                        const plots = btn.parentElement.parentElement.querySelector(".allplots");
+                        if (plots.style.display === "none") {{
+                            plots.style.display = "block";
+                            btn.innerHTML = "Collapse";
+                        }} else {{
+                            plots.style.display = "none";
+                            btn.innerHTML = "Show All Plots";
+                        }}
+                    }}
+                </script>
+                """
+            else:
+                html += f"""
+                <div class="metric-value">
+                    <div class="metric-value-title">Metric Plots</div>
+                    <div class="metric-value-value">
+                        {"".join(plot_htmls)}
+                    </div>
+                </div>
+                """
 
         else:
             html += f"""
@@ -172,6 +211,13 @@ class TestPlanMetricResult(TestPlanResult):
                 font-weight: 500;
                 margin-top: 10px;
             }
+            .metric-plot img {
+                margin-left: auto !important;
+                margin-right: auto !important;
+                max-height: 500px !important;
+                height: 100%;
+                width: auto;
+            }
         </style>
         """
 
@@ -209,7 +255,8 @@ class TestPlanModelResult(TestPlanResult):
                 <div class="model-body-column">
                     <div class="model-body-column-title">Framework</div>
                     <div class="model-body-column-value">
-                        {self.model.attributes.framework} (v{self.model.attributes.framework_version})
+                        {self.model.attributes.framework}
+                        <span>(v{self.model.attributes.framework_version})</span>
                     </div>
                 </div>
                 <div class="model-body-column">
@@ -290,10 +337,9 @@ class TestPlanTestResult(TestPlanResult):
                         {"✅" if self.test_results.passed else "❌"}
                     </span>
                 </div>
-                <div class="test-result-header-button">
-                    <a id="expand-results-{self.test_results.test_name}">See Results</a>
-                    <span>(double click)</span>
-                </div>
+                <a href="#" class="expand-test-results" onclick="toggleTestResults(this)">
+                    See Result Details
+                </a>
             </div>
             <div class="test-result-body">
                 <div class="test-result-body-column">
@@ -313,9 +359,9 @@ class TestPlanTestResult(TestPlanResult):
                     <div class="test-result-body-column-value">{self.test_results.params}</div>
                 </div>
             </div>
-            <div class="test-result-results">
-                <div class="test-result-results-title">Results</div>
-                <div class="test-result-results-body">{self.test_results.results}</div>
+            <div class="results-objs" style="display: none;">
+                <div class="results-objs-title">Results</div>
+                <div class="results-objs-body">{self.test_results.results}</div>
             </div>
         </div>
         <style>
@@ -340,16 +386,6 @@ class TestPlanTestResult(TestPlanResult):
             .test-result-header-title-icon {{
                 margin-left: 10px;
             }}
-            .test-result-header-button {{
-                cursor: pointer;
-            }}
-            .test-result-header-button button {{
-                background: none;
-                border: none;
-                font-size: 16px;
-                font-weight: bold;
-                color: #000;
-            }}
             .test-result-body {{
                 display: flex;
                 padding: 10px;
@@ -363,32 +399,27 @@ class TestPlanTestResult(TestPlanResult):
             .test-result-body-column-value {{
                 margin-top: 5px;
             }}
-            .test-result-results {{
-                display: none;
+            .results-objs {{
                 padding: 10px;
             }}
-            .test-result-results-title {{
+            .results-objs-title {{
                 font-weight: bold;
             }}
-            .test-result-results-body {{
+            .results-objs-body {{
                 margin-top: 5px;
             }}
         </style>
         <script>
-            document.getElementById('expand-results-{self.test_results.test_name}').addEventListener('click', function() {{
-                var testResult = this.closest('.test-result');
-                var testResultBody = testResult.querySelector('.test-result-body');
-                var testResultResults = testResult.querySelector('.test-result-results');
-                if (testResultResults.style.display === 'none') {{
-                    testResultResults.style.display = 'block';
-                    testResultBody.style.display = 'none';
-                    this.innerHTML = 'Hide Results';
+            function toggleTestResults(btn) {{
+                const rslts = btn.parentElement.parentElement.querySelector('.results-objs');
+                if (rslts.style.display === 'none') {{
+                    rslts.style.display = 'block';
+                    btn.innerHTML = 'Hide Result Details';
                 }} else {{
-                    testResultResults.style.display = 'none';
-                    testResultBody.style.display = 'flex';
-                    this.innerHTML = 'See Results';
+                    rslts.style.display = 'none';
+                    btn.innerHTML = 'See Result Details';
                 }}
-            }});
+            }}
         </script>
         """
 
