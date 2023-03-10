@@ -2,6 +2,7 @@
 Metrics functions models trained with statsmodels or that provide
 a statsmodels-like API
 """
+import pandas as pd
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.stats.stattools import durbin_watson
@@ -50,6 +51,12 @@ class ADFTest(Metric):
 
         adf_values = {}
         for col in x_train.columns:
-            adf_values[col] = adfuller(x_train[col].values)
-
+            # adf_values[col] = adfuller(x_train[col].values)
+            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(x_train[col].values)
+            adf_values["adf" ] = adf
+            adf_values['pvalue'] = pvalue
+            adf_values['usedlag'] = usedlag
+            adf_values['nobs'] = nobs
+            adf_values['icbest'] = icbest
+        
         return self.cache_results(adf_values)

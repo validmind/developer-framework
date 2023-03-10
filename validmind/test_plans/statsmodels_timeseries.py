@@ -2,8 +2,11 @@
 Time Series Test Plans from statsmodels
 """
 from ..vm_models import TestPlan
+from ..data_validation.metrics import DatasetMetadata
 from ..model_validation.statsmodels.metrics import (
     DurbinWatsonTest,
+)
+from ..model_validation.statsmodels.threshold_tests import (
     ADFTest,
 )
 
@@ -23,7 +26,8 @@ class StationarityTestPlan(TestPlan):
 
     name = "stationarity_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [ADFTest]
+    tests = [DatasetMetadata, ADFTest]
+    
 
 
 class TimeSeriesTestPlan(TestPlan):
