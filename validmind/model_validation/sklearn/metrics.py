@@ -183,24 +183,18 @@ class ConfusionMatrix(Metric):
 
         class_pred = self.class_predictions(self.y_test_predict)
 
-        tn, fp, fn, tp = metrics.confusion_matrix(
-            y_true, class_pred, labels=y_labels
-        ).ravel()
-        plot = metrics.ConfusionMatrixDisplay(
-            confusion_matrix=metrics.confusion_matrix(
-                y_true, class_pred, labels=y_labels
-            ),
-            display_labels=y_labels,
-        ).plot()
+        cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
+        tn, fp, fn, tp = cm.ravel()
 
-        cfm = {
-            "tn": tn,
-            "fp": fp,
-            "fn": fn,
-            "tp": tp,
-        }
+        plot = metrics.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=y_labels).plot()
+
         return self.cache_results(
-            metric_value=cfm,
+            metric_value={
+                "tn": tn,
+                "fp": fp,
+                "fn": fn,
+                "tp": tp,
+            },
             figures=[
                 Figure(
                     key="confusion_matrix",
