@@ -57,6 +57,13 @@ class Metric(TestContextUtils):
     ):
         """
         Cache the results of the metric calculation and do any post-processing if needed
+
+        Args:
+            metric_value (Union[dict, list, pd.DataFrame]): The value of the metric
+            figures (Optional[object]): Any figures to attach to the test plan result
+
+        Returns:
+            TestPlanResult: The test plan result object
         """
         test_plan_result = TestPlanResult(
             metric=MetricResult(

@@ -65,6 +65,12 @@ class Model:
     def is_supported_model(cls, model):
         """
         Checks if the model is supported by the API
+
+        Args:
+            model (object): The trained model instance to check
+
+        Returns:
+            bool: True if the model is supported, False otherwise
         """
         model_class = model.__class__.__name__
 
@@ -75,5 +81,14 @@ class Model:
 
     @classmethod
     def create_from_dict(cls, dict_):
+        """
+        Creates a Model instance from a dictionary
+
+        Args:
+            dict_ (dict): The dictionary to create the Model instance from
+
+        Returns:
+            Model: The Model instance created from the dictionary
+        """
         class_fields = {f.name for f in fields(cls)}
         return Model(**{k: v for k, v in dict_.items() if k in class_fields})

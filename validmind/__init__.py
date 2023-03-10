@@ -1,5 +1,5 @@
 """
-Exports
+Main entrypoint to the ValidMind Python Library
 """
 
 from .vm_models import (

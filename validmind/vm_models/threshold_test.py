@@ -51,6 +51,13 @@ class ThresholdTest(TestContextUtils):
     def cache_results(self, results: List[TestResult], passed: bool):
         """
         Cache the individual results of the threshold test as a list of TestResult objects
+
+        Args:
+            results (List[TestResult]): The results of the threshold test
+            passed (bool): Whether the threshold test passed or failed
+
+        Returns:
+            TestPlanResult: The test plan result object
         """
         self.test_results = TestPlanResult(
             test_results=TestResults(

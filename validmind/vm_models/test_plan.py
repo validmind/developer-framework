@@ -115,6 +115,9 @@ class TestPlan:
             test_plan_instance.run(send=send)
 
     def log_results(self):
+        """
+        Logs the results of the test plan to ValidMind
+        """
         print(f"Sending results of test plan execution '{self.name}' to ValidMind...")
 
         metrics = []
