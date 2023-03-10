@@ -84,12 +84,9 @@ def log_dataset(vm_dataset):
     """
     Logs metadata and statistics about a dataset to ValidMind API.
 
-    :param dataset: A VM dataset object
-    :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
-    :param dataset_options: Additional dataset options for analysis
-    :param dataset_targets: A list of targets for the dataset.
-    :param features: Optional. A list of features metadata.
-    :type dataset_targets: validmind.DatasetTargets, optional
+    :param vm_dataset: ValidMind Dataset object
+
+    :return: The logged dataset object
     """
     payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder)
     r = api_session.post(
@@ -102,8 +99,6 @@ def log_dataset(vm_dataset):
         print("Could not log dataset to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged dataset metadata and statistics.")
-
     return vm_dataset
 
 
@@ -114,6 +109,8 @@ def log_metadata(content_id, text=None, extra_json=None):
     :param content_id: Unique content identifier for the metadata
     :param text: Free-form text to assign to the metadata
     :param extra_json: Free-form key-value pairs to assign to the metadata
+
+    :return: True if successful
     """
     metadata_dict = {
         "content_id": content_id,
@@ -134,8 +131,6 @@ def log_metadata(content_id, text=None, extra_json=None):
         print("Could not log metadata to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged metadata")
-
     return True
 
 
@@ -143,6 +138,8 @@ def log_model(vm_model):
     """
     Logs model metadata and hyperparameters to ValidMind API.
     :param vm_model: A ValidMind Model wrapper instance.
+
+    :return: True if successful
     """
     r = api_session.post(
         f"{API_HOST}/log_model",
@@ -182,6 +179,8 @@ def log_metrics(metrics, run_cuid=None):
 
     :param metrics: A list of Metric objects.
     :param run_cuid: The run CUID. If not provided, a new run will be created.
+
+    :return: True if successful
     """
     if run_cuid is None:
         run_cuid = start_run()
@@ -198,8 +197,6 @@ def log_metrics(metrics, run_cuid=None):
         print("Could not log metrics to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged metrics")
-
     return True
 
 
@@ -210,6 +207,9 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
 
     :param result: A TestResults object
     :param run_cuid: The run CUID. If not provided, a new run will be created.
+    :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
+
+    :return: True if successful
     """
     if run_cuid is None:
         run_cuid = start_run()
@@ -224,8 +224,6 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
     if r.status_code != 200:
         print("Could not log test results to ValidMind API")
         raise Exception(r.text)
-
-    print(f"Successfully logged test results for test: {result.test_name}")
 
     return True
 
@@ -278,7 +276,10 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     :param key: identifier of the figure
     :param metadata: python data structure
     :param run_cuid: run cuid from start_run
+
+    :return: JSON response from the API
     """
+
     if not run_cuid:
         run_cuid = _get_or_create_run_cuid()
 
@@ -308,4 +309,9 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     res = api_session.post(
         url, files=files, data={"key": key, "type": type_, "metadata": metadata_json}
     )
+
+    if res.status_code != 200:
+        print("Could not log figure to ValidMind API")
+        raise Exception(res.text)
+
     return res.json()

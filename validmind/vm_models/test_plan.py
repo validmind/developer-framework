@@ -2,17 +2,12 @@
 TestPlan class
 """
 from dataclasses import dataclass
-from tqdm.autonotebook import tqdm
 from typing import ClassVar, List
 
+from IPython.display import display, HTML
+from tqdm import tqdm
 
-from ..api_client import (
-    log_dataset,
-    log_figure,
-    log_metrics,
-    log_model,
-    log_test_result,
-)
+from ..utils import is_notebook
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -33,9 +28,7 @@ class TestPlan:
     required_context: ClassVar[List[str]]
     tests: ClassVar[List[object]] = []
     test_plans: ClassVar[List[object]] = []
-    results: ClassVar[
-        List[object]
-    ] = []  # Results can hold  Metric, Figure, TestResults
+    results: ClassVar[List[TestPlanResult]] = []
 
     # Instance Variables
     config: dict() = None
@@ -48,6 +41,9 @@ class TestPlan:
     model: Model = None
     train_ds: Dataset = None
     test_ds: Dataset = None
+
+    # tqdm progress bar
+    pbar: tqdm = None
 
     def __post_init__(self):
         if self.test_context is not None:
@@ -68,7 +64,8 @@ class TestPlan:
                 raise ValueError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
-            elif getattr(self, element) is None:
+
+            if getattr(self, element) is None:
                 raise ValueError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
@@ -77,7 +74,6 @@ class TestPlan:
         """
         Runs the test plan
         """
-        print(f"Running test plan '{self.name}'...")
         self.results = []  # Empty the results cache on every run
 
         if self.test_context is None:
@@ -88,51 +84,98 @@ class TestPlan:
                 test_ds=self.test_ds,
             )
 
-        for test in tqdm(self.tests):
+        if self.pbar is None:
+            self.pbar = tqdm(
+                total=len(self.tests),
+                desc=f"Running test plan: '{self.name}'",
+                leave=False,
+            )
+        else:
+            # if already initiated (meaning we are in a sub test plan), reset it
+            self.pbar.reset(total=len(self.tests))
+            self.pbar.set_description(f"Running sub test plan: '{self.name}'")
+
+        for test in self.tests:
             test_instance = test(self.test_context)
-            print(f"Running {test.test_type}: {test_instance.name}")
+
+            self.pbar.set_description(f"Running {test.test_type}: {test_instance.name}")
+
             result = test_instance.run()
 
             if result is None:
-                print("Test returned None, skipping...")
+                self.pbar.set_description("Test returned None, skipping...")
+                self.pbar.update(1)
                 continue
 
             if not isinstance(result, TestPlanResult):
                 raise ValueError(
-                    f"Test '{test_instance.name}' must return a TestPlanResult"
+                    f"'{test_instance.name}' must return an instance of TestPlanResult Base Class"
                 )
 
             self.results.append(result)
+
+            self.pbar.update(1)
 
         if send:
             self.log_results()
 
         for test_plan in self.test_plans:
-            print(f"|-- Running sub test plan - {test_plan.name}")
             test_plan_instance = test_plan(
                 test_context=self.test_context,
+                pbar=self.pbar,
             )
             test_plan_instance.run(send=send)
 
+        self.pbar.close()
+        self.summarize()
+
     def log_results(self):
-        print(f"Sending results of test plan execution '{self.name}' to ValidMind...")
+        """Logs the results of the test plan to ValidMind
 
-        metrics = []
+        This method will be called after the test plan has been run and all results have been
+        collected. This method will log the results to ValidMind.
+        """
+        self.pbar.reset(total=len(self.results))
+        self.pbar.set_description(
+            f"Sending results of test plan execution '{self.name}' to ValidMind..."
+        )
+
         for result in self.results:
-            if result.test_results is not None:
-                log_test_result(result.test_results)
-            elif result.metric is not None:
-                metrics.append(result.metric)
-            elif result.dataset is not None:
-                log_dataset(result.dataset)
-            elif result.model is not None:
-                log_model(result.model)
+            self.pbar.set_description(f"Logging result: {result}")
+            result.log()
+            self.pbar.update(1)
 
-            # Figures are optional and can be included in the results
-            if result.figures is not None:
-                for figure in result.figures:
-                    log_figure(figure["figure"], figure["key"], figure["metadata"])
+    def summarize(self):
+        """Summarizes the results of the test plan
 
-        if len(metrics) > 0:
-            # API accepts metrics as a list, we need to do the same for test results
-            log_metrics(metrics)
+        This method will be called after the test plan has been run and all results have been
+        logged to ValidMind. It will summarize the results of the test plan by creating an
+        html table with the results of each test. This html table will be displayed in an
+        VS Code, Jupyter or other notebook environment.
+        """
+        if not is_notebook():
+            return
+
+        if len(self.results) == 0:
+            return
+
+        html = f"<h2>Results for <i>{self.name}</i> Test Plan:</h2><hr>"
+
+        for result in self.results:
+            result_html = result._to_html()
+            if result_html:
+                html += f'<div class="result">{result_html}</div>'
+
+        html += """
+        <style>
+            .result {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: #f1f1f1;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+        </style>
+        """
+
+        display(HTML(html))

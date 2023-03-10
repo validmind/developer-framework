@@ -2,8 +2,8 @@
 Figure objects track the figure schema supported by the ValidMind API
 """
 
-
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -15,6 +15,7 @@ class Figure:
     key: str
     metadata: dict
     figure: object
+    extras: Optional[dict] = None
 
     def serialize(self):
         """

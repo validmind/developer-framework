@@ -4,7 +4,7 @@ Client interface for all data and model validation functions
 
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .test_plans import get_by_name
-from .vm_models import Dataset, Model, ModelAttributes
+from .vm_models import Dataset, Model, ModelAttributes, TestPlan
 
 
 def init_dataset(
@@ -81,7 +81,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         See the documentation for the specific test plan for more details.
     """
     try:
-        Plan = get_by_name(test_plan_name)
+        Plan: TestPlan = get_by_name(test_plan_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
