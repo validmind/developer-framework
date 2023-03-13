@@ -5,16 +5,12 @@ name = "validmind"
 version = "1.1.1"
 
 [tool.poetry.dependencies]
+python = ">=3.8,<3.11"
 click = "^8.0.4"
 dython = "^0.7.1"
-ipykernel = "^6.9.0"
-jupyter = "^1.0.0"
-notebook = "^6.4.8"
 numpy = "1.22.3"
 pandas = "1.3.5"
-pandas-profiling = "^3.2.0"
 pydantic = "^1.9.1"
-python = ">=3.8,<3.11"
 python-dotenv = "^0.20.0"
 requests = "^2.27.1"
 scikit-learn = "^1.0.2"
@@ -22,18 +18,23 @@ seaborn = "^0.11.2"
 shap = "^0.41.0"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
-wheel = "^0.37.1"
 xgboost = "^1.5.2"
 statsmodels = "^0.13.5"
+
+[tool.poetry.group.r_support]
+optional = true
+
+[tool.poetry.group.r_support.dependencies]
+rpy2 = "^3.4.5"
 pypmml = "^0.9.17"
-rpy2 = "^3.5.7"
+
+[tool.poetry.extras]
+r_support = ["rpy2", "pypmml"]
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 click = "^8.1.3"
 flake8 = "^4.0.1"
-imbalanced-learn = "0.8.1"
-jupyterlab = "^3.4.3"
 pytest = "^5.2"
 
 [build-system]
