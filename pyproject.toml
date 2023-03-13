@@ -20,6 +20,8 @@ tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
 statsmodels = "^0.13.5"
+pandas-profiling = "^3.2.0"
+ipython = "^8.11.0"
 
 [tool.poetry.group.r_support]
 optional = true
