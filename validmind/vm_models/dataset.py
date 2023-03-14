@@ -75,6 +75,15 @@ class Dataset:
         """
         Returns the feature with the given id. We also build a lazy
         lookup cache in case the same feature is requested multiple times.
+
+        Args:
+            feature_id (str): The id of the feature to return
+
+        Raises:
+            ValueError: If the feature with the given id does not exist
+
+        Returns:
+            dict: The feature with the given id
         """
         if feature_id not in self.__feature_lookup:
             for feature in self.fields:
@@ -88,6 +97,12 @@ class Dataset:
     def get_feature_type(self, feature_id):
         """
         Returns the type of the feature with the given id
+
+        Args:
+            feature_id (str): The id of the feature to return
+
+        Returns:
+            str: The type of the feature with the given id
         """
         feature = self.get_feature_by_id(feature_id)
         return feature["type"]
@@ -153,6 +168,12 @@ class Dataset:
     def get_correlation_plots(self, n_top=15):
         """
         Extracts correlation plots for the n_top correlations in the dataset
+
+        Args:
+            n_top (int, optional): The number of top correlations to extract. Defaults to 15.
+
+        Returns:
+            list: A list of correlation plots
         """
         correlation_plots = generate_correlation_plots(self, n_top)
         return correlation_plots
@@ -163,6 +184,12 @@ class Dataset:
         Returns a transformed dataset that uses the features from vm_dataset.
         Some of the features in vm_dataset are of type Dummy so we need to
         reverse the one hot encoding and drop the individual dummy columns
+
+        Args:
+            force_refresh (bool, optional): Whether to force a refresh of the transformed dataset. Defaults to False.
+
+        Returns:
+            pd.DataFrame: The transformed dataset
         """
         if self.__transformed_df is not None and force_refresh is False:
             return self.__transformed_df
@@ -200,6 +227,15 @@ class Dataset:
 
     @classmethod
     def create_from_dict(cls, dict_):
+        """
+        Creates a Dataset object from a dictionary
+
+        Args:
+            dict_ (dict): The dictionary to create the Dataset object from
+
+        Returns:
+            Dataset: The Dataset object
+        """
         class_fields = {f.name for f in fields(cls)}
         return Dataset(**{k: v for k, v in dict_.items() if k in class_fields})
 
@@ -209,6 +245,19 @@ class Dataset:
     def init_from_pd_dataset(
         cls, df, options=None, targets=None, target_column=None, class_labels=None
     ):
+        """
+        Initializes a Dataset object from a pandas DataFrame
+
+        Args:
+            df (pd.DataFrame): The pandas DataFrame to initialize the Dataset object from
+            options (dict, optional): The options to use when initializing the Dataset object. Defaults to None.
+            targets (list, optional): The targets to use when initializing the Dataset object. Defaults to None.
+            target_column (str, optional): The target column to use when initializing the Dataset object. Defaults to None.
+            class_labels (list, optional): The class labels to use when initializing the Dataset object. Defaults to None.
+
+        Returns:
+            Dataset: The Dataset object
+        """
         print("Inferring dataset types...")
         vm_dataset_variables = parse_dataset_variables(df, options)
 

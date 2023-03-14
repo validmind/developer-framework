@@ -116,11 +116,13 @@ class TestPlanMetricResult(TestPlanResult):
                 tmpfile = BytesIO()
                 fig.figure.savefig(tmpfile, format="png")
                 encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-                plot_htmls.append(f"""
+                plot_htmls.append(
+                    f"""
                 <div class="metric-plot">
                     <img src="data:image/png;base64,{encoded}"/>
                 </div>
-                """)
+                """
+                )
 
             if len(plot_htmls) > 2:
                 # if theres a lot of plots, we want to only show the first
