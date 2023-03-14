@@ -165,3 +165,6 @@ notebooks/insurance_mortality/**/*.csv
 notebooks/insurance_mortality/**/*.pickle
 notebooks/insurance_mortality/**/*.pkl
 notebooks/insurance_mortality/**/*.zip
+
+# r models
+notebooks/r_demo/*.rds

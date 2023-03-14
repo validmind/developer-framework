@@ -1,5 +1,19 @@
 # ValidMind Python Client
 
+## Installation
+
+### Install from PyPI
+
+```bash
+pip install validmind
+```
+
+#### Install with R support (requires R to be installed)
+
+```bash
+pip install validmind[r-support]
+```
+
 ## Contributing to ValidMind Developer Framework
 
 ### Install dependencies
@@ -11,6 +25,20 @@
 ```bash
 poetry shell
 poetry install
+```
+
+### Installing R dependencies
+
+If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from https://cran.r-project.org/. If you are on a Mac, you can install R using Homebrew:
+
+```bash
+brew install r
+```
+
+Once you have R installed, you can install the `r-support` extra to install the necessary dependencies for R by running:
+
+```bash
+poetry install --extras r-support
 ```
 
 ### Versioning
