@@ -2,11 +2,10 @@
 Metrics functions models trained with sklearn or that provide
 a sklearn-like API
 """
+from dataclasses import dataclass
 from typing import ClassVar
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
-from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -15,7 +14,13 @@ import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Metric, TestContext, TestContextUtils, TestPlanResult
+from ...vm_models import (
+    Figure,
+    Metric,
+    TestContext,
+    TestContextUtils,
+    TestPlanMetricResult,
+)
 
 # TBD - for regression:
 # metrics = [
@@ -49,11 +54,7 @@ def _generate_shap_plot(type_, shap_values, x_test):
     # avoid displaying on notebooks and clears the canvas for the next plot
     plt.close()
 
-    return {
-        "figure": figure,
-        "key": f"shap:{type_}",
-        "metadata": {"type": type_},
-    }
+    return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -135,7 +136,7 @@ class AccuracyScore(Metric):
         class_pred = self.class_predictions(self.y_test_predict)
         accuracy_score = metrics.accuracy_score(y_true, class_pred)
 
-        return self.cache_results(accuracy_score)
+        return self.cache_results(metric_value=accuracy_score)
 
 
 @dataclass
@@ -162,7 +163,7 @@ class CharacteristicStabilityIndex(Metric):
             csi_value = np.mean(psi_df["psi"])
             csi_values[col] = csi_value
 
-        return self.cache_results(csi_values)
+        return self.cache_results(metric_value=csi_values)
 
 
 @dataclass
@@ -182,17 +183,26 @@ class ConfusionMatrix(Metric):
 
         class_pred = self.class_predictions(self.y_test_predict)
 
-        tn, fp, fn, tp = metrics.confusion_matrix(
-            y_true, class_pred, labels=y_labels
-        ).ravel()
+        cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
+        tn, fp, fn, tp = cm.ravel()
 
-        cfm = {
-            "tn": tn,
-            "fp": fp,
-            "fn": fn,
-            "tp": tp,
-        }
-        return self.cache_results(cfm)
+        plot = metrics.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=y_labels).plot()
+
+        return self.cache_results(
+            metric_value={
+                "tn": tn,
+                "fp": fp,
+                "fn": fn,
+                "tp": tp,
+            },
+            figures=[
+                Figure(
+                    key="confusion_matrix",
+                    figure=plot.figure_,
+                    metadata={},
+                )
+            ],
+        )
 
 
 @dataclass
@@ -210,7 +220,7 @@ class F1Score(Metric):
         class_pred = self.class_predictions(self.y_test_predict)
         f1_score = metrics.f1_score(y_true, class_pred)
 
-        return self.cache_results(f1_score)
+        return self.cache_results(metric_value=f1_score)
 
 
 @dataclass
@@ -238,7 +248,23 @@ class PermutationFeatureImportance(Metric):
                 pfi_values["importances_std"][i]
             ]
 
-        return self.cache_results(pfi)
+        sorted_idx = pfi_values.importances_mean.argsort()
+        fig, ax = plt.subplots()
+        ax.barh(
+            x.columns[sorted_idx], pfi_values.importances[sorted_idx].mean(axis=1).T
+        )
+        ax.set_title("Permutation Importances (test set)")
+
+        return self.cache_results(
+            metric_value=pfi,
+            figures=[
+                Figure(
+                    key="pfi",
+                    figure=fig,
+                    metadata={},
+                ),
+            ],
+        )
 
 
 @dataclass
@@ -256,13 +282,19 @@ class PrecisionRecallCurve(Metric):
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
             y_true, self.y_test_predict
         )
+        plot = metrics.PrecisionRecallDisplay(
+            precision=precision,
+            recall=recall,
+            average_precision=None,
+        ).plot()
 
         return self.cache_results(
-            {
+            metric_value={
                 "precision": precision,
                 "recall": recall,
                 "thresholds": pr_thresholds,
-            }
+            },
+            figures=[Figure(key="pr_curve", figure=plot.figure_, metadata={})],
         )
 
 
@@ -281,7 +313,7 @@ class PrecisionScore(Metric):
         class_pred = self.class_predictions(self.y_test_predict)
         precision = metrics.precision_score(y_true, class_pred)
 
-        return self.cache_results(precision)
+        return self.cache_results(metric_value=precision)
 
 
 @dataclass
@@ -299,7 +331,7 @@ class RecallScore(Metric):
         class_pred = self.class_predictions(self.y_test_predict)
         recall = metrics.recall_score(y_true, class_pred)
 
-        return self.cache_results(recall)
+        return self.cache_results(metric_value=recall)
 
 
 @dataclass
@@ -317,7 +349,9 @@ class ROCAUCScore(Metric):
         class_pred = self.class_predictions(self.y_test_predict)
         roc_auc = metrics.roc_auc_score(y_true, class_pred)
 
-        return self.cache_results(roc_auc)
+        return self.cache_results(
+            metric_value=roc_auc,
+        )
 
 
 @dataclass
@@ -338,13 +372,20 @@ class ROCCurve(Metric):
         )
         auc = metrics.roc_auc_score(y_true, class_pred)
 
+        plot = metrics.RocCurveDisplay(
+            fpr=fpr,
+            tpr=tpr,
+            roc_auc=auc,
+        ).plot()
+
         return self.cache_results(
-            {
+            metric_value={
                 "auc": auc,
                 "fpr": fpr,
                 "tpr": tpr,
                 "thresholds": roc_thresholds,
-            }
+            },
+            figures=[Figure(key="roc_auc_curve", figure=plot.figure_, metadata={})],
         )
 
 
@@ -360,7 +401,7 @@ class SHAPGlobalImportance(TestContextUtils):
     test_context: TestContext
 
     name = "shap"
-    result: TestPlanResult = None
+    result: TestPlanMetricResult = None
 
     def run(self):
         trained_model = self.model.model
@@ -388,7 +429,7 @@ class SHAPGlobalImportance(TestContextUtils):
         #     shap_values = shap_values[0]
         #     result_values = shap_values
 
-        self.result = TestPlanResult(
+        self.result = TestPlanMetricResult(
             figures=[
                 _generate_shap_plot("mean", shap_values, self.test_ds.x),
                 _generate_shap_plot("summary", shap_values, self.test_ds.x),
@@ -412,4 +453,4 @@ class PopulationStabilityIndex(Metric):
     def run(self):
         psi_df = _get_psi(self.y_train_predict, self.y_test_predict)
 
-        return self.cache_results(psi_df)
+        return self.cache_results(metric_value=psi_df)

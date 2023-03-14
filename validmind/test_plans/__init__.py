@@ -52,12 +52,12 @@ def list_plans(pretty: bool = True):
     return tabulate.tabulate(table, headers="keys", tablefmt="html")
 
 
-def list_tests(type: str = "all", pretty: bool = True):
+def list_tests(test_type: str = "all", pretty: bool = True):
     """
     Returns a list of all available tests
     """
     tests = []
-    if type == "all" or type == "data":
+    if test_type == "all" or test_type == "data":
         tests.extend(
             [
                 test
@@ -77,7 +77,7 @@ def list_tests(type: str = "all", pretty: bool = True):
             ]
         )
 
-    if type == "all" or type == "model":
+    if test_type == "all" or test_type == "model":
         tests.extend(
             [
                 test
@@ -105,14 +105,14 @@ def list_tests(type: str = "all", pretty: bool = True):
         if inspect.isclass(test):
             test_type = _get_test_type(test)
             if test_type == "Metric":
-                id = test.key
+                test_id = test.key
             else:
-                id = test.name
+                test_id = test.name
 
             table.append(
                 {
                     "Test Type": test_type,
-                    "ID": id,
+                    "ID": test_id,
                     "Name": test.__name__,
                     "Description": test.__doc__.strip(),
                 }

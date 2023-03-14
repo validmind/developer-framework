@@ -115,8 +115,6 @@ def log_dataset(vm_dataset):
         print("Could not log dataset to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged dataset metadata and statistics.")
-
     return vm_dataset
 
 
@@ -153,8 +151,6 @@ def log_metadata(content_id, text=None, extra_json=None):
     if r.status_code != 200:
         print("Could not log metadata to ValidMind API")
         raise Exception(r.text)
-
-    print("Successfully logged metadata")
 
     return True
 
@@ -214,8 +210,6 @@ def log_metrics(metrics, run_cuid=None):
         print("Could not log metrics to ValidMind API")
         raise Exception(r.text)
 
-    print("Successfully logged metrics")
-
     return True
 
 
@@ -248,8 +242,6 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
     if r.status_code != 200:
         print("Could not log test results to ValidMind API")
         raise Exception(r.text)
-
-    print(f"Successfully logged test results for test: {result.test_name}")
 
     return True
 
@@ -318,6 +310,7 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     Returns:
         bool: True if the API call was successful
     """
+
     if not run_cuid:
         run_cuid = _get_or_create_run_cuid()
 
@@ -347,4 +340,9 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     res = api_session.post(
         url, files=files, data={"key": key, "type": type_, "metadata": metadata_json}
     )
+
+    if res.status_code != 200:
+        print("Could not log figure to ValidMind API")
+        raise Exception(res.text)
+
     return res.json()

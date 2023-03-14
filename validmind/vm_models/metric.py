@@ -3,13 +3,14 @@ Class for storing ValidMind metric objects and associated
 data for display and reporting purposes
 """
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Union
+from typing import ClassVar, List, Optional, Union
 
 import pandas as pd
 
+from .figure import Figure
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
-from .test_plan_result import TestPlanResult
+from .test_plan_result import TestPlanMetricResult
 
 
 @dataclass
@@ -31,7 +32,7 @@ class Metric(TestContextUtils):
 
     # Instance Variables
     params: dict = None
-    result: TestPlanResult = None
+    result: TestPlanMetricResult = None
 
     def __post_init__(self):
         """
@@ -53,7 +54,7 @@ class Metric(TestContextUtils):
     def cache_results(
         self,
         metric_value: Union[dict, list, pd.DataFrame],
-        figures: Optional[object] = None,
+        figures: Optional[List[Figure]] = None,
     ):
         """
         Cache the results of the metric calculation and do any post-processing if needed
@@ -65,7 +66,7 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
-        test_plan_result = TestPlanResult(
+        test_plan_result = TestPlanMetricResult(
             metric=MetricResult(
                 type=self.type,
                 scope=self.scope,
