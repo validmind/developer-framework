@@ -222,7 +222,7 @@ class TestPlanMetricResult(TestPlanResult):
         </style>
         """)
 
-        return html
+        return html.getvalue()
 
     def log(self):
         if self.metric:
