@@ -21,13 +21,20 @@ def init_dataset(
     also ensures we are reading a valid dataset type. We only support Pandas
     DataFrames at the moment.
 
-    :param pd.DataFrame dataset: We only support Pandas DataFrames at the moment
-    :param str type: The dataset split type is necessary for mapping and relating multiple
-        datasets together. Can be one of training, validation, test or generic
-    :param dict options: A dictionary of options for the dataset
-    :param vm.vm.DatasetTargets targets: A list of target variables
-    :param str target_column: The name of the target column in the dataset
-    :param dict class_labels: A list of class labels for classification problems
+    Args:
+        dataset (pd.DataFrame): We only support Pandas DataFrames at the moment
+        type (str): The dataset split type is necessary for mapping and relating multiple
+            datasets together. Can be one of training, validation, test or generic
+        options (dict): A dictionary of options for the dataset
+        targets (vm.vm.DatasetTargets): A list of target variables
+        target_column (str): The name of the target column in the dataset
+        class_labels (dict): A list of class labels for classification problems
+
+    Raises:
+        ValueError: If the dataset type is not supported
+
+    Returns:
+        vm.vm.Dataset: A VM Dataset instance
     """
     dataset_class = dataset.__class__.__name__
 
@@ -51,7 +58,14 @@ def init_model(model):
     that can perform additional analysis and tests on the data. This function
     also ensures we are reading a supported model type.
 
-    :param model: A trained model instance
+    Args:
+        model: A trained sklearn model
+
+    Raises:
+        ValueError: If the model type is not supported
+
+    Returns:
+        vm.vm.Model: A VM Model instance
     """
 
     if not Model.is_supported_model(model):
@@ -74,11 +88,18 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     find the correct test plan class based on the test_plan_name, initialize the test plan, and
     run it.
 
-    :param str test_plan_name: The test plan name (e.g. 'sklearn_classifier')
-    :param bool send: Whether to post the test results to the API. send=False is useful for testing
-    :param dict kwargs: Additional keyword arguments to pass to the test plan. These will provide
-        the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-        See the documentation for the specific test plan for more details.
+    Args:
+        test_plan_name (str): The test plan name (e.g. 'sklearn_classifier')
+        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        **kwargs: Additional keyword arguments to pass to the test plan. These will provide
+            the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
+            See the documentation for the specific test plan for more details.
+
+    Raises:
+        ValueError: If the test plan name is not found or if there is an error initializing the test plan
+
+    Returns:
+        dict: A dictionary of test results
     """
     try:
         Plan: TestPlan = get_by_name(test_plan_name)

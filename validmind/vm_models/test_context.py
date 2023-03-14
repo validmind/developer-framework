@@ -71,6 +71,12 @@ class TestContextUtils:
     def class_predictions(self, y_predict):
         """
         Converts a set of probability predictions to class predictions
+
+        Args:
+            y_predict (np.array, pd.DataFrame): Predictions to convert
+
+        Returns:
+            (np.array, pd.DataFrame): Class predictions
         """
         # TODO: parametrize at some point
         return (y_predict > 0.5).astype(int)

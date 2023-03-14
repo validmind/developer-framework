@@ -8,14 +8,6 @@ from io import BytesIO
 import requests
 
 from .utils import NumpyEncoder
-
-# from .vm_models import Model, ModelAttributes
-
-# from .model_utils import (
-#     # get_info_from_model_instance,
-#     # get_params_from_model_instance,
-#     # get_training_metrics,
-# )
 from .utils import get_full_typename, is_matplotlib_typename
 
 API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
@@ -50,8 +42,23 @@ def _get_or_create_run_cuid():
 
 def init(project, api_key=None, api_secret=None, api_host=None):
     """
-    Initializes the API client instances and /pings the API
-    to ensure the provided credentials are valid.
+    Initializes the API client instances and calls the /ping endpoint to ensure
+    the provided credentials are valid and we can connect to the ValidMind API.
+
+    If the API key and secret are not provided, the client will attempt to
+    retrieve them from the environment variables `VM_API_KEY` and `VM_API_SECRET`.
+
+    Args:
+        project (str): The project CUID
+        api_key (str, optional): The API key. Defaults to None.
+        api_secret (str, optional): The API secret. Defaults to None.
+        api_host (str, optional): The API host. Defaults to None.
+
+    Raises:
+        ValueError: If the API key and secret are not provided
+
+    Returns:
+        bool: True if the ping was successful
     """
     global API_HOST
 
@@ -84,9 +91,18 @@ def log_dataset(vm_dataset):
     """
     Logs metadata and statistics about a dataset to ValidMind API.
 
-    :param vm_dataset: ValidMind Dataset object
+    Args:
+        vm_dataset (validmind.VMDataset): A VM dataset object
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
+        dataset_options (dict, optional): Additional dataset options for analysis. Defaults to None.
+        dataset_targets (validmind.DatasetTargets, optional): A list of targets for the dataset. Defaults to None.
+        features (list, optional): Optional. A list of features metadata. Defaults to None.
 
-    :return: The logged dataset object
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        validmind.VMDataset: The VMDataset object
     """
     payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder)
     r = api_session.post(
@@ -106,11 +122,16 @@ def log_metadata(content_id, text=None, extra_json=None):
     """
     Logs free-form metadata to ValidMind API.
 
-    :param content_id: Unique content identifier for the metadata
-    :param text: Free-form text to assign to the metadata
-    :param extra_json: Free-form key-value pairs to assign to the metadata
+    Args:
+        content_id (str): Unique content identifier for the metadata
+        text (str, optional): Free-form text to assign to the metadata. Defaults to None.
+        extra_json (dict, optional): Free-form key-value pairs to assign to the metadata. Defaults to None.
 
-    :return: True if successful
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
     metadata_dict = {
         "content_id": content_id,
@@ -137,9 +158,15 @@ def log_metadata(content_id, text=None, extra_json=None):
 def log_model(vm_model):
     """
     Logs model metadata and hyperparameters to ValidMind API.
-    :param vm_model: A ValidMind Model wrapper instance.
 
-    :return: True if successful
+    Args:
+        vm_model (validmind.VMModel): A VM model object
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
     r = api_session.post(
         f"{API_HOST}/log_model",
@@ -154,33 +181,19 @@ def log_model(vm_model):
     return True
 
 
-# def log_training_metrics(model, x_train, y_train, x_val, y_val, run_cuid=None):
-#     """
-#     Logs training metrics to ValidMind API.
-
-#     :param model: A model instance. Only supports XGBoost at the moment.
-#     :param x_train: The training dataset.
-#     :param y_train: The training dataset targets.
-#     :param x_val: The validation dataset.
-#     :param y_val: The validation dataset targets.
-#     :param run_cuid: The run CUID. If not provided, a new run will be created.
-#     """
-#     if run_cuid is None:
-#         run_cuid = start_run()
-
-#     training_metrics = get_training_metrics(model, x_train, y_train, x_val, y_val)
-
-#     return log_metrics(training_metrics, run_cuid)
-
-
 def log_metrics(metrics, run_cuid=None):
     """
     Logs metrics to ValidMind API.
 
-    :param metrics: A list of Metric objects.
-    :param run_cuid: The run CUID. If not provided, a new run will be created.
+    Args:
+        metrics (list): A list of Metric objects
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
 
-    :return: True if successful
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
     if run_cuid is None:
         run_cuid = start_run()
@@ -205,11 +218,16 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
     Logs test results information. This method will be called automatically be any function
     running tests but can also be called directly if the user wants to run tests on their own.
 
-    :param result: A TestResults object
-    :param run_cuid: The run CUID. If not provided, a new run will be created.
-    :param dataset_type: The type of dataset. Can be one of "training", "test", or "validation".
+    Args:
+        result (validmind.TestResults): A TestResults object
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
 
-    :return: True if successful
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
     if run_cuid is None:
         run_cuid = start_run()
@@ -233,8 +251,16 @@ def log_test_results(results, run_cuid=None, dataset_type="training"):
     Logs test results information. This method will be called automatically be any function
     running tests but can also be called directly if the user wants to run tests on their own.
 
-    :param results: A list of TestResults objects
-    :param run_cuid: The run CUID. If not provided, a new run will be created.
+    Args:
+        results (list): A list of TestResults objects
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
     if run_cuid is None:
         run_cuid = start_run()
@@ -272,12 +298,17 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
     """
     Logs a figure
 
-    :param data_or_path: the path of the image or the data of the plot
-    :param key: identifier of the figure
-    :param metadata: python data structure
-    :param run_cuid: run cuid from start_run
+    Args:
+        data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot
+        key (str): Identifier of the figure
+        metadata (dict): Python data structure
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
 
-    :return: JSON response from the API
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
     """
 
     if not run_cuid:

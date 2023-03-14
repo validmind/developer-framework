@@ -60,6 +60,30 @@ wheel first, since we have not pushed the package to a public PyPI repository ye
 - This will create a new wheel file in the `dist` folder
 - Run `pip install <path-to-wheel>` to install the newly built package in your environment
 
+## Generating Docs
+
+API documentation can be generated in Markdown or HTML format. Our documentation pipeline
+uses Markdown documentation before generating the final HTML assets for the documentation site.
+
+For local testing, HTML docs can be generated with Sphinx. Note that the output template
+is different since the documentation pipeline uses the source Markdown files for the final
+HTML output.
+
+Markdown and HTML docs can be generated with the following commands:
+
+```bash
+# Navigate to the docs folder
+cd docs/
+
+# Generate Markdown docs
+make markdown
+
+# Generate HTML docs
+make html
+```
+
+The resulting `markdown` and `html` under `docs/_build` folders will contain the generated documentation.
+
 ## Known Issues
 
 ### ValidMind wheel errors
