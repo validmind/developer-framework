@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Library Tests &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Core Library Tests" href="model_validation_tests_sklearn.html" />
+    <link rel="prev" title="Python Library API" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python Library API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core Library Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-validation-tests">Data Validation Tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-validmind.data_validation.metrics">Data Validation Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetMetadata"><code class="docutils literal notranslate"><span class="pre">DatasetMetadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetCorrelations"><code class="docutils literal notranslate"><span class="pre">DatasetCorrelations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetDescription"><code class="docutils literal notranslate"><span class="pre">DatasetDescription</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-validmind.data_validation.threshold_tests">Data Validation Threshold Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest"><code class="docutils literal notranslate"><span class="pre">ClassImbalanceTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.DuplicatesTest"><code class="docutils literal notranslate"><span class="pre">DuplicatesTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.HighCardinalityTest"><code class="docutils literal notranslate"><span class="pre">HighCardinalityTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest"><code class="docutils literal notranslate"><span class="pre">HighPearsonCorrelationTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.MissingValuesTest"><code class="docutils literal notranslate"><span class="pre">MissingValuesTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.SkewnessTest"><code class="docutils literal notranslate"><span class="pre">SkewnessTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.UniqueRowsTest"><code class="docutils literal notranslate"><span class="pre">UniqueRowsTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.ZerosTest"><code class="docutils literal notranslate"><span class="pre">ZerosTest</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Core Library Tests</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/data_validation_tests.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="core-library-tests">
+<h1>Core Library Tests<a class="headerlink" href="#core-library-tests" title="Permalink to this heading"></a></h1>
+<section id="data-validation-tests">
+<h2>Data Validation Tests<a class="headerlink" href="#data-validation-tests" title="Permalink to this heading"></a></h2>
+<section id="module-validmind.data_validation.metrics">
+<span id="data-validation-metrics"></span><h3>Data Validation Metrics<a class="headerlink" href="#module-validmind.data_validation.metrics" title="Permalink to this heading"></a></h3>
+<p>Metrics functions for any Pandas-compatible datasets</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">DatasetMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanDatasetResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestContextUtils</span></code></p>
+<p>Custom class to collect a set of descriptive statistics for a dataset.
+This class will log dataset metadata via <cite>log_dataset</cite> instead of a metric.
+Dataset metadat is necessary to initialize dataset object that can be related
+to different metrics and test results</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.test_type">
+<span class="sig-name descname"><span class="pre">test_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DatasetMetadata'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata.test_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_metadata'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.result">
+<span class="sig-name descname"><span class="pre">result</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestPlanDatasetResult</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata.result" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetMetadata.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetMetadata.run" title="Permalink to this definition"></a></dt>
+<dd><p>Just set the dataset to the result attribute of the test plan result
+and it will be logged via the <cite>log_dataset</cite> function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">DatasetCorrelations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetCorrelations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
+<p>Extracts the correlation matrix for a dataset. The following coefficients
+are calculated:
+- Pearson’s R for numerical variables
+- Cramer’s V for categorical variables
+- Correlation ratios for categorical-numerical variables</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_correlations'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetCorrelations.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">DatasetDescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetDescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
+<p>Collects a set of descriptive statistics for a dataset</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_description'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetDescription.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-validmind.data_validation.threshold_tests">
+<span id="data-validation-threshold-tests"></span><h3>Data Validation Threshold Tests<a class="headerlink" href="#module-validmind.data_validation.threshold_tests" title="Permalink to this heading"></a></h3>
+<p>Threshold based tests</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">ClassImbalanceTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ClassImbalanceTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the minority class does not represent more than a threshold
+of the total number of examples</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'class_imbalance'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_percent_threshold':</span> <span class="pre">0.2}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ClassImbalanceTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalanceTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalanceTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">DuplicatesTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#DuplicatesTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of duplicates is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'duplicates'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#DuplicatesTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.DuplicatesTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.DuplicatesTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">HighCardinalityTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#HighCardinalityTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of unique values in a column is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cardinality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'num_threshold':</span> <span class="pre">100,</span> <span class="pre">'percent_threshold':</span> <span class="pre">0.1,</span> <span class="pre">'threshold_type':</span> <span class="pre">'percent'}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#HighCardinalityTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinalityTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinalityTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">HighPearsonCorrelationTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#HighPearsonCorrelationTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the Pearson correlation between two columns is less than a threshold</p>
+<p>Inspired by: <a class="reference external" href="https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py">https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py</a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pearson_correlation'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_threshold':</span> <span class="pre">0.3}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#HighPearsonCorrelationTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">MissingValuesTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#MissingValuesTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of missing values is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'missing'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#MissingValuesTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValuesTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValuesTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">SkewnessTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#SkewnessTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the skewness of a column is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'skewness'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#SkewnessTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.SkewnessTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.SkewnessTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">UniqueRowsTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#UniqueRowsTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of unique rows is greater than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unique'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_percent_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#UniqueRowsTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRowsTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRowsTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">ZerosTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ZerosTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of zeros is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zeros'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_percent_threshold':</span> <span class="pre">0.03}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ZerosTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ZerosTest.test_context">
+<span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ZerosTest.test_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-left" title="Python Library API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model_validation_tests_sklearn.html" class="btn btn-neutral float-right" title="Core Library Tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

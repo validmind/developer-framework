@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.data_validation.metrics &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">validmind.data_validation.metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.data_validation.metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Metrics functions for any Pandas-compatible datasets</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span>
+
+
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">TestContext</span><span class="p">,</span> <span class="n">TestContextUtils</span><span class="p">,</span> <span class="n">TestPlanDatasetResult</span>
+
+
+<div class="viewcode-block" id="DatasetMetadata"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DatasetMetadata</span><span class="p">(</span><span class="n">TestContextUtils</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom class to collect a set of descriptive statistics for a dataset.</span>
+<span class="sd">    This class will log dataset metadata via `log_dataset` instead of a metric.</span>
+<span class="sd">    Dataset metadat is necessary to initialize dataset object that can be related</span>
+<span class="sd">    to different metrics and test results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">test_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;DatasetMetadata&quot;</span>
+
+    <span class="c1"># Test Context</span>
+    <span class="n">test_context</span><span class="p">:</span> <span class="n">TestContext</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dataset_metadata&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">TestPlanDatasetResult</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="DatasetMetadata.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Just set the dataset to the result attribute of the test plan result</span>
+<span class="sd">        and it will be logged via the `log_dataset` function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">TestPlanDatasetResult</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="DatasetCorrelations"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetCorrelations">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DatasetCorrelations</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the correlation matrix for a dataset. The following coefficients</span>
+<span class="sd">    are calculated:</span>
+<span class="sd">    - Pearson&#39;s R for numerical variables</span>
+<span class="sd">    - Cramer&#39;s V for categorical variables</span>
+<span class="sd">    - Correlation ratios for categorical-numerical variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_correlations&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">type</span>
+
+<div class="viewcode-block" id="DatasetCorrelations.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetCorrelations.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This will populate the &quot;correlations&quot; attribute in the dataset object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_correlations</span><span class="p">()</span>
+        <span class="n">correlation_plots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_correlation_plots</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">correlations</span><span class="p">,</span> <span class="n">figures</span><span class="o">=</span><span class="n">correlation_plots</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DatasetDescription"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetDescription">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DatasetDescription</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collects a set of descriptive statistics for a dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_description&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">type</span>
+
+<div class="viewcode-block" id="DatasetDescription.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetDescription.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># This will populate the &quot;fields&quot; attribute in the dataset object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.test_plans.sklearn_classifier &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../test_plans.html">validmind.test_plans</a></li>
+      <li class="breadcrumb-item active">validmind.test_plans.sklearn_classifier</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.test_plans.sklearn_classifier</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test plan for sklearn classifier models</span>
+
+<span class="sd">Ideal setup is to have the API client to read a</span>
+<span class="sd">custom test plan from the project&#39;s configuration</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">TestPlan</span>
+<span class="kn">from</span> <span class="nn">..model_validation.model_metadata</span> <span class="kn">import</span> <span class="n">ModelMetadata</span>
+<span class="kn">from</span> <span class="nn">..model_validation.sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AccuracyScore</span><span class="p">,</span>
+    <span class="n">ConfusionMatrix</span><span class="p">,</span>
+    <span class="n">F1Score</span><span class="p">,</span>
+    <span class="n">PermutationFeatureImportance</span><span class="p">,</span>
+    <span class="n">PrecisionRecallCurve</span><span class="p">,</span>
+    <span class="n">PrecisionScore</span><span class="p">,</span>
+    <span class="n">RecallScore</span><span class="p">,</span>
+    <span class="n">ROCAUCScore</span><span class="p">,</span>
+    <span class="n">ROCCurve</span><span class="p">,</span>
+    <span class="n">CharacteristicStabilityIndex</span><span class="p">,</span>
+    <span class="n">PopulationStabilityIndex</span><span class="p">,</span>
+    <span class="n">SHAPGlobalImportance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..model_validation.sklearn.threshold_tests</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AccuracyTest</span><span class="p">,</span>
+    <span class="n">F1ScoreTest</span><span class="p">,</span>
+    <span class="n">ROCAUCScoreTest</span><span class="p">,</span>
+    <span class="n">TrainingTestDegradationTest</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="SKLearnClassifierMetrics"><a class="viewcode-back" href="../../../test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics">[docs]</a><span class="k">class</span> <span class="nc">SKLearnClassifierMetrics</span><span class="p">(</span><span class="n">TestPlan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test plan for sklearn classifier metrics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sklearn_classifier_metrics&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;test_ds&quot;</span><span class="p">]</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ModelMetadata</span><span class="p">,</span>
+        <span class="n">AccuracyScore</span><span class="p">,</span>
+        <span class="n">ConfusionMatrix</span><span class="p">,</span>
+        <span class="n">F1Score</span><span class="p">,</span>
+        <span class="n">PermutationFeatureImportance</span><span class="p">,</span>
+        <span class="n">PrecisionRecallCurve</span><span class="p">,</span>
+        <span class="n">PrecisionScore</span><span class="p">,</span>
+        <span class="n">RecallScore</span><span class="p">,</span>
+        <span class="n">ROCAUCScore</span><span class="p">,</span>
+        <span class="n">ROCCurve</span><span class="p">,</span>
+        <span class="n">CharacteristicStabilityIndex</span><span class="p">,</span>
+        <span class="n">PopulationStabilityIndex</span><span class="p">,</span>
+        <span class="n">SHAPGlobalImportance</span><span class="p">,</span>
+    <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SKLearnClassifierPerformance"><a class="viewcode-back" href="../../../test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance">[docs]</a><span class="k">class</span> <span class="nc">SKLearnClassifierPerformance</span><span class="p">(</span><span class="n">TestPlan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test plan for sklearn classifier models</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sklearn_classifier_validation&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;test_ds&quot;</span><span class="p">]</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="n">AccuracyTest</span><span class="p">,</span> <span class="n">F1ScoreTest</span><span class="p">,</span> <span class="n">ROCAUCScoreTest</span><span class="p">,</span> <span class="n">TrainingTestDegradationTest</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SKLearnClassifier"><a class="viewcode-back" href="../../../test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifier">[docs]</a><span class="k">class</span> <span class="nc">SKLearnClassifier</span><span class="p">(</span><span class="n">TestPlan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test plan for sklearn classifier models that includes</span>
+<span class="sd">    both metrics and validation tests</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sklearn_classifier&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;test_ds&quot;</span><span class="p">]</span>
+    <span class="n">test_plans</span> <span class="o">=</span> <span class="p">[</span><span class="n">SKLearnClassifierMetrics</span><span class="p">,</span> <span class="n">SKLearnClassifierPerformance</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

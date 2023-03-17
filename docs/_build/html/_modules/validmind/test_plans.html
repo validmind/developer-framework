@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.test_plans &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">validmind.test_plans</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.test_plans</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test Plans entry point</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="kn">import</span> <span class="nn">tabulate</span>
+
+<span class="kn">from</span> <span class="nn">..data_validation</span> <span class="kn">import</span> <span class="n">metrics</span> <span class="k">as</span> <span class="n">data_metrics</span>
+<span class="kn">from</span> <span class="nn">..data_validation</span> <span class="kn">import</span> <span class="n">threshold_tests</span> <span class="k">as</span> <span class="n">data_threshold_tests</span>
+<span class="kn">from</span> <span class="nn">..model_validation.sklearn</span> <span class="kn">import</span> <span class="n">metrics</span> <span class="k">as</span> <span class="n">sklearn_model_metrics</span>
+<span class="kn">from</span> <span class="nn">..model_validation.sklearn</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">threshold_tests</span> <span class="k">as</span> <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.sklearn_classifier</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
+    <span class="n">SKLearnClassifier</span><span class="p">,</span>
+    <span class="n">SKLearnClassifierPerformance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.tabular_datasets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TabularDataset</span><span class="p">,</span>
+    <span class="n">TabularDataQuality</span><span class="p">,</span>
+    <span class="n">TabularDatasetDescription</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">core_test_plans</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;sklearn_classifier_metrics&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
+    <span class="s2">&quot;sklearn_classifier_validation&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierPerformance</span><span class="p">,</span>
+    <span class="s2">&quot;sklearn_classifier&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifier</span><span class="p">,</span>
+    <span class="s2">&quot;tabular_dataset&quot;</span><span class="p">:</span> <span class="n">TabularDataset</span><span class="p">,</span>
+    <span class="s2">&quot;tabular_dataset_description&quot;</span><span class="p">:</span> <span class="n">TabularDatasetDescription</span><span class="p">,</span>
+    <span class="s2">&quot;tabular_data_quality&quot;</span><span class="p">:</span> <span class="n">TabularDataQuality</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="list_plans"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.list_plans">[docs]</a><span class="k">def</span> <span class="nf">list_plans</span><span class="p">(</span><span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of all available test plans</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pretty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">core_test_plans</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">core_test_plans</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">test_plan</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="n">test_plan</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="list_tests"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.list_tests">[docs]</a><span class="k">def</span> <span class="nf">list_tests</span><span class="p">(</span><span class="n">test_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of all available tests</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span> <span class="ow">or</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">test</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
+                    <span class="n">data_metrics</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">data_metrics</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">test</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
+                    <span class="n">data_threshold_tests</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">data_threshold_tests</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span> <span class="ow">or</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">test</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
+                    <span class="n">sklearn_model_metrics</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sklearn_model_metrics</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">test</span>
+                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
+                    <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pretty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tests</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">tests</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+            <span class="n">test_type</span> <span class="o">=</span> <span class="n">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;Metric&quot;</span><span class="p">:</span>
+                <span class="n">test_id</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">key</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">test_id</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Test Type&quot;</span><span class="p">:</span> <span class="n">test_type</span><span class="p">,</span>
+                    <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">test_id</span><span class="p">,</span>
+                    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                    <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="n">test</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_by_name"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.get_by_name">[docs]</a><span class="k">def</span> <span class="nf">get_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the test plan by name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">core_test_plans</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">core_test_plans</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test plan with name: &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the test type by inspecting the test class hierarchy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">super_class</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">test</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;Metric&quot;</span> <span class="ow">and</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;ThresholdTest&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Custom Test&quot;</span>
+
+    <span class="k">return</span> <span class="n">super_class</span>
+
+
+<div class="viewcode-block" id="describe_plan"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.describe_plan">[docs]</a><span class="k">def</span> <span class="nf">describe_plan</span><span class="p">(</span><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a description of the test plan</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">get_by_name</span><span class="p">(</span><span class="n">plan_id</span><span class="p">)</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">tests</span><span class="p">]</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__name__</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()],</span>
+        <span class="p">[</span><span class="s2">&quot;Required Context&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="n">required_context</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="n">tests</span><span class="p">],</span>
+        <span class="p">[</span><span class="s2">&quot;Test Plans&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">test_plan</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">test_plans</span><span class="p">]],</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Attribute&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
