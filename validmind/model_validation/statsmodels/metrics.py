@@ -8,7 +8,33 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.stats.diagnostic import kstest_normal
 from ...vm_models import Metric
+
+
+@dataclass
+class KolmogorovSmirnovTest(Metric):
+    """
+    The Kolmogorov-Smirnov metric is a statistical test used to determine 
+    whether a given set of data follows a normal distribution.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "kolmogorov_smirnov"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates KS for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        ks_values = {}
+        for col in x_train.columns:
+            ks_values[col] = kstest_normal(x_train[col].values)
+
+        return self.cache_results(ks_values)
 
 @dataclass
 class JarqueBeraTest(Metric):
