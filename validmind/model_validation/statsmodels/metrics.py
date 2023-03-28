@@ -6,12 +6,40 @@ import pandas as pd
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats.diagnostic import acorr_ljungbox
 from ...vm_models import Metric
+
+
+@dataclass
+class LJungBoxTest(Metric):
+    """
+    The LJung-Box Metric is a statistical test that 
+    can be used to detect autocorrelation in a time series.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "ljung_box"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates LB for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        lb_values = {}
+        for col in x_train.columns:
+            # Aggregate of the ljb results for the first 25 lags
+            lb_values[col] = acorr_ljungbox(x_train[col].values, lags=None)['lb_pvalue']
+
+        return self.cache_results(lb_values)
 
 @dataclass
 class DurbinWatsonTest(Metric):
     """
-    Durbin-Watson Metric
+    The Durbin-Watson Metric is a statistical test that 
+    can be used to detect autocorrelation in a time series.
     """
 
     type = "evaluation"  # assume this value
@@ -21,7 +49,7 @@ class DurbinWatsonTest(Metric):
 
     def run(self):
         """
-        Calculates PSI for each of the dataset features
+        Calculates DB for each of the dataset features
         """
         x_train = self.train_ds.raw_dataset
 
