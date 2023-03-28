@@ -6,8 +6,33 @@ import pandas as pd
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from ...vm_models import Metric
+
+@dataclass
+class JarqueBeraTest(Metric):
+    """
+    The Jarque-Bera test is a statistical test used to determine 
+    whether a given set of data follows a normal distribution.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "jarque_bera"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates JB for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        jb_values = {}
+        for col in x_train.columns:
+            jb_values[col] = jarque_bera(x_train[col].values)
+
+        return self.cache_results(jb_values)
 
 
 @dataclass
@@ -30,7 +55,6 @@ class LJungBoxTest(Metric):
 
         lb_values = {}
         for col in x_train.columns:
-            # Aggregate of the ljb results for the first 25 lags
             lb_values[col] = acorr_ljungbox(x_train[col].values, lags=None)['lb_pvalue']
 
         return self.cache_results(lb_values)

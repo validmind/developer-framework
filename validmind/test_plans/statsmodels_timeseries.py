@@ -6,10 +6,31 @@ from ..data_validation.metrics import DatasetMetadata
 from ..model_validation.statsmodels.metrics import (
     DurbinWatsonTest,
     LJungBoxTest,
+    JarqueBeraTest,
 )
 from ..model_validation.statsmodels.threshold_tests import (
     ADFTest,
 )
+
+class AutocorrelationTestPlan(TestPlan):
+    """
+    Test plan to perform autocorrelation tests.
+    """
+
+    name = "autocorrelation_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    tests = [LJungBoxTest, DurbinWatsonTest]
+
+
+class NormalityTestPlan(TestPlan):
+    """
+    Test plan to perform normality tests.
+    """
+
+    name = "normality_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    tests = [JarqueBeraTest]
+
 
 class SesonalityTestPlan(TestPlan):
     """
@@ -18,7 +39,8 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [DurbinWatsonTest, LJungBoxTest]
+    tests = [AutocorrelationTestPlan, NormalityTestPlan]
+
 
 class StationarityTestPlan(TestPlan):
     """
