@@ -13,6 +13,7 @@ from ..model_validation.statsmodels.threshold_tests import (
     ADFTest,
 )
 
+
 class AutocorrelationTestPlan(TestPlan):
     """
     Test plan to perform autocorrelation tests.
@@ -40,7 +41,7 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [AutocorrelationTestPlan, NormalityTestPlan]
+    test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
 class StationarityTestPlan(TestPlan):
@@ -51,7 +52,6 @@ class StationarityTestPlan(TestPlan):
     name = "stationarity_test_plan"
     required_context = ["train_ds", "test_ds"]
     tests = [ADFTest]
-    
 
 
 class TimeSeriesTestPlan(TestPlan):
