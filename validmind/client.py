@@ -2,19 +2,31 @@
 Client interface for all data and model validation functions
 """
 
+import pandas as pd
+import numpy as np
+import xgboost as xgb
+from sklearn.linear_model import LinearRegression, LogisticRegression
+
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .test_plans import get_by_name
-from .vm_models import Dataset, Model, ModelAttributes, TestPlan
+from .vm_models import (
+    Dataset,
+    DatasetTargets,
+    Model,
+    ModelAttributes,
+    R_MODEL_TYPES,
+    TestPlan,
+)
 
 
 def init_dataset(
-    dataset,
-    type="training",
-    options=None,
-    targets=None,
-    target_column=None,
-    class_labels=None,
-):
+    dataset: pd.DataFrame,
+    type: str = "training",
+    options: dict = None,
+    targets: DatasetTargets = None,
+    target_column: str = None,
+    class_labels: dict = None,
+) -> Dataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
@@ -52,7 +64,7 @@ def init_dataset(
     return vm_dataset
 
 
-def init_model(model):
+def init_model(model: object) -> Model:
     """
     Initializes a VM Model, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
@@ -75,9 +87,80 @@ def init_model(model):
             )
         )
 
-    vm_model = Model(model=model, attributes=ModelAttributes())
+    return Model(model=model, attributes=ModelAttributes())
 
-    return vm_model
+
+def init_r_model(model_path: str, model_type: str) -> Model:
+    """Initializes a VM Model for an R model
+
+    R models must be saved to disk and the filetype depends on the model type...
+    Currently we support the following model types:
+        - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`
+        - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`
+        - XGBClassifier: saved as a .json or .bin file with `xgb.save`
+        - XGBRegressor: saved as a .json or .bin file with `xgb.save`
+
+    LogisticRegression and LinearRegression models are converted to sklearn models by extracting
+    the coefficients and intercept from the R model. XGB models are loaded using the xgboost
+    since xgb models saved in .json or .bin format can be loaded directly with either Python or R
+
+    Args:
+        model_path (str): The path to the R model saved as an RDS or XGB file
+        model_type (str): The type of the model (one of R_MODEL_TYPES)
+    Returns:
+        vm.vm.Model: A VM Model instance
+    """
+    # first we need to load the model using rpy2
+    # since rpy2 is an extra we need to conditionally import it
+    try:
+        import rpy2.robjects as robjects
+    except ImportError:
+        raise ImportError(
+            "ValidMind r-support needs to be installed: `pip install validmind[r-support]`"
+        )
+
+    if model_type not in R_MODEL_TYPES:
+        raise ValueError(
+            "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
+        )
+
+    # convert the R model to an sklearn or xgboost estimator
+    if model_type == "LogisticRegression":  # load the model
+        r_model = robjects.r["readRDS"](model_path)
+        intercept, *coefficients = robjects.r["coef"](r_model)
+
+        model = LogisticRegression()
+        model.intercept_ = intercept
+        model.coef_ = np.array(coefficients).reshape(1, -1)
+        model.classes_ = np.array([0, 1])
+        model.feature_names_in_ = np.array(
+            robjects.r["colnames"](robjects.r["model.matrix"](r_model))[1:]
+        )
+
+    elif model_type == "LinearRegression":
+        r_model = robjects.r["readRDS"](model_path)
+        intercept, *coefficients = robjects.r["coef"](r_model)
+
+        model = LinearRegression()
+        model.intercept_ = intercept
+        model.coef_ = np.array(coefficients).reshape(1, -1)
+
+    elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
+        # validate that path is a .json or .bin file not .rds
+        if not model_path.endswith(".json") and not model_path.endswith(".bin"):
+            raise ValueError(
+                "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
+                + "Please use `xgb.save(model, 'model.json')` to save the model."
+            )
+
+        booster = xgb.Booster(model_file=model_path)
+
+        model = (
+            xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
+        )
+        model._Booster = booster
+
+    return init_model(model)
 
 
 def run_test_plan(test_plan_name, send=True, **kwargs):

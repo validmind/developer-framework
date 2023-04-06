@@ -168,3 +168,7 @@ notebooks/insurance_mortality/**/*.zip
 
 # r models
 notebooks/r_demo/*.rds
+notebooks/r_demo/*.rda
+notebooks/r_demo/*model.json
+.Rdata
+.Rhistory

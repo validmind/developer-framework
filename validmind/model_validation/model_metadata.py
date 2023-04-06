@@ -3,7 +3,7 @@ import sys
 from dataclasses import dataclass
 from typing import ClassVar
 
-from ..vm_models import Model, TestContext, TestContextUtils, TestPlanModelResult
+from ..vm_models import TestContext, TestContextUtils, TestPlanModelResult
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -54,11 +54,6 @@ def get_info_from_model_instance(model):
     Attempts to extract all model info from a model object instance
     """
     model_class = model.__class__.__name__
-
-    if not Model.is_supported_model(model):
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
 
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
@@ -123,11 +118,6 @@ def get_params_from_model_instance(model):
     Attempts to extract model hyperparameters from a model object instance
     """
     model_class = model.__class__.__name__
-
-    if not Model.is_supported_model(model):
-        raise ValueError(
-            "Model type {} is not supported at the moment.".format(model_class)
-        )
 
     # Only supports xgboot classifiers at the moment
     if model_class == "XGBClassifier" or model_class == "XGBRegressor":

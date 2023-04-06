@@ -11,6 +11,13 @@ SUPPORTED_MODEL_TYPES = [
     "LinearRegression",
 ]
 
+R_MODEL_TYPES = [
+    "LogisticRegression",
+    "LinearRegression",
+    "XGBClassifier",
+    "XGBRegressor",
+]
+
 
 @dataclass()
 class ModelAttributes:
@@ -55,14 +62,13 @@ class Model:
 
         NOTE: This only works for sklearn or xgboost models at the moment
         """
-        predict_fn = getattr(self.model, "predict_proba", None)
-        if callable(predict_fn):
+        if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
-        else:
-            return self.model.predict(*args, **kwargs)
 
-    @classmethod
-    def is_supported_model(cls, model):
+        return self.model.predict(*args, **kwargs)
+
+    @staticmethod
+    def is_supported_model(model):
         """
         Checks if the model is supported by the API
 
@@ -72,12 +78,7 @@ class Model:
         Returns:
             bool: True if the model is supported, False otherwise
         """
-        model_class = model.__class__.__name__
-
-        if model_class not in SUPPORTED_MODEL_TYPES:
-            return False
-
-        return True
+        return model.__class__.__name__ in SUPPORTED_MODEL_TYPES
 
     @classmethod
     def create_from_dict(cls, dict_):

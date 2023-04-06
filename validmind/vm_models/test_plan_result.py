@@ -81,17 +81,22 @@ class TestPlanMetricResult(TestPlanResult):
         html = StringIO()
 
         if self.metric:
-            html.write(f"""
+            html.write(
+                f"""
             <h4>Logged the following {self.metric.type} metric to the ValidMind platform:</h4>
-            """)
+            """
+            )
         else:
-            html.write(f"""
+            html.write(
+                f"""
             <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""}
             to the ValidMind platform:</h4>
-            """)
+            """
+            )
 
         if self.metric:
-            html.write("""
+            html.write(
+                f"""
             <div class="metric-result">
                 <div class="metric-result-body">
                     <div class="metric-body-column">
@@ -107,7 +112,8 @@ class TestPlanMetricResult(TestPlanResult):
                         <div class="metric-body-column-value">{self.metric.scope}</div>
                     </div>
                 </div>
-            """)
+            """
+            )
 
         if self.figures:
             plot_htmls = []
@@ -127,7 +133,8 @@ class TestPlanMetricResult(TestPlanResult):
             if len(plot_htmls) > 2:
                 # if theres a lot of plots, we want to only show the first
                 # one and then have an expand button to show the rest
-                html.write(f"""
+                html.write(
+                    f"""
                 <div class="metric-value">
                     <div class="metric-value-title">
                         <span>Metric Plots</span>
@@ -154,28 +161,34 @@ class TestPlanMetricResult(TestPlanResult):
                         }}
                     }}
                 </script>
-                """)
+                """
+                )
             else:
-                html.write(f"""
+                html.write(
+                    f"""
                 <div class="metric-value">
                     <div class="metric-value-title">Metric Plots</div>
                     <div class="metric-value-value">
                         {"".join(plot_htmls)}
                     </div>
                 </div>
-                """)
+                """
+                )
 
         else:
-            html.write(f"""
+            html.write(
+                f"""
             <div class="metric-value">
                 <div class="metric-value-title">Metric Value</div>
                 <div class="metric-value-value">
                     <pre>{self.metric.value}</pre>
                 </div>
             </div>
-            """)
+            """
+            )
 
-        html.write("""
+        html.write(
+            """
         </div>
         <style>
             .metric-result {
@@ -222,7 +235,8 @@ class TestPlanMetricResult(TestPlanResult):
                 width: auto;
             }
         </style>
-        """)
+        """
+        )
 
         return html.getvalue()
 
