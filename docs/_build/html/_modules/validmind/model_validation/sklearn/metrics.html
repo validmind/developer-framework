@@ -75,15 +75,15 @@
 <span class="sd">Metrics functions models trained with sklearn or that provide</span>
 <span class="sd">a sklearn-like API</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span>
+
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">shap</span>
-
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
 <span class="kn">from</span> <span class="nn">sklearn.inspection</span> <span class="kn">import</span> <span class="n">permutation_importance</span>
 
@@ -420,12 +420,11 @@
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;roc_auc&quot;</span>
 
 <div class="viewcode-block" id="ROCAUCScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCAUCScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">raw_dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
-        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
-        <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
-            <span class="n">metric_value</span><span class="o">=</span><span class="n">roc_auc</span><span class="p">,</span>
+            <span class="n">metric_value</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">raw_dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">),</span>
+            <span class="p">),</span>
         <span class="p">)</span></div></div>
 
 
@@ -482,6 +481,9 @@
         <span class="n">trained_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span>
         <span class="n">model_class</span> <span class="o">=</span> <span class="n">trained_model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
+        <span class="c1"># the shap library generates a bunch of annoying warnings that we don&#39;t care about</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
+
         <span class="c1"># RandomForestClassifier applies here too</span>
         <span class="k">if</span> <span class="n">model_class</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span><span class="p">:</span>
             <span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">)</span>
@@ -510,6 +512,9 @@
                 <span class="n">_generate_shap_plot</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
             <span class="p">]</span>
         <span class="p">)</span>
+
+        <span class="c1"># restore warnings</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div></div>
 

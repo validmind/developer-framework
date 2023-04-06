@@ -75,19 +75,31 @@
 <span class="sd">Client interface for all data and model validation functions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">LogisticRegression</span>
+
 <span class="c1"># from .model_validation import evaluate_model as mod_evaluate_model</span>
 <span class="kn">from</span> <span class="nn">.test_plans</span> <span class="kn">import</span> <span class="n">get_by_name</span>
-<span class="kn">from</span> <span class="nn">.vm_models</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelAttributes</span><span class="p">,</span> <span class="n">TestPlan</span>
+<span class="kn">from</span> <span class="nn">.vm_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">DatasetTargets</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">ModelAttributes</span><span class="p">,</span>
+    <span class="n">R_MODEL_TYPES</span><span class="p">,</span>
+    <span class="n">TestPlan</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="init_dataset"><a class="viewcode-back" href="../../api.html#validmind.init_dataset">[docs]</a><span class="k">def</span> <span class="nf">init_dataset</span><span class="p">(</span>
-    <span class="n">dataset</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">,</span>
-    <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">target_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">DatasetTargets</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initializes a VM Dataset, which can then be passed to other functions</span>
 <span class="sd">    that can perform additional analysis and tests on the data. This function</span>
@@ -125,7 +137,7 @@
     <span class="k">return</span> <span class="n">vm_dataset</span></div>
 
 
-<div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initializes a VM Model, which can then be passed to other functions</span>
 <span class="sd">    that can perform additional analysis and tests on the data. This function</span>
@@ -148,9 +160,80 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="n">vm_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span></div>
 
-    <span class="k">return</span> <span class="n">vm_model</span></div>
+
+<div class="viewcode-block" id="init_r_model"><a class="viewcode-back" href="../../api.html#validmind.init_r_model">[docs]</a><span class="k">def</span> <span class="nf">init_r_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes a VM Model for an R model</span>
+
+<span class="sd">    R models must be saved to disk and the filetype depends on the model type...</span>
+<span class="sd">    Currently we support the following model types:</span>
+<span class="sd">        - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">        - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">        - XGBClassifier: saved as a .json or .bin file with `xgb.save`</span>
+<span class="sd">        - XGBRegressor: saved as a .json or .bin file with `xgb.save`</span>
+
+<span class="sd">    LogisticRegression and LinearRegression models are converted to sklearn models by extracting</span>
+<span class="sd">    the coefficients and intercept from the R model. XGB models are loaded using the xgboost</span>
+<span class="sd">    since xgb models saved in .json or .bin format can be loaded directly with either Python or R</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_path (str): The path to the R model saved as an RDS or XGB file</span>
+<span class="sd">        model_type (str): The type of the model (one of R_MODEL_TYPES)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        vm.vm.Model: A VM Model instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first we need to load the model using rpy2</span>
+    <span class="c1"># since rpy2 is an extra we need to conditionally import it</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;ValidMind r-support needs to be installed: `pip install validmind[r-support]`&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">model_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">R_MODEL_TYPES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;model_type must be one of </span><span class="si">{}</span><span class="s2">. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R_MODEL_TYPES</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># convert the R model to an sklearn or xgboost estimator</span>
+    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;LogisticRegression&quot;</span><span class="p">:</span>  <span class="c1"># load the model</span>
+        <span class="n">r_model</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;readRDS&quot;</span><span class="p">](</span><span class="n">model_path</span><span class="p">)</span>
+        <span class="n">intercept</span><span class="p">,</span> <span class="o">*</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;coef&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">intercept</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">feature_names_in_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;colnames&quot;</span><span class="p">](</span><span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;model.matrix&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">))[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;LinearRegression&quot;</span><span class="p">:</span>
+        <span class="n">r_model</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;readRDS&quot;</span><span class="p">](</span><span class="n">model_path</span><span class="p">)</span>
+        <span class="n">intercept</span><span class="p">,</span> <span class="o">*</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;coef&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">intercept</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span> <span class="ow">or</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBRegressor&quot;</span><span class="p">:</span>
+        <span class="c1"># validate that path is a .json or .bin file not .rds</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">model_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.bin&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;XGBoost models must be a .json or .bin file. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;Please use `xgb.save(model, &#39;model.json&#39;)` to save the model.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">booster</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">Booster</span><span class="p">(</span><span class="n">model_file</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">()</span> <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span> <span class="k">else</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">_Booster</span> <span class="o">=</span> <span class="n">booster</span>
+
+    <span class="k">return</span> <span class="n">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="run_test_plan"><a class="viewcode-back" href="../../api.html#validmind.run_test_plan">[docs]</a><span class="k">def</span> <span class="nf">run_test_plan</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
