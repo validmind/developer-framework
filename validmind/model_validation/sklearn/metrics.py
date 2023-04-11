@@ -2,15 +2,15 @@
 Metrics functions models trained with sklearn or that provide
 a sklearn-like API
 """
+import warnings
 from dataclasses import dataclass
 from typing import ClassVar
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-
 import numpy as np
 import pandas as pd
 import shap
-
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
@@ -186,7 +186,9 @@ class ConfusionMatrix(Metric):
         cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
         tn, fp, fn, tp = cm.ravel()
 
-        plot = metrics.ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=y_labels).plot()
+        plot = metrics.ConfusionMatrixDisplay(
+            confusion_matrix=cm, display_labels=y_labels
+        ).plot()
 
         return self.cache_results(
             metric_value={
@@ -345,12 +347,11 @@ class ROCAUCScore(Metric):
     key = "roc_auc"
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
-        class_pred = self.class_predictions(self.y_test_predict)
-        roc_auc = metrics.roc_auc_score(y_true, class_pred)
-
         return self.cache_results(
-            metric_value=roc_auc,
+            metric_value=metrics.roc_auc_score(
+                self.test_ds.raw_dataset[self.test_ds.target_column],
+                self.class_predictions(self.y_test_predict),
+            ),
         )
 
 
@@ -407,6 +408,9 @@ class SHAPGlobalImportance(TestContextUtils):
         trained_model = self.model.model
         model_class = trained_model.__class__.__name__
 
+        # the shap library generates a bunch of annoying warnings that we don't care about
+        warnings.filterwarnings("ignore", category=UserWarning)
+
         # RandomForestClassifier applies here too
         if model_class == "XGBClassifier":
             explainer = shap.TreeExplainer(trained_model)
@@ -435,6 +439,9 @@ class SHAPGlobalImportance(TestContextUtils):
                 _generate_shap_plot("summary", shap_values, self.test_ds.x),
             ]
         )
+
+        # restore warnings
+        warnings.filterwarnings("default", category=UserWarning)
 
         return self.result
 

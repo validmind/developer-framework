@@ -1,5 +1,5 @@
 """
-Exports
+Main entrypoint to the ValidMind Python Library
 """
 
 from .vm_models import (
@@ -24,7 +24,7 @@ from .api_client import (
     log_figure,
 )
 
-from .client import init_dataset, init_model, run_test_plan
+from .client import init_dataset, init_model, init_r_model, run_test_plan
 
 # TODO: need to fix this import * situation
 from .data_validation import *  # noqa
@@ -36,6 +36,7 @@ __all__ = [  # noqa
     "init",
     "init_dataset",
     "init_model",
+    "init_r_model",
     "test_plans",
     "run_test_plan",
     # Framework Logging API

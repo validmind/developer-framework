@@ -9,6 +9,10 @@ from pydantic import BaseModel
 
 
 class BaseResultModel(BaseModel):
+    """
+    Base class for all result models
+    """
+
     class Config:
         json_encoders = {
             np.ndarray: lambda obj: obj.tolist(),
@@ -18,6 +22,10 @@ class BaseResultModel(BaseModel):
 
 
 class TestResult(BaseResultModel):
+    """
+    TestResult model
+    """
+
     test_name: Optional[str]  # Optionally allow a name for an individual test
     column: Optional[str]  # Optionally track the results for an individual column
     passed: Optional[bool]  # Optionally per-result pass/fail
@@ -25,6 +33,10 @@ class TestResult(BaseResultModel):
 
 
 class TestResults(BaseResultModel):
+    """
+    TestResults model
+    """
+
     category: str
     test_name: str
     params: dict

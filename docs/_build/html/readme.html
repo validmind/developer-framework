@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ValidMind Python Client &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Python Library API" href="api.html" />
+    <link rel="prev" title="ValidMind Developer Framework" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ValidMind Python Client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-from-pypi">Install from PyPI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#install-with-r-support-requires-r-to-be-installed">Install with R support (requires R to be installed)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing-to-validmind-developer-framework">Contributing to ValidMind Developer Framework</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-r-dependencies">Installing R dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#versioning">Versioning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-the-validmind-developer-framework-to-your-development-environment">Integrating the ValidMind Developer Framework to your development environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-docs">Generating Docs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#known-issues">Known Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validmind-wheel-errors">ValidMind wheel errors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ValidMind Python Client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/readme.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="validmind-python-client">
+<h1>ValidMind Python Client<a class="headerlink" href="#validmind-python-client" title="Permalink to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<section id="install-from-pypi">
+<h3>Install from PyPI<a class="headerlink" href="#install-from-pypi" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>validmind
+</pre></div>
+</div>
+<section id="install-with-r-support-requires-r-to-be-installed">
+<h4>Install with R support (requires R to be installed)<a class="headerlink" href="#install-with-r-support-requires-r-to-be-installed" title="Permalink to this heading"></a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>validmind<span class="o">[</span>r-support<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="contributing-to-validmind-developer-framework">
+<h2>Contributing to ValidMind Developer Framework<a class="headerlink" href="#contributing-to-validmind-developer-framework" title="Permalink to this heading"></a></h2>
+<section id="install-dependencies">
+<h3>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Ensure you have <code class="docutils literal notranslate"><span class="pre">poetry</span></code> installed: https://python-poetry.org/</p></li>
+<li><p>After cloning this repo run:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>shell
+poetry<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="installing-r-dependencies">
+<h3>Installing R dependencies<a class="headerlink" href="#installing-r-dependencies" title="Permalink to this heading"></a></h3>
+<p>If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from https://cran.r-project.org/. If you are on a Mac, you can install R using Homebrew:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>r
+</pre></div>
+</div>
+<p>Once you have R installed, you can install the <code class="docutils literal notranslate"><span class="pre">r-support</span></code> extra to install the necessary dependencies for R by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>install<span class="w"> </span>--extras<span class="w"> </span>r-support
+</pre></div>
+</div>
+</section>
+<section id="versioning">
+<h3>Versioning<a class="headerlink" href="#versioning" title="Permalink to this heading"></a></h3>
+<p>Make sure you bump the package version before merging a PR with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>version<span class="w"> </span><span class="nv">tag</span><span class="o">=</span>prerelease
+</pre></div>
+</div>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">tag</span></code> corresponds to one of the options provided by Poetry: https://python-poetry.org/docs/cli/#version</p>
+</section>
+</section>
+<section id="integrating-the-validmind-developer-framework-to-your-development-environment">
+<h2>Integrating the ValidMind Developer Framework to your development environment<a class="headerlink" href="#integrating-the-validmind-developer-framework-to-your-development-environment" title="Permalink to this heading"></a></h2>
+<p>If you want to integate the <code class="docutils literal notranslate"><span class="pre">validmind</span></code> package to your development environment, you must build the package
+wheel first, since we have not pushed the package to a public PyPI repository yet. Steps:</p>
+<ul class="simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build</span></code> to build a new Python package for the developer framework</p></li>
+<li><p>This will create a new wheel file in the <code class="docutils literal notranslate"><span class="pre">dist</span></code> folder</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&lt;path-to-wheel&gt;</span></code> to install the newly built package in your environment</p></li>
+</ul>
+</section>
+<section id="generating-docs">
+<h2>Generating Docs<a class="headerlink" href="#generating-docs" title="Permalink to this heading"></a></h2>
+<p>API documentation can be generated in Markdown or HTML format. Our documentation pipeline
+uses Markdown documentation before generating the final HTML assets for the documentation site.</p>
+<p>For local testing, HTML docs can be generated with Sphinx. Note that the output template
+is different since the documentation pipeline uses the source Markdown files for the final
+HTML output.</p>
+<p>Markdown and HTML docs can be generated with the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Navigate to the docs folder</span>
+<span class="nb">cd</span><span class="w"> </span>docs/
+
+<span class="c1"># Generate Markdown docs</span>
+make<span class="w"> </span>markdown
+
+<span class="c1"># Generate HTML docs</span>
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>The resulting <code class="docutils literal notranslate"><span class="pre">markdown</span></code> and <code class="docutils literal notranslate"><span class="pre">html</span></code> under <code class="docutils literal notranslate"><span class="pre">docs/_build</span></code> folders will contain the generated documentation.</p>
+</section>
+<section id="known-issues">
+<h2>Known Issues<a class="headerlink" href="#known-issues" title="Permalink to this heading"></a></h2>
+<section id="validmind-wheel-errors">
+<h3>ValidMind wheel errors<a class="headerlink" href="#validmind-wheel-errors" title="Permalink to this heading"></a></h3>
+<p>If you run into an error related to the ValidMind wheel, try:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>add<span class="w"> </span>wheel
+poetry<span class="w"> </span>update<span class="w"> </span>wheel
+poetry<span class="w"> </span>install
+</pre></div>
+</div>
+<p>If there are lightgbm errors partway through, run <code class="docutils literal notranslate"><span class="pre">remove</span> <span class="pre">lightgbm</span></code>, followed by <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">update</span> <span class="pre">wheel</span></code> and <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ValidMind Developer Framework" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Python Library API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.vm_models.dataset &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">validmind.vm_models.dataset</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.vm_models.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dataset class wrapper</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+
+<span class="kn">from</span> <span class="nn">dython.nominal</span> <span class="kn">import</span> <span class="n">associations</span>
+
+<span class="kn">from</span> <span class="nn">.dataset_utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">describe_dataset_field</span><span class="p">,</span>
+    <span class="n">generate_correlation_plots</span><span class="p">,</span>
+    <span class="n">parse_dataset_variables</span><span class="p">,</span>
+    <span class="n">validate_pd_dataset_targets</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="DatasetTargets"><a class="viewcode-back" href="../../../vm_models.html#validmind.DatasetTargets">[docs]</a><span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">DatasetTargets</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset targets definition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset">[docs]</a><span class="nd">@dataclass</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model class wrapper</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">raw_dataset</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">sample</span><span class="p">:</span> <span class="nb">list</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">correlation_matrix</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">correlations</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">statistics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Specify targets via DatasetTargets or via target_column and class_labels</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">__feature_lookup</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">__transformed_df</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set target_column and class_labels from DatasetTargets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">target_column</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">class_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the dataset&#39;s features</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the dataset&#39;s target column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Dataset.get_feature_by_id"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.get_feature_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the feature with the given id. We also build a lazy</span>
+<span class="sd">        lookup cache in case the same feature is requested multiple times.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            feature_id (str): The id of the feature to return</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the feature with the given id does not exist</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: The feature with the given id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">feature_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">feature</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">feature_id</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">feature</span>
+                    <span class="k">return</span> <span class="n">feature</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature with id </span><span class="si">{</span><span class="n">feature_id</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Dataset.get_feature_type"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.get_feature_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the type of the feature with the given id</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            feature_id (str): The id of the feature to return</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The type of the feature with the given id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_by_id</span><span class="p">(</span><span class="n">feature_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">feature</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Dataset.serialize"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes the model to a dictionary so it can be sent to the API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Dataset with no targets can be logged</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset_dict</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;target_column&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span><span class="p">,</span>
+                <span class="s2">&quot;class_labels&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_labels</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">dataset_dict</span></div>
+
+<div class="viewcode-block" id="Dataset.describe"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts descriptive statistics for each field in the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transformed_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformed_dataset</span>
+
+        <span class="k">for</span> <span class="n">ds_field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="n">describe_dataset_field</span><span class="p">(</span><span class="n">transformed_df</span><span class="p">,</span> <span class="n">ds_field</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Dataset.get_correlations"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.get_correlations">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts correlations for each field in the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ignore fields that have very high cardinality</span>
+        <span class="n">fields_for_correlation</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ds_field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;statistics&quot;</span> <span class="ow">in</span> <span class="n">ds_field</span> <span class="ow">and</span> <span class="s2">&quot;distinct&quot;</span> <span class="ow">in</span> <span class="n">ds_field</span><span class="p">[</span><span class="s2">&quot;statistics&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">ds_field</span><span class="p">[</span><span class="s2">&quot;statistics&quot;</span><span class="p">][</span><span class="s2">&quot;distinct&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                    <span class="n">fields_for_correlation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds_field</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span> <span class="o">=</span> <span class="n">associations</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">transformed_dataset</span><span class="p">[</span><span class="n">fields_for_correlation</span><span class="p">],</span>
+            <span class="n">compute_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)[</span><span class="s2">&quot;corr&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Transform to the current format expected by the UI</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correlations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;field&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">correlation_row</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">correlation_row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">correlation_matrix</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+        <span class="p">]</span></div>
+
+<div class="viewcode-block" id="Dataset.get_correlation_plots"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.get_correlation_plots">[docs]</a>    <span class="k">def</span> <span class="nf">get_correlation_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_top</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts correlation plots for the n_top correlations in the dataset</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            n_top (int, optional): The number of top correlations to extract. Defaults to 15.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of correlation plots</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">correlation_plots</span> <span class="o">=</span> <span class="n">generate_correlation_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_top</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">correlation_plots</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transformed_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a transformed dataset that uses the features from vm_dataset.</span>
+<span class="sd">        Some of the features in vm_dataset are of type Dummy so we need to</span>
+<span class="sd">        reverse the one hot encoding and drop the individual dummy columns</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            force_refresh (bool, optional): Whether to force a refresh of the transformed dataset. Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame: The transformed dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transformed_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">force_refresh</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transformed_df</span>
+
+        <span class="c1"># Get the list of features that are of type Dummy</span>
+        <span class="n">dataset_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
+        <span class="n">dummy_variables</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">dataset_options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dummy_variables&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">dataset_options</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="p">)</span>
+        <span class="c1"># Exclude columns that have prefixes that are in the dummy feature list</span>
+        <span class="n">dummy_column_names</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">column_name</span>
+            <span class="k">for</span> <span class="n">column_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="n">column_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">dummy_variable</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">dummy_variable</span> <span class="ow">in</span> <span class="n">dummy_variables</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">transformed_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dummy_column_names</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Add reversed dummy features to the transformed dataset</span>
+        <span class="k">for</span> <span class="n">dummy_variable</span> <span class="ow">in</span> <span class="n">dummy_variables</span><span class="p">:</span>
+            <span class="n">columns_with_dummy_prefix</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">col</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">columns</span>
+                <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">dummy_variable</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">transformed_df</span><span class="p">[</span><span class="n">dummy_variable</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">raw_dataset</span><span class="p">[</span><span class="n">columns_with_dummy_prefix</span><span class="p">]</span>
+                <span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dummy_variable</span><span class="si">}</span><span class="s2">[-_:]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transformed_df</span>
+
+<div class="viewcode-block" id="Dataset.create_from_dict"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.create_from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dict_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a Dataset object from a dictionary</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dict_ (dict): The dictionary to create the Dataset object from</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dataset: The Dataset object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">class_fields</span><span class="p">})</span></div>
+
+    <span class="c1"># TODO: Accept variable descriptions from framework</span>
+    <span class="c1"># TODO: Accept type overrides from framework</span>
+<div class="viewcode-block" id="Dataset.init_from_pd_dataset"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.init_from_pd_dataset">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">init_from_pd_dataset</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a Dataset object from a pandas DataFrame</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pd.DataFrame): The pandas DataFrame to initialize the Dataset object from</span>
+<span class="sd">            options (dict, optional): The options to use when initializing the Dataset object. Defaults to None.</span>
+<span class="sd">            targets (list, optional): The targets to use when initializing the Dataset object. Defaults to None.</span>
+<span class="sd">            target_column (str, optional): The target column to use when initializing the Dataset object. Defaults to None.</span>
+<span class="sd">            class_labels (list, optional): The class labels to use when initializing the Dataset object. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dataset: The Dataset object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inferring dataset types...&quot;</span><span class="p">)</span>
+        <span class="n">vm_dataset_variables</span> <span class="o">=</span> <span class="n">parse_dataset_variables</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;rows&quot;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">df_head</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+        <span class="n">df_tail</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: validate with target_column and class_labels</span>
+        <span class="k">if</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">validate_pd_dataset_targets</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span>
+            <span class="n">raw_dataset</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">vm_dataset_variables</span><span class="p">,</span>  <span class="c1"># TODO - deprecate naming in favor of variables</span>
+            <span class="n">variables</span><span class="o">=</span><span class="n">vm_dataset_variables</span><span class="p">,</span>
+            <span class="n">sample</span><span class="o">=</span><span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;head&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">df_head</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;tail&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">df_tail</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">],</span>
+            <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+            <span class="n">target_column</span><span class="o">=</span><span class="n">target_column</span><span class="p">,</span>
+            <span class="n">class_labels</span><span class="o">=</span><span class="n">class_labels</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 """
-Test plan for tabular datasets
+Test plan for sklearn classifier models
 
 Ideal setup is to have the API client to read a
 custom test plan from the project's configuration

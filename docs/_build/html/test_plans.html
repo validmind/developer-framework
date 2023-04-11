@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Plans &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ValidMind Models" href="vm_models.html" />
+    <link rel="prev" title="Core Library Tests" href="model_validation_tests_sklearn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Test Plans</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#validmind.test_plans.list_plans"><code class="docutils literal notranslate"><span class="pre">list_plans()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validmind.test_plans.list_tests"><code class="docutils literal notranslate"><span class="pre">list_tests()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validmind.test_plans.get_by_name"><code class="docutils literal notranslate"><span class="pre">get_by_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validmind.test_plans.describe_plan"><code class="docutils literal notranslate"><span class="pre">describe_plan()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-validmind.test_plans.sklearn_classifier">Test Plans for SKLearn-Compatible Classifiers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierMetrics</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.name"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierMetrics.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.required_context"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierMetrics.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.tests"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierMetrics.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierPerformance</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.name"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierPerformance.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.required_context"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierPerformance.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.tests"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifierPerformance.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifier</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.name"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifier.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.required_context"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifier.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.test_plans"><code class="docutils literal notranslate"><span class="pre">SKLearnClassifier.test_plans</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-validmind.test_plans.tabular_datasets">Test Plans for Tabular Datasets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription"><code class="docutils literal notranslate"><span class="pre">TabularDatasetDescription</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.name"><code class="docutils literal notranslate"><span class="pre">TabularDatasetDescription.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.required_context"><code class="docutils literal notranslate"><span class="pre">TabularDatasetDescription.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.tests"><code class="docutils literal notranslate"><span class="pre">TabularDatasetDescription.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataQuality"><code class="docutils literal notranslate"><span class="pre">TabularDataQuality</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.name"><code class="docutils literal notranslate"><span class="pre">TabularDataQuality.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.required_context"><code class="docutils literal notranslate"><span class="pre">TabularDataQuality.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.tests"><code class="docutils literal notranslate"><span class="pre">TabularDataQuality.tests</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataset"><code class="docutils literal notranslate"><span class="pre">TabularDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataset.name"><code class="docutils literal notranslate"><span class="pre">TabularDataset.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataset.required_context"><code class="docutils literal notranslate"><span class="pre">TabularDataset.required_context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.test_plans.tabular_datasets.TabularDataset.test_plans"><code class="docutils literal notranslate"><span class="pre">TabularDataset.test_plans</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Test Plans</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/test_plans.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-validmind.test_plans">
+<span id="test-plans"></span><h1>Test Plans<a class="headerlink" href="#module-validmind.test_plans" title="Permalink to this heading"></a></h1>
+<p>Test Plans entry point</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="validmind.test_plans.list_plans">
+<span class="sig-prename descclassname"><span class="pre">validmind.test_plans.</span></span><span class="sig-name descname"><span class="pre">list_plans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pretty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans.html#list_plans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.list_plans" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all available test plans</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="validmind.test_plans.list_tests">
+<span class="sig-prename descclassname"><span class="pre">validmind.test_plans.</span></span><span class="sig-name descname"><span class="pre">list_tests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans.html#list_tests"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.list_tests" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of all available tests</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="validmind.test_plans.get_by_name">
+<span class="sig-prename descclassname"><span class="pre">validmind.test_plans.</span></span><span class="sig-name descname"><span class="pre">get_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans.html#get_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.get_by_name" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the test plan by name</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="validmind.test_plans.describe_plan">
+<span class="sig-prename descclassname"><span class="pre">validmind.test_plans.</span></span><span class="sig-name descname"><span class="pre">describe_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plan_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans.html#describe_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.describe_plan" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a description of the test plan</p>
+</dd></dl>
+
+<section id="module-validmind.test_plans.sklearn_classifier">
+<span id="test-plans-for-sklearn-compatible-classifiers"></span><h2>Test Plans for SKLearn-Compatible Classifiers<a class="headerlink" href="#module-validmind.test_plans.sklearn_classifier" title="Permalink to this heading"></a></h2>
+<p>Test plan for sklearn classifier models</p>
+<p>Ideal setup is to have the API client to read a
+custom test plan from the project’s configuration</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.sklearn_classifier.</span></span><span class="sig-name descname"><span class="pre">SKLearnClassifierMetrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/sklearn_classifier.html#SKLearnClassifierMetrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan for sklearn classifier metrics</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sklearn_classifier_metrics'</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model',</span> <span class="pre">'train_ds',</span> <span class="pre">'test_ds']</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.tests">
+<span class="sig-name descname"><span class="pre">tests</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.model_validation.model_metadata.ModelMetadata'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.AccuracyScore'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.ConfusionMatrix'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.F1Score'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.PermutationFeatureImportance'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.PrecisionRecallCurve'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.PrecisionScore'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.RecallScore'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.ROCAUCScore'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.ROCCurve'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.CharacteristicStabilityIndex'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.PopulationStabilityIndex'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.metrics.SHAPGlobalImportance'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.tests" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.sklearn_classifier.</span></span><span class="sig-name descname"><span class="pre">SKLearnClassifierPerformance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/sklearn_classifier.html#SKLearnClassifierPerformance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan for sklearn classifier models</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sklearn_classifier_validation'</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model',</span> <span class="pre">'train_ds',</span> <span class="pre">'test_ds']</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.tests">
+<span class="sig-name descname"><span class="pre">tests</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.threshold_tests.AccuracyTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.threshold_tests.F1ScoreTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.tests" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.sklearn_classifier.</span></span><span class="sig-name descname"><span class="pre">SKLearnClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/sklearn_classifier.html#SKLearnClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan for sklearn classifier models that includes
+both metrics and validation tests</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifier.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sklearn_classifier'</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifier.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model',</span> <span class="pre">'train_ds',</span> <span class="pre">'test_ds']</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.sklearn_classifier.SKLearnClassifier.test_plans">
+<span class="sig-name descname"><span class="pre">test_plans</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.sklearn_classifier.SKLearnClassifier.test_plans" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-validmind.test_plans.tabular_datasets">
+<span id="test-plans-for-tabular-datasets"></span><h2>Test Plans for Tabular Datasets<a class="headerlink" href="#module-validmind.test_plans.tabular_datasets" title="Permalink to this heading"></a></h2>
+<p>Test plan for tabular datasets</p>
+<p>Ideal setup is to have the API client to read a
+custom test plan from the project’s configuration</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDatasetDescription">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.tabular_datasets.</span></span><span class="sig-name descname"><span class="pre">TabularDatasetDescription</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/tabular_datasets.html#TabularDatasetDescription"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan to extract metadata and descriptive
+statistics from a tabular dataset</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDatasetDescription.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tabular_dataset_description'</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDatasetDescription.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDatasetDescription.tests">
+<span class="sig-name descname"><span class="pre">tests</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.data_validation.metrics.DatasetMetadata'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.metrics.DatasetDescription'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.metrics.DatasetCorrelations'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDatasetDescription.tests" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataQuality">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.tabular_datasets.</span></span><span class="sig-name descname"><span class="pre">TabularDataQuality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/tabular_datasets.html#TabularDataQuality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataQuality" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan for data quality on tabular datasets</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataQuality.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tabular_data_quality'</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataQuality.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataQuality.tests">
+<span class="sig-name descname"><span class="pre">tests</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.ClassImbalanceTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.DuplicatesTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.HighCardinalityTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.HighPearsonCorrelationTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.MissingValuesTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.SkewnessTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.UniqueRowsTest'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.data_validation.threshold_tests.ZerosTest'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataQuality.tests" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.test_plans.tabular_datasets.</span></span><span class="sig-name descname"><span class="pre">TabularDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_ds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tqdm</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/test_plans/tabular_datasets.html#TabularDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestPlan</span></code></p>
+<p>Test plan for generic tabular datasets</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataset.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tabular_dataset'</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataset.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataset.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataset.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.test_plans.tabular_datasets.TabularDataset.test_plans">
+<span class="sig-name descname"><span class="pre">test_plans</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">object</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'validmind.test_plans.tabular_datasets.TabularDatasetDescription'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'validmind.test_plans.tabular_datasets.TabularDataQuality'&gt;]</span></em><a class="headerlink" href="#validmind.test_plans.tabular_datasets.TabularDataset.test_plans" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_validation_tests_sklearn.html" class="btn btn-neutral float-left" title="Core Library Tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vm_models.html" class="btn btn-neutral float-right" title="ValidMind Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

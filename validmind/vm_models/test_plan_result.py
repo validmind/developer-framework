@@ -1,10 +1,12 @@
 """
 TestPlanResult
 """
+# TODO: we are probably going to want to move all this html generation into an html template file
+# and use something like jinja to render it. This is fine for now, but the html is a bit messy
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from io import BytesIO
+from io import BytesIO, StringIO
 from typing import List, Optional
 import base64
 
@@ -76,18 +78,25 @@ class TestPlanMetricResult(TestPlanResult):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 
+        html = StringIO()
+
         if self.metric:
-            html = f"""
+            html.write(
+                f"""
             <h4>Logged the following {self.metric.type} metric to the ValidMind platform:</h4>
             """
+            )
         else:
-            html = f"""
+            html.write(
+                f"""
             <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""}
             to the ValidMind platform:</h4>
             """
+            )
 
         if self.metric:
-            html += f"""
+            html.write(
+                f"""
             <div class="metric-result">
                 <div class="metric-result-body">
                     <div class="metric-body-column">
@@ -104,27 +113,28 @@ class TestPlanMetricResult(TestPlanResult):
                     </div>
                 </div>
             """
+            )
 
         if self.figures:
-            html += """
-            """
-
             plot_htmls = []
 
             for fig in self.figures:
                 tmpfile = BytesIO()
                 fig.figure.savefig(tmpfile, format="png")
                 encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-                plot_htmls.append(f"""
+                plot_htmls.append(
+                    f"""
                 <div class="metric-plot">
                     <img src="data:image/png;base64,{encoded}"/>
                 </div>
-                """)
+                """
+                )
 
             if len(plot_htmls) > 2:
                 # if theres a lot of plots, we want to only show the first
                 # one and then have an expand button to show the rest
-                html += f"""
+                html.write(
+                    f"""
                 <div class="metric-value">
                     <div class="metric-value-title">
                         <span>Metric Plots</span>
@@ -152,8 +162,10 @@ class TestPlanMetricResult(TestPlanResult):
                     }}
                 </script>
                 """
+                )
             else:
-                html += f"""
+                html.write(
+                    f"""
                 <div class="metric-value">
                     <div class="metric-value-title">Metric Plots</div>
                     <div class="metric-value-value">
@@ -161,9 +173,11 @@ class TestPlanMetricResult(TestPlanResult):
                     </div>
                 </div>
                 """
+                )
 
         else:
-            html += f"""
+            html.write(
+                f"""
             <div class="metric-value">
                 <div class="metric-value-title">Metric Value</div>
                 <div class="metric-value-value">
@@ -171,8 +185,10 @@ class TestPlanMetricResult(TestPlanResult):
                 </div>
             </div>
             """
+            )
 
-        html += """
+        html.write(
+            """
         </div>
         <style>
             .metric-result {
@@ -220,8 +236,9 @@ class TestPlanMetricResult(TestPlanResult):
             }
         </style>
         """
+        )
 
-        return html
+        return html.getvalue()
 
     def log(self):
         if self.metric:
@@ -240,8 +257,8 @@ class TestPlanModelResult(TestPlanResult):
     model: Model = None
 
     def _to_html(self):
-        html = "<h4>Logged the following model to the ValidMind platform:</h4>"
-        html += f"""
+        return f"""
+        <h4>Logged the following model to the ValidMind platform:</h4>
         <div class="model-result">
             <div class="model-result-header">
                 <div class="model-result-header-title">
@@ -309,7 +326,6 @@ class TestPlanModelResult(TestPlanResult):
             }}
         </style>
         """
-        return html
 
     def log(self):
         log_model(self.model)
@@ -324,9 +340,8 @@ class TestPlanTestResult(TestPlanResult):
     test_results: TestResults = None
 
     def _to_html(self):
-        html = "<h4>Logged the following test result to the ValidMind platform:</h4>"
-        # TODO: probably want to move this into an html template file
-        html += f"""
+        return f"""
+        <h4>Logged the following test result to the ValidMind platform:</h4>
         <div class="test-result">
             <div class="test-result-header">
                 <div class="test-result-header-title">
@@ -422,8 +437,6 @@ class TestPlanTestResult(TestPlanResult):
             }}
         </script>
         """
-
-        return html
 
     def log(self):
         log_test_result(self.test_results)

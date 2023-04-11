@@ -1,4 +1,5 @@
 {
-  "python.formatting.provider": "black",
-  "notebook.output.textLineLimit": 1000
+    "python.formatting.provider": "black",
+    "notebook.output.textLineLimit": 1000
 }
+  

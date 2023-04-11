@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.data_validation.threshold_tests &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">validmind.data_validation.threshold_tests</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.data_validation.threshold_tests</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Threshold based tests</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">pandas_profiling.config</span> <span class="kn">import</span> <span class="n">Settings</span>
+<span class="kn">from</span> <span class="nn">pandas_profiling.model.typeset</span> <span class="kn">import</span> <span class="n">ProfilingTypeSet</span>
+
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">ThresholdTest</span>
+
+
+<div class="viewcode-block" id="ClassImbalanceTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalanceTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ClassImbalanceTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the minority class does not represent more than a threshold</span>
+<span class="sd">    of the total number of examples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;class_imbalance&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
+
+<div class="viewcode-block" id="ClassImbalanceTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalanceTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Can only run this test if we have a Dataset object</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ClassImbalanceTest requires a validmind Dataset object&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">target_column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping class_imbalance test because no target column is defined&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">target_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">target_column</span>
+        <span class="n">imbalance_percentages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">target_column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Does the minority class represent more than our threshold?</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="n">imbalance_percentages</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">target_column</span><span class="p">,</span>
+                <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">imbalance_percentages</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DuplicatesTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.DuplicatesTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DuplicatesTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of duplicates is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;duplicates&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="DuplicatesTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.DuplicatesTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">n_duplicates</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+        <span class="n">p_duplicates</span> <span class="o">=</span> <span class="n">n_duplicates</span> <span class="o">/</span> <span class="n">rows</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="n">n_duplicates</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_duplicates&quot;</span><span class="p">:</span> <span class="n">n_duplicates</span><span class="p">,</span> <span class="s2">&quot;p_duplicates&quot;</span><span class="p">:</span> <span class="n">p_duplicates</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Additionally, run duplicates test on fields that are primary keys</span>
+        <span class="n">primary_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_options&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_options&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;primary_key&quot;</span><span class="p">,</span> <span class="kc">False</span>
+            <span class="p">):</span>
+                <span class="n">primary_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">primary_keys</span><span class="p">:</span>
+            <span class="n">col_n_duplicates</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span>
+            <span class="n">col_p_duplicates</span> <span class="o">=</span> <span class="n">col_n_duplicates</span> <span class="o">/</span> <span class="n">rows</span>
+            <span class="n">col_passed</span> <span class="o">=</span> <span class="n">col_n_duplicates</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">TestResult</span><span class="p">(</span>
+                    <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                    <span class="n">passed</span><span class="o">=</span><span class="n">col_passed</span><span class="p">,</span>
+                    <span class="n">values</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;n_duplicates&quot;</span><span class="p">:</span> <span class="n">col_n_duplicates</span><span class="p">,</span>
+                        <span class="s2">&quot;p_duplicates&quot;</span><span class="p">:</span> <span class="n">col_p_duplicates</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="HighCardinalityTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighCardinalityTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">HighCardinalityTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of unique values in a column is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cardinality&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;num_threshold&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;percent_threshold&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;threshold_type&quot;</span><span class="p">:</span> <span class="s2">&quot;percent&quot;</span><span class="p">,</span>  <span class="c1"># or &quot;num&quot;</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="HighCardinalityTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighCardinalityTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
+        <span class="n">dataset_types</span> <span class="o">=</span> <span class="n">typeset</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">num_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;num_threshold&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;threshold_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;percent&quot;</span><span class="p">:</span>
+            <span class="n">num_threshold</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;percent_threshold&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rows</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="c1"># Only calculate high cardinality for categorical columns</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_types</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">!=</span> <span class="s2">&quot;Categorical&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">n_distinct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+            <span class="n">p_distinct</span> <span class="o">=</span> <span class="n">n_distinct</span> <span class="o">/</span> <span class="n">rows</span>
+
+            <span class="n">passed</span> <span class="o">=</span> <span class="n">n_distinct</span> <span class="o">&lt;</span> <span class="n">num_threshold</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">TestResult</span><span class="p">(</span>
+                    <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                    <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
+                    <span class="n">values</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;n_distinct&quot;</span><span class="p">:</span> <span class="n">n_distinct</span><span class="p">,</span>
+                        <span class="s2">&quot;p_distinct&quot;</span><span class="p">:</span> <span class="n">p_distinct</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="HighPearsonCorrelationTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">HighPearsonCorrelationTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the Pearson correlation between two columns is less than a threshold</span>
+
+<span class="sd">    Inspired by: https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pearson_correlation&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+
+<div class="viewcode-block" id="HighPearsonCorrelationTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighPearsonCorrelationTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="c1"># Matrix of True/False where True means the correlation is above the threshold</span>
+        <span class="c1"># Fill diagonal with False since all diagonal values are 1</span>
+        <span class="n">bool_index</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">corr</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">bool_index</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Simple cache to avoid a-&gt;b and b-&gt;a correlation entries</span>
+        <span class="n">correlation_mapping_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span> <span class="nf">cache_hit</span><span class="p">(</span><span class="n">from_field</span><span class="p">,</span> <span class="n">to_field</span><span class="p">):</span>
+            <span class="n">correlation_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_field</span><span class="p">,</span> <span class="n">to_field</span><span class="p">]</span>
+            <span class="n">correlation_keys</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">cache_key</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">correlation_keys</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">in</span> <span class="n">correlation_mapping_cache</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="n">correlation_mapping_cache</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">def</span> <span class="nf">corr_items</span><span class="p">(</span><span class="n">from_field</span><span class="p">,</span> <span class="n">to_fields</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;column&quot;</span><span class="p">:</span> <span class="n">to_field</span><span class="p">,</span>
+                    <span class="s2">&quot;correlation&quot;</span><span class="p">:</span> <span class="n">corr</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">from_field</span><span class="p">,</span> <span class="n">to_field</span><span class="p">],</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">to_field</span> <span class="ow">in</span> <span class="n">to_fields</span>
+                <span class="k">if</span> <span class="n">cache_hit</span><span class="p">(</span><span class="n">from_field</span><span class="p">,</span> <span class="n">to_field</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span>
+            <span class="p">]</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">col</span><span class="p">:</span> <span class="n">corr_items</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="n">bool_index</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">bool_index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Cleanup keys with no values</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;correlations&quot;</span><span class="p">:</span> <span class="n">correlations</span><span class="p">},</span>
+                <span class="n">passed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">correlations</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MissingValuesTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.MissingValuesTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MissingValuesTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of missing values is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;missing&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="MissingValuesTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.MissingValuesTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">passed</span><span class="o">=</span><span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">],</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="s2">&quot;p_missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">missing</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="SkewnessTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.SkewnessTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SkewnessTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the skewness of a column is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;skewness&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="SkewnessTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.SkewnessTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
+        <span class="n">dataset_types</span> <span class="o">=</span> <span class="n">typeset</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="n">skewness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">skew</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">skewness</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">])</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">skewness</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="c1"># Only calculate skewness for numerical columns</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_types</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">!=</span> <span class="s2">&quot;Numeric&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">col_skewness</span> <span class="o">=</span> <span class="n">skewness</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">TestResult</span><span class="p">(</span>
+                    <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                    <span class="n">passed</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">col_skewness</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">],</span>
+                    <span class="n">values</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;skewness&quot;</span><span class="p">:</span> <span class="n">col_skewness</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UniqueRowsTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.UniqueRowsTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">UniqueRowsTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of unique rows is greater than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;unique&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="UniqueRowsTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.UniqueRowsTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">unique_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">passed</span><span class="o">=</span><span class="p">(</span><span class="n">unique_rows</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">],</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;n_unique&quot;</span><span class="p">:</span> <span class="n">unique_rows</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+                    <span class="s2">&quot;p_unique&quot;</span><span class="p">:</span> <span class="n">unique_rows</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">unique_rows</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="ZerosTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ZerosTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ZerosTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of zeros is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;zeros&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_percent_threshold&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">}</span>
+
+<div class="viewcode-block" id="ZerosTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ZerosTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
+        <span class="n">dataset_types</span> <span class="o">=</span> <span class="n">typeset</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="c1"># Only calculate zeros for numerical columns</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_types</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">!=</span> <span class="s2">&quot;Numeric&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">value_counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="mi">0</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value_counts</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">n_zeros</span> <span class="o">=</span> <span class="n">value_counts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p_zeros</span> <span class="o">=</span> <span class="n">n_zeros</span> <span class="o">/</span> <span class="n">rows</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">TestResult</span><span class="p">(</span>
+                    <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                    <span class="n">passed</span><span class="o">=</span><span class="n">p_zeros</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_percent_threshold&quot;</span><span class="p">],</span>
+                    <span class="n">values</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;n_zeros&quot;</span><span class="p">:</span> <span class="n">n_zeros</span><span class="p">,</span>
+                        <span class="s2">&quot;p_zeros&quot;</span><span class="p">:</span> <span class="n">p_zeros</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

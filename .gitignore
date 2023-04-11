@@ -69,7 +69,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/_build/doctrees
 
 # PyBuilder
 .pybuilder/
@@ -165,3 +165,10 @@ notebooks/insurance_mortality/**/*.csv
 notebooks/insurance_mortality/**/*.pickle
 notebooks/insurance_mortality/**/*.pkl
 notebooks/insurance_mortality/**/*.zip
+
+# r models
+notebooks/r_demo/*.rds
+notebooks/r_demo/*.rda
+notebooks/r_demo/*model.json
+.Rdata
+.Rhistory

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>validmind.client &mdash; ValidMind Developer Framework  documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ValidMind Developer Framework
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">ValidMind Python Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python Library API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_validation_tests.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../model_validation_tests_sklearn.html">Core Library Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_plans.html">Test Plans</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vm_models.html">ValidMind Models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ValidMind Developer Framework</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">validmind.client</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for validmind.client</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Client interface for all data and model validation functions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">LogisticRegression</span>
+
+<span class="c1"># from .model_validation import evaluate_model as mod_evaluate_model</span>
+<span class="kn">from</span> <span class="nn">.test_plans</span> <span class="kn">import</span> <span class="n">get_by_name</span>
+<span class="kn">from</span> <span class="nn">.vm_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">DatasetTargets</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">ModelAttributes</span><span class="p">,</span>
+    <span class="n">R_MODEL_TYPES</span><span class="p">,</span>
+    <span class="n">TestPlan</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="init_dataset"><a class="viewcode-back" href="../../api.html#validmind.init_dataset">[docs]</a><span class="k">def</span> <span class="nf">init_dataset</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span><span class="p">,</span>
+    <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">DatasetTargets</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a VM Dataset, which can then be passed to other functions</span>
+<span class="sd">    that can perform additional analysis and tests on the data. This function</span>
+<span class="sd">    also ensures we are reading a valid dataset type. We only support Pandas</span>
+<span class="sd">    DataFrames at the moment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset (pd.DataFrame): We only support Pandas DataFrames at the moment</span>
+<span class="sd">        type (str): The dataset split type is necessary for mapping and relating multiple</span>
+<span class="sd">            datasets together. Can be one of training, validation, test or generic</span>
+<span class="sd">        options (dict): A dictionary of options for the dataset</span>
+<span class="sd">        targets (vm.vm.DatasetTargets): A list of target variables</span>
+<span class="sd">        target_column (str): The name of the target column in the dataset</span>
+<span class="sd">        class_labels (dict): A list of class labels for classification problems</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the dataset type is not supported</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        vm.vm.Dataset: A VM Dataset instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataset_class</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="c1"># TODO: when we accept numpy datasets we can convert them to/from pandas</span>
+    <span class="k">if</span> <span class="n">dataset_class</span> <span class="o">==</span> <span class="s2">&quot;DataFrame&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pandas dataset detected. Initializing VM Dataset instance...&quot;</span><span class="p">)</span>
+        <span class="n">vm_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">init_from_pd_dataset</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">target_column</span><span class="p">,</span> <span class="n">class_labels</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only Pandas datasets are supported at the moment.&quot;</span><span class="p">)</span>
+
+    <span class="n">vm_dataset</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
+
+    <span class="k">return</span> <span class="n">vm_dataset</span></div>
+
+
+<div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a VM Model, which can then be passed to other functions</span>
+<span class="sd">    that can perform additional analysis and tests on the data. This function</span>
+<span class="sd">    also ensures we are reading a supported model type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: A trained sklearn model</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the model type is not supported</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        vm.vm.Model: A VM Model instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Model</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Model type </span><span class="si">{}</span><span class="s2"> is not supported at the moment.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="init_r_model"><a class="viewcode-back" href="../../api.html#validmind.init_r_model">[docs]</a><span class="k">def</span> <span class="nf">init_r_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes a VM Model for an R model</span>
+
+<span class="sd">    R models must be saved to disk and the filetype depends on the model type...</span>
+<span class="sd">    Currently we support the following model types:</span>
+<span class="sd">        - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">        - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">        - XGBClassifier: saved as a .json or .bin file with `xgb.save`</span>
+<span class="sd">        - XGBRegressor: saved as a .json or .bin file with `xgb.save`</span>
+
+<span class="sd">    LogisticRegression and LinearRegression models are converted to sklearn models by extracting</span>
+<span class="sd">    the coefficients and intercept from the R model. XGB models are loaded using the xgboost</span>
+<span class="sd">    since xgb models saved in .json or .bin format can be loaded directly with either Python or R</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_path (str): The path to the R model saved as an RDS or XGB file</span>
+<span class="sd">        model_type (str): The type of the model (one of R_MODEL_TYPES)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        vm.vm.Model: A VM Model instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first we need to load the model using rpy2</span>
+    <span class="c1"># since rpy2 is an extra we need to conditionally import it</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">rpy2.robjects</span> <span class="k">as</span> <span class="nn">robjects</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;ValidMind r-support needs to be installed: `pip install validmind[r-support]`&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">model_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">R_MODEL_TYPES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;model_type must be one of </span><span class="si">{}</span><span class="s2">. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R_MODEL_TYPES</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># convert the R model to an sklearn or xgboost estimator</span>
+    <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;LogisticRegression&quot;</span><span class="p">:</span>  <span class="c1"># load the model</span>
+        <span class="n">r_model</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;readRDS&quot;</span><span class="p">](</span><span class="n">model_path</span><span class="p">)</span>
+        <span class="n">intercept</span><span class="p">,</span> <span class="o">*</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;coef&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">intercept</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">feature_names_in_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;colnames&quot;</span><span class="p">](</span><span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;model.matrix&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">))[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;LinearRegression&quot;</span><span class="p">:</span>
+        <span class="n">r_model</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;readRDS&quot;</span><span class="p">](</span><span class="n">model_path</span><span class="p">)</span>
+        <span class="n">intercept</span><span class="p">,</span> <span class="o">*</span><span class="n">coefficients</span> <span class="o">=</span> <span class="n">robjects</span><span class="o">.</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;coef&quot;</span><span class="p">](</span><span class="n">r_model</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">intercept</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span> <span class="ow">or</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBRegressor&quot;</span><span class="p">:</span>
+        <span class="c1"># validate that path is a .json or .bin file not .rds</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">model_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">model_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.bin&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;XGBoost models must be a .json or .bin file. Got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">&quot;Please use `xgb.save(model, &#39;model.json&#39;)` to save the model.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">booster</span> <span class="o">=</span> <span class="n">xgb</span><span class="o">.</span><span class="n">Booster</span><span class="p">(</span><span class="n">model_file</span><span class="o">=</span><span class="n">model_path</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">xgb</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">()</span> <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span> <span class="k">else</span> <span class="n">xgb</span><span class="o">.</span><span class="n">XGBRegressor</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">_Booster</span> <span class="o">=</span> <span class="n">booster</span>
+
+    <span class="k">return</span> <span class="n">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_test_plan"><a class="viewcode-back" href="../../api.html#validmind.run_test_plan">[docs]</a><span class="k">def</span> <span class="nf">run_test_plan</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;High Level function for running a test plan</span>
+
+<span class="sd">    This function provides a high level interface for running a test plan. It removes the need</span>
+<span class="sd">    to manually initialize a TestPlan instance and run it. This function will automatically</span>
+<span class="sd">    find the correct test plan class based on the test_plan_name, initialize the test plan, and</span>
+<span class="sd">    run it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        test_plan_name (str): The test plan name (e.g. &#39;sklearn_classifier&#39;)</span>
+<span class="sd">        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</span>
+<span class="sd">        **kwargs: Additional keyword arguments to pass to the test plan. These will provide</span>
+<span class="sd">            the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.</span>
+<span class="sd">            See the documentation for the specific test plan for more details.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the test plan name is not found or if there is an error initializing the test plan</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary of test results</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Plan</span><span class="p">:</span> <span class="n">TestPlan</span> <span class="o">=</span> <span class="n">get_by_name</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Error retrieving test plan </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">Plan</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Error initializing test plan </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">plan</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span></div>
+
+
+<span class="c1"># def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Evaluates a model and logs results to the ValidMind API. This function will log information</span>
+<span class="c1">#     about the trained model (parameters, etc.), training metrics, test metrics, and run model</span>
+<span class="c1">#     evaluation tests.</span>
+
+<span class="c1">#     :param model: The model to evaluate. Only scikit-learn and XGBoost models are supported at the moment</span>
+<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) train_set: (x_train, y_train) tuple</span>
+<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) val_set: (x_val, y_val) tuple</span>
+<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) test_set: (x_test, y_test) tuple</span>
+<span class="c1">#     :param dict eval_opts: A dictionary of options for the model evaluation</span>
+<span class="c1">#     :param bool send: Whether to post the test results to the API. send=False is useful for testing</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     print(&quot;Logging model metadata and parameters...&quot;)</span>
+<span class="c1">#     log_model(model)</span>
+
+<span class="c1">#     print(&quot;Extracting training/validation set metrics from trained model...&quot;)</span>
+<span class="c1">#     x_train, y_train = train_set</span>
+<span class="c1">#     x_val, y_val = val_set</span>
+
+<span class="c1">#     log_training_metrics(</span>
+<span class="c1">#         model, x_train.copy(), y_train.copy(), x_val.copy(), y_val.copy()</span>
+<span class="c1">#     )</span>
+
+<span class="c1">#     print(&quot;Running model evaluation tests...&quot;)</span>
+<span class="c1">#     eval_results = mod_evaluate_model(</span>
+<span class="c1">#         model,</span>
+<span class="c1">#         test_set=test_set,</span>
+<span class="c1">#         train_set=train_set,</span>
+<span class="c1">#         eval_opts=eval_opts,</span>
+<span class="c1">#         send=send,</span>
+<span class="c1">#     )</span>
+
+<span class="c1">#     return eval_results</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, ValidMind Inc..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
