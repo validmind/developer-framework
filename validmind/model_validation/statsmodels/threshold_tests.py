@@ -1,13 +1,12 @@
 from dataclasses import dataclass
 from ...vm_models import ThresholdTest, TestResult
-from random import random
 from statsmodels.tsa.stattools import adfuller
 
 
 @dataclass
 class ADFTest(ThresholdTest):
     """
-    Augmented Dickey-Fuller Metric for establishing the order of integration of 
+    Augmented Dickey-Fuller Metric for establishing the order of integration of
     time series
     """
 
@@ -21,8 +20,10 @@ class ADFTest(ThresholdTest):
         results = []
         for col in x_train.columns:
             # adf_values[col] = adfuller(x_train[col].values)
-            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(x_train[col].values)
-    
+            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
+                x_train[col].values
+            )
+
             col_passed = pvalue < self.params["threshold"]
             results.append(
                 TestResult(
@@ -37,8 +38,5 @@ class ADFTest(ThresholdTest):
                     },
                 )
             )
-        
+
         return self.cache_results(results, passed=all([r.passed for r in results]))
-
-
-            

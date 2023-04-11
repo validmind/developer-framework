@@ -2,7 +2,6 @@
 Time Series Test Plans from statsmodels
 """
 from ..vm_models import TestPlan
-from ..data_validation.metrics import DatasetMetadata
 from ..model_validation.statsmodels.metrics import (
     DurbinWatsonTest,
     LJungBoxTest,

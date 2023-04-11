@@ -2,7 +2,6 @@
 Metrics functions models trained with statsmodels or that provide
 a statsmodels-like API
 """
-import pandas as pd
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.stats.stattools import durbin_watson
