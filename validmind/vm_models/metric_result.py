@@ -39,6 +39,7 @@ class MetricResult:
                 "Must be one of 'records' or 'key_values'"
             )
         else:
+            # TODO: we need to handle formatting arbitrary shapes of data
             value = self.value
 
         if isinstance(value, pd.DataFrame):

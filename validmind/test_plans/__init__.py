@@ -21,6 +21,13 @@ from .tabular_datasets import (
     TabularDataQuality,
     TabularDatasetDescription,
 )
+from .statsmodels_timeseries import (
+    NormalityTestPlan,
+    AutocorrelationTestPlan,
+    SesonalityTestPlan,
+    StationarityTestPlan,
+    TimeSeriesTestPlan,
+)
 
 core_test_plans = {
     "sklearn_classifier_metrics": SKLearnClassifierMetrics,
@@ -29,6 +36,11 @@ core_test_plans = {
     "tabular_dataset": TabularDataset,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,
+    "normality_test_plan": NormalityTestPlan,
+    "autocorrelation_test_plan": AutocorrelationTestPlan,
+    "seasonality_test_plan": SesonalityTestPlan,
+    "stationarity_test_plan": StationarityTestPlan,
+    "timeseries_test_plan": TimeSeriesTestPlan,
 }
 
 
