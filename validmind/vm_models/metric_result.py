@@ -32,7 +32,6 @@ class MetricResult:
         if self.value_formatter == "records":
             value = format_records(self.value)
         elif self.value_formatter == "key_values":
-            print(self.value)
             value = format_key_values(self.value)
         elif self.value_formatter is not None:
             raise ValueError(
