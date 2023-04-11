@@ -94,6 +94,13 @@
     <span class="n">TabularDataQuality</span><span class="p">,</span>
     <span class="n">TabularDatasetDescription</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.statsmodels_timeseries</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">NormalityTestPlan</span><span class="p">,</span>
+    <span class="n">AutocorrelationTestPlan</span><span class="p">,</span>
+    <span class="n">SesonalityTestPlan</span><span class="p">,</span>
+    <span class="n">StationarityTestPlan</span><span class="p">,</span>
+    <span class="n">TimeSeriesTestPlan</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">core_test_plans</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;sklearn_classifier_metrics&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
@@ -102,6 +109,11 @@
     <span class="s2">&quot;tabular_dataset&quot;</span><span class="p">:</span> <span class="n">TabularDataset</span><span class="p">,</span>
     <span class="s2">&quot;tabular_dataset_description&quot;</span><span class="p">:</span> <span class="n">TabularDatasetDescription</span><span class="p">,</span>
     <span class="s2">&quot;tabular_data_quality&quot;</span><span class="p">:</span> <span class="n">TabularDataQuality</span><span class="p">,</span>
+    <span class="s2">&quot;normality_test_plan&quot;</span><span class="p">:</span> <span class="n">NormalityTestPlan</span><span class="p">,</span>
+    <span class="s2">&quot;autocorrelation_test_plan&quot;</span><span class="p">:</span> <span class="n">AutocorrelationTestPlan</span><span class="p">,</span>
+    <span class="s2">&quot;seasonality_test_plan&quot;</span><span class="p">:</span> <span class="n">SesonalityTestPlan</span><span class="p">,</span>
+    <span class="s2">&quot;stationarity_test_plan&quot;</span><span class="p">:</span> <span class="n">StationarityTestPlan</span><span class="p">,</span>
+    <span class="s2">&quot;timeseries_test_plan&quot;</span><span class="p">:</span> <span class="n">TimeSeriesTestPlan</span><span class="p">,</span>
 <span class="p">}</span>
 
 
