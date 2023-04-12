@@ -41,6 +41,8 @@ class ThresholdTest(TestContextUtils):
         """
         if self.params is None:
             self.params = self.default_params
+        else:
+            self.params = {**self.default_params, **self.params}
 
     def run(self, *args, **kwargs):
         """
