@@ -149,7 +149,7 @@ class ADFTest(Metric):
 @dataclass
 class PhillipsPerronTest(Metric):
     """
-    Phillips-Perron (PP) unit root test for 
+    Phillips-Perron (PP) unit root test for
     establishing the order of integration of time series
     """
 
@@ -173,12 +173,12 @@ class PhillipsPerronTest(Metric):
             pp_values["nobs"] = pp.nobs
 
         return self.cache_results(pp_values)
-    
+
 
 @dataclass
 class ZivotAndrewsTest(Metric):
     """
-    Zivot-Andrews unit root test for 
+    Zivot-Andrews unit root test for
     establishing the order of integration of time series
     """
 
@@ -203,10 +203,11 @@ class ZivotAndrewsTest(Metric):
 
         return self.cache_results(za_values)
 
+
 @dataclass
 class DFGLSTest(Metric):
     """
-    Dickey-Fuller GLS unit root test for 
+    Dickey-Fuller GLS unit root test for
     establishing the order of integration of time series
     """
 
@@ -231,10 +232,11 @@ class DFGLSTest(Metric):
 
         return self.cache_results(dfgls_values)
 
+
 @dataclass
 class KPSSTest(Metric):
     """
-    Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for 
+    Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for
     establishing the order of integration of time series
     """
 
@@ -251,9 +253,7 @@ class KPSSTest(Metric):
 
         kpss_values = {}
         for col in x_train.columns:
-            kpss_stat, pvalue, usedlag, critical_values = kpss(
-                x_train[col].values
-            )
+            kpss_stat, pvalue, usedlag, critical_values = kpss(x_train[col].values)
             kpss_values["stat"] = kpss_stat
             kpss_values["pvalue"] = pvalue
             kpss_values["usedlag"] = usedlag

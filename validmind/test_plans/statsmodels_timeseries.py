@@ -54,6 +54,7 @@ class UnitRootTestPlan(TestPlan):
     required_context = ["train_ds", "test_ds"]
     tests = [ADFTest, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
 
+
 class StationarityTestPlan(TestPlan):
     """
     Test plan to perform stationarity tests.
@@ -62,7 +63,6 @@ class StationarityTestPlan(TestPlan):
     name = "stationarity_test_plan"
     required_context = ["train_ds", "test_ds"]
     test_plans = [UnitRootTestPlan]
-
 
 
 class TimeSeriesTestPlan(TestPlan):
