@@ -9,6 +9,7 @@ from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
+from arch.unitroot import PhillipsPerron
 from ...vm_models import Metric
 
 
@@ -144,6 +145,34 @@ class ADFTest(Metric):
 
 
 @dataclass
+class PhillipsPerronTest(Metric):
+    """
+    Phillips-Perron (PP) Test unit root test for 
+    establishing the order of integration of time series
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "pp"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates PP for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        pp_values = {}
+        for col in x_train.columns:
+            pp = PhillipsPerron(x_train[col].values)
+            pp_values["pp"] = pp.stat
+            pp_values["pvalue"] = pp.pvalue
+            pp_values["usedlag"] = pp.lags
+
+        return self.cache_results(pp_values)
+    
+
+@dataclass
 class KPSSTest(Metric):
     """
     Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for 
@@ -163,10 +192,10 @@ class KPSSTest(Metric):
 
         kpss_values = {}
         for col in x_train.columns:
-            kpss_value, pvalue, usedlag, critical_values = kpss(
+            kpss_stat, pvalue, usedlag, critical_values = kpss(
                 x_train[col].values
             )
-            kpss_values["kpss"] = kpss_value
+            kpss_values["kpss"] = kpss_stat
             kpss_values["pvalue"] = pvalue
             kpss_values["usedlag"] = usedlag
 
