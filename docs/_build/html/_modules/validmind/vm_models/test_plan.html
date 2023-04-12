@@ -143,6 +143,27 @@
                     <span class="sa">f</span><span class="s2">&quot;Test plan &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; requires &#39;</span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&#39; to be present in the test context&quot;</span>
                 <span class="p">)</span></div>
 
+<div class="viewcode-block" id="TestPlan.get_config_params_for_test"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.get_config_params_for_test">[docs]</a>    <span class="k">def</span> <span class="nf">get_config_params_for_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the config for a given test, if it exists. The `config`</span>
+<span class="sd">        attribute is a dictionary where the keys are the test names and</span>
+<span class="sd">        the values are dictionaries of config values for that test.</span>
+
+<span class="sd">        The key in the config must match the name of the test, i.e. for</span>
+<span class="sd">        a test called &quot;time_series_univariate_inspection_raw&quot; we could</span>
+<span class="sd">        pass a config like this:</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;time_series_univariate_inspection_raw&quot;: {</span>
+<span class="sd">                &quot;columns&quot;: [&quot;col1&quot;, &quot;col2&quot;]</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="TestPlan.run"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the test plan</span>
@@ -169,7 +190,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running sub test plan: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
-            <span class="n">test_instance</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="p">)</span>
+            <span class="c1"># TODO: we need to unify key/name for any object</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">):</span>
+                <span class="n">test_name</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">key</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+                <span class="n">test_name</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="n">test_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_params_for_test</span><span class="p">(</span><span class="n">test_name</span><span class="p">)</span>
+            <span class="n">test_instance</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">test_params</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">test_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">test_instance</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

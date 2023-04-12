@@ -94,6 +94,9 @@
     <span class="n">TabularDataQuality</span><span class="p">,</span>
     <span class="n">TabularDatasetDescription</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.time_series</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TimeSeriesUnivariateInspection</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.statsmodels_timeseries</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">NormalityTestPlan</span><span class="p">,</span>
     <span class="n">AutocorrelationTestPlan</span><span class="p">,</span>
@@ -114,6 +117,8 @@
     <span class="s2">&quot;seasonality_test_plan&quot;</span><span class="p">:</span> <span class="n">SesonalityTestPlan</span><span class="p">,</span>
     <span class="s2">&quot;stationarity_test_plan&quot;</span><span class="p">:</span> <span class="n">StationarityTestPlan</span><span class="p">,</span>
     <span class="s2">&quot;timeseries_test_plan&quot;</span><span class="p">:</span> <span class="n">TimeSeriesTestPlan</span><span class="p">,</span>
+    <span class="c1"># TODO: remove this once we complete the time series test plan</span>
+    <span class="s2">&quot;timeseries_univariate_inspection&quot;</span><span class="p">:</span> <span class="n">TimeSeriesUnivariateInspection</span><span class="p">,</span>
 <span class="p">}</span>
 
 
