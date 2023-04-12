@@ -99,6 +99,71 @@
 <span class="kn">from</span> <span class="nn">.test_result</span> <span class="kn">import</span> <span class="n">TestResults</span>
 
 
+<span class="k">def</span> <span class="nf">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">:</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">figures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot figures to html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">plot_htmls</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">figures</span><span class="p">:</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">tmpfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">plot_htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;metric-plot&quot;&gt;</span>
+<span class="s2">            &lt;img src=&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">encoded</span><span class="si">}</span><span class="s2">&quot;/&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># if theres a lot of plots, we want to only show the first</span>
+        <span class="c1"># one and then have an expand button to show the rest</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;metric-value&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-value-title&quot;&gt;</span>
+<span class="s2">                &lt;span&gt;Metric Plots&lt;/span&gt;</span>
+<span class="s2">                &lt;a onclick=&quot;showMetricPlots(this)&quot; style=&quot;cursor: pointer;&quot;&gt;</span>
+<span class="s2">                    Show All Plots</span>
+<span class="s2">                &lt;/a&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">                &lt;div class=&quot;allplots&quot; style=&quot;display: none;&quot;&gt;</span>
+<span class="s2">                    </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="si">}</span>
+<span class="s2">                &lt;/div&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        &lt;script&gt;</span>
+<span class="s2">            function showMetricPlots(btn) </span><span class="se">{{</span>
+<span class="s2">                const plots = btn.parentElement.parentElement.querySelector(&quot;.allplots&quot;);</span>
+<span class="s2">                if (plots.style.display === &quot;none&quot;) </span><span class="se">{{</span>
+<span class="s2">                    plots.style.display = &quot;block&quot;;</span>
+<span class="s2">                    btn.innerHTML = &quot;Collapse&quot;;</span>
+<span class="s2">                </span><span class="se">}}</span><span class="s2"> else </span><span class="se">{{</span>
+<span class="s2">                    plots.style.display = &quot;none&quot;;</span>
+<span class="s2">                    btn.innerHTML = &quot;Show All Plots&quot;;</span>
+<span class="s2">                </span><span class="se">}}</span>
+<span class="s2">            </span><span class="se">}}</span>
+<span class="s2">        &lt;/script&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div class=&quot;metric-value&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-value-title&quot;&gt;Metric Plots&lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
+<span class="s2">                </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TestPlanResult</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Class for test plan results&quot;&quot;&quot;</span>
@@ -168,6 +233,11 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
+            <span class="n">metric_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">value</span>
+            <span class="c1"># Don&#39;t log the entire metric if it has more than 1000 characters</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1024</span><span class="p">:</span>
+                <span class="n">metric_value</span> <span class="o">=</span> <span class="n">metric_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()[:</span><span class="mi">1024</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
+
             <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            &lt;div class=&quot;metric-result&quot;&gt;</span>
@@ -185,80 +255,17 @@
 <span class="s2">                        &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">scope</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">                    &lt;/div&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;metric-value&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-value-title&quot;&gt;Metric Value&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-value-value&quot;&gt;</span>
+<span class="s2">                        &lt;pre&gt;</span><span class="si">{</span><span class="n">metric_value</span><span class="si">}</span><span class="s2">&lt;/pre&gt;</span>
+<span class="s2">                    &lt;/div&gt;</span>
+<span class="s2">                &lt;/div&gt;</span>
 <span class="s2">            &quot;&quot;&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
-            <span class="n">plot_htmls</span> <span class="o">=</span> <span class="p">[]</span>
-
-            <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
-                <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-                <span class="n">fig</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
-                <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">tmpfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-                <span class="n">plot_htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                &lt;div class=&quot;metric-plot&quot;&gt;</span>
-<span class="s2">                    &lt;img src=&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">encoded</span><span class="si">}</span><span class="s2">&quot;/&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span>
-                <span class="p">)</span>
-
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="c1"># if theres a lot of plots, we want to only show the first</span>
-                <span class="c1"># one and then have an expand button to show the rest</span>
-                <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-title&quot;&gt;</span>
-<span class="s2">                        &lt;span&gt;Metric Plots&lt;/span&gt;</span>
-<span class="s2">                        &lt;a onclick=&quot;showMetricPlots(this)&quot; style=&quot;cursor: pointer;&quot;&gt;</span>
-<span class="s2">                            Show All Plots</span>
-<span class="s2">                        &lt;/a&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                        </span><span class="si">{</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span>
-<span class="s2">                        &lt;div class=&quot;allplots&quot; style=&quot;display: none;&quot;&gt;</span>
-<span class="s2">                            </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="si">}</span>
-<span class="s2">                        &lt;/div&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;script&gt;</span>
-<span class="s2">                    function showMetricPlots(btn) </span><span class="se">{{</span>
-<span class="s2">                        const plots = btn.parentElement.parentElement.querySelector(&quot;.allplots&quot;);</span>
-<span class="s2">                        if (plots.style.display === &quot;none&quot;) </span><span class="se">{{</span>
-<span class="s2">                            plots.style.display = &quot;block&quot;;</span>
-<span class="s2">                            btn.innerHTML = &quot;Collapse&quot;;</span>
-<span class="s2">                        </span><span class="se">}}</span><span class="s2"> else </span><span class="se">{{</span>
-<span class="s2">                            plots.style.display = &quot;none&quot;;</span>
-<span class="s2">                            btn.innerHTML = &quot;Show All Plots&quot;;</span>
-<span class="s2">                        </span><span class="se">}}</span>
-<span class="s2">                    </span><span class="se">}}</span>
-<span class="s2">                &lt;/script&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-title&quot;&gt;Metric Plots&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                        </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span><span class="si">}</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span>
-                <span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">                &lt;div class=&quot;metric-value-title&quot;&gt;Metric Value&lt;/div&gt;</span>
-<span class="s2">                &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                    &lt;pre&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&lt;/pre&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-            <span class="p">)</span>
+            <span class="n">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
 
         <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
@@ -410,10 +417,13 @@
 <span class="sd">    Result wrapper for test results produced by the tests that run as part of a test plan</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">test_results</span><span class="p">:</span> <span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;h4&gt;Logged the following test result to the ValidMind platform:&lt;/h4&gt;</span>
 <span class="s2">        &lt;div class=&quot;test-result&quot;&gt;</span>
 <span class="s2">            &lt;div class=&quot;test-result-header&quot;&gt;</span>
@@ -451,68 +461,106 @@
 <span class="s2">                &lt;div class=&quot;results-objs-title&quot;&gt;Results&lt;/div&gt;</span>
 <span class="s2">                &lt;div class=&quot;results-objs-body&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">results</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
-<span class="s2">        &lt;/div&gt;</span>
-<span class="s2">        &lt;style&gt;</span>
-<span class="s2">            .test-result </span><span class="se">{{</span>
-<span class="s2">                border: 1px solid #ccc;</span>
-<span class="s2">                border-radius: 5px;</span>
-<span class="s2">                margin-bottom: 10px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-header </span><span class="se">{{</span>
-<span class="s2">                display: flex;</span>
-<span class="s2">                justify-content: space-between;</span>
-<span class="s2">                align-items: center;</span>
-<span class="s2">                padding: 10px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-header-title </span><span class="se">{{</span>
-<span class="s2">                display: flex;</span>
-<span class="s2">                align-items: center;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-header-title-text </span><span class="se">{{</span>
-<span class="s2">                font-weight: bold;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-header-title-icon </span><span class="se">{{</span>
-<span class="s2">                margin-left: 10px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-body </span><span class="se">{{</span>
-<span class="s2">                display: flex;</span>
-<span class="s2">                padding: 10px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-body-column </span><span class="se">{{</span>
-<span class="s2">                flex: 1;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-body-column-title </span><span class="se">{{</span>
-<span class="s2">                font-weight: bold;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .test-result-body-column-value </span><span class="se">{{</span>
-<span class="s2">                margin-top: 5px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .results-objs </span><span class="se">{{</span>
-<span class="s2">                padding: 10px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .results-objs-title </span><span class="se">{{</span>
-<span class="s2">                font-weight: bold;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">            .results-objs-body </span><span class="se">{{</span>
-<span class="s2">                margin-top: 5px;</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">        &lt;/style&gt;</span>
-<span class="s2">        &lt;script&gt;</span>
-<span class="s2">            function toggleTestResults(btn) </span><span class="se">{{</span>
-<span class="s2">                const rslts = btn.parentElement.parentElement.querySelector(&#39;.results-objs&#39;);</span>
-<span class="s2">                if (rslts.style.display === &#39;none&#39;) </span><span class="se">{{</span>
-<span class="s2">                    rslts.style.display = &#39;block&#39;;</span>
-<span class="s2">                    btn.innerHTML = &#39;Hide Result Details&#39;;</span>
-<span class="s2">                </span><span class="se">}}</span><span class="s2"> else </span><span class="se">{{</span>
-<span class="s2">                    rslts.style.display = &#39;none&#39;;</span>
-<span class="s2">                    btn.innerHTML = &#39;See Result Details&#39;;</span>
-<span class="s2">                </span><span class="se">}}</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">        &lt;/script&gt;</span>
+<span class="s2">            &lt;div class=&quot;test-result-body&quot;&gt;</span>
 <span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
+            <span class="n">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+
+        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            &lt;/div&gt;</span>
+<span class="sd">        &lt;/div&gt;</span>
+<span class="sd">        &lt;style&gt;</span>
+<span class="sd">            .test-result {{</span>
+<span class="sd">                border: 1px solid #ccc;</span>
+<span class="sd">                border-radius: 5px;</span>
+<span class="sd">                margin-bottom: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-header {{</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                justify-content: space-between;</span>
+<span class="sd">                align-items: center;</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-header-title {{</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                align-items: center;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-header-title-text {{</span>
+<span class="sd">                font-weight: bold;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-header-title-icon {{</span>
+<span class="sd">                margin-left: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-body {{</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-body-column {{</span>
+<span class="sd">                flex: 1;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-body-column-title {{</span>
+<span class="sd">                font-weight: bold;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .test-result-body-column-value {{</span>
+<span class="sd">                margin-top: 5px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .results-objs {{</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .results-objs-title {{</span>
+<span class="sd">                font-weight: bold;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .results-objs-body {{</span>
+<span class="sd">                margin-top: 5px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .metric-value {{</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                flex-direction: column;</span>
+<span class="sd">                justify-content: space-between;</span>
+<span class="sd">                margin-top: 15px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .metric-value-title {{</span>
+<span class="sd">                font-size: 14px;</span>
+<span class="sd">                font-weight: 500;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .metric-value-value {{</span>
+<span class="sd">                font-size: 14px;</span>
+<span class="sd">                font-weight: 500;</span>
+<span class="sd">                margin-top: 10px;</span>
+<span class="sd">            }}</span>
+<span class="sd">            .metric-plot img {{</span>
+<span class="sd">                margin-left: auto !important;</span>
+<span class="sd">                margin-right: auto !important;</span>
+<span class="sd">                max-height: 500px !important;</span>
+<span class="sd">                height: 100%;</span>
+<span class="sd">                width: auto;</span>
+<span class="sd">            }}</span>
+<span class="sd">        &lt;/style&gt;</span>
+<span class="sd">        &lt;script&gt;</span>
+<span class="sd">            function toggleTestResults(btn) {{</span>
+<span class="sd">                const rslts = btn.parentElement.parentElement.querySelector(&#39;.results-objs&#39;);</span>
+<span class="sd">                if (rslts.style.display === &#39;none&#39;) {{</span>
+<span class="sd">                    rslts.style.display = &#39;block&#39;;</span>
+<span class="sd">                    btn.innerHTML = &#39;Hide Result Details&#39;;</span>
+<span class="sd">                }} else {{</span>
+<span class="sd">                    rslts.style.display = &#39;none&#39;;</span>
+<span class="sd">                    btn.innerHTML = &#39;See Result Details&#39;;</span>
+<span class="sd">                }}</span>
+<span class="sd">            }}</span>
+<span class="sd">        &lt;/script&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TestPlanTestResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanTestResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">log_test_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">)</span></div></div>
+        <span class="n">log_test_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
+                <span class="n">log_figure</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">fig</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

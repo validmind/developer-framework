@@ -104,8 +104,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">raw_dataset</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="c1"># This is list of metadata objects for each field in the dataset. It does</span>
+    <span class="c1"># not contain the actual data for each field, just metadata about it</span>
     <span class="n">fields</span><span class="p">:</span> <span class="nb">list</span>
-    <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">sample</span><span class="p">:</span> <span class="nb">list</span>
     <span class="n">shape</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="n">correlation_matrix</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
@@ -354,8 +355,7 @@
 
         <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span>
             <span class="n">raw_dataset</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
-            <span class="n">fields</span><span class="o">=</span><span class="n">vm_dataset_variables</span><span class="p">,</span>  <span class="c1"># TODO - deprecate naming in favor of variables</span>
-            <span class="n">variables</span><span class="o">=</span><span class="n">vm_dataset_variables</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">vm_dataset_variables</span><span class="p">,</span>
             <span class="n">sample</span><span class="o">=</span><span class="p">[</span>
                 <span class="p">{</span>
                     <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;head&quot;</span><span class="p">,</span>
