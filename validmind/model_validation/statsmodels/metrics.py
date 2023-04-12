@@ -10,6 +10,7 @@ from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
 from arch.unitroot import PhillipsPerron
+from arch.unitroot import ZivotAndrews
 from ...vm_models import Metric
 
 
@@ -135,7 +136,7 @@ class ADFTest(Metric):
             adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
                 x_train[col].values
             )
-            adf_values["adf"] = adf
+            adf_values["stat"] = adf
             adf_values["pvalue"] = pvalue
             adf_values["usedlag"] = usedlag
             adf_values["nobs"] = nobs
@@ -153,7 +154,7 @@ class PhillipsPerronTest(Metric):
 
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
-    key = "pp"
+    key = "phillips_perron"
     value_formatter = "key_values"
 
     def run(self):
@@ -165,12 +166,41 @@ class PhillipsPerronTest(Metric):
         pp_values = {}
         for col in x_train.columns:
             pp = PhillipsPerron(x_train[col].values)
-            pp_values["pp"] = pp.stat
+            pp_values["stat"] = pp.stat
             pp_values["pvalue"] = pp.pvalue
             pp_values["usedlag"] = pp.lags
+            pp_values["nobs"] = pp.nobs
 
         return self.cache_results(pp_values)
     
+
+@dataclass
+class ZivotAndrewsTest(Metric):
+    """
+    Zivot-Andrews Test unit root test for 
+    establishing the order of integration of time series
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "zivot_andrews"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates Zivot-Andrews metric for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        za_values = {}
+        for col in x_train.columns:
+            za = ZivotAndrews(x_train[col].values)
+            za_values["stat"] = za.stat
+            za_values["pvalue"] = za.pvalue
+            za_values["usedlag"] = za.lags
+            za_values["nobs"] = za.nobs
+
+        return self.cache_results(za_values)
 
 @dataclass
 class KPSSTest(Metric):
@@ -195,7 +225,7 @@ class KPSSTest(Metric):
             kpss_stat, pvalue, usedlag, critical_values = kpss(
                 x_train[col].values
             )
-            kpss_values["kpss"] = kpss_stat
+            kpss_values["stat"] = kpss_stat
             kpss_values["pvalue"] = pvalue
             kpss_values["usedlag"] = usedlag
 
