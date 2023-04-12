@@ -53,6 +53,15 @@ class StationarityTestPlan(TestPlan):
     tests = [ADFTest]
 
 
+class UnitRootTestPlan(TestPlan):
+    """
+    Test plan to perform unit root tests.
+    """
+
+    name = "unit_root_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    tests = [ADFTest]
+
 class TimeSeriesTestPlan(TestPlan):
     """
     Test plan for time series statsmodels that includes
