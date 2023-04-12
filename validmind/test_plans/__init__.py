@@ -21,6 +21,9 @@ from .tabular_datasets import (
     TabularDataQuality,
     TabularDatasetDescription,
 )
+from .time_series import (
+    TimeSeriesUnivariateInspection,
+)
 from .statsmodels_timeseries import (
     NormalityTestPlan,
     AutocorrelationTestPlan,
@@ -41,6 +44,8 @@ core_test_plans = {
     "seasonality_test_plan": SesonalityTestPlan,
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries_test_plan": TimeSeriesTestPlan,
+    # TODO: remove this once we complete the time series test plan
+    "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
 }
 
 

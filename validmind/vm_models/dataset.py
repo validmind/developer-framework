@@ -58,6 +58,13 @@ class Dataset:
             self.class_labels = self.targets.class_labels
 
     @property
+    def df(self):
+        """
+        Returns the raw Pandas DataFrame
+        """
+        return self.raw_dataset
+
+    @property
     def x(self):
         """
         Returns the dataset's features

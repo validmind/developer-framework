@@ -140,13 +140,24 @@ class ModelMetadata(TestContextUtils):
     - Model task type
     """
 
-    test_type: ClassVar[str] = "ModelMetadata"
-
     # Test Context
     test_context: TestContext
 
+    # Class Variables
+    test_type: ClassVar[str] = "ModelMetadata"
+    default_params: ClassVar[dict] = {}
+
+    # Instance Variables
+    params: dict = None
     name = "model_metadata"
     result: TestPlanModelResult = None
+
+    def __post_init__(self):
+        """
+        Set default params if not provided
+        """
+        if self.params is None:
+            self.params = self.default_params
 
     def run(self):
         """

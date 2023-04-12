@@ -396,13 +396,24 @@ class SHAPGlobalImportance(TestContextUtils):
     SHAP Global Importance. Custom metric
     """
 
-    test_type: ClassVar[str] = "SHAPGlobalImportance"
-
     # Test Context
     test_context: TestContext
 
+    # Class Variables
+    test_type: ClassVar[str] = "SHAPGlobalImportance"
+    default_params: ClassVar[dict] = {}
+
+    # Instance Variables
     name = "shap"
+    params: dict = None
     result: TestPlanMetricResult = None
+
+    def __post_init__(self):
+        """
+        Set default params if not provided
+        """
+        if self.params is None:
+            self.params = self.default_params
 
     def run(self):
         trained_model = self.model.model
