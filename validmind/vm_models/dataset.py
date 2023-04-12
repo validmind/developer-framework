@@ -31,8 +31,9 @@ class Dataset:
     """
 
     raw_dataset: object
+    # This is list of metadata objects for each field in the dataset. It does
+    # not contain the actual data for each field, just metadata about it
     fields: list
-    variables: list
     sample: list
     shape: dict
     correlation_matrix: object = None
@@ -281,8 +282,7 @@ class Dataset:
 
         return Dataset(
             raw_dataset=df,
-            fields=vm_dataset_variables,  # TODO - deprecate naming in favor of variables
-            variables=vm_dataset_variables,
+            fields=vm_dataset_variables,
             sample=[
                 {
                     "id": "head",

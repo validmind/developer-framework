@@ -7,8 +7,9 @@ TODO: Test definitions should be supported in the API too
 """
 
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Optional
 
+from .figure import Figure
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanTestResult
 from .test_result import TestResult, TestResults
@@ -41,6 +42,8 @@ class ThresholdTest(TestContextUtils):
         """
         if self.params is None:
             self.params = self.default_params
+        else:
+            self.params = {**self.default_params, **self.params}
 
     def run(self, *args, **kwargs):
         """
@@ -48,7 +51,12 @@ class ThresholdTest(TestContextUtils):
         """
         raise NotImplementedError
 
-    def cache_results(self, results: List[TestResult], passed: bool):
+    def cache_results(
+        self,
+        results: List[TestResult],
+        passed: bool,
+        figures: Optional[List[Figure]] = None,
+    ):
         """
         Cache the individual results of the threshold test as a list of TestResult objects
 
@@ -68,4 +76,9 @@ class ThresholdTest(TestContextUtils):
                 results=results,
             )
         )
+
+        # Allow test results to attach figures to the test plan result
+        if figures:
+            self.test_results.figures = figures
+
         return self.test_results
