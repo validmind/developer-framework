@@ -46,6 +46,46 @@ files = [
 ]
 
 [[package]]
+name = "arch"
+version = "5.4.0"
+description = "ARCH for Python"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "arch-5.4.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f5ae6846e568f3f3884e1bfcac2970106e42ffe5943973977f79539d0c269bdf"},
+    {file = "arch-5.4.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:b59b079a290613306809a34b4d00979c45537daeeee97e33cdce7765567a1978"},
+    {file = "arch-5.4.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d154dbd39747b1eeb2f5c16f9857063e529610cabb9a7bfb74a466fb39bd19ac"},
+    {file = "arch-5.4.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c56d5d88175e81a979288495fd735d2620224466028ccd45f58e0139a64253b7"},
+    {file = "arch-5.4.0-cp310-cp310-win_amd64.whl", hash = "sha256:690684728d7b3d87c2eecb2016fbe7b012a47375d7f26731d9c2f3787904e60a"},
+    {file = "arch-5.4.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:50c01099273df42a3d2d82b8ba7c2fc4ee65899977ea0dc577f41ddd9b6ebf09"},
+    {file = "arch-5.4.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:5b5603f21b5ef36d9183a0c0de600a0e1f63dd87fd07b9884c38aa0bc1bf6d5e"},
+    {file = "arch-5.4.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6fa0f56cb5299d5e529392fb241330f78388379ab96c8d4343c9521b5df53ced"},
+    {file = "arch-5.4.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c435785852e747e66621558b37e44fb7c201586f86128f310e82ac842013b121"},
+    {file = "arch-5.4.0-cp311-cp311-win_amd64.whl", hash = "sha256:260bafa16102ece9d480c6ddfa05ad20e6414989183775a98610ed0488c4fc62"},
+    {file = "arch-5.4.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:2f1ac3faa6f4866fa0e8658fa6161e383cea1b97b073dd5046cd7dd2bb44bb19"},
+    {file = "arch-5.4.0-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:364228aa5ed3c24e8b86bf88e98002d0ffa015da1989c074eb32cc057ca39bba"},
+    {file = "arch-5.4.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3def1e915c74a87c03e48b7160cc2f8adeab3cd9f9df342d8cad428ffbcb6479"},
+    {file = "arch-5.4.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:324e7beaef163881b9aa0d633de72072ce4e49a2e7fde5bfdb506af408152806"},
+    {file = "arch-5.4.0-cp38-cp38-win32.whl", hash = "sha256:44f006f715db3e0da3eb672acc3e4462431da468182e922e1b46f5312484f5b6"},
+    {file = "arch-5.4.0-cp38-cp38-win_amd64.whl", hash = "sha256:8d332c42cab50019a5c2d6934487db9aa55c4458764558dca323dd25e2a1c8d7"},
+    {file = "arch-5.4.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:4c5e5a22f8731806f49279a1dee8230bbb74c0b768e371f703ea3bf14c0d5220"},
+    {file = "arch-5.4.0-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:4277327893bd59f83271828cce5b5c6e750d6d17b8c6b9b75d43e28a5a8e5f16"},
+    {file = "arch-5.4.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:93a5dfaad0008828de0884bd5c4f4b606276a2be51aebd5e66b457dfbf5eb800"},
+    {file = "arch-5.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d2a22fe5f2a3e7c71cf2cb0c675cd27f5185c1b0c6b0e6f420179495db8a08ea"},
+    {file = "arch-5.4.0-cp39-cp39-win32.whl", hash = "sha256:be36178d9faa4916aa266e6b4f2b98aa768db7cc4197b5f77cd5203ecede3e3b"},
+    {file = "arch-5.4.0-cp39-cp39-win_amd64.whl", hash = "sha256:adb7e550b471f46e30f007dffd23dc2ab7ece7cb2a733bc613603c88231e4c5b"},
+    {file = "arch-5.4.0.tar.gz", hash = "sha256:a1e83d4ffc5c09516230e58dc9f9c4af55445e2005507a51896f7ea120d9a5bd"},
+]
+
+[package.dependencies]
+numpy = ">=1.17"
+pandas = ">=1.0"
+property-cached = ">=1.6.4"
+scipy = ">=1.3"
+statsmodels = ">=0.11"
+
+[[package]]
 name = "argon2-cffi"
 version = "21.3.0"
 description = "The secure Argon2 password hashing algorithm."
@@ -2377,6 +2417,18 @@ files = [
 wcwidth = "*"
 
 [[package]]
+name = "property-cached"
+version = "1.6.4"
+description = "A decorator for caching properties in classes (forked from cached-property)."
+category = "main"
+optional = false
+python-versions = ">= 3.5"
+files = [
+    {file = "property-cached-1.6.4.zip", hash = "sha256:3e9c4ef1ed3653909147510481d7df62a3cfb483461a6986a6f1dcd09b2ebb73"},
+    {file = "property_cached-1.6.4-py2.py3-none-any.whl", hash = "sha256:135fc059ec969c1646424a0db15e7fbe1b5f8c36c0006d0b3c91ba568c11e7d8"},
+]
+
+[[package]]
 name = "psutil"
 version = "5.9.4"
 description = "Cross-platform lib for process and system monitoring in Python."
@@ -4047,4 +4099,4 @@ r-support = ["rpy2"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "e48f510c3b2b674bef71cd506bf9d60970f15d668eb27ccd3b3ff2d41a623a95"
+content-hash = "649070d53d623ab369e3e9aa6c79de13da97eb3a8a184ba016063b7743ec4a29"
