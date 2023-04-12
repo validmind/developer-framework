@@ -160,6 +160,11 @@ class TestPlanMetricResult(TestPlanResult):
             )
 
         if self.metric:
+            metric_value = self.metric.value
+            # Don't log the entire metric if it has more than 1000 characters
+            if len(metric_value.__str__()) > 1024:
+                metric_value = metric_value.__str__()[:1024] + "..."
+
             html.write(
                 f"""
             <div class="metric-result">
@@ -180,7 +185,7 @@ class TestPlanMetricResult(TestPlanResult):
                 <div class="metric-value">
                     <div class="metric-value-title">Metric Value</div>
                     <div class="metric-value-value">
-                        <pre>{self.metric.value}</pre>
+                        <pre>{metric_value}</pre>
                     </div>
                 </div>
             """
