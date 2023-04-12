@@ -5,8 +5,19 @@ Metrics functions for any Pandas-compatible datasets
 from dataclasses import dataclass
 from typing import ClassVar
 
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
-from ..vm_models import Metric, TestContext, TestContextUtils, TestPlanDatasetResult
+
+from ..vm_models import (
+    Figure,
+    Metric,
+    TestContext,
+    TestContextUtils,
+    TestPlanDatasetResult,
+)
 
 
 @dataclass
@@ -18,13 +29,24 @@ class DatasetMetadata(TestContextUtils):
     to different metrics and test results
     """
 
-    test_type: ClassVar[str] = "DatasetMetadata"
-
     # Test Context
     test_context: TestContext
 
+    # Class Variables
+    test_type: ClassVar[str] = "DatasetMetadata"
+    default_params: ClassVar[dict] = {}
+
+    # Instance Variables
     name = "dataset_metadata"
+    params: dict = None
     result: TestPlanDatasetResult = None
+
+    def __post_init__(self):
+        """
+        Set default params if not provided
+        """
+        if self.params is None:
+            self.params = self.default_params
 
     def run(self):
         """
@@ -75,3 +97,92 @@ class DatasetDescription(Metric):
         # This will populate the "fields" attribute in the dataset object
         self.dataset.describe()
         return self.cache_results(self.dataset.fields)
+
+
+class TimeSeriesUnivariateInspectionRaw(Metric):
+    """
+    Generates a visual analysis of time series data by plotting the
+    raw time series. The input dataset can have multiple time series
+    if necessary. In this case we produce a separate plot for each time series.
+    """
+
+    type = "dataset"
+    key = "time_series_univariate_inspection_raw"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Time series columns must be provided in params")
+
+        # Check if index is datetime
+        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+            raise ValueError("Index must be a datetime type")
+
+        columns = self.params["columns"]
+        df = self.dataset.df
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        figures = []
+        for col in columns:
+            plt.figure(figsize=(10, 6))
+            fig, _ = plt.subplots()
+            ax = sns.lineplot(data=df, x="Date", y=col)
+            plt.title(f"Time Series: {col}")
+            plt.xlabel("Date")
+            plt.ylabel(col)
+
+            # Rotate x-axis labels and set the number of x-axis ticks
+            ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+            plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class TimeSeriesUnivariateInspectionHistogram(Metric):
+    """
+    Generates a visual analysis of time series data by plotting the
+    histogram. The input dataset can have multiple time series if
+    necessary. In this case we produce a separate plot for each time series.
+    """
+
+    type = "dataset"
+    key = "time_series_univariate_inspection_histogram"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Time series columns must be provided in params")
+
+        # Check if index is datetime
+        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+            raise ValueError("Index must be a datetime type")
+
+        columns = self.params["columns"]
+        df = self.dataset.df
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        figures = []
+        for col in columns:
+            plt.figure(figsize=(10, 6))
+            fig, _ = plt.subplots()
+            sns.histplot(data=df, x=col, kde=True)
+            plt.title(f"Histogram: {col}")
+            plt.xlabel(col)
+            plt.ylabel("Frequency")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )

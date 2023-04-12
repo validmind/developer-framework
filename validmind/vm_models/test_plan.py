@@ -70,6 +70,27 @@ class TestPlan:
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
 
+    def get_config_params_for_test(self, test_name):
+        """
+        Returns the config for a given test, if it exists. The `config`
+        attribute is a dictionary where the keys are the test names and
+        the values are dictionaries of config values for that test.
+
+        The key in the config must match the name of the test, i.e. for
+        a test called "time_series_univariate_inspection_raw" we could
+        pass a config like this:
+
+        {
+            "time_series_univariate_inspection_raw": {
+                "columns": ["col1", "col2"]
+            }
+        }
+        """
+        if self.config is None:
+            return None
+
+        return self.config.get(test_name, None)
+
     def run(self, send=True):
         """
         Runs the test plan
@@ -96,7 +117,14 @@ class TestPlan:
             self.pbar.set_description(f"Running sub test plan: '{self.name}'")
 
         for test in self.tests:
-            test_instance = test(self.test_context)
+            # TODO: we need to unify key/name for any object
+            if hasattr(test, "key"):
+                test_name = test.key
+            elif hasattr(test, "name"):
+                test_name = test.name
+
+            test_params = self.get_config_params_for_test(test_name)
+            test_instance = test(self.test_context, params=test_params)
 
             self.pbar.set_description(f"Running {test.test_type}: {test_instance.name}")
 

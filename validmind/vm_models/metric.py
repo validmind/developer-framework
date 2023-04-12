@@ -53,7 +53,7 @@ class Metric(TestContextUtils):
 
     def cache_results(
         self,
-        metric_value: Union[dict, list, pd.DataFrame],
+        metric_value: Optional[Union[dict, list, pd.DataFrame]] = None,
         figures: Optional[List[Figure]] = None,
     ):
         """
@@ -66,15 +66,16 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
-        test_plan_result = TestPlanMetricResult(
-            metric=MetricResult(
+        test_plan_result = TestPlanMetricResult()
+
+        if metric_value is not None:
+            test_plan_result.metric = MetricResult(
                 type=self.type,
                 scope=self.scope,
                 key=self.key,
                 value=metric_value,
                 value_formatter=self.value_formatter,
             )
-        )
 
         # Allow metrics to attach figures to the test plan result
         if figures:
