@@ -28,6 +28,7 @@ statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
+arch = "^5.4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
