@@ -7,9 +7,8 @@ from ..model_validation.statsmodels.metrics import (
     LJungBoxTest,
     JarqueBeraTest,
     KolmogorovSmirnovTest,
-)
-from ..model_validation.statsmodels.threshold_tests import (
     ADFTest,
+    KPSSTest,
 )
 
 
@@ -43,16 +42,6 @@ class SesonalityTestPlan(TestPlan):
     test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
-class StationarityTestPlan(TestPlan):
-    """
-    Test plan to perform stationarity tests.
-    """
-
-    name = "stationarity_test_plan"
-    required_context = ["train_ds", "test_ds"]
-    tests = [ADFTest]
-
-
 class UnitRootTestPlan(TestPlan):
     """
     Test plan to perform unit root tests.
@@ -60,7 +49,18 @@ class UnitRootTestPlan(TestPlan):
 
     name = "unit_root_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [ADFTest]
+    tests = [ADFTest, KPSSTest]
+
+class StationarityTestPlan(TestPlan):
+    """
+    Test plan to perform stationarity tests.
+    """
+
+    name = "stationarity_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    test_plans = [UnitRootTestPlan]
+
+
 
 class TimeSeriesTestPlan(TestPlan):
     """

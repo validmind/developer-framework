@@ -4,6 +4,7 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import kpss
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
@@ -112,7 +113,7 @@ class DurbinWatsonTest(Metric):
 @dataclass
 class ADFTest(Metric):
     """
-    Augmented Dickey-Fuller Metric for establishing the order of integration of
+    Augmented Dickey-Fuller unit root test for establishing the order of integration of
     time series
     """
 
@@ -140,3 +141,33 @@ class ADFTest(Metric):
             adf_values["icbest"] = icbest
 
         return self.cache_results(adf_values)
+
+
+@dataclass
+class KPSSTest(Metric):
+    """
+    Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for 
+    establishing the order of integration of time series
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "kpss"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates KPSS for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        kpss_values = {}
+        for col in x_train.columns:
+            kpss_value, pvalue, usedlag, critical_values = kpss(
+                x_train[col].values
+            )
+            kpss_values["kpss"] = kpss_value
+            kpss_values["pvalue"] = pvalue
+            kpss_values["usedlag"] = usedlag
+
+        return self.cache_results(kpss_values)
