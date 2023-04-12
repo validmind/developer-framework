@@ -11,6 +11,7 @@ from ..model_validation.statsmodels.metrics import (
     KPSSTest,
     PhillipsPerronTest,
     ZivotAndrewsTest,
+    DFGLSTest,
 )
 
 
@@ -51,7 +52,7 @@ class UnitRootTestPlan(TestPlan):
 
     name = "unit_root_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [ADFTest, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest]
+    tests = [ADFTest, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
 
 class StationarityTestPlan(TestPlan):
     """

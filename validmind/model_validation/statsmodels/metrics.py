@@ -11,6 +11,7 @@ from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
+from arch.unitroot import DFGLS
 from ...vm_models import Metric
 
 
@@ -126,7 +127,7 @@ class ADFTest(Metric):
 
     def run(self):
         """
-        Calculates ADF for each of the dataset features
+        Calculates ADF metric for each of the dataset features
         """
         x_train = self.train_ds.raw_dataset
 
@@ -148,7 +149,7 @@ class ADFTest(Metric):
 @dataclass
 class PhillipsPerronTest(Metric):
     """
-    Phillips-Perron (PP) Test unit root test for 
+    Phillips-Perron (PP) unit root test for 
     establishing the order of integration of time series
     """
 
@@ -159,7 +160,7 @@ class PhillipsPerronTest(Metric):
 
     def run(self):
         """
-        Calculates PP for each of the dataset features
+        Calculates PP metric for each of the dataset features
         """
         x_train = self.train_ds.raw_dataset
 
@@ -177,7 +178,7 @@ class PhillipsPerronTest(Metric):
 @dataclass
 class ZivotAndrewsTest(Metric):
     """
-    Zivot-Andrews Test unit root test for 
+    Zivot-Andrews unit root test for 
     establishing the order of integration of time series
     """
 
@@ -201,6 +202,34 @@ class ZivotAndrewsTest(Metric):
             za_values["nobs"] = za.nobs
 
         return self.cache_results(za_values)
+
+@dataclass
+class DFGLSTest(Metric):
+    """
+    Dickey-Fuller GLS unit root test for 
+    establishing the order of integration of time series
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "dickey_fuller_gls"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates Dickey-Fuller GLS metric for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        dfgls_values = {}
+        for col in x_train.columns:
+            dfgls_out = DFGLS(x_train[col].values)
+            dfgls_values["stat"] = dfgls_out.stat
+            dfgls_values["pvalue"] = dfgls_out.pvalue
+            dfgls_values["usedlag"] = dfgls_out.lags
+            dfgls_values["nobs"] = dfgls_out.nobs
+
+        return self.cache_results(dfgls_values)
 
 @dataclass
 class KPSSTest(Metric):
