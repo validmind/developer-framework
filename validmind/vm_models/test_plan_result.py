@@ -396,7 +396,7 @@ class TestPlanTestResult(TestPlanResult):
             plot_figures(html, self.figures)
 
         html.write(
-            f"""
+            """
             </div>
         </div>
         <style>
