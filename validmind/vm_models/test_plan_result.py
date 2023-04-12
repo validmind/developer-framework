@@ -26,6 +26,71 @@ from .model import Model
 from .test_result import TestResults
 
 
+def plot_figures(html: StringIO, figures: List[Figure]) -> None:
+    """
+    Plot figures to html
+    """
+
+    plot_htmls = []
+
+    for fig in figures:
+        tmpfile = BytesIO()
+        fig.figure.savefig(tmpfile, format="png")
+        encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+        plot_htmls.append(
+            f"""
+        <div class="metric-plot">
+            <img src="data:image/png;base64,{encoded}"/>
+        </div>
+        """
+        )
+
+    if len(plot_htmls) > 2:
+        # if theres a lot of plots, we want to only show the first
+        # one and then have an expand button to show the rest
+        html.write(
+            f"""
+        <div class="metric-value">
+            <div class="metric-value-title">
+                <span>Metric Plots</span>
+                <a onclick="showMetricPlots(this)" style="cursor: pointer;">
+                    Show All Plots
+                </a>
+            </div>
+            <div class="metric-value-value">
+                {plot_htmls[0]}
+                <div class="allplots" style="display: none;">
+                    {"".join(plot_htmls[1:])}
+                </div>
+            </div>
+        </div>
+        <script>
+            function showMetricPlots(btn) {{
+                const plots = btn.parentElement.parentElement.querySelector(".allplots");
+                if (plots.style.display === "none") {{
+                    plots.style.display = "block";
+                    btn.innerHTML = "Collapse";
+                }} else {{
+                    plots.style.display = "none";
+                    btn.innerHTML = "Show All Plots";
+                }}
+            }}
+        </script>
+        """
+        )
+    else:
+        html.write(
+            f"""
+        <div class="metric-value">
+            <div class="metric-value-title">Metric Plots</div>
+            <div class="metric-value-value">
+                {"".join(plot_htmls)}
+            </div>
+        </div>
+        """
+        )
+
+
 @dataclass
 class TestPlanResult(ABC):
     """Base Class for test plan results"""
@@ -112,80 +177,17 @@ class TestPlanMetricResult(TestPlanResult):
                         <div class="metric-body-column-value">{self.metric.scope}</div>
                     </div>
                 </div>
+                <div class="metric-value">
+                    <div class="metric-value-title">Metric Value</div>
+                    <div class="metric-value-value">
+                        <pre>{self.metric.value}</pre>
+                    </div>
+                </div>
             """
             )
 
         if self.figures:
-            plot_htmls = []
-
-            for fig in self.figures:
-                tmpfile = BytesIO()
-                fig.figure.savefig(tmpfile, format="png")
-                encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-                plot_htmls.append(
-                    f"""
-                <div class="metric-plot">
-                    <img src="data:image/png;base64,{encoded}"/>
-                </div>
-                """
-                )
-
-            if len(plot_htmls) > 2:
-                # if theres a lot of plots, we want to only show the first
-                # one and then have an expand button to show the rest
-                html.write(
-                    f"""
-                <div class="metric-value">
-                    <div class="metric-value-title">
-                        <span>Metric Plots</span>
-                        <a onclick="showMetricPlots(this)" style="cursor: pointer;">
-                            Show All Plots
-                        </a>
-                    </div>
-                    <div class="metric-value-value">
-                        {plot_htmls[0]}
-                        <div class="allplots" style="display: none;">
-                            {"".join(plot_htmls[1:])}
-                        </div>
-                    </div>
-                </div>
-                <script>
-                    function showMetricPlots(btn) {{
-                        const plots = btn.parentElement.parentElement.querySelector(".allplots");
-                        if (plots.style.display === "none") {{
-                            plots.style.display = "block";
-                            btn.innerHTML = "Collapse";
-                        }} else {{
-                            plots.style.display = "none";
-                            btn.innerHTML = "Show All Plots";
-                        }}
-                    }}
-                </script>
-                """
-                )
-            else:
-                html.write(
-                    f"""
-                <div class="metric-value">
-                    <div class="metric-value-title">Metric Plots</div>
-                    <div class="metric-value-value">
-                        {"".join(plot_htmls)}
-                    </div>
-                </div>
-                """
-                )
-
-        else:
-            html.write(
-                f"""
-            <div class="metric-value">
-                <div class="metric-value-title">Metric Value</div>
-                <div class="metric-value-value">
-                    <pre>{self.metric.value}</pre>
-                </div>
-            </div>
-            """
-            )
+            plot_figures(html, self.figures)
 
         html.write(
             """
@@ -337,10 +339,13 @@ class TestPlanTestResult(TestPlanResult):
     Result wrapper for test results produced by the tests that run as part of a test plan
     """
 
+    figures: Optional[List[Figure]] = None
     test_results: TestResults = None
 
     def _to_html(self):
-        return f"""
+        html = StringIO()
+        html.write(
+            f"""
         <h4>Logged the following test result to the ValidMind platform:</h4>
         <div class="test-result">
             <div class="test-result-header">
@@ -377,6 +382,16 @@ class TestPlanTestResult(TestPlanResult):
             <div class="results-objs" style="display: none;">
                 <div class="results-objs-title">Results</div>
                 <div class="results-objs-body">{self.test_results.results}</div>
+            </div>
+            <div class="test-result-body">
+        """
+        )
+
+        if self.figures:
+            plot_figures(html, self.figures)
+
+        html.write(
+            f"""
             </div>
         </div>
         <style>
@@ -423,6 +438,28 @@ class TestPlanTestResult(TestPlanResult):
             .results-objs-body {{
                 margin-top: 5px;
             }}
+            .metric-value {{
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin-top: 15px;
+            }}
+            .metric-value-title {{
+                font-size: 14px;
+                font-weight: 500;
+            }}
+            .metric-value-value {{
+                font-size: 14px;
+                font-weight: 500;
+                margin-top: 10px;
+            }}
+            .metric-plot img {{
+                margin-left: auto !important;
+                margin-right: auto !important;
+                max-height: 500px !important;
+                height: 100%;
+                width: auto;
+            }}
         </style>
         <script>
             function toggleTestResults(btn) {{
@@ -437,6 +474,12 @@ class TestPlanTestResult(TestPlanResult):
             }}
         </script>
         """
+        )
+
+        return html.getvalue()
 
     def log(self):
         log_test_result(self.test_results)
+        if self.figures:
+            for fig in self.figures:
+                log_figure(fig.figure, fig.key, fig.metadata)
