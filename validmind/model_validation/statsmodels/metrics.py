@@ -3,6 +3,7 @@ Metrics functions models trained with statsmodels or that provide
 a statsmodels-like API
 """
 from dataclasses import dataclass
+import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -30,16 +31,19 @@ class SeasonalDecomposeMetricWithFigure(Metric):
 
         x_train = self.train_ds.raw_dataset
 
+        # Each key holds the table of seasonal_decompose values for each column
         sd_values = {}
+        # columns = ["loan_rate_A", "loan_rate_B", "loan_rate_C", "loan_rate_D"]
         for col in x_train.columns:
-            sd = seasonal_decompose(
-                x_train[col], model="additive"
-            )  # Use 'multiplicative' for a multiplicative model
-
-            sd_values["trend"] = sd.trend
-            sd_values["seasonal"] = sd.seasonal
-            sd_values["resid"] = sd.resid
-            sd_values["observed"] = sd.observed
+            sd = seasonal_decompose(x_train[col], model="additive")
+            sd_values[col] = sd
+            sd_df = pd.DataFrame()
+            sd_df["date"] = x_train[col].index.astype(str)
+            sd_df["trend"] = sd.trend.values
+            sd_df["seasonal"] = sd.seasonal.values
+            sd_df["resid"] = sd.resid.values
+            sd_df["observed"] = sd.observed.values
+            sd_values[col] = sd_df.to_dict(orient="records")
 
             # Create a random histogram with matplotlib
             fig, (ax_observed, ax_trend, ax_seasonal, ax_resid) = plt.subplots(
