@@ -5,6 +5,7 @@ a statsmodels-like API
 from dataclasses import dataclass
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
+from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
@@ -12,7 +13,51 @@ from statsmodels.stats.diagnostic import kstest_normal
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
-from ...vm_models import Metric
+from ...vm_models import Figure, Metric
+import matplotlib.pyplot as plt
+
+
+@dataclass
+class SeasonalDecomposeMetricWithFigure(Metric):
+    """
+    Calculates seasonal_decomponse metric for each of the dataset features
+    """
+
+    type = "dataset"
+    key = "seasonal_decomposition_with_figure"
+
+    def run(self):
+
+        x_train = self.train_ds.raw_dataset
+
+        sd_values = {}
+        for col in x_train.columns:
+            sd = seasonal_decompose(
+                x_train[col], model="additive"
+            )  # Use 'multiplicative' for a multiplicative model
+
+            sd_values["trend"] = sd.trend
+            sd_values["seasonal"] = sd.seasonal
+            sd_values["resid"] = sd.resid
+            sd_values["observed"] = sd.observed
+
+            # Create a random histogram with matplotlib
+            fig, (ax_observed, ax_trend, ax_seasonal, ax_resid) = plt.subplots(
+                nrows=4, ncols=1
+            )
+
+            ax_observed.set_title("Observed")
+            ax_trend.set_title("Trend")
+            ax_seasonal.set_title("Seasonal")
+            ax_resid.set_title("Residuals")
+            ax_resid.set_xlabel("Date")
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figure = Figure(key=self.key, figure=fig, metadata={})
+
+        return self.cache_results(sd_values, figures=[figure])
 
 
 @dataclass

@@ -12,6 +12,7 @@ from ..model_validation.statsmodels.metrics import (
     PhillipsPerronTest,
     ZivotAndrewsTest,
     DFGLSTest,
+    SeasonalDecomposeMetricWithFigure,
 )
 
 
@@ -35,6 +36,16 @@ class NormalityTestPlan(TestPlan):
     tests = [JarqueBeraTest, KolmogorovSmirnovTest]
 
 
+class ResidualsTestPlan(TestPlan):
+    """
+    Test plan to perform residual analysis tests.
+    """
+
+    name = "residuals_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
+
+
 class SesonalityTestPlan(TestPlan):
     """
     Test plan to perform seasonality tests.
@@ -42,7 +53,8 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
+    tests = [SeasonalDecomposeMetricWithFigure]
+    test_plans = [ResidualsTestPlan]
 
 
 class UnitRootTestPlan(TestPlan):
