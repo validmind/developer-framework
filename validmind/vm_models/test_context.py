@@ -27,11 +27,26 @@ class TestContext:
     y_train_predict: object = None
     y_test_predict: object = None
 
+    # Custom context data that can be set by metrics or tests using this context
+    context_data: dict = None
+
     def __post_init__(self):
         if self.model and self.train_ds:
             self.y_train_predict = self.model.predict(self.train_ds.x)
         if self.model and self.test_ds:
             self.y_test_predict = self.model.predict(self.test_ds.x)
+
+    def set_context_data(self, key, value):
+        if self.context_data is None:
+            self.context_data = {}
+
+        self.context_data[key] = value
+
+    def get_context_data(self, key):
+        if self.context_data is None:
+            return None
+
+        return self.context_data.get(key)
 
 
 class TestContextUtils:
