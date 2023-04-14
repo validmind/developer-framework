@@ -45,7 +45,7 @@ retrieve them from the environment variables VM_API_KEY and VM_API_SECRET.
 
 
 
-### validmind.init_dataset(dataset, type='training', options=None, targets=None, target_column=None, class_labels=None)
+### validmind.init_dataset(dataset: DataFrame, type: str = 'training', options: dict | None = None, targets: DatasetTargets | None = None, target_column: str | None = None, class_labels: dict | None = None)
 Initializes a VM Dataset, which can then be passed to other functions
 that can perform additional analysis and tests on the data. This function
 also ensures we are reading a valid dataset type. We only support Pandas
@@ -93,7 +93,7 @@ DataFrames at the moment.
 
 
 
-### validmind.init_model(model)
+### validmind.init_model(model: object)
 Initializes a VM Model, which can then be passed to other functions
 that can perform additional analysis and tests on the data. This function
 also ensures we are reading a supported model type.
@@ -108,6 +108,51 @@ also ensures we are reading a supported model type.
 * **Raises**
 
     **ValueError** – If the model type is not supported
+
+
+
+* **Returns**
+
+    A VM Model instance
+
+
+
+* **Return type**
+
+    vm.vm.Model
+
+
+
+### validmind.init_r_model(model_path: str, model_type: str)
+Initializes a VM Model for an R model
+
+R models must be saved to disk and the filetype depends on the model type…
+Currently we support the following model types:
+
+> 
+> * LogisticRegression glm model in R: saved as an RDS file with saveRDS
+
+
+> * LinearRegression lm model in R: saved as an RDS file with saveRDS
+
+
+> * XGBClassifier: saved as a .json or .bin file with xgb.save
+
+
+> * XGBRegressor: saved as a .json or .bin file with xgb.save
+
+LogisticRegression and LinearRegression models are converted to sklearn models by extracting
+the coefficients and intercept from the R model. XGB models are loaded using the xgboost
+since xgb models saved in .json or .bin format can be loaded directly with either Python or R
+
+
+* **Parameters**
+
+    
+    * **model_path** (*str*) – The path to the R model saved as an RDS or XGB file
+
+
+    * **model_type** (*str*) – The type of the model (one of R_MODEL_TYPES)
 
 
 
@@ -375,7 +420,7 @@ running tests but can also be called directly if the user wants to run tests on 
 
 
 
-### _class_ validmind.Dataset(raw_dataset: object, fields: list, variables: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
+### _class_ validmind.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
 Bases: `object`
 
 Model class wrapper
@@ -384,8 +429,6 @@ Model class wrapper
 #### raw_dataset(_: objec_ )
 
 #### fields(_: lis_ )
-
-#### variables(_: lis_ )
 
 #### sample(_: lis_ )
 
@@ -406,6 +449,10 @@ Model class wrapper
 #### target_column(_: st_ _ = '_ )
 
 #### class_labels(_: dic_ _ = Non_ )
+
+#### _property_ df()
+Returns the raw Pandas DataFrame
+
 
 #### _property_ x()
 Returns the dataset’s features
@@ -641,7 +688,7 @@ Metric objects track the schema supported by the ValidMind API
 Run the metric calculation and cache its results
 
 
-#### cache_results(metric_value: dict | list | DataFrame, figures: List[Figure] | None = None)
+#### cache_results(metric_value: dict | list | DataFrame | None = None, figures: List[Figure] | None = None)
 Cache the results of the metric calculation and do any post-processing if needed
 
 
@@ -696,7 +743,7 @@ predict_proba (for classification) or predict (for regression) method
 NOTE: This only works for sklearn or xgboost models at the moment
 
 
-#### _classmethod_ is_supported_model(model)
+#### _static_ is_supported_model(model)
 Checks if the model is supported by the API
 
 
@@ -808,7 +855,7 @@ us to determine whether the metric/plot passes or fails.
 Run the test and cache its results
 
 
-#### cache_results(results: List[TestResult], passed: bool)
+#### cache_results(results: List[TestResult], passed: bool, figures: List[Figure] | None = None)
 Cache the individual results of the threshold test as a list of TestResult objects
 
 
