@@ -13,6 +13,7 @@ from ..model_validation.statsmodels.metrics import (
     ZivotAndrewsTest,
     DFGLSTest,
     SeasonalDecomposeMetricWithFigure,
+    ResidualsVisualInspection,
 )
 
 
@@ -43,6 +44,7 @@ class ResidualsTestPlan(TestPlan):
 
     name = "residuals_test_plan"
     required_context = ["train_ds", "test_ds"]
+    tests = [ResidualsVisualInspection]
     test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 

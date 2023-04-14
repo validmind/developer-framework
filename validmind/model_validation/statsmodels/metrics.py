@@ -4,6 +4,10 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import scipy.stats as stats
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -15,7 +19,51 @@ from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
 from ...vm_models import Figure, Metric
-import matplotlib.pyplot as plt
+
+
+@dataclass
+class ResidualsVisualInspection(Metric):
+    """
+    Log plots for visual inspection of residuals
+    """
+
+    type = "evaluation"
+    key = "residuals_visual_inspection"
+
+    def run(self):
+
+        x_train = self.train_ds.raw_dataset
+        residuals = x_train.copy()
+
+        for col in x_train.columns:
+
+            # Create subplots
+            fig, axes = plt.subplots(nrows=2, ncols=2)
+
+            # Plot 1: Residuals histogram
+            sns.histplot(residuals, kde=True, ax=axes[0, 0])
+            axes[0, 0].set_xlabel("Residuals")
+            axes[0, 0].set_title("Residuals Histogram")
+
+            # Plot 2: Residuals Q-Q plot
+            stats.probplot(residuals, dist="norm", plot=axes[0, 1])
+            # axes[0, 1].set_title("Residuals Q-Q Plot")
+
+            # Plot 3: Residuals autocorrelation plot
+            pd.plotting.autocorrelation_plot(residuals, ax=axes[1, 0])
+            axes[1, 0].set_title("Residuals Autocorrelation")
+
+            # Plot 4: Residuals box plot
+            sns.boxplot(y=residuals, ax=axes[1, 1])
+            axes[1, 1].set_ylabel("Residuals")
+            axes[1, 1].set_title("Residuals Box Plot")
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figure = Figure(key=self.key, figure=fig, metadata={})
+
+        return self.cache_results(figures=[figure])
 
 
 @dataclass
@@ -24,7 +72,7 @@ class SeasonalDecomposeMetricWithFigure(Metric):
     Calculates seasonal_decomponse metric for each of the dataset features
     """
 
-    type = "dataset"
+    type = "evaluation"
     key = "seasonal_decomposition_with_figure"
 
     def run(self):
@@ -33,7 +81,6 @@ class SeasonalDecomposeMetricWithFigure(Metric):
 
         # Each key holds the table of seasonal_decompose values for each column
         sd_values = {}
-        # columns = ["loan_rate_A", "loan_rate_B", "loan_rate_C", "loan_rate_D"]
         for col in x_train.columns:
             sd = seasonal_decompose(x_train[col], model="additive")
             sd_values[col] = sd
