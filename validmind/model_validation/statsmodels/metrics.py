@@ -33,10 +33,12 @@ class ResidualsVisualInspection(Metric):
     def run(self):
 
         x_train = self.train_ds.raw_dataset
-        residuals = x_train.copy()
+        figures = []
 
+        # TODO: specify which columns to plot via params
         for col in x_train.columns:
-
+            sd = seasonal_decompose(x_train[col], model="additive")
+            residuals = sd.resid
             # Create subplots
             fig, axes = plt.subplots(nrows=2, ncols=2)
 
@@ -47,7 +49,7 @@ class ResidualsVisualInspection(Metric):
 
             # Plot 2: Residuals Q-Q plot
             stats.probplot(residuals, dist="norm", plot=axes[0, 1])
-            # axes[0, 1].set_title("Residuals Q-Q Plot")
+            axes[0, 1].set_title("Residuals Q-Q Plot")
 
             # Plot 3: Residuals autocorrelation plot
             pd.plotting.autocorrelation_plot(residuals, ax=axes[1, 0])
@@ -58,12 +60,15 @@ class ResidualsVisualInspection(Metric):
             axes[1, 1].set_ylabel("Residuals")
             axes[1, 1].set_title("Residuals Box Plot")
 
+            # Adjust the layout
+            plt.tight_layout()
+
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figure = Figure(key=self.key, figure=fig, metadata={})
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
 
-        return self.cache_results(figures=[figure])
+        return self.cache_results(figures=figures)
 
 
 @dataclass
