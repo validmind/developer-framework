@@ -18,6 +18,14 @@ build:
 test:
 	poetry run python -m unittest discover tests
 
+docs-html:
+	poetry run sphinx-build -M html docs/ docs/_build
+
+docs-markdown:
+	poetry run sphinx-build -M markdown docs/ docs/_build
+
+docs: docs-html docs-markdown
+
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
 	poetry version $(tag)

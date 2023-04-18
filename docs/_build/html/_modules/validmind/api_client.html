@@ -191,9 +191,11 @@
     <span class="k">return</span> <span class="n">vm_dataset</span></div>
 
 
-<div class="viewcode-block" id="log_metadata"><a class="viewcode-back" href="../../api.html#validmind.log_metadata">[docs]</a><span class="k">def</span> <span class="nf">log_metadata</span><span class="p">(</span><span class="n">content_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">log_metadata</span><span class="p">(</span><span class="n">content_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Logs free-form metadata to ValidMind API.</span>
+<span class="sd">    Logs free-form metadata to ValidMind API. This function is not exported on purpose.</span>
+<span class="sd">    To use it you must import it from the validmind.api_client module like this:</span>
+<span class="sd">        `from validmind.api_client import log_metadata`</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        content_id (str): Unique content identifier for the metadata</span>
@@ -225,7 +227,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not log metadata to ValidMind API&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="kc">True</span></div>
+    <span class="k">return</span> <span class="kc">True</span>
 
 
 <div class="viewcode-block" id="log_model"><a class="viewcode-back" href="../../api.html#validmind.log_model">[docs]</a><span class="k">def</span> <span class="nf">log_model</span><span class="p">(</span><span class="n">vm_model</span><span class="p">):</span>

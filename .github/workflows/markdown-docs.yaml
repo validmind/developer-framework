@@ -39,9 +39,7 @@ jobs:
         run: poetry install
 
       - name: Generate Docs
-        run: |
-          poetry run sphinx-build -M html docs/ docs/_build
-          poetry run sphinx-build -M markdown docs/ docs/_build
+        run: make docs
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9

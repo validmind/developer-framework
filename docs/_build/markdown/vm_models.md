@@ -3,7 +3,7 @@
 Models entrypoint
 
 
-### _class_ validmind.vm_models.Dataset(raw_dataset: object, fields: list, variables: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
+### _class_ validmind.vm_models.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
 Bases: `object`
 
 Model class wrapper
@@ -12,8 +12,6 @@ Model class wrapper
 #### raw_dataset(_: objec_ )
 
 #### fields(_: lis_ )
-
-#### variables(_: lis_ )
 
 #### sample(_: lis_ )
 
@@ -34,6 +32,10 @@ Model class wrapper
 #### target_column(_: st_ _ = '_ )
 
 #### class_labels(_: dic_ _ = Non_ )
+
+#### _property_ df()
+Returns the raw Pandas DataFrame
+
 
 #### _property_ x()
 Returns the dataset’s features
@@ -269,7 +271,7 @@ Metric objects track the schema supported by the ValidMind API
 Run the metric calculation and cache its results
 
 
-#### cache_results(metric_value: dict | list | DataFrame, figures: List[Figure] | None = None)
+#### cache_results(metric_value: dict | list | DataFrame | None = None, figures: List[Figure] | None = None)
 Cache the results of the metric calculation and do any post-processing if needed
 
 
@@ -346,7 +348,7 @@ predict_proba (for classification) or predict (for regression) method
 NOTE: This only works for sklearn or xgboost models at the moment
 
 
-#### _classmethod_ is_supported_model(model)
+#### _static_ is_supported_model(model)
 Checks if the model is supported by the API
 
 
@@ -402,7 +404,7 @@ Model attributes definition
 
 #### framework_version(_: st_ _ = Non_ )
 
-### _class_ validmind.vm_models.TestContext(dataset: Dataset | None = None, model: Model | None = None, train_ds: Dataset | None = None, test_ds: Dataset | None = None, y_train_predict: object | None = None, y_test_predict: object | None = None)
+### _class_ validmind.vm_models.TestContext(dataset: Dataset | None = None, model: Model | None = None, train_ds: Dataset | None = None, test_ds: Dataset | None = None, y_train_predict: object | None = None, y_test_predict: object | None = None, context_data: dict | None = None)
 Bases: `object`
 
 Holds context that can be used by tests to run.
@@ -422,6 +424,12 @@ shared dataset metrics, etc.
 #### y_train_predict(_: objec_ _ = Non_ )
 
 #### y_test_predict(_: objec_ _ = Non_ )
+
+#### context_data(_: dic_ _ = Non_ )
+
+#### set_context_data(key, value)
+
+#### get_context_data(key)
 
 ### _class_ validmind.vm_models.TestContextUtils()
 Bases: `object`
@@ -508,6 +516,26 @@ Validates that the context elements are present
 in the instance so that the test plan can be run
 
 
+#### get_config_params_for_test(test_name)
+Returns the config for a given test, if it exists. The config
+attribute is a dictionary where the keys are the test names and
+the values are dictionaries of config values for that test.
+
+The key in the config must match the name of the test, i.e. for
+a test called “time_series_univariate_inspection_raw” we could
+pass a config like this:
+
+{
+
+    “time_series_univariate_inspection_raw”: {
+
+        “columns”: [“col1”, “col2”]
+
+    }
+
+}
+
+
 #### run(send=True)
 Runs the test plan
 
@@ -566,11 +594,13 @@ Result wrapper for models that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanTestResult(test_results: TestResults | None = None)
+### _class_ validmind.vm_models.TestPlanTestResult(figures: List[Figure] | None = None, test_results: TestResults | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for test results produced by the tests that run as part of a test plan
 
+
+#### figures(_: List[Figure] | Non_ _ = Non_ )
 
 #### test_results(_: TestResult_ _ = Non_ )
 
@@ -634,7 +664,7 @@ us to determine whether the metric/plot passes or fails.
 Run the test and cache its results
 
 
-#### cache_results(results: List[TestResult], passed: bool)
+#### cache_results(results: List[TestResult], passed: bool, figures: List[Figure] | None = None)
 Cache the individual results of the threshold test as a list of TestResult objects
 
 

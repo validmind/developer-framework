@@ -120,7 +120,9 @@ def log_dataset(vm_dataset):
 
 def log_metadata(content_id, text=None, extra_json=None):
     """
-    Logs free-form metadata to ValidMind API.
+    Logs free-form metadata to ValidMind API. This function is not exported on purpose.
+    To use it you must import it from the validmind.api_client module like this:
+        `from validmind.api_client import log_metadata`
 
     Args:
         content_id (str): Unique content identifier for the metadata

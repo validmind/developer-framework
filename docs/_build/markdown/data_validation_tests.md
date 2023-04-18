@@ -7,7 +7,7 @@
 Metrics functions for any Pandas-compatible datasets
 
 
-### _class_ validmind.data_validation.metrics.DatasetMetadata(test_context: TestContext, result: TestPlanDatasetResult | None = None)
+### _class_ validmind.data_validation.metrics.DatasetMetadata(test_context: TestContext, params: dict | None = None, result: TestPlanDatasetResult | None = None)
 Bases: `TestContextUtils`
 
 Custom class to collect a set of descriptive statistics for a dataset.
@@ -16,11 +16,15 @@ Dataset metadat is necessary to initialize dataset object that can be related
 to different metrics and test results
 
 
-#### test_type(_: ClassVar[str_ _ = 'DatasetMetadata_ )
-
 #### test_context(_: TestContex_ )
 
+#### test_type(_: ClassVar[str_ _ = 'DatasetMetadata_ )
+
+#### default_params(_: ClassVar[dict_ _ = {_ )
+
 #### name(_ = 'dataset_metadata_ )
+
+#### params(_: dic_ _ = Non_ )
 
 #### result(_: TestPlanDatasetResul_ _ = Non_ )
 
@@ -58,6 +62,42 @@ Collects a set of descriptive statistics for a dataset
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'dataset_description_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+#### test_context(_: TestContex_ )
+
+### _class_ validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Generates a visual analysis of time series data by plotting the
+raw time series. The input dataset can have multiple time series
+if necessary. In this case we produce a separate plot for each time series.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'time_series_univariate_inspection_raw_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+#### test_context(_: TestContex_ )
+
+### _class_ validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Generates a visual analysis of time series data by plotting the
+histogram. The input dataset can have multiple time series if
+necessary. In this case we produce a separate plot for each time series.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'time_series_univariate_inspection_histogram_ )
 
 #### run()
 Run the metric calculation and cache its results
