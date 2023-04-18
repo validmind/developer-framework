@@ -190,17 +190,21 @@ Run the metric calculation and cache its results
 
 #### test_context(_: TestContex_ )
 
-### _class_ validmind.model_validation.sklearn.metrics.SHAPGlobalImportance(test_context: TestContext, result: TestPlanMetricResult | None = None)
+### _class_ validmind.model_validation.sklearn.metrics.SHAPGlobalImportance(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `TestContextUtils`
 
 SHAP Global Importance. Custom metric
 
 
-#### test_type(_: ClassVar[str_ _ = 'SHAPGlobalImportance_ )
-
 #### test_context(_: TestContex_ )
 
+#### test_type(_: ClassVar[str_ _ = 'SHAPGlobalImportance_ )
+
+#### default_params(_: ClassVar[dict_ _ = {_ )
+
 #### name(_ = 'shap_ )
+
+#### params(_: dic_ _ = Non_ )
 
 #### result(_: TestPlanMetricResul_ _ = Non_ )
 
