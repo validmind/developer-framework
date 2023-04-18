@@ -172,3 +172,6 @@ notebooks/r_demo/*.rda
 notebooks/r_demo/*model.json
 .Rdata
 .Rhistory
+
+# Don't force Python versions from peynv into the repo
+.python-version

@@ -17,7 +17,6 @@ from .vm_models import (
 from .api_client import (
     init,
     log_dataset,
-    log_metadata,
     log_metrics,
     log_model,
     log_test_results,
@@ -42,7 +41,6 @@ __all__ = [  # noqa
     # Framework Logging API
     "log_dataset",
     "log_figure",
-    "log_metadata",
     "log_metrics",
     "log_model",
     "log_test_results",
