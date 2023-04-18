@@ -165,11 +165,14 @@ HTML output.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Navigate to the docs folder</span>
 <span class="nb">cd</span><span class="w"> </span>docs/
 
-<span class="c1"># Generate Markdown docs</span>
-make<span class="w"> </span>markdown
+<span class="c1"># Generate HTML and Markdown docs</span>
+make<span class="w"> </span>docs
 
-<span class="c1"># Generate HTML docs</span>
-make<span class="w"> </span>html
+<span class="c1"># Generate Markdown docs only</span>
+make<span class="w"> </span>docs-markdown
+
+<span class="c1"># Generate HTML docs only</span>
+make<span class="w"> </span>docs-html
 </pre></div>
 </div>
 <p>The resulting <code class="docutils literal notranslate"><span class="pre">markdown</span></code> and <code class="docutils literal notranslate"><span class="pre">html</span></code> under <code class="docutils literal notranslate"><span class="pre">docs/_build</span></code> folders will contain the generated documentation.</p>
