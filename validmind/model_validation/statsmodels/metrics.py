@@ -5,16 +5,16 @@ a statsmodels-like API
 from dataclasses import dataclass
 import pandas as pd
 import numpy as np
+from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
-import scipy.stats as stats
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.stats.stattools import durbin_watson
-from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
+from statsmodels.stats.stattools import jarque_bera
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
@@ -126,6 +126,38 @@ class SeasonalDecomposeMetricWithFigure(Metric):
 
 
 @dataclass
+class ADFTest(Metric):
+    """
+    Augmented Dickey-Fuller unit root test for establishing the order of integration of
+    time series
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "adf"
+    value_formatter = "key_values"
+
+    def run(self):
+        """
+        Calculates ADF metric for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        adf_values = {}
+        for col in x_train.columns:
+            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
+                x_train[col].values
+            )
+            adf_values["stat"] = adf
+            adf_values["pvalue"] = pvalue
+            adf_values["usedlag"] = usedlag
+            adf_values["nobs"] = nobs
+            adf_values["icbest"] = icbest
+
+        return self.cache_results(adf_values)
+
+
+@dataclass
 class KolmogorovSmirnovTest(Metric):
     """
     The Kolmogorov-Smirnov metric is a statistical test used to determine
@@ -144,12 +176,12 @@ class KolmogorovSmirnovTest(Metric):
 
         ks_values = {}
         for col in x_train.columns:
-            ks_values[col] = kstest_normal(x_train[col].values)
+            ks_stat, p_value = kstest_normal(x_train[col].values, "norm")
+            ks_values[col] = {"stat": ks_stat, "pvalue": p_value}
 
         return self.cache_results(ks_values)
 
 
-@dataclass
 class JarqueBeraTest(Metric):
     """
     The Jarque-Bera test is a statistical test used to determine
@@ -168,7 +200,14 @@ class JarqueBeraTest(Metric):
 
         jb_values = {}
         for col in x_train.columns:
-            jb_values[col] = jarque_bera(x_train[col].values)
+            jb_stat, jb_pvalue, jb_skew, jb_kurtosis = jarque_bera(x_train[col].values)
+
+            jb_values[col] = {
+                "stat": jb_stat,
+                "pvalue": jb_pvalue,
+                "skew": jb_skew,
+                "kurtosis": jb_kurtosis,
+            }
 
         return self.cache_results(jb_values)
 
