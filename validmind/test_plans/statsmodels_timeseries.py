@@ -5,6 +5,7 @@ from ..vm_models import TestPlan
 from ..model_validation.statsmodels.metrics import (
     LJungBox,
     BoxPierce,
+    RunsTest,
     JarqueBera,
     KolmogorovSmirnov,
     ShapiroWilk,
@@ -26,7 +27,7 @@ class AutocorrelationTestPlan(TestPlan):
 
     name = "autocorrelation_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [LJungBox, BoxPierce]
+    tests = [LJungBox, BoxPierce, RunsTest]
 
 
 class NormalityTestPlan(TestPlan):

@@ -12,6 +12,7 @@ from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.sandbox.stats.runs import runstest_1samp
 from statsmodels.stats.diagnostic import kstest_normal
 from statsmodels.stats.diagnostic import lilliefors
 from statsmodels.stats.stattools import jarque_bera
@@ -325,6 +326,35 @@ class BoxPierce(Metric):
             }
 
         return self.cache_results(box_pierce_values)
+
+
+class RunsTest(Metric):
+    """
+    The runs test is a statistical test used to determine whether a given set
+    of data has runs of positive and negative values that are longer than expected
+    under the null hypothesis of randomness.
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "runs_test"
+
+    def run(self):
+        """
+        Calculates the run test for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        runs_test_values = {}
+        for col in x_train.columns:
+            runs_stat, runs_p_value = runstest_1samp(x_train[col].values)
+
+            runs_test_values[col] = {
+                "stat": runs_stat,
+                "pvalue": runs_p_value,
+            }
+
+        return self.cache_results(runs_test_values)
 
 
 @dataclass
