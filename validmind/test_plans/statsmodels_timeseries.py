@@ -4,7 +4,7 @@ Time Series Test Plans from statsmodels
 from ..vm_models import TestPlan
 from ..model_validation.statsmodels.metrics import (
     DurbinWatsonTest,
-    LJungBoxTest,
+    LJungBox,
     JarqueBera,
     KolmogorovSmirnov,
     ShapiroWilk,
@@ -26,7 +26,7 @@ class AutocorrelationTestPlan(TestPlan):
 
     name = "autocorrelation_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [LJungBoxTest, DurbinWatsonTest]
+    tests = [LJungBox, DurbinWatsonTest]
 
 
 class NormalityTestPlan(TestPlan):

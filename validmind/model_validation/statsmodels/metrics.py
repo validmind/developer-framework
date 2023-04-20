@@ -264,34 +264,37 @@ class JarqueBera(Metric):
                 "skew": jb_skew,
                 "kurtosis": jb_kurtosis,
             }
-        print(jb_values)
+
         return self.cache_results(jb_values)
 
 
-@dataclass
-class LJungBoxTest(Metric):
+class LJungBox(Metric):
     """
-    The LJung-Box Metric is a statistical test that
-    can be used to detect autocorrelation in a time series.
+    The Ljung-Box test is a statistical test used to determine
+    whether a given set of data has autocorrelations
+    that are different from zero.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
+    type = "evaluation"
+    scope = "test"
     key = "ljung_box"
 
     def run(self):
         """
-        Calculates LB for each of the dataset features
+        Calculates Ljung-Box test for each of the dataset features
         """
         x_train = self.train_ds.raw_dataset
 
-        lb_values = {}
+        ljung_box_values = {}
         for col in x_train.columns:
-            lb_values[col] = acorr_ljungbox(x_train[col].values, lags=None)[
-                "lb_pvalue"
-            ].tolist()
+            lb_results = acorr_ljungbox(x_train[col].values, return_df=True)
 
-        return self.cache_results(lb_values)
+            ljung_box_values[col] = {
+                "lbvalue": lb_results["lb_stat"].values[0],
+                "pvalue": lb_results["lb_pvalue"].values[0],
+            }
+
+        return self.cache_results(ljung_box_values)
 
 
 @dataclass
