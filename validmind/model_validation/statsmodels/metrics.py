@@ -82,10 +82,9 @@ class ResidualsVisualInspection(Metric):
         return self.cache_results(figures=figures)
 
 
-@dataclass
 class SeasonalDecomposeMetricWithFigure(Metric):
     """
-    Calculates seasonal_decomponse metric for each of the dataset features
+    Calculates seasonal_decompose metric for each of the dataset features
     """
 
     type = "evaluation"
@@ -96,34 +95,38 @@ class SeasonalDecomposeMetricWithFigure(Metric):
 
         # Each key holds the table of seasonal_decompose values for each column
         sd_values = {}
+        figures = []
+
         for col in x_train.columns:
             sd = seasonal_decompose(x_train[col], model="additive")
             sd_values[col] = sd
-            sd_df = pd.DataFrame()
-            sd_df["date"] = x_train[col].index.astype(str)
-            sd_df["trend"] = sd.trend.values
-            sd_df["seasonal"] = sd.seasonal.values
-            sd_df["resid"] = sd.resid.values
-            sd_df["observed"] = sd.observed.values
-            sd_values[col] = sd_df.to_dict(orient="records")
 
             # Create a random histogram with matplotlib
-            fig, (ax_observed, ax_trend, ax_seasonal, ax_resid) = plt.subplots(
-                nrows=4, ncols=1
-            )
+            fig, axes = plt.subplots(nrows=1, ncols=4)
+            fig.subplots_adjust(hspace=1)
 
-            ax_observed.set_title("Observed")
-            ax_trend.set_title("Trend")
-            ax_seasonal.set_title("Seasonal")
-            ax_resid.set_title("Residuals")
-            ax_resid.set_xlabel("Date")
+            axes[0].set_title("Observed")
+            sd.observed.plot(ax=axes[0])
+
+            axes[1].set_title("Trend")
+            sd.trend.plot(ax=axes[1])
+
+            axes[2].set_title("Seasonal")
+            sd.seasonal.plot(ax=axes[2])
+
+            axes[3].set_title("Residuals")
+            sd.resid.plot(ax=axes[3])
+            axes[3].set_xlabel("Date")
+
+            # Adjust the layout
+            plt.tight_layout()
 
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figure = Figure(key=self.key, figure=fig, metadata={})
+            figures.append(Figure(key=f"{self.key}_{col}", figure=fig, metadata={}))
 
-        return self.cache_results(sd_values, figures=[figure])
+        return self.cache_results(sd_values, figures=figures)
 
 
 @dataclass
