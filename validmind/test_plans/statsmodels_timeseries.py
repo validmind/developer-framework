@@ -5,8 +5,10 @@ from ..vm_models import TestPlan
 from ..model_validation.statsmodels.metrics import (
     DurbinWatsonTest,
     LJungBoxTest,
-    JarqueBeraTest,
-    KolmogorovSmirnovTest,
+    JarqueBera,
+    KolmogorovSmirnov,
+    ShapiroWilk,
+    Lilliefors,
     ADFTest,
     KPSSTest,
     PhillipsPerronTest,
@@ -14,7 +16,6 @@ from ..model_validation.statsmodels.metrics import (
     DFGLSTest,
     SeasonalDecomposeMetricWithFigure,
     ResidualsVisualInspection,
-    ShapiroWilkTest,
 )
 
 
@@ -35,7 +36,7 @@ class NormalityTestPlan(TestPlan):
 
     name = "normality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [JarqueBeraTest, KolmogorovSmirnovTest, ShapiroWilkTest]
+    tests = [JarqueBera, KolmogorovSmirnov, ShapiroWilk, Lilliefors]
 
 
 class ResidualsTestPlan(TestPlan):

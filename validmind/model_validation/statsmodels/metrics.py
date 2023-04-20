@@ -14,6 +14,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
+from statsmodels.stats.diagnostic import lilliefors
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from arch.unitroot import PhillipsPerron
@@ -158,7 +159,7 @@ class ADFTest(Metric):
 
 
 @dataclass
-class KolmogorovSmirnovTest(Metric):
+class KolmogorovSmirnov(Metric):
     """
     The Kolmogorov-Smirnov metric is a statistical test used to determine
     whether a given set of data follows a normal distribution.
@@ -182,7 +183,7 @@ class KolmogorovSmirnovTest(Metric):
         return self.cache_results(ks_values)
 
 
-class ShapiroWilkTest(Metric):
+class ShapiroWilk(Metric):
     """
     The Shapiro-Wilk test is a statistical test used to determine
     whether a given set of data follows a normal distribution.
@@ -210,7 +211,35 @@ class ShapiroWilkTest(Metric):
         return self.cache_results(sw_values)
 
 
-class JarqueBeraTest(Metric):
+@dataclass
+class Lilliefors(Metric):
+    """
+    The Lilliefors test is a statistical test used to determine
+    whether a given set of data follows a normal distribution.
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "lilliefors_test"
+
+    def run(self):
+        """
+        Calculates Lilliefors test for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        lilliefors_values = {}
+        for col in x_train.columns:
+            l_stat, p_value = lilliefors(x_train[col].values)
+            lilliefors_values[col] = {
+                "pvalue": p_value,
+                "stat": l_stat,
+            }
+
+        return self.cache_results(lilliefors_values)
+
+
+class JarqueBera(Metric):
     """
     The Jarque-Bera test is a statistical test used to determine
     whether a given set of data follows a normal distribution.
