@@ -4,7 +4,6 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
-import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -16,7 +15,7 @@ from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
 from statsmodels.stats.diagnostic import lilliefors
 from statsmodels.stats.stattools import jarque_bera
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
@@ -317,39 +316,6 @@ class DurbinWatsonTest(Metric):
             dw_values[col] = durbin_watson(x_train[col].values)
 
         return self.cache_results(dw_values)
-
-
-@dataclass
-class ADFTest(Metric):
-    """
-    Augmented Dickey-Fuller unit root test for establishing the order of integration of
-    time series
-    """
-
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "adf"
-    value_formatter = "key_values"
-
-    def run(self):
-        """
-        Calculates ADF metric for each of the dataset features
-        """
-        x_train = self.train_ds.raw_dataset
-
-        adf_values = {}
-        for col in x_train.columns:
-            # adf_values[col] = adfuller(x_train[col].values)
-            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
-                x_train[col].values
-            )
-            adf_values["stat"] = adf
-            adf_values["pvalue"] = pvalue
-            adf_values["usedlag"] = usedlag
-            adf_values["nobs"] = nobs
-            adf_values["icbest"] = icbest
-
-        return self.cache_results(adf_values)
 
 
 @dataclass
