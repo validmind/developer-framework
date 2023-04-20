@@ -231,8 +231,8 @@ class Lilliefors(Metric):
         for col in x_train.columns:
             l_stat, p_value = lilliefors(x_train[col].values)
             lilliefors_values[col] = {
-                "pvalue": p_value,
                 "stat": l_stat,
+                "pvalue": p_value,
             }
 
         return self.cache_results(lilliefors_values)
@@ -290,11 +290,41 @@ class LJungBox(Metric):
             lb_results = acorr_ljungbox(x_train[col].values, return_df=True)
 
             ljung_box_values[col] = {
-                "lbvalue": lb_results["lb_stat"].values[0],
+                "stat": lb_results["lb_stat"].values[0],
                 "pvalue": lb_results["lb_pvalue"].values[0],
             }
 
         return self.cache_results(ljung_box_values)
+
+
+class BoxPierce(Metric):
+    """
+    The Box-Pierce test is a statistical test used to determine
+    whether a given set of data has autocorrelations
+    that are different from zero.
+    """
+
+    type = "evaluation"
+    scope = "test"
+    key = "box_pierce"
+
+    def run(self):
+        """
+        Calculates Box-Pierce test for each of the dataset features
+        """
+        x_train = self.train_ds.raw_dataset
+
+        box_pierce_values = {}
+        for col in x_train.columns:
+            bp_results = acorr_ljungbox(
+                x_train[col].values, boxpierce=True, return_df=True
+            )
+            box_pierce_values[col] = {
+                "stat": bp_results.iloc[0]["lb_stat"],
+                "pvalue": bp_results.iloc[0]["lb_pvalue"],
+            }
+
+        return self.cache_results(box_pierce_values)
 
 
 @dataclass
