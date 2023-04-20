@@ -4,6 +4,7 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy.stats as stats
@@ -14,6 +15,7 @@ from statsmodels.stats.stattools import durbin_watson
 from statsmodels.stats.stattools import jarque_bera
 from statsmodels.stats.diagnostic import acorr_ljungbox
 from statsmodels.stats.diagnostic import kstest_normal
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
@@ -29,35 +31,45 @@ class ResidualsVisualInspection(Metric):
     type = "evaluation"
     key = "residuals_visual_inspection"
 
-    def run(self):
+    @staticmethod
+    def residual_analysis(residuals, variable_name, axes):
+        residuals = residuals.dropna().reset_index(
+            drop=True
+        )  # drop NaN values and reset index
 
+        # QQ plot
+        stats.probplot(residuals, dist="norm", plot=axes[0, 1])
+        axes[0, 1].set_title(f"Residuals Q-Q Plot ({variable_name})")
+
+        # Histogram with KDE
+        sns.histplot(residuals, kde=True, ax=axes[0, 0])
+        axes[0, 0].set_xlabel("Residuals")
+        axes[0, 0].set_title(f"Residuals Histogram ({variable_name})")
+
+        # Residual series dot plot
+        sns.lineplot(data=residuals, linewidth=0.5, color="red", ax=axes[1, 0])
+        axes[1, 0].set_title(f"Residual Series Dot Plot ({variable_name})")
+
+        # ACF plot
+        n_lags = min(100, len(residuals) - 1)  # Adjust the number of lags
+        plot_acf(residuals, ax=axes[1, 1], lags=n_lags, zero=False)  # Added zero=False
+        axes[1, 1].set_title(f"ACF Plot of Residuals ({variable_name})")
+
+    def run(self):
         x_train = self.train_ds.raw_dataset
         figures = []
 
         # TODO: specify which columns to plot via params
         for col in x_train.columns:
             sd = seasonal_decompose(x_train[col], model="additive")
-            residuals = sd.resid
+
+            # Remove NaN values from the residuals and reset the index
+            residuals = pd.Series(sd.resid).dropna().reset_index(drop=True)
+
             # Create subplots
             fig, axes = plt.subplots(nrows=2, ncols=2)
 
-            # Plot 1: Residuals histogram
-            sns.histplot(residuals, kde=True, ax=axes[0, 0])
-            axes[0, 0].set_xlabel("Residuals")
-            axes[0, 0].set_title("Residuals Histogram")
-
-            # Plot 2: Residuals Q-Q plot
-            stats.probplot(residuals, dist="norm", plot=axes[0, 1])
-            axes[0, 1].set_title("Residuals Q-Q Plot")
-
-            # Plot 3: Residuals autocorrelation plot
-            pd.plotting.autocorrelation_plot(residuals, ax=axes[1, 0])
-            axes[1, 0].set_title("Residuals Autocorrelation")
-
-            # Plot 4: Residuals box plot
-            sns.boxplot(y=residuals, ax=axes[1, 1])
-            axes[1, 1].set_ylabel("Residuals")
-            axes[1, 1].set_title("Residuals Box Plot")
+            self.residual_analysis(residuals, col, axes)
 
             # Adjust the layout
             plt.tight_layout()
@@ -66,7 +78,6 @@ class ResidualsVisualInspection(Metric):
             plt.close("all")
 
             figures.append(Figure(key=self.key, figure=fig, metadata={}))
-
         return self.cache_results(figures=figures)
 
 
@@ -80,7 +91,6 @@ class SeasonalDecomposeMetricWithFigure(Metric):
     key = "seasonal_decomposition_with_figure"
 
     def run(self):
-
         x_train = self.train_ds.raw_dataset
 
         # Each key holds the table of seasonal_decompose values for each column
