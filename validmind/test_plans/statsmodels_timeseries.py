@@ -15,8 +15,9 @@ from ..model_validation.statsmodels.metrics import (
     PhillipsPerronTest,
     ZivotAndrewsTest,
     DFGLSTest,
-    SeasonalDecomposeMetricWithFigure,
+    SeasonalDecompose,
     ResidualsVisualInspection,
+    SeasonalityDetectionWithACF,
 )
 
 
@@ -58,7 +59,7 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [SeasonalDecomposeMetricWithFigure]
+    tests = [SeasonalDecompose, SeasonalityDetectionWithACF]
     test_plans = [ResidualsTestPlan]
 
 
