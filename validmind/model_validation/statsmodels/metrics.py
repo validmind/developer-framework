@@ -204,7 +204,6 @@ class ADFTest(Metric):
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
     key = "adf"
-    value_formatter = "key_values"
 
     def run(self):
         """
@@ -217,11 +216,14 @@ class ADFTest(Metric):
             adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
                 x_train[col].values
             )
-            adf_values["stat"] = adf
-            adf_values["pvalue"] = pvalue
-            adf_values["usedlag"] = usedlag
-            adf_values["nobs"] = nobs
-            adf_values["icbest"] = icbest
+            adf_values[col] = {
+                "stat": adf,
+                "pvalue": pvalue,
+                "usedlag": usedlag,
+                "nobs": nobs,
+                "critical_values": critical_values,
+                "icbest": icbest,
+            }
 
         return self.cache_results(adf_values)
 
