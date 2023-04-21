@@ -153,20 +153,20 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
 
     category = "model_diagnosis"
     name = "weak_spots"
-    
+
     default_params = {"weak_spots_thresholds": {"Age": 0.02}}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        }
+    }
 
     def run(self):
         if "weak_spots_thresholds" not in self.params:
-           raise ValueError("weak_spot_thresholds must be provided in params")
+            raise ValueError("weak_spot_thresholds must be provided in params")
 
         features_thresholds_dict = self.params["weak_spots_thresholds"]
         if not isinstance(features_thresholds_dict, dict):
             raise ValueError("weak_spot_thresholds must be a dictionary with feature and threshold value")
-        
+
         target_column = self.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
@@ -182,7 +182,7 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
         results_headers = ["slice", "shape", "accuracy"]
         for feature in features_thresholds_dict.keys():
             train_df['bin'] = pd.cut(train_df[feature], bins=10)
-            results_train =  {k: [] for k in results_headers}
+            results_train = {k: [] for k in results_headers}
             results_test = {k: [] for k in results_headers}
 
             for region, df_region in train_df.groupby('bin'):
@@ -218,7 +218,7 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
 
         return results
 
-    def compute_metrics(self, results, region, df_region, target_column, prediction_column): 
+    def compute_metrics(self, results, region, df_region, target_column, prediction_column):
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
         y_true = df_region[target_column].values
