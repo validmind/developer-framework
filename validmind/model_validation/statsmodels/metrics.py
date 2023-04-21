@@ -490,7 +490,6 @@ class ZivotAndrewsTest(Metric):
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
     key = "zivot_andrews"
-    value_formatter = "key_values"
 
     def run(self):
         """
@@ -501,10 +500,12 @@ class ZivotAndrewsTest(Metric):
         za_values = {}
         for col in x_train.columns:
             za = ZivotAndrews(x_train[col].values)
-            za_values["stat"] = za.stat
-            za_values["pvalue"] = za.pvalue
-            za_values["usedlag"] = za.lags
-            za_values["nobs"] = za.nobs
+            za_values[col] = {
+                "stat": za.stat,
+                "pvalue": za.pvalue,
+                "usedlag": za.lags,
+                "nobs": za.nobs,
+            }
 
         return self.cache_results(za_values)
 
