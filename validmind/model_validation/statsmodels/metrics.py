@@ -519,7 +519,6 @@ class DFGLSTest(Metric):
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
     key = "dickey_fuller_gls"
-    value_formatter = "key_values"
 
     def run(self):
         """
@@ -530,10 +529,12 @@ class DFGLSTest(Metric):
         dfgls_values = {}
         for col in x_train.columns:
             dfgls_out = DFGLS(x_train[col].values)
-            dfgls_values["stat"] = dfgls_out.stat
-            dfgls_values["pvalue"] = dfgls_out.pvalue
-            dfgls_values["usedlag"] = dfgls_out.lags
-            dfgls_values["nobs"] = dfgls_out.nobs
+            dfgls_values[col] = {
+                "stat": dfgls_out.stat,
+                "pvalue": dfgls_out.pvalue,
+                "usedlag": dfgls_out.lags,
+                "nobs": dfgls_out.nobs,
+            }
 
         return self.cache_results(dfgls_values)
 
