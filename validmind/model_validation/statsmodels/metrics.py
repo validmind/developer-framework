@@ -126,7 +126,7 @@ class SeasonalityDetectionWithACF(Metric):
             }
 
             # Create subplots
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+            fig, (ax1, ax2) = plt.subplots(1, 2)
 
             plot_acf(series, ax=ax1)
             plot_pacf(series, ax=ax2)
@@ -139,7 +139,7 @@ class SeasonalityDetectionWithACF(Metric):
 
             figures.append(Figure(key=self.key, figure=fig, metadata={}))
 
-        return self.cache_results(results=results, figures=figures)
+        return self.cache_results(results, figures=figures)
 
 
 class SeasonalDecompose(Metric):
