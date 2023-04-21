@@ -548,7 +548,6 @@ class KPSSTest(Metric):
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
     key = "kpss"
-    value_formatter = "key_values"
 
     def run(self):
         """
@@ -559,8 +558,11 @@ class KPSSTest(Metric):
         kpss_values = {}
         for col in x_train.columns:
             kpss_stat, pvalue, usedlag, critical_values = kpss(x_train[col].values)
-            kpss_values["stat"] = kpss_stat
-            kpss_values["pvalue"] = pvalue
-            kpss_values["usedlag"] = usedlag
+            kpss_values[col] = {
+                "stat": kpss_stat,
+                "pvalue": pvalue,
+                "usedlag": usedlag,
+                "critical_values": critical_values,
+            }
 
         return self.cache_results(kpss_values)
