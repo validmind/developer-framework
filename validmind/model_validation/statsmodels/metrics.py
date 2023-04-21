@@ -461,7 +461,6 @@ class PhillipsPerronTest(Metric):
     type = "evaluation"  # assume this value
     scope = "test"  # assume this value (could be "train")
     key = "phillips_perron"
-    value_formatter = "key_values"
 
     def run(self):
         """
@@ -472,10 +471,12 @@ class PhillipsPerronTest(Metric):
         pp_values = {}
         for col in x_train.columns:
             pp = PhillipsPerron(x_train[col].values)
-            pp_values["stat"] = pp.stat
-            pp_values["pvalue"] = pp.pvalue
-            pp_values["usedlag"] = pp.lags
-            pp_values["nobs"] = pp.nobs
+            pp_values[col] = {
+                "stat": pp.stat,
+                "pvalue": pp.pvalue,
+                "usedlag": pp.lags,
+                "nobs": pp.nobs,
+            }
 
         return self.cache_results(pp_values)
 
