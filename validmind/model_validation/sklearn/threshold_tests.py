@@ -5,8 +5,10 @@ Threshold based tests
 from dataclasses import dataclass
 from sklearn import metrics
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-from ...vm_models import TestResult, ThresholdTest
+from ...vm_models import TestResult, Figure, ThresholdTest
 
 
 @dataclass
@@ -146,31 +148,31 @@ class TrainingTestDegradationTest(ThresholdTest):
 
 
 @dataclass
-class WeakSpotsDiagnosisTest(ThresholdTest):
+class OverfitDiagnosisTest(ThresholdTest):
     """
-    Test that identify weak regions with high residuals by slicing techniques.
+    Test that identify overfit regions with high residuals by histogram slicing techniques.
     """
 
     category = "model_diagnosis"
-    name = "weak_spots"
+    name = "overfit_regions"
 
-    default_params = {"weak_spots_thresholds": {"Age": 0.02}}
+    default_params = {"overfit_regions_thresholds": {"Age": 0.02}}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
 
     def run(self):
-        if "weak_spots_thresholds" not in self.params:
-            raise ValueError("weak_spot_thresholds must be provided in params")
+        if "overfit_regions_thresholds" not in self.params:
+            raise ValueError("overfit_regions_thresholds must be provided in params")
 
-        features_thresholds_dict = self.params["weak_spots_thresholds"]
+        features_thresholds_dict = self.params["overfit_regions_thresholds"]
         if not isinstance(features_thresholds_dict, dict):
-            raise ValueError("weak_spot_thresholds must be a dictionary with feature and threshold value")
+            raise ValueError("overfit_regions_thresholds must be a dictionary with feature and threshold value")
 
         target_column = self.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
-        train_df = self.train_ds.df
+        train_df = self.train_ds.df.copy(deep=True)
         train_class_pred = self.class_predictions(self.y_train_predict)
         train_df[prediction_column] = train_class_pred
 
@@ -179,6 +181,7 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
         test_df[prediction_column] = test_class_pred
 
         test_results = []
+        test_figures = []
         results_headers = ["slice", "shape", "accuracy"]
         for feature in features_thresholds_dict.keys():
             train_df['bin'] = pd.cut(train_df[feature], bins=10)
@@ -190,30 +193,39 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
                 df_test_region = test_df[(test_df[feature] > region.left) & (test_df[feature] <= region.right)]
                 self.compute_metrics(results_test, region, df_test_region, target_column, prediction_column)
 
-            results = self.prepare_results(results_train, results_test, features_thresholds_dict[feature])
+            results = self.prepare_results(results_train, results_test)
+
+            fig = self.plot_overfit_regions(results, threshold=features_thresholds_dict[feature])
+            test_figures.append(
+                Figure(
+                    key=self.name,
+                    figure=fig,
+                    metadata={}
+                )
+            )
+
+            results = results[results["gap"] > features_thresholds_dict[feature]]
             passed = results.empty
             results = results.to_dict(orient="list")
             test_results.append(
                 TestResult(
-                    test_name=f"{self.name}_{feature}",
+                    test_name="accuracy",
+                    column=feature,
                     passed=passed,
                     values={
                         "results": results,
                     },
                 )
             )
+        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
 
-        return self.cache_results(test_results, passed=all([r.passed for r in test_results]))
-
-    def prepare_results(self, results_train, results_test, threshold):
-
+    def prepare_results(self, results_train, results_test):
         results_train = pd.DataFrame(results_train)
         results_test = pd.DataFrame(results_test)
-        results = results_train.copy()
+        results = results_train.copy(deep=True)
         results['test records'] = results_test['shape']
         results['test accuracy'] = results_test['accuracy']
         results["gap"] = results_train["accuracy"] - results_test["accuracy"]
-        results = results[results["gap"] > threshold]
         results.rename(columns={"shape": "training records", "accuracy": "training accuracy"}, inplace=True)
 
         return results
@@ -226,3 +238,123 @@ class WeakSpotsDiagnosisTest(ThresholdTest):
 
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction))
+
+    def plot_overfit_regions(self, df, threshold):
+        """
+        Create overfit regions with threshold
+        """
+
+        # Create a bar plot using seaborn library
+        fig, ax = plt.subplots()
+        sns.barplot(data=df, x="slice", y="gap", ax=ax)
+        ax.tick_params(axis='x', rotation=90)
+        ax.axhline(y=threshold, color='red', linestyle='--', linewidth=1)
+        ax.set_ylabel("Gap")
+        ax.set_xlabel("Slice/Segments")
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+        return fig
+
+
+@dataclass
+class WeakspotsDiagnosisTest(ThresholdTest):
+    """
+    Test that identify weak regions with high residuals by histogram slicing techniques.
+    """
+
+    category = "model_diagnosis"
+    name = "weak_spots"
+
+    default_params = {"weak_spots_thresholds": {"Age": 0.8}}
+    default_metrics = {
+        "accuracy": metrics.accuracy_score,
+    }
+
+    def run(self):
+        # Validate parameters
+        if "weak_spots_thresholds" not in self.params:
+            raise ValueError("weak_spot_thresholds must be provided in params")
+
+        features_thresholds_dict = self.params["weak_spots_thresholds"]
+        if not isinstance(features_thresholds_dict, dict):
+            raise ValueError("weak_spot_thresholds must be a dictionary with feature and threshold value")
+
+        target_column = self.train_ds.target_column
+        prediction_column = f"{target_column}_pred"
+
+        train_df = self.train_ds.df.copy(deep=True)
+        train_class_pred = self.class_predictions(self.y_train_predict)
+        train_df[prediction_column] = train_class_pred
+
+        test_df = self.test_ds.df
+        test_class_pred = self.class_predictions(self.y_test_predict)
+        test_df[prediction_column] = test_class_pred
+
+        test_results = []
+        test_figures = []
+        results_headers = ["slice", "shape", "accuracy"]
+        for feature in features_thresholds_dict.keys():
+            train_df['bin'] = pd.cut(train_df[feature], bins=10)
+            results_train = {k: [] for k in results_headers}
+            results_test = {k: [] for k in results_headers}
+
+            for region, df_region in train_df.groupby('bin'):
+                self.compute_metrics(results_train, region, df_region, target_column, prediction_column)
+                df_test_region = test_df[(test_df[feature] > region.left) & (test_df[feature] <= region.right)]
+                self.compute_metrics(results_test, region, df_test_region, target_column, prediction_column)
+
+            fig, df = self.plot_weak_spots(results_train, results_test, threshold=features_thresholds_dict[feature])
+
+            test_figures.append(
+                Figure(
+                    key=self.name,
+                    figure=fig,
+                    metadata={}
+                )
+            )
+
+            results = df[df["accuracy"] > features_thresholds_dict[feature]]
+            passed = results.empty
+            results = results.to_dict(orient="list")
+            test_results.append(
+                TestResult(
+                    test_name="accuracy",
+                    column=feature,
+                    passed=passed,
+                    values={
+                        "results": results,
+                    },
+                )
+            )
+        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+
+    def compute_metrics(self, results, region, df_region, target_column, prediction_column):
+        results["slice"].append(str(region))
+        results["shape"].append(df_region.shape[0])
+        y_true = df_region[target_column].values
+        y_prediction = df_region[prediction_column].astype(df_region[target_column].dtypes).values
+
+        for metric, metric_fn in self.default_metrics.items():
+            results[metric].append(metric_fn(y_true, y_prediction))
+
+    def plot_weak_spots(self, results_train, results_test, threshold):
+        # Concat training and test datasets
+        results_train = pd.DataFrame(results_train)
+        results_test = pd.DataFrame(results_test)
+        dataset_type_column = "Dataset Type"
+        results_train[dataset_type_column] = "Training"
+        results_test[dataset_type_column] = "Test"
+        df = pd.concat([results_train, results_test])
+
+        # Create a bar plot using seaborn library
+        fig, ax = plt.subplots()
+        sns.barplot(data=df, x="slice", y="accuracy", hue=dataset_type_column, ax=ax)
+        ax.tick_params(axis='x', rotation=90)
+        ax.axhline(y=threshold, color='red', linestyle='--', linewidth=3)
+        ax.set_ylabel("Accuracy")
+        ax.set_xlabel("Slice/Segments")
+
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+
+        return fig , df

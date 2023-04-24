@@ -15,6 +15,7 @@ from .sklearn_classifier import (
     SKLearnClassifierMetrics,
     SKLearnClassifier,
     SKLearnClassifierPerformance,
+    SKLearnClassifierDiagnosis,
 )
 from .tabular_datasets import (
     TabularDataset,
@@ -36,6 +37,7 @@ from .statsmodels_timeseries import (
 core_test_plans = {
     "sklearn_classifier_metrics": SKLearnClassifierMetrics,
     "sklearn_classifier_validation": SKLearnClassifierPerformance,
+    "sklearn_classifier_model_diagnosis": SKLearnClassifierDiagnosis,
     "sklearn_classifier": SKLearnClassifier,
     "tabular_dataset": TabularDataset,
     "tabular_dataset_description": TabularDatasetDescription,

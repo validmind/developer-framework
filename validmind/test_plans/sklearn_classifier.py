@@ -26,7 +26,8 @@ from ..model_validation.sklearn.threshold_tests import (
     F1ScoreTest,
     ROCAUCScoreTest,
     TrainingTestDegradationTest,
-    WeakSpotsDiagnosisTest,
+    OverfitDiagnosisTest,
+    WeakspotsDiagnosisTest,
 )
 
 
@@ -71,7 +72,7 @@ class SKLearnClassifierDiagnosis(TestPlan):
 
     name = "sklearn_classifier_model_diagnosis"
     required_context = ["model", "train_ds", "test_ds"]
-    tests = [WeakSpotsDiagnosisTest]
+    tests = [OverfitDiagnosisTest, WeakspotsDiagnosisTest]
 
 
 class SKLearnClassifier(TestPlan):
