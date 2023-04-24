@@ -3,15 +3,21 @@ Time Series Test Plans from statsmodels
 """
 from ..vm_models import TestPlan
 from ..model_validation.statsmodels.metrics import (
-    DurbinWatsonTest,
-    LJungBoxTest,
-    JarqueBeraTest,
-    KolmogorovSmirnovTest,
+    LJungBox,
+    BoxPierce,
+    RunsTest,
+    JarqueBera,
+    KolmogorovSmirnov,
+    ShapiroWilk,
+    Lilliefors,
     ADFTest,
     KPSSTest,
     PhillipsPerronTest,
     ZivotAndrewsTest,
     DFGLSTest,
+    SeasonalDecompose,
+    ResidualsVisualInspection,
+    SeasonalityDetectionWithACF,
 )
 
 
@@ -22,7 +28,7 @@ class AutocorrelationTestPlan(TestPlan):
 
     name = "autocorrelation_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [LJungBoxTest, DurbinWatsonTest]
+    tests = [LJungBox, BoxPierce, RunsTest]
 
 
 class NormalityTestPlan(TestPlan):
@@ -32,7 +38,18 @@ class NormalityTestPlan(TestPlan):
 
     name = "normality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [JarqueBeraTest, KolmogorovSmirnovTest]
+    tests = [JarqueBera, KolmogorovSmirnov, ShapiroWilk, Lilliefors]
+
+
+class ResidualsTestPlan(TestPlan):
+    """
+    Test plan to perform residual analysis tests.
+    """
+
+    name = "residuals_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    tests = [ResidualsVisualInspection]
+    test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
 class SesonalityTestPlan(TestPlan):
@@ -42,7 +59,8 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
+    tests = [SeasonalDecompose, SeasonalityDetectionWithACF]
+    test_plans = [ResidualsTestPlan]
 
 
 class UnitRootTestPlan(TestPlan):
