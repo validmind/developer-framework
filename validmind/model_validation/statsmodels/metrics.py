@@ -84,13 +84,47 @@ class ResidualsVisualInspection(Metric):
         return self.cache_results(figures=figures)
 
 
-class SeasonalityDetectionWithACF(Metric):
+@dataclass
+class ACFandPACFFigures(Metric):
+    """
+    Plots ACF and PACF for a given time series dataset.
+    """
+
+    type = "evaluation"
+    key = "acf_and_pacf_figures"
+
+    def run(self):
+        x_train = self.train_ds.raw_dataset
+
+        figures = []
+
+        for col in x_train.columns:
+            series = x_train[col]
+
+            # Create subplots
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+
+            plot_acf(series, ax=ax1)
+            plot_pacf(series, ax=ax2)
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)
+
+
+class SeasonalityDetectionWithACFandPACF(Metric):
     """
     Detects seasonality in a time series dataset using ACF and PACF.
     """
 
     type = "evaluation"
-    key = "seasonality_detection_with_acf"
+    key = "seasonality_detection_with_acf_and_pacf"
 
     def calculate_acf(self, series, nlags=40):
         acf_values = acf(series, nlags=nlags)
@@ -120,9 +154,9 @@ class SeasonalityDetectionWithACF(Metric):
             seasonal_period = self.find_seasonal_period(acf_vals)
 
             results[col] = {
+                "seasonal_period": seasonal_period,
                 "acf_values": acf_vals,
                 "pacf_values": pacf_vals,
-                "seasonal_period": seasonal_period,
             }
 
             # Create subplots
@@ -569,3 +603,34 @@ class KPSSTest(Metric):
             }
 
         return self.cache_results(kpss_values)
+
+
+# AUTOMATIC DECISION ENGINES
+
+
+@dataclass
+class ADFIntegrationOrderDecision(Metric):
+    # ...
+    def run(self):
+        """
+        Calculates the ADF order of integration for each of the dataset features.
+        """
+        x_train = self.train_ds.raw_dataset
+        max_order = 3
+
+        adf_orders = {}
+        for col in x_train.columns:
+            order = 0
+            orders_pvalues = []
+
+            while order <= max_order:
+                diff_series = x_train[col].diff(order).dropna()
+                adf, pvalue, _, _, _, _ = adfuller(diff_series)
+                orders_pvalues.append({"order": order, "pvalue": pvalue})
+                if pvalue <= 0.05:
+                    break
+                order += 1
+
+            adf_orders[col] = orders_pvalues
+
+        return self.cache_results(adf_orders)

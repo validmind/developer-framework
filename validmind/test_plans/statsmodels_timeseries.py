@@ -17,7 +17,7 @@ from ..model_validation.statsmodels.metrics import (
     DFGLSTest,
     SeasonalDecompose,
     ResidualsVisualInspection,
-    SeasonalityDetectionWithACF,
+    SeasonalityDetectionWithACFandPACF,
 )
 
 
@@ -52,17 +52,6 @@ class ResidualsTestPlan(TestPlan):
     test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
-class SesonalityTestPlan(TestPlan):
-    """
-    Test plan to perform seasonality tests.
-    """
-
-    name = "seasonality_test_plan"
-    required_context = ["train_ds", "test_ds"]
-    tests = [SeasonalDecompose, SeasonalityDetectionWithACF]
-    test_plans = [ResidualsTestPlan]
-
-
 class UnitRootTestPlan(TestPlan):
     """
     Test plan to perform unit root tests.
@@ -71,6 +60,17 @@ class UnitRootTestPlan(TestPlan):
     name = "unit_root_test_plan"
     required_context = ["train_ds", "test_ds"]
     tests = [ADFTest, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
+
+
+class SesonalityTestPlan(TestPlan):
+    """
+    Test plan to perform seasonality tests.
+    """
+
+    name = "seasonality_test_plan"
+    required_context = ["train_ds", "test_ds"]
+    tests = [SeasonalDecompose, SeasonalityDetectionWithACFandPACF]
+    test_plans = [ResidualsTestPlan, UnitRootTestPlan]
 
 
 class StationarityTestPlan(TestPlan):
