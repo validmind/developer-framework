@@ -182,7 +182,8 @@ class OverfitDiagnosisTest(ThresholdTest):
 
         test_results = []
         test_figures = []
-        results_headers = ["slice", "shape", "accuracy"]
+        results_headers = ["slice", "shape"]
+        results_headers.extend(self.default_metrics.keys())
         for feature in features_thresholds_dict.keys():
             train_df['bin'] = pd.cut(train_df[feature], bins=10)
             results_train = {k: [] for k in results_headers}
@@ -212,9 +213,7 @@ class OverfitDiagnosisTest(ThresholdTest):
                     test_name="accuracy",
                     column=feature,
                     passed=passed,
-                    values={
-                        "results": results,
-                    },
+                    values=results,
                 )
             )
         return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
@@ -265,9 +264,10 @@ class WeakspotsDiagnosisTest(ThresholdTest):
     category = "model_diagnosis"
     name = "weak_spots"
 
-    default_params = {"weak_spots_thresholds": {"Age": 0.8}}
+    default_params = {"weak_spots_thresholds": {"Age": 0.8, "Balance": 0.7}}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
+
     }
 
     def run(self):
@@ -321,9 +321,7 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                     test_name="accuracy",
                     column=feature,
                     passed=passed,
-                    values={
-                        "results": results,
-                    },
+                    values=results,
                 )
             )
         return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
