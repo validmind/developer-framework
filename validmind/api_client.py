@@ -104,7 +104,7 @@ def log_dataset(vm_dataset):
     Returns:
         validmind.VMDataset: The VMDataset object
     """
-    payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder)
+    payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder, allow_nan=False)
     r = api_session.post(
         f"{API_HOST}/log_dataset",
         data=payload,
@@ -146,7 +146,7 @@ def log_metadata(content_id, text=None, extra_json=None):
 
     r = api_session.post(
         f"{API_HOST}/log_metadata",
-        data=json.dumps(metadata_dict, cls=NumpyEncoder),
+        data=json.dumps(metadata_dict, cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 
@@ -172,7 +172,7 @@ def log_model(vm_model):
     """
     r = api_session.post(
         f"{API_HOST}/log_model",
-        data=json.dumps(vm_model.serialize(), cls=NumpyEncoder),
+        data=json.dumps(vm_model.serialize(), cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 
@@ -204,7 +204,7 @@ def log_metrics(metrics, run_cuid=None):
 
     r = api_session.post(
         f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
-        data=json.dumps(serialized_metrics, cls=NumpyEncoder),
+        data=json.dumps(serialized_metrics, cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 
@@ -236,7 +236,7 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
 
     r = api_session.post(
         f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
-        data=json.dumps(result.dict(), cls=NumpyEncoder),
+        data=json.dumps(result.dict(), cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 
@@ -335,7 +335,7 @@ def log_figure(data_or_path, key, metadata, run_cuid=None):
         )
 
     try:
-        metadata_json = json.dumps(metadata)
+        metadata_json = json.dumps(metadata, allow_nan=False)
     except TypeError:
         raise
 

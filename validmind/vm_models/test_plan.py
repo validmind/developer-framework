@@ -170,7 +170,16 @@ class TestPlan:
 
         for result in self.results:
             self.pbar.set_description(f"Logging result: {result}")
-            result.log()
+
+            try:
+                result.log()
+            except Exception as e:
+                self.pbar.set_description(
+                    f"Failed to log result: {result} for test plan result '{str(result)}'"
+                )
+                print(e)
+                raise e
+
             self.pbar.update(1)
 
     def summarize(self):

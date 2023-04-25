@@ -139,6 +139,12 @@ class TestPlanMetricResult(TestPlanResult):
     figures: Optional[List[Figure]] = None
     metric: Optional[MetricResult] = None
 
+    def __str__(self) -> str:
+        if self.metric:
+            return f"{self.__class__.__name__}({self.metric.key})"
+        else:
+            return f"{self.__class__.__name__}({self.figures})"
+
     def _to_html(self):
         if self.metric and self.metric.key == "dataset_description":
             return ""
@@ -346,6 +352,12 @@ class TestPlanTestResult(TestPlanResult):
 
     figures: Optional[List[Figure]] = None
     test_results: TestResults = None
+
+    def __str__(self) -> str:
+        if self.test_results:
+            return f"{self.__class__.__name__}({self.test_results.test_name})"
+        else:
+            return f"{self.__class__.__name__}({self.figures})"
 
     def _to_html(self):
         html = StringIO()
