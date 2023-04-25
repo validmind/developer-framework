@@ -69,6 +69,21 @@ def _get_all_test_plans():
     return {**core_test_plans, **custom_test_plans}
 
 
+def _get_test_plan_tests(test_plan):
+    """
+    Returns a list of all tests in a test plan. A test plan
+    can have many test plans as well.
+    """
+    tests = set()
+    for test in test_plan.tests:
+        tests.add(test)
+
+    for test_plan in test_plan.test_plans:
+        tests.update(_get_test_plan_tests(test_plan))
+
+    return tests
+
+
 def _get_test_type(test):
     """
     Returns the test type by inspecting the test class hierarchy
@@ -106,67 +121,14 @@ def list_plans(pretty: bool = True):
 def list_tests(test_type: str = "all", pretty: bool = True):
     """
     Returns a list of all available tests.
-
-    # TODO: build this list from all registered test plans instead.
     """
-    tests = []
-    if test_type == "all" or test_type == "data":
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    data_metrics,
-                    lambda m: inspect.getmodule(m) is data_metrics,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    data_threshold_tests,
-                    lambda m: inspect.getmodule(m) is data_threshold_tests,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    statsmodels_model_metrics,
-                    lambda m: inspect.getmodule(m) is statsmodels_model_metrics,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    statsmodels_model_threshold_tests,
-                    lambda m: inspect.getmodule(m) is statsmodels_model_threshold_tests,
-                )
-            ]
-        )
+    all_test_plans = _get_all_test_plans()
+    tests = set()
+    for test_plan in all_test_plans.values():
+        tests.update(_get_test_plan_tests(test_plan))
 
-    if test_type == "all" or test_type == "model":
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    sklearn_model_metrics,
-                    lambda m: inspect.getmodule(m) is sklearn_model_metrics,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    sklearn_model_threshold_tests,
-                    lambda m: inspect.getmodule(m) is sklearn_model_threshold_tests,
-                )
-            ]
-        )
+    # Sort by test type and then by name
+    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
 
     if not pretty:
         return tests
