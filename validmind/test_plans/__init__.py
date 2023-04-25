@@ -5,16 +5,6 @@ import inspect
 
 import tabulate
 
-from ..data_validation import metrics as data_metrics
-from ..data_validation import threshold_tests as data_threshold_tests
-from ..model_validation.sklearn import metrics as sklearn_model_metrics
-from ..model_validation.sklearn import (
-    threshold_tests as sklearn_model_threshold_tests,
-)
-from ..model_validation.statsmodels import metrics as statsmodels_model_metrics
-from ..model_validation.statsmodels import (
-    threshold_tests as statsmodels_model_threshold_tests,
-)
 from ..vm_models import TestPlan
 from .sklearn_classifier import (
     SKLearnClassifierMetrics,
