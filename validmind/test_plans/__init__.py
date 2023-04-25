@@ -5,12 +5,7 @@ import inspect
 
 import tabulate
 
-from ..data_validation import metrics as data_metrics
-from ..data_validation import threshold_tests as data_threshold_tests
-from ..model_validation.sklearn import metrics as sklearn_model_metrics
-from ..model_validation.sklearn import (
-    threshold_tests as sklearn_model_threshold_tests,
-)
+from ..vm_models import TestPlan
 from .sklearn_classifier import (
     SKLearnClassifierMetrics,
     SKLearnClassifier,
@@ -52,16 +47,58 @@ core_test_plans = {
     "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
 }
 
+# These test plans can be added by the user
+custom_test_plans = {}
+
+
+def _get_all_test_plans():
+    """
+    Returns a dictionary of all test plans.
+
+    Merge the core and custom test plans, with the custom plans
+    taking precedence, i.e. allowing overriding of core test plans
+    """
+    return {**core_test_plans, **custom_test_plans}
+
+
+def _get_test_plan_tests(test_plan):
+    """
+    Returns a list of all tests in a test plan. A test plan
+    can have many test plans as well.
+    """
+    tests = set()
+    for test in test_plan.tests:
+        tests.add(test)
+
+    for test_plan in test_plan.test_plans:
+        tests.update(_get_test_plan_tests(test_plan))
+
+    return tests
+
+
+def _get_test_type(test):
+    """
+    Returns the test type by inspecting the test class hierarchy
+    """
+    super_class = inspect.getmro(test)[1].__name__
+    if super_class != "Metric" and super_class != "ThresholdTest":
+        return "Custom Test"
+
+    return super_class
+
 
 def list_plans(pretty: bool = True):
     """
     Returns a list of all available test plans
     """
+
+    all_test_plans = _get_all_test_plans()
+
     if not pretty:
-        return list(core_test_plans.keys())
+        return list(all_test_plans.keys())
 
     table = []
-    for name, test_plan in core_test_plans.items():
+    for name, test_plan in all_test_plans.items():
         table.append(
             {
                 "ID": name,
@@ -75,48 +112,15 @@ def list_plans(pretty: bool = True):
 
 def list_tests(test_type: str = "all", pretty: bool = True):
     """
-    Returns a list of all available tests
+    Returns a list of all available tests.
     """
-    tests = []
-    if test_type == "all" or test_type == "data":
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    data_metrics,
-                    lambda m: inspect.getmodule(m) is data_metrics,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    data_threshold_tests,
-                    lambda m: inspect.getmodule(m) is data_threshold_tests,
-                )
-            ]
-        )
+    all_test_plans = _get_all_test_plans()
+    tests = set()
+    for test_plan in all_test_plans.values():
+        tests.update(_get_test_plan_tests(test_plan))
 
-    if test_type == "all" or test_type == "model":
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    sklearn_model_metrics,
-                    lambda m: inspect.getmodule(m) is sklearn_model_metrics,
-                )
-            ]
-        )
-        tests.extend(
-            [
-                test
-                for _, test in inspect.getmembers(
-                    sklearn_model_threshold_tests,
-                    lambda m: inspect.getmodule(m) is sklearn_model_threshold_tests,
-                )
-            ]
-        )
+    # Sort by test type and then by name
+    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
 
     if not pretty:
         return tests
@@ -146,22 +150,11 @@ def get_by_name(name: str):
     """
     Returns the test plan by name
     """
-
-    if name in core_test_plans:
-        return core_test_plans[name]
+    all_test_plans = _get_all_test_plans()
+    if name in all_test_plans:
+        return all_test_plans[name]
 
     raise ValueError(f"Test plan with name: '{name}' not found")
-
-
-def _get_test_type(test):
-    """
-    Returns the test type by inspecting the test class hierarchy
-    """
-    super_class = inspect.getmro(test)[1].__name__
-    if super_class != "Metric" and super_class != "ThresholdTest":
-        return "Custom Test"
-
-    return super_class
 
 
 def describe_plan(plan_id: str):
@@ -182,3 +175,11 @@ def describe_plan(plan_id: str):
     ]
 
     return tabulate.tabulate(table, headers=["Attribute", "Value"], tablefmt="html")
+
+
+def register_test_plan(plan_id: str, plan: TestPlan):
+    """
+    Registers a custom test plan
+    """
+    custom_test_plans[plan_id] = plan
+    print(f"Registered test plan: {plan_id}")

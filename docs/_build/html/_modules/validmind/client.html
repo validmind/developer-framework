@@ -164,14 +164,16 @@
 
 
 <div class="viewcode-block" id="init_r_model"><a class="viewcode-back" href="../../api.html#validmind.init_r_model">[docs]</a><span class="k">def</span> <span class="nf">init_r_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes a VM Model for an R model</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a VM Model for an R model</span>
 
 <span class="sd">    R models must be saved to disk and the filetype depends on the model type...</span>
 <span class="sd">    Currently we support the following model types:</span>
-<span class="sd">        - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`</span>
-<span class="sd">        - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`</span>
-<span class="sd">        - XGBClassifier: saved as a .json or .bin file with `xgb.save`</span>
-<span class="sd">        - XGBRegressor: saved as a .json or .bin file with `xgb.save`</span>
+
+<span class="sd">    - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">    - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`</span>
+<span class="sd">    - XGBClassifier: saved as a .json or .bin file with `xgb.save`</span>
+<span class="sd">    - XGBRegressor: saved as a .json or .bin file with `xgb.save`</span>
 
 <span class="sd">    LogisticRegression and LinearRegression models are converted to sklearn models by extracting</span>
 <span class="sd">    the coefficients and intercept from the R model. XGB models are loaded using the xgboost</span>
@@ -180,6 +182,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        model_path (str): The path to the R model saved as an RDS or XGB file</span>
 <span class="sd">        model_type (str): The type of the model (one of R_MODEL_TYPES)</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        vm.vm.Model: A VM Model instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>

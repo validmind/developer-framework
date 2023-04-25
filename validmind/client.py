@@ -91,14 +91,16 @@ def init_model(model: object) -> Model:
 
 
 def init_r_model(model_path: str, model_type: str) -> Model:
-    """Initializes a VM Model for an R model
+    """
+    Initializes a VM Model for an R model
 
     R models must be saved to disk and the filetype depends on the model type...
     Currently we support the following model types:
-        - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`
-        - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`
-        - XGBClassifier: saved as a .json or .bin file with `xgb.save`
-        - XGBRegressor: saved as a .json or .bin file with `xgb.save`
+
+    - LogisticRegression `glm` model in R: saved as an RDS file with `saveRDS`
+    - LinearRegression `lm` model in R: saved as an RDS file with `saveRDS`
+    - XGBClassifier: saved as a .json or .bin file with `xgb.save`
+    - XGBRegressor: saved as a .json or .bin file with `xgb.save`
 
     LogisticRegression and LinearRegression models are converted to sklearn models by extracting
     the coefficients and intercept from the R model. XGB models are loaded using the xgboost
@@ -107,6 +109,7 @@ def init_r_model(model_path: str, model_type: str) -> Model:
     Args:
         model_path (str): The path to the R model saved as an RDS or XGB file
         model_type (str): The type of the model (one of R_MODEL_TYPES)
+
     Returns:
         vm.vm.Model: A VM Model instance
     """

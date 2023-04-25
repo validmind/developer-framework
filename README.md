@@ -46,7 +46,7 @@ poetry install --extras r-support
 Make sure you bump the package version before merging a PR with the following command:
 
 ```bash
-make version tag=prerelease
+make version tag=patch
 ```
 
 The value of `tag` corresponds to one of the options provided by Poetry: https://python-poetry.org/docs/cli/#version
@@ -75,11 +75,14 @@ Markdown and HTML docs can be generated with the following commands:
 # Navigate to the docs folder
 cd docs/
 
-# Generate Markdown docs
-make markdown
+# Generate HTML and Markdown docs
+make docs
 
-# Generate HTML docs
-make html
+# Generate Markdown docs only
+make docs-markdown
+
+# Generate HTML docs only
+make docs-html
 ```
 
 The resulting `markdown` and `html` under `docs/_build` folders will contain the generated documentation.

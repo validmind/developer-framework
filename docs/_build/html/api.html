@@ -163,14 +163,12 @@ also ensures we are reading a supported model type.</p>
 <dd><p>Initializes a VM Model for an R model</p>
 <p>R models must be saved to disk and the filetype depends on the model type…
 Currently we support the following model types:</p>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p>LogisticRegression <cite>glm</cite> model in R: saved as an RDS file with <cite>saveRDS</cite></p></li>
 <li><p>LinearRegression <cite>lm</cite> model in R: saved as an RDS file with <cite>saveRDS</cite></p></li>
 <li><p>XGBClassifier: saved as a .json or .bin file with <cite>xgb.save</cite></p></li>
 <li><p>XGBRegressor: saved as a .json or .bin file with <cite>xgb.save</cite></p></li>
 </ul>
-</div></blockquote>
 <p>LogisticRegression and LinearRegression models are converted to sklearn models by extracting
 the coefficients and intercept from the R model. XGB models are loaded using the xgboost
 since xgb models saved in .json or .bin format can be loaded directly with either Python or R</p>
@@ -257,30 +255,6 @@ See the documentation for the specific test plan for more details.</p></li>
 <li><p><strong>key</strong> (<em>str</em>) – Identifier of the figure</p></li>
 <li><p><strong>metadata</strong> (<em>dict</em>) – Python data structure</p></li>
 <li><p><strong>run_cuid</strong> (<em>str</em><em>, </em><em>optional</em>) – The run CUID. If not provided, a new run will be created. Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Exception</strong> – If the API call fails</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if the API call was successful</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">validmind.</span></span><span class="sig-name descname"><span class="pre">log_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/api_client.html#log_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Logs free-form metadata to ValidMind API.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>content_id</strong> (<em>str</em>) – Unique content identifier for the metadata</p></li>
-<li><p><strong>text</strong> (<em>str</em><em>, </em><em>optional</em>) – Free-form text to assign to the metadata. Defaults to None.</p></li>
-<li><p><strong>extra_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Free-form key-value pairs to assign to the metadata. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
