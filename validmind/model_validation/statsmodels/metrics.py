@@ -61,7 +61,7 @@ class ResidualsVisualInspection(Metric):
         axes[1, 1].set_title(f"ACF Plot of Residuals ({variable_name})")
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
         figures = []
 
         # TODO: specify which columns to plot via params
@@ -96,7 +96,7 @@ class ACFandPACFFigures(Metric):
     key = "acf_and_pacf_figures"
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         figures = []
 
@@ -143,7 +143,7 @@ class SeasonalityDetectionWithACFandPACF(Metric):
         return peaks[1] - peaks[0]
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         results = {}
         figures = []
@@ -187,7 +187,7 @@ class SeasonalDecompose(Metric):
     key = "seasonal_decompose"
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         results = {}
         figures = []
@@ -245,7 +245,7 @@ class ADFTest(Metric):
         """
         Calculates ADF metric for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         adf_values = {}
         for col in x_train.columns:
@@ -279,7 +279,7 @@ class KolmogorovSmirnov(Metric):
         """
         Calculates KS for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         ks_values = {}
         for col in x_train.columns:
@@ -303,7 +303,7 @@ class ShapiroWilk(Metric):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         sw_values = {}
         for col in x_train.columns:
@@ -332,7 +332,7 @@ class Lilliefors(Metric):
         """
         Calculates Lilliefors test for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         lilliefors_values = {}
         for col in x_train.columns:
@@ -359,7 +359,7 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         jb_values = {}
         for col in x_train.columns:
@@ -390,7 +390,7 @@ class LJungBox(Metric):
         """
         Calculates Ljung-Box test for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         ljung_box_values = {}
         for col in x_train.columns:
@@ -419,7 +419,7 @@ class BoxPierce(Metric):
         """
         Calculates Box-Pierce test for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         box_pierce_values = {}
         for col in x_train.columns:
@@ -449,7 +449,7 @@ class RunsTest(Metric):
         """
         Calculates the run test for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         runs_test_values = {}
         for col in x_train.columns:
@@ -478,7 +478,7 @@ class DurbinWatsonTest(Metric):
         """
         Calculates DB for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         dw_values = {}
         for col in x_train.columns:
@@ -502,7 +502,7 @@ class PhillipsPerronTest(Metric):
         """
         Calculates PP metric for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         pp_values = {}
         for col in x_train.columns:
@@ -532,7 +532,7 @@ class ZivotAndrewsTest(Metric):
         """
         Calculates Zivot-Andrews metric for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         za_values = {}
         for col in x_train.columns:
@@ -562,7 +562,7 @@ class DFGLSTest(Metric):
         """
         Calculates Dickey-Fuller GLS metric for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         dfgls_values = {}
         for col in x_train.columns:
@@ -592,7 +592,7 @@ class KPSSTest(Metric):
         """
         Calculates KPSS for each of the dataset features
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         kpss_values = {}
         for col in x_train.columns:
@@ -616,7 +616,7 @@ class ADFIntegrationOrderDecision(Metric):
         """
         Calculates the ADF order of integration for each of the dataset features.
         """
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
         max_order = 3
 
         adf_orders = {}
@@ -649,7 +649,7 @@ class AutoAR(Metric):
     max_ar_order = 10
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         results = []
 
@@ -699,7 +699,7 @@ class AutoMA(Metric):
     max_ma_order = 10
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         results = []
 
@@ -751,7 +751,7 @@ class AutoARIMA(Metric):
     max_q = 3
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.train_ds.df
 
         results = []
 

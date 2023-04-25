@@ -83,12 +83,12 @@ class StationarityTestPlan(TestPlan):
     test_plans = [UnitRootTestPlan]
 
 
-class TimeSeriesTestPlan(TestPlan):
+class TimeSeries(TestPlan):
     """
     Test plan for time series statsmodels that includes
     both metrics and validation tests
     """
 
-    name = "timeseries_test_plan"
+    name = "timeseries"
     required_context = ["train_ds", "test_ds"]
     test_plans = [SesonalityTestPlan, StationarityTestPlan]

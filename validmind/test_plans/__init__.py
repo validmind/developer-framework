@@ -30,7 +30,7 @@ from .statsmodels_timeseries import (
     SesonalityTestPlan,
     UnitRootTestPlan,
     StationarityTestPlan,
-    TimeSeriesTestPlan,
+    TimeSeries,
 )
 
 core_test_plans = {
@@ -45,7 +45,7 @@ core_test_plans = {
     "seasonality_test_plan": SesonalityTestPlan,
     "unit_root_test_plan": UnitRootTestPlan,
     "stationarity_test_plan": StationarityTestPlan,
-    "timeseries_test_plan": TimeSeriesTestPlan,
+    "timeseries": TimeSeries,
     # TODO: remove this once we complete the time series test plan
     "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
 }
