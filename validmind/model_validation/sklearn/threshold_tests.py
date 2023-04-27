@@ -326,7 +326,9 @@ class WeakspotsDiagnosisTest(ThresholdTest):
     default_params = {"features_columns": None, "accuracy_gap_threshold": 10}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-
+        "precision": metrics.precision_score,
+        "recall": metrics.recall_score,
+        "f1": metrics.f1_score,
     }
 
     def run(self):
@@ -358,7 +360,8 @@ class WeakspotsDiagnosisTest(ThresholdTest):
 
         test_results = []
         test_figures = []
-        results_headers = ["slice", "shape", "accuracy"]
+        results_headers = ["slice", "shape"]
+        results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
             train_df['bin'] = pd.cut(train_df[feature], bins=10)
             results_train = {k: [] for k in results_headers}
@@ -412,7 +415,7 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         y_prediction = df_region[prediction_column].astype(df_region[target_column].dtypes).values
 
         for metric, metric_fn in self.default_metrics.items():
-            if metric == "accuracy":
+            if metric != "f1":
                 results[metric].append(metric_fn(y_true, y_prediction) * 100)
             else:
                 results[metric].append(metric_fn(y_true, y_prediction))
@@ -559,10 +562,7 @@ class RobustnessDiagnosisTest(ThresholdTest):
         y_prediction = self.model.predict(df)
         y_prediction = y_prediction.astype(y_true.dtypes)
         for metric, metric_fn in self.default_metrics.items():
-            if metric == "accuracy":
-                results[metric].append(metric_fn(y_true, y_prediction) * 100)
-            else:
-                results[metric].append(metric_fn(y_true, y_prediction))
+            results[metric].append(metric_fn(y_true, y_prediction) * 100)
 
     def add_noise_std_dev(self, values: list[float], x_std_dev: float) -> tuple[list[float], float]:
         """
