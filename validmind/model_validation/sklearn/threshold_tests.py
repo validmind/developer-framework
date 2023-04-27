@@ -302,9 +302,12 @@ class OverfitDiagnosisTest(ThresholdTest):
         ax.tick_params(axis='x', rotation=90)
         # Draw threshold line
         ax.axhline(y=threshold, color='red', linestyle='--', linewidth=1)
+        ax.tick_params(axis="x", labelsize=20)
+        ax.tick_params(axis="y", labelsize=20)
+
         ax.set_ylabel("Gap", weight='bold', fontsize=22)
         ax.set_xlabel("Slice/Segments", weight='bold', fontsize=22)
-        ax.set_title(f"Overfit region in feature column: {feature_column}", weight='bold', fontsize=24)
+        ax.set_title(f"Overfit regions in feature column: {feature_column}", weight='bold', fontsize=24)
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
@@ -409,7 +412,10 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         y_prediction = df_region[prediction_column].astype(df_region[target_column].dtypes).values
 
         for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true, y_prediction))
+            if metric == "accuracy":
+                results[metric].append(metric_fn(y_true, y_prediction) * 100)
+            else:
+                results[metric].append(metric_fn(y_true, y_prediction))
 
     def _plot_weak_spots(self, results_train, results_test, feature_column, threshold):
         """
@@ -436,12 +442,16 @@ class WeakspotsDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.barplot(data=df, x="slice", y="accuracy", hue=dataset_type_column, ax=ax)
+        sns.barplot(data=df, x="slice", y="accuracy", hue=dataset_type_column, edgecolor="black", ax=ax)
         ax.tick_params(axis='x', rotation=90)
+        for p in ax.patches:
+            t = ax.annotate(str('{:.2f}%'.format(p.get_height())), xy=(p.get_x() + 0.03, p.get_height() + 1))
+            t.set(color="black", size=14)
+
         ax.axhline(y=threshold, color='red', linestyle='--', linewidth=3)
-        ax.set_ylabel("Accuracy")
-        ax.set_xlabel("Slice/Segments")
-        ax.set_title(f"Weak region in feature column: {feature_column}", weight='bold', fontsize=24)
+        ax.set_ylabel("Accuracy", weight='bold', fontsize=22)
+        ax.set_xlabel("Slice/Segments", weight='bold', fontsize=22)
+        ax.set_title(f"Weak regions in feature column: {feature_column}", weight='bold', fontsize=24)
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
@@ -549,7 +559,10 @@ class RobustnessDiagnosisTest(ThresholdTest):
         y_prediction = self.model.predict(df)
         y_prediction = y_prediction.astype(y_true.dtypes)
         for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true, y_prediction))
+            if metric == "accuracy":
+                results[metric].append(metric_fn(y_true, y_prediction) * 100)
+            else:
+                results[metric].append(metric_fn(y_true, y_prediction))
 
     def add_noise_std_dev(self, values: list[float], x_std_dev: float) -> tuple[list[float], float]:
         """
@@ -594,10 +607,10 @@ class RobustnessDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.lineplot(data=df, x="Perturbation Size", y="accuracy", style="Dataset Type", markers=True, ax=ax)
-        ax.tick_params(axis='x', rotation=90)
-        ax.set_ylabel("Accuracy")
-        ax.set_xlabel("Slice/Segments")
+        sns.lineplot(data=df, x="Perturbation Size", y="accuracy", style="Dataset Type", linewidth=3, markers=True, ax=ax)
+        ax.tick_params(axis='x')
+        ax.set_ylabel("Accuracy", weight='bold', fontsize=22)
+        ax.set_xlabel("Perturbation Size ( X * Standard Deviation)", weight='bold', fontsize=22)
         ax.set_title(f"Model Performance Perturb features columns: {features_columns}", weight='bold', fontsize=24)
 
         # Do this if you want to prevent the figure from being displayed
