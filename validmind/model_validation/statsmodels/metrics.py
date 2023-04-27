@@ -486,7 +486,7 @@ class DurbinWatsonTest(Metric):
 
 
 @dataclass
-class PhillipsPerronTest(Metric):
+class PhillipsPerronUnitRoot(Metric):
     """
     Phillips-Perron (PP) unit root test for
     establishing the order of integration of time series
@@ -500,11 +500,11 @@ class PhillipsPerronTest(Metric):
         """
         Calculates PP metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         pp_values = {}
-        for col in x_train.columns:
-            pp = PhillipsPerron(x_train[col].values)
+        for col in dataset.columns:
+            pp = PhillipsPerron(dataset[col].values)
             pp_values[col] = {
                 "stat": pp.stat,
                 "pvalue": pp.pvalue,

@@ -12,7 +12,7 @@ from ..model_validation.statsmodels.metrics import (
     Lilliefors,
     ADF,
     KPSS,
-    PhillipsPerronTest,
+    PhillipsPerronUnitRoot,
     ZivotAndrewsTest,
     DFGLSTest,
     SeasonalDecompose,
@@ -59,7 +59,7 @@ class UnitRoot(TestPlan):
 
     name = "unit_root"
     required_context = ["dataset"]
-    tests = [ADF, KPSS, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
+    tests = [ADF, KPSS, PhillipsPerronUnitRoot, ZivotAndrewsTest, DFGLSTest]
 
 
 class SesonalityTestPlan(TestPlan):
