@@ -486,7 +486,7 @@ class DurbinWatsonTest(Metric):
 
 
 @dataclass
-class PhillipsPerronUnitRoot(Metric):
+class PhillipsPerronArch(Metric):
     """
     Phillips-Perron (PP) unit root test for
     establishing the order of integration of time series
@@ -516,7 +516,7 @@ class PhillipsPerronUnitRoot(Metric):
 
 
 @dataclass
-class ZivotAndrewsTest(Metric):
+class ZivotAndrewsArch(Metric):
     """
     Zivot-Andrews unit root test for
     establishing the order of integration of time series
@@ -530,11 +530,11 @@ class ZivotAndrewsTest(Metric):
         """
         Calculates Zivot-Andrews metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         za_values = {}
-        for col in x_train.columns:
-            za = ZivotAndrews(x_train[col].values)
+        for col in dataset.columns:
+            za = ZivotAndrews(dataset[col].values)
             za_values[col] = {
                 "stat": za.stat,
                 "pvalue": za.pvalue,
@@ -546,7 +546,7 @@ class ZivotAndrewsTest(Metric):
 
 
 @dataclass
-class DFGLSTest(Metric):
+class DFGLSArch(Metric):
     """
     Dickey-Fuller GLS unit root test for
     establishing the order of integration of time series
@@ -560,11 +560,11 @@ class DFGLSTest(Metric):
         """
         Calculates Dickey-Fuller GLS metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         dfgls_values = {}
-        for col in x_train.columns:
-            dfgls_out = DFGLS(x_train[col].values)
+        for col in dataset.columns:
+            dfgls_out = DFGLS(dataset[col].values)
             dfgls_values[col] = {
                 "stat": dfgls_out.stat,
                 "pvalue": dfgls_out.pvalue,

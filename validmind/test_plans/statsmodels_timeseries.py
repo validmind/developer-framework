@@ -12,9 +12,9 @@ from ..model_validation.statsmodels.metrics import (
     Lilliefors,
     ADF,
     KPSS,
-    PhillipsPerronUnitRoot,
-    ZivotAndrewsTest,
-    DFGLSTest,
+    PhillipsPerronArch,
+    ZivotAndrewsArch,
+    DFGLSArch,
     SeasonalDecompose,
     ResidualsVisualInspection,
     SeasonalityDetectionWithACFandPACF,
@@ -59,7 +59,7 @@ class UnitRoot(TestPlan):
 
     name = "unit_root"
     required_context = ["dataset"]
-    tests = [ADF, KPSS, PhillipsPerronUnitRoot, ZivotAndrewsTest, DFGLSTest]
+    tests = [ADF, KPSS, PhillipsPerronArch, ZivotAndrewsArch, DFGLSArch]
 
 
 class SesonalityTestPlan(TestPlan):
