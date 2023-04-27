@@ -11,7 +11,7 @@ from ..model_validation.statsmodels.metrics import (
     ShapiroWilk,
     Lilliefors,
     ADF,
-    KPSSTest,
+    KPSS,
     PhillipsPerronTest,
     ZivotAndrewsTest,
     DFGLSTest,
@@ -52,14 +52,14 @@ class ResidualsTestPlan(TestPlan):
     test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
-class UnitRootTestPlan(TestPlan):
+class UnitRoot(TestPlan):
     """
     Test plan to perform unit root tests.
     """
 
-    name = "unit_root_test_plan"
+    name = "unit_root"
     required_context = ["dataset"]
-    tests = [ADF, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
+    tests = [ADF, KPSS, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
 
 
 class SesonalityTestPlan(TestPlan):
@@ -70,7 +70,7 @@ class SesonalityTestPlan(TestPlan):
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
     tests = [SeasonalDecompose, SeasonalityDetectionWithACFandPACF]
-    test_plans = [ResidualsTestPlan, UnitRootTestPlan]
+    test_plans = [ResidualsTestPlan, UnitRoot]
 
 
 class StationarityTestPlan(TestPlan):
@@ -80,7 +80,7 @@ class StationarityTestPlan(TestPlan):
 
     name = "stationarity_test_plan"
     required_context = ["train_ds", "test_ds"]
-    test_plans = [UnitRootTestPlan]
+    test_plans = [UnitRoot]
 
 
 class TimeSeries(TestPlan):

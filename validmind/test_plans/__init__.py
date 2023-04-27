@@ -28,7 +28,7 @@ from .statsmodels_timeseries import (
     NormalityTestPlan,
     AutocorrelationTestPlan,
     SesonalityTestPlan,
-    UnitRootTestPlan,
+    UnitRoot,
     StationarityTestPlan,
     TimeSeries,
 )
@@ -43,7 +43,7 @@ core_test_plans = {
     "normality_test_plan": NormalityTestPlan,
     "autocorrelation_test_plan": AutocorrelationTestPlan,
     "seasonality_test_plan": SesonalityTestPlan,
-    "unit_root_test_plan": UnitRootTestPlan,
+    "unit_root": UnitRoot,
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
     # TODO: remove this once we complete the time series test plan

@@ -576,7 +576,7 @@ class DFGLSTest(Metric):
 
 
 @dataclass
-class KPSSTest(Metric):
+class KPSS(Metric):
     """
     Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for
     establishing the order of integration of time series
@@ -590,11 +590,11 @@ class KPSSTest(Metric):
         """
         Calculates KPSS for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         kpss_values = {}
-        for col in x_train.columns:
-            kpss_stat, pvalue, usedlag, critical_values = kpss(x_train[col].values)
+        for col in dataset.columns:
+            kpss_stat, pvalue, usedlag, critical_values = kpss(dataset[col].values)
             kpss_values[col] = {
                 "stat": kpss_stat,
                 "pvalue": pvalue,
