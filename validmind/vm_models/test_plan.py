@@ -141,7 +141,6 @@ class TestPlan:
                 )
 
             self.results.append(result)
-
             self.pbar.update(1)
 
         if send:
@@ -149,6 +148,7 @@ class TestPlan:
 
         for test_plan in self.test_plans:
             test_plan_instance = test_plan(
+                config=self.config,
                 test_context=self.test_context,
                 pbar=self.pbar,
             )

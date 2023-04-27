@@ -1,6 +1,7 @@
 """
 Time Series Test Plans from statsmodels
 """
+from .time_series import TimeSeriesUnivariateInspection
 from ..vm_models import TestPlan
 from ..model_validation.statsmodels.metrics import (
     LJungBox,
@@ -91,4 +92,8 @@ class TimeSeriesTestPlan(TestPlan):
 
     name = "timeseries_test_plan"
     required_context = ["train_ds", "test_ds"]
-    test_plans = [SesonalityTestPlan, StationarityTestPlan]
+    test_plans = [
+        TimeSeriesUnivariateInspection,
+        SesonalityTestPlan,
+        StationarityTestPlan,
+    ]
