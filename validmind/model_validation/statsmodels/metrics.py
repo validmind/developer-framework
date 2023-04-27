@@ -115,7 +115,7 @@ class ACFandPACFFigures(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(figures=figures)
 
@@ -610,21 +610,32 @@ class KPSSTest(Metric):
 # AUTOMATIC DECISION ENGINES
 
 
-class ADFIntegrationOrderDecision(Metric):
-    # ...
+@dataclass
+class DeterminationOfIntegrationOrderADF(Metric):
+    """
+    This class calculates the order of integration for each feature
+    in a dataset using the Augmented Dickey-Fuller (ADF) test.
+    The order of integration is the number of times a series
+    needs to be differenced to make it stationary.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "integration_order_adf"
+    default_params = {"max_order": 3}
+
     def run(self):
         """
         Calculates the ADF order of integration for each of the dataset features.
         """
         x_train = self.train_ds.df
-        max_order = 3
 
         adf_orders = {}
         for col in x_train.columns:
             order = 0
             orders_pvalues = []
 
-            while order <= max_order:
+            while order <= self.params["max_order"]:
                 diff_series = x_train[col].diff(order).dropna()
                 adf, pvalue, _, _, _, _ = adfuller(diff_series)
                 orders_pvalues.append({"order": order, "pvalue": pvalue})
