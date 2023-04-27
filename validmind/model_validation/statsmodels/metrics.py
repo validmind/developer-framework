@@ -230,27 +230,25 @@ class SeasonalDecompose(Metric):
         return self.cache_results(results, figures=figures)
 
 
-@dataclass
-class ADFTest(Metric):
+class ADF(Metric):
     """
     Augmented Dickey-Fuller unit root test for establishing the order of integration of
     time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
+    type = "dataset"  # assume this value
     key = "adf"
 
     def run(self):
         """
         Calculates ADF metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         adf_values = {}
-        for col in x_train.columns:
+        for col in dataset.columns:
             adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
-                x_train[col].values
+                dataset[col].values
             )
             adf_values[col] = {
                 "stat": adf,
