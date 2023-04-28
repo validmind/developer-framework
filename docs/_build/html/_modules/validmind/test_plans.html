@@ -78,12 +78,7 @@
 
 <span class="kn">import</span> <span class="nn">tabulate</span>
 
-<span class="kn">from</span> <span class="nn">..data_validation</span> <span class="kn">import</span> <span class="n">metrics</span> <span class="k">as</span> <span class="n">data_metrics</span>
-<span class="kn">from</span> <span class="nn">..data_validation</span> <span class="kn">import</span> <span class="n">threshold_tests</span> <span class="k">as</span> <span class="n">data_threshold_tests</span>
-<span class="kn">from</span> <span class="nn">..model_validation.sklearn</span> <span class="kn">import</span> <span class="n">metrics</span> <span class="k">as</span> <span class="n">sklearn_model_metrics</span>
-<span class="kn">from</span> <span class="nn">..model_validation.sklearn</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">threshold_tests</span> <span class="k">as</span> <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">TestPlan</span>
 <span class="kn">from</span> <span class="nn">.sklearn_classifier</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
     <span class="n">SKLearnClassifier</span><span class="p">,</span>
@@ -93,9 +88,6 @@
     <span class="n">TabularDataset</span><span class="p">,</span>
     <span class="n">TabularDataQuality</span><span class="p">,</span>
     <span class="n">TabularDatasetDescription</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.time_series</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">TimeSeriesUnivariateInspection</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.statsmodels_timeseries</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">NormalityTestPlan</span><span class="p">,</span>
@@ -119,20 +111,60 @@
     <span class="s2">&quot;unit_root_test_plan&quot;</span><span class="p">:</span> <span class="n">UnitRootTestPlan</span><span class="p">,</span>
     <span class="s2">&quot;stationarity_test_plan&quot;</span><span class="p">:</span> <span class="n">StationarityTestPlan</span><span class="p">,</span>
     <span class="s2">&quot;timeseries_test_plan&quot;</span><span class="p">:</span> <span class="n">TimeSeriesTestPlan</span><span class="p">,</span>
-    <span class="c1"># TODO: remove this once we complete the time series test plan</span>
-    <span class="s2">&quot;timeseries_univariate_inspection&quot;</span><span class="p">:</span> <span class="n">TimeSeriesUnivariateInspection</span><span class="p">,</span>
 <span class="p">}</span>
+
+<span class="c1"># These test plans can be added by the user</span>
+<span class="n">custom_test_plans</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">_get_all_test_plans</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a dictionary of all test plans.</span>
+
+<span class="sd">    Merge the core and custom test plans, with the custom plans</span>
+<span class="sd">    taking precedence, i.e. allowing overriding of core test plans</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">core_test_plans</span><span class="p">,</span> <span class="o">**</span><span class="n">custom_test_plans</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_get_test_plan_tests</span><span class="p">(</span><span class="n">test_plan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of all tests in a test plan. A test plan</span>
+<span class="sd">    can have many test plans as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">test_plan</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">test_plan</span><span class="o">.</span><span class="n">test_plans</span><span class="p">:</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_get_test_plan_tests</span><span class="p">(</span><span class="n">test_plan</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">tests</span>
+
+
+<span class="k">def</span> <span class="nf">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the test type by inspecting the test class hierarchy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">super_class</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">test</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;Metric&quot;</span> <span class="ow">and</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;ThresholdTest&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Custom Test&quot;</span>
+
+    <span class="k">return</span> <span class="n">super_class</span>
 
 
 <div class="viewcode-block" id="list_plans"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.list_plans">[docs]</a><span class="k">def</span> <span class="nf">list_plans</span><span class="p">(</span><span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a list of all available test plans</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">all_test_plans</span> <span class="o">=</span> <span class="n">_get_all_test_plans</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pretty</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">core_test_plans</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">all_test_plans</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">core_test_plans</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">all_test_plans</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
@@ -146,48 +178,15 @@
 
 <div class="viewcode-block" id="list_tests"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.list_tests">[docs]</a><span class="k">def</span> <span class="nf">list_tests</span><span class="p">(</span><span class="n">test_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns a list of all available tests</span>
+<span class="sd">    Returns a list of all available tests.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tests</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span> <span class="ow">or</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
-        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">test</span>
-                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
-                    <span class="n">data_metrics</span><span class="p">,</span>
-                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">data_metrics</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">test</span>
-                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
-                    <span class="n">data_threshold_tests</span><span class="p">,</span>
-                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">data_threshold_tests</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+    <span class="n">all_test_plans</span> <span class="o">=</span> <span class="n">_get_all_test_plans</span><span class="p">()</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">all_test_plans</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">tests</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_get_test_plan_tests</span><span class="p">(</span><span class="n">test_plan</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span> <span class="ow">or</span> <span class="n">test_type</span> <span class="o">==</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
-        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">test</span>
-                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
-                    <span class="n">sklearn_model_metrics</span><span class="p">,</span>
-                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sklearn_model_metrics</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">tests</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">test</span>
-                <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span>
-                    <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
-                    <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sklearn_model_threshold_tests</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+    <span class="c1"># Sort by test type and then by name</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">tests</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">test</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pretty</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">tests</span>
@@ -217,22 +216,11 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the test plan by name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">core_test_plans</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">core_test_plans</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">all_test_plans</span> <span class="o">=</span> <span class="n">_get_all_test_plans</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">all_test_plans</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">all_test_plans</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test plan with name: &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span></div>
-
-
-<span class="k">def</span> <span class="nf">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the test type by inspecting the test class hierarchy</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">super_class</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmro</span><span class="p">(</span><span class="n">test</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="k">if</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;Metric&quot;</span> <span class="ow">and</span> <span class="n">super_class</span> <span class="o">!=</span> <span class="s2">&quot;ThresholdTest&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Custom Test&quot;</span>
-
-    <span class="k">return</span> <span class="n">super_class</span>
 
 
 <div class="viewcode-block" id="describe_plan"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.describe_plan">[docs]</a><span class="k">def</span> <span class="nf">describe_plan</span><span class="p">(</span><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -253,6 +241,14 @@
     <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Attribute&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="register_test_plan"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.register_test_plan">[docs]</a><span class="k">def</span> <span class="nf">register_test_plan</span><span class="p">(</span><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plan</span><span class="p">:</span> <span class="n">TestPlan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers a custom test plan</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">custom_test_plans</span><span class="p">[</span><span class="n">plan_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">plan</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered test plan: </span><span class="si">{</span><span class="n">plan_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

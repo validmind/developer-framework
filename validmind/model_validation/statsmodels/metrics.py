@@ -36,6 +36,18 @@ class ResidualsVisualInspection(Metric):
     type = "evaluation"
     key = "residuals_visual_inspection"
 
+    def get_residuals(self, column, series):
+        """
+        Get the seasonal decomposition residuals from the test
+        context or re-compute them if not available. This allows
+        running the test individually or as part of a test plan.
+        """
+        sd_all_columns = self.test_context.get_context_data("seasonal_decompose")
+        if sd_all_columns is None or column not in sd_all_columns:
+            return seasonal_decompose(series, model="additive")
+
+        return sd_all_columns[column]
+
     @staticmethod
     def residual_analysis(residuals, variable_name, axes):
         residuals = residuals.dropna().reset_index(
@@ -62,17 +74,19 @@ class ResidualsVisualInspection(Metric):
 
     def run(self):
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
         figures = []
 
         # TODO: specify which columns to plot via params
         for col in x_train.columns:
-            sd = seasonal_decompose(x_train[col], model="additive")
+            sd = self.get_residuals(col, x_train[col])
 
             # Remove NaN values from the residuals and reset the index
             residuals = pd.Series(sd.resid).dropna().reset_index(drop=True)
 
             # Create subplots
             fig, axes = plt.subplots(nrows=2, ncols=2)
+            fig.suptitle(f"Residuals Inspection for {col}", fontsize=24)
 
             self.residual_analysis(residuals, col, axes)
 
@@ -144,6 +158,7 @@ class SeasonalityDetectionWithACFandPACF(Metric):
 
     def run(self):
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         results = {}
         figures = []
@@ -162,7 +177,8 @@ class SeasonalityDetectionWithACFandPACF(Metric):
             }
 
             # Create subplots
-            fig, (ax1, ax2) = plt.subplots(1, 2)
+            fig, (ax1, ax2) = plt.subplots(2, 1)
+            fig.suptitle(f"Seasonal Decomposition with ACF for {col}", fontsize=24)
 
             plot_acf(series, ax=ax1)
             plot_pacf(series, ax=ax2)
@@ -173,7 +189,7 @@ class SeasonalityDetectionWithACFandPACF(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(results, figures=figures)
 
@@ -186,7 +202,48 @@ class SeasonalDecompose(Metric):
     type = "evaluation"
     key = "seasonal_decompose"
 
+    def store_seasonal_decompose(self, column, sd_one_column):
+        """
+        Stores the seasonal decomposition results in the test context so they
+        can be re-used by other tests. Note we store one `sd` at a time for every
+        column in the dataset.
+        """
+        sd_all_columns = (
+            self.test_context.get_context_data("seasonal_decompose") or dict()
+        )
+        sd_all_columns[column] = sd_one_column
+        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
+
+    def serialize_seasonal_decompose(self, sd):
+        """
+        Serializes the seasonal decomposition results for one column into a
+        JSON serializable format that can be sent to the API.
+        """
+        results = {
+            "observed": sd.observed,
+            "trend": sd.trend,
+            "seasonal": sd.seasonal,
+            "resid": sd.resid,
+        }
+
+        # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
+        dfs = [
+            pd.DataFrame(series)
+            .reset_index()
+            .assign(Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d"))
+            for series in results.values()
+        ]
+
+        # Merge DataFrames on the 'Date' column
+        merged_df = dfs[0]
+        for df in dfs[1:]:
+            merged_df = merged_df.merge(df, on="Date")
+
+        # Convert the merged DataFrame into a list of dictionaries
+        return merged_df.to_dict("records")
+
     def run(self):
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         results = {}
@@ -194,30 +251,27 @@ class SeasonalDecompose(Metric):
 
         for col in x_train.columns:
             sd = seasonal_decompose(x_train[col], model="additive")
+            self.store_seasonal_decompose(col, sd)
 
-            results[col] = {
-                "observed": sd.observed,
-                "trend": sd.trend,
-                "seasonal": sd.seasonal,
-                "resid": sd.resid,
-            }
+            results[col] = self.serialize_seasonal_decompose(sd)
 
             # Create subplots
-            fig, axes = plt.subplots(nrows=1, ncols=4)
+            fig, axes = plt.subplots(nrows=2, ncols=2)
             fig.subplots_adjust(hspace=1)
+            fig.suptitle(f"Seasonal Decomposition for {col}", fontsize=24)
 
-            axes[0].set_title("Observed")
-            sd.observed.plot(ax=axes[0])
+            axes[0, 0].set_title("Observed")
+            sd.observed.plot(ax=axes[0, 0])
 
-            axes[1].set_title("Trend")
-            sd.trend.plot(ax=axes[1])
+            axes[0, 1].set_title("Trend")
+            sd.trend.plot(ax=axes[0, 1])
 
-            axes[2].set_title("Seasonal")
-            sd.seasonal.plot(ax=axes[2])
+            axes[1, 0].set_title("Seasonal")
+            sd.seasonal.plot(ax=axes[1, 0])
 
-            axes[3].set_title("Residuals")
-            sd.resid.plot(ax=axes[3])
-            axes[3].set_xlabel("Date")
+            axes[1, 1].set_title("Residuals")
+            sd.resid.plot(ax=axes[1, 1])
+            axes[1, 1].set_xlabel("Date")
 
             # Adjust the layout
             plt.tight_layout()
@@ -225,7 +279,7 @@ class SeasonalDecompose(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}_{col}", figure=fig, metadata={}))
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(results, figures=figures)
 
@@ -278,6 +332,7 @@ class KolmogorovSmirnov(Metric):
         Calculates KS for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ks_values = {}
         for col in x_train.columns:
@@ -301,6 +356,7 @@ class ShapiroWilk(Metric):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         sw_values = {}
@@ -331,6 +387,7 @@ class Lilliefors(Metric):
         Calculates Lilliefors test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         lilliefors_values = {}
         for col in x_train.columns:
@@ -357,6 +414,7 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         jb_values = {}
@@ -389,6 +447,7 @@ class LJungBox(Metric):
         Calculates Ljung-Box test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ljung_box_values = {}
         for col in x_train.columns:
@@ -417,6 +476,7 @@ class BoxPierce(Metric):
         """
         Calculates Box-Pierce test for each of the dataset features
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         box_pierce_values = {}
@@ -448,6 +508,7 @@ class RunsTest(Metric):
         Calculates the run test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         runs_test_values = {}
         for col in x_train.columns:
@@ -476,6 +537,7 @@ class DurbinWatsonTest(Metric):
         """
         Calculates DB for each of the dataset features
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         dw_values = {}

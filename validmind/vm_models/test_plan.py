@@ -141,7 +141,6 @@ class TestPlan:
                 )
 
             self.results.append(result)
-
             self.pbar.update(1)
 
         if send:
@@ -149,6 +148,7 @@ class TestPlan:
 
         for test_plan in self.test_plans:
             test_plan_instance = test_plan(
+                config=self.config,
                 test_context=self.test_context,
                 pbar=self.pbar,
             )
@@ -170,7 +170,16 @@ class TestPlan:
 
         for result in self.results:
             self.pbar.set_description(f"Logging result: {result}")
-            result.log()
+
+            try:
+                result.log()
+            except Exception as e:
+                self.pbar.set_description(
+                    f"Failed to log result: {result} for test plan result '{str(result)}'"
+                )
+                print(e)
+                raise e
+
             self.pbar.update(1)
 
     def summarize(self):
