@@ -8,7 +8,9 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
+from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import kpss
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.stats.stattools import durbin_watson
@@ -72,6 +74,7 @@ class ResidualsVisualInspection(Metric):
 
     def run(self):
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
         figures = []
 
         # TODO: specify which columns to plot via params
@@ -93,17 +96,51 @@ class ResidualsVisualInspection(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
         return self.cache_results(figures=figures)
 
 
-class SeasonalityDetectionWithACF(Metric):
+@dataclass
+class ACFandPACFFigures(Metric):
+    """
+    Plots ACF and PACF for a given time series dataset.
+    """
+
+    type = "evaluation"
+    key = "acf_and_pacf_figures"
+
+    def run(self):
+        x_train = self.train_ds.df
+
+        figures = []
+
+        for col in x_train.columns:
+            series = x_train[col]
+
+            # Create subplots
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+
+            plot_acf(series, ax=ax1)
+            plot_pacf(series, ax=ax2)
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)
+
+
+class SeasonalityDetectionWithACFandPACF(Metric):
     """
     Detects seasonality in a time series dataset using ACF and PACF.
     """
 
     type = "evaluation"
-    key = "seasonality_detection_with_acf"
+    key = "seasonality_detection_with_acf_and_pacf"
 
     def calculate_acf(self, series, nlags=40):
         acf_values = acf(series, nlags=nlags)
@@ -121,6 +158,7 @@ class SeasonalityDetectionWithACF(Metric):
 
     def run(self):
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         results = {}
         figures = []
@@ -133,9 +171,9 @@ class SeasonalityDetectionWithACF(Metric):
             seasonal_period = self.find_seasonal_period(acf_vals)
 
             results[col] = {
+                "seasonal_period": seasonal_period,
                 "acf_values": acf_vals,
                 "pacf_values": pacf_vals,
-                "seasonal_period": seasonal_period,
             }
 
             # Create subplots
@@ -206,6 +244,7 @@ class SeasonalDecompose(Metric):
 
     def run(self):
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         results = {}
         figures = []
@@ -245,27 +284,25 @@ class SeasonalDecompose(Metric):
         return self.cache_results(results, figures=figures)
 
 
-@dataclass
-class ADFTest(Metric):
+class ADF(Metric):
     """
     Augmented Dickey-Fuller unit root test for establishing the order of integration of
     time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
+    type = "dataset"  # assume this value
     key = "adf"
 
     def run(self):
         """
         Calculates ADF metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         adf_values = {}
-        for col in x_train.columns:
+        for col in dataset.columns:
             adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
-                x_train[col].values
+                dataset[col].values
             )
             adf_values[col] = {
                 "stat": adf,
@@ -295,6 +332,7 @@ class KolmogorovSmirnov(Metric):
         Calculates KS for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ks_values = {}
         for col in x_train.columns:
@@ -318,6 +356,7 @@ class ShapiroWilk(Metric):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         sw_values = {}
@@ -348,6 +387,7 @@ class Lilliefors(Metric):
         Calculates Lilliefors test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         lilliefors_values = {}
         for col in x_train.columns:
@@ -374,6 +414,7 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         jb_values = {}
@@ -406,6 +447,7 @@ class LJungBox(Metric):
         Calculates Ljung-Box test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ljung_box_values = {}
         for col in x_train.columns:
@@ -434,6 +476,7 @@ class BoxPierce(Metric):
         """
         Calculates Box-Pierce test for each of the dataset features
         """
+        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         box_pierce_values = {}
@@ -465,6 +508,7 @@ class RunsTest(Metric):
         Calculates the run test for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         runs_test_values = {}
         for col in x_train.columns:
@@ -494,6 +538,7 @@ class DurbinWatsonTest(Metric):
         Calculates DB for each of the dataset features
         """
         x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         dw_values = {}
         for col in x_train.columns:
@@ -503,7 +548,7 @@ class DurbinWatsonTest(Metric):
 
 
 @dataclass
-class PhillipsPerronTest(Metric):
+class PhillipsPerronArch(Metric):
     """
     Phillips-Perron (PP) unit root test for
     establishing the order of integration of time series
@@ -517,11 +562,11 @@ class PhillipsPerronTest(Metric):
         """
         Calculates PP metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         pp_values = {}
-        for col in x_train.columns:
-            pp = PhillipsPerron(x_train[col].values)
+        for col in dataset.columns:
+            pp = PhillipsPerron(dataset[col].values)
             pp_values[col] = {
                 "stat": pp.stat,
                 "pvalue": pp.pvalue,
@@ -533,7 +578,7 @@ class PhillipsPerronTest(Metric):
 
 
 @dataclass
-class ZivotAndrewsTest(Metric):
+class ZivotAndrewsArch(Metric):
     """
     Zivot-Andrews unit root test for
     establishing the order of integration of time series
@@ -547,11 +592,11 @@ class ZivotAndrewsTest(Metric):
         """
         Calculates Zivot-Andrews metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         za_values = {}
-        for col in x_train.columns:
-            za = ZivotAndrews(x_train[col].values)
+        for col in dataset.columns:
+            za = ZivotAndrews(dataset[col].values)
             za_values[col] = {
                 "stat": za.stat,
                 "pvalue": za.pvalue,
@@ -563,7 +608,7 @@ class ZivotAndrewsTest(Metric):
 
 
 @dataclass
-class DFGLSTest(Metric):
+class DFGLSArch(Metric):
     """
     Dickey-Fuller GLS unit root test for
     establishing the order of integration of time series
@@ -577,11 +622,11 @@ class DFGLSTest(Metric):
         """
         Calculates Dickey-Fuller GLS metric for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         dfgls_values = {}
-        for col in x_train.columns:
-            dfgls_out = DFGLS(x_train[col].values)
+        for col in dataset.columns:
+            dfgls_out = DFGLS(dataset[col].values)
             dfgls_values[col] = {
                 "stat": dfgls_out.stat,
                 "pvalue": dfgls_out.pvalue,
@@ -593,7 +638,7 @@ class DFGLSTest(Metric):
 
 
 @dataclass
-class KPSSTest(Metric):
+class KPSS(Metric):
     """
     Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test for
     establishing the order of integration of time series
@@ -607,11 +652,11 @@ class KPSSTest(Metric):
         """
         Calculates KPSS for each of the dataset features
         """
-        x_train = self.train_ds.df
+        dataset = self.dataset.df
 
         kpss_values = {}
-        for col in x_train.columns:
-            kpss_stat, pvalue, usedlag, critical_values = kpss(x_train[col].values)
+        for col in dataset.columns:
+            kpss_stat, pvalue, usedlag, critical_values = kpss(dataset[col].values)
             kpss_values[col] = {
                 "stat": kpss_stat,
                 "pvalue": pvalue,
@@ -620,3 +665,200 @@ class KPSSTest(Metric):
             }
 
         return self.cache_results(kpss_values)
+
+
+# AUTOMATIC DECISION ENGINES
+
+
+@dataclass
+class DeterminationOfIntegrationOrderADF(Metric):
+    """
+    This class calculates the order of integration for each feature
+    in a dataset using the Augmented Dickey-Fuller (ADF) test.
+    The order of integration is the number of times a series
+    needs to be differenced to make it stationary.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "integration_order_adf"
+    default_params = {"max_order": 3}
+
+    def run(self):
+        """
+        Calculates the ADF order of integration for each of the dataset features.
+        """
+        x_train = self.train_ds.df
+
+        adf_orders = {}
+        for col in x_train.columns:
+            order = 0
+            orders_pvalues = []
+
+            while order <= self.params["max_order"]:
+                diff_series = x_train[col].diff(order).dropna()
+                adf, pvalue, _, _, _, _ = adfuller(diff_series)
+                orders_pvalues.append({"order": order, "pvalue": pvalue})
+                if pvalue <= 0.05:
+                    break
+                order += 1
+
+            adf_orders[col] = orders_pvalues
+
+        return self.cache_results(adf_orders)
+
+
+class AutoAR(Metric):
+    """
+    Automatically detects the AR order of a time series using both BIC and AIC.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "auto_ar"
+
+    max_ar_order = 10
+
+    def run(self):
+        x_train = self.train_ds.df
+
+        results = []
+
+        for col in x_train.columns:
+            series = x_train[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ar_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ar_order in range(1, self.max_ar_order + 1):
+                try:
+                    model = AutoReg(series, lags=ar_order, old_names=False)
+                    model_fit = model.fit()
+
+                    ar_orders.append(ar_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting AR({ar_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "AR orders": ar_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)
+
+
+class AutoMA(Metric):
+    """
+    Automatically detects the MA order of a time series using both BIC and AIC.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "auto_ma"
+
+    max_ma_order = 10
+
+    def run(self):
+        x_train = self.train_ds.df
+
+        results = []
+
+        for col in x_train.columns:
+            series = x_train[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ma_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ma_order in range(1, self.max_ma_order + 1):
+                try:
+                    model = ARIMA(series, order=(0, 0, ma_order))
+                    model_fit = model.fit()
+
+                    ma_orders.append(ma_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting MA({ma_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "MA orders": ma_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)
+
+
+class AutoARIMA(Metric):
+    """
+    Automatically fits multiple ARIMA models for each variable and ranks them by BIC and AIC.
+    """
+
+    type = "evaluation"  # assume this value
+    scope = "test"  # assume this value (could be "train")
+    key = "auto_arima"
+
+    max_p = 3
+    max_d = 2
+    max_q = 3
+
+    def run(self):
+        x_train = self.train_ds.df
+
+        results = []
+
+        for col in x_train.columns:
+            series = x_train[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            arima_orders = []
+            bic_values = []
+            aic_values = []
+
+            for p in range(self.max_p + 1):
+                for d in range(self.max_d + 1):
+                    for q in range(self.max_q + 1):
+                        try:
+                            model = ARIMA(series, order=(p, d, q))
+                            model_fit = model.fit()
+
+                            arima_orders.append((p, d, q))
+                            bic_values.append(model_fit.bic)
+                            aic_values.append(model_fit.aic)
+                        except Exception as e:
+                            print(
+                                f"Error fitting ARIMA({p}, {d}, {q}) model for {col}: {e}"
+                            )
+
+            result = {
+                "Variable": col,
+                "ARIMA Orders": arima_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)

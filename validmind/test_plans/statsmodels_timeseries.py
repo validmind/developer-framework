@@ -11,14 +11,14 @@ from ..model_validation.statsmodels.metrics import (
     KolmogorovSmirnov,
     ShapiroWilk,
     Lilliefors,
-    ADFTest,
-    KPSSTest,
-    PhillipsPerronTest,
-    ZivotAndrewsTest,
-    DFGLSTest,
+    ADF,
+    KPSS,
+    PhillipsPerronArch,
+    ZivotAndrewsArch,
+    DFGLSArch,
     SeasonalDecompose,
     ResidualsVisualInspection,
-    SeasonalityDetectionWithACF,
+    SeasonalityDetectionWithACFandPACF,
 )
 
 
@@ -53,6 +53,16 @@ class ResidualsTestPlan(TestPlan):
     test_plans = [AutocorrelationTestPlan, NormalityTestPlan]
 
 
+class UnitRoot(TestPlan):
+    """
+    Test plan to perform unit root tests.
+    """
+
+    name = "unit_root"
+    required_context = ["dataset"]
+    tests = [ADF, KPSS, PhillipsPerronArch, ZivotAndrewsArch, DFGLSArch]
+
+
 class SesonalityTestPlan(TestPlan):
     """
     Test plan to perform seasonality tests.
@@ -60,18 +70,8 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [SeasonalDecompose, SeasonalityDetectionWithACF]
-    test_plans = [ResidualsTestPlan]
-
-
-class UnitRootTestPlan(TestPlan):
-    """
-    Test plan to perform unit root tests.
-    """
-
-    name = "unit_root_test_plan"
-    required_context = ["train_ds", "test_ds"]
-    tests = [ADFTest, KPSSTest, PhillipsPerronTest, ZivotAndrewsTest, DFGLSTest]
+    tests = [SeasonalDecompose, SeasonalityDetectionWithACFandPACF]
+    test_plans = [ResidualsTestPlan, UnitRoot]
 
 
 class StationarityTestPlan(TestPlan):
@@ -81,16 +81,16 @@ class StationarityTestPlan(TestPlan):
 
     name = "stationarity_test_plan"
     required_context = ["train_ds", "test_ds"]
-    test_plans = [UnitRootTestPlan]
+    test_plans = [UnitRoot]
 
 
-class TimeSeriesTestPlan(TestPlan):
+class TimeSeries(TestPlan):
     """
     Test plan for time series statsmodels that includes
     both metrics and validation tests
     """
 
-    name = "timeseries_test_plan"
+    name = "timeseries"
     required_context = ["train_ds", "test_ds"]
     test_plans = [
         TimeSeriesUnivariateInspection,
