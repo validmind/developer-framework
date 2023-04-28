@@ -38,8 +38,6 @@ core_test_plans = {
     "unit_root": UnitRoot,
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
-    # TODO: remove this once we complete the time series test plan
-    "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
 }
 
 # These test plans can be added by the user
