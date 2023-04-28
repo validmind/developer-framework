@@ -66,6 +66,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest"><code class="docutils literal notranslate"><span class="pre">F1ScoreTest</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest"><code class="docutils literal notranslate"><span class="pre">ROCAUCScoreTest</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest"><code class="docutils literal notranslate"><span class="pre">TrainingTestDegradationTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest"><code class="docutils literal notranslate"><span class="pre">OverfitDiagnosisTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest"><code class="docutils literal notranslate"><span class="pre">WeakspotsDiagnosisTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest"><code class="docutils literal notranslate"><span class="pre">RobustnessDiagnosisTest</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -585,6 +588,134 @@ a sklearn-like API</p>
 <dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#TrainingTestDegradationTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.model_validation.sklearn.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">OverfitDiagnosisTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#OverfitDiagnosisTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that identify overfit regions with high residuals by histogram slicing techniques.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model_diagnosis'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'overfit_regions'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'cut_off_percentage':</span> <span class="pre">4,</span> <span class="pre">'features_columns':</span> <span class="pre">None}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_metrics">
+<span class="sig-name descname"><span class="pre">default_metrics</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'accuracy':</span> <span class="pre">&lt;function</span> <span class="pre">accuracy_score&gt;}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#OverfitDiagnosisTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.model_validation.sklearn.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">WeakspotsDiagnosisTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#WeakspotsDiagnosisTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that identify weak regions with high residuals by histogram slicing techniques.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model_diagnosis'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'weak_spots'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'accuracy_gap_threshold':</span> <span class="pre">10,</span> <span class="pre">'features_columns':</span> <span class="pre">None}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_metrics">
+<span class="sig-name descname"><span class="pre">default_metrics</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'accuracy':</span> <span class="pre">&lt;function</span> <span class="pre">accuracy_score&gt;,</span> <span class="pre">'f1':</span> <span class="pre">&lt;function</span> <span class="pre">f1_score&gt;,</span> <span class="pre">'precision':</span> <span class="pre">&lt;function</span> <span class="pre">precision_score&gt;,</span> <span class="pre">'recall':</span> <span class="pre">&lt;function</span> <span class="pre">recall_score&gt;}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#WeakspotsDiagnosisTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.model_validation.sklearn.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">RobustnessDiagnosisTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#RobustnessDiagnosisTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test robustness of model by perturbing the features column values</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'model_diagnosis'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'robustness'</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'features_columns':</span> <span class="pre">None,</span> <span class="pre">'scaling_factor_std_dev_list':</span> <span class="pre">[0.01,</span> <span class="pre">0.02]}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_metrics">
+<span class="sig-name descname"><span class="pre">default_metrics</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'accuracy':</span> <span class="pre">&lt;function</span> <span class="pre">accuracy_score&gt;}</span></em><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_metrics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#RobustnessDiagnosisTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.add_noise_std_dev">
+<span class="sig-name descname"><span class="pre">add_noise_std_dev</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_std_dev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/validmind/model_validation/sklearn/threshold_tests.html#RobustnessDiagnosisTest.add_noise_std_dev"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.add_noise_std_dev" title="Permalink to this definition"></a></dt>
+<dd><p>Adds Gaussian noise to a list of values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – A list of numerical values to which noise is added.</p></li>
+<li><p><strong>x_std_dev</strong> (<em>float</em>) – A scaling factor for the standard deviation of the noise.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl>
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>A list of noisy values, where each value is the sum of the corresponding value</p></li>
+</ul>
+<p>in the input list and a randomly generated value sampled from a Gaussian distribution
+with mean 0 and standard deviation x_std_dev times the standard deviation of the input list.
+- The standard deviation of the input list of values.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[list[float], float]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

@@ -83,12 +83,14 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
 </div>
@@ -100,6 +102,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.AccuracyTest">AccuracyTest (class in validmind.model_validation.sklearn.threshold_tests)</a>
+</li>
+      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.add_noise_std_dev">add_noise_std_dev() (validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -128,9 +132,15 @@
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest.category">(validmind.model_validation.sklearn.threshold_tests.F1ScoreTest attribute)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.category">(validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.category">(validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest attribute)</a>
+</li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest.category">(validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest attribute)</a>
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.category">(validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.category">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -153,8 +163,16 @@
 </li>
       <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata">DatasetMetadata (class in validmind.data_validation.metrics)</a>
 </li>
-      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.default_metrics">default_metrics (validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest attribute)</a>
+      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_metrics">default_metrics (validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest attribute)</a>
+
+      <ul>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_metrics">(validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest attribute)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.default_metrics">(validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_metrics">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest attribute)</a>
+</li>
+      </ul></li>
       <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata.default_params">default_params (validmind.data_validation.metrics.DatasetMetadata attribute)</a>
 
       <ul>
@@ -180,9 +198,15 @@
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest.default_params">(validmind.model_validation.sklearn.threshold_tests.F1ScoreTest attribute)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.default_params">(validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.default_params">(validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest attribute)</a>
+</li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest.default_params">(validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest attribute)</a>
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.default_params">(validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.default_params">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -331,11 +355,19 @@
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest.name">(validmind.model_validation.sklearn.threshold_tests.F1ScoreTest attribute)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.name">(validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest attribute)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.name">(validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest attribute)</a>
+</li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest.name">(validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest attribute)</a>
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.name">(validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest attribute)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.name">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest attribute)</a>
+</li>
         <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifier.name">(validmind.test_plans.sklearn_classifier.SKLearnClassifier attribute)</a>
+</li>
+        <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis.name">(validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis attribute)</a>
 </li>
         <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.name">(validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics attribute)</a>
 </li>
@@ -348,6 +380,14 @@
         <li><a href="test_plans.html#validmind.test_plans.tabular_datasets.TabularDatasetDescription.name">(validmind.test_plans.tabular_datasets.TabularDatasetDescription attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest">OverfitDiagnosisTest (class in validmind.model_validation.sklearn.threshold_tests)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -383,6 +423,8 @@
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifier.required_context">required_context (validmind.test_plans.sklearn_classifier.SKLearnClassifier attribute)</a>
 
       <ul>
+        <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis.required_context">(validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis attribute)</a>
+</li>
         <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.required_context">(validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics attribute)</a>
 </li>
         <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.required_context">(validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance attribute)</a>
@@ -400,6 +442,8 @@
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.SHAPGlobalImportance.result">(validmind.model_validation.sklearn.metrics.SHAPGlobalImportance attribute)</a>
 </li>
       </ul></li>
+      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest">RobustnessDiagnosisTest (class in validmind.model_validation.sklearn.threshold_tests)</a>
+</li>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCAUCScore">ROCAUCScore (class in validmind.model_validation.sklearn.metrics)</a>
 </li>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest">ROCAUCScoreTest (class in validmind.model_validation.sklearn.threshold_tests)</a>
@@ -461,9 +505,15 @@
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest.run">(validmind.model_validation.sklearn.threshold_tests.F1ScoreTest method)</a>
 </li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.run">(validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest method)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.run">(validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest method)</a>
+</li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest.run">(validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest method)</a>
 </li>
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.run">(validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest method)</a>
+</li>
+        <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.run">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -504,6 +554,8 @@
 </li>
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifier">SKLearnClassifier (class in validmind.test_plans.sklearn_classifier)</a>
 </li>
+      <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis">SKLearnClassifierDiagnosis (class in validmind.test_plans.sklearn_classifier)</a>
+</li>
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics">SKLearnClassifierMetrics (class in validmind.test_plans.sklearn_classifier)</a>
 </li>
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance">SKLearnClassifierPerformance (class in validmind.test_plans.sklearn_classifier)</a>
@@ -538,9 +590,11 @@
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.SHAPGlobalImportance.test_type">(validmind.model_validation.sklearn.metrics.SHAPGlobalImportance attribute)</a>
 </li>
       </ul></li>
-      <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.tests">tests (validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics attribute)</a>
+      <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis.tests">tests (validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis attribute)</a>
 
       <ul>
+        <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics.tests">(validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics attribute)</a>
+</li>
         <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance.tests">(validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance attribute)</a>
 </li>
         <li><a href="test_plans.html#validmind.test_plans.tabular_datasets.TabularDataQuality.tests">(validmind.test_plans.tabular_datasets.TabularDataQuality attribute)</a>
@@ -659,6 +713,14 @@
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PopulationStabilityIndex.value_formatter">(validmind.model_validation.sklearn.metrics.PopulationStabilityIndex attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest">WeakspotsDiagnosisTest (class in validmind.model_validation.sklearn.threshold_tests)</a>
+</li>
   </ul></td>
 </tr></table>
 
