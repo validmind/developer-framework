@@ -66,7 +66,7 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
-        test_plan_result = TestPlanMetricResult()
+        test_plan_result = TestPlanMetricResult(result_id=self.name)
 
         if metric_value is not None:
             test_plan_result.metric = MetricResult(

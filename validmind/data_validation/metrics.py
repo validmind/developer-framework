@@ -53,7 +53,9 @@ class DatasetMetadata(TestContextUtils):
         Just set the dataset to the result attribute of the test plan result
         and it will be logged via the `log_dataset` function
         """
-        self.result = TestPlanDatasetResult(dataset=self.dataset)
+        self.result = TestPlanDatasetResult(
+            result_id="dataset_metadata", dataset=self.dataset
+        )
 
         return self.result
 

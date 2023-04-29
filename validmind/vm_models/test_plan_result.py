@@ -52,9 +52,11 @@ def plot_figures(html: StringIO, figures: List[Figure]) -> None:
             f"""
         <div class="metric-value">
             <div class="metric-value-title">
-                <span>Metric Plots</span>
-                <a onclick="showMetricPlots(this)" style="cursor: pointer;">
-                    Show All Plots
+                Metric Plots
+            </div>
+            <div class="metric-value-value">
+                <a onclick="showMetricPlots(this)" style="cursor: pointer; color: blue;">
+                Show All Plots
                 </a>
             </div>
             <div class="metric-value-value">
@@ -95,6 +97,10 @@ def plot_figures(html: StringIO, figures: List[Figure]) -> None:
 class TestPlanResult(ABC):
     """Base Class for test plan results"""
 
+    # id of the result, can be set by the subclass. This helps
+    # looking up results later on
+    result_id: str = None
+
     def __str__(self) -> str:
         """May be overridden by subclasses"""
         return self.__class__.__name__
@@ -122,6 +128,9 @@ class TestPlanDatasetResult(TestPlanResult):
 
     dataset: Dataset = None
 
+    def __repr__(self) -> str:
+        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
+
     def _to_html(self):
         html = "<h4>Logged the following dataset to the ValidMind platform:</h4>"
         return html + self.dataset.raw_dataset.describe().to_html()
@@ -139,11 +148,17 @@ class TestPlanMetricResult(TestPlanResult):
     figures: Optional[List[Figure]] = None
     metric: Optional[MetricResult] = None
 
+    def __repr__(self) -> str:
+        if self.metric:
+            return f'{self.__class__.__name__}(result_id="{self.result_id}", metric, figures)'
+        else:
+            return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
+
     def __str__(self) -> str:
         if self.metric:
-            return f"{self.__class__.__name__}({self.metric.key})"
+            return f'{self.__class__.__name__}(result_id="{self.result_id}", metric, figures)'
         else:
-            return f"{self.__class__.__name__}({self.figures})"
+            return f"{self.__class__.__name__}(result_id={self.result_id}, figures)"
 
     def _to_html(self):
         if self.metric and self.metric.key == "dataset_description":
@@ -205,6 +220,7 @@ class TestPlanMetricResult(TestPlanResult):
         </div>
         <style>
             .metric-result {
+                background-color: #F5F5F5;
                 border: 1px solid #e0e0e0;
                 border-radius: 4px;
                 padding: 10px;
@@ -212,8 +228,9 @@ class TestPlanMetricResult(TestPlanResult):
             }
             .metric-result-body {
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: space-between;
+                gap: 10px;
             }
             .metric-body-column {
                 display: flex;
@@ -222,8 +239,8 @@ class TestPlanMetricResult(TestPlanResult):
                 width: 33%;
             }
             .metric-body-column-title {
-                font-size: 14px;
-                font-weight: 500;
+                font-size: 16px;
+                font-weight: 600;
             }
             .metric-value {
                 display: flex;
@@ -232,8 +249,8 @@ class TestPlanMetricResult(TestPlanResult):
                 margin-top: 15px;
             }
             .metric-value-title {
-                font-size: 14px;
-                font-weight: 500;
+                font-size: 16px;
+                font-weight: 600;
             }
             .metric-value-value {
                 font-size: 14px;
@@ -246,6 +263,7 @@ class TestPlanMetricResult(TestPlanResult):
                 max-height: 500px !important;
                 height: 100%;
                 width: auto;
+                max-width: 800px;
             }
         </style>
         """
@@ -353,19 +371,29 @@ class TestPlanTestResult(TestPlanResult):
     figures: Optional[List[Figure]] = None
     test_results: TestResults = None
 
+    def __repr__(self) -> str:
+        if self.test_results:
+            return (
+                f'{self.__class__.__name__}(result_id="{self.result_id}", test_results)'
+            )
+        else:
+            return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
+
     def __str__(self) -> str:
         if self.test_results:
-            return f"{self.__class__.__name__}({self.test_results.test_name})"
+            return (
+                f'{self.__class__.__name__}(result_id="{self.result_id}", test_results)'
+            )
         else:
-            return f"{self.__class__.__name__}({self.figures})"
+            return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
 
     def _to_html(self):
         html = StringIO()
         html.write(
             f"""
         <h4>Logged the following test result to the ValidMind platform:</h4>
-        <div class="test-result">
-            <div class="test-result-header">
+        <div class="metric-result">
+            <div class="metric-result-body">
                 <div class="test-result-header-title">
                     <span class="test-result-header-title-text">
                         {" ".join(self.test_results.test_name.split("_")).title()}
@@ -374,33 +402,35 @@ class TestPlanTestResult(TestPlanResult):
                         {"✅" if self.test_results.passed else "❌"}
                     </span>
                 </div>
-                <a onclick="toggleTestResults(this)" style="cursor: pointer;">
-                    See Result Details
-                </a>
             </div>
-            <div class="test-result-body">
-                <div class="test-result-body-column">
-                    <div class="test-result-body-column-title">Test Name</div>
-                    <div class="test-result-body-column-value">{self.test_results.test_name}</div>
+            <div class="metric-result-body">
+                <div class="metric-body-column">
+                    <div class="metric-body-column-title">Test Name</div>
+                    <div class="metric-body-column-value">{self.test_results.test_name}</div>
                 </div>
-                <div class="test-result-body-column">
-                    <div class="test-result-body-column-title">Category</div>
-                    <div class="test-result-body-column-value">{self.test_results.category}</div>
+                <div class="metric-body-column">
+                    <div class="metric-body-column-title">Category</div>
+                    <div class="metric-body-column-value">{self.test_results.category}</div>
                 </div>
-                <div class="test-result-body-column">
-                    <div class="test-result-body-column-title">Passed</div>
-                    <div class="test-result-body-column-value">{self.test_results.passed}</div>
+                <div class="metric-body-column">
+                    <div class="metric-body-column-title">Passed</div>
+                    <div class="metric-body-column-value">{self.test_results.passed}</div>
                 </div>
-                <div class="test-result-body-column">
-                    <div class="test-result-body-column-title">Params</div>
-                    <div class="test-result-body-column-value">{self.test_results.params}</div>
+                <div class="metric-body-column">
+                    <div class="metric-body-column-title">Params</div>
+                    <div class="metric-body-column-value">{self.test_results.params}</div>
                 </div>
             </div>
             <div class="results-objs" style="display: none;">
                 <div class="results-objs-title">Results</div>
                 <div class="results-objs-body">{self.test_results.results}</div>
             </div>
-            <div class="test-result-body">
+            <div class="metric-result-body">
+                <a onclick="toggleTestResults(this)" style="margin-top: 10px; cursor: pointer; color: blue;">
+                    See Result Details
+                </a>
+            </div>
+            <div class="metric-result-body">
         """
         )
 
@@ -412,71 +442,84 @@ class TestPlanTestResult(TestPlanResult):
             </div>
         </div>
         <style>
-            .test-result {{
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }}
-            .test-result-header {{
+            .metric-result {
+                background-color: #F5F5F5;
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                padding: 10px;
+                margin: 10px 0;
+            }
+            .metric-result-body {
                 display: flex;
+                flex-direction: column;
                 justify-content: space-between;
-                align-items: center;
-                padding: 10px;
-            }}
-            .test-result-header-title {{
+                gap: 10px;
+            }
+            .metric-body-column {
                 display: flex;
-                align-items: center;
-            }}
-            .test-result-header-title-text {{
-                font-weight: bold;
-            }}
-            .test-result-header-title-icon {{
-                margin-left: 10px;
-            }}
-            .test-result-body {{
-                display: flex;
-                padding: 10px;
-            }}
-            .test-result-body-column {{
-                flex: 1;
-            }}
-            .test-result-body-column-title {{
-                font-weight: bold;
-            }}
-            .test-result-body-column-value {{
-                margin-top: 5px;
-            }}
-            .results-objs {{
-                padding: 10px;
-            }}
-            .results-objs-title {{
-                font-weight: bold;
-            }}
-            .results-objs-body {{
-                margin-top: 5px;
-            }}
-            .metric-value {{
+                flex-direction: column;
+                justify-content: space-between;
+                width: 33%;
+            }
+            .metric-body-column-title {
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .metric-value {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 margin-top: 15px;
-            }}
-            .metric-value-title {{
-                font-size: 14px;
-                font-weight: 500;
-            }}
-            .metric-value-value {{
+            }
+            .metric-value-title {
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .metric-value-value {
                 font-size: 14px;
                 font-weight: 500;
                 margin-top: 10px;
-            }}
-            .metric-plot img {{
+            }
+            .metric-plot img {
                 margin-left: auto !important;
                 margin-right: auto !important;
                 max-height: 500px !important;
                 height: 100%;
                 width: auto;
-            }}
+                max-width: 800px;
+            }
+            .test-result {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            .test-result-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px;
+            }
+            .test-result-header-title {
+                display: flex;
+                align-items: center;
+            }
+            .test-result-header-title-text {
+                text-decoration: underline;
+                font-size: 18px;
+                font-weight: 600;
+            }
+            .test-result-header-title-icon {
+                margin-left: 10px;
+            }
+            .results-objs {
+                padding: 10px;
+            }
+            .results-objs-title {
+                font-weight: bold;
+            }
+            .results-objs-body {
+                margin-top: 5px;
+            }
         </style>
         <script>
             function toggleTestResults(btn) {{

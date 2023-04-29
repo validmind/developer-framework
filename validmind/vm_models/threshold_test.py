@@ -68,13 +68,14 @@ class ThresholdTest(TestContextUtils):
             TestPlanResult: The test plan result object
         """
         self.test_results = TestPlanTestResult(
+            result_id=self.name,
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
                 params=self.params,
                 passed=passed,
                 results=results,
-            )
+            ),
         )
 
         # Allow test results to attach figures to the test plan result
