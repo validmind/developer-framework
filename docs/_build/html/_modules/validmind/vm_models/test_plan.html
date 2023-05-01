@@ -74,6 +74,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">TestPlan class</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">List</span>
 
@@ -86,7 +88,7 @@
 <span class="kn">from</span> <span class="nn">.test_context</span> <span class="kn">import</span> <span class="n">TestContext</span>
 <span class="kn">from</span> <span class="nn">.test_plan_result</span> <span class="kn">import</span> <span class="n">TestPlanResult</span>
 
-<span class="c1"># A test plan can have 1 or more test plans</span>
+<span class="n">VM_SUMMARIZE_TEST_PLANS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VM_SUMMARIZE_TEST_PLANS&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TestPlan"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan">[docs]</a><span class="nd">@dataclass</span>
@@ -106,6 +108,8 @@
     <span class="c1"># Instance Variables</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">()</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">test_context</span><span class="p">:</span> <span class="n">TestContext</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Stores a reference to the child test plan instances</span>
+    <span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Single dataset for dataset-only tests</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
@@ -117,6 +121,14 @@
 
     <span class="c1"># tqdm progress bar</span>
     <span class="n">pbar</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">(test_context=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">(test_context=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="si">}</span><span class="s2">, config=</span><span class="se">{{</span><span class="s2">...</span><span class="se">}}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -164,7 +176,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">test_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TestPlan.run"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPlan.run"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1"># noqa C901 &#39;TestPlan.run&#39; is too complex</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the test plan</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -216,6 +228,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
+        <span class="c1"># Set the progress bar to 100% if it&#39;s not already</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">total</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">send</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_results</span><span class="p">()</span>
 
@@ -227,8 +242,16 @@
             <span class="p">)</span>
             <span class="n">test_plan_instance</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
 
+            <span class="c1"># Build up the subtest plan instances so we can log them</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_plan_instance</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span></div>
+
+        <span class="k">if</span> <span class="n">VM_SUMMARIZE_TEST_PLANS</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="TestPlan.log_results"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.log_results">[docs]</a>    <span class="k">def</span> <span class="nf">log_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Logs the results of the test plan to ValidMind</span>
@@ -255,6 +278,33 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">_results_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds the title for the results of the test plan</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;h2&gt;Results for &lt;i&gt;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&lt;/i&gt; Test Plan:&lt;/h2&gt;&lt;hr&gt;&quot;</span>
+
+        <span class="k">return</span> <span class="n">html</span>
+
+    <span class="k">def</span> <span class="nf">_results_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds the description for the results of the test plan. Subclasses</span>
+<span class="sd">        should override this method to provide an appropriate description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">html</span>
+
+    <span class="k">def</span> <span class="nf">_results_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a summary of the results for each of the tests in the test plan</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="n">result_html</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">_to_html</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">result_html</span><span class="p">:</span>
+                <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;result&quot;&gt;</span><span class="si">{</span><span class="n">result_html</span><span class="si">}</span><span class="s1">&lt;/div&gt;&#39;</span>
+
+        <span class="k">return</span> <span class="n">html</span>
+
 <div class="viewcode-block" id="TestPlan.summarize"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.summarize">[docs]</a>    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Summarizes the results of the test plan</span>
 
@@ -269,12 +319,10 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">html</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;h2&gt;Results for &lt;i&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/i&gt; Test Plan:&lt;/h2&gt;&lt;hr&gt;&quot;</span>
-
-        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
-            <span class="n">result_html</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">_to_html</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">result_html</span><span class="p">:</span>
-                <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;result&quot;&gt;</span><span class="si">{</span><span class="n">result_html</span><span class="si">}</span><span class="s1">&lt;/div&gt;&#39;</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_title</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_description</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_summary</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
 
         <span class="n">html</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;style&gt;</span>
@@ -288,7 +336,33 @@
 <span class="s2">        &lt;/style&gt;</span>
 <span class="s2">        &quot;&quot;&quot;</span>
 
-        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">))</span></div></div>
+        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_all_subtest_plan_results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TestPlanResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively gets all sub test plan results since a test plan</span>
+<span class="sd">        can have sub test plans which can have sub test plans and so on.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sub_test_plans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">sub_test_plans</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">test_plan</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">test_plan</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">test_plan</span><span class="o">.</span><span class="n">_get_all_subtest_plan_results</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="TestPlan.get_results"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.get_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TestPlanResult</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns one or more results of the test plan. Includes results from</span>
+<span class="sd">        sub test plans.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_results</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="ow">or</span> <span class="p">[])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_subtest_plan_results</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">all_results</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">result</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">all_results</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">result_id</span> <span class="o">==</span> <span class="n">result_id</span><span class="p">]</span></div></div>
 </pre></div>
 
            </div>

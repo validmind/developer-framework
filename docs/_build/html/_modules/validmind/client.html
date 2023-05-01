@@ -274,7 +274,9 @@
             <span class="s2">&quot;Error initializing test plan </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
         <span class="p">)</span>
 
-    <span class="n">plan</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span></div>
+    <span class="n">plan</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">plan</span></div>
 
 
 <span class="c1"># def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):</span>

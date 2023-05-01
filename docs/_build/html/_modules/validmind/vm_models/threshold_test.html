@@ -141,13 +141,14 @@
 <span class="sd">            TestPlanResult: The test plan result object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span> <span class="o">=</span> <span class="n">TestPlanTestResult</span><span class="p">(</span>
+            <span class="n">result_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">test_results</span><span class="o">=</span><span class="n">TestResults</span><span class="p">(</span>
                 <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">,</span>
                 <span class="n">test_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
                 <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># Allow test results to attach figures to the test plan result</span>
