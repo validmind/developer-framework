@@ -35,8 +35,8 @@ class TestPlan:
     # Instance Variables
     config: dict() = None
     test_context: TestContext = None
-    # Captures the results of the child test plans to make debugging easier
-    _subtest_plan_results: List[TestPlanResult] = None
+    # Stores a reference to the child test plan instances
+    _test_plan_instances: List[object] = None
 
     # Single dataset for dataset-only tests
     dataset: Dataset = None
@@ -53,13 +53,9 @@ class TestPlan:
         class_name = type(self).__name__
 
         if self.config is None:
-            return f"{class_name}()"
+            return f"{class_name}(test_context={self.test_context})"
 
-        config_string = str(self.config)
-        if len(config_string) > 50:
-            config_string = config_string[:50] + " ..."
-
-        return f"{class_name}(config={config_string})"
+        return f"{class_name}(test_context={self.test_context}, config={{...}})"
 
     def __post_init__(self):
         if self.test_context is not None:
@@ -173,11 +169,11 @@ class TestPlan:
             )
             test_plan_instance.run(send=send)
 
-            # Build up the subtest plan results so that we can log them
-            if self._subtest_plan_results is None:
-                self._subtest_plan_results = []
+            # Build up the subtest plan instances so we can log them
+            if self._test_plan_instances is None:
+                self._test_plan_instances = []
 
-            self._subtest_plan_results.extend(test_plan_instance.results)
+            self._test_plan_instances.append(test_plan_instance)
 
         self.pbar.close()
 
@@ -275,11 +271,11 @@ class TestPlan:
         can have sub test plans which can have sub test plans and so on.
         """
         results = []
-        for test_plan in self.test_plans:
-            if test_plan._subtest_plan_results is None:
-                continue
+        sub_test_plans = self._test_plan_instances or []
+        for test_plan in sub_test_plans:
+            if test_plan.results is not None:
+                results.extend(test_plan.results)
 
-            results.extend(test_plan._subtest_plan_results)
             results.extend(test_plan._get_all_subtest_plan_results())
 
         return results
@@ -289,12 +285,7 @@ class TestPlan:
         Returns one or more results of the test plan. Includes results from
         sub test plans.
         """
-        # FIX THIS
-        all_results = (
-            self.results
-            + self._subtest_plan_results
-            + self._get_all_subtest_plan_results()
-        )
+        all_results = (self.results or []) + self._get_all_subtest_plan_results()
         if result_id is None:
             return all_results
 
