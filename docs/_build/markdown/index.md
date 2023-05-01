@@ -53,6 +53,9 @@ contain the root `toctree` directive. -->
     * [`describe_plan()`](test_plans.md#validmind.test_plans.describe_plan)
 
 
+    * [`register_test_plan()`](test_plans.md#validmind.test_plans.register_test_plan)
+
+
     * [Test Plans for SKLearn-Compatible Classifiers](test_plans.md#module-validmind.test_plans.sklearn_classifier)
 
 
