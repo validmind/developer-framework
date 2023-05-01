@@ -1,10 +1,10 @@
 """
 Threshold based tests
 """
-
 from dataclasses import dataclass
 from operator import add
 from sklearn import metrics
+from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -179,7 +179,9 @@ class OverfitDiagnosisTest(ThresholdTest):
             features_list = self.params["features_columns"]
 
         if not isinstance(features_list, list):
-            raise ValueError("features_columns must be a list of features you would like to test")
+            raise ValueError(
+                "features_columns must be a list of features you would like to test"
+            )
 
         target_column = self.train_ds.target_column
         prediction_column = f"{target_column}_pred"
@@ -200,25 +202,30 @@ class OverfitDiagnosisTest(ThresholdTest):
         results_headers.extend(self.default_metrics.keys())
 
         for feature_column in features_list:
-            train_df['bin'] = pd.cut(train_df[feature_column], bins=10)
+            train_df["bin"] = pd.cut(train_df[feature_column], bins=10)
             results_train = {k: [] for k in results_headers}
             results_test = {k: [] for k in results_headers}
 
-            for region, df_region in train_df.groupby('bin'):
-                self._compute_metrics(results_train, region, df_region, target_column, prediction_column)
-                df_test_region = test_df[(test_df[feature_column] > region.left) & (test_df[feature_column] <= region.right)]
-                self._compute_metrics(results_test, region, df_test_region, target_column, prediction_column)
+            for region, df_region in train_df.groupby("bin"):
+                self._compute_metrics(
+                    results_train, region, df_region, target_column, prediction_column
+                )
+                df_test_region = test_df[
+                    (test_df[feature_column] > region.left)
+                    & (test_df[feature_column] <= region.right)
+                ]
+                self._compute_metrics(
+                    results_test,
+                    region,
+                    df_test_region,
+                    target_column,
+                    prediction_column,
+                )
 
             results = self._prepare_results(results_train, results_test)
 
             fig = self._plot_overfit_regions(results, feature_column, threshold=cut_off)
-            test_figures.append(
-                Figure(
-                    key=self.name,
-                    figure=fig,
-                    metadata={}
-                )
-            )
+            test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
 
             results = results[results["gap"] > cut_off]
             passed = results.empty
@@ -231,7 +238,11 @@ class OverfitDiagnosisTest(ThresholdTest):
                     values=results,
                 )
             )
-        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+        return self.cache_results(
+            test_results,
+            passed=all([r.passed for r in test_results]),
+            figures=test_figures,
+        )
 
     def _prepare_results(self, results_train: dict, results_test: dict) -> pd.DataFrame:
         """
@@ -253,14 +264,24 @@ class OverfitDiagnosisTest(ThresholdTest):
         results_train = pd.DataFrame(results_train)
         results_test = pd.DataFrame(results_test)
         results = results_train.copy(deep=True)
-        results.rename(columns={"shape": "training records", "accuracy": "training accuracy"}, inplace=True)
-        results['training accuracy'] = results['training accuracy'] * 100
-        results['test accuracy'] = results_test['accuracy'] * 100
+        results.rename(
+            columns={"shape": "training records", "accuracy": "training accuracy"},
+            inplace=True,
+        )
+        results["training accuracy"] = results["training accuracy"] * 100
+        results["test accuracy"] = results_test["accuracy"] * 100
         results["gap"] = results["training accuracy"] - results["test accuracy"]
 
         return results
 
-    def _compute_metrics(self, results: dict, region: str, df_region: pd.DataFrame, target_column: str, prediction_column: str) -> None:
+    def _compute_metrics(
+        self,
+        results: dict,
+        region: str,
+        df_region: pd.DataFrame,
+        target_column: str,
+        prediction_column: str,
+    ) -> None:
         """
         Computes and appends the evaluation metrics for a given region.
 
@@ -278,12 +299,16 @@ class OverfitDiagnosisTest(ThresholdTest):
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
         y_true = df_region[target_column].values
-        y_prediction = df_region[prediction_column].astype(df_region[target_column].dtypes).values
+        y_prediction = (
+            df_region[prediction_column].astype(df_region[target_column].dtypes).values
+        )
 
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction))
 
-    def _plot_overfit_regions(self, df: pd.DataFrame, feature_column: str, threshold: float) -> plt.Figure:
+    def _plot_overfit_regions(
+        self, df: pd.DataFrame, feature_column: str, threshold: float
+    ) -> plt.Figure:
         """
         Plots the overfit regions of a given DataFrame.
 
@@ -299,15 +324,19 @@ class OverfitDiagnosisTest(ThresholdTest):
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
         sns.barplot(data=df, x="slice", y="gap", ax=ax)
-        ax.tick_params(axis='x', rotation=90)
+        ax.tick_params(axis="x", rotation=90)
         # Draw threshold line
-        ax.axhline(y=threshold, color='red', linestyle='--', linewidth=1)
+        ax.axhline(y=threshold, color="red", linestyle="--", linewidth=1)
         ax.tick_params(axis="x", labelsize=20)
         ax.tick_params(axis="y", labelsize=20)
 
-        ax.set_ylabel("Gap", weight='bold', fontsize=22)
-        ax.set_xlabel("Slice/Segments", weight='bold', fontsize=22)
-        ax.set_title(f"Overfit regions in feature column: {feature_column}", weight='bold', fontsize=24)
+        ax.set_ylabel("Gap", weight="bold", fontsize=22)
+        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
+        ax.set_title(
+            f"Overfit regions in feature column: {feature_column}",
+            weight="bold",
+            fontsize=24,
+        )
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
@@ -363,24 +392,31 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         results_headers = ["slice", "shape"]
         results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
-            train_df['bin'] = pd.cut(train_df[feature], bins=10)
+            train_df["bin"] = pd.cut(train_df[feature], bins=10)
             results_train = {k: [] for k in results_headers}
             results_test = {k: [] for k in results_headers}
 
-            for region, df_region in train_df.groupby('bin'):
-                self._compute_metrics(results_train, region, df_region, target_column, prediction_column)
-                df_test_region = test_df[(test_df[feature] > region.left) & (test_df[feature] <= region.right)]
-                self._compute_metrics(results_test, region, df_test_region, target_column, prediction_column)
-
-            fig, df = self._plot_weak_spots(results_train, results_test, feature, threshold=accuracy_gap_threshold)
-
-            test_figures.append(
-                Figure(
-                    key=self.name,
-                    figure=fig,
-                    metadata={}
+            for region, df_region in train_df.groupby("bin"):
+                self._compute_metrics(
+                    results_train, region, df_region, target_column, prediction_column
                 )
+                df_test_region = test_df[
+                    (test_df[feature] > region.left)
+                    & (test_df[feature] <= region.right)
+                ]
+                self._compute_metrics(
+                    results_test,
+                    region,
+                    df_test_region,
+                    target_column,
+                    prediction_column,
+                )
+
+            fig, df = self._plot_weak_spots(
+                results_train, results_test, feature, threshold=accuracy_gap_threshold
             )
+
+            test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
 
             results = df[df["accuracy"] > accuracy_gap_threshold]
             passed = results.empty
@@ -393,9 +429,20 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                     values=results,
                 )
             )
-        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+        return self.cache_results(
+            test_results,
+            passed=all([r.passed for r in test_results]),
+            figures=test_figures,
+        )
 
-    def _compute_metrics(self, results: dict, region: str, df_region: pd.DataFrame, target_column: str, prediction_column: str) -> None:
+    def _compute_metrics(
+        self,
+        results: dict,
+        region: str,
+        df_region: pd.DataFrame,
+        target_column: str,
+        prediction_column: str,
+    ) -> None:
         """
         Computes and appends the default metrics for a given DataFrame slice to the results dictionary.
 
@@ -412,7 +459,9 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
         y_true = df_region[target_column].values
-        y_prediction = df_region[prediction_column].astype(df_region[target_column].dtypes).values
+        y_prediction = (
+            df_region[prediction_column].astype(df_region[target_column].dtypes).values
+        )
 
         for metric, metric_fn in self.default_metrics.items():
             if metric != "f1":
@@ -445,21 +494,35 @@ class WeakspotsDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.barplot(data=df, x="slice", y="accuracy", hue=dataset_type_column, edgecolor="black", ax=ax)
-        ax.tick_params(axis='x', rotation=90)
+        sns.barplot(
+            data=df,
+            x="slice",
+            y="accuracy",
+            hue=dataset_type_column,
+            edgecolor="black",
+            ax=ax,
+        )
+        ax.tick_params(axis="x", rotation=90)
         for p in ax.patches:
-            t = ax.annotate(str('{:.2f}%'.format(p.get_height())), xy=(p.get_x() + 0.03, p.get_height() + 1))
+            t = ax.annotate(
+                str("{:.2f}%".format(p.get_height())),
+                xy=(p.get_x() + 0.03, p.get_height() + 1),
+            )
             t.set(color="black", size=14)
 
-        ax.axhline(y=threshold, color='red', linestyle='--', linewidth=3)
-        ax.set_ylabel("Accuracy", weight='bold', fontsize=22)
-        ax.set_xlabel("Slice/Segments", weight='bold', fontsize=22)
-        ax.set_title(f"Weak regions in feature column: {feature_column}", weight='bold', fontsize=24)
+        ax.axhline(y=threshold, color="red", linestyle="--", linewidth=3)
+        ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
+        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
+        ax.set_title(
+            f"Weak regions in feature column: {feature_column}",
+            weight="bold",
+            fontsize=24,
+        )
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
-        return fig , df
+        return fig, df
 
 
 @dataclass
@@ -471,7 +534,10 @@ class RobustnessDiagnosisTest(ThresholdTest):
     category = "model_diagnosis"
     name = "robustness"
 
-    default_params = {"features_columns": None, "scaling_factor_std_dev_list": [0.01, 0.02]}
+    default_params = {
+        "features_columns": None,
+        "scaling_factor_std_dev_list": [0.01, 0.02],
+    }
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
@@ -487,7 +553,11 @@ class RobustnessDiagnosisTest(ThresholdTest):
             raise ValueError("features_columns must be provided in params")
 
         # Identify numeric features
-        numeric_features_columns = [field_dic["id"] for field_dic in self.train_ds.fields if field_dic["type"] == "Numeric"]
+        numeric_features_columns = [
+            field_dic["id"]
+            for field_dic in self.train_ds.fields
+            if field_dic["type"] == "Numeric"
+        ]
         if self.params["features_columns"] is None:
             features_list = numeric_features_columns
         else:
@@ -517,32 +587,40 @@ class RobustnessDiagnosisTest(ThresholdTest):
 
             # Add noise to numeric features columns provided by user
             for feature in features_list:
-                temp_train_df[feature] = self.add_noise_std_dev(temp_train_df[feature].to_list(), x_std_dev)
-                temp_test_df[feature] = self.add_noise_std_dev(temp_test_df[feature].to_list(), x_std_dev)
+                temp_train_df[feature] = self.add_noise_std_dev(
+                    temp_train_df[feature].to_list(), x_std_dev
+                )
+                temp_test_df[feature] = self.add_noise_std_dev(
+                    temp_test_df[feature].to_list(), x_std_dev
+                )
 
-            self._compute_metrics(results, temp_train_df, train_y_true, x_std_dev, "Traning")
+            self._compute_metrics(
+                results, temp_train_df, train_y_true, x_std_dev, "Traning"
+            )
             self._compute_metrics(results, temp_test_df, test_y_true, x_std_dev, "Test")
 
         fig, df = self._plot_robustness(results, features_list)
 
-        test_figures.append(
-            Figure(
-                key=self.name,
-                figure=fig,
-                metadata={}
-            )
-        )
+        test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
 
         test_results.append(
-            TestResult(test_name="accuracy",
-                       column=features_list[0],
-                       passed=True,
-                       values=df.to_dict(orient="list"),
-                       )
+            TestResult(
+                test_name="accuracy",
+                column=features_list[0],
+                passed=True,
+                values=df.to_dict(orient="list"),
+            )
         )
         return self.cache_results(test_results, passed=True, figures=test_figures)
 
-    def _compute_metrics(self, results: dict, df: pd.DataFrame, y_true: str, x_std_dev: float, dataset_type: str):
+    def _compute_metrics(
+        self,
+        results: dict,
+        df: pd.DataFrame,
+        y_true: str,
+        x_std_dev: float,
+        dataset_type: str,
+    ):
         """
         Compute evaluation metrics for a given perturbed dataset.
 
@@ -564,7 +642,9 @@ class RobustnessDiagnosisTest(ThresholdTest):
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction) * 100)
 
-    def add_noise_std_dev(self, values: list[float], x_std_dev: float) -> tuple[list[float], float]:
+    def add_noise_std_dev(
+        self, values: List[float], x_std_dev: float
+    ) -> Tuple[List[float], float]:
         """
         Adds Gaussian noise to a list of values.
 
@@ -585,7 +665,7 @@ class RobustnessDiagnosisTest(ThresholdTest):
 
         return noisy_values
 
-    def _plot_robustness(self, results: dict, features_columns: list[str]):
+    def _plot_robustness(self, results: dict, features_columns: List[str]):
         """
         Plots the model's accuracy under feature perturbations.
 
@@ -607,11 +687,25 @@ class RobustnessDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.lineplot(data=df, x="Perturbation Size", y="accuracy", style="Dataset Type", linewidth=3, markers=True, ax=ax)
-        ax.tick_params(axis='x')
-        ax.set_ylabel("Accuracy", weight='bold', fontsize=22)
-        ax.set_xlabel("Perturbation Size ( X * Standard Deviation)", weight='bold', fontsize=22)
-        ax.set_title(f"Model Performance Perturb features columns: {features_columns}", weight='bold', fontsize=24)
+        sns.lineplot(
+            data=df,
+            x="Perturbation Size",
+            y="accuracy",
+            style="Dataset Type",
+            linewidth=3,
+            markers=True,
+            ax=ax,
+        )
+        ax.tick_params(axis="x")
+        ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
+        ax.set_xlabel(
+            "Perturbation Size ( X * Standard Deviation)", weight="bold", fontsize=22
+        )
+        ax.set_title(
+            f"Model Performance Perturb features columns: {features_columns}",
+            weight="bold",
+            fontsize=24,
+        )
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")

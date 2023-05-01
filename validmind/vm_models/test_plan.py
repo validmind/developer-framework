@@ -1,6 +1,8 @@
 """
 TestPlan class
 """
+import os
+
 from dataclasses import dataclass
 from typing import ClassVar, List
 
@@ -13,7 +15,7 @@ from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
 
-# A test plan can have 1 or more test plans
+VM_SUMMARIZE_TEST_PLANS = os.environ.get("VM_SUMMARIZE_TEST_PLANS", "True")
 
 
 @dataclass
@@ -33,6 +35,8 @@ class TestPlan:
     # Instance Variables
     config: dict() = None
     test_context: TestContext = None
+    # Stores a reference to the child test plan instances
+    _test_plan_instances: List[object] = None
 
     # Single dataset for dataset-only tests
     dataset: Dataset = None
@@ -44,6 +48,14 @@ class TestPlan:
 
     # tqdm progress bar
     pbar: tqdm = None
+
+    def __repr__(self):
+        class_name = type(self).__name__
+
+        if self.config is None:
+            return f"{class_name}(test_context={self.test_context})"
+
+        return f"{class_name}(test_context={self.test_context}, config={{...}})"
 
     def __post_init__(self):
         if self.test_context is not None:
@@ -91,7 +103,7 @@ class TestPlan:
 
         return self.config.get(test_name, None)
 
-    def run(self, send=True):
+    def run(self, send=True):  # noqa C901 'TestPlan.run' is too complex
         """
         Runs the test plan
         """
@@ -143,6 +155,9 @@ class TestPlan:
             self.results.append(result)
             self.pbar.update(1)
 
+        # Set the progress bar to 100% if it's not already
+        self.pbar.update(self.pbar.total - self.pbar.n)
+
         if send:
             self.log_results()
 
@@ -154,8 +169,16 @@ class TestPlan:
             )
             test_plan_instance.run(send=send)
 
+            # Build up the subtest plan instances so we can log them
+            if self._test_plan_instances is None:
+                self._test_plan_instances = []
+
+            self._test_plan_instances.append(test_plan_instance)
+
         self.pbar.close()
-        self.summarize()
+
+        if VM_SUMMARIZE_TEST_PLANS == "True":
+            self.summarize()
 
     def log_results(self):
         """Logs the results of the test plan to ValidMind
@@ -182,6 +205,33 @@ class TestPlan:
 
             self.pbar.update(1)
 
+    def _results_title(self, html: str = "") -> str:
+        """
+        Builds the title for the results of the test plan
+        """
+        class_name = type(self).__name__
+        html += f"<h2>Results for <i>{class_name}</i> Test Plan:</h2><hr>"
+
+        return html
+
+    def _results_description(self, html: str = "") -> str:
+        """
+        Builds the description for the results of the test plan. Subclasses
+        should override this method to provide an appropriate description
+        """
+        return html
+
+    def _results_summary(self, html: str = "") -> str:
+        """
+        Builds a summary of the results for each of the tests in the test plan
+        """
+        for result in self.results:
+            result_html = result._to_html()
+            if result_html:
+                html += f'<div class="result">{result_html}</div>'
+
+        return html
+
     def summarize(self):
         """Summarizes the results of the test plan
 
@@ -196,12 +246,10 @@ class TestPlan:
         if len(self.results) == 0:
             return
 
-        html = f"<h2>Results for <i>{self.name}</i> Test Plan:</h2><hr>"
-
-        for result in self.results:
-            result_html = result._to_html()
-            if result_html:
-                html += f'<div class="result">{result_html}</div>'
+        html = ""
+        html = self._results_title(html)
+        html = self._results_description(html)
+        html = self._results_summary(html)
 
         html += """
         <style>
@@ -216,3 +264,29 @@ class TestPlan:
         """
 
         display(HTML(html))
+
+    def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
+        """
+        Recursively gets all sub test plan results since a test plan
+        can have sub test plans which can have sub test plans and so on.
+        """
+        results = []
+        sub_test_plans = self._test_plan_instances or []
+        for test_plan in sub_test_plans:
+            if test_plan.results is not None:
+                results.extend(test_plan.results)
+
+            results.extend(test_plan._get_all_subtest_plan_results())
+
+        return results
+
+    def get_results(self, result_id: str = None) -> List[TestPlanResult]:
+        """
+        Returns one or more results of the test plan. Includes results from
+        sub test plans.
+        """
+        all_results = (self.results or []) + self._get_all_subtest_plan_results()
+        if result_id is None:
+            return all_results
+
+        return [result for result in all_results if result.result_id == result_id]

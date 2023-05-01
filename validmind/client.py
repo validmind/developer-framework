@@ -203,6 +203,8 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
 
     plan.run(send=send)
 
+    return plan
+
 
 # def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):
 #     """
