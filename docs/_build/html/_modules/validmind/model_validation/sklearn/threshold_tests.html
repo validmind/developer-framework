@@ -298,7 +298,9 @@
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_results</span><span class="p">(</span><span class="n">results_train</span><span class="p">,</span> <span class="n">results_test</span><span class="p">)</span>
 
             <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_overfit_regions</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">feature_column</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">cut_off</span><span class="p">)</span>
-            <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+            <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">feature_column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{})</span>
+            <span class="p">)</span>
 
             <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">cut_off</span><span class="p">]</span>
             <span class="n">passed</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">empty</span>
@@ -489,7 +491,9 @@
                 <span class="n">results_train</span><span class="p">,</span> <span class="n">results_test</span><span class="p">,</span> <span class="n">feature</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">accuracy_gap_threshold</span>
             <span class="p">)</span>
 
-            <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+            <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">feature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{})</span>
+            <span class="p">)</span>
 
             <span class="n">results</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">accuracy_gap_threshold</span><span class="p">]</span>
             <span class="n">passed</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">empty</span>
@@ -674,7 +678,9 @@
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_robustness</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">features_list</span><span class="p">)</span>
 
-        <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+        <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;features_list&quot;</span><span class="p">:</span> <span class="n">features_list</span><span class="p">})</span>
+        <span class="p">)</span>
 
         <span class="n">test_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">TestResult</span><span class="p">(</span>
