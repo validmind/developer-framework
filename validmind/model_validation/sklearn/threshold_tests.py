@@ -439,7 +439,12 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                     Figure(
                         key=f"{self.name}:{metric}:{feature}",
                         figure=fig,
-                        metadata={"threshold": thresholds[metric]},
+                        metadata={
+                            "threshold": thresholds[metric],
+                            "key": self.name,
+                            "metric": metric,
+                            "feature": feature,
+                        },
                     )
                 )
 
