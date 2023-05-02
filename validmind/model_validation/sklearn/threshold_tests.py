@@ -225,7 +225,9 @@ class OverfitDiagnosisTest(ThresholdTest):
             results = self._prepare_results(results_train, results_test)
 
             fig = self._plot_overfit_regions(results, feature_column, threshold=cut_off)
-            test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
+            test_figures.append(
+                Figure(key=f"{self.name}:{feature_column}", figure=fig, metadata={})
+            )
 
             results = results[results["gap"] > cut_off]
             passed = results.empty
@@ -416,7 +418,9 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                 results_train, results_test, feature, threshold=accuracy_gap_threshold
             )
 
-            test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
+            test_figures.append(
+                Figure(key=f"{self.name}:{feature}", figure=fig, metadata={})
+            )
 
             results = df[df["accuracy"] > accuracy_gap_threshold]
             passed = results.empty
@@ -601,7 +605,9 @@ class RobustnessDiagnosisTest(ThresholdTest):
 
         fig, df = self._plot_robustness(results, features_list)
 
-        test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
+        test_figures.append(
+            Figure(key=self.name, figure=fig, metadata={"features_list": features_list})
+        )
 
         test_results.append(
             TestResult(
