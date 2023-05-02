@@ -17,6 +17,8 @@ from .test_plan_result import TestPlanMetricResult
 class Metric(TestContextUtils):
     """
     Metric objects track the schema supported by the ValidMind API
+
+    TODO: Metric should validate required context too
     """
 
     # Test Context

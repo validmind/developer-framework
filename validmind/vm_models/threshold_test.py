@@ -21,6 +21,8 @@ class ThresholdTest(TestContextUtils):
     A threshold test is a combination of a metric/plot we track and a
     corresponding set of parameters and thresholds values that allow
     us to determine whether the metric/plot passes or fails.
+
+    TODO: ThresholdTest should validate required context too
     """
 
     # Test Context
