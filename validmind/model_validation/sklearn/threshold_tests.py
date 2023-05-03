@@ -2,6 +2,7 @@
 Threshold based tests
 """
 from dataclasses import dataclass
+from functools import partial
 from operator import add
 from sklearn import metrics
 from typing import List, Tuple
@@ -112,9 +113,9 @@ class TrainingTestDegradationTest(ThresholdTest):
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": metrics.precision_score,
-        "recall": metrics.recall_score,
-        "f1": metrics.f1_score,
+        "precision": partial(metrics.precision_score, zero_division=0),
+        "recall": partial(metrics.recall_score, zero_division=0),
+        "f1": partial(metrics.f1_score, zero_division=0),
     }
 
     def run(self):
@@ -300,6 +301,13 @@ class OverfitDiagnosisTest(ThresholdTest):
 
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+
+        # Check if df_region is an empty dataframe and if so, append 0 to all metrics
+        if df_region.empty:
+            for metric in self.default_metrics.keys():
+                results[metric].append(0)
+            return
+
         y_true = df_region[target_column].values
         y_prediction = (
             df_region[prediction_column].astype(df_region[target_column].dtypes).values
@@ -367,9 +375,9 @@ class WeakspotsDiagnosisTest(ThresholdTest):
     # TODO: allow configuring
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": metrics.precision_score,
-        "recall": metrics.recall_score,
-        "f1": metrics.f1_score,
+        "precision": partial(metrics.precision_score, zero_division=0),
+        "recall": partial(metrics.recall_score, zero_division=0),
+        "f1": partial(metrics.f1_score, zero_division=0),
     }
 
     def run(self):
@@ -494,6 +502,13 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         """
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+
+        # Check if df_region is an empty dataframe and if so, append 0 to all metrics
+        if df_region.empty:
+            for metric in self.default_metrics.keys():
+                results[metric].append(0)
+            return
+
         y_true = df_region[target_column].values
         y_prediction = (
             df_region[prediction_column].astype(df_region[target_column].dtypes).values
