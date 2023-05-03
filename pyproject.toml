@@ -2,7 +2,7 @@
 authors = ["Andres Rodriguez <andres@validmind.ai>"]
 description = "ValidMind SDK"
 name = "validmind"
-version = "1.3.2"
+version = "1.3.3"
 
 [tool.poetry.dependencies]
 click = "^8.0.4"

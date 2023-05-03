@@ -168,7 +168,7 @@ class OverfitDiagnosisTest(ThresholdTest):
     def run(self):
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
-        cut_off = self.params["cut_off_percentage"]
+        cut_off_percentage = self.params["cut_off_percentage"]
 
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
@@ -225,12 +225,24 @@ class OverfitDiagnosisTest(ThresholdTest):
 
             results = self._prepare_results(results_train, results_test)
 
-            fig = self._plot_overfit_regions(results, feature_column, threshold=cut_off)
+            fig = self._plot_overfit_regions(
+                results, feature_column, "accuracy", threshold=cut_off_percentage
+            )
+            # We're currently plotting accuracy gap only
             test_figures.append(
-                Figure(key=f"{self.name}:{feature_column}", figure=fig, metadata={})
+                Figure(
+                    key=f"{self.name}:accuracy:{feature_column}",
+                    figure=fig,
+                    metadata={
+                        "cut_off_percentage": cut_off_percentage,
+                        "key": self.name,
+                        "metric": "accuracy",
+                        "feature": feature_column,
+                    },
+                )
             )
 
-            results = results[results["gap"] > cut_off]
+            results = results[results["gap"] > cut_off_percentage]
             passed = results.empty
             results = results.to_dict(orient="list")
             test_results.append(
@@ -317,7 +329,7 @@ class OverfitDiagnosisTest(ThresholdTest):
             results[metric].append(metric_fn(y_true, y_prediction))
 
     def _plot_overfit_regions(
-        self, df: pd.DataFrame, feature_column: str, threshold: float
+        self, df: pd.DataFrame, feature_column: str, metric: str, threshold: float
     ) -> plt.Figure:
         """
         Plots the overfit regions of a given DataFrame.
@@ -333,20 +345,45 @@ class OverfitDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.barplot(data=df, x="slice", y="gap", ax=ax)
+        barplot = sns.barplot(data=df, x="slice", y="gap", ax=ax)
         ax.tick_params(axis="x", rotation=90)
         # Draw threshold line
-        ax.axhline(y=threshold, color="red", linestyle="--", linewidth=1)
+        axhline = ax.axhline(
+            y=threshold,
+            color="red",
+            linestyle="--",
+            linewidth=1,
+            label=f"Cut-Off Percentage: {threshold}%",
+        )
         ax.tick_params(axis="x", labelsize=20)
         ax.tick_params(axis="y", labelsize=20)
 
-        ax.set_ylabel("Gap", weight="bold", fontsize=22)
+        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=22)
         ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
         ax.set_title(
             f"Overfit regions in feature column: {feature_column}",
             weight="bold",
             fontsize=24,
         )
+
+        # Get the legend handles and labels from the barplot
+        handles, labels = barplot.get_legend_handles_labels()
+
+        # Append the axhline handle and label
+        handles.append(axhline)
+        labels.append(axhline.get_label())
+
+        # Create a legend with both hue and axhline labels, the threshold line
+        # will show up twice so remove the first element
+        # barplot.legend(handles=handles[:-1], labels=labels, loc="upper right")
+        barplot.legend(
+            handles=handles[:-1],
+            labels=labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.1),
+            ncol=len(handles),
+        )
+
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
@@ -677,7 +714,15 @@ class RobustnessDiagnosisTest(ThresholdTest):
         fig, df = self._plot_robustness(results, features_list)
 
         test_figures.append(
-            Figure(key=self.name, figure=fig, metadata={"features_list": features_list})
+            Figure(
+                key=f"{self.name}:accuracy",
+                figure=fig,
+                metadata={
+                    "key": self.name,
+                    "metric": "accuracy",
+                    "features_list": features_list,
+                },
+            )
         )
 
         test_results.append(
@@ -779,7 +824,7 @@ class RobustnessDiagnosisTest(ThresholdTest):
             "Perturbation Size ( X * Standard Deviation)", weight="bold", fontsize=22
         )
         ax.set_title(
-            f"Model Performance Perturb features columns: {features_columns}",
+            f"Perturbed Features: {', '.join(features_columns)}",
             weight="bold",
             fontsize=24,
         )
