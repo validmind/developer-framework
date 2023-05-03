@@ -456,7 +456,7 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                     )
                 )
 
-            # For simplicity, test has passed if any of the metrics is below the threshold. We will
+            # For simplicity, test has failed if any of the metrics is below the threshold. We will
             # rely on visual assessment for this test for now.
             results_passed = df[df[list(thresholds.keys())].lt(thresholds).any(axis=1)]
 
