@@ -2,13 +2,18 @@
 Threshold based tests
 """
 
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 
 from dataclasses import dataclass
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
+from scipy import stats
 
-from ..vm_models import Dataset, TestResult, ThresholdTest
+
+from ..vm_models import Dataset, TestResult, Figure, ThresholdTest
 
 
 @dataclass
@@ -346,3 +351,80 @@ class ZerosTest(ThresholdTest):
             )
 
         return self.cache_results(results, passed=all([r.passed for r in results]))
+
+
+@dataclass
+class OutliersTest(ThresholdTest):
+    """
+    Test that find outliers for time series data
+    """
+
+    category = "data_quality"
+    name = "outliers"
+    default_params = {"zscore_threshold": 3}
+
+    def run(self):
+        # Validate threshold paremeter
+        if "zscore_threshold" not in self.params:
+            raise ValueError("zscore_threshold must be provided in params")
+        zscore_threshold = self.params["zscore_threshold"]
+
+        typeset = ProfilingTypeSet(Settings())
+        dataset_types = typeset.infer_type(self.df)
+        test_results = []
+        test_figures = []
+        num_features_columns = [k for k, v in dataset_types.items() if str(v) == "Numeric"]
+
+        outliers_table = self._identify_outliers(self.df[num_features_columns], zscore_threshold)
+        fig = self._plot_outliers(self.df, outliers_table, use_subplots=False)
+        passed = outliers_table.empty
+        print(outliers_table)
+        outliers_table["Date"] = outliers_table["Date"].astype(str)
+        print(outliers_table.to_dict(orient="list"))
+
+        test_results.append(
+            TestResult(
+                test_name="outliers",
+                passed=passed,
+                values=outliers_table.to_dict(orient="list"),
+            )
+        )
+        test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
+
+        return self.cache_results(test_results, passed=passed, figures=test_figures)
+
+    def _identify_outliers(self, df, threshold):
+        z_scores = pd.DataFrame(stats.zscore(df), index=df.index, columns=df.columns)
+        outliers = z_scores[(z_scores.abs() > threshold).any(axis=1)]
+        outlier_table = []
+        for idx, row in outliers.iterrows():
+            for col in df.columns:
+                if abs(row[col]) > threshold:
+                    outlier_table.append({"Variable": col, "z-score": row[col], "Threshold": threshold, "Date": idx})
+        return pd.DataFrame(outlier_table)
+
+    def _plot_outliers(self, df, outliers_table, use_subplots=True):
+        sns.set(style="darkgrid")
+        n_variables = len(df.columns)
+        fig, axes = plt.subplots(n_variables, 1, figsize=(12, 3 * n_variables), sharex=True)
+
+        for i, col in enumerate(df.columns):
+            sns.lineplot(data=df, x=df.index, y=col, ax=axes[i], label=col)
+
+            variable_outliers = outliers_table[outliers_table["Variable"] == col]
+            for idx, row in variable_outliers.iterrows():
+                date = row["Date"]
+                outlier_value = df.loc[date, col]
+                axes[i].scatter(date, outlier_value, marker="o", s=100, c="red",
+                                label="Outlier" if idx == 0 else "")
+
+            axes[i].legend()
+            axes[i].set_ylabel("Value")
+            axes[i].set_title(f"Time Series with Outliers for {col}")
+
+        plt.xlabel("Date")
+        plt.tight_layout()
+
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+        return fig
