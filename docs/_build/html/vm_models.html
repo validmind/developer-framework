@@ -380,6 +380,7 @@ reverse the one hot encoding and drop the individual dummy columns</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.vm_models.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/vm_models/metric.html#Metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestContextUtils</span></code></p>
 <p>Metric objects track the schema supported by the ValidMind API</p>
+<p>TODO: Metric should validate required context too</p>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em></dt>
@@ -1001,6 +1002,7 @@ sub test plans.</p>
 <p>A threshold test is a combination of a metric/plot we track and a
 corresponding set of parameters and thresholds values that allow
 us to determine whether the metric/plot passes or fails.</p>
+<p>TODO: ThresholdTest should validate required context too</p>
 <dl class="py attribute">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">test_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">TestContext</span></em></dt>

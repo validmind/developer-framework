@@ -2,6 +2,7 @@
 Threshold based tests
 """
 from dataclasses import dataclass
+from functools import partial
 from operator import add
 from sklearn import metrics
 from typing import List, Tuple
@@ -112,9 +113,9 @@ class TrainingTestDegradationTest(ThresholdTest):
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": metrics.precision_score,
-        "recall": metrics.recall_score,
-        "f1": metrics.f1_score,
+        "precision": partial(metrics.precision_score, zero_division=0),
+        "recall": partial(metrics.recall_score, zero_division=0),
+        "f1": partial(metrics.f1_score, zero_division=0),
     }
 
     def run(self):
@@ -167,7 +168,7 @@ class OverfitDiagnosisTest(ThresholdTest):
     def run(self):
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
-        cut_off = self.params["cut_off_percentage"]
+        cut_off_percentage = self.params["cut_off_percentage"]
 
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
@@ -224,12 +225,24 @@ class OverfitDiagnosisTest(ThresholdTest):
 
             results = self._prepare_results(results_train, results_test)
 
-            fig = self._plot_overfit_regions(results, feature_column, threshold=cut_off)
+            fig = self._plot_overfit_regions(
+                results, feature_column, "accuracy", threshold=cut_off_percentage
+            )
+            # We're currently plotting accuracy gap only
             test_figures.append(
-                Figure(key=f"{self.name}:{feature_column}", figure=fig, metadata={})
+                Figure(
+                    key=f"{self.name}:accuracy:{feature_column}",
+                    figure=fig,
+                    metadata={
+                        "cut_off_percentage": cut_off_percentage,
+                        "key": self.name,
+                        "metric": "accuracy",
+                        "feature": feature_column,
+                    },
+                )
             )
 
-            results = results[results["gap"] > cut_off]
+            results = results[results["gap"] > cut_off_percentage]
             passed = results.empty
             results = results.to_dict(orient="list")
             test_results.append(
@@ -300,6 +313,13 @@ class OverfitDiagnosisTest(ThresholdTest):
 
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+
+        # Check if df_region is an empty dataframe and if so, append 0 to all metrics
+        if df_region.empty:
+            for metric in self.default_metrics.keys():
+                results[metric].append(0)
+            return
+
         y_true = df_region[target_column].values
         y_prediction = (
             df_region[prediction_column].astype(df_region[target_column].dtypes).values
@@ -309,7 +329,7 @@ class OverfitDiagnosisTest(ThresholdTest):
             results[metric].append(metric_fn(y_true, y_prediction))
 
     def _plot_overfit_regions(
-        self, df: pd.DataFrame, feature_column: str, threshold: float
+        self, df: pd.DataFrame, feature_column: str, metric: str, threshold: float
     ) -> plt.Figure:
         """
         Plots the overfit regions of a given DataFrame.
@@ -325,20 +345,45 @@ class OverfitDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.barplot(data=df, x="slice", y="gap", ax=ax)
+        barplot = sns.barplot(data=df, x="slice", y="gap", ax=ax)
         ax.tick_params(axis="x", rotation=90)
         # Draw threshold line
-        ax.axhline(y=threshold, color="red", linestyle="--", linewidth=1)
+        axhline = ax.axhline(
+            y=threshold,
+            color="red",
+            linestyle="--",
+            linewidth=1,
+            label=f"Cut-Off Percentage: {threshold}%",
+        )
         ax.tick_params(axis="x", labelsize=20)
         ax.tick_params(axis="y", labelsize=20)
 
-        ax.set_ylabel("Gap", weight="bold", fontsize=22)
+        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=22)
         ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
         ax.set_title(
             f"Overfit regions in feature column: {feature_column}",
             weight="bold",
             fontsize=24,
         )
+
+        # Get the legend handles and labels from the barplot
+        handles, labels = barplot.get_legend_handles_labels()
+
+        # Append the axhline handle and label
+        handles.append(axhline)
+        labels.append(axhline.get_label())
+
+        # Create a legend with both hue and axhline labels, the threshold line
+        # will show up twice so remove the first element
+        # barplot.legend(handles=handles[:-1], labels=labels, loc="upper right")
+        barplot.legend(
+            handles=handles[:-1],
+            labels=labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.1),
+            ncol=len(handles),
+        )
+
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
@@ -354,20 +399,31 @@ class WeakspotsDiagnosisTest(ThresholdTest):
     category = "model_diagnosis"
     name = "weak_spots"
 
-    default_params = {"features_columns": None, "accuracy_gap_threshold": 10}
+    default_params = {
+        "features_columns": None,
+        # Some default values that the user should override
+        "thresholds": {
+            "accuracy": 0.75,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.7,
+        },
+    }
+    # TODO: allow configuring
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": metrics.precision_score,
-        "recall": metrics.recall_score,
-        "f1": metrics.f1_score,
+        "precision": partial(metrics.precision_score, zero_division=0),
+        "recall": partial(metrics.recall_score, zero_division=0),
+        "f1": partial(metrics.f1_score, zero_division=0),
     }
 
     def run(self):
-        # Validate parameters
-        if "accuracy_gap_threshold" not in self.params:
-            raise ValueError("accuracy_gap_threshold must be provided in params")
+        thresholds = self.params["thresholds"]
 
-        accuracy_gap_threshold = self.params["accuracy_gap_threshold"]
+        # Ensure there is a threshold for each metric
+        for metric in self.default_metrics.keys():
+            if metric not in thresholds:
+                raise ValueError(f"Threshold for metric {metric} is missing")
 
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
@@ -414,17 +470,38 @@ class WeakspotsDiagnosisTest(ThresholdTest):
                     prediction_column,
                 )
 
-            fig, df = self._plot_weak_spots(
-                results_train, results_test, feature, threshold=accuracy_gap_threshold
-            )
+            # Make one plot per metric
+            for metric in self.default_metrics.keys():
+                fig, df = self._plot_weak_spots(
+                    results_train,
+                    results_test,
+                    feature,
+                    metric=metric,
+                    threshold=thresholds[metric],
+                )
 
-            test_figures.append(
-                Figure(key=f"{self.name}:{feature}", figure=fig, metadata={})
-            )
+                test_figures.append(
+                    Figure(
+                        key=f"{self.name}:{metric}:{feature}",
+                        figure=fig,
+                        metadata={
+                            "threshold": thresholds[metric],
+                            "key": self.name,
+                            "metric": metric,
+                            "feature": feature,
+                        },
+                    )
+                )
 
-            results = df[df["accuracy"] > accuracy_gap_threshold]
-            passed = results.empty
-            results = results.to_dict(orient="list")
+            # For simplicity, test has failed if any of the metrics is below the threshold. We will
+            # rely on visual assessment for this test for now.
+            results_passed = df[df[list(thresholds.keys())].lt(thresholds).any(axis=1)]
+
+            passed = results_passed.empty
+            results = pd.concat(
+                [pd.DataFrame(results_train), pd.DataFrame(results_test)]
+            ).to_dict(orient="list")
+
             test_results.append(
                 TestResult(
                     test_name="accuracy",
@@ -462,26 +539,33 @@ class WeakspotsDiagnosisTest(ThresholdTest):
         """
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+
+        # Check if df_region is an empty dataframe and if so, append 0 to all metrics
+        if df_region.empty:
+            for metric in self.default_metrics.keys():
+                results[metric].append(0)
+            return
+
         y_true = df_region[target_column].values
         y_prediction = (
             df_region[prediction_column].astype(df_region[target_column].dtypes).values
         )
 
         for metric, metric_fn in self.default_metrics.items():
-            if metric != "f1":
-                results[metric].append(metric_fn(y_true, y_prediction) * 100)
-            else:
-                results[metric].append(metric_fn(y_true, y_prediction))
+            results[metric].append(metric_fn(y_true, y_prediction))
 
-    def _plot_weak_spots(self, results_train, results_test, feature_column, threshold):
+    def _plot_weak_spots(
+        self, results_train, results_test, feature_column, metric, threshold
+    ):
         """
-        Plots the accuracy of the training and test datasets for each region in a given feature column, and highlights
-        regions where the accuracy is below a specified threshold.
+        Plots the metric of the training and test datasets for each region in a given feature column,
+        and highlights regions where the score is below a specified threshold.
 
         Args:
             results_train (list of dict): The results of the model on the training dataset, as a list of dictionaries.
             results_test (list of dict): The results of the model on the test dataset, as a list of dictionaries.
             feature_column (str): The name of the feature column being analyzed.
+            metric (str): The name of the metric to plot.
             threshold (float): The minimum accuracy threshold to be highlighted on the plot.
 
         Returns:
@@ -498,10 +582,10 @@ class WeakspotsDiagnosisTest(ThresholdTest):
 
         # Create a bar plot using seaborn library
         fig, ax = plt.subplots()
-        sns.barplot(
+        barplot = sns.barplot(
             data=df,
             x="slice",
-            y="accuracy",
+            y=metric,
             hue=dataset_type_column,
             edgecolor="black",
             ax=ax,
@@ -514,13 +598,37 @@ class WeakspotsDiagnosisTest(ThresholdTest):
             )
             t.set(color="black", size=14)
 
-        ax.axhline(y=threshold, color="red", linestyle="--", linewidth=3)
-        ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
+        axhline = ax.axhline(
+            y=threshold,
+            color="red",
+            linestyle="--",
+            linewidth=3,
+            label=f"Threshold: {threshold}",
+        )
+        ax.set_ylabel(metric.capitalize(), weight="bold", fontsize=22)
         ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
         ax.set_title(
             f"Weak regions in feature column: {feature_column}",
             weight="bold",
             fontsize=24,
+        )
+
+        # Get the legend handles and labels from the barplot
+        handles, labels = barplot.get_legend_handles_labels()
+
+        # Append the axhline handle and label
+        handles.append(axhline)
+        labels.append(axhline.get_label())
+
+        # Create a legend with both hue and axhline labels, the threshold line
+        # will show up twice so remove the first element
+        # barplot.legend(handles=handles[:-1], labels=labels, loc="upper right")
+        barplot.legend(
+            handles=handles[:-1],
+            labels=labels,
+            loc="upper center",
+            bbox_to_anchor=(0.5, 0.1),
+            ncol=len(handles),
         )
 
         # Do this if you want to prevent the figure from being displayed
@@ -606,7 +714,15 @@ class RobustnessDiagnosisTest(ThresholdTest):
         fig, df = self._plot_robustness(results, features_list)
 
         test_figures.append(
-            Figure(key=self.name, figure=fig, metadata={"features_list": features_list})
+            Figure(
+                key=f"{self.name}:accuracy",
+                figure=fig,
+                metadata={
+                    "key": self.name,
+                    "metric": "accuracy",
+                    "features_list": features_list,
+                },
+            )
         )
 
         test_results.append(
@@ -708,7 +824,7 @@ class RobustnessDiagnosisTest(ThresholdTest):
             "Perturbation Size ( X * Standard Deviation)", weight="bold", fontsize=22
         )
         ax.set_title(
-            f"Model Performance Perturb features columns: {features_columns}",
+            f"Perturbed Features: {', '.join(features_columns)}",
             weight="bold",
             fontsize=24,
         )
