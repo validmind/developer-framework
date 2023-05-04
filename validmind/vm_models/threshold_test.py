@@ -21,6 +21,8 @@ class ThresholdTest(TestContextUtils):
     A threshold test is a combination of a metric/plot we track and a
     corresponding set of parameters and thresholds values that allow
     us to determine whether the metric/plot passes or fails.
+
+    TODO: ThresholdTest should validate required context too
     """
 
     # Test Context
@@ -68,13 +70,14 @@ class ThresholdTest(TestContextUtils):
             TestPlanResult: The test plan result object
         """
         self.test_results = TestPlanTestResult(
+            result_id=self.name,
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
                 params=self.params,
                 passed=passed,
                 results=results,
-            )
+            ),
         )
 
         # Allow test results to attach figures to the test plan result

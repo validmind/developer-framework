@@ -129,17 +129,17 @@ Initializes a VM Model for an R model
 R models must be saved to disk and the filetype depends on the model type…
 Currently we support the following model types:
 
-> 
-> * LogisticRegression glm model in R: saved as an RDS file with saveRDS
+
+* LogisticRegression glm model in R: saved as an RDS file with saveRDS
 
 
-> * LinearRegression lm model in R: saved as an RDS file with saveRDS
+* LinearRegression lm model in R: saved as an RDS file with saveRDS
 
 
-> * XGBClassifier: saved as a .json or .bin file with xgb.save
+* XGBClassifier: saved as a .json or .bin file with xgb.save
 
 
-> * XGBRegressor: saved as a .json or .bin file with xgb.save
+* XGBRegressor: saved as a .json or .bin file with xgb.save
 
 LogisticRegression and LinearRegression models are converted to sklearn models by extracting
 the coefficients and intercept from the R model. XGB models are loaded using the xgboost
@@ -268,41 +268,6 @@ Logs a figure
 
 
     * **run_cuid** (*str**, **optional*) – The run CUID. If not provided, a new run will be created. Defaults to None.
-
-
-
-* **Raises**
-
-    **Exception** – If the API call fails
-
-
-
-* **Returns**
-
-    True if the API call was successful
-
-
-
-* **Return type**
-
-    bool
-
-
-
-### validmind.log_metadata(content_id, text=None, extra_json=None)
-Logs free-form metadata to ValidMind API.
-
-
-* **Parameters**
-
-    
-    * **content_id** (*str*) – Unique content identifier for the metadata
-
-
-    * **text** (*str**, **optional*) – Free-form text to assign to the metadata. Defaults to None.
-
-
-    * **extra_json** (*dict**, **optional*) – Free-form key-value pairs to assign to the metadata. Defaults to None.
 
 
 
@@ -510,6 +475,38 @@ Returns the type of the feature with the given id
 * **Return type**
 
     str
+
+
+
+#### get_numeric_features_columns()
+Returns list of numeric features columns
+
+
+* **Returns**
+
+    The list of numberic features columns
+
+
+
+* **Return type**
+
+    list
+
+
+
+#### get_categorical_features_columns()
+Returns list of categorical features columns
+
+
+* **Returns**
+
+    The list of categorical features columns
+
+
+
+* **Return type**
+
+    list
 
 
 

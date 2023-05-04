@@ -16,3 +16,20 @@ class TimeSeriesUnivariateInspection(TestPlan):
     name = "time_series_univariate_inspection"
     required_context = ["dataset"]
     tests = [TimeSeriesUnivariateInspectionHistogram, TimeSeriesUnivariateInspectionRaw]
+
+    def _results_description(self, html: str = ""):
+        description = """
+        This section provides a preliminary understanding of the target variable(s)
+        used in the time series dataset. It visualizations that present the raw time
+        series data and a histogram of the target variable(s).
+
+        The raw time series data provides a visual inspection of the target variable's
+        behavior over time. This helps to identify any patterns or trends in the data,
+        as well as any potential outliers or anomalies. The histogram of the target
+        variable displays the distribution of values, providing insight into the range
+        and frequency of values observed in the data.
+        """
+
+        html += f'<div class="result">{description}</div>'
+
+        return html

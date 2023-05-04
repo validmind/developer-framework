@@ -126,7 +126,9 @@
 <span class="sd">        Just set the dataset to the result attribute of the test plan result</span>
 <span class="sd">        and it will be logged via the `log_dataset` function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">TestPlanDatasetResult</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">TestPlanDatasetResult</span><span class="p">(</span>
+            <span class="n">result_id</span><span class="o">=</span><span class="s2">&quot;dataset_metadata&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div></div>
 

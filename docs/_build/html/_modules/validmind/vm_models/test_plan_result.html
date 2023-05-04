@@ -125,9 +125,11 @@
             <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;div class=&quot;metric-value&quot;&gt;</span>
 <span class="s2">            &lt;div class=&quot;metric-value-title&quot;&gt;</span>
-<span class="s2">                &lt;span&gt;Metric Plots&lt;/span&gt;</span>
-<span class="s2">                &lt;a onclick=&quot;showMetricPlots(this)&quot; style=&quot;cursor: pointer;&quot;&gt;</span>
-<span class="s2">                    Show All Plots</span>
+<span class="s2">                Metric Plots</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
+<span class="s2">                &lt;a onclick=&quot;showMetricPlots(this)&quot; style=&quot;cursor: pointer; color: blue;&quot;&gt;</span>
+<span class="s2">                Show All Plots</span>
 <span class="s2">                &lt;/a&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
 <span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
@@ -168,6 +170,10 @@
 <span class="k">class</span> <span class="nc">TestPlanResult</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Class for test plan results&quot;&quot;&quot;</span>
 
+    <span class="c1"># id of the result, can be set by the subclass. This helps</span>
+    <span class="c1"># looking up results later on</span>
+    <span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;May be overridden by subclasses&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
@@ -195,6 +201,9 @@
 
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;TestPlanDatasetResult(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;)&#39;</span>
+
     <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;h4&gt;Logged the following dataset to the ValidMind platform:&lt;/h4&gt;&quot;</span>
         <span class="k">return</span> <span class="n">html</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
@@ -212,11 +221,17 @@
     <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metric</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, metric, figures)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, figures)&#39;</span>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, metric, figures)&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(result_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s2">, figures)&quot;</span>
 
     <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;dataset_description&quot;</span><span class="p">:</span>
@@ -278,6 +293,7 @@
 <span class="sd">        &lt;/div&gt;</span>
 <span class="sd">        &lt;style&gt;</span>
 <span class="sd">            .metric-result {</span>
+<span class="sd">                background-color: #F5F5F5;</span>
 <span class="sd">                border: 1px solid #e0e0e0;</span>
 <span class="sd">                border-radius: 4px;</span>
 <span class="sd">                padding: 10px;</span>
@@ -285,8 +301,9 @@
 <span class="sd">            }</span>
 <span class="sd">            .metric-result-body {</span>
 <span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: row;</span>
+<span class="sd">                flex-direction: column;</span>
 <span class="sd">                justify-content: space-between;</span>
+<span class="sd">                gap: 10px;</span>
 <span class="sd">            }</span>
 <span class="sd">            .metric-body-column {</span>
 <span class="sd">                display: flex;</span>
@@ -295,8 +312,8 @@
 <span class="sd">                width: 33%;</span>
 <span class="sd">            }</span>
 <span class="sd">            .metric-body-column-title {</span>
-<span class="sd">                font-size: 14px;</span>
-<span class="sd">                font-weight: 500;</span>
+<span class="sd">                font-size: 16px;</span>
+<span class="sd">                font-weight: 600;</span>
 <span class="sd">            }</span>
 <span class="sd">            .metric-value {</span>
 <span class="sd">                display: flex;</span>
@@ -305,8 +322,8 @@
 <span class="sd">                margin-top: 15px;</span>
 <span class="sd">            }</span>
 <span class="sd">            .metric-value-title {</span>
-<span class="sd">                font-size: 14px;</span>
-<span class="sd">                font-weight: 500;</span>
+<span class="sd">                font-size: 16px;</span>
+<span class="sd">                font-weight: 600;</span>
 <span class="sd">            }</span>
 <span class="sd">            .metric-value-value {</span>
 <span class="sd">                font-size: 14px;</span>
@@ -319,6 +336,7 @@
 <span class="sd">                max-height: 500px !important;</span>
 <span class="sd">                height: 100%;</span>
 <span class="sd">                width: auto;</span>
+<span class="sd">                max-width: 800px;</span>
 <span class="sd">            }</span>
 <span class="sd">        &lt;/style&gt;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -426,19 +444,29 @@
     <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">test_results</span><span class="p">:</span> <span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, test_results)&#39;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, figures)&#39;</span>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, test_results)&#39;</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, figures)&#39;</span>
 
     <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">html</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
         <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;h4&gt;Logged the following test result to the ValidMind platform:&lt;/h4&gt;</span>
-<span class="s2">        &lt;div class=&quot;test-result&quot;&gt;</span>
-<span class="s2">            &lt;div class=&quot;test-result-header&quot;&gt;</span>
+<span class="s2">        &lt;div class=&quot;metric-result&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
 <span class="s2">                &lt;div class=&quot;test-result-header-title&quot;&gt;</span>
 <span class="s2">                    &lt;span class=&quot;test-result-header-title-text&quot;&gt;</span>
 <span class="s2">                        </span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span>
@@ -447,33 +475,35 @@
 <span class="s2">                        </span><span class="si">{</span><span class="s2">&quot;✅&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">passed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;❌&quot;</span><span class="si">}</span>
 <span class="s2">                    &lt;/span&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;a onclick=&quot;toggleTestResults(this)&quot; style=&quot;cursor: pointer;&quot;&gt;</span>
-<span class="s2">                    See Result Details</span>
-<span class="s2">                &lt;/a&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;test-result-body&quot;&gt;</span>
-<span class="s2">                &lt;div class=&quot;test-result-body-column&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-title&quot;&gt;Test Name&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
+<span class="s2">                &lt;div class=&quot;metric-body-column&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-title&quot;&gt;Test Name&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;div class=&quot;test-result-body-column&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-title&quot;&gt;Category&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;metric-body-column&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-title&quot;&gt;Category&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;div class=&quot;test-result-body-column&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-title&quot;&gt;Passed&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">passed</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;metric-body-column&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-title&quot;&gt;Passed&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">passed</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;div class=&quot;test-result-body-column&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-title&quot;&gt;Params&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;test-result-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
+<span class="s2">                &lt;div class=&quot;metric-body-column&quot;&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-title&quot;&gt;Params&lt;/div&gt;</span>
+<span class="s2">                    &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">                &lt;/div&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
 <span class="s2">            &lt;div class=&quot;results-objs&quot; style=&quot;display: none;&quot;&gt;</span>
 <span class="s2">                &lt;div class=&quot;results-objs-title&quot;&gt;Results&lt;/div&gt;</span>
 <span class="s2">                &lt;div class=&quot;results-objs-body&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">results</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;test-result-body&quot;&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
+<span class="s2">                &lt;a onclick=&quot;toggleTestResults(this)&quot; style=&quot;margin-top: 10px; cursor: pointer; color: blue;&quot;&gt;</span>
+<span class="s2">                    See Result Details</span>
+<span class="s2">                &lt;/a&gt;</span>
+<span class="s2">            &lt;/div&gt;</span>
+<span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
 <span class="s2">        &quot;&quot;&quot;</span>
         <span class="p">)</span>
 
@@ -485,71 +515,84 @@
 <span class="sd">            &lt;/div&gt;</span>
 <span class="sd">        &lt;/div&gt;</span>
 <span class="sd">        &lt;style&gt;</span>
-<span class="sd">            .test-result {{</span>
-<span class="sd">                border: 1px solid #ccc;</span>
-<span class="sd">                border-radius: 5px;</span>
-<span class="sd">                margin-bottom: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-header {{</span>
+<span class="sd">            .metric-result {</span>
+<span class="sd">                background-color: #F5F5F5;</span>
+<span class="sd">                border: 1px solid #e0e0e0;</span>
+<span class="sd">                border-radius: 4px;</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">                margin: 10px 0;</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-result-body {</span>
 <span class="sd">                display: flex;</span>
+<span class="sd">                flex-direction: column;</span>
 <span class="sd">                justify-content: space-between;</span>
-<span class="sd">                align-items: center;</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-header-title {{</span>
+<span class="sd">                gap: 10px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-body-column {</span>
 <span class="sd">                display: flex;</span>
-<span class="sd">                align-items: center;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-header-title-text {{</span>
-<span class="sd">                font-weight: bold;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-header-title-icon {{</span>
-<span class="sd">                margin-left: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-body {{</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-body-column {{</span>
-<span class="sd">                flex: 1;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-body-column-title {{</span>
-<span class="sd">                font-weight: bold;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .test-result-body-column-value {{</span>
-<span class="sd">                margin-top: 5px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .results-objs {{</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .results-objs-title {{</span>
-<span class="sd">                font-weight: bold;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .results-objs-body {{</span>
-<span class="sd">                margin-top: 5px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .metric-value {{</span>
+<span class="sd">                flex-direction: column;</span>
+<span class="sd">                justify-content: space-between;</span>
+<span class="sd">                width: 33%;</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-body-column-title {</span>
+<span class="sd">                font-size: 16px;</span>
+<span class="sd">                font-weight: 600;</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-value {</span>
 <span class="sd">                display: flex;</span>
 <span class="sd">                flex-direction: column;</span>
 <span class="sd">                justify-content: space-between;</span>
 <span class="sd">                margin-top: 15px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .metric-value-title {{</span>
-<span class="sd">                font-size: 14px;</span>
-<span class="sd">                font-weight: 500;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .metric-value-value {{</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-value-title {</span>
+<span class="sd">                font-size: 16px;</span>
+<span class="sd">                font-weight: 600;</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-value-value {</span>
 <span class="sd">                font-size: 14px;</span>
 <span class="sd">                font-weight: 500;</span>
 <span class="sd">                margin-top: 10px;</span>
-<span class="sd">            }}</span>
-<span class="sd">            .metric-plot img {{</span>
+<span class="sd">            }</span>
+<span class="sd">            .metric-plot img {</span>
 <span class="sd">                margin-left: auto !important;</span>
 <span class="sd">                margin-right: auto !important;</span>
 <span class="sd">                max-height: 500px !important;</span>
 <span class="sd">                height: 100%;</span>
 <span class="sd">                width: auto;</span>
-<span class="sd">            }}</span>
+<span class="sd">                max-width: 800px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .test-result {</span>
+<span class="sd">                border: 1px solid #ccc;</span>
+<span class="sd">                border-radius: 5px;</span>
+<span class="sd">                margin-bottom: 10px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .test-result-header {</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                justify-content: space-between;</span>
+<span class="sd">                align-items: center;</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .test-result-header-title {</span>
+<span class="sd">                display: flex;</span>
+<span class="sd">                align-items: center;</span>
+<span class="sd">            }</span>
+<span class="sd">            .test-result-header-title-text {</span>
+<span class="sd">                text-decoration: underline;</span>
+<span class="sd">                font-size: 18px;</span>
+<span class="sd">                font-weight: 600;</span>
+<span class="sd">            }</span>
+<span class="sd">            .test-result-header-title-icon {</span>
+<span class="sd">                margin-left: 10px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .results-objs {</span>
+<span class="sd">                padding: 10px;</span>
+<span class="sd">            }</span>
+<span class="sd">            .results-objs-title {</span>
+<span class="sd">                font-weight: bold;</span>
+<span class="sd">            }</span>
+<span class="sd">            .results-objs-body {</span>
+<span class="sd">                margin-top: 5px;</span>
+<span class="sd">            }</span>
 <span class="sd">        &lt;/style&gt;</span>
 <span class="sd">        &lt;script&gt;</span>
 <span class="sd">            function toggleTestResults(btn) {{</span>

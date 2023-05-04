@@ -90,6 +90,8 @@
 <span class="k">class</span> <span class="nc">Metric</span><span class="p">(</span><span class="n">TestContextUtils</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metric objects track the schema supported by the ValidMind API</span>
+
+<span class="sd">    TODO: Metric should validate required context too</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Test Context</span>
@@ -139,7 +141,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            TestPlanResult: The test plan result object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">test_plan_result</span> <span class="o">=</span> <span class="n">TestPlanMetricResult</span><span class="p">()</span>
+        <span class="n">test_plan_result</span> <span class="o">=</span> <span class="n">TestPlanMetricResult</span><span class="p">(</span><span class="n">result_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">metric_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">test_plan_result</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">MetricResult</span><span class="p">(</span>
