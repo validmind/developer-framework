@@ -16,6 +16,8 @@ from .tabular_datasets import (
     TabularDataset,
     TabularDataQuality,
     TabularDatasetDescription,
+    TimeSeriesDataQuality,
+    TimeSeriesDataset,
 )
 from .statsmodels_timeseries import (
     NormalityTestPlan,
@@ -42,6 +44,8 @@ core_test_plans = {
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
     "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
+    "time_series_data_quality": TimeSeriesDataQuality,
+    "time_series_dataset": TimeSeriesDataset,
 }
 
 # These test plans can be added by the user
