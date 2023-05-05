@@ -79,9 +79,13 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.ar_model</span> <span class="kn">import</span> <span class="n">AutoReg</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.arima.model</span> <span class="kn">import</span> <span class="n">ARIMA</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="kn">import</span> <span class="n">adfuller</span>
 
 
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="p">(</span>
@@ -174,7 +178,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionRaw"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesUnivariateInspectionRaw</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesLinePlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesLinePlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a visual analysis of time series data by plotting the</span>
 <span class="sd">    raw time series. The input dataset can have multiple time series</span>
@@ -182,9 +186,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_univariate_inspection_raw&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionRaw.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesLinePlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time series columns must be provided in params&quot;</span><span class="p">)</span>
 
@@ -202,9 +206,10 @@
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">column_index_name</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">x</span><span class="o">=</span><span class="n">column_index_name</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time Series: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">column_index_name</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
             <span class="c1"># Rotate x-axis labels and set the number of x-axis ticks</span>
@@ -221,7 +226,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionHistogram"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesUnivariateInspectionHistogram</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesHistogram"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesHistogram</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a visual analysis of time series data by plotting the</span>
 <span class="sd">    histogram. The input dataset can have multiple time series if</span>
@@ -229,9 +234,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_univariate_inspection_histogram&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time series columns must be provided in params&quot;</span><span class="p">)</span>
 
@@ -261,6 +266,226 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
             <span class="n">figures</span><span class="o">=</span><span class="n">figures</span><span class="p">,</span>
         <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ScatterPlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot">[docs]</a><span class="k">class</span> <span class="nc">ScatterPlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a visual analysis of data by plotting a scatter plot matrix for all columns</span>
+<span class="sd">    in the dataset. The input dataset can have multiple columns (features) if necessary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;scatter_plot&quot;</span>
+
+<div class="viewcode-block" id="ScatterPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Columns must be provided in params&quot;</span><span class="p">)</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Provided &#39;columns&#39; must exist in the dataset&quot;</span><span class="p">)</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">diag_kind</span><span class="o">=</span><span class="s2">&quot;kde&quot;</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Scatter Plot Matrix&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="c1"># Get the current figure</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+        <span class="n">figures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="n">figures</span><span class="o">=</span><span class="n">figures</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="LaggedCorrelationHeatmap"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap">[docs]</a><span class="k">class</span> <span class="nc">LaggedCorrelationHeatmap</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a heatmap of correlations between the target variable and the lags of independent variables in the dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;lagged_correlation_heatmap&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_compute_correlations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span><span class="p">):</span>
+        <span class="n">correlations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">),</span> <span class="n">num_lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ind_var_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">temp_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="n">target_col</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="n">target_col</span><span class="p">],</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ind_var_col</span><span class="si">}</span><span class="s2">_lag</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="n">ind_var_col</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">lag</span><span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+                <span class="n">temp_df</span> <span class="o">=</span> <span class="n">temp_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+                <span class="n">corr</span> <span class="o">=</span> <span class="n">temp_df</span><span class="p">[</span><span class="n">target_col</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">temp_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ind_var_col</span><span class="si">}</span><span class="s2">_lag</span><span class="si">{</span><span class="n">lag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+
+                <span class="n">correlations</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">lag</span><span class="p">]</span> <span class="o">=</span> <span class="n">corr</span>
+
+        <span class="k">return</span> <span class="n">correlations</span>
+
+    <span class="k">def</span> <span class="nf">_plot_heatmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">correlations</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span><span class="p">):</span>
+        <span class="n">correlation_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">correlations</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;lag_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">independent_vars</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">correlation_df</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;coolwarm&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+            <span class="s2">&quot;Heatmap of Correlations between Target Variable and Lags of Independent Variables&quot;</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Lags&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Independent Variables&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LaggedCorrelationHeatmap.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;target_col&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="ow">or</span> <span class="s2">&quot;independent_vars&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Both &#39;target_col&#39; and &#39;independent_vars&#39; must be provided in params&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">target_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;target_col&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">target_col</span> <span class="o">=</span> <span class="n">target_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;target_col&#39; must be a single string or a list containing a single string&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">independent_vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;independent_vars&quot;</span><span class="p">]</span>
+        <span class="n">num_lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_lags&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
+
+        <span class="n">correlations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_correlations</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span>
+        <span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_heatmap</span><span class="p">(</span><span class="n">correlations</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span><span class="p">)</span>
+
+        <span class="n">figures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="n">figures</span><span class="o">=</span><span class="n">figures</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AutoAR"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR">[docs]</a><span class="k">class</span> <span class="nc">AutoAR</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Automatically detects the AR order of a time series using both BIC and AIC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>  <span class="c1"># assume this value</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
+
+<div class="viewcode-block" id="AutoAR.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;max_ar_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_ar_order must be provided in params&quot;</span><span class="p">)</span>
+
+        <span class="n">max_ar_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_ar_order&quot;</span><span class="p">]</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+            <span class="c1"># Check for stationarity using the Augmented Dickey-Fuller test</span>
+            <span class="n">adf_test</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">adf_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> is not stationary. Results may be inaccurate.&quot;</span><span class="p">)</span>
+
+            <span class="n">ar_orders</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">bic_values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">aic_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">ar_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_ar_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">AutoReg</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">ar_order</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+                    <span class="n">ar_orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ar_order</span><span class="p">)</span>
+                    <span class="n">bic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">)</span>
+                    <span class="n">aic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fitting AR(</span><span class="si">{</span><span class="n">ar_order</span><span class="si">}</span><span class="s2">) model for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                <span class="s2">&quot;AR orders&quot;</span><span class="p">:</span> <span class="n">ar_orders</span><span class="p">,</span>
+                <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">bic_values</span><span class="p">,</span>
+                <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">aic_values</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AutoMA"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA">[docs]</a><span class="k">class</span> <span class="nc">AutoMA</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Automatically detects the MA order of a time series using both BIC and AIC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>  <span class="c1"># assume this value</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
+
+<div class="viewcode-block" id="AutoMA.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;max_ma_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_ma_order must be provided in params&quot;</span><span class="p">)</span>
+
+        <span class="n">max_ma_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_ma_order&quot;</span><span class="p">]</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+            <span class="c1"># Check for stationarity using the Augmented Dickey-Fuller test</span>
+            <span class="n">adf_test</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">adf_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> is not stationary. Results may be inaccurate.&quot;</span><span class="p">)</span>
+
+            <span class="n">ma_orders</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">bic_values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">aic_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">ma_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_ma_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ma_order</span><span class="p">))</span>
+                    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+                    <span class="n">ma_orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ma_order</span><span class="p">)</span>
+                    <span class="n">bic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">)</span>
+                    <span class="n">aic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fitting MA(</span><span class="si">{</span><span class="n">ma_order</span><span class="si">}</span><span class="s2">) model for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                <span class="s2">&quot;MA orders&quot;</span><span class="p">:</span> <span class="n">ma_orders</span><span class="p">,</span>
+                <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">bic_values</span><span class="p">,</span>
+                <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">aic_values</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

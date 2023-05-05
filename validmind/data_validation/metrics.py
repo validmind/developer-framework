@@ -6,9 +6,13 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.stattools import adfuller
 
 
 from ..vm_models import (
@@ -101,7 +105,7 @@ class DatasetDescription(Metric):
         return self.cache_results(self.dataset.fields)
 
 
-class TimeSeriesUnivariateInspectionRaw(Metric):
+class TimeSeriesLinePlot(Metric):
     """
     Generates a visual analysis of time series data by plotting the
     raw time series. The input dataset can have multiple time series
@@ -109,7 +113,7 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
     """
 
     type = "dataset"
-    key = "time_series_univariate_inspection_raw"
+    key = "time_series_line_plot"
 
     def run(self):
         if "columns" not in self.params:
@@ -129,9 +133,10 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
         for col in columns:
             plt.figure(figsize=(10, 6))
             fig, _ = plt.subplots()
-            ax = sns.lineplot(data=df, x="Date", y=col)
+            column_index_name = df.index.name
+            ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
             plt.title(f"Time Series: {col}")
-            plt.xlabel("Date")
+            plt.xlabel(column_index_name)
             plt.ylabel(col)
 
             # Rotate x-axis labels and set the number of x-axis ticks
@@ -148,7 +153,7 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
         )
 
 
-class TimeSeriesUnivariateInspectionHistogram(Metric):
+class TimeSeriesHistogram(Metric):
     """
     Generates a visual analysis of time series data by plotting the
     histogram. The input dataset can have multiple time series if
@@ -156,7 +161,7 @@ class TimeSeriesUnivariateInspectionHistogram(Metric):
     """
 
     type = "dataset"
-    key = "time_series_univariate_inspection_histogram"
+    key = "time_series_histogram"
 
     def run(self):
         if "columns" not in self.params:
@@ -188,3 +193,223 @@ class TimeSeriesUnivariateInspectionHistogram(Metric):
         return self.cache_results(
             figures=figures,
         )
+
+
+class ScatterPlot(Metric):
+    """
+    Generates a visual analysis of data by plotting a scatter plot matrix for all columns
+    in the dataset. The input dataset can have multiple columns (features) if necessary.
+    """
+
+    type = "dataset"
+    key = "scatter_plot"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Columns must be provided in params")
+
+        columns = self.params["columns"]
+        df = self.dataset.df[columns]
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        sns.pairplot(data=df, diag_kind="kde")
+
+        plt.title("Scatter Plot Matrix")
+        plt.tight_layout()
+
+        # Get the current figure
+        fig = plt.gcf()
+
+        figures = []
+        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class LaggedCorrelationHeatmap(Metric):
+    """
+    Generates a heatmap of correlations between the target variable and the lags of independent variables in the dataset.
+    """
+
+    type = "dataset"
+    key = "lagged_correlation_heatmap"
+
+    def _compute_correlations(self, df, target_col, independent_vars, num_lags):
+        correlations = np.zeros((len(independent_vars), num_lags + 1))
+
+        for i, ind_var_col in enumerate(independent_vars):
+            for lag in range(num_lags + 1):
+                temp_df = pd.DataFrame(
+                    {
+                        target_col: df[target_col],
+                        f"{ind_var_col}_lag{lag}": df[ind_var_col].shift(lag),
+                    }
+                )
+
+                temp_df = temp_df.dropna()
+
+                corr = temp_df[target_col].corr(temp_df[f"{ind_var_col}_lag{lag}"])
+
+                correlations[i, lag] = corr
+
+        return correlations
+
+    def _plot_heatmap(self, correlations, independent_vars, num_lags):
+        correlation_df = pd.DataFrame(
+            correlations,
+            columns=[f"lag_{i}" for i in range(num_lags + 1)],
+            index=independent_vars,
+        )
+
+        plt.figure(figsize=(12, 3))
+        sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
+        plt.title(
+            "Heatmap of Correlations between Target Variable and Lags of Independent Variables"
+        )
+        plt.xlabel("Lags")
+        plt.ylabel("Independent Variables")
+
+        return plt.gcf()
+
+    def run(self):
+        if "target_col" not in self.params or "independent_vars" not in self.params:
+            raise ValueError(
+                "Both 'target_col' and 'independent_vars' must be provided in params"
+            )
+
+        target_col = self.params["target_col"]
+        if isinstance(target_col, list) and len(target_col) == 1:
+            target_col = target_col[0]
+
+        if not isinstance(target_col, str):
+            raise ValueError(
+                "The 'target_col' must be a single string or a list containing a single string"
+            )
+
+        independent_vars = self.params["independent_vars"]
+        num_lags = self.params.get("num_lags", 10)
+
+        df = self.dataset.df
+
+        correlations = self._compute_correlations(
+            df, target_col, independent_vars, num_lags
+        )
+        fig = self._plot_heatmap(correlations, independent_vars, num_lags)
+
+        figures = []
+        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class AutoAR(Metric):
+    """
+    Automatically detects the AR order of a time series using both BIC and AIC.
+    """
+
+    type = "dataset"  # assume this value
+    key = "auto_ar"
+
+    def run(self):
+        if "max_ar_order" not in self.params:
+            raise ValueError("max_ar_order must be provided in params")
+
+        max_ar_order = self.params["max_ar_order"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col in df.columns:
+            series = df[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ar_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ar_order in range(0, max_ar_order + 1):
+                try:
+                    model = AutoReg(series, lags=ar_order, old_names=False)
+                    model_fit = model.fit()
+
+                    ar_orders.append(ar_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting AR({ar_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "AR orders": ar_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)
+
+
+class AutoMA(Metric):
+    """
+    Automatically detects the MA order of a time series using both BIC and AIC.
+    """
+
+    type = "dataset"  # assume this value
+    key = "auto_ma"
+
+    def run(self):
+        if "max_ma_order" not in self.params:
+            raise ValueError("max_ma_order must be provided in params")
+
+        max_ma_order = self.params["max_ma_order"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col in df.columns:
+            series = df[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ma_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ma_order in range(0, max_ma_order + 1):
+                try:
+                    model = ARIMA(series, order=(0, 0, ma_order))
+                    model_fit = model.fit()
+
+                    ma_orders.append(ma_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting MA({ma_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "MA orders": ma_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)

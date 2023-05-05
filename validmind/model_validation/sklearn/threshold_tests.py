@@ -760,9 +760,9 @@ class RobustnessDiagnosisTest(ThresholdTest):
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
         y_prediction = self.model.predict(df)
-        y_prediction = y_prediction.astype(y_true.dtypes)
+        y_prediction = [round(value) for value in y_prediction]
         for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true, y_prediction) * 100)
+            results[metric].append(metric_fn(y_true.values, y_prediction) * 100)
 
     def add_noise_std_dev(
         self, values: List[float], x_std_dev: float
@@ -813,13 +813,18 @@ class RobustnessDiagnosisTest(ThresholdTest):
             data=df,
             x="Perturbation Size",
             y="accuracy",
+            hue="Dataset Type",
             style="Dataset Type",
             linewidth=3,
             markers=True,
+            markersize=10,
+            dashes=False,
+            palette=['red', 'blue'],
             ax=ax,
         )
         ax.tick_params(axis="x")
         ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
+        ax.legend(fontsize=22)
         ax.set_xlabel(
             "Perturbation Size ( X * Standard Deviation)", weight="bold", fontsize=22
         )

@@ -96,6 +96,38 @@ Returns the type of the feature with the given id
 
 
 
+#### get_numeric_features_columns()
+Returns list of numeric features columns
+
+
+* **Returns**
+
+    The list of numberic features columns
+
+
+
+* **Return type**
+
+    list
+
+
+
+#### get_categorical_features_columns()
+Returns list of categorical features columns
+
+
+* **Returns**
+
+    The list of categorical features columns
+
+
+
+* **Return type**
+
+    list
+
+
+
 #### serialize()
 Serializes the model to a dictionary so it can be sent to the API
 
@@ -245,6 +277,8 @@ Serializes the Figure to a dictionary so it can be sent to the API
 Bases: `TestContextUtils`
 
 Metric objects track the schema supported by the ValidMind API
+
+TODO: Metric should validate required context too
 
 
 #### test_context(_: TestContex_ )
@@ -480,7 +514,7 @@ Returns a Pandas DataFrame for the dataset, first checking if
 we passed in a Dataset or a DataFrame
 
 
-### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
+### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
 Bases: `object`
 
 Base class for test plans. Test plans are used to define any
@@ -556,7 +590,12 @@ html table with the results of each test. This html table will be displayed in a
 VS Code, Jupyter or other notebook environment.
 
 
-### _class_ validmind.vm_models.TestPlanDatasetResult(dataset: Dataset | None = None)
+#### get_results(result_id: str | None = None)
+Returns one or more results of the test plan. Includes results from
+sub test plans.
+
+
+### _class_ validmind.vm_models.TestPlanDatasetResult(result_id: str | None = None, dataset: Dataset | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for datasets that run as part of a test plan
@@ -568,7 +607,7 @@ Result wrapper for datasets that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanMetricResult(figures: List[Figure] | None = None, metric: MetricResult | None = None)
+### _class_ validmind.vm_models.TestPlanMetricResult(result_id: str | None = None, figures: List[Figure] | None = None, metric: MetricResult | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for metrics that run as part of a test plan
@@ -582,7 +621,7 @@ Result wrapper for metrics that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanModelResult(model: Model | None = None)
+### _class_ validmind.vm_models.TestPlanModelResult(result_id: str | None = None, model: Model | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for models that run as part of a test plan
@@ -594,7 +633,7 @@ Result wrapper for models that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanTestResult(figures: List[Figure] | None = None, test_results: TestResults | None = None)
+### _class_ validmind.vm_models.TestPlanTestResult(result_id: str | None = None, figures: List[Figure] | None = None, test_results: TestResults | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for test results produced by the tests that run as part of a test plan
@@ -644,6 +683,8 @@ Bases: `TestContextUtils`
 A threshold test is a combination of a metric/plot we track and a
 corresponding set of parameters and thresholds values that allow
 us to determine whether the metric/plot passes or fails.
+
+TODO: ThresholdTest should validate required context too
 
 
 #### test_context(_: TestContex_ )
