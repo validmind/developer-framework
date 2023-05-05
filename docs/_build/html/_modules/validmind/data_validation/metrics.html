@@ -178,7 +178,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionRaw"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesUnivariateInspectionRaw</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesLinePlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesLinePlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a visual analysis of time series data by plotting the</span>
 <span class="sd">    raw time series. The input dataset can have multiple time series</span>
@@ -186,9 +186,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_univariate_inspection_raw&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionRaw.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesLinePlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time series columns must be provided in params&quot;</span><span class="p">)</span>
 
@@ -206,9 +206,10 @@
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
             <span class="n">fig</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">column_index_name</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">x</span><span class="o">=</span><span class="n">column_index_name</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time Series: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">column_index_name</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
             <span class="c1"># Rotate x-axis labels and set the number of x-axis ticks</span>
@@ -225,7 +226,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionHistogram"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesUnivariateInspectionHistogram</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesHistogram"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesHistogram</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a visual analysis of time series data by plotting the</span>
 <span class="sd">    histogram. The input dataset can have multiple time series if</span>
@@ -233,9 +234,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_univariate_inspection_histogram&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
 
-<div class="viewcode-block" id="TimeSeriesUnivariateInspectionHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Time series columns must be provided in params&quot;</span><span class="p">)</span>
 
