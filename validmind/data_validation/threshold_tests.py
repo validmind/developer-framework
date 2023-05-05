@@ -378,9 +378,7 @@ class OutliersTest(ThresholdTest):
         outliers_table = self._identify_outliers(self.df[num_features_columns], zscore_threshold)
         fig = self._plot_outliers(self.df, outliers_table, use_subplots=False)
         passed = outliers_table.empty
-        print(outliers_table)
         outliers_table["Date"] = outliers_table["Date"].astype(str)
-        print(outliers_table.to_dict(orient="list"))
 
         test_results.append(
             TestResult(
