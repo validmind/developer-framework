@@ -188,3 +188,43 @@ class TimeSeriesUnivariateInspectionHistogram(Metric):
         return self.cache_results(
             figures=figures,
         )
+
+
+class ScatterPlot(Metric):
+    """
+    Generates a visual analysis of data by plotting a scatter plot matrix for all columns
+    in the dataset. The input dataset can have multiple columns (features) if necessary.
+    """
+
+    type = "dataset"
+    key = "scatter_plot"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Columns must be provided in params")
+
+        columns = self.params["columns"]
+        df = self.dataset.df[columns]
+        print(df)
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        pair_grid = sns.pairplot(data=df, diag_kind="kde")
+        print(pair_grid)
+
+        plt.title("Scatter Plot Matrix")
+        plt.tight_layout()
+
+        # Get the current figure
+        fig = plt.gcf()
+        print(fig)
+
+        figures = []
+        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        print(figures)
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )

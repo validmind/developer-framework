@@ -25,7 +25,10 @@ from .statsmodels_timeseries import (
     StationarityTestPlan,
     TimeSeries,
 )
-from .time_series import TimeSeriesUnivariateInspection
+from .time_series import (
+    TimeSeriesUnivariateInspection,
+    TimeSeriesMultivariate,
+)
 
 core_test_plans = {
     "sklearn_classifier_metrics": SKLearnClassifierMetrics,
@@ -42,6 +45,7 @@ core_test_plans = {
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
     "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
+    "time_series_multivariate": TimeSeriesMultivariate,
 }
 
 # These test plans can be added by the user
