@@ -105,7 +105,7 @@ class DatasetDescription(Metric):
         return self.cache_results(self.dataset.fields)
 
 
-class TimeSeriesUnivariateInspectionRaw(Metric):
+class TimeSeriesLinePlot(Metric):
     """
     Generates a visual analysis of time series data by plotting the
     raw time series. The input dataset can have multiple time series
@@ -113,7 +113,7 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
     """
 
     type = "dataset"
-    key = "time_series_univariate_inspection_raw"
+    key = "time_series_line_plot"
 
     def run(self):
         if "columns" not in self.params:
@@ -133,9 +133,10 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
         for col in columns:
             plt.figure(figsize=(10, 6))
             fig, _ = plt.subplots()
-            ax = sns.lineplot(data=df, x="Date", y=col)
+            column_index_name = df.index.name
+            ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
             plt.title(f"Time Series: {col}")
-            plt.xlabel("Date")
+            plt.xlabel(column_index_name)
             plt.ylabel(col)
 
             # Rotate x-axis labels and set the number of x-axis ticks
@@ -152,7 +153,7 @@ class TimeSeriesUnivariateInspectionRaw(Metric):
         )
 
 
-class TimeSeriesUnivariateInspectionHistogram(Metric):
+class TimeSeriesHistogram(Metric):
     """
     Generates a visual analysis of time series data by plotting the
     histogram. The input dataset can have multiple time series if
@@ -160,7 +161,7 @@ class TimeSeriesUnivariateInspectionHistogram(Metric):
     """
 
     type = "dataset"
-    key = "time_series_univariate_inspection_histogram"
+    key = "time_series_histogram"
 
     def run(self):
         if "columns" not in self.params:

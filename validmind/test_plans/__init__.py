@@ -26,7 +26,7 @@ from .statsmodels_timeseries import (
     TimeSeries,
 )
 from .time_series import (
-    TimeSeriesUnivariateInspection,
+    TimeSeriesUnivariate,
     TimeSeriesMultivariate,
 )
 
@@ -44,7 +44,7 @@ core_test_plans = {
     "unit_root": UnitRoot,
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
-    "time_series_univariate_inspection": TimeSeriesUnivariateInspection,
+    "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
 }
 

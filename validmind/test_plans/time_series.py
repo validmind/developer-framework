@@ -3,8 +3,8 @@ Time Series Test Plans
 """
 from ..vm_models import TestPlan
 from ..data_validation.metrics import (
-    TimeSeriesUnivariateInspectionHistogram,
-    TimeSeriesUnivariateInspectionRaw,
+    TimeSeriesHistogram,
+    TimeSeriesLinePlot,
     ScatterPlot,
     LaggedCorrelationHeatmap,
     AutoAR,
@@ -12,16 +12,16 @@ from ..data_validation.metrics import (
 )
 
 
-class TimeSeriesUnivariateInspection(TestPlan):
+class TimeSeriesUnivariate(TestPlan):
     """
     Test plan to perform univariate inspection tests.
     """
 
-    name = "time_series_univariate_inspection"
+    name = "time_series_univariate"
     required_context = ["dataset"]
     tests = [
-        TimeSeriesUnivariateInspectionHistogram,
-        TimeSeriesUnivariateInspectionRaw,
+        TimeSeriesLinePlot,
+        TimeSeriesHistogram,
         AutoAR,
         AutoMA,
     ]
