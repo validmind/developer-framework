@@ -48,6 +48,7 @@ core_test_plans = {
     "timeseries": TimeSeries,
     "time_series_data_quality": TimeSeriesDataQuality,
     "time_series_dataset": TimeSeriesDataset,
+    "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
 }
 
