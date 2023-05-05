@@ -24,8 +24,6 @@ Accuracy Score
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.CharacteristicStabilityIndex(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -44,8 +42,6 @@ Characteristic Stability Index between two datasets
 Calculates PSI for each of the dataset features
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.ConfusionMatrix(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -61,8 +57,6 @@ Confusion Matrix
 #### run()
 Run the metric calculation and cache its results
 
-
-#### test_context(_: TestContex_ )
 
 ### _class_ validmind.model_validation.sklearn.metrics.F1Score(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
@@ -80,8 +74,6 @@ F1 Score
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.PermutationFeatureImportance(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -97,8 +89,6 @@ Permutation Feature Importance
 #### run()
 Run the metric calculation and cache its results
 
-
-#### test_context(_: TestContex_ )
 
 ### _class_ validmind.model_validation.sklearn.metrics.PrecisionRecallCurve(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
@@ -116,8 +106,6 @@ Precision Recall Curve
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.PrecisionScore(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -133,8 +121,6 @@ Precision Score
 #### run()
 Run the metric calculation and cache its results
 
-
-#### test_context(_: TestContex_ )
 
 ### _class_ validmind.model_validation.sklearn.metrics.RecallScore(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
@@ -152,8 +138,6 @@ Recall Score
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.ROCAUCScore(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -170,8 +154,6 @@ ROC AUC Score
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.metrics.ROCCurve(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -187,8 +169,6 @@ ROC Curve
 #### run()
 Run the metric calculation and cache its results
 
-
-#### test_context(_: TestContex_ )
 
 ### _class_ validmind.model_validation.sklearn.metrics.SHAPGlobalImportance(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `TestContextUtils`
@@ -227,8 +207,6 @@ Population Stability Index between two datasets
 #### run()
 Run the metric calculation and cache its results
 
-
-#### test_context(_: TestContex_ )
 ### Data Validation Threshold Tests
 
 Threshold based tests
@@ -250,8 +228,6 @@ Test that the accuracy score is above a threshold.
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.threshold_tests.F1ScoreTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
@@ -267,8 +243,6 @@ Test that the F1 score is above a threshold.
 #### run()
 Run the test and cache its results
 
-
-#### test_context(_: TestContex_ )
 
 ### _class_ validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
@@ -286,8 +260,6 @@ Test that the ROC AUC score is above a threshold.
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
@@ -300,10 +272,94 @@ Test that the training set metrics are better than the test set metrics.
 
 #### default_params(_: ClassVar[dict_ _ = {'metrics': ['accuracy', 'precision', 'recall', 'f1']_ )
 
-#### default_metrics(_ = {'accuracy': <function accuracy_score>, 'f1': <function f1_score>, 'precision': <function precision_score>, 'recall': <function recall_score>_ )
+#### default_metrics(_ = {'accuracy': <function accuracy_score>, 'f1': functools.partial(<function f1_score>, zero_division=0), 'precision': functools.partial(<function precision_score>, zero_division=0), 'recall': functools.partial(<function recall_score>, zero_division=0)_ )
 
 #### run()
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
+### _class_ validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test that identify overfit regions with high residuals by histogram slicing techniques.
+
+
+#### category(_: ClassVar[str_ _ = 'model_diagnosis_ )
+
+#### name(_: ClassVar[str_ _ = 'overfit_regions_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'cut_off_percentage': 4, 'features_columns': None_ )
+
+#### default_metrics(_ = {'accuracy': <function accuracy_score>_ )
+
+#### run()
+Run the test and cache its results
+
+
+### _class_ validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test that identify weak regions with high residuals by histogram slicing techniques.
+
+
+#### category(_: ClassVar[str_ _ = 'model_diagnosis_ )
+
+#### name(_: ClassVar[str_ _ = 'weak_spots_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'features_columns': None, 'thresholds': {'accuracy': 0.75, 'f1': 0.7, 'precision': 0.5, 'recall': 0.5}_ )
+
+#### default_metrics(_ = {'accuracy': <function accuracy_score>, 'f1': functools.partial(<function f1_score>, zero_division=0), 'precision': functools.partial(<function precision_score>, zero_division=0), 'recall': functools.partial(<function recall_score>, zero_division=0)_ )
+
+#### run()
+Run the test and cache its results
+
+
+### _class_ validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test robustness of model by perturbing the features column values
+
+
+#### category(_: ClassVar[str_ _ = 'model_diagnosis_ )
+
+#### name(_: ClassVar[str_ _ = 'robustness_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'features_columns': None, 'scaling_factor_std_dev_list': [0.01, 0.02]_ )
+
+#### default_metrics(_ = {'accuracy': <function accuracy_score>_ )
+
+#### run()
+Run the test and cache its results
+
+
+#### add_noise_std_dev(values: List[float], x_std_dev: float)
+Adds Gaussian noise to a list of values.
+
+
+* **Parameters**
+
+    
+    * **values** (*list**[**float**]*) – A list of numerical values to which noise is added.
+
+
+    * **x_std_dev** (*float*) – A scaling factor for the standard deviation of the noise.
+
+
+
+* **Returns**
+
+    A tuple containing:
+
+
+        * A list of noisy values, where each value is the sum of the corresponding value
+
+        in the input list and a randomly generated value sampled from a Gaussian distribution
+        with mean 0 and standard deviation x_std_dev times the standard deviation of the input list.
+        - The standard deviation of the input list of values.
+
+
+
+
+* **Return type**
+
+    tuple[list[float], float]
