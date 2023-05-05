@@ -6,6 +6,7 @@ from ..data_validation.metrics import (
     TimeSeriesUnivariateInspectionHistogram,
     TimeSeriesUnivariateInspectionRaw,
     ScatterPlot,
+    LaggedCorrelationHeatmap,
 )
 
 
@@ -43,7 +44,7 @@ class TimeSeriesMultivariate(TestPlan):
 
     name = "time_series_multivariate"
     required_context = ["dataset"]
-    tests = [ScatterPlot]
+    tests = [ScatterPlot, LaggedCorrelationHeatmap]
 
     def _results_description(self, html: str = ""):
         description = """
