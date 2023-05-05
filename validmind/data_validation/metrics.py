@@ -11,6 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 
 
@@ -353,6 +354,58 @@ class AutoAR(Metric):
             result = {
                 "Variable": col,
                 "AR orders": ar_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)
+
+
+class AutoMA(Metric):
+    """
+    Automatically detects the MA order of a time series using both BIC and AIC.
+    """
+
+    type = "dataset"  # assume this value
+    key = "auto_ma"
+
+    def run(self):
+        if "max_ma_order" not in self.params:
+            raise ValueError("max_ma_order must be provided in params")
+
+        max_ma_order = self.params["max_ma_order"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col in df.columns:
+            series = df[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ma_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ma_order in range(0, max_ma_order + 1):
+                try:
+                    model = ARIMA(series, order=(0, 0, ma_order))
+                    model_fit = model.fit()
+
+                    ma_orders.append(ma_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting MA({ma_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "MA orders": ma_orders,
                 "BIC": bic_values,
                 "AIC": aic_values,
             }
