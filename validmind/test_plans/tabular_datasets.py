@@ -20,6 +20,8 @@ from ..data_validation.threshold_tests import (
     SkewnessTest,
     UniqueRowsTest,
     ZerosTest,
+    OutliersTest,
+    TimeSeriesMissingValuesTest
 )
 
 
@@ -54,6 +56,8 @@ class TabularDataQuality(TestPlan):
         SkewnessTest,
         UniqueRowsTest,
         ZerosTest,
+        OutliersTest,
+        TimeSeriesMissingValuesTest
     ]
 
 

@@ -356,11 +356,11 @@ class ZerosTest(ThresholdTest):
 @dataclass
 class OutliersTest(ThresholdTest):
     """
-    Test that find outliers for time series data
+    Test that find outliers for time series data using the z-score method
     """
 
     category = "data_quality"
-    name = "outliers"
+    name = "time_series_outliers"
     default_params = {"zscore_threshold": 3}
 
     def run(self):
@@ -369,14 +369,16 @@ class OutliersTest(ThresholdTest):
             raise ValueError("zscore_threshold must be provided in params")
         zscore_threshold = self.params["zscore_threshold"]
 
+        temp_df = self.df.copy(deep=True)
+        temp_df = temp_df.dropna()
         typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(self.df)
+        dataset_types = typeset.infer_type(temp_df)
         test_results = []
         test_figures = []
         num_features_columns = [k for k, v in dataset_types.items() if str(v) == "Numeric"]
 
-        outliers_table = self._identify_outliers(self.df[num_features_columns], zscore_threshold)
-        fig = self._plot_outliers(self.df, outliers_table, use_subplots=False)
+        outliers_table = self._identify_outliers(temp_df[num_features_columns], zscore_threshold)
+        fig = self._plot_outliers(temp_df, outliers_table)
         passed = outliers_table.empty
         outliers_table["Date"] = outliers_table["Date"].astype(str)
 
@@ -392,8 +394,23 @@ class OutliersTest(ThresholdTest):
         return self.cache_results(test_results, passed=passed, figures=test_figures)
 
     def _identify_outliers(self, df, threshold):
+        """
+        Identifies and returns outliers in a pandas DataFrame using the z-score method.
+
+        Args:
+        df (pandas.DataFrame): A pandas DataFrame containing the data to be analyzed.
+        threshold (float): The absolute value of the z-score above which a value is considered an outlier.
+
+        Returns:
+        pandas.DataFrame: A DataFrame containing the variables, z-scores, threshold, and dates of the identified outliers.
+
+        Example:
+        df = pd.DataFrame({'A': [1, 2, 3, 4, 5], 'B': [6, 7, 8, 9, 10], 'C': [11, 12, 13, 14, 15]})
+        threshold = 2.5
+        outliers = _identify_outliers(df, threshold)
+        """
         z_scores = pd.DataFrame(stats.zscore(df), index=df.index, columns=df.columns)
-        outliers = z_scores[(z_scores.abs() > threshold).any(axis=1)]
+        outliers = z_scores[(z_scores > threshold).any(axis=1)]
         outlier_table = []
         for idx, row in outliers.iterrows():
             for col in df.columns:
@@ -401,10 +418,20 @@ class OutliersTest(ThresholdTest):
                     outlier_table.append({"Variable": col, "z-score": row[col], "Threshold": threshold, "Date": idx})
         return pd.DataFrame(outlier_table)
 
-    def _plot_outliers(self, df, outliers_table, use_subplots=True):
+    def _plot_outliers(self, df, outliers_table):
+        """
+        Plots time series with identified outliers.
+
+        Args:
+            df (pandas.DataFrame): Input data with time series.
+            outliers_table (pandas.DataFrame): DataFrame with identified outliers.
+
+        Returns:
+            matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
+        """
         sns.set(style="darkgrid")
         n_variables = len(df.columns)
-        fig, axes = plt.subplots(n_variables, 1, figsize=(12, 3 * n_variables), sharex=True)
+        fig, axes = plt.subplots(n_variables, 1, sharex=True)
 
         for i, col in enumerate(df.columns):
             sns.lineplot(data=df, x=df.index, y=col, ax=axes[i], label=col)
@@ -417,12 +444,157 @@ class OutliersTest(ThresholdTest):
                                 label="Outlier" if idx == 0 else "")
 
             axes[i].legend()
-            axes[i].set_ylabel("Value")
-            axes[i].set_title(f"Time Series with Outliers for {col}")
+            axes[i].set_ylabel(
+                col, weight="bold", fontsize=16
+            )
+            axes[i].set_title(
+                f"Time Series with Outliers for {col}", weight="bold", fontsize=16
+            )
 
-        plt.xlabel("Date")
+        plt.xlabel(
+            "Date", weight="bold", fontsize=16
+        )
         plt.tight_layout()
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
+        return fig
+
+
+@dataclass
+class TimeSeriesMissingValuesTest(ThresholdTest):
+    """
+    Test that the number of missing values is less than a threshold
+    """
+
+    category = "data_quality"
+    name = "time_series_missing_values"
+    default_params = {"min_threshold": 1}
+
+    def run(self):
+        # Validate threshold paremeter
+        if "min_threshold" not in self.params:
+            raise ValueError("min_threshold must be provided in params")
+        min_threshold = self.params["min_threshold"]
+
+        rows = self.df.shape[0]
+        missing = self.df.isna().sum()
+        test_results = [
+            TestResult(
+                column=col,
+                passed=missing[col] < min_threshold,
+                values={"n_missing": missing[col], "p_missing": missing[col] / rows},
+            )
+            for col in missing.index
+        ]
+
+        fig_barplot = self._barplot(self.df)
+        fig_heatmap = self._heatmap(self.df)
+        test_figures = []
+        test_figures.append(
+            Figure(
+                key=f"{self.name}:barplot",
+                figure=fig_barplot,
+                metadata={}
+            )
+        )
+        test_figures.append(
+            Figure(
+                key=f"{self.name}:heatmap",
+                figure=fig_heatmap,
+                metadata={}
+            )
+        )
+
+        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+
+    def _barplot(self, df):
+        """
+        Generate a bar plot of missing values in a pandas DataFrame.
+
+        Args:
+        df (pandas.DataFrame): The input DataFrame to plot the missing values of.
+
+        Returns:
+        matplotlib.figure.Figure: A matplotlib figure object containing the bar plot.
+        """
+        # Create a bar plot using seaborn library
+        missing_values = df.isnull().sum()
+
+        fig, ax = plt.subplots()
+        sns.barplot(
+            data=missing_values,
+            x=missing_values.index,
+            y=missing_values.values,
+            ax=ax,
+        )
+        ax.set_xticklabels(
+            labels=missing_values.index, rotation=25, fontsize=18
+        )
+        plt.yticks(
+            rotation=45, fontsize=18
+        )
+        ax.set_ylabel(
+            "Number of Missing Values", weight="bold", fontsize=18
+        )
+        ax.set_xlabel(
+            "Variables (Columns)", weight="bold", fontsize=18
+        )
+        ax.set_title(
+            "Total Number of Missing Values per Variable",
+            weight="bold",
+            fontsize=20,
+        )
+
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+
+        return fig
+
+    def _heatmap(self, df):
+        """
+        Plots a heatmap to visualize missing values in a dataframe with actual years on the x-axis.
+
+        Args:
+        df (pandas.DataFrame): The input dataframe to visualize.
+
+        Returns:
+        matplotlib.figure.Figure: A matplotlib figure object representing the heatmap plot.
+
+        Raises:
+        None
+        """
+        # Create a boolean mask for missing values
+        missing_mask = df.isnull()
+        # Set seaborn plot style
+        sns.set(style="darkgrid")
+        fig, ax = plt.subplots()
+
+        # Plot the heatmap
+        sns.heatmap(missing_mask.T, cmap='viridis', cbar=False, xticklabels=False, ax=ax)
+
+        # Add actual years on the x-axis
+        years = df.index.year.unique()
+        xticks = [df.index.get_loc(df.index[df.index.year == year][0]) for year in years]
+        plt.xticks(
+            xticks, years, rotation=45, fontsize=18
+        )
+        plt.yticks(
+            rotation=45, fontsize=18
+        )
+        plt.gca().xaxis.set_major_locator(plt.MultipleLocator(5))
+        ax.set_xlabel(
+            "Rows (Years)", weight="bold", fontsize=18
+        )
+        ax.set_ylabel(
+            "Variables (Columns)", weight="bold", fontsize=18
+        )
+        ax.set_title(
+            "Missing Values Heatmap with Actual Years in Rows",
+            weight="bold",
+            fontsize=20,
+        )
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+
         return fig
