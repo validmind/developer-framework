@@ -10,6 +10,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.tsa.stattools import adfuller
 
 
 from ..vm_models import (
@@ -305,3 +307,55 @@ class LaggedCorrelationHeatmap(Metric):
         return self.cache_results(
             figures=figures,
         )
+
+
+class AutoAR(Metric):
+    """
+    Automatically detects the AR order of a time series using both BIC and AIC.
+    """
+
+    type = "dataset"  # assume this value
+    key = "auto_ar"
+
+    def run(self):
+        if "max_ar_order" not in self.params:
+            raise ValueError("max_ar_order must be provided in params")
+
+        max_ar_order = self.params["max_ar_order"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col in df.columns:
+            series = df[col].dropna()
+
+            # Check for stationarity using the Augmented Dickey-Fuller test
+            adf_test = adfuller(series)
+            if adf_test[1] > 0.05:
+                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+
+            ar_orders = []
+            bic_values = []
+            aic_values = []
+
+            for ar_order in range(0, max_ar_order + 1):
+                try:
+                    model = AutoReg(series, lags=ar_order, old_names=False)
+                    model_fit = model.fit()
+
+                    ar_orders.append(ar_order)
+                    bic_values.append(model_fit.bic)
+                    aic_values.append(model_fit.aic)
+                except Exception as e:
+                    print(f"Error fitting AR({ar_order}) model for {col}: {e}")
+
+            result = {
+                "Variable": col,
+                "AR orders": ar_orders,
+                "BIC": bic_values,
+                "AIC": aic_values,
+            }
+            results.append(result)
+
+        return self.cache_results(results)

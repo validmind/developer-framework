@@ -44,7 +44,7 @@ core_test_plans = {
     "unit_root": UnitRoot,
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
-    "timeseries_univariate_inspection": TimeSeriesUnivariateInspection,
+    "time_series_univariate_inspection": TimeSeriesUnivariateInspection,
     "time_series_multivariate": TimeSeriesMultivariate,
 }
 
