@@ -8,7 +8,6 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
-from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import kpss
@@ -706,106 +705,6 @@ class DeterminationOfIntegrationOrderADF(Metric):
             adf_orders[col] = orders_pvalues
 
         return self.cache_results(adf_orders)
-
-
-class AutoAR(Metric):
-    """
-    Automatically detects the AR order of a time series using both BIC and AIC.
-    """
-
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "auto_ar"
-
-    max_ar_order = 10
-
-    def run(self):
-        x_train = self.train_ds.df
-
-        results = []
-
-        for col in x_train.columns:
-            series = x_train[col].dropna()
-
-            # Check for stationarity using the Augmented Dickey-Fuller test
-            adf_test = adfuller(series)
-            if adf_test[1] > 0.05:
-                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
-
-            ar_orders = []
-            bic_values = []
-            aic_values = []
-
-            for ar_order in range(1, self.max_ar_order + 1):
-                try:
-                    model = AutoReg(series, lags=ar_order, old_names=False)
-                    model_fit = model.fit()
-
-                    ar_orders.append(ar_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
-                except Exception as e:
-                    print(f"Error fitting AR({ar_order}) model for {col}: {e}")
-
-            result = {
-                "Variable": col,
-                "AR orders": ar_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
-
-        return self.cache_results(results)
-
-
-class AutoMA(Metric):
-    """
-    Automatically detects the MA order of a time series using both BIC and AIC.
-    """
-
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "auto_ma"
-
-    max_ma_order = 10
-
-    def run(self):
-        x_train = self.train_ds.df
-
-        results = []
-
-        for col in x_train.columns:
-            series = x_train[col].dropna()
-
-            # Check for stationarity using the Augmented Dickey-Fuller test
-            adf_test = adfuller(series)
-            if adf_test[1] > 0.05:
-                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
-
-            ma_orders = []
-            bic_values = []
-            aic_values = []
-
-            for ma_order in range(1, self.max_ma_order + 1):
-                try:
-                    model = ARIMA(series, order=(0, 0, ma_order))
-                    model_fit = model.fit()
-
-                    ma_orders.append(ma_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
-                except Exception as e:
-                    print(f"Error fitting MA({ma_order}) model for {col}: {e}")
-
-            result = {
-                "Variable": col,
-                "MA orders": ma_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
-
-        return self.cache_results(results)
 
 
 class AutoARIMA(Metric):
