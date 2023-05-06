@@ -66,6 +66,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.Skewness"><code class="docutils literal notranslate"><span class="pre">Skewness</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.UniqueRows"><code class="docutils literal notranslate"><span class="pre">UniqueRows</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.TooManyZeroValues"><code class="docutils literal notranslate"><span class="pre">TooManyZeroValues</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.OutliersTest"><code class="docutils literal notranslate"><span class="pre">OutliersTest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest"><code class="docutils literal notranslate"><span class="pre">TimeSeriesMissingValuesTest</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -580,6 +582,62 @@ longer tail of values in the left.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TooManyZeroValues.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#TooManyZeroValues.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.TooManyZeroValues.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.OutliersTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">OutliersTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#OutliersTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.OutliersTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that find outliers for time series data using the z-score method</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.OutliersTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.OutliersTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.OutliersTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_outliers'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.OutliersTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.OutliersTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'zscore_threshold':</span> <span class="pre">3}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.OutliersTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.OutliersTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#OutliersTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.OutliersTest.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the test and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.threshold_tests.</span></span><span class="sig-name descname"><span class="pre">TimeSeriesMissingValuesTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#TimeSeriesMissingValuesTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ThresholdTest</span></code></p>
+<p>Test that the number of missing values is less than a threshold</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'data_quality'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_missing_values'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#TimeSeriesMissingValuesTest.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the test and cache its results</p>
 </dd></dl>
 

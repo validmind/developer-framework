@@ -75,13 +75,18 @@
 <span class="sd">Threshold based tests</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">pandas_profiling.config</span> <span class="kn">import</span> <span class="n">Settings</span>
 <span class="kn">from</span> <span class="nn">pandas_profiling.model.typeset</span> <span class="kn">import</span> <span class="n">ProfilingTypeSet</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
-<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">ThresholdTest</span>
+
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ThresholdTest</span>
 
 
 <div class="viewcode-block" id="ClassImbalance"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance">[docs]</a><span class="nd">@dataclass</span>
@@ -425,6 +430,253 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="OutliersTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.OutliersTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OutliersTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that find outliers for time series data using the z-score method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_outliers&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;zscore_threshold&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+
+<div class="viewcode-block" id="OutliersTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.OutliersTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Validate threshold paremeter</span>
+        <span class="k">if</span> <span class="s2">&quot;zscore_threshold&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;zscore_threshold must be provided in params&quot;</span><span class="p">)</span>
+        <span class="n">zscore_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;zscore_threshold&quot;</span><span class="p">]</span>
+
+        <span class="n">temp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">temp_df</span> <span class="o">=</span> <span class="n">temp_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
+        <span class="n">dataset_types</span> <span class="o">=</span> <span class="n">typeset</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="n">temp_df</span><span class="p">)</span>
+        <span class="n">test_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">test_figures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">num_features_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dataset_types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Numeric&quot;</span><span class="p">]</span>
+
+        <span class="n">outliers_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identify_outliers</span><span class="p">(</span><span class="n">temp_df</span><span class="p">[</span><span class="n">num_features_columns</span><span class="p">],</span> <span class="n">zscore_threshold</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plot_outliers</span><span class="p">(</span><span class="n">temp_df</span><span class="p">,</span> <span class="n">outliers_table</span><span class="p">)</span>
+        <span class="n">passed</span> <span class="o">=</span> <span class="n">outliers_table</span><span class="o">.</span><span class="n">empty</span>
+        <span class="n">outliers_table</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outliers_table</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="n">test_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">test_name</span><span class="o">=</span><span class="s2">&quot;outliers&quot;</span><span class="p">,</span>
+                <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">outliers_table</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span> <span class="n">figures</span><span class="o">=</span><span class="n">test_figures</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_identify_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identifies and returns outliers in a pandas DataFrame using the z-score method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        df (pandas.DataFrame): A pandas DataFrame containing the data to be analyzed.</span>
+<span class="sd">        threshold (float): The absolute value of the z-score above which a value is considered an outlier.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        pandas.DataFrame: A DataFrame containing the variables, z-scores, threshold, and dates of the identified outliers.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">        df = pd.DataFrame({&#39;A&#39;: [1, 2, 3, 4, 5], &#39;B&#39;: [6, 7, 8, 9, 10], &#39;C&#39;: [11, 12, 13, 14, 15]})</span>
+<span class="sd">        threshold = 2.5</span>
+<span class="sd">        outliers = _identify_outliers(df, threshold)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z_scores</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">outliers</span> <span class="o">=</span> <span class="n">z_scores</span><span class="p">[(</span><span class="n">z_scores</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">outlier_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">outliers</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+                    <span class="n">outlier_table</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s2">&quot;z-score&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">outlier_table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_plot_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">outliers_table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots time series with identified outliers.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df (pandas.DataFrame): Input data with time series.</span>
+<span class="sd">            outliers_table (pandas.DataFrame): DataFrame with identified outliers.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+        <span class="n">n_variables</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n_variables</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="n">variable_outliers</span> <span class="o">=</span> <span class="n">outliers_table</span><span class="p">[</span><span class="n">outliers_table</span><span class="p">[</span><span class="s2">&quot;Variable&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">col</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">variable_outliers</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="n">date</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+                <span class="n">outlier_value</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+                <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">outlier_value</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                                <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Outlier&quot;</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+                <span class="n">col</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
+            <span class="p">)</span>
+            <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Time Series with Outliers for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
+            <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span>
+            <span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="c1"># Do this if you want to prevent the figure from being displayed</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="TimeSeriesMissingValuesTest"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TimeSeriesMissingValuesTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test that the number of missing values is less than a threshold</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;data_quality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_missing_values&quot;</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="TimeSeriesMissingValuesTest.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Validate threshold paremeter</span>
+        <span class="k">if</span> <span class="s2">&quot;min_threshold&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min_threshold must be provided in params&quot;</span><span class="p">)</span>
+        <span class="n">min_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">]</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">test_results</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TestResult</span><span class="p">(</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                <span class="n">passed</span><span class="o">=</span><span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_threshold</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;n_missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="s2">&quot;p_missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">missing</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">]</span>
+
+        <span class="n">fig_barplot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_barplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">fig_heatmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_heatmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">test_figures</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Figure</span><span class="p">(</span>
+                <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:barplot&quot;</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="n">fig_barplot</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="p">{}</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">test_figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Figure</span><span class="p">(</span>
+                <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:heatmap&quot;</span><span class="p">,</span>
+                <span class="n">figure</span><span class="o">=</span><span class="n">fig_heatmap</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="p">{}</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">test_results</span><span class="p">]),</span> <span class="n">figures</span><span class="o">=</span><span class="n">test_figures</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_barplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a bar plot of missing values in a pandas DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        df (pandas.DataFrame): The input DataFrame to plot the missing values of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        matplotlib.figure.Figure: A matplotlib figure object containing the bar plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a bar plot using seaborn library</span>
+        <span class="n">missing_values</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">missing_values</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">missing_values</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">missing_values</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">missing_values</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span>
+            <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+            <span class="s2">&quot;Number of Missing Values&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+            <span class="s2">&quot;Variables (Columns)&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="s2">&quot;Total Number of Missing Values per Variable&quot;</span><span class="p">,</span>
+            <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Do this if you want to prevent the figure from being displayed</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span>
+
+    <span class="k">def</span> <span class="nf">_heatmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots a heatmap to visualize missing values in a dataframe with actual years on the x-axis.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">        df (pandas.DataFrame): The input dataframe to visualize.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        matplotlib.figure.Figure: A matplotlib figure object representing the heatmap plot.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a boolean mask for missing values</span>
+        <span class="n">missing_mask</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span>
+        <span class="c1"># Set seaborn plot style</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="c1"># Plot the heatmap</span>
+        <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">missing_mask</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">xticklabels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+
+        <span class="c1"># Add actual years on the x-axis</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">xticks</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="n">years</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span>
+            <span class="n">xticks</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span>
+            <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">MultipleLocator</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+            <span class="s2">&quot;Rows (Years)&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+            <span class="s2">&quot;Variables (Columns)&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="s2">&quot;Missing Values Heatmap with Actual Years in Rows&quot;</span><span class="p">,</span>
+            <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Do this if you want to prevent the figure from being displayed</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
 </pre></div>
 
            </div>
