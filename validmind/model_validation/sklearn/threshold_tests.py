@@ -16,9 +16,10 @@ from ...vm_models import TestResult, Figure, ThresholdTest
 
 
 @dataclass
-class AccuracyTest(ThresholdTest):
+class MinimumAccuracy(ThresholdTest):
     """
-    Test that the accuracy score is above a threshold.
+    Test that the model's prediction accuracy on a dataset meets or
+    exceeds a predefined threshold.
     """
 
     category = "model_performance"
@@ -45,9 +46,10 @@ class AccuracyTest(ThresholdTest):
 
 
 @dataclass
-class F1ScoreTest(ThresholdTest):
+class MinimumF1Score(ThresholdTest):
     """
-    Test that the F1 score is above a threshold.
+    Test that the model's F1 score on the validation dataset meets or
+    exceeds a predefined threshold.
     """
 
     category = "model_performance"
@@ -74,9 +76,10 @@ class F1ScoreTest(ThresholdTest):
 
 
 @dataclass
-class ROCAUCScoreTest(ThresholdTest):
+class MinimumROCAUCScore(ThresholdTest):
     """
-    Test that the ROC AUC score is above a threshold.
+    Test that the model's ROC AUC score on the validation dataset meets or
+    exceeds a predefined threshold.
     """
 
     category = "model_performance"
@@ -103,9 +106,10 @@ class ROCAUCScoreTest(ThresholdTest):
 
 
 @dataclass
-class TrainingTestDegradationTest(ThresholdTest):
+class TrainingTestDegradation(ThresholdTest):
     """
-    Test that the training set metrics are better than the test set metrics.
+    Test that the degradation in performance between the training and test datasets
+    does not exceed a predefined threshold.
     """
 
     category = "model_performance"
@@ -152,7 +156,7 @@ class TrainingTestDegradationTest(ThresholdTest):
 
 
 @dataclass
-class OverfitDiagnosisTest(ThresholdTest):
+class OverfitDiagnosis(ThresholdTest):
     """
     Test that identify overfit regions with high residuals by histogram slicing techniques.
     """
@@ -391,7 +395,7 @@ class OverfitDiagnosisTest(ThresholdTest):
 
 
 @dataclass
-class WeakspotsDiagnosisTest(ThresholdTest):
+class WeakspotsDiagnosis(ThresholdTest):
     """
     Test that identify weak regions with high residuals by histogram slicing techniques.
     """
@@ -638,7 +642,7 @@ class WeakspotsDiagnosisTest(ThresholdTest):
 
 
 @dataclass
-class RobustnessDiagnosisTest(ThresholdTest):
+class RobustnessDiagnosis(ThresholdTest):
     """
     Test robustness of model by perturbing the features column values
     """
@@ -819,7 +823,7 @@ class RobustnessDiagnosisTest(ThresholdTest):
             markers=True,
             markersize=10,
             dashes=False,
-            palette=['red', 'blue'],
+            palette=["red", "blue"],
             ax=ax,
         )
         ax.tick_params(axis="x")

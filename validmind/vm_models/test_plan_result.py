@@ -15,6 +15,7 @@ from IPython.display import display, HTML
 from ..api_client import (
     log_dataset,
     log_figure,
+    log_metadata,
     log_metrics,
     log_model,
     log_test_result,
@@ -100,6 +101,8 @@ class TestPlanResult(ABC):
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
+    # Text metadata about the result, can include description, etc.
+    result_metadata: List[dict] = None
 
     def __str__(self) -> str:
         """May be overridden by subclasses"""
@@ -277,6 +280,9 @@ class TestPlanMetricResult(TestPlanResult):
         if self.figures:
             for fig in self.figures:
                 log_figure(fig.figure, fig.key, fig.metadata)
+        if hasattr(self, "result_metadata") and self.result_metadata:
+            for metadata in self.result_metadata:
+                log_metadata(metadata["content_id"], metadata["text"])
 
 
 @dataclass
@@ -543,3 +549,6 @@ class TestPlanTestResult(TestPlanResult):
         if self.figures:
             for fig in self.figures:
                 log_figure(fig.figure, fig.key, fig.metadata)
+        if hasattr(self, "result_metadata") and self.result_metadata:
+            for metadata in self.result_metadata:
+                log_metadata(metadata["content_id"], metadata["text"])

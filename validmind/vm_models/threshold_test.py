@@ -47,6 +47,13 @@ class ThresholdTest(TestContextUtils):
         else:
             self.params = {**self.default_params, **self.params}
 
+    def description(self):
+        """
+        Return the test description. Should be overridden by subclasses. Defaults
+        to returning the class' docstring
+        """
+        return self.__doc__.strip()
+
     def run(self, *args, **kwargs):
         """
         Run the test and cache its results
@@ -69,8 +76,18 @@ class ThresholdTest(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
+        # Rename to self.result
+        # At a minimum, send the test description
+        result_metadata = [
+            {
+                "content_id": f"test_description:{self.name}",
+                "text": self.description(),
+            }
+        ]
+
         self.test_results = TestPlanTestResult(
             result_id=self.name,
+            result_metadata=result_metadata,
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
