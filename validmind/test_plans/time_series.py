@@ -8,6 +8,7 @@ from ..data_validation.metrics import (
     ACFandPACFPlot,
     SeasonalDecompose,
     AutoSeasonality,
+    AutoStationarity,
     AutoAR,
     AutoMA,
     ScatterPlot,
@@ -28,6 +29,7 @@ class TimeSeriesUnivariate(TestPlan):
         ACFandPACFPlot,
         SeasonalDecompose,
         AutoSeasonality,
+        AutoStationarity,
         AutoAR,
         AutoMA,
     ]

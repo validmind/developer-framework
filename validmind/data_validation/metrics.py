@@ -648,3 +648,61 @@ class ACFandPACFPlot(Metric):
             figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(figures=figures)
+
+
+class AutoStationarity(Metric):
+    """
+    Automatically detects stationarity for each time series in a DataFrame
+    using the Augmented Dickey-Fuller (ADF) test.
+    """
+
+    type = "dataset"
+    key = "auto_stationarity"
+    default_params = {"max_order": 5, "threshold": 0.05}
+
+    def run(self):
+        if "max_order" not in self.params:
+            raise ValueError("max_order must be provided in params")
+        max_order = self.params["max_order"]
+
+        if "threshold" not in self.params:
+            raise ValueError("threshold must be provided in params")
+        threshold = self.params["threshold"]
+
+        df = self.dataset.df.dropna()
+        results = []
+
+        # Loop over each column in the input DataFrame and perform stationarity tests
+        for col in df.columns:
+            is_stationary = False
+            order = 0
+
+            while not is_stationary and order <= max_order:
+                series = df[col]
+
+                if order == 0:
+                    adf_result = adfuller(series)
+                else:
+                    adf_result = adfuller(np.diff(series, n=order - 1))
+
+                adf_pvalue = adf_result[1]
+                adf_pass_fail = adf_pvalue < threshold
+                adf_decision = "Stationary" if adf_pass_fail else "Non-stationary"
+
+                result = {
+                    "Variable": col,
+                    "Integration Order": order,
+                    "Test": "ADF",
+                    "p-value": adf_pvalue,
+                    "Threshold": threshold,
+                    "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
+                    "Decision": adf_decision,
+                }
+                results.append(result)
+
+                if adf_pass_fail:
+                    is_stationary = True
+
+                order += 1
+
+        return self.cache_results(results)
