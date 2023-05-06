@@ -9,6 +9,7 @@ from ..data_validation.metrics import (
     SeasonalDecompose,
     AutoSeasonality,
     AutoStationarity,
+    RollingStatsPlot,
     AutoAR,
     AutoMA,
     ScatterPlot,
@@ -30,6 +31,7 @@ class TimeSeriesUnivariate(TestPlan):
         SeasonalDecompose,
         AutoSeasonality,
         AutoStationarity,
+        RollingStatsPlot,
         AutoAR,
         AutoMA,
     ]
@@ -86,3 +88,13 @@ class Seasonality(TestPlan):
         return """
         This test plan aims to detect seasonality in the provided dataset. It provides various visualizations and statistical tests to identify the presence of seasonality in the time series. The ACF and PACF plots help to identify the order of the autoregressive (AR) and moving average (MA) components in the time series, while the seasonal decomposition test provides insights into the trend and seasonality components. The auto-seasonality test uses different periods to test seasonality and identify the best fit. The results of these tests can help guide further exploration and modeling of the time series data.
         """
+
+
+class Stationarity(TestPlan):
+    """
+    Test plan to perform stationarity tests.
+    """
+
+    name = "stationarity"
+    required_context = ["dataset"]
+    tests = [AutoStationarity, RollingStatsPlot]
