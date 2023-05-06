@@ -3160,14 +3160,14 @@ cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
 name = "qtconsole"
-version = "5.4.2"
+version = "5.4.3"
 description = "Jupyter Qt console"
 category = "dev"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "qtconsole-5.4.2-py3-none-any.whl", hash = "sha256:30975c6a7d7941dd646d00a23e5982db49beaa60c3920bb243727d43da805f12"},
-    {file = "qtconsole-5.4.2.tar.gz", hash = "sha256:dc935780da276a2ab31a7a08a8cf327a2ea47fa27e21d485073251a7eeb16167"},
+    {file = "qtconsole-5.4.3-py3-none-any.whl", hash = "sha256:35fd6e87b1f6d1fd41801b07e69339f8982e76afd4fa8ef35595bc6036717189"},
+    {file = "qtconsole-5.4.3.tar.gz", hash = "sha256:5e4082a86a201796b2a5cfd4298352d22b158b51b57736531824715fc2a979dd"},
 ]
 
 [package.dependencies]

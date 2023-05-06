@@ -22,13 +22,13 @@ from ..model_validation.sklearn.metrics import (
     SHAPGlobalImportance,
 )
 from ..model_validation.sklearn.threshold_tests import (
-    AccuracyTest,
-    F1ScoreTest,
-    ROCAUCScoreTest,
-    TrainingTestDegradationTest,
-    OverfitDiagnosisTest,
-    WeakspotsDiagnosisTest,
-    RobustnessDiagnosisTest,
+    MinimumAccuracy,
+    MinimumF1Score,
+    MinimumROCAUCScore,
+    TrainingTestDegradation,
+    OverfitDiagnosis,
+    WeakspotsDiagnosis,
+    RobustnessDiagnosis,
 )
 
 
@@ -63,7 +63,12 @@ class SKLearnClassifierPerformance(TestPlan):
 
     name = "sklearn_classifier_validation"
     required_context = ["model", "train_ds", "test_ds"]
-    tests = [AccuracyTest, F1ScoreTest, ROCAUCScoreTest, TrainingTestDegradationTest]
+    tests = [
+        MinimumAccuracy,
+        MinimumF1Score,
+        MinimumROCAUCScore,
+        TrainingTestDegradation,
+    ]
 
 
 class SKLearnClassifierDiagnosis(TestPlan):
@@ -73,7 +78,7 @@ class SKLearnClassifierDiagnosis(TestPlan):
 
     name = "sklearn_classifier_model_diagnosis"
     required_context = ["model", "train_ds", "test_ds"]
-    tests = [OverfitDiagnosisTest, WeakspotsDiagnosisTest, RobustnessDiagnosisTest]
+    tests = [OverfitDiagnosis, WeakspotsDiagnosis, RobustnessDiagnosis]
 
 
 class SKLearnClassifier(TestPlan):
@@ -84,4 +89,8 @@ class SKLearnClassifier(TestPlan):
 
     name = "sklearn_classifier"
     required_context = ["model", "train_ds", "test_ds"]
-    test_plans = [SKLearnClassifierMetrics, SKLearnClassifierPerformance, SKLearnClassifierDiagnosis]
+    test_plans = [
+        SKLearnClassifierMetrics,
+        SKLearnClassifierPerformance,
+        SKLearnClassifierDiagnosis,
+    ]

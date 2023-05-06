@@ -47,6 +47,13 @@ class Metric(TestContextUtils):
     def name(self):
         return self.key
 
+    def description(self):
+        """
+        Return the metric description. Should be overridden by subclasses. Defaults
+        to returning the class' docstring
+        """
+        return self.__doc__.strip()
+
     def run(self, *args, **kwargs):
         """
         Run the metric calculation and cache its results
@@ -68,7 +75,18 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
-        test_plan_result = TestPlanMetricResult(result_id=self.name)
+        # At a minimum, send the metric description
+        result_metadata = [
+            {
+                "content_id": f"metric_description:{self.name}",
+                "text": self.description(),
+            }
+        ]
+
+        test_plan_result = TestPlanMetricResult(
+            result_id=self.name,
+            result_metadata=result_metadata,
+        )
 
         if metric_value is not None:
             test_plan_result.metric = MetricResult(

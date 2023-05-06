@@ -1,8 +1,15 @@
 """
 Main entrypoint to the ValidMind Python Library
 """
+import warnings
 
-from .vm_models import (
+# Ignore Numba warnings. We are not requiring this package directly
+from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+
+warnings.simplefilter("ignore", category=NumbaDeprecationWarning)
+warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
+
+from .vm_models import (  # noqa: E402
     Dataset,
     DatasetTargets,
     Figure,
@@ -14,7 +21,7 @@ from .vm_models import (
     ThresholdTest,
 )
 
-from .api_client import (
+from .api_client import (  # noqa: E402
     init,
     log_dataset,
     log_metrics,
@@ -23,7 +30,7 @@ from .api_client import (
     log_figure,
 )
 
-from .client import init_dataset, init_model, init_r_model, run_test_plan
+from .client import init_dataset, init_model, init_r_model, run_test_plan  # noqa: E402
 
 # TODO: need to fix this import * situation
 from .data_validation import *  # noqa

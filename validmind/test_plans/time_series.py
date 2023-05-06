@@ -26,8 +26,8 @@ class TimeSeriesUnivariate(TestPlan):
         AutoMA,
     ]
 
-    def _results_description(self, html: str = ""):
-        description = """
+    def description(self):
+        return """
         This section provides a preliminary understanding of the target variable(s)
         used in the time series dataset. It visualizations that present the raw time
         series data and a histogram of the target variable(s).
@@ -39,10 +39,6 @@ class TimeSeriesUnivariate(TestPlan):
         and frequency of values observed in the data.
         """
 
-        html += f'<div class="result">{description}</div>'
-
-        return html
-
 
 class TimeSeriesMultivariate(TestPlan):
     """
@@ -53,12 +49,17 @@ class TimeSeriesMultivariate(TestPlan):
     required_context = ["dataset"]
     tests = [ScatterPlot, LaggedCorrelationHeatmap]
 
-    def _results_description(self, html: str = ""):
-        description = """
-        This section provides a preliminary understanding of the features and relationship in multivariate dataset. It presents various multivariate visualizations that can help identify patterns, trends, and relationships between pairs of variables. The visualizations are designed to explore the relationships between multiple features simultaneously. They allow you to quickly identify any patterns or trends in the data, as well as any potential outliers or anomalies. The individual feature distribution can also be explored to provide insight into the range and frequency of values observed in the data. This multivariate analysis test plan aims to provide an overview of the data
-structure and guide further exploration and modeling.
+    def description(self):
+        return """
+        This section provides a preliminary understanding of the features
+        and relationship in multivariate dataset. It presents various
+        multivariate visualizations that can help identify patterns, trends,
+        and relationships between pairs of variables. The visualizations are
+        designed to explore the relationships between multiple features
+        simultaneously. They allow you to quickly identify any patterns or
+        trends in the data, as well as any potential outliers or anomalies.
+        The individual feature distribution can also be explored to provide
+        insight into the range and frequency of values observed in the data.
+        This multivariate analysis test plan aims to provide an overview of
+        the data structure and guide further exploration and modeling.
         """
-
-        html += f'<div class="result">{description}</div>'
-
-        return html
