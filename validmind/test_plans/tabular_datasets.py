@@ -20,6 +20,8 @@ from ..data_validation.threshold_tests import (
     Skewness,
     UniqueRows,
     TooManyZeroValues,
+    OutliersTest,
+    TimeSeriesMissingValuesTest,
 )
 
 
@@ -57,6 +59,16 @@ class TabularDataQuality(TestPlan):
     ]
 
 
+class TimeSeriesDataQuality(TestPlan):
+    """
+    Test plan for data quality on time series datasets
+    """
+
+    name = "time_series_data_quality"
+    required_context = ["dataset"]
+    tests = [OutliersTest, TimeSeriesMissingValuesTest]
+
+
 class TabularDataset(TestPlan):
     """
     Test plan for generic tabular datasets
@@ -67,4 +79,16 @@ class TabularDataset(TestPlan):
     test_plans = [
         TabularDatasetDescription,
         TabularDataQuality,
+    ]
+
+
+class TimeSeriesDataset(TestPlan):
+    """
+    Test plan for time series  datasets
+    """
+
+    name = "time_series_dataset"
+    required_context = ["dataset"]
+    test_plans = [
+        TimeSeriesDataQuality,
     ]
