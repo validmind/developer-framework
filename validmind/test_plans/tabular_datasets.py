@@ -21,7 +21,7 @@ from ..data_validation.threshold_tests import (
     UniqueRows,
     TooManyZeroValues,
     OutliersTest,
-    TimeSeriesMissingValuesTest    
+    TimeSeriesMissingValuesTest,
 )
 
 
@@ -66,10 +66,7 @@ class TimeSeriesDataQuality(TestPlan):
 
     name = "time_series_data_quality"
     required_context = ["dataset"]
-    tests = [
-        OutliersTest,
-        TimeSeriesMissingValuesTest
-    ]
+    tests = [OutliersTest, TimeSeriesMissingValuesTest]
 
 
 class TabularDataset(TestPlan):
