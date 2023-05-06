@@ -3,12 +3,13 @@ Time Series Test Plans
 """
 from ..vm_models import TestPlan
 from ..data_validation.metrics import (
-    TimeSeriesHistogram,
     TimeSeriesLinePlot,
-    ScatterPlot,
-    LaggedCorrelationHeatmap,
+    TimeSeriesHistogram,
+    SeasonalDecompose,
     AutoAR,
     AutoMA,
+    ScatterPlot,
+    LaggedCorrelationHeatmap,
 )
 
 
@@ -22,6 +23,7 @@ class TimeSeriesUnivariate(TestPlan):
     tests = [
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
+        SeasonalDecompose,
         AutoAR,
         AutoMA,
     ]

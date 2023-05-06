@@ -13,6 +13,7 @@ import matplotlib.dates as mdates
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 from ..vm_models import (
@@ -368,7 +369,7 @@ class AutoMA(Metric):
     Automatically detects the MA order of a time series using both BIC and AIC.
     """
 
-    type = "dataset"  # assume this value
+    type = "dataset"
     key = "auto_ma"
 
     def run(self):
@@ -413,3 +414,92 @@ class AutoMA(Metric):
             results.append(result)
 
         return self.cache_results(results)
+
+
+class SeasonalDecomposeOLD(Metric):
+    """
+    Calculates seasonal_decompose metric for each of the dataset features
+    """
+
+    type = "dataset"
+    key = "seasonal_decompose"
+
+    def store_seasonal_decompose(self, column, sd_one_column):
+        """
+        Stores the seasonal decomposition results in the test context so they
+        can be re-used by other tests. Note we store one `sd` at a time for every
+        column in the dataset.
+        """
+        sd_all_columns = (
+            self.test_context.get_context_data("seasonal_decompose") or dict()
+        )
+        sd_all_columns[column] = sd_one_column
+        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
+
+    def serialize_seasonal_decompose(self, sd):
+        """
+        Serializes the seasonal decomposition results for one column into a
+        JSON serializable format that can be sent to the API.
+        """
+        results = {
+            "observed": sd.observed,
+            "trend": sd.trend,
+            "seasonal": sd.seasonal,
+            "resid": sd.resid,
+        }
+
+        # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
+        dfs = [
+            pd.DataFrame(series)
+            .reset_index()
+            .assign(Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d"))
+            for series in results.values()
+        ]
+
+        # Merge DataFrames on the 'Date' column
+        merged_df = dfs[0]
+        for df in dfs[1:]:
+            merged_df = merged_df.merge(df, on="Date")
+
+        # Convert the merged DataFrame into a list of dictionaries
+        return merged_df.to_dict("records")
+
+    def run(self):
+        df = self.dataset.df
+
+        results = {}
+        figures = []
+
+        for col in df.columns:
+            sd = seasonal_decompose(df[col], model="additive")
+            self.store_seasonal_decompose(col, sd)
+
+            results[col] = self.serialize_seasonal_decompose(sd)
+
+            # Create subplots
+            fig, axes = plt.subplots(nrows=2, ncols=2)
+            fig.subplots_adjust(hspace=1)
+            fig.suptitle(f"Seasonal Decomposition for {col}", fontsize=24)
+
+            axes[0, 0].set_title("Observed")
+            sd.observed.plot(ax=axes[0, 0])
+
+            axes[0, 1].set_title("Trend")
+            sd.trend.plot(ax=axes[0, 1])
+
+            axes[1, 0].set_title("Seasonal")
+            sd.seasonal.plot(ax=axes[1, 0])
+
+            axes[1, 1].set_title("Residuals")
+            sd.resid.plot(ax=axes[1, 1])
+            axes[1, 1].set_xlabel("Date")
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(results, figures=figures)
