@@ -88,17 +88,18 @@
 <span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ThresholdTest</span>
 
 
-<div class="viewcode-block" id="AccuracyTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.AccuracyTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">AccuracyTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumAccuracy"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MinimumAccuracy</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test that the accuracy score is above a threshold.</span>
+<span class="sd">    Test that the model&#39;s prediction accuracy on a dataset meets or</span>
+<span class="sd">    exceeds a predefined threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_performance&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;accuracy_score&quot;</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
 
-<div class="viewcode-block" id="AccuracyTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.AccuracyTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumAccuracy.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
         <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
         <span class="n">accuracy_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
@@ -117,17 +118,18 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
 
 
-<div class="viewcode-block" id="F1ScoreTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">F1ScoreTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumF1Score"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumF1Score">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MinimumF1Score</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test that the F1 score is above a threshold.</span>
+<span class="sd">    Test that the model&#39;s F1 score on the validation dataset meets or</span>
+<span class="sd">    exceeds a predefined threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_performance&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;f1_score&quot;</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
 
-<div class="viewcode-block" id="F1ScoreTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.F1ScoreTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumF1Score.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumF1Score.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
         <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
         <span class="n">f1_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
@@ -146,17 +148,18 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
 
 
-<div class="viewcode-block" id="ROCAUCScoreTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ROCAUCScoreTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumROCAUCScore"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">MinimumROCAUCScore</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test that the ROC AUC score is above a threshold.</span>
+<span class="sd">    Test that the model&#39;s ROC AUC score on the validation dataset meets or</span>
+<span class="sd">    exceeds a predefined threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_performance&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;roc_auc_score&quot;</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
 
-<div class="viewcode-block" id="ROCAUCScoreTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MinimumROCAUCScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
         <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
         <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
@@ -175,10 +178,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">passed</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]))</span></div></div>
 
 
-<div class="viewcode-block" id="TrainingTestDegradationTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TrainingTestDegradationTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="TrainingTestDegradation"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TrainingTestDegradation</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test that the training set metrics are better than the test set metrics.</span>
+<span class="sd">    Test that the degradation in performance between the training and test datasets</span>
+<span class="sd">    does not exceed a predefined threshold.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_performance&quot;</span>
@@ -191,7 +195,7 @@
         <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="TrainingTestDegradationTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TrainingTestDegradation.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
 
         <span class="n">train_class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train_predict</span><span class="p">)</span>
@@ -224,8 +228,8 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="OverfitDiagnosisTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OverfitDiagnosisTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="OverfitDiagnosis"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">OverfitDiagnosis</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test that identify overfit regions with high residuals by histogram slicing techniques.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -238,7 +242,7 @@
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="OverfitDiagnosisTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OverfitDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;cut_off_percentage&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cut_off_percentage must be provided in params&quot;</span><span class="p">)</span>
         <span class="n">cut_off_percentage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cut_off_percentage&quot;</span><span class="p">]</span>
@@ -463,8 +467,8 @@
         <span class="k">return</span> <span class="n">fig</span></div>
 
 
-<div class="viewcode-block" id="WeakspotsDiagnosisTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">WeakspotsDiagnosisTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="WeakspotsDiagnosis"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">WeakspotsDiagnosis</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test that identify weak regions with high residuals by histogram slicing techniques.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -490,7 +494,7 @@
         <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="WeakspotsDiagnosisTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WeakspotsDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;thresholds&quot;</span><span class="p">]</span>
 
         <span class="c1"># Ensure there is a threshold for each metric</span>
@@ -710,8 +714,8 @@
         <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">df</span></div>
 
 
-<div class="viewcode-block" id="RobustnessDiagnosisTest"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RobustnessDiagnosisTest</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
+<div class="viewcode-block" id="RobustnessDiagnosis"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">RobustnessDiagnosis</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test robustness of model by perturbing the features column values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -727,7 +731,7 @@
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="RobustnessDiagnosisTest.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RobustnessDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Validate X std deviation parameter</span>
         <span class="k">if</span> <span class="s2">&quot;scaling_factor_std_dev_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scaling_factor_std_dev_list must be provided in params&quot;</span><span class="p">)</span>
@@ -837,7 +841,7 @@
         <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">metric_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_prediction</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
 
-<div class="viewcode-block" id="RobustnessDiagnosisTest.add_noise_std_dev"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest.add_noise_std_dev">[docs]</a>    <span class="k">def</span> <span class="nf">add_noise_std_dev</span><span class="p">(</span>
+<div class="viewcode-block" id="RobustnessDiagnosis.add_noise_std_dev"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.add_noise_std_dev">[docs]</a>    <span class="k">def</span> <span class="nf">add_noise_std_dev</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">x_std_dev</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -892,7 +896,7 @@
             <span class="n">markers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">markersize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
             <span class="n">dashes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">palette</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">],</span>
+            <span class="n">palette</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">],</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>

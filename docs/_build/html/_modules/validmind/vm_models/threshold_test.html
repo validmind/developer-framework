@@ -120,6 +120,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
 
+<div class="viewcode-block" id="ThresholdTest.description"><a class="viewcode-back" href="../../../vm_models.html#validmind.ThresholdTest.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the test description. Should be overridden by subclasses. Defaults</span>
+<span class="sd">        to returning the class&#39; docstring</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="ThresholdTest.run"><a class="viewcode-back" href="../../../vm_models.html#validmind.ThresholdTest.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the test and cache its results</span>
@@ -142,8 +149,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            TestPlanResult: The test plan result object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rename to self.result</span>
+        <span class="c1"># At a minimum, send the test description</span>
+        <span class="n">result_metadata</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;content_id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;test_description:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">(),</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span> <span class="o">=</span> <span class="n">TestPlanTestResult</span><span class="p">(</span>
             <span class="n">result_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">result_metadata</span><span class="o">=</span><span class="n">result_metadata</span><span class="p">,</span>
             <span class="n">test_results</span><span class="o">=</span><span class="n">TestResults</span><span class="p">(</span>
                 <span class="n">category</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">,</span>
                 <span class="n">test_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>

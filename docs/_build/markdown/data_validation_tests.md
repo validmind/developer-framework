@@ -51,8 +51,6 @@ are calculated:
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
 ### _class_ validmind.data_validation.metrics.DatasetDescription(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -67,9 +65,7 @@ Collects a set of descriptive statistics for a dataset
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.metrics.TimeSeriesUnivariateInspectionRaw(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+### _class_ validmind.data_validation.metrics.TimeSeriesLinePlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
 Generates a visual analysis of time series data by plotting the
@@ -79,15 +75,13 @@ if necessary. In this case we produce a separate plot for each time series.
 
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
-#### key(_: ClassVar[str_ _ = 'time_series_univariate_inspection_raw_ )
+#### key(_: ClassVar[str_ _ = 'time_series_line_plot_ )
 
 #### run()
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.metrics.TimeSeriesUnivariateInspectionHistogram(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+### _class_ validmind.data_validation.metrics.TimeSeriesHistogram(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
 Generates a visual analysis of time series data by plotting the
@@ -97,23 +91,78 @@ necessary. In this case we produce a separate plot for each time series.
 
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
-#### key(_: ClassVar[str_ _ = 'time_series_univariate_inspection_histogram_ )
+#### key(_: ClassVar[str_ _ = 'time_series_histogram_ )
 
 #### run()
 Run the metric calculation and cache its results
 
 
-#### test_context(_: TestContex_ )
+### _class_ validmind.data_validation.metrics.ScatterPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Generates a visual analysis of data by plotting a scatter plot matrix for all columns
+in the dataset. The input dataset can have multiple columns (features) if necessary.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'scatter_plot_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.LaggedCorrelationHeatmap(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Generates a heatmap of correlations between the target variable and the lags of independent variables in the dataset.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'lagged_correlation_heatmap_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.AutoAR(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Automatically detects the AR order of a time series using both BIC and AIC.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'auto_ar_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.AutoMA(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Automatically detects the MA order of a time series using both BIC and AIC.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'auto_ma_ )
+
+#### run()
+Run the metric calculation and cache its results
+
 ### Data Validation Threshold Tests
 
 Threshold based tests
 
 
-### _class_ validmind.data_validation.threshold_tests.ClassImbalanceTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.ClassImbalance(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the minority class does not represent more than a threshold
-of the total number of examples
+The class imbalance test measures the disparity between the majority
+class and the minority class in the target column.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -126,12 +175,12 @@ of the total number of examples
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.DuplicatesTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.Duplicates(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the number of duplicates is less than a threshold
+The duplicates test measures the number of duplicate rows found in
+the dataset. If a primary key column is specified, the dataset is
+checked for duplicate primary keys as well.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -144,12 +193,11 @@ Test that the number of duplicates is less than a threshold
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.HighCardinalityTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.HighCardinality(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the number of unique values in a column is less than a threshold
+The high cardinality test measures the number of unique
+values found in categorical columns.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -162,14 +210,11 @@ Test that the number of unique values in a column is less than a threshold
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.HighPearsonCorrelationTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.HighPearsonCorrelation(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the Pearson correlation between two columns is less than a threshold
-
-Inspired by: [https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py](https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py)
+Test that the pairwise Pearson correlation coefficients between the
+features in the dataset do not exceed a specified threshold.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -182,12 +227,11 @@ Inspired by: [https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.MissingValuesTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.MissingValues(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the number of missing values is less than a threshold
+Test that the number of missing values in the dataset across all features
+is less than a threshold
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -200,12 +244,13 @@ Test that the number of missing values is less than a threshold
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.SkewnessTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.Skewness(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the skewness of a column is less than a threshold
+The skewness test measures the extent to which a distribution of
+values differs from a normal distribution. A positive skew describes
+a longer tail of values in the right and a negative skew describes a
+longer tail of values in the left.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -218,9 +263,7 @@ Test that the skewness of a column is less than a threshold
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.UniqueRowsTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.UniqueRows(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test that the number of unique rows is greater than a threshold
@@ -236,12 +279,10 @@ Test that the number of unique rows is greater than a threshold
 Run the test and cache its results
 
 
-#### test_context(_: TestContex_ )
-
-### _class_ validmind.data_validation.threshold_tests.ZerosTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.TooManyZeroValues(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the number of zeros is less than a threshold
+The zeros test finds columns that have too many zero values.
 
 
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
@@ -252,6 +293,3 @@ Test that the number of zeros is less than a threshold
 
 #### run()
 Run the test and cache its results
-
-
-#### test_context(_: TestContex_ )
