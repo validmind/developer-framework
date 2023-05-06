@@ -293,3 +293,35 @@ The zeros test finds columns that have too many zero values.
 
 #### run()
 Run the test and cache its results
+
+
+### _class_ validmind.data_validation.threshold_tests.OutliersTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test that find outliers for time series data using the z-score method
+
+
+#### category(_: ClassVar[str_ _ = 'data_quality_ )
+
+#### name(_: ClassVar[str_ _ = 'time_series_outliers_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'zscore_threshold': 3_ )
+
+#### run()
+Run the test and cache its results
+
+
+### _class_ validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test that the number of missing values is less than a threshold
+
+
+#### category(_: ClassVar[str_ _ = 'data_quality_ )
+
+#### name(_: ClassVar[str_ _ = 'time_series_missing_values_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
+
+#### run()
+Run the test and cache its results
