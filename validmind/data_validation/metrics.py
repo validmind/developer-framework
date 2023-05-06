@@ -7,12 +7,15 @@ from typing import ClassVar
 
 import pandas as pd
 import numpy as np
+from scipy import stats
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 
 from ..vm_models import (
@@ -368,7 +371,7 @@ class AutoMA(Metric):
     Automatically detects the MA order of a time series using both BIC and AIC.
     """
 
-    type = "dataset"  # assume this value
+    type = "dataset"
     key = "auto_ma"
 
     def run(self):
@@ -413,3 +416,235 @@ class AutoMA(Metric):
             results.append(result)
 
         return self.cache_results(results)
+
+
+class SeasonalDecompose(Metric):
+    """
+    Calculates seasonal_decompose metric for each of the dataset features
+    """
+
+    type = "dataset"
+    key = "seasonal_decompose"
+    default_params = {"seasonal_model": "additive"}
+
+    def store_seasonal_decompose(self, column, sd_one_column):
+        """
+        Stores the seasonal decomposition results in the test context so they
+        can be re-used by other tests. Note we store one `sd` at a time for every
+        column in the dataset.
+        """
+        sd_all_columns = (
+            self.test_context.get_context_data("seasonal_decompose") or dict()
+        )
+        sd_all_columns[column] = sd_one_column
+        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
+
+    def serialize_seasonal_decompose(self, sd):
+        """
+        Serializes the seasonal decomposition results for one column into a
+        JSON serializable format that can be sent to the API.
+        """
+        results = {
+            "observed": sd.observed,
+            "trend": sd.trend,
+            "seasonal": sd.seasonal,
+            "resid": sd.resid,
+        }
+
+        # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
+        dfs = [
+            pd.DataFrame(series)
+            .pipe(
+                lambda x: x.reset_index()
+                if not isinstance(x.index, pd.DatetimeIndex)
+                else x.reset_index().rename(columns={x.index.name: "Date"})
+            )
+            .assign(
+                Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d")
+                if "Date" in x.columns
+                else x.index.strftime("%Y-%m-%d")
+            )
+            for series in results.values()
+        ]
+
+        # Merge DataFrames on the 'Date' column
+        merged_df = dfs[0]
+        for df in dfs[1:]:
+            merged_df = merged_df.merge(df, on="Date")
+
+        # Convert the merged DataFrame into a list of dictionaries
+        return merged_df.to_dict("records")
+
+    def run(self):
+        # Parse input parameters
+        if "seasonal_model" not in self.params:
+            raise ValueError("seasonal_model must be provided in params")
+        seasonal_model = self.params["seasonal_model"]
+
+        df = self.dataset.df
+
+        # Drop rows with missing values
+        df = df.dropna()
+
+        results = {}
+        figures = []
+
+        for col in df.columns:
+            sd = seasonal_decompose(df[col], model=seasonal_model)
+            self.store_seasonal_decompose(col, sd)
+
+            results[col] = self.serialize_seasonal_decompose(sd)
+
+            # Create subplots
+            fig, axes = plt.subplots(nrows=4, ncols=2)
+            fig.subplots_adjust(hspace=1)
+            fig.suptitle(
+                f"Seasonal Decomposition and Residual Diagnostics for {col}",
+                fontsize=24,
+            )
+
+            # Original seasonal decomposition plots
+            axes[0, 0].set_title("Observed")
+            sd.observed.plot(ax=axes[0, 0])
+
+            axes[0, 1].set_title("Trend")
+            sd.trend.plot(ax=axes[0, 1])
+
+            axes[1, 0].set_title("Seasonal")
+            sd.seasonal.plot(ax=axes[1, 0])
+
+            axes[1, 1].set_title("Residuals")
+            sd.resid.plot(ax=axes[1, 1])
+            axes[1, 1].set_xlabel("Date")
+
+            # Residual diagnostics plots
+            residuals = sd.resid.dropna()
+
+            # Histogram with KDE
+            sns.histplot(residuals, kde=True, ax=axes[2, 0])
+            axes[2, 0].set_title("Histogram and KDE of Residuals")
+
+            # Normal Q-Q plot
+            stats.probplot(residuals, plot=axes[2, 1])
+            axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
+
+            # ACF plot
+            plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
+
+            # PACF plot
+            plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(results, figures=figures)
+
+
+class AutoSeasonality(Metric):
+    """
+    Automatically detects the optimal seasonal order for a time series dataset
+    using the seasonal_decompose method.
+    """
+
+    type = "dataset"
+    key = "auto_seasonality"
+    default_params = {"min_period": 1, "max_period": 4}
+
+    def evaluate_seasonal_periods(self, series, min_period, max_period):
+        seasonal_periods = []
+        residual_errors = []
+
+        for period in range(min_period, max_period + 1):
+            try:
+                sd = seasonal_decompose(series, model="additive", period=period)
+                residual_error = np.abs(sd.resid.dropna()).mean()
+
+                seasonal_periods.append(period)
+                residual_errors.append(residual_error)
+            except Exception as e:
+                print(f"Error evaluating period {period} for series: {e}")
+
+        return seasonal_periods, residual_errors
+
+    def run(self):
+        # Parse input parameters
+        if "min_period" not in self.params:
+            raise ValueError("min_period must be provided in params")
+        min_period = self.params["min_period"]
+
+        if "max_period" not in self.params:
+            raise ValueError("max_period must be provided in params")
+        max_period = self.params["max_period"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col_name, col in df.iteritems():
+            series = col.dropna()
+            seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
+                series, min_period, max_period
+            )
+
+            best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
+            decision = "Seasonality" if best_seasonal_period > 1 else "Not Seasonality"
+
+            result = {
+                "Variable": col_name,
+                "Seasonal Periods": seasonal_periods,
+                "Residual Errors": residual_errors,
+                "Best Period": best_seasonal_period,
+                "Decision": decision,
+            }
+            results.append(result)
+
+        return self.cache_results(results)
+
+
+class ACFandPACFPlot(Metric):
+    """
+    Plots ACF and PACF for a given time series dataset.
+    """
+
+    type = "evaluation"
+    key = "acf_pacf_plot"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Time series columns must be provided in params")
+
+        # Check if index is datetime
+        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+            raise ValueError("Index must be a datetime type")
+
+        columns = self.params["columns"]
+        df = self.dataset.df.dropna()
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        figures = []
+
+        for col in df.columns:
+            series = df[col]
+
+            # Create subplots
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+
+            plot_acf(series, ax=ax1)
+            plot_pacf(series, ax=ax2)
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)

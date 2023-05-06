@@ -3,12 +3,15 @@ Time Series Test Plans
 """
 from ..vm_models import TestPlan
 from ..data_validation.metrics import (
-    TimeSeriesHistogram,
     TimeSeriesLinePlot,
-    ScatterPlot,
-    LaggedCorrelationHeatmap,
+    TimeSeriesHistogram,
+    ACFandPACFPlot,
+    SeasonalDecompose,
+    AutoSeasonality,
     AutoAR,
     AutoMA,
+    ScatterPlot,
+    LaggedCorrelationHeatmap,
 )
 
 
@@ -22,6 +25,9 @@ class TimeSeriesUnivariate(TestPlan):
     tests = [
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
+        ACFandPACFPlot,
+        SeasonalDecompose,
+        AutoSeasonality,
         AutoAR,
         AutoMA,
     ]
@@ -62,4 +68,19 @@ class TimeSeriesMultivariate(TestPlan):
         insight into the range and frequency of values observed in the data.
         This multivariate analysis test plan aims to provide an overview of
         the data structure and guide further exploration and modeling.
+        """
+
+
+class Seasonality(TestPlan):
+    """
+    Test plan to perform seasonality tests.
+    """
+
+    name = "seasonality"
+    required_context = ["dataset"]
+    tests = [ACFandPACFPlot, SeasonalDecompose, AutoSeasonality]
+
+    def description(self):
+        return """
+        This test plan aims to detect seasonality in the provided dataset. It provides various visualizations and statistical tests to identify the presence of seasonality in the time series. The ACF and PACF plots help to identify the order of the autoregressive (AR) and moving average (MA) components in the time series, while the seasonal decomposition test provides insights into the trend and seasonality components. The auto-seasonality test uses different periods to test seasonality and identify the best fit. The results of these tests can help guide further exploration and modeling of the time series data.
         """

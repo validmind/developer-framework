@@ -4,7 +4,6 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
-import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -18,8 +17,7 @@ from statsmodels.sandbox.stats.runs import runstest_1samp
 from statsmodels.stats.diagnostic import kstest_normal
 from statsmodels.stats.diagnostic import lilliefors
 from statsmodels.stats.stattools import jarque_bera
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
@@ -97,190 +95,6 @@ class ResidualsVisualInspection(Metric):
 
             figures.append(Figure(key=self.key, figure=fig, metadata={}))
         return self.cache_results(figures=figures)
-
-
-@dataclass
-class ACFandPACFFigures(Metric):
-    """
-    Plots ACF and PACF for a given time series dataset.
-    """
-
-    type = "evaluation"
-    key = "acf_and_pacf_figures"
-
-    def run(self):
-        x_train = self.train_ds.df
-
-        figures = []
-
-        for col in x_train.columns:
-            series = x_train[col]
-
-            # Create subplots
-            fig, (ax1, ax2) = plt.subplots(1, 2)
-
-            plot_acf(series, ax=ax1)
-            plot_pacf(series, ax=ax2)
-
-            # Adjust the layout
-            plt.tight_layout()
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
-
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
-
-        return self.cache_results(figures=figures)
-
-
-class SeasonalityDetectionWithACFandPACF(Metric):
-    """
-    Detects seasonality in a time series dataset using ACF and PACF.
-    """
-
-    type = "evaluation"
-    key = "seasonality_detection_with_acf_and_pacf"
-
-    def calculate_acf(self, series, nlags=40):
-        acf_values = acf(series, nlags=nlags)
-        return acf_values
-
-    def calculate_pacf(self, series, nlags=40):
-        pacf_values = pacf(series, nlags=nlags)
-        return pacf_values
-
-    def find_seasonal_period(self, acf_values, threshold=0.2):
-        peaks = np.where(acf_values > threshold)[0]
-        if peaks.size == 0:
-            return None
-        return peaks[1] - peaks[0]
-
-    def run(self):
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
-
-        results = {}
-        figures = []
-
-        for col in x_train.columns:
-            series = x_train[col]
-            acf_vals = self.calculate_acf(series)
-            pacf_vals = self.calculate_pacf(series)
-
-            seasonal_period = self.find_seasonal_period(acf_vals)
-
-            results[col] = {
-                "seasonal_period": seasonal_period,
-                "acf_values": acf_vals,
-                "pacf_values": pacf_vals,
-            }
-
-            # Create subplots
-            fig, (ax1, ax2) = plt.subplots(2, 1)
-            fig.suptitle(f"Seasonal Decomposition with ACF for {col}", fontsize=24)
-
-            plot_acf(series, ax=ax1)
-            plot_pacf(series, ax=ax2)
-
-            # Adjust the layout
-            plt.tight_layout()
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
-
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
-
-        return self.cache_results(results, figures=figures)
-
-
-class SeasonalDecompose(Metric):
-    """
-    Calculates seasonal_decompose metric for each of the dataset features
-    """
-
-    type = "evaluation"
-    key = "seasonal_decompose"
-
-    def store_seasonal_decompose(self, column, sd_one_column):
-        """
-        Stores the seasonal decomposition results in the test context so they
-        can be re-used by other tests. Note we store one `sd` at a time for every
-        column in the dataset.
-        """
-        sd_all_columns = (
-            self.test_context.get_context_data("seasonal_decompose") or dict()
-        )
-        sd_all_columns[column] = sd_one_column
-        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
-
-    def serialize_seasonal_decompose(self, sd):
-        """
-        Serializes the seasonal decomposition results for one column into a
-        JSON serializable format that can be sent to the API.
-        """
-        results = {
-            "observed": sd.observed,
-            "trend": sd.trend,
-            "seasonal": sd.seasonal,
-            "resid": sd.resid,
-        }
-
-        # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
-        dfs = [
-            pd.DataFrame(series)
-            .reset_index()
-            .assign(Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d"))
-            for series in results.values()
-        ]
-
-        # Merge DataFrames on the 'Date' column
-        merged_df = dfs[0]
-        for df in dfs[1:]:
-            merged_df = merged_df.merge(df, on="Date")
-
-        # Convert the merged DataFrame into a list of dictionaries
-        return merged_df.to_dict("records")
-
-    def run(self):
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
-
-        results = {}
-        figures = []
-
-        for col in x_train.columns:
-            sd = seasonal_decompose(x_train[col], model="additive")
-            self.store_seasonal_decompose(col, sd)
-
-            results[col] = self.serialize_seasonal_decompose(sd)
-
-            # Create subplots
-            fig, axes = plt.subplots(nrows=2, ncols=2)
-            fig.subplots_adjust(hspace=1)
-            fig.suptitle(f"Seasonal Decomposition for {col}", fontsize=24)
-
-            axes[0, 0].set_title("Observed")
-            sd.observed.plot(ax=axes[0, 0])
-
-            axes[0, 1].set_title("Trend")
-            sd.trend.plot(ax=axes[0, 1])
-
-            axes[1, 0].set_title("Seasonal")
-            sd.seasonal.plot(ax=axes[1, 0])
-
-            axes[1, 1].set_title("Residuals")
-            sd.resid.plot(ax=axes[1, 1])
-            axes[1, 1].set_xlabel("Date")
-
-            # Adjust the layout
-            plt.tight_layout()
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
-
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
-
-        return self.cache_results(results, figures=figures)
 
 
 class ADF(Metric):
