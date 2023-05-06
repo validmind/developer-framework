@@ -7,6 +7,7 @@ from typing import ClassVar
 
 import pandas as pd
 import numpy as np
+from scipy import stats
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -14,6 +15,7 @@ from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 
 from ..vm_models import (
@@ -423,6 +425,7 @@ class SeasonalDecompose(Metric):
 
     type = "dataset"
     key = "seasonal_decompose"
+    default_params = {"seasonal_model": "additive", "fig_size": (20, 16)}
 
     def store_seasonal_decompose(self, column, sd_one_column):
         """
@@ -473,6 +476,15 @@ class SeasonalDecompose(Metric):
         return merged_df.to_dict("records")
 
     def run(self):
+        # Parse input parameters
+        if "seasonal_model" not in self.params:
+            raise ValueError("seasonal_model must be provided in params")
+        seasonal_model = self.params["seasonal_model"]
+
+        if "fig_size" not in self.params:
+            raise ValueError("fig_size must be provided in params")
+        fig_size = self.params["fig_size"]
+
         df = self.dataset.df
 
         # Drop rows with missing values
@@ -482,16 +494,20 @@ class SeasonalDecompose(Metric):
         figures = []
 
         for col in df.columns:
-            sd = seasonal_decompose(df[col], model="additive")
+            sd = seasonal_decompose(df[col], model=seasonal_model)
             self.store_seasonal_decompose(col, sd)
 
             results[col] = self.serialize_seasonal_decompose(sd)
 
             # Create subplots
-            fig, axes = plt.subplots(nrows=2, ncols=2)
+            fig, axes = plt.subplots(nrows=4, ncols=2, figsize=fig_size)
             fig.subplots_adjust(hspace=1)
-            fig.suptitle(f"Seasonal Decomposition for {col}", fontsize=24)
+            fig.suptitle(
+                f"Seasonal Decomposition and Residual Diagnostics for {col}",
+                fontsize=24,
+            )
 
+            # Original seasonal decomposition plots
             axes[0, 0].set_title("Observed")
             sd.observed.plot(ax=axes[0, 0])
 
@@ -505,6 +521,23 @@ class SeasonalDecompose(Metric):
             sd.resid.plot(ax=axes[1, 1])
             axes[1, 1].set_xlabel("Date")
 
+            # Residual diagnostics plots
+            residuals = sd.resid.dropna()
+
+            # Histogram with KDE
+            sns.histplot(residuals, kde=True, ax=axes[2, 0])
+            axes[2, 0].set_title("Histogram and KDE of Residuals")
+
+            # Normal Q-Q plot
+            stats.probplot(residuals, plot=axes[2, 1])
+            axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
+
+            # ACF plot
+            plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
+
+            # PACF plot
+            plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+
             # Adjust the layout
             plt.tight_layout()
 
@@ -514,3 +547,64 @@ class SeasonalDecompose(Metric):
             figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(results, figures=figures)
+
+
+class AutoSeasonality(Metric):
+    """
+    Automatically detects the optimal seasonal order for a time series dataset
+    using the seasonal_decompose method.
+    """
+
+    type = "dataset"
+    key = "auto_seasonality"
+    default_params = {"min_period": 1, "max_period": 4}
+
+    def evaluate_seasonal_periods(self, series, min_period, max_period):
+        seasonal_periods = []
+        residual_errors = []
+
+        for period in range(min_period, max_period + 1):
+            try:
+                sd = seasonal_decompose(series, model="additive", period=period)
+                residual_error = np.abs(sd.resid.dropna()).mean()
+
+                seasonal_periods.append(period)
+                residual_errors.append(residual_error)
+            except Exception as e:
+                print(f"Error evaluating period {period} for series: {e}")
+
+        return seasonal_periods, residual_errors
+
+    def run(self):
+        # Parse input parameters
+        if "min_period" not in self.params:
+            raise ValueError("min_period must be provided in params")
+        min_period = self.params["min_period"]
+
+        if "max_period" not in self.params:
+            raise ValueError("max_period must be provided in params")
+        max_period = self.params["max_period"]
+
+        df = self.dataset.df
+
+        results = []
+
+        for col_name, col in df.iteritems():
+            series = col.dropna()
+            seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
+                series, min_period, max_period
+            )
+
+            best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
+            decision = "Seasonality" if best_seasonal_period > 1 else "Not Seasonality"
+
+            result = {
+                "Variable": col_name,
+                "Seasonal Periods": seasonal_periods,
+                "Residual Errors": residual_errors,
+                "Best Period": best_seasonal_period,
+                "Decision": decision,
+            }
+            results.append(result)
+
+        return self.cache_results(results)

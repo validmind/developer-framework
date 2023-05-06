@@ -6,6 +6,7 @@ from ..data_validation.metrics import (
     TimeSeriesLinePlot,
     TimeSeriesHistogram,
     SeasonalDecompose,
+    AutoSeasonality,
     AutoAR,
     AutoMA,
     ScatterPlot,
@@ -24,6 +25,7 @@ class TimeSeriesUnivariate(TestPlan):
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
         SeasonalDecompose,
+        AutoSeasonality,
         AutoAR,
         AutoMA,
     ]
