@@ -710,7 +710,7 @@ class AutoStationarity(Metric):
 
 class RollingStatsPlot(Metric):
     """
-    Plots rolling mean and standard deviation for a given time series dataset.
+    This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.
     """
 
     type = "dataset"
@@ -733,16 +733,14 @@ class RollingStatsPlot(Metric):
         if ax1 is None or ax2 is None:
             fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
-        ax1.plot(rolling_mean, label=f"Rolling Mean")
+        ax1.plot(rolling_mean, label="Rolling Mean")
         ax1.legend()
         ax1.set_ylabel("Value")
-        ax1.set_title("Rolling Mean")
 
-        ax2.plot(rolling_std, label=f"Rolling Standard Deviation", color="orange")
+        ax2.plot(rolling_std, label="Rolling Standard Deviation", color="orange")
         ax2.legend()
         ax2.set_xlabel("Time")
         ax2.set_ylabel("Value")
-        ax2.set_title("Rolling Standard Deviation")
 
     def run(self):
         if "window_size" not in self.params:
