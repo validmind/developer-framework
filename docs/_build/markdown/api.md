@@ -660,6 +660,8 @@ Bases: `TestContextUtils`
 
 Metric objects track the schema supported by the ValidMind API
 
+TODO: Metric should validate required context too
+
 
 #### test_context(_: TestContex_ )
 
@@ -680,6 +682,11 @@ Metric objects track the schema supported by the ValidMind API
 #### result(_: TestPlanMetricResul_ _ = Non_ )
 
 #### _property_ name()
+
+#### description()
+Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring
+
 
 #### run(\*args, \*\*kwargs)
 Run the metric calculation and cache its results
@@ -833,6 +840,8 @@ A threshold test is a combination of a metric/plot we track and a
 corresponding set of parameters and thresholds values that allow
 us to determine whether the metric/plot passes or fails.
 
+TODO: ThresholdTest should validate required context too
+
 
 #### test_context(_: TestContex_ )
 
@@ -847,6 +856,11 @@ us to determine whether the metric/plot passes or fails.
 #### params(_: dic_ _ = Non_ )
 
 #### test_results(_: TestResult_ _ = Non_ )
+
+#### description()
+Return the test description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring
+
 
 #### run(\*args, \*\*kwargs)
 Run the test and cache its results

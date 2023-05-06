@@ -139,6 +139,20 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate_context</span><span class="p">()</span>
 
+<div class="viewcode-block" id="TestPlan.title"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.title">[docs]</a>    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the title of the test plan. Defaults to the title</span>
+<span class="sd">        version of the test plan name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestPlan.description"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the description of the test plan. Defaults to the</span>
+<span class="sd">        docstring of the test plan</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span></div>
+
 <div class="viewcode-block" id="TestPlan.validate_context"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlan.validate_context">[docs]</a>    <span class="k">def</span> <span class="nf">validate_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validates that the context elements are present</span>
@@ -282,8 +296,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds the title for the results of the test plan</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
-        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;h2&gt;Results for &lt;i&gt;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&lt;/i&gt; Test Plan:&lt;/h2&gt;&lt;hr&gt;&quot;</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&lt;h2&gt;Results for &lt;i&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2">&lt;/i&gt; Test Plan:&lt;/h2&gt;&lt;hr&gt;&quot;</span>
 
         <span class="k">return</span> <span class="n">html</span>
 
@@ -292,6 +305,7 @@
 <span class="sd">        Builds the description for the results of the test plan. Subclasses</span>
 <span class="sd">        should override this method to provide an appropriate description</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;result&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">()</span><span class="si">}</span><span class="s1">&lt;/div&gt;&#39;</span>
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_results_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

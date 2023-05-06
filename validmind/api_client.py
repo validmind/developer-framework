@@ -157,6 +157,30 @@ def log_metadata(content_id, text=None, extra_json=None):
     return True
 
 
+def get_metadata(content_id):
+    """
+    Gets a metadata object from ValidMind API.
+
+    Args:
+        content_id (str): Unique content identifier for the metadata
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: Metadata object
+    """
+    r = api_session.get(f"{API_HOST}/get_metadata/{content_id}")
+
+    if r.status_code == 404:
+        return None
+    if r.status_code != 200:
+        print("Could not retrieve metadata from ValidMind API")
+        raise Exception(r.text)
+
+    return r.json()
+
+
 def log_model(vm_model):
     """
     Logs model metadata and hyperparameters to ValidMind API.

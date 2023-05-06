@@ -12,16 +12,16 @@ from ..data_validation.metrics import (
     DatasetMetadata,
 )
 from ..data_validation.threshold_tests import (
-    ClassImbalanceTest,
-    DuplicatesTest,
-    HighCardinalityTest,
-    HighPearsonCorrelationTest,
-    MissingValuesTest,
-    SkewnessTest,
-    UniqueRowsTest,
-    ZerosTest,
+    ClassImbalance,
+    Duplicates,
+    HighCardinality,
+    HighPearsonCorrelation,
+    MissingValues,
+    Skewness,
+    UniqueRows,
+    TooManyZeroValues,
     OutliersTest,
-    TimeSeriesMissingValuesTest
+    TimeSeriesMissingValuesTest    
 )
 
 
@@ -48,14 +48,14 @@ class TabularDataQuality(TestPlan):
     name = "tabular_data_quality"
     required_context = ["dataset"]
     tests = [
-        ClassImbalanceTest,
-        DuplicatesTest,
-        HighCardinalityTest,
-        HighPearsonCorrelationTest,
-        MissingValuesTest,
-        SkewnessTest,
-        UniqueRowsTest,
-        ZerosTest,
+        ClassImbalance,
+        Duplicates,
+        HighCardinality,
+        HighPearsonCorrelation,
+        MissingValues,
+        Skewness,
+        UniqueRows,
+        TooManyZeroValues,
     ]
 
 

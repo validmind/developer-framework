@@ -17,10 +17,10 @@ from ..vm_models import Dataset, TestResult, Figure, ThresholdTest
 
 
 @dataclass
-class ClassImbalanceTest(ThresholdTest):
+class ClassImbalance(ThresholdTest):
     """
-    Test that the minority class does not represent more than a threshold
-    of the total number of examples
+    The class imbalance test measures the disparity between the majority
+    class and the minority class in the target column.
     """
 
     category = "data_quality"
@@ -30,7 +30,7 @@ class ClassImbalanceTest(ThresholdTest):
     def run(self):
         # Can only run this test if we have a Dataset object
         if not isinstance(self.dataset, Dataset):
-            raise ValueError("ClassImbalanceTest requires a validmind Dataset object")
+            raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
             print("Skipping class_imbalance test because no target column is defined")
@@ -53,9 +53,11 @@ class ClassImbalanceTest(ThresholdTest):
 
 
 @dataclass
-class DuplicatesTest(ThresholdTest):
+class Duplicates(ThresholdTest):
     """
-    Test that the number of duplicates is less than a threshold
+    The duplicates test measures the number of duplicate rows found in
+    the dataset. If a primary key column is specified, the dataset is
+    checked for duplicate primary keys as well.
     """
 
     category = "data_quality"
@@ -103,9 +105,10 @@ class DuplicatesTest(ThresholdTest):
 
 
 @dataclass
-class HighCardinalityTest(ThresholdTest):
+class HighCardinality(ThresholdTest):
     """
-    Test that the number of unique values in a column is less than a threshold
+    The high cardinality test measures the number of unique
+    values found in categorical columns.
     """
 
     category = "data_quality"
@@ -152,11 +155,10 @@ class HighCardinalityTest(ThresholdTest):
 
 
 @dataclass
-class HighPearsonCorrelationTest(ThresholdTest):
+class HighPearsonCorrelation(ThresholdTest):
     """
-    Test that the Pearson correlation between two columns is less than a threshold
-
-    Inspired by: https://github.com/ydataai/pandas-profiling/blob/f8bad5dde27e3f87f11ac74fb8966c034bc22db8/src/pandas_profiling/model/correlations.py
+    Test that the pairwise Pearson correlation coefficients between the
+    features in the dataset do not exceed a specified threshold.
     """
 
     category = "data_quality"
@@ -219,9 +221,10 @@ class HighPearsonCorrelationTest(ThresholdTest):
 
 
 @dataclass
-class MissingValuesTest(ThresholdTest):
+class MissingValues(ThresholdTest):
     """
-    Test that the number of missing values is less than a threshold
+    Test that the number of missing values in the dataset across all features
+    is less than a threshold
     """
 
     category = "data_quality"
@@ -245,9 +248,12 @@ class MissingValuesTest(ThresholdTest):
 
 
 @dataclass
-class SkewnessTest(ThresholdTest):
+class Skewness(ThresholdTest):
     """
-    Test that the skewness of a column is less than a threshold
+    The skewness test measures the extent to which a distribution of
+    values differs from a normal distribution. A positive skew describes
+    a longer tail of values in the right and a negative skew describes a
+    longer tail of values in the left.
     """
 
     category = "data_quality"
@@ -282,7 +288,7 @@ class SkewnessTest(ThresholdTest):
 
 
 @dataclass
-class UniqueRowsTest(ThresholdTest):
+class UniqueRows(ThresholdTest):
     """
     Test that the number of unique rows is greater than a threshold
     """
@@ -311,9 +317,9 @@ class UniqueRowsTest(ThresholdTest):
 
 
 @dataclass
-class ZerosTest(ThresholdTest):
+class TooManyZeroValues(ThresholdTest):
     """
-    Test that the number of zeros is less than a threshold
+    The zeros test finds columns that have too many zero values.
     """
 
     category = "data_quality"

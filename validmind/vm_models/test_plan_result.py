@@ -3,6 +3,7 @@ TestPlanResult
 """
 # TODO: we are probably going to want to move all this html generation into an html template file
 # and use something like jinja to render it. This is fine for now, but the html is a bit messy
+import os
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -13,8 +14,10 @@ import base64
 from IPython.display import display, HTML
 
 from ..api_client import (
+    get_metadata,
     log_dataset,
     log_figure,
+    log_metadata,
     log_metrics,
     log_model,
     log_test_result,
@@ -24,6 +27,23 @@ from .figure import Figure
 from .metric_result import MetricResult
 from .model import Model
 from .test_result import TestResults
+
+
+def update_metadata(content_id: str, text: str) -> None:
+    """
+    Update the metadata of a content item. By default we don't
+    override the existing metadata, but we can override it by
+    setting the VM_OVERRIDE_METADATA environment variable to True
+    """
+    VM_OVERRIDE_METADATA = os.environ.get("VM_OVERRIDE_METADATA", False)
+    existing_metadata = get_metadata(content_id)
+
+    if (
+        existing_metadata is None
+        or VM_OVERRIDE_METADATA == "True"
+        or VM_OVERRIDE_METADATA is True
+    ):
+        log_metadata(content_id, text)
 
 
 def plot_figures(html: StringIO, figures: List[Figure]) -> None:
@@ -100,6 +120,8 @@ class TestPlanResult(ABC):
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
+    # Text metadata about the result, can include description, etc.
+    result_metadata: List[dict] = None
 
     def __str__(self) -> str:
         """May be overridden by subclasses"""
@@ -277,6 +299,9 @@ class TestPlanMetricResult(TestPlanResult):
         if self.figures:
             for fig in self.figures:
                 log_figure(fig.figure, fig.key, fig.metadata)
+        if hasattr(self, "result_metadata") and self.result_metadata:
+            for metadata in self.result_metadata:
+                update_metadata(metadata["content_id"], metadata["text"])
 
 
 @dataclass
@@ -543,3 +568,6 @@ class TestPlanTestResult(TestPlanResult):
         if self.figures:
             for fig in self.figures:
                 log_figure(fig.figure, fig.key, fig.metadata)
+        if hasattr(self, "result_metadata") and self.result_metadata:
+            for metadata in self.result_metadata:
+                update_metadata(metadata["content_id"], metadata["text"])

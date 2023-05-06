@@ -230,6 +230,30 @@
     <span class="k">return</span> <span class="kc">True</span>
 
 
+<span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="n">content_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets a metadata object from ValidMind API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        content_id (str): Unique content identifier for the metadata</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: If the API call fails</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Metadata object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">api_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">API_HOST</span><span class="si">}</span><span class="s2">/get_metadata/</span><span class="si">{</span><span class="n">content_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not retrieve metadata from ValidMind API&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+
 <div class="viewcode-block" id="log_model"><a class="viewcode-back" href="../../api.html#validmind.log_model">[docs]</a><span class="k">def</span> <span class="nf">log_model</span><span class="p">(</span><span class="n">vm_model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logs model metadata and hyperparameters to ValidMind API.</span>

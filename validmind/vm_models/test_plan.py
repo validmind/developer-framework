@@ -66,6 +66,20 @@ class TestPlan:
 
         self.validate_context()
 
+    def title(self):
+        """
+        Returns the title of the test plan. Defaults to the title
+        version of the test plan name
+        """
+        return self.name.title().replace("_", " ")
+
+    def description(self):
+        """
+        Returns the description of the test plan. Defaults to the
+        docstring of the test plan
+        """
+        return self.__doc__
+
     def validate_context(self):
         """
         Validates that the context elements are present
@@ -209,8 +223,7 @@ class TestPlan:
         """
         Builds the title for the results of the test plan
         """
-        class_name = type(self).__name__
-        html += f"<h2>Results for <i>{class_name}</i> Test Plan:</h2><hr>"
+        html += f"<h2>Results for <i>{self.title()}</i> Test Plan:</h2><hr>"
 
         return html
 
@@ -219,6 +232,7 @@ class TestPlan:
         Builds the description for the results of the test plan. Subclasses
         should override this method to provide an appropriate description
         """
+        html += f'<div class="result">{self.description()}</div>'
         return html
 
     def _results_summary(self, html: str = "") -> str:
