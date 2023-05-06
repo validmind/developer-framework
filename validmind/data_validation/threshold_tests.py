@@ -360,7 +360,7 @@ class TooManyZeroValues(ThresholdTest):
 
 
 @dataclass
-class OutliersTest(ThresholdTest):
+class TimeSeriesOutliers(ThresholdTest):
     """
     Test that find outliers for time series data using the z-score method
     """
@@ -468,7 +468,7 @@ class OutliersTest(ThresholdTest):
 
 
 @dataclass
-class TimeSeriesMissingValuesTest(ThresholdTest):
+class TimeSeriesMissingValues(ThresholdTest):
     """
     Test that the number of missing values is less than a threshold
     """
