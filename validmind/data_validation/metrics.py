@@ -416,7 +416,7 @@ class AutoMA(Metric):
         return self.cache_results(results)
 
 
-class SeasonalDecomposeOLD(Metric):
+class SeasonalDecompose(Metric):
     """
     Calculates seasonal_decompose metric for each of the dataset features
     """
@@ -451,8 +451,16 @@ class SeasonalDecomposeOLD(Metric):
         # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
         dfs = [
             pd.DataFrame(series)
-            .reset_index()
-            .assign(Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d"))
+            .pipe(
+                lambda x: x.reset_index()
+                if not isinstance(x.index, pd.DatetimeIndex)
+                else x.reset_index().rename(columns={x.index.name: "Date"})
+            )
+            .assign(
+                Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d")
+                if "Date" in x.columns
+                else x.index.strftime("%Y-%m-%d")
+            )
             for series in results.values()
         ]
 
@@ -466,6 +474,9 @@ class SeasonalDecomposeOLD(Metric):
 
     def run(self):
         df = self.dataset.df
+
+        # Drop rows with missing values
+        df = df.dropna()
 
         results = {}
         figures = []
