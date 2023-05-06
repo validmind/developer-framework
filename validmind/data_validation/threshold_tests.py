@@ -370,6 +370,11 @@ class TimeSeriesOutliers(ThresholdTest):
     default_params = {"zscore_threshold": 3}
 
     def run(self):
+        # Check if the index of dataframe is datetime
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        if not is_datetime:
+            raise ValueError("Dataset must be provided with datetime index")
+
         # Validate threshold paremeter
         if "zscore_threshold" not in self.params:
             raise ValueError("zscore_threshold must be provided in params")
@@ -478,6 +483,11 @@ class TimeSeriesMissingValues(ThresholdTest):
     default_params = {"min_threshold": 1}
 
     def run(self):
+        # Check if the index of dataframe is datetime
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        if not is_datetime:
+            raise ValueError("Dataset must be provided with datetime index")
+
         # Validate threshold paremeter
         if "min_threshold" not in self.params:
             raise ValueError("min_threshold must be provided in params")
@@ -600,6 +610,112 @@ class TimeSeriesMissingValues(ThresholdTest):
             weight="bold",
             fontsize=20,
         )
+        # Do this if you want to prevent the figure from being displayed
+        plt.close("all")
+
+        return fig
+
+
+@dataclass
+class TimeSeriesFrequency(ThresholdTest):
+    """
+    Test that detect frequencies in the data
+    """
+
+    category = "data_quality"
+    name = "time_series_frequency"
+
+    def run(self):
+        # Check if the index of dataframe is datetime
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        if not is_datetime:
+            raise ValueError("Dataset must be provided with datetime index")
+
+        freq_df = self._identify_frequencies(self.df)
+        n_frequencies = len(freq_df["Frequency"].unique())
+        test_results = [
+            TestResult(
+                passed=n_frequencies == 1,
+                values=freq_df.to_dict(orient="list"),
+            )
+        ]
+        fig_frequency = self._frequncy_plot(self.df)
+        test_figures = []
+        test_figures.append(
+            Figure(
+                key=f"{self.name}:frequecyplot",
+                figure=fig_frequency,
+                metadata={}
+            )
+        )
+        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+
+    def _identify_frequencies(self, df):
+        """
+        Identify the frequency of each series in the DataFrame.
+
+        :param df: Time-series DataFrame
+        :return: DataFrame with two columns: 'Variable' and 'Frequency'
+        """
+        frequencies = []
+        freq_dict = {'S': 'Second', 'T': 'Minute', 'min': 'Minute', 'H': 'Hourly', 'D': 'Daily',
+                     'B': 'Business day', 'W': 'Weekly', 'MS': 'Monthly', 'M': 'Monthly', 'Q': 'Quarterly',
+                     'A': 'Yearly', 'Y': 'Yearly'}
+
+        for column in df.columns:
+            series = df[column].dropna()
+            if not series.empty:
+                freq = pd.infer_freq(series.index)
+                label = freq_dict[freq] if freq in freq_dict.keys() else freq
+            else:
+                label = None
+
+            frequencies.append({'Variable': column, 'Frequency': label})
+
+        freq_df = pd.DataFrame(frequencies)
+
+        return freq_df
+
+    def _frequncy_plot(self, df):
+        """
+        Creates a frequency plot of time differences between consecutive entries in a DataFrame index.
+
+        Args:
+        df (pandas.DataFrame): The input DataFrame.
+
+        Returns:
+        A matplotlib Figure object representing the frequency plot of time differences.
+        """
+
+        # Calculate the time differences between consecutive entries
+        time_diff = df.index.to_series().diff().dropna()
+
+        # Convert the time differences to a suitable unit (e.g., days)
+        time_diff_days = time_diff.dt.total_seconds() / (60 * 60 * 24)
+
+        # Create a DataFrame with the time differences
+        time_diff_df = pd.DataFrame({'Time Differences (Days)': time_diff_days})
+        fig, ax = plt.subplots()
+        # Plot the frequency distribution of the time differences
+        sns.histplot(
+            data=time_diff_df, x='Time Differences (Days)', bins=50, kde=False, ax=ax
+        )
+
+        plt.yticks(
+            rotation=45, fontsize=18
+        )
+        ax.set_ylabel(
+            "Frequency", weight="bold", fontsize=18
+        )
+        ax.set_xlabel(
+            "Time Differences (Days)", weight="bold", fontsize=18
+        )
+        ax.set_title(
+            "Frequency",
+            weight="bold",
+            fontsize=20,
+        )
+
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
