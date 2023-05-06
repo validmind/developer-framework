@@ -17,7 +17,6 @@ from ..model_validation.statsmodels.metrics import (
     ZivotAndrewsArch,
     DFGLSArch,
     ResidualsVisualInspection,
-    SeasonalityDetectionWithACFandPACF,
 )
 
 
@@ -69,7 +68,7 @@ class SesonalityTestPlan(TestPlan):
 
     name = "seasonality_test_plan"
     required_context = ["train_ds", "test_ds"]
-    tests = [SeasonalityDetectionWithACFandPACF]
+
     test_plans = [ResidualsTestPlan, UnitRoot]
 
 

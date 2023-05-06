@@ -5,6 +5,7 @@ from ..vm_models import TestPlan
 from ..data_validation.metrics import (
     TimeSeriesLinePlot,
     TimeSeriesHistogram,
+    ACFandPACFPlot,
     SeasonalDecompose,
     AutoSeasonality,
     AutoAR,
@@ -24,6 +25,7 @@ class TimeSeriesUnivariate(TestPlan):
     tests = [
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
+        ACFandPACFPlot,
         SeasonalDecompose,
         AutoSeasonality,
         AutoAR,

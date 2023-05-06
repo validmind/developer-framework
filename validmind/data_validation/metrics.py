@@ -425,7 +425,7 @@ class SeasonalDecompose(Metric):
 
     type = "dataset"
     key = "seasonal_decompose"
-    default_params = {"seasonal_model": "additive", "fig_size": (20, 16)}
+    default_params = {"seasonal_model": "additive"}
 
     def store_seasonal_decompose(self, column, sd_one_column):
         """
@@ -481,10 +481,6 @@ class SeasonalDecompose(Metric):
             raise ValueError("seasonal_model must be provided in params")
         seasonal_model = self.params["seasonal_model"]
 
-        if "fig_size" not in self.params:
-            raise ValueError("fig_size must be provided in params")
-        fig_size = self.params["fig_size"]
-
         df = self.dataset.df
 
         # Drop rows with missing values
@@ -500,7 +496,7 @@ class SeasonalDecompose(Metric):
             results[col] = self.serialize_seasonal_decompose(sd)
 
             # Create subplots
-            fig, axes = plt.subplots(nrows=4, ncols=2, figsize=fig_size)
+            fig, axes = plt.subplots(nrows=4, ncols=2)
             fig.subplots_adjust(hspace=1)
             fig.suptitle(
                 f"Seasonal Decomposition and Residual Diagnostics for {col}",
@@ -608,3 +604,47 @@ class AutoSeasonality(Metric):
             results.append(result)
 
         return self.cache_results(results)
+
+
+class ACFandPACFPlot(Metric):
+    """
+    Plots ACF and PACF for a given time series dataset.
+    """
+
+    type = "evaluation"
+    key = "acf_pacf_plot"
+
+    def run(self):
+        if "columns" not in self.params:
+            raise ValueError("Time series columns must be provided in params")
+
+        # Check if index is datetime
+        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+            raise ValueError("Index must be a datetime type")
+
+        columns = self.params["columns"]
+        df = self.dataset.df.dropna()
+
+        if not set(columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        figures = []
+
+        for col in df.columns:
+            series = df[col]
+
+            # Create subplots
+            fig, (ax1, ax2) = plt.subplots(1, 2)
+
+            plot_acf(series, ax=ax1)
+            plot_pacf(series, ax=ax2)
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)
