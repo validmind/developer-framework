@@ -76,6 +76,7 @@
  <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
@@ -98,6 +99,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.AccuracyScore">AccuracyScore (class in validmind.model_validation.sklearn.metrics)</a>
 </li>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot">ACFandPACFPlot (class in validmind.data_validation.metrics)</a>
+</li>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.add_noise_std_dev">add_noise_std_dev() (validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis method)</a>
 </li>
   </ul></td>
@@ -105,6 +108,8 @@
       <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR">AutoAR (class in validmind.data_validation.metrics)</a>
 </li>
       <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoMA">AutoMA (class in validmind.data_validation.metrics)</a>
+</li>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality">AutoSeasonality (class in validmind.data_validation.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -178,9 +183,13 @@
         <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis.default_metrics">(validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis attribute)</a>
 </li>
       </ul></li>
-      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata.default_params">default_params (validmind.data_validation.metrics.DatasetMetadata attribute)</a>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.default_params">default_params (validmind.data_validation.metrics.AutoSeasonality attribute)</a>
 
       <ul>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetMetadata.default_params">(validmind.data_validation.metrics.DatasetMetadata attribute)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.default_params">(validmind.data_validation.metrics.SeasonalDecompose attribute)</a>
+</li>
         <li><a href="data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance.default_params">(validmind.data_validation.threshold_tests.ClassImbalance attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.threshold_tests.Duplicates.default_params">(validmind.data_validation.threshold_tests.Duplicates attribute)</a>
@@ -227,6 +236,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.evaluate_seasonal_periods">evaluate_seasonal_periods() (validmind.data_validation.metrics.AutoSeasonality method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -258,10 +275,14 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.key">key (validmind.data_validation.metrics.AutoAR attribute)</a>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.key">key (validmind.data_validation.metrics.ACFandPACFPlot attribute)</a>
 
       <ul>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.key">(validmind.data_validation.metrics.AutoAR attribute)</a>
+</li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoMA.key">(validmind.data_validation.metrics.AutoMA attribute)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.key">(validmind.data_validation.metrics.AutoSeasonality attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetCorrelations.key">(validmind.data_validation.metrics.DatasetCorrelations attribute)</a>
 </li>
@@ -270,6 +291,8 @@
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap.key">(validmind.data_validation.metrics.LaggedCorrelationHeatmap attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.key">(validmind.data_validation.metrics.ScatterPlot attribute)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.key">(validmind.data_validation.metrics.SeasonalDecompose attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.key">(validmind.data_validation.metrics.TimeSeriesHistogram attribute)</a>
 </li>
@@ -485,10 +508,14 @@
 </li>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCCurve">ROCCurve (class in validmind.model_validation.sklearn.metrics)</a>
 </li>
-      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">run() (validmind.data_validation.metrics.AutoAR method)</a>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.run">run() (validmind.data_validation.metrics.ACFandPACFPlot method)</a>
 
       <ul>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">(validmind.data_validation.metrics.AutoAR method)</a>
+</li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoMA.run">(validmind.data_validation.metrics.AutoMA method)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.run">(validmind.data_validation.metrics.AutoSeasonality method)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetCorrelations.run">(validmind.data_validation.metrics.DatasetCorrelations method)</a>
 </li>
@@ -499,6 +526,8 @@
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap.run">(validmind.data_validation.metrics.LaggedCorrelationHeatmap method)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.run">(validmind.data_validation.metrics.ScatterPlot method)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.run">(validmind.data_validation.metrics.SeasonalDecompose method)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">(validmind.data_validation.metrics.TimeSeriesHistogram method)</a>
 </li>
@@ -597,6 +626,10 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose">SeasonalDecompose (class in validmind.data_validation.metrics)</a>
+</li>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.serialize_seasonal_decompose">serialize_seasonal_decompose() (validmind.data_validation.metrics.SeasonalDecompose method)</a>
+</li>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.SHAPGlobalImportance">SHAPGlobalImportance (class in validmind.model_validation.sklearn.metrics)</a>
 </li>
       <li><a href="data_validation_tests.html#validmind.data_validation.threshold_tests.Skewness">Skewness (class in validmind.data_validation.threshold_tests)</a>
@@ -608,6 +641,8 @@
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierMetrics">SKLearnClassifierMetrics (class in validmind.test_plans.sklearn_classifier)</a>
 </li>
       <li><a href="test_plans.html#validmind.test_plans.sklearn_classifier.SKLearnClassifierPerformance">SKLearnClassifierPerformance (class in validmind.test_plans.sklearn_classifier)</a>
+</li>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.store_seasonal_decompose">store_seasonal_decompose() (validmind.data_validation.metrics.SeasonalDecompose method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -665,16 +700,20 @@
 </li>
       <li><a href="data_validation_tests.html#validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest">TimeSeriesMissingValuesTest (class in validmind.data_validation.threshold_tests)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="data_validation_tests.html#validmind.data_validation.threshold_tests.TooManyZeroValues">TooManyZeroValues (class in validmind.data_validation.threshold_tests)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation">TrainingTestDegradation (class in validmind.model_validation.sklearn.threshold_tests)</a>
 </li>
-      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.type">type (validmind.data_validation.metrics.AutoAR attribute)</a>
+      <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.type">type (validmind.data_validation.metrics.ACFandPACFPlot attribute)</a>
 
       <ul>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoAR.type">(validmind.data_validation.metrics.AutoAR attribute)</a>
+</li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoMA.type">(validmind.data_validation.metrics.AutoMA attribute)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.type">(validmind.data_validation.metrics.AutoSeasonality attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.DatasetCorrelations.type">(validmind.data_validation.metrics.DatasetCorrelations attribute)</a>
 </li>
@@ -683,6 +722,8 @@
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap.type">(validmind.data_validation.metrics.LaggedCorrelationHeatmap attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.type">(validmind.data_validation.metrics.ScatterPlot attribute)</a>
+</li>
+        <li><a href="data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.type">(validmind.data_validation.metrics.SeasonalDecompose attribute)</a>
 </li>
         <li><a href="data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.type">(validmind.data_validation.metrics.TimeSeriesHistogram attribute)</a>
 </li>
