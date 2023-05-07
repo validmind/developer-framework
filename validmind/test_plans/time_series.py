@@ -110,3 +110,18 @@ class Stationarity(TestPlan):
         return """
         This test plan aims to assess stationarity in the provided dataset. It provides various visualizations and statistical tests to determine if the time series is stationary. The rolling mean and rolling standard deviation plots help to visually identify any changing trends or variability in the time series. The Augmented Dickey-Fuller (ADF) test is a formal statistical test to determine the presence of a unit root, which indicates non-stationarity in the time series. If a time series is found to be non-stationary, it can be transformed using methods such as differencing or detrending to achieve stationarity before further analysis or modeling is performed. Assessing stationarity is an essential step in the analysis of time series data, as many time series models assume stationarity.
         """
+
+
+class Cointegration(TestPlan):
+    """
+    Test plan to perform cointegration tests.
+    """
+
+    name = "cointegration"
+    required_context = ["dataset"]
+    tests = [EngleGrangerCoint, SpreadPlot]
+
+    def description(self):
+        return """
+        This test plan aims to assess cointegration in the provided dataset. It provides various visualizations and statistical tests to determine if pairs of time series variables share a long-term, equilibrium relationship despite having individual trends. The spread plots help to visually identify any relationships between the time series pairs. The Engle-Granger test is a formal statistical test to determine the presence of cointegration between two time series variables, which suggests that they have a long-run relationship. If a pair of time series is found to be cointegrated, it can be used to build more accurate forecasting models that take into account the long-term relationship between the variables. Assessing cointegration is an essential step in the analysis of time series data, as it can provide valuable insights into the underlying relationships between variables.
+        """
