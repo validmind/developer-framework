@@ -14,6 +14,7 @@ from ..data_validation.metrics import (
     AutoMA,
     ScatterPlot,
     LaggedCorrelationHeatmap,
+    EngleGrangerCoint,
 )
 
 
@@ -57,7 +58,7 @@ class TimeSeriesMultivariate(TestPlan):
 
     name = "time_series_multivariate"
     required_context = ["dataset"]
-    tests = [ScatterPlot, LaggedCorrelationHeatmap]
+    tests = [ScatterPlot, LaggedCorrelationHeatmap, EngleGrangerCoint]
 
     def description(self):
         return """

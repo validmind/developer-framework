@@ -16,6 +16,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.stattools import coint
 
 
 from ..vm_models import (
@@ -779,3 +780,48 @@ class RollingStatsPlot(Metric):
             figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(figures=figures)
+
+
+class EngleGrangerCoint(Metric):
+    """
+    Tests cointegration between pairs of time series using the Engle-Granger test.
+    """
+
+    type = "dataset"
+    key = "engle_granger_coint"
+    default_params = {"threshold": 0.05}
+
+    def run(self):
+        threshold = self.params["threshold"]
+        df = self.dataset.df.dropna()
+
+        results = []
+        columns = df.columns
+        num_vars = len(columns)
+
+        for i in range(num_vars):
+            for j in range(i + 1, num_vars):
+                var1 = columns[i]
+                var2 = columns[j]
+
+                # Perform the Engle-Granger cointegration test
+                _, p_value, _ = coint(df[var1], df[var2])
+
+                # Determine the decision based on the p-value and the significance level
+                decision = (
+                    "Cointegrated" if p_value <= threshold else "Not cointegrated"
+                )
+                pass_fail = "Pass" if p_value <= threshold else "Fail"
+
+                result = {
+                    "Variable 1": var1,
+                    "Variable 2": var2,
+                    "Test": "Engle-Granger",
+                    "p-value": p_value,
+                    "Threshold": threshold,
+                    "Pass/Fail": pass_fail,
+                    "Decision": decision,
+                }
+                results.append(result)
+
+        return self.cache_results(results)
