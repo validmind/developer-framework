@@ -58,6 +58,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.SeasonalDecompose"><code class="docutils literal notranslate"><span class="pre">SeasonalDecompose</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.AutoSeasonality"><code class="docutils literal notranslate"><span class="pre">AutoSeasonality</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.ACFandPACFPlot"><code class="docutils literal notranslate"><span class="pre">ACFandPACFPlot</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.AutoStationarity"><code class="docutils literal notranslate"><span class="pre">AutoStationarity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.RollingStatsPlot"><code class="docutils literal notranslate"><span class="pre">RollingStatsPlot</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-validmind.data_validation.threshold_tests">Data Validation Threshold Tests</a><ul>
@@ -449,6 +451,79 @@ using the seasonal_decompose method.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.ACFandPACFPlot.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#ACFandPACFPlot.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.ACFandPACFPlot.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">AutoStationarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoStationarity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
+<p>Automatically detects stationarity for each time series in a DataFrame
+using the Augmented Dickey-Fuller (ADF) test.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_stationarity'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_order':</span> <span class="pre">5,</span> <span class="pre">'threshold':</span> <span class="pre">0.05}</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoStationarity.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">RollingStatsPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#RollingStatsPlot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
+<p>This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rolling_stats_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.default_params">
+<span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'window_size':</span> <span class="pre">12}</span></em><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.default_params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.plot_rolling_statistics">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_rolling_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#RollingStatsPlot.plot_rolling_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.plot_rolling_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Plot rolling mean and rolling standard deviation in different subplots for a given series.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>series</strong> – Pandas Series with time-series data</p></li>
+<li><p><strong>window_size</strong> – Window size for the rolling calculations</p></li>
+<li><p><strong>ax1</strong> – Axis object for the rolling mean plot</p></li>
+<li><p><strong>ax2</strong> – Axis object for the rolling standard deviation plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#RollingStatsPlot.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the metric calculation and cache its results</p>
 </dd></dl>
 
