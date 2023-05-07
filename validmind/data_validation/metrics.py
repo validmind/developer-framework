@@ -648,3 +648,134 @@ class ACFandPACFPlot(Metric):
             figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
 
         return self.cache_results(figures=figures)
+
+
+class AutoStationarity(Metric):
+    """
+    Automatically detects stationarity for each time series in a DataFrame
+    using the Augmented Dickey-Fuller (ADF) test.
+    """
+
+    type = "dataset"
+    key = "auto_stationarity"
+    default_params = {"max_order": 5, "threshold": 0.05}
+
+    def run(self):
+        if "max_order" not in self.params:
+            raise ValueError("max_order must be provided in params")
+        max_order = self.params["max_order"]
+
+        if "threshold" not in self.params:
+            raise ValueError("threshold must be provided in params")
+        threshold = self.params["threshold"]
+
+        df = self.dataset.df.dropna()
+        results = []
+
+        # Loop over each column in the input DataFrame and perform stationarity tests
+        for col in df.columns:
+            is_stationary = False
+            order = 0
+
+            while not is_stationary and order <= max_order:
+                series = df[col]
+
+                if order == 0:
+                    adf_result = adfuller(series)
+                else:
+                    adf_result = adfuller(np.diff(series, n=order - 1))
+
+                adf_pvalue = adf_result[1]
+                adf_pass_fail = adf_pvalue < threshold
+                adf_decision = "Stationary" if adf_pass_fail else "Non-stationary"
+
+                result = {
+                    "Variable": col,
+                    "Integration Order": order,
+                    "Test": "ADF",
+                    "p-value": adf_pvalue,
+                    "Threshold": threshold,
+                    "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
+                    "Decision": adf_decision,
+                }
+                results.append(result)
+
+                if adf_pass_fail:
+                    is_stationary = True
+
+                order += 1
+
+        return self.cache_results(results)
+
+
+class RollingStatsPlot(Metric):
+    """
+    This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.
+    """
+
+    type = "dataset"
+    key = "rolling_stats_plot"
+    default_params = {"window_size": 12}
+
+    @staticmethod
+    def plot_rolling_statistics(series, window_size=12, ax1=None, ax2=None):
+        """
+        Plot rolling mean and rolling standard deviation in different subplots for a given series.
+
+        :param series: Pandas Series with time-series data
+        :param window_size: Window size for the rolling calculations
+        :param ax1: Axis object for the rolling mean plot
+        :param ax2: Axis object for the rolling standard deviation plot
+        """
+        rolling_mean = series.rolling(window=window_size).mean()
+        rolling_std = series.rolling(window=window_size).std()
+
+        if ax1 is None or ax2 is None:
+            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+
+        ax1.plot(rolling_mean, label="Rolling Mean")
+        ax1.legend()
+        ax1.set_ylabel("Value")
+
+        ax2.plot(rolling_std, label="Rolling Standard Deviation", color="orange")
+        ax2.legend()
+        ax2.set_xlabel("Time")
+        ax2.set_ylabel("Value")
+
+    def run(self):
+        if "window_size" not in self.params:
+            raise ValueError("Window size must be provided in params")
+
+        # Check if index is datetime
+        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+            raise ValueError("Index must be a datetime type")
+
+        window_size = self.params["window_size"]
+        df = self.dataset.df.dropna()
+
+        if not set(df.columns).issubset(set(df.columns)):
+            raise ValueError("Provided 'columns' must exist in the dataset")
+
+        figures = []
+
+        for col in df.columns:
+            series = df[col]
+
+            # Create a new figure and axis objects
+            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+            fig.suptitle(col)
+
+            # Call the plot_rolling_statistics function
+            self.plot_rolling_statistics(
+                series, window_size=window_size, ax1=ax1, ax2=ax2
+            )
+
+            # Adjust the layout
+            plt.tight_layout()
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
+
+            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)

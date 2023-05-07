@@ -8,6 +8,8 @@ from ..data_validation.metrics import (
     ACFandPACFPlot,
     SeasonalDecompose,
     AutoSeasonality,
+    AutoStationarity,
+    RollingStatsPlot,
     AutoAR,
     AutoMA,
     ScatterPlot,
@@ -28,13 +30,15 @@ class TimeSeriesUnivariate(TestPlan):
         ACFandPACFPlot,
         SeasonalDecompose,
         AutoSeasonality,
+        AutoStationarity,
+        RollingStatsPlot,
         AutoAR,
         AutoMA,
     ]
 
     def description(self):
         return """
-        This section provides a preliminary understanding of the target variable(s)
+        This test plan provides a preliminary understanding of the target variable(s)
         used in the time series dataset. It visualizations that present the raw time
         series data and a histogram of the target variable(s).
 
@@ -57,7 +61,7 @@ class TimeSeriesMultivariate(TestPlan):
 
     def description(self):
         return """
-        This section provides a preliminary understanding of the features
+        This test plan provides a preliminary understanding of the features
         and relationship in multivariate dataset. It presents various
         multivariate visualizations that can help identify patterns, trends,
         and relationships between pairs of variables. The visualizations are
@@ -83,4 +87,19 @@ class Seasonality(TestPlan):
     def description(self):
         return """
         This test plan aims to detect seasonality in the provided dataset. It provides various visualizations and statistical tests to identify the presence of seasonality in the time series. The ACF and PACF plots help to identify the order of the autoregressive (AR) and moving average (MA) components in the time series, while the seasonal decomposition test provides insights into the trend and seasonality components. The auto-seasonality test uses different periods to test seasonality and identify the best fit. The results of these tests can help guide further exploration and modeling of the time series data.
+        """
+
+
+class Stationarity(TestPlan):
+    """
+    Test plan to perform stationarity tests.
+    """
+
+    name = "stationarity"
+    required_context = ["dataset"]
+    tests = [AutoStationarity, RollingStatsPlot]
+
+    def description(self):
+        return """
+        This test plan aims to assess stationarity in the provided dataset. It provides various visualizations and statistical tests to determine if the time series is stationary. The rolling mean and rolling standard deviation plots help to visually identify any changing trends or variability in the time series. The Augmented Dickey-Fuller (ADF) test is a formal statistical test to determine the presence of a unit root, which indicates non-stationarity in the time series. If a time series is found to be non-stationary, it can be transformed using methods such as differencing or detrending to achieve stationarity before further analysis or modeling is performed. Assessing stationarity is an essential step in the analysis of time series data, as many time series models assume stationarity.
         """
