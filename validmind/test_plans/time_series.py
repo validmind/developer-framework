@@ -15,12 +15,13 @@ from ..data_validation.metrics import (
     ScatterPlot,
     LaggedCorrelationHeatmap,
     EngleGrangerCoint,
+    SpreadPlot,
 )
 
 
 class TimeSeriesUnivariate(TestPlan):
     """
-    Test plan to perform univariate inspection tests.
+    Test plan to perform time series univariate analysis.
     """
 
     name = "time_series_univariate"
@@ -53,12 +54,17 @@ class TimeSeriesUnivariate(TestPlan):
 
 class TimeSeriesMultivariate(TestPlan):
     """
-    Test plan to perform univariate inspection tests.
+    Test plan to perform time series multivariate analysis.
     """
 
     name = "time_series_multivariate"
     required_context = ["dataset"]
-    tests = [ScatterPlot, LaggedCorrelationHeatmap, EngleGrangerCoint]
+    tests = [
+        ScatterPlot,
+        LaggedCorrelationHeatmap,
+        EngleGrangerCoint,
+        SpreadPlot,
+    ]
 
     def description(self):
         return """

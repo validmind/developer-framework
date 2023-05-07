@@ -271,7 +271,7 @@ class LaggedCorrelationHeatmap(Metric):
             index=independent_vars,
         )
 
-        plt.figure(figsize=(12, 3))
+        plt.figure()
         sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
         plt.title(
             "Heatmap of Correlations between Target Variable and Lags of Independent Variables"
@@ -784,7 +784,7 @@ class RollingStatsPlot(Metric):
 
 class EngleGrangerCoint(Metric):
     """
-    Tests cointegration between pairs of time series using the Engle-Granger test.
+    Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.
     """
 
     type = "dataset"
@@ -825,3 +825,62 @@ class EngleGrangerCoint(Metric):
                 results.append(result)
 
         return self.cache_results(results)
+
+
+class SpreadPlot(Metric):
+    """
+    This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.
+    """
+
+    type = "dataset"
+    key = "spread_plot"
+
+    @staticmethod
+    def plot_spread(series1, series2, ax=None):
+        """
+        Plot the spread between two time series variables.
+
+        :param series1: Pandas Series with time-series data for the first variable
+        :param series2: Pandas Series with time-series data for the second variable
+        :param ax: Axis object for the spread plot
+        """
+        spread = series1 - series2
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        sns.lineplot(data=spread, ax=ax)
+
+        return ax
+
+    def run(self):
+        df = self.dataset.df.dropna()
+
+        figures = []
+        columns = df.columns
+        num_vars = len(columns)
+
+        for i in range(num_vars):
+            for j in range(i + 1, num_vars):
+                var1 = columns[i]
+                var2 = columns[j]
+
+                series1 = df[var1]
+                series2 = df[var2]
+
+                fig, ax = plt.subplots()
+                fig.suptitle(f"Spread between {var1} and {var2}")
+
+                self.plot_spread(series1, series2, ax=ax)
+
+                # Adjust the layout
+                plt.tight_layout()
+
+                # Do this if you want to prevent the figure from being displayed
+                plt.close("all")
+
+                figures.append(
+                    Figure(key=f"{self.key}:{var1}_{var2}", figure=fig, metadata={})
+                )
+
+        return self.cache_results(figures=figures)
