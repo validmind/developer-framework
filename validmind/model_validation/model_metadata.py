@@ -1,9 +1,8 @@
 import sys
 
 from dataclasses import dataclass
-from typing import ClassVar
 
-from ..vm_models import TestContext, TestContextUtils, TestPlanModelResult
+from ..vm_models import Metric
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -132,7 +131,7 @@ def get_params_from_model_instance(model):
 
 
 @dataclass
-class ModelMetadata(TestContextUtils):
+class ModelMetadata(Metric):
     """
     Custom class to collect the following metadata for a model:
     - Model architecture
@@ -140,17 +139,9 @@ class ModelMetadata(TestContextUtils):
     - Model task type
     """
 
-    # Test Context
-    test_context: TestContext
-
-    # Class Variables
-    test_type: ClassVar[str] = "ModelMetadata"
-    default_params: ClassVar[dict] = {}
-
-    # Instance Variables
-    params: dict = None
-    name = "model_metadata"
-    result: TestPlanModelResult = None
+    type = "model"
+    scope = "test"
+    key = "model_metadata"
 
     def __post_init__(self):
         """
@@ -159,26 +150,20 @@ class ModelMetadata(TestContextUtils):
         if self.params is None:
             self.params = self.default_params
 
+    def description(self):
+        return """
+        The model metadata test collects attributes about the model such as
+        the model architecture, training parameters, and task type. This helps
+        understand the model's capabilities and limitations in the context of
+        a modeling framework.
+        """.strip()
+
     def run(self):
         """
-        Just set the model to the result attribute of the test plan result
-        and it will be logged via the `log_model` function
+        Extracts model metadata from a model object instance
         """
         trained_model = self.model.model
         model_info = get_info_from_model_instance(trained_model)
+        model_info["params"] = get_params_from_model_instance(trained_model)
 
-        if self.model.task is None:
-            self.model.task = model_info["task"]
-        if self.model.subtask is None:
-            self.model.subtask = model_info["subtask"]
-        if self.model.attributes.framework is None:
-            self.model.attributes.framework = model_info["framework"]
-        if self.model.attributes.framework_version is None:
-            self.model.attributes.framework_version = model_info["framework_version"]
-        if self.model.attributes.architecture is None:
-            self.model.attributes.architecture = model_info["architecture"]
-
-        self.model.params = get_params_from_model_instance(trained_model)
-        self.result = TestPlanModelResult(model=self.model)
-
-        return self.result
+        return self.cache_results(model_info)
