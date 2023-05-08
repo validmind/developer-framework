@@ -212,10 +212,11 @@ Run the metric calculation and cache its results
 Threshold based tests
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.AccuracyTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the accuracy score is above a threshold.
+Test that the model’s prediction accuracy on a dataset meets or
+exceeds a predefined threshold.
 
 
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
@@ -228,10 +229,11 @@ Test that the accuracy score is above a threshold.
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.F1ScoreTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.MinimumF1Score(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the F1 score is above a threshold.
+Test that the model’s F1 score on the validation dataset meets or
+exceeds a predefined threshold.
 
 
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
@@ -244,10 +246,11 @@ Test that the F1 score is above a threshold.
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the ROC AUC score is above a threshold.
+Test that the model’s ROC AUC score on the validation dataset meets or
+exceeds a predefined threshold.
 
 
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
@@ -260,10 +263,11 @@ Test that the ROC AUC score is above a threshold.
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
-Test that the training set metrics are better than the test set metrics.
+Test that the degradation in performance between the training and test datasets
+does not exceed a predefined threshold.
 
 
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
@@ -278,7 +282,7 @@ Test that the training set metrics are better than the test set metrics.
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test that identify overfit regions with high residuals by histogram slicing techniques.
@@ -296,7 +300,7 @@ Test that identify overfit regions with high residuals by histogram slicing tech
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test that identify weak regions with high residuals by histogram slicing techniques.
@@ -314,7 +318,7 @@ Test that identify weak regions with high residuals by histogram slicing techniq
 Run the test and cache its results
 
 
-### _class_ validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test robustness of model by perturbing the features column values
