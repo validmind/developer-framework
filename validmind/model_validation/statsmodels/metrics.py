@@ -575,3 +575,110 @@ class AutoARIMA(Metric):
             results.append(result)
 
         return self.cache_results(results)
+
+
+@dataclass
+class RegressorModelSummary(Metric):
+    """
+    Test that output the summary of regression models of statsmodel library.
+    """
+
+    category = "model_performance"
+    name = "regressor_model_summary"
+
+    def run(self):
+        # statsmodels library information
+        module_name = self.model.model.__class__.__module__
+        library_name = module_name.split('.')[0]
+        model_name = self.model.model.__class__.__name__
+
+        if library_name != "statsmodels" or model_name != "RegressionResultsWrapper":
+            raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+
+        lib_model = self.model.model
+        # List of features columns
+        X_columns = lib_model.model.exog_names
+
+        # Extract R-squared and Adjusted R-squared
+        r2 = lib_model.rsquared
+        adj_r2 = lib_model.rsquared_adj
+
+        # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
+        mse = lib_model.mse_resid
+        rmse = mse ** 0.5
+
+        results = {
+            "Model Name": self.model.model.__class__.__name__,
+            "Library Name": library_name,
+            "Independent Variables": X_columns,
+            'R-Squared': r2,
+            'Adjusted R-Squared': adj_r2,
+            'MSE': mse,
+            'RMSE': rmse,
+        }
+        return self.cache_results(results)
+
+
+@dataclass
+class RegressorInsampleModelComparison(Metric):
+    """
+    Test that output the comparison of regression models.
+    """
+
+    category = "model_performance"
+    name = "regressor_insample_performance"
+    default_params = {"models": []}
+
+    def run(self):
+        # Validate X std deviation parameter
+        if not self.params["models"]:
+            raise ValueError("List of models must be provided in params")
+        models = self.params["models"]
+
+        for model in models:
+            model_name = model.model.__class__.__name__
+            if model_name != "RegressionResultsWrapper":
+                raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+
+        results_df = self._in_sample_performance_ols(models)
+        print(results_df)
+        results = results_df.to_dict(orient="list")
+        return self.cache_results(results)
+
+    def _in_sample_performance_ols(self, models):
+
+        evaluation_results = []
+
+        for i, model in enumerate(models):
+            # X = model.model.exog
+            X_columns = model.model.exog_names
+            # y = model.model.endog
+
+            # # Calculate the predicted values using the model
+            # y_pred = model.predict(X)
+
+            # # Calculate the residuals
+            # residuals = y - y_pred
+
+            # Extract R-squared and Adjusted R-squared
+            r2 = model.rsquared
+            adj_r2 = model.rsquared_adj
+
+            # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
+            mse = model.mse_resid
+            rmse = mse ** 0.5
+
+            # Append the results to the evaluation_results list
+            evaluation_results.append({
+                'Model': f'Model_{i + 1}',
+                'Independent Variables': ', '.join(X_columns),
+                'R-Squared': r2,
+                'Adjusted R-Squared': adj_r2,
+                'MSE': mse,
+                'RMSE': rmse
+            })
+
+        # Convert the evaluation_results list to a DataFrame
+        results_df = pd.DataFrame(evaluation_results)
+
+        return results_df
