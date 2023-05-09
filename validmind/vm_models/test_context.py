@@ -2,6 +2,8 @@
 TestContext
 """
 from dataclasses import dataclass
+from typing import List
+from attr import field
 
 import pandas as pd
 
@@ -20,6 +22,7 @@ class TestContext:
 
     dataset: Dataset = None
     model: Model = None
+    models: List[Model] = field(type=list)
     train_ds: Dataset = None
     test_ds: Dataset = None
     validation_ds: Dataset = None
@@ -67,6 +70,10 @@ class TestContextUtils:
     @property
     def model(self):
         return self.test_context.model
+
+    @property
+    def models(self):
+        return self.test_context.models
 
     @property
     def train_ds(self):

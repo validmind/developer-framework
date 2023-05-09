@@ -504,66 +504,71 @@ class TimeSeriesMissingValues(ThresholdTest):
             for col in missing.index
         ]
 
-        fig_barplot = self._barplot(self.df)
+        fig_barplot = self._barplot(self.df, rotation=45, font_size=16)
         fig_heatmap = self._heatmap(self.df)
         test_figures = []
-        test_figures.append(
-            Figure(
-                key=f"{self.name}:barplot",
-                figure=fig_barplot,
-                metadata={}
+        if fig_barplot is not None:
+            test_figures.append(
+                Figure(
+                    key=f"{self.name}:barplot",
+                    figure=fig_barplot,
+                    metadata={}
+                )
             )
-        )
-        test_figures.append(
-            Figure(
-                key=f"{self.name}:heatmap",
-                figure=fig_heatmap,
-                metadata={}
+            test_figures.append(
+                Figure(
+                    key=f"{self.name}:heatmap",
+                    figure=fig_heatmap,
+                    metadata={}
+                )
             )
-        )
 
         return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
 
-    def _barplot(self, df):
+    def _barplot(self, df: pd.DataFrame, rotation: int = 45,
+                 font_size: int = 18) -> plt.Figure:
         """
         Generate a bar plot of missing values in a pandas DataFrame.
 
         Args:
         df (pandas.DataFrame): The input DataFrame to plot the missing values of.
+        rotation (int): The rotation angle for x-axis labels. Default is 45.
+        font_size (int): The font size for x-axis and y-axis labels. Default is 18.
 
         Returns:
         matplotlib.figure.Figure: A matplotlib figure object containing the bar plot.
         """
         # Create a bar plot using seaborn library
         missing_values = df.isnull().sum()
+        if sum(missing_values.values) != 0:
 
-        fig, ax = plt.subplots()
-        sns.barplot(
-            data=missing_values,
-            x=missing_values.index,
-            y=missing_values.values,
-            ax=ax,
-        )
-        ax.set_xticklabels(
-            labels=missing_values.index, rotation=25, fontsize=18
-        )
-        plt.yticks(
-            rotation=45, fontsize=18
-        )
-        ax.set_ylabel(
-            "Number of Missing Values", weight="bold", fontsize=18
-        )
-        ax.set_xlabel(
-            "Variables (Columns)", weight="bold", fontsize=18
-        )
-        ax.set_title(
-            "Total Number of Missing Values per Variable",
-            weight="bold",
-            fontsize=20,
-        )
-
-        # Do this if you want to prevent the figure from being displayed
-        plt.close("all")
+            with plt.style.context('seaborn'):
+                fig, ax = plt.subplots()
+                sns.barplot(
+                    data=missing_values,
+                    x=missing_values.index,
+                    y=missing_values.values,
+                    ax=ax,
+                )
+                ax.set_xticklabels(
+                    labels=missing_values.index, rotation=rotation, fontsize=font_size
+                )
+                plt.yticks(
+                    rotation=45, fontsize=font_size
+                )
+                ax.set_ylabel(
+                    "Number of Missing Values", weight="bold", fontsize=font_size
+                )
+                ax.set_xlabel(
+                    "Variables (Columns)", weight="bold", fontsize=font_size
+                )
+                ax.set_title(
+                    "Total Number of Missing Values per Variable",
+                    weight="bold",
+                    fontsize=font_size + 2,
+                )
+        else:
+            fig = None
 
         return fig
 
