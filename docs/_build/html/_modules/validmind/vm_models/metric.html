@@ -84,6 +84,7 @@
 <span class="kn">from</span> <span class="nn">.metric_result</span> <span class="kn">import</span> <span class="n">MetricResult</span>
 <span class="kn">from</span> <span class="nn">.test_context</span> <span class="kn">import</span> <span class="n">TestContext</span><span class="p">,</span> <span class="n">TestContextUtils</span>
 <span class="kn">from</span> <span class="nn">.test_plan_result</span> <span class="kn">import</span> <span class="n">TestPlanMetricResult</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">clean_docstring</span>
 
 
 <div class="viewcode-block" id="Metric"><a class="viewcode-back" href="../../../vm_models.html#validmind.Metric">[docs]</a><span class="nd">@dataclass</span>
@@ -152,7 +153,7 @@
         <span class="n">result_metadata</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">{</span>
                 <span class="s2">&quot;content_id&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;metric_description:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">(),</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">clean_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">()),</span>
             <span class="p">}</span>
         <span class="p">]</span>
 

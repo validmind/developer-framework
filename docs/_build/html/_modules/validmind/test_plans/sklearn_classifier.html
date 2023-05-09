@@ -80,6 +80,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">TestPlan</span>
+<span class="kn">from</span> <span class="nn">..data_validation.metrics</span> <span class="kn">import</span> <span class="n">DatasetSplit</span>
 <span class="kn">from</span> <span class="nn">..model_validation.model_metadata</span> <span class="kn">import</span> <span class="n">ModelMetadata</span>
 <span class="kn">from</span> <span class="nn">..model_validation.sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AccuracyScore</span><span class="p">,</span>
@@ -115,6 +116,7 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;test_ds&quot;</span><span class="p">]</span>
     <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">ModelMetadata</span><span class="p">,</span>
+        <span class="n">DatasetSplit</span><span class="p">,</span>
         <span class="n">AccuracyScore</span><span class="p">,</span>
         <span class="n">ConfusionMatrix</span><span class="p">,</span>
         <span class="n">F1Score</span><span class="p">,</span>

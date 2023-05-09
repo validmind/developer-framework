@@ -49,6 +49,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetMetadata"><code class="docutils literal notranslate"><span class="pre">DatasetMetadata</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetCorrelations"><code class="docutils literal notranslate"><span class="pre">DatasetCorrelations</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetDescription"><code class="docutils literal notranslate"><span class="pre">DatasetDescription</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.DatasetSplit"><code class="docutils literal notranslate"><span class="pre">DatasetSplit</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.TimeSeriesLinePlot"><code class="docutils literal notranslate"><span class="pre">TimeSeriesLinePlot</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.TimeSeriesHistogram"><code class="docutils literal notranslate"><span class="pre">TimeSeriesHistogram</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#validmind.data_validation.metrics.ScatterPlot"><code class="docutils literal notranslate"><span class="pre">ScatterPlot</span></code></a></li>
@@ -210,6 +211,51 @@ are calculated:
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetDescription.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">DatasetSplit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetSplit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
+<p>Attempts to extract information about the dataset split from the
+provided training, test and validation datasets.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.key">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_split'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.dataset_labels">
+<span class="sig-name descname"><span class="pre">dataset_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'test_ds':</span> <span class="pre">'Test',</span> <span class="pre">'total':</span> <span class="pre">'Total',</span> <span class="pre">'train_ds':</span> <span class="pre">'Training',</span> <span class="pre">'validation_ds':</span> <span class="pre">'Validation'}</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.dataset_labels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetSplit.description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.description" title="Permalink to this definition"></a></dt>
+<dd><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.as_table">
+<span class="sig-name descname"><span class="pre">as_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetSplit.as_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.as_table" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a table representation of the dataset split information</p>
+<p>Each metric can optionally implement this method to return a properly
+formatted table representation of the results to be shown in the model
+documentation as-is.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetSplit.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the metric calculation and cache its results</p>
 </dd></dl>
 

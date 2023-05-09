@@ -182,6 +182,98 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span></div></div>
 
 
+<div class="viewcode-block" id="DatasetSplit"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit">[docs]</a><span class="k">class</span> <span class="nc">DatasetSplit</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempts to extract information about the dataset split from the</span>
+<span class="sd">    provided training, test and validation datasets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_split&quot;</span>
+
+    <span class="n">dataset_labels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;train_ds&quot;</span><span class="p">:</span> <span class="s2">&quot;Training&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;test_ds&quot;</span><span class="p">:</span> <span class="s2">&quot;Test&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;validation_ds&quot;</span><span class="p">:</span> <span class="s2">&quot;Validation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="s2">&quot;Total&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="DatasetSplit.description"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This section shows the size of the dataset split into training, test (and validation) sets</span>
+<span class="s2">        where applicable. The size of each dataset is shown in absolute terms and as a proportion</span>
+<span class="s2">        of the total dataset size.</span>
+
+<span class="s2">        The dataset split is important to understand because it can affect the performance of</span>
+<span class="s2">        the model. For example, if the training set is too small, the model may not be able to</span>
+<span class="s2">        learn the patterns in the data and will perform poorly on the test set. On the other hand,</span>
+<span class="s2">        if the test set is too small, the model may not be able to generalize well to unseen data</span>
+<span class="s2">        and will perform poorly on the validation set.</span>
+<span class="s2">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="DatasetSplit.as_table"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.as_table">[docs]</a>    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_results</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a table representation of the dataset split information</span>
+
+<span class="sd">        Each metric can optionally implement this method to return a properly</span>
+<span class="sd">        formatted table representation of the results to be shown in the model</span>
+<span class="sd">        documentation as-is.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">raw_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_size&quot;</span><span class="p">):</span>
+                <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_size&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+                    <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;Total&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;Size&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                            <span class="s2">&quot;Proportion&quot;</span><span class="p">:</span> <span class="s2">&quot;100%&quot;</span><span class="p">,</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">proportion</span> <span class="o">=</span> <span class="n">raw_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_proportion&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+                <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span> <span class="n">DatasetSplit</span><span class="o">.</span><span class="n">dataset_labels</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">],</span>
+                        <span class="s2">&quot;Size&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                        <span class="s2">&quot;Proportion&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">proportion</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">records</span></div>
+
+<div class="viewcode-block" id="DatasetSplit.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Try to extract metrics from each available dataset</span>
+        <span class="n">available_datasets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;test_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;validation_ds&quot;</span><span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># First calculate the total size of the dataset</span>
+        <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">total_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="c1"># Then calculate the proportion of each dataset</span>
+        <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+                <span class="n">results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_proportion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_size</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_size</span>
+
+        <span class="c1"># A call to as_table() will be made inside the cache_results() method instead</span>
+        <span class="c1"># so we can capture the &quot;raw&quot; results and the table representation of the results</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span>
+            <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_table</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+
+
 <div class="viewcode-block" id="TimeSeriesLinePlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesLinePlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a visual analysis of time series data by plotting the</span>
