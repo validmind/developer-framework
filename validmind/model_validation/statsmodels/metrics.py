@@ -582,6 +582,7 @@ class ModelPredictionOLS(Metric):
 
     type = "dataset"
     key = "model_prediction_ols"
+    default_params = {"plot_start_date": None, "plot_end_date": None}
 
     def serialize_time_series_df(self, df):
         # Convert the DateTimeIndex to strings without specifying a date format
@@ -679,11 +680,18 @@ class ModelPredictionOLS(Metric):
 
         df_test = self.test_ds.df
 
+        plot_start_date = self.params["plot_start_date"]
+        plot_end_date = self.params["plot_end_date"]
+
+        print(plot_start_date)
+
         prediction_df = self.get_model_prediction(model_list, df_test)
         results = self.serialize_time_series_df(prediction_df)
 
         figures = []
-        self.plot_predictions(prediction_df)
+        self.plot_predictions(
+            prediction_df, start_date=plot_start_date, end_date=plot_end_date
+        )
 
         # Assuming the plot is the only figure we want to store
         fig = plt.gcf()
