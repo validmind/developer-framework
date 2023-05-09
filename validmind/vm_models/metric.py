@@ -55,6 +55,16 @@ class Metric(TestContextUtils):
         """
         return self.__doc__.strip()
 
+    def summary(self, metric_value: Optional[Union[dict, list, pd.DataFrame]] = None):
+        """
+        Return the metric summary. Should be overridden by subclasses. Defaults to None.
+        The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+        short summary of the metric results.
+
+        We return None here because the metric summary is optional.
+        """
+        return None
+
     def run(self, *args, **kwargs):
         """
         Run the metric calculation and cache its results
@@ -84,6 +94,8 @@ class Metric(TestContextUtils):
             }
         ]
 
+        result_summary = self.summary(metric_value)
+
         test_plan_result = TestPlanMetricResult(
             result_id=self.name,
             result_metadata=result_metadata,
@@ -96,6 +108,7 @@ class Metric(TestContextUtils):
                 key=self.key,
                 value=metric_value,
                 value_formatter=self.value_formatter,
+                summary=result_summary,
             )
 
         # Allow metrics to attach figures to the test plan result

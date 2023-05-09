@@ -260,7 +260,7 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
 
     r = api_session.post(
         f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
-        data=json.dumps(result.dict(), cls=NumpyEncoder, allow_nan=False),
+        data=json.dumps(result.serialize(), cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 

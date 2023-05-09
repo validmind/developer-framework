@@ -22,6 +22,8 @@ from statsmodels.tsa.stattools import coint
 from ..vm_models import (
     Figure,
     Metric,
+    ResultSummary,
+    ResultTable,
     TestContext,
     TestContextUtils,
     TestPlanDatasetResult,
@@ -138,20 +140,16 @@ class DatasetSplit(Metric):
         and will perform poorly on the validation set.
         """
 
-    def as_table(self, raw_results):
+    def summary(self, raw_results):
         """
-        Returns a table representation of the dataset split information
-
-        Each metric can optionally implement this method to return a properly
-        formatted table representation of the results to be shown in the model
-        documentation as-is.
+        Returns a summarized representation of the dataset split information
         """
-        records = []
+        table_records = []
         for key, value in raw_results.items():
             if key.endswith("_size"):
                 dataset_name = key.replace("_size", "")
                 if dataset_name == "total":
-                    records.append(
+                    table_records.append(
                         {
                             "Dataset": "Total",
                             "Size": value,
@@ -161,7 +159,7 @@ class DatasetSplit(Metric):
                     continue
 
                 proportion = raw_results[f"{dataset_name}_proportion"] * 100
-                records.append(
+                table_records.append(
                     {
                         "Dataset": DatasetSplit.dataset_labels[dataset_name],
                         "Size": value,
@@ -169,7 +167,7 @@ class DatasetSplit(Metric):
                     }
                 )
 
-        return records
+        return ResultSummary(results=[ResultTable(data=table_records)])
 
     def run(self):
         # Try to extract metrics from each available dataset
@@ -192,12 +190,6 @@ class DatasetSplit(Metric):
 
         results["total_size"] = total_size
 
-        # A call to as_table() will be made inside the cache_results() method instead
-        # so we can capture the "raw" results and the table representation of the results
-        results = {
-            "raw": results,
-            "table": self.as_table(results),
-        }
         return self.cache_results(results)
 
 
