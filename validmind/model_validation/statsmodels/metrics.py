@@ -4,6 +4,7 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
+import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -480,9 +481,6 @@ class KPSS(Metric):
         return self.cache_results(kpss_values)
 
 
-# AUTOMATIC DECISION ENGINES
-
-
 @dataclass
 class DeterminationOfIntegrationOrderADF(Metric):
     """
@@ -575,3 +573,104 @@ class AutoARIMA(Metric):
             results.append(result)
 
         return self.cache_results(results)
+
+
+class ModelPredictionOLS(Metric):
+    """
+    Calculates and plots the model predictions for each of the models
+    """
+
+    type = "dataset"
+    key = "model_prediction_ols"
+
+    def get_model_prediction(self, model_fits_dict, df_test):
+        # Extract the training data from the first model fit
+        first_model_fit = list(model_fits_dict.values())[0]
+        train_data = pd.Series(
+            first_model_fit.model.endog, index=first_model_fit.model.data.row_labels
+        )
+        train_data = train_data.to_frame()
+        target_var_name = first_model_fit.model.endog_names
+        train_data.columns = [f"{target_var_name}_train"]
+
+        # Initialize an empty DataFrame to store the predictions
+        prediction_df = pd.DataFrame(index=df_test.index)
+        prediction_df[f"{target_var_name}_test"] = np.nan
+
+        # Concatenate the train_data and prediction_df
+        combined_df = pd.concat([train_data, prediction_df], axis=0)
+
+        # Loop through each model fit
+        for model_name, model_fit in model_fits_dict.items():
+            # Prepare the test dataset
+            exog_names = model_fit.model.exog_names
+            X_test = df_test.copy()
+
+            # Add the constant if it's missing
+            if "const" in exog_names and "const" not in X_test.columns:
+                X_test["const"] = 1.0
+
+            # Select the necessary columns
+            X_test = X_test[exog_names]
+
+            # Generate the predictions
+            predictions = model_fit.predict(X_test)
+
+            # Add the predictions to the DataFrame
+            combined_df[model_name] = np.nan
+            combined_df[model_name].iloc[len(train_data) :] = predictions
+
+        # Add the test data to the '<target_variable>_test' column
+        combined_df[f"{target_var_name}_test"].iloc[len(train_data) :] = df_test[
+            target_var_name
+        ]
+
+        return combined_df
+
+    def plot_predictions(self, prediction_df):
+        n_models = prediction_df.shape[1] - 2
+        fig, axes = plt.subplots(n_models, 1, figsize=(12, 6 * n_models), sharex=True)
+
+        for i in range(n_models):
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, 0],
+                label=prediction_df.columns[0],
+                color="grey",
+            )
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, 1],
+                label=prediction_df.columns[1],
+                color="lightgrey",
+            )
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, i + 2],
+                label=prediction_df.columns[i + 2],
+                linestyle="-",
+            )
+            axes[i].set_ylabel("Target Variable")
+            axes[i].set_title(f"Test Data vs. {prediction_df.columns[i + 2]}")
+            axes[i].legend()
+            axes[i].grid(True)
+        plt.xlabel("Date")
+        plt.tight_layout()
+
+    def run(self):
+        model_fits_dict = self.params["model_fits_dict"]
+        df_test = self.test_ds.df
+
+        prediction_df = self.get_model_prediction(model_fits_dict, df_test)
+        results = prediction_df.to_dict()
+
+        figures = []
+        self.plot_predictions(prediction_df)
+
+        # Assuming the plot is the only figure we want to store
+        fig = plt.gcf()
+        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        plt.close("all")
+
+        # Assuming we do not need to cache any results, just the figure
+        return self.cache_results(results, figures=figures)

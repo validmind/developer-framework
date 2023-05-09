@@ -18,6 +18,8 @@ from ..data_validation.metrics import (
     SpreadPlot,
 )
 
+from ..model_validation.statsmodels.metrics import ModelPredictionOLS
+
 
 class TimeSeriesUnivariate(TestPlan):
     """
@@ -120,6 +122,21 @@ class Cointegration(TestPlan):
     name = "cointegration"
     required_context = ["dataset"]
     tests = [EngleGrangerCoint, SpreadPlot]
+
+    def description(self):
+        return """
+        This test plan aims to assess cointegration in the provided dataset. It provides various visualizations and statistical tests to determine if pairs of time series variables share a long-term, equilibrium relationship despite having individual trends. The spread plots help to visually identify any relationships between the time series pairs. The Engle-Granger test is a formal statistical test to determine the presence of cointegration between two time series variables, which suggests that they have a long-run relationship. If a pair of time series is found to be cointegrated, it can be used to build more accurate forecasting models that take into account the long-term relationship between the variables. Assessing cointegration is an essential step in the analysis of time series data, as it can provide valuable insights into the underlying relationships between variables.
+        """
+
+
+class TimeSeriesForecast(TestPlan):
+    """
+    Test plan to perform time series forecast tests.
+    """
+
+    name = "time_series_forecast"
+    required_context = ["train_ds", "test_ds"]
+    tests = [ModelPredictionOLS]
 
     def description(self):
         return """
