@@ -135,7 +135,7 @@ class TimeSeriesForecast(TestPlan):
     """
 
     name = "time_series_forecast"
-    required_context = ["models", "train_ds", "test_ds"]
+    required_context = ["models", "test_ds"]
     tests = [ModelPredictionOLS]
 
     def description(self):

@@ -593,9 +593,11 @@ class ModelPredictionOLS(Metric):
         # Convert the DataFrame into a list of dictionaries
         return df.to_dict("records")
 
-    def get_model_prediction(self, model_fits_dict, df_test):
-        # Extract the training data from the first model fit
-        first_model_fit = list(model_fits_dict.values())[0]
+    def get_model_prediction(self, model_list, df_test):
+        # Extract the training target variable from the first model fit
+
+        first_model_fit = model_list[0].model
+
         train_data = pd.Series(
             first_model_fit.model.endog, index=first_model_fit.model.data.row_labels
         )
@@ -611,9 +613,11 @@ class ModelPredictionOLS(Metric):
         combined_df = pd.concat([train_data, prediction_df], axis=0)
 
         # Loop through each model fit
-        for model_name, model_fit in model_fits_dict.items():
+        for i, model_fit in enumerate(model_list):
+            model_name = f"model_{i+1}"
+
             # Prepare the test dataset
-            exog_names = model_fit.model.exog_names
+            exog_names = model_fit.model.model.exog_names
             X_test = df_test.copy()
 
             # Add the constant if it's missing
@@ -624,7 +628,7 @@ class ModelPredictionOLS(Metric):
             X_test = X_test[exog_names]
 
             # Generate the predictions
-            predictions = model_fit.predict(X_test)
+            predictions = model_fit.model.predict(X_test)
 
             # Add the predictions to the DataFrame
             combined_df[model_name] = np.nan
@@ -637,7 +641,10 @@ class ModelPredictionOLS(Metric):
 
         return combined_df
 
-    def plot_predictions(self, prediction_df):
+    def plot_predictions(self, prediction_df, start_date=None, end_date=None):
+        if start_date and end_date:
+            prediction_df = prediction_df.loc[start_date:end_date]
+
         n_models = prediction_df.shape[1] - 2
         fig, axes = plt.subplots(n_models, 1, sharex=True)
 
@@ -668,10 +675,11 @@ class ModelPredictionOLS(Metric):
         plt.tight_layout()
 
     def run(self):
-        model_fits_dict = self.models
+        model_list = self.models
+
         df_test = self.test_ds.df
 
-        prediction_df = self.get_model_prediction(model_fits_dict, df_test)
+        prediction_df = self.get_model_prediction(model_list, df_test)
         results = self.serialize_time_series_df(prediction_df)
 
         figures = []
