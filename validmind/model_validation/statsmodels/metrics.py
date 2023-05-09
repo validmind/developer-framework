@@ -583,6 +583,16 @@ class ModelPredictionOLS(Metric):
     type = "dataset"
     key = "model_prediction_ols"
 
+    def serialize_time_series_df(self, df):
+        # Convert the DateTimeIndex to strings without specifying a date format
+        df.index = df.index.astype(str)
+
+        # Reset the index and rename the index column to 'Date'
+        df = df.reset_index().rename(columns={"index": "Date"})
+
+        # Convert the DataFrame into a list of dictionaries
+        return df.to_dict("records")
+
     def get_model_prediction(self, model_fits_dict, df_test):
         # Extract the training data from the first model fit
         first_model_fit = list(model_fits_dict.values())[0]
@@ -629,7 +639,7 @@ class ModelPredictionOLS(Metric):
 
     def plot_predictions(self, prediction_df):
         n_models = prediction_df.shape[1] - 2
-        fig, axes = plt.subplots(n_models, 1, figsize=(12, 6 * n_models), sharex=True)
+        fig, axes = plt.subplots(n_models, 1, sharex=True)
 
         for i in range(n_models):
             axes[i].plot(
@@ -658,11 +668,11 @@ class ModelPredictionOLS(Metric):
         plt.tight_layout()
 
     def run(self):
-        model_fits_dict = self.params["model_fits_dict"]
+        model_fits_dict = self.models
         df_test = self.test_ds.df
 
         prediction_df = self.get_model_prediction(model_fits_dict, df_test)
-        results = prediction_df.to_dict()
+        results = self.serialize_time_series_df(prediction_df)
 
         figures = []
         self.plot_predictions(prediction_df)
