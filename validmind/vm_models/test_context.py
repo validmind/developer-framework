@@ -22,6 +22,7 @@ class TestContext:
     model: Model = None
     train_ds: Dataset = None
     test_ds: Dataset = None
+    validation_ds: Dataset = None
 
     # These variables can be generated dynamically if not passed
     y_train_predict: object = None
@@ -74,6 +75,10 @@ class TestContextUtils:
     @property
     def test_ds(self):
         return self.test_context.test_ds
+
+    @property
+    def validation_ds(self):
+        return self.test_context.validation_ds
 
     @property
     def y_train_predict(self):
