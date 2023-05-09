@@ -16,6 +16,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.stattools import coint
 
 
 from ..vm_models import (
@@ -106,6 +107,98 @@ class DatasetDescription(Metric):
         # This will populate the "fields" attribute in the dataset object
         self.dataset.describe()
         return self.cache_results(self.dataset.fields)
+
+
+class DatasetSplit(Metric):
+    """
+    Attempts to extract information about the dataset split from the
+    provided training, test and validation datasets.
+    """
+
+    type = "dataset"
+    key = "dataset_split"
+
+    dataset_labels = {
+        "train_ds": "Training",
+        "test_ds": "Test",
+        "validation_ds": "Validation",
+        "total": "Total",
+    }
+
+    def description(self):
+        return """
+        This section shows the size of the dataset split into training, test (and validation) sets
+        where applicable. The size of each dataset is shown in absolute terms and as a proportion
+        of the total dataset size.
+
+        The dataset split is important to understand because it can affect the performance of
+        the model. For example, if the training set is too small, the model may not be able to
+        learn the patterns in the data and will perform poorly on the test set. On the other hand,
+        if the test set is too small, the model may not be able to generalize well to unseen data
+        and will perform poorly on the validation set.
+        """
+
+    def as_table(self, raw_results):
+        """
+        Returns a table representation of the dataset split information
+
+        Each metric can optionally implement this method to return a properly
+        formatted table representation of the results to be shown in the model
+        documentation as-is.
+        """
+        records = []
+        for key, value in raw_results.items():
+            if key.endswith("_size"):
+                dataset_name = key.replace("_size", "")
+                if dataset_name == "total":
+                    records.append(
+                        {
+                            "Dataset": "Total",
+                            "Size": value,
+                            "Proportion": "100%",
+                        }
+                    )
+                    continue
+
+                proportion = raw_results[f"{dataset_name}_proportion"] * 100
+                records.append(
+                    {
+                        "Dataset": DatasetSplit.dataset_labels[dataset_name],
+                        "Size": value,
+                        "Proportion": f"{proportion:.2f}%",
+                    }
+                )
+
+        return records
+
+    def run(self):
+        # Try to extract metrics from each available dataset
+        available_datasets = ["train_ds", "test_ds", "validation_ds"]
+        results = {}
+        total_size = 0
+
+        # First calculate the total size of the dataset
+        for dataset_name in available_datasets:
+            dataset = getattr(self, dataset_name, None)
+            if dataset is not None:
+                total_size += len(dataset.df)
+
+        # Then calculate the proportion of each dataset
+        for dataset_name in available_datasets:
+            dataset = getattr(self, dataset_name, None)
+            if dataset is not None:
+                results[f"{dataset_name}_size"] = len(dataset.df)
+                results[f"{dataset_name}_proportion"] = len(dataset.df) / total_size
+
+        results["total_size"] = total_size
+
+        # A call to as_table() will be made inside the cache_results() method instead
+        # so we can capture the "raw" results and the table representation of the results
+        results = {
+            "raw": results,
+            "table": self.as_table(results),
+        }
+        return self.cache_results(results)
 
 
 class TimeSeriesLinePlot(Metric):
@@ -270,7 +363,7 @@ class LaggedCorrelationHeatmap(Metric):
             index=independent_vars,
         )
 
-        plt.figure(figsize=(12, 3))
+        plt.figure()
         sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
         plt.title(
             "Heatmap of Correlations between Target Variable and Lags of Independent Variables"
@@ -777,5 +870,109 @@ class RollingStatsPlot(Metric):
             plt.close("all")
 
             figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+
+        return self.cache_results(figures=figures)
+
+
+class EngleGrangerCoint(Metric):
+    """
+    Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.
+    """
+
+    type = "dataset"
+    key = "engle_granger_coint"
+    default_params = {"threshold": 0.05}
+
+    def run(self):
+        threshold = self.params["threshold"]
+        df = self.dataset.df.dropna()
+
+        results = []
+        columns = df.columns
+        num_vars = len(columns)
+
+        for i in range(num_vars):
+            for j in range(i + 1, num_vars):
+                var1 = columns[i]
+                var2 = columns[j]
+
+                # Perform the Engle-Granger cointegration test
+                _, p_value, _ = coint(df[var1], df[var2])
+
+                # Determine the decision based on the p-value and the significance level
+                decision = (
+                    "Cointegrated" if p_value <= threshold else "Not cointegrated"
+                )
+                pass_fail = "Pass" if p_value <= threshold else "Fail"
+
+                result = {
+                    "Variable 1": var1,
+                    "Variable 2": var2,
+                    "Test": "Engle-Granger",
+                    "p-value": p_value,
+                    "Threshold": threshold,
+                    "Pass/Fail": pass_fail,
+                    "Decision": decision,
+                }
+                results.append(result)
+
+        return self.cache_results(results)
+
+
+class SpreadPlot(Metric):
+    """
+    This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.
+    """
+
+    type = "dataset"
+    key = "spread_plot"
+
+    @staticmethod
+    def plot_spread(series1, series2, ax=None):
+        """
+        Plot the spread between two time series variables.
+
+        :param series1: Pandas Series with time-series data for the first variable
+        :param series2: Pandas Series with time-series data for the second variable
+        :param ax: Axis object for the spread plot
+        """
+        spread = series1 - series2
+
+        if ax is None:
+            _, ax = plt.subplots()
+
+        sns.lineplot(data=spread, ax=ax)
+
+        return ax
+
+    def run(self):
+        df = self.dataset.df.dropna()
+
+        figures = []
+        columns = df.columns
+        num_vars = len(columns)
+
+        for i in range(num_vars):
+            for j in range(i + 1, num_vars):
+                var1 = columns[i]
+                var2 = columns[j]
+
+                series1 = df[var1]
+                series2 = df[var2]
+
+                fig, ax = plt.subplots()
+                fig.suptitle(f"Spread between {var1} and {var2}")
+
+                self.plot_spread(series1, series2, ax=ax)
+
+                # Adjust the layout
+                plt.tight_layout()
+
+                # Do this if you want to prevent the figure from being displayed
+                plt.close("all")
+
+                figures.append(
+                    Figure(key=f"{self.key}:{var1}_{var2}", figure=fig, metadata={})
+                )
 
         return self.cache_results(figures=figures)

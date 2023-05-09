@@ -52,7 +52,7 @@ Test plan for sklearn classifier models
 
 #### required_context(_: ClassVar[List[str]_ _ = ['model', 'train_ds', 'test_ds'_ )
 
-#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.model_validation.sklearn.threshold_tests.AccuracyTest'>, <class 'validmind.model_validation.sklearn.threshold_tests.F1ScoreTest'>, <class 'validmind.model_validation.sklearn.threshold_tests.ROCAUCScoreTest'>, <class 'validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradationTest'>_ )
+#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy'>, <class 'validmind.model_validation.sklearn.threshold_tests.MinimumF1Score'>, <class 'validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore'>, <class 'validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation'>_ )
 
 ### _class_ validmind.test_plans.sklearn_classifier.SKLearnClassifierDiagnosis(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
 Bases: `TestPlan`
@@ -64,7 +64,7 @@ Test plan for sklearn classifier model diagnosis tests
 
 #### required_context(_: ClassVar[List[str]_ _ = ['model', 'train_ds', 'test_ds'_ )
 
-#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosisTest'>, <class 'validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosisTest'>, <class 'validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosisTest'>_ )
+#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis'>, <class 'validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis'>, <class 'validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis'>_ )
 
 ### _class_ validmind.test_plans.sklearn_classifier.SKLearnClassifier(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
 Bases: `TestPlan`
@@ -109,7 +109,19 @@ Test plan for data quality on tabular datasets
 
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
-#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.ClassImbalanceTest'>, <class 'validmind.data_validation.threshold_tests.DuplicatesTest'>, <class 'validmind.data_validation.threshold_tests.HighCardinalityTest'>, <class 'validmind.data_validation.threshold_tests.HighPearsonCorrelationTest'>, <class 'validmind.data_validation.threshold_tests.MissingValuesTest'>, <class 'validmind.data_validation.threshold_tests.SkewnessTest'>, <class 'validmind.data_validation.threshold_tests.UniqueRowsTest'>, <class 'validmind.data_validation.threshold_tests.ZerosTest'>_ )
+#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.ClassImbalance'>, <class 'validmind.data_validation.threshold_tests.Duplicates'>, <class 'validmind.data_validation.threshold_tests.HighCardinality'>, <class 'validmind.data_validation.threshold_tests.HighPearsonCorrelation'>, <class 'validmind.data_validation.threshold_tests.MissingValues'>, <class 'validmind.data_validation.threshold_tests.Skewness'>, <class 'validmind.data_validation.threshold_tests.UniqueRows'>, <class 'validmind.data_validation.threshold_tests.TooManyZeroValues'>_ )
+
+### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataQuality(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
+Bases: `TestPlan`
+
+Test plan for data quality on time series datasets
+
+
+#### name(_: ClassVar[str_ _ = 'time_series_data_quality_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
+#### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.TimeSeriesOutliers'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesMissingValues'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesFrequency'>_ )
 
 ### _class_ validmind.test_plans.tabular_datasets.TabularDataset(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
 Bases: `TestPlan`
@@ -122,3 +134,15 @@ Test plan for generic tabular datasets
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### test_plans(_: ClassVar[List[object]_ _ = [<class 'validmind.test_plans.tabular_datasets.TabularDatasetDescription'>, <class 'validmind.test_plans.tabular_datasets.TabularDataQuality'>_ )
+
+### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataset(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
+Bases: `TestPlan`
+
+Test plan for time series  datasets
+
+
+#### name(_: ClassVar[str_ _ = 'time_series_dataset_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
+#### test_plans(_: ClassVar[List[object]_ _ = [<class 'validmind.test_plans.tabular_datasets.TimeSeriesDataQuality'>_ )

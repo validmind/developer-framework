@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import ClassVar, List
 
 from IPython.display import display, HTML
+from attr import field
 from tqdm import tqdm
 
 from ..utils import is_notebook
@@ -14,6 +15,7 @@ from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
+from ..utils import clean_docstring
 
 VM_SUMMARIZE_TEST_PLANS = os.environ.get("VM_SUMMARIZE_TEST_PLANS", "True")
 
@@ -46,6 +48,9 @@ class TestPlan:
     train_ds: Dataset = None
     test_ds: Dataset = None
 
+    # Multiple models for model comparison tests
+    models: List[Model] = field(type=list)
+
     # tqdm progress bar
     pbar: tqdm = None
 
@@ -61,6 +66,7 @@ class TestPlan:
         if self.test_context is not None:
             self.dataset = self.test_context.dataset
             self.model = self.test_context.model
+            self.models = self.test_context.models
             self.train_ds = self.test_context.train_ds
             self.test_ds = self.test_context.test_ds
 
@@ -127,6 +133,7 @@ class TestPlan:
             self.test_context = TestContext(
                 dataset=self.dataset,
                 model=self.model,
+                models=self.models,
                 train_ds=self.train_ds,
                 test_ds=self.test_ds,
             )
@@ -232,7 +239,7 @@ class TestPlan:
         Builds the description for the results of the test plan. Subclasses
         should override this method to provide an appropriate description
         """
-        html += f'<div class="result">{self.description()}</div>'
+        html += f'<div class="result">{clean_docstring(self.description())}</div>'
         return html
 
     def _results_summary(self, html: str = "") -> str:

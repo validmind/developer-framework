@@ -80,6 +80,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">is_notebook</span>
@@ -87,6 +88,7 @@
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">.test_context</span> <span class="kn">import</span> <span class="n">TestContext</span>
 <span class="kn">from</span> <span class="nn">.test_plan_result</span> <span class="kn">import</span> <span class="n">TestPlanResult</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">clean_docstring</span>
 
 <span class="n">VM_SUMMARIZE_TEST_PLANS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;VM_SUMMARIZE_TEST_PLANS&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
 
@@ -119,6 +121,9 @@
     <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="c1"># Multiple models for model comparison tests</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
     <span class="c1"># tqdm progress bar</span>
     <span class="n">pbar</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -134,6 +139,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">dataset</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">models</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">train_ds</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">test_ds</span>
 
@@ -200,6 +206,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span> <span class="o">=</span> <span class="n">TestContext</span><span class="p">(</span>
                 <span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
                 <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">models</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span>
                 <span class="n">train_ds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">,</span>
                 <span class="n">test_ds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="p">,</span>
             <span class="p">)</span>
@@ -305,7 +312,7 @@
 <span class="sd">        Builds the description for the results of the test plan. Subclasses</span>
 <span class="sd">        should override this method to provide an appropriate description</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;result&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">()</span><span class="si">}</span><span class="s1">&lt;/div&gt;&#39;</span>
+        <span class="n">html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;result&quot;&gt;</span><span class="si">{</span><span class="n">clean_docstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">())</span><span class="si">}</span><span class="s1">&lt;/div&gt;&#39;</span>
         <span class="k">return</span> <span class="n">html</span>
 
     <span class="k">def</span> <span class="nf">_results_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

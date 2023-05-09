@@ -11,6 +11,7 @@ from .figure import Figure
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanMetricResult
+from ..utils import clean_docstring
 
 
 @dataclass
@@ -79,7 +80,7 @@ class Metric(TestContextUtils):
         result_metadata = [
             {
                 "content_id": f"metric_description:{self.name}",
-                "text": self.description(),
+                "text": clean_docstring(self.description()),
             }
         ]
 

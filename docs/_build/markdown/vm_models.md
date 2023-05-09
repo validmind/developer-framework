@@ -301,6 +301,11 @@ TODO: Metric should validate required context too
 
 #### _property_ name()
 
+#### description()
+Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring
+
+
 #### run(\*args, \*\*kwargs)
 Run the metric calculation and cache its results
 
@@ -545,6 +550,16 @@ arbitrary grouping of tests that will be run on a dataset or model.
 
 #### pbar(_: tqd_ _ = Non_ )
 
+#### title()
+Returns the title of the test plan. Defaults to the title
+version of the test plan name
+
+
+#### description()
+Returns the description of the test plan. Defaults to the
+docstring of the test plan
+
+
 #### validate_context()
 Validates that the context elements are present
 in the instance so that the test plan can be run
@@ -595,7 +610,7 @@ Returns one or more results of the test plan. Includes results from
 sub test plans.
 
 
-### _class_ validmind.vm_models.TestPlanDatasetResult(result_id: str | None = None, dataset: Dataset | None = None)
+### _class_ validmind.vm_models.TestPlanDatasetResult(result_id: str | None = None, result_metadata: List[dict] | None = None, dataset: Dataset | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for datasets that run as part of a test plan
@@ -607,7 +622,7 @@ Result wrapper for datasets that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanMetricResult(result_id: str | None = None, figures: List[Figure] | None = None, metric: MetricResult | None = None)
+### _class_ validmind.vm_models.TestPlanMetricResult(result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, metric: MetricResult | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for metrics that run as part of a test plan
@@ -621,7 +636,7 @@ Result wrapper for metrics that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanModelResult(result_id: str | None = None, model: Model | None = None)
+### _class_ validmind.vm_models.TestPlanModelResult(result_id: str | None = None, result_metadata: List[dict] | None = None, model: Model | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for models that run as part of a test plan
@@ -633,7 +648,7 @@ Result wrapper for models that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanTestResult(result_id: str | None = None, figures: List[Figure] | None = None, test_results: TestResults | None = None)
+### _class_ validmind.vm_models.TestPlanTestResult(result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, test_results: TestResults | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for test results produced by the tests that run as part of a test plan
@@ -700,6 +715,11 @@ TODO: ThresholdTest should validate required context too
 #### params(_: dic_ _ = Non_ )
 
 #### test_results(_: TestResult_ _ = Non_ )
+
+#### description()
+Return the test description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring
+
 
 #### run(\*args, \*\*kwargs)
 Run the test and cache its results
