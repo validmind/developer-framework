@@ -146,7 +146,6 @@ class CharacteristicStabilityIndex(Metric):
     """
 
     type = "training"
-    scope = "training:validation"  # should be set when running test plan
     key = "csi"
     value_formatter = "key_values"
 
@@ -464,7 +463,6 @@ class PopulationStabilityIndex(Metric):
     """
 
     type = "training"
-    scope = "training:validation"  # should be set when running test plan
     key = "psi"
     value_formatter = "records"
 

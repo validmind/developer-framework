@@ -13,6 +13,7 @@ from .figure import Figure
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanTestResult
 from .test_result import TestResult, TestResults
+from ..utils import clean_docstring
 
 
 @dataclass
@@ -81,7 +82,7 @@ class ThresholdTest(TestContextUtils):
         result_metadata = [
             {
                 "content_id": f"test_description:{self.name}",
-                "text": self.description(),
+                "text": clean_docstring(self.description()),
             }
         ]
 

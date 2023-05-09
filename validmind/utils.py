@@ -1,5 +1,7 @@
+import inspect
 import json
 import math
+import re
 
 from typing import Any
 
@@ -186,3 +188,18 @@ def summarize_data_quality_results(results):
         headers=["Test", "Passed", "# Passed", "# Errors", "% Passed"],
         numalign="right",
     )
+
+
+def clean_docstring(docstring: str) -> str:
+    """
+    Clean up docstrings by removing leading and trailing whitespace and
+    replacing newlines with spaces.
+    """
+    # Remove leading and trailing whitespace
+    cleandoc = inspect.cleandoc(docstring)
+
+    # Replace newlines with spaces, leave double newlines \n\n alone
+    pattern = r"(?<!\n)\n(?!\n)"
+    replacement = " "
+
+    return re.sub(pattern, replacement, cleandoc)

@@ -6,6 +6,7 @@ custom test plan from the project's configuration
 """
 
 from ..vm_models import TestPlan
+from ..data_validation.metrics import DatasetSplit
 from ..model_validation.model_metadata import ModelMetadata
 from ..model_validation.sklearn.metrics import (
     AccuracyScore,
@@ -41,6 +42,7 @@ class SKLearnClassifierMetrics(TestPlan):
     required_context = ["model", "train_ds", "test_ds"]
     tests = [
         ModelMetadata,
+        DatasetSplit,
         AccuracyScore,
         ConfusionMatrix,
         F1Score,
