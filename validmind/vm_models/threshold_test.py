@@ -55,6 +55,16 @@ class ThresholdTest(TestContextUtils):
         """
         return self.__doc__.strip()
 
+    def summary(self, test_results: Optional[TestResults] = None):
+        """
+        Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+        The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+        short summary of the test results.
+
+        We return None here because the test summary is optional.
+        """
+        return None
+
     def run(self, *args, **kwargs):
         """
         Run the test and cache its results
@@ -86,6 +96,8 @@ class ThresholdTest(TestContextUtils):
             }
         ]
 
+        result_summary = self.summary(results)
+
         self.test_results = TestPlanTestResult(
             result_id=self.name,
             result_metadata=result_metadata,
@@ -95,6 +107,7 @@ class ThresholdTest(TestContextUtils):
                 params=self.params,
                 passed=passed,
                 results=results,
+                summary=result_summary,
             ),
         )
 

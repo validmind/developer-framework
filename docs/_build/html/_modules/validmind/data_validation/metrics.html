@@ -95,6 +95,9 @@
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Figure</span><span class="p">,</span>
     <span class="n">Metric</span><span class="p">,</span>
+    <span class="n">ResultSummary</span><span class="p">,</span>
+    <span class="n">ResultTable</span><span class="p">,</span>
+    <span class="n">ResultTableMetadata</span><span class="p">,</span>
     <span class="n">TestContext</span><span class="p">,</span>
     <span class="n">TestContextUtils</span><span class="p">,</span>
     <span class="n">TestPlanDatasetResult</span><span class="p">,</span>
@@ -182,6 +185,85 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span></div></div>
 
 
+<div class="viewcode-block" id="DescriptiveStatistics"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DescriptiveStatistics</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Collects a set of descriptive statistics for a dataset, both for</span>
+<span class="sd">    numerical and categorical variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;descriptive_statistics&quot;</span>
+
+<div class="viewcode-block" id="DescriptiveStatistics.get_summary_statistics_numerical"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.get_summary_statistics_numerical">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary_statistics_numerical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_fields</span><span class="p">):</span>
+        <span class="n">percentiles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">]</span>
+        <span class="n">summary_stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">numerical_fields</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">percentiles</span><span class="o">=</span><span class="n">percentiles</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">summary_stats</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;25%&quot;</span><span class="p">,</span> <span class="s2">&quot;50%&quot;</span><span class="p">,</span> <span class="s2">&quot;75%&quot;</span><span class="p">,</span> <span class="s2">&quot;90%&quot;</span><span class="p">,</span> <span class="s2">&quot;95%&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">summary_stats</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="n">summary_stats</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">summary_stats</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">summary_stats</span></div>
+
+<div class="viewcode-block" id="DescriptiveStatistics.get_summary_statistics_categorical"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.get_summary_statistics_categorical">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary_statistics_categorical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categorical_fields</span><span class="p">):</span>
+        <span class="n">summary_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">categorical_fields</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">top_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+            <span class="n">top_freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">summary_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;Count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">summary_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;Number of Unique Values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span>
+                <span class="n">column</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+            <span class="n">summary_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;Top Value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_value</span>
+            <span class="n">summary_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;Top Value Frequency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_freq</span>
+            <span class="n">summary_stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">column</span><span class="p">,</span> <span class="s2">&quot;Top Value Frequency %&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">top_freq</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+        <span class="n">summary_stats</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">summary_stats</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">summary_stats</span></div>
+
+<div class="viewcode-block" id="DescriptiveStatistics.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build two tables: one for summarizing numerical variables and one for categorical variables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_stats_numerical</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;numerical&quot;</span><span class="p">]</span>
+        <span class="n">summary_stats_categorical</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;categorical&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_stats_numerical</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Numerical Variables&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_stats_categorical</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Categorical Variables&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="DescriptiveStatistics.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">numerical_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_numeric_features_columns</span><span class="p">()</span>
+        <span class="n">categorical_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_categorical_features_columns</span><span class="p">()</span>
+
+        <span class="n">summary_stats_numerical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_summary_statistics_numerical</span><span class="p">(</span>
+            <span class="n">numerical_fields</span>
+        <span class="p">)</span>
+        <span class="n">summary_stats_categorical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_summary_statistics_categorical</span><span class="p">(</span>
+            <span class="n">categorical_fields</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;numerical&quot;</span><span class="p">:</span> <span class="n">summary_stats_numerical</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;categorical&quot;</span><span class="p">:</span> <span class="n">summary_stats_categorical</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div></div>
+
+
 <div class="viewcode-block" id="DatasetSplit"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit">[docs]</a><span class="k">class</span> <span class="nc">DatasetSplit</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Attempts to extract information about the dataset split from the</span>
@@ -211,20 +293,16 @@
 <span class="s2">        and will perform poorly on the validation set.</span>
 <span class="s2">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="DatasetSplit.as_table"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.as_table">[docs]</a>    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_results</span><span class="p">):</span>
+<div class="viewcode-block" id="DatasetSplit.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_results</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a table representation of the dataset split information</span>
-
-<span class="sd">        Each metric can optionally implement this method to return a properly</span>
-<span class="sd">        formatted table representation of the results to be shown in the model</span>
-<span class="sd">        documentation as-is.</span>
+<span class="sd">        Returns a summarized representation of the dataset split information</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">table_records</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">raw_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_size&quot;</span><span class="p">):</span>
                 <span class="n">dataset_name</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_size&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dataset_name</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
-                    <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">table_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="p">{</span>
                             <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span> <span class="s2">&quot;Total&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;Size&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
@@ -234,7 +312,7 @@
                     <span class="k">continue</span>
 
                 <span class="n">proportion</span> <span class="o">=</span> <span class="n">raw_results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_proportion&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
-                <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">table_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="p">{</span>
                         <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span> <span class="n">DatasetSplit</span><span class="o">.</span><span class="n">dataset_labels</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">],</span>
                         <span class="s2">&quot;Size&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
@@ -242,7 +320,7 @@
                     <span class="p">}</span>
                 <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">records</span></div>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="p">[</span><span class="n">ResultTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">table_records</span><span class="p">)])</span></div>
 
 <div class="viewcode-block" id="DatasetSplit.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DatasetSplit.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Try to extract metrics from each available dataset</span>
@@ -265,12 +343,6 @@
 
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;total_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_size</span>
 
-        <span class="c1"># A call to as_table() will be made inside the cache_results() method instead</span>
-        <span class="c1"># so we can capture the &quot;raw&quot; results and the table representation of the results</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;raw&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">,</span>
-            <span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_table</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
-        <span class="p">}</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
 
 

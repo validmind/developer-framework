@@ -574,7 +574,6 @@ class AutoARIMA(Metric):
 
         return self.cache_results(results)
 
-
 class ModelPredictionOLS(Metric):
     """
     Calculates and plots the model predictions for each of the models
@@ -700,3 +699,43 @@ class ModelPredictionOLS(Metric):
 
         # Assuming we do not need to cache any results, just the figure
         return self.cache_results(results, figures=figures)
+
+@dataclass
+class RegressionModelSummary(Metric):
+    """
+    Test that output the summary of regression models of statsmodel library.
+    """
+
+    category = "model_performance"
+    scope = "test"
+    name = "regression_model_summary"
+
+    def run(self):
+        # statsmodels library information
+        module_name = self.model.model.__class__.__module__
+        library_name = module_name.split('.')[0]
+        model_name = self.model.model.__class__.__name__
+
+        if library_name != "statsmodels" or model_name != "RegressionResultsWrapper":
+            raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+
+        lib_model = self.model.model
+        # List of features columns
+        X_columns = lib_model.model.exog_names
+
+        # Extract R-squared and Adjusted R-squared
+        r2 = lib_model.rsquared
+        adj_r2 = lib_model.rsquared_adj
+
+        # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
+        mse = lib_model.mse_resid
+        rmse = mse ** 0.5
+
+        results = {
+            "Independent Variables": X_columns,
+            'R-Squared': r2,
+            'Adjusted R-Squared': adj_r2,
+            'MSE': mse,
+            'RMSE': rmse,
+        }
+        return self.cache_results(results)
