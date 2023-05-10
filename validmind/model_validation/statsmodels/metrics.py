@@ -743,3 +743,79 @@ class RegressionModelSummary(Metric):
             "RMSE": rmse,
         }
         return self.cache_results(results)
+
+
+@dataclass
+class RegressionModelInsampleComparison(Metric):
+    """
+    Test that output the comparison of stats library regression models.
+    """
+
+    category = "model_performance"
+    scope = "test"
+    name = "regression_insample_performance"
+
+    def description(self):
+        return """
+        This section shows In-sample comparison of regression models involves comparing
+        the performance of different regression models on the same dataset that was used
+        to train the models. This is typically done by calculating a goodness-of-fit statistic
+        such as the R-squared or mean squared error (MSE) for each model, and then comparing
+        these statistics to determine which model has the best fit to the data.
+        """
+
+    def run(self):
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+        all_models = []
+        for model in self.models:
+            if model.model.__class__.__name__ != "RegressionResultsWrapper":
+                raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+            all_models.append(model.model)
+
+        results = self._in_sample_performance_ols(all_models)
+        return self.cache_results(results)
+
+    def _in_sample_performance_ols(self, models):
+        """
+        Computes the in-sample performance evaluation metrics for a list of OLS models.
+
+        Args:
+        models (list): A list of statsmodels OLS models.
+
+        Returns:
+        list: A list of dictionaries containing the evaluation results for each model.
+        Each dictionary contains the following keys:
+        - 'Model': A string identifying the model.
+        - 'Independent Variables': A list of strings identifying the independent variables used in the model.
+        - 'R-Squared': The R-squared value of the model.
+        - 'Adjusted R-Squared': The adjusted R-squared value of the model.
+        - 'MSE': The mean squared error of the model.
+        - 'RMSE': The root mean squared error of the model.
+        """
+        evaluation_results = []
+
+        for i, model in enumerate(models):
+            # print(model.model)
+            X_columns = model.model.exog_names
+
+            # Extract R-squared and Adjusted R-squared
+            r2 = model.rsquared
+            adj_r2 = model.rsquared_adj
+
+            # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
+            mse = model.mse_resid
+            rmse = mse ** 0.5
+
+            # Append the results to the evaluation_results list
+            evaluation_results.append({
+                'Model': f'Model_{i + 1}',
+                'Independent Variables': X_columns,
+                'R-Squared': r2,
+                'Adjusted R-Squared': adj_r2,
+                'MSE': mse,
+                'RMSE': rmse
+            })
+
+        return evaluation_results

@@ -18,6 +18,7 @@ from ..model_validation.statsmodels.metrics import (
     DFGLSArch,
     ResidualsVisualInspection,
     RegressionModelSummary,
+    RegressionModelInsampleComparison,
 )
 
 
@@ -100,10 +101,19 @@ class TimeSeries(TestPlan):
 
 class RegressionModelPerformance(TestPlan):
     """
-    Test plan for statsmodels regressor models that includes
-    both metrics and validation tests
+    Test plan for performance metric of regression model of statsmodels library
     """
 
     name = "regression_model_performance"
     required_context = ["model"]
     tests = [RegressionModelSummary]
+
+
+class RegressionModelsComparison(TestPlan):
+    """
+    Test plan for metrics comparison of regression model of statsmodels library
+    """
+
+    name = "regression_models_comparison"
+    required_context = ["models"]
+    tests = [RegressionModelInsampleComparison]
