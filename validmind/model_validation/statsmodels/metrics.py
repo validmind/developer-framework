@@ -768,24 +768,13 @@ class RegressionModelInsampleComparison(Metric):
         # Check models list is not empty
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
-
-        # Check models list is not empty
-        if not self.model:
-            raise ValueError("Candidate model must be provided in the model parameter")
-        if self.model.model.__class__.__name__ != "RegressionResultsWrapper":
-            raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
-        all_models = [self.model.model]
-
+        all_models = []
         for model in self.models:
-            model_name = model.model.__class__.__name__
-            print(model_name)
-            if model_name != "RegressionResultsWrapper":
+            if model.model.__class__.__name__ != "RegressionResultsWrapper":
                 raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
             all_models.append(model.model)
-        # all_models.extend(self.models)
 
         results = self._in_sample_performance_ols(all_models)
-        print(results)
         return self.cache_results(results)
 
     def _in_sample_performance_ols(self, models):
