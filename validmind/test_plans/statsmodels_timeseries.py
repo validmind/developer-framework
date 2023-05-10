@@ -109,7 +109,7 @@ class RegressionModelPerformance(TestPlan):
     tests = [RegressionModelSummary]
 
 
-class RegressionModelsComparision(TestPlan):
+class RegressionModelsComparison(TestPlan):
     """
     Test plan for metrics comparison of regression model of statsmodels library
     """
