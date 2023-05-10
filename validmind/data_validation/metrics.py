@@ -616,7 +616,7 @@ class SeasonalDecompose(Metric):
             "resid": sd.resid,
         }
 
-        # Convert pandas Series to DataFrames, reset their indices, and format the dates as strings
+        # Convert pandas Series to DataFrames, reset their indices, and convert the dates to strings
         dfs = [
             pd.DataFrame(series)
             .pipe(
@@ -625,9 +625,9 @@ class SeasonalDecompose(Metric):
                 else x.reset_index().rename(columns={x.index.name: "Date"})
             )
             .assign(
-                Date=lambda x: x["Date"].dt.strftime("%Y-%m-%d")
+                Date=lambda x: x["Date"].astype(str)
                 if "Date" in x.columns
-                else x.index.strftime("%Y-%m-%d")
+                else x.index.astype(str)
             )
             for series in results.values()
         ]

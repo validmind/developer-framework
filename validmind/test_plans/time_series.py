@@ -32,12 +32,12 @@ class TimeSeriesUnivariate(TestPlan):
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
         ACFandPACFPlot,
-        SeasonalDecompose,
-        AutoSeasonality,
-        AutoStationarity,
+        # SeasonalDecompose,
+        # AutoSeasonality,
+        # AutoStationarity,
         RollingStatsPlot,
-        AutoAR,
-        AutoMA,
+        # AutoAR,
+        # AutoMA,
     ]
 
     def description(self):
@@ -64,7 +64,7 @@ class TimeSeriesMultivariate(TestPlan):
     tests = [
         ScatterPlot,
         LaggedCorrelationHeatmap,
-        EngleGrangerCoint,
+        # EngleGrangerCoint,
         SpreadPlot,
     ]
 
