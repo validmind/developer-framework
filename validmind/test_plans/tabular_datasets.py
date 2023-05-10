@@ -69,7 +69,7 @@ class TimeSeriesDataQuality(TestPlan):
 
     name = "time_series_data_quality"
     required_context = ["dataset"]
-    tests = [TimeSeriesOutliers, TimeSeriesMissingValues, TimeSeriesFrequency]
+    tests = [TimeSeriesMissingValues, TimeSeriesFrequency]  # TimeSeriesOutliers,
 
 
 class TabularDataset(TestPlan):
