@@ -105,7 +105,7 @@ class RegressionModelPerformance(TestPlan):
     """
 
     name = "regression_model_performance"
-    required_context = ["model", "models"]
+    required_context = ["model"]
     tests = [RegressionModelSummary]
 
 
