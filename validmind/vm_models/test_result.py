@@ -4,24 +4,7 @@ TestResult models
 from dataclasses import dataclass
 from typing import List, Optional
 
-import numpy as np
-
-# from pydantic import BaseModel
-
 from .result_summary import ResultSummary
-
-
-# class BaseResultModel():
-#     """
-#     Base class for all result models
-#     """
-
-#     class Config:
-#         json_encoders = {
-#             np.ndarray: lambda obj: obj.tolist(),
-#             np.integer: lambda obj: int(obj),
-#             np.floating: lambda obj: float(obj),
-#         }
 
 
 @dataclass
