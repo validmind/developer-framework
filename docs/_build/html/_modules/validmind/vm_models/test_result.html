@@ -74,38 +74,47 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">TestResult models</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">.result_summary</span> <span class="kn">import</span> <span class="n">ResultSummary</span>
 
 
-<span class="k">class</span> <span class="nc">BaseResultModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class for all result models</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">json_encoders</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span>
-        <span class="p">}</span>
-
-
-<div class="viewcode-block" id="TestResult"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResult">[docs]</a><span class="k">class</span> <span class="nc">TestResult</span><span class="p">(</span><span class="n">BaseResultModel</span><span class="p">):</span>
+<div class="viewcode-block" id="TestResult"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResult">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TestResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TestResult model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">test_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># Optionally allow a name for an individual test</span>
-    <span class="n">column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># Optionally track the results for an individual column</span>
-    <span class="n">passed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span>  <span class="c1"># Optionally per-result pass/fail</span>
-    <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span></div>
+    <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">test_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Optionally allow a name for an individual test</span>
+    <span class="n">column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="nb">str</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Optionally track the results for an individual column</span>
+    <span class="n">passed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Optionally per-result pass/fail</span>
+
+<div class="viewcode-block" id="TestResult.serialize"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResult.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes the TestResult to a dictionary so it can be sent to the API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">test_result</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">test_result</span><span class="p">[</span><span class="s2">&quot;test_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">test_result</span><span class="p">[</span><span class="s2">&quot;column&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">passed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">test_result</span><span class="p">[</span><span class="s2">&quot;passed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">passed</span>
+
+        <span class="k">return</span> <span class="n">test_result</span></div></div>
 
 
-<div class="viewcode-block" id="TestResults"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResults">[docs]</a><span class="k">class</span> <span class="nc">TestResults</span><span class="p">(</span><span class="n">BaseResultModel</span><span class="p">):</span>
+<div class="viewcode-block" id="TestResults"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResults">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">TestResults</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TestResults model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -114,7 +123,25 @@
     <span class="n">test_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span></div>
+    <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">]</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResultSummary</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TestResults.serialize"><a class="viewcode-back" href="../../../vm_models.html#validmind.TestResults.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serializes the TestResults to a dictionary so it can be sent to the API</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">test_results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">,</span>
+            <span class="s2">&quot;test_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_name</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="s2">&quot;passed&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">passed</span><span class="p">,</span>
+            <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">result</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">test_results</span><span class="p">[</span><span class="s2">&quot;summary&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">test_results</span></div></div>
 </pre></div>
 
            </div>
