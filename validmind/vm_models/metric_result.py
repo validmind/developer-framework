@@ -8,6 +8,7 @@ from typing import Optional, Union
 
 import pandas as pd
 
+from .result_summary import ResultSummary
 from ..utils import format_records, format_key_values
 
 
@@ -23,6 +24,7 @@ class MetricResult:
     scope: str
     key: dict
     value: Union[dict, list, pd.DataFrame]
+    summary: Optional[ResultSummary] = None
     value_formatter: Optional[str] = None
 
     def serialize(self):
@@ -52,4 +54,5 @@ class MetricResult:
             "scope": self.scope,
             "key": self.key,
             "value": value,
+            "summary": self.summary.serialize() if self.summary else None,
         }

@@ -22,6 +22,9 @@ from statsmodels.tsa.stattools import coint
 from ..vm_models import (
     Figure,
     Metric,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
     TestContext,
     TestContextUtils,
     TestPlanDatasetResult,
@@ -109,6 +112,85 @@ class DatasetDescription(Metric):
         return self.cache_results(self.dataset.fields)
 
 
+@dataclass
+class DescriptiveStatistics(Metric):
+    """
+    Collects a set of descriptive statistics for a dataset, both for
+    numerical and categorical variables
+    """
+
+    type = "dataset"
+    key = "descriptive_statistics"
+
+    def get_summary_statistics_numerical(self, numerical_fields):
+        percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
+        summary_stats = self.df[numerical_fields].describe(percentiles=percentiles).T
+        summary_stats = summary_stats[
+            ["count", "mean", "std", "min", "25%", "50%", "75%", "90%", "95%", "max"]
+        ]
+        summary_stats.columns = summary_stats.columns.str.title()
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Name"}, inplace=True)
+        return summary_stats
+
+    def get_summary_statistics_categorical(self, categorical_fields):
+        summary_stats = pd.DataFrame()
+        for column in self.df[categorical_fields].columns:
+            top_value = self.df[column].value_counts().idxmax()
+            top_freq = self.df[column].value_counts().max()
+            summary_stats.loc[column, "Count"] = self.df[column].count()
+            summary_stats.loc[column, "Number of Unique Values"] = self.df[
+                column
+            ].nunique()
+            summary_stats.loc[column, "Top Value"] = top_value
+            summary_stats.loc[column, "Top Value Frequency"] = top_freq
+            summary_stats.loc[column, "Top Value Frequency %"] = (
+                top_freq / self.df[column].count()
+            ) * 100
+
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Name"}, inplace=True)
+
+        return summary_stats
+
+    def summary(self, metric_value):
+        """
+        Build two tables: one for summarizing numerical variables and one for categorical variables
+        """
+        summary_stats_numerical = metric_value["numerical"]
+        summary_stats_categorical = metric_value["categorical"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_stats_numerical,
+                    metadata=ResultTableMetadata(title="Numerical Variables"),
+                ),
+                ResultTable(
+                    data=summary_stats_categorical,
+                    metadata=ResultTableMetadata(title="Categorical Variables"),
+                ),
+            ]
+        )
+
+    def run(self):
+        numerical_fields = self.dataset.get_numeric_features_columns()
+        categorical_fields = self.dataset.get_categorical_features_columns()
+
+        summary_stats_numerical = self.get_summary_statistics_numerical(
+            numerical_fields
+        )
+        summary_stats_categorical = self.get_summary_statistics_categorical(
+            categorical_fields
+        )
+        return self.cache_results(
+            {
+                "numerical": summary_stats_numerical.to_dict(orient="records"),
+                "categorical": summary_stats_categorical.to_dict(orient="records"),
+            }
+        )
+
+
 class DatasetSplit(Metric):
     """
     Attempts to extract information about the dataset split from the
@@ -138,20 +220,16 @@ class DatasetSplit(Metric):
         and will perform poorly on the validation set.
         """
 
-    def as_table(self, raw_results):
+    def summary(self, raw_results):
         """
-        Returns a table representation of the dataset split information
-
-        Each metric can optionally implement this method to return a properly
-        formatted table representation of the results to be shown in the model
-        documentation as-is.
+        Returns a summarized representation of the dataset split information
         """
-        records = []
+        table_records = []
         for key, value in raw_results.items():
             if key.endswith("_size"):
                 dataset_name = key.replace("_size", "")
                 if dataset_name == "total":
-                    records.append(
+                    table_records.append(
                         {
                             "Dataset": "Total",
                             "Size": value,
@@ -161,7 +239,7 @@ class DatasetSplit(Metric):
                     continue
 
                 proportion = raw_results[f"{dataset_name}_proportion"] * 100
-                records.append(
+                table_records.append(
                     {
                         "Dataset": DatasetSplit.dataset_labels[dataset_name],
                         "Size": value,
@@ -169,7 +247,7 @@ class DatasetSplit(Metric):
                     }
                 )
 
-        return records
+        return ResultSummary(results=[ResultTable(data=table_records)])
 
     def run(self):
         # Try to extract metrics from each available dataset
@@ -192,12 +270,6 @@ class DatasetSplit(Metric):
 
         results["total_size"] = total_size
 
-        # A call to as_table() will be made inside the cache_results() method instead
-        # so we can capture the "raw" results and the table representation of the results
-        results = {
-            "raw": results,
-            "table": self.as_table(results),
-        }
         return self.cache_results(results)
 
 

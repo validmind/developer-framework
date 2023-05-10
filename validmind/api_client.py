@@ -27,7 +27,14 @@ def __ping():
         print("Unsuccessful ping to ValidMind API")
         raise Exception(r.text)
 
-    return True
+    project_info = r.json()
+
+    if "name" in project_info:
+        print(
+            f"Connected to ValidMind. Project: {project_info['name']} ({project_info['cuid']})"
+        )
+    else:
+        print("Connected to ValidMind")
 
 
 def _get_or_create_run_cuid():
@@ -260,7 +267,7 @@ def log_test_result(result, run_cuid=None, dataset_type="training"):
 
     r = api_session.post(
         f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
-        data=json.dumps(result.dict(), cls=NumpyEncoder, allow_nan=False),
+        data=json.dumps(result.serialize(), cls=NumpyEncoder, allow_nan=False),
         headers={"Content-Type": "application/json"},
     )
 

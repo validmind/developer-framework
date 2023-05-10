@@ -10,6 +10,7 @@ from ..data_validation.metrics import (
     DatasetCorrelations,
     DatasetDescription,
     DatasetMetadata,
+    DescriptiveStatistics,
 )
 from ..data_validation.threshold_tests import (
     ClassImbalance,
@@ -37,6 +38,7 @@ class TabularDatasetDescription(TestPlan):
     tests = [
         DatasetMetadata,
         DatasetDescription,
+        DescriptiveStatistics,
         DatasetCorrelations,
     ]
 
