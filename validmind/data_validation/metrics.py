@@ -24,6 +24,7 @@ from ..vm_models import (
     Metric,
     ResultSummary,
     ResultTable,
+    ResultTableMetadata,
     TestContext,
     TestContextUtils,
     TestPlanDatasetResult,
@@ -109,6 +110,85 @@ class DatasetDescription(Metric):
         # This will populate the "fields" attribute in the dataset object
         self.dataset.describe()
         return self.cache_results(self.dataset.fields)
+
+
+@dataclass
+class DescriptiveStatistics(Metric):
+    """
+    Collects a set of descriptive statistics for a dataset, both for
+    numerical and categorical variables
+    """
+
+    type = "dataset"
+    key = "descriptive_statistics"
+
+    def get_summary_statistics_numerical(self, numerical_fields):
+        percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
+        summary_stats = self.df[numerical_fields].describe(percentiles=percentiles).T
+        summary_stats = summary_stats[
+            ["count", "mean", "std", "min", "25%", "50%", "75%", "90%", "95%", "max"]
+        ]
+        summary_stats.columns = summary_stats.columns.str.title()
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Name"}, inplace=True)
+        return summary_stats
+
+    def get_summary_statistics_categorical(self, categorical_fields):
+        summary_stats = pd.DataFrame()
+        for column in self.df[categorical_fields].columns:
+            top_value = self.df[column].value_counts().idxmax()
+            top_freq = self.df[column].value_counts().max()
+            summary_stats.loc[column, "Count"] = self.df[column].count()
+            summary_stats.loc[column, "Number of Unique Values"] = self.df[
+                column
+            ].nunique()
+            summary_stats.loc[column, "Top Value"] = top_value
+            summary_stats.loc[column, "Top Value Frequency"] = top_freq
+            summary_stats.loc[column, "Top Value Frequency %"] = (
+                top_freq / self.df[column].count()
+            ) * 100
+
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Name"}, inplace=True)
+
+        return summary_stats
+
+    def summary(self, metric_value):
+        """
+        Build two tables: one for summarizing numerical variables and one for categorical variables
+        """
+        summary_stats_numerical = metric_value["numerical"]
+        summary_stats_categorical = metric_value["categorical"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_stats_numerical,
+                    metadata=ResultTableMetadata(title="Numerical Variables"),
+                ),
+                ResultTable(
+                    data=summary_stats_categorical,
+                    metadata=ResultTableMetadata(title="Categorical Variables"),
+                ),
+            ]
+        )
+
+    def run(self):
+        numerical_fields = self.dataset.get_numeric_features_columns()
+        categorical_fields = self.dataset.get_categorical_features_columns()
+
+        summary_stats_numerical = self.get_summary_statistics_numerical(
+            numerical_fields
+        )
+        summary_stats_categorical = self.get_summary_statistics_categorical(
+            categorical_fields
+        )
+        return self.cache_results(
+            {
+                "numerical": summary_stats_numerical.to_dict(orient="records"),
+                "categorical": summary_stats_categorical.to_dict(orient="records"),
+            }
+        )
 
 
 class DatasetSplit(Metric):

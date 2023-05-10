@@ -94,4 +94,4 @@ class TestFrameworkInit(unittest.TestCase):
         client_ok = vm.init(
             api_key="api_key", api_secret="api_secret", project="project"
         )
-        self.assertTrue(client_ok)
+        self.assertIsNone(client_ok)

@@ -27,7 +27,14 @@ def __ping():
         print("Unsuccessful ping to ValidMind API")
         raise Exception(r.text)
 
-    return True
+    project_info = r.json()
+
+    if "name" in project_info:
+        print(
+            f"Connected to ValidMind. Project: {project_info['name']} ({project_info['cuid']})"
+        )
+    else:
+        print("Connected to ValidMind")
 
 
 def _get_or_create_run_cuid():

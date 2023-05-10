@@ -7,7 +7,7 @@ from .figure import Figure
 from .model import Model, ModelAttributes, R_MODEL_TYPES
 from .metric import Metric
 from .metric_result import MetricResult
-from .result_summary import ResultSummary, ResultTable
+from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
 from .test_plan_result import (
@@ -30,6 +30,7 @@ __all__ = [
     "R_MODEL_TYPES",
     "ResultSummary",
     "ResultTable",
+    "ResultTableMetadata",
     "TestContext",
     "TestContextUtils",
     "TestPlan",
