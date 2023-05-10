@@ -27,6 +27,7 @@ from .statsmodels_timeseries import (
     StationarityTestPlan,
     TimeSeries,
     RegressionModelPerformance,
+    RegressionModelsComparision,
 )
 from .time_series import (
     TimeSeriesUnivariate,
@@ -54,6 +55,7 @@ core_test_plans = {
     "time_series_multivariate": TimeSeriesMultivariate,
     "time_series_forecast": TimeSeriesForecast,
     "regression_model_performance": RegressionModelPerformance,
+    "regression_models_comparison": RegressionModelsComparision
 }
 
 # These test plans can be added by the user
