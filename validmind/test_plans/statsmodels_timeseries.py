@@ -18,6 +18,7 @@ from ..model_validation.statsmodels.metrics import (
     DFGLSArch,
     ResidualsVisualInspection,
     RegressionModelSummary,
+    RegressionModelInsampleComparison,
 )
 
 
@@ -105,5 +106,5 @@ class RegressionModelPerformance(TestPlan):
     """
 
     name = "regression_model_performance"
-    required_context = ["model"]
-    tests = [RegressionModelSummary]
+    required_context = ["model", "models"]
+    tests = [RegressionModelSummary, RegressionModelInsampleComparison]
