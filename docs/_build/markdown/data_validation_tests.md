@@ -65,6 +65,55 @@ Collects a set of descriptive statistics for a dataset
 Run the metric calculation and cache its results
 
 
+### _class_ validmind.data_validation.metrics.DescriptiveStatistics(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Collects a set of descriptive statistics for a dataset, both for
+numerical and categorical variables
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'descriptive_statistics_ )
+
+#### get_summary_statistics_numerical(numerical_fields)
+
+#### get_summary_statistics_categorical(categorical_fields)
+
+#### summary(metric_value)
+Build two tables: one for summarizing numerical variables and one for categorical variables
+
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.DatasetSplit(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Attempts to extract information about the dataset split from the
+provided training, test and validation datasets.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'dataset_split_ )
+
+#### dataset_labels(_ = {'test_ds': 'Test', 'total': 'Total', 'train_ds': 'Training', 'validation_ds': 'Validation'_ )
+
+#### description()
+Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class’ docstring
+
+
+#### summary(raw_results)
+Returns a summarized representation of the dataset split information
+
+
+#### run()
+Run the metric calculation and cache its results
+
+
 ### _class_ validmind.data_validation.metrics.TimeSeriesLinePlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
 
@@ -149,6 +198,166 @@ Automatically detects the MA order of a time series using both BIC and AIC.
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'auto_ma_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.SeasonalDecompose(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Calculates seasonal_decompose metric for each of the dataset features
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'seasonal_decompose_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'seasonal_model': 'additive'_ )
+
+#### store_seasonal_decompose(column, sd_one_column)
+Stores the seasonal decomposition results in the test context so they
+can be re-used by other tests. Note we store one sd at a time for every
+column in the dataset.
+
+
+#### serialize_seasonal_decompose(sd)
+Serializes the seasonal decomposition results for one column into a
+JSON serializable format that can be sent to the API.
+
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.AutoSeasonality(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Automatically detects the optimal seasonal order for a time series dataset
+using the seasonal_decompose method.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'auto_seasonality_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'max_period': 4, 'min_period': 1_ )
+
+#### evaluate_seasonal_periods(series, min_period, max_period)
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.ACFandPACFPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Plots ACF and PACF for a given time series dataset.
+
+
+#### type(_: ClassVar[str_ _ = 'evaluation_ )
+
+#### key(_: ClassVar[str_ _ = 'acf_pacf_plot_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.AutoStationarity(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Automatically detects stationarity for each time series in a DataFrame
+using the Augmented Dickey-Fuller (ADF) test.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'auto_stationarity_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'max_order': 5, 'threshold': 0.05_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.RollingStatsPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'rolling_stats_plot_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'window_size': 12_ )
+
+#### _static_ plot_rolling_statistics(series, window_size=12, ax1=None, ax2=None)
+Plot rolling mean and rolling standard deviation in different subplots for a given series.
+
+
+* **Parameters**
+
+    
+    * **series** – Pandas Series with time-series data
+
+
+    * **window_size** – Window size for the rolling calculations
+
+
+    * **ax1** – Axis object for the rolling mean plot
+
+
+    * **ax2** – Axis object for the rolling standard deviation plot
+
+
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.EngleGrangerCoint(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'engle_granger_coint_ )
+
+#### default_params(_: ClassVar[dict_ _ = {'threshold': 0.05_ )
+
+#### run()
+Run the metric calculation and cache its results
+
+
+### _class_ validmind.data_validation.metrics.SpreadPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
+Bases: `Metric`
+
+This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.
+
+
+#### type(_: ClassVar[str_ _ = 'dataset_ )
+
+#### key(_: ClassVar[str_ _ = 'spread_plot_ )
+
+#### _static_ plot_spread(series1, series2, ax=None)
+Plot the spread between two time series variables.
+
+
+* **Parameters**
+
+    
+    * **series1** – Pandas Series with time-series data for the first variable
+
+
+    * **series2** – Pandas Series with time-series data for the second variable
+
+
+    * **ax** – Axis object for the spread plot
+
+
 
 #### run()
 Run the metric calculation and cache its results
@@ -295,7 +504,7 @@ The zeros test finds columns that have too many zero values.
 Run the test and cache its results
 
 
-### _class_ validmind.data_validation.threshold_tests.OutliersTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.TimeSeriesOutliers(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test that find outliers for time series data using the z-score method
@@ -311,7 +520,7 @@ Test that find outliers for time series data using the z-score method
 Run the test and cache its results
 
 
-### _class_ validmind.data_validation.threshold_tests.TimeSeriesMissingValuesTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.data_validation.threshold_tests.TimeSeriesMissingValues(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `ThresholdTest`
 
 Test that the number of missing values is less than a threshold
@@ -322,6 +531,20 @@ Test that the number of missing values is less than a threshold
 #### name(_: ClassVar[str_ _ = 'time_series_missing_values_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
+
+#### run()
+Run the test and cache its results
+
+
+### _class_ validmind.data_validation.threshold_tests.TimeSeriesFrequency(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+Bases: `ThresholdTest`
+
+Test that detect frequencies in the data
+
+
+#### category(_: ClassVar[str_ _ = 'data_quality_ )
+
+#### name(_: ClassVar[str_ _ = 'time_series_frequency_ )
 
 #### run()
 Run the test and cache its results
