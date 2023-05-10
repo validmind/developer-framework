@@ -17,6 +17,7 @@ from ..model_validation.statsmodels.metrics import (
     ZivotAndrewsArch,
     DFGLSArch,
     ResidualsVisualInspection,
+    RegressionModelSummary,
 )
 
 
@@ -95,3 +96,14 @@ class TimeSeries(TestPlan):
         SesonalityTestPlan,
         StationarityTestPlan,
     ]
+
+
+class RegressionModelPerformance(TestPlan):
+    """
+    Test plan for statsmodels regressor models that includes
+    both metrics and validation tests
+    """
+
+    name = "regression_model_performance"
+    required_context = ["model"]
+    tests = [RegressionModelSummary]
