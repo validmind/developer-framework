@@ -10,8 +10,8 @@ from ..data_validation.metrics import (
     AutoSeasonality,
     AutoStationarity,
     RollingStatsPlot,
-    # AutoAR,
-    # AutoMA,
+    AutoAR,
+    AutoMA,
     ScatterPlot,
     LaggedCorrelationHeatmap,
     EngleGrangerCoint,
@@ -32,12 +32,12 @@ class TimeSeriesUnivariate(TestPlan):
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
         ACFandPACFPlot,
-        # SeasonalDecompose,
-        # AutoSeasonality,
-        # AutoStationarity,
+        SeasonalDecompose,
+        AutoSeasonality,
+        AutoStationarity,
         RollingStatsPlot,
-        # AutoAR,
-        # AutoMA,
+        AutoAR,
+        AutoMA,
     ]
 
     def description(self):
