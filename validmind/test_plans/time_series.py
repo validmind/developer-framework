@@ -64,7 +64,7 @@ class TimeSeriesMultivariate(TestPlan):
     tests = [
         ScatterPlot,
         LaggedCorrelationHeatmap,
-        # EngleGrangerCoint,
+        EngleGrangerCoint,
         SpreadPlot,
     ]
 

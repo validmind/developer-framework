@@ -688,6 +688,14 @@ Return the metric description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
 
 
+#### summary(metric_value: dict | list | DataFrame | None = None)
+Return the metric summary. Should be overridden by subclasses. Defaults to None.
+The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the metric results.
+
+We return None here because the metric summary is optional.
+
+
 #### run(\*args, \*\*kwargs)
 Run the metric calculation and cache its results
 
@@ -803,22 +811,26 @@ Model attributes definition
 
 #### framework_version(_: st_ _ = Non_ )
 
-### _class_ validmind.TestResult(\*, test_name: str | None = None, column: str | None = None, passed: bool | None = None, values: dict)
-Bases: `BaseResultModel`
+### _class_ validmind.TestResult(values: dict, test_name: str | None = None, column: str | None = None, passed: bool | None = None)
+Bases: `object`
 
 TestResult model
 
 
-#### test_name(_: str | Non_ )
-
-#### column(_: str | Non_ )
-
-#### passed(_: bool | Non_ )
-
 #### values(_: dic_ )
 
-### _class_ validmind.TestResults(\*, category: str, test_name: str, params: dict, passed: bool, results: List[TestResult])
-Bases: `BaseResultModel`
+#### test_name(_: str | Non_ _ = Non_ )
+
+#### column(_: str | Non_ _ = Non_ )
+
+#### passed(_: bool | Non_ _ = Non_ )
+
+#### serialize()
+Serializes the TestResult to a dictionary so it can be sent to the API
+
+
+### _class_ validmind.TestResults(category: str, test_name: str, params: dict, passed: bool, results: List[TestResult], summary: ResultSummary | None)
+Bases: `object`
 
 TestResults model
 
@@ -832,6 +844,12 @@ TestResults model
 #### passed(_: boo_ )
 
 #### results(_: List[TestResult_ )
+
+#### summary(_: ResultSummary | Non_ )
+
+#### serialize()
+Serializes the TestResults to a dictionary so it can be sent to the API
+
 
 ### _class_ validmind.ThresholdTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `TestContextUtils`
@@ -860,6 +878,14 @@ TODO: ThresholdTest should validate required context too
 #### description()
 Return the test description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
+
+
+#### summary(test_results: TestResults | None = None)
+Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the test results.
+
+We return None here because the test summary is optional.
 
 
 #### run(\*args, \*\*kwargs)
