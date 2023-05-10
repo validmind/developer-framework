@@ -386,12 +386,18 @@ class TimeSeriesOutliers(ThresholdTest):
         dataset_types = typeset.infer_type(temp_df)
         test_results = []
         test_figures = []
-        num_features_columns = [k for k, v in dataset_types.items() if str(v) == "Numeric"]
+        num_features_columns = [
+            k for k, v in dataset_types.items() if str(v) == "Numeric"
+        ]
 
-        outliers_table = self._identify_outliers(temp_df[num_features_columns], zscore_threshold)
+        outliers_table = self._identify_outliers(
+            temp_df[num_features_columns], zscore_threshold
+        )
         fig = self._plot_outliers(temp_df, outliers_table)
         passed = outliers_table.empty
-        outliers_table["Date"] = outliers_table["Date"].astype(str)
+
+        if not outliers_table.empty:
+            outliers_table["Date"] = outliers_table["Date"].astype(str)
 
         test_results.append(
             TestResult(
@@ -426,7 +432,14 @@ class TimeSeriesOutliers(ThresholdTest):
         for idx, row in outliers.iterrows():
             for col in df.columns:
                 if abs(row[col]) > threshold:
-                    outlier_table.append({"Variable": col, "z-score": row[col], "Threshold": threshold, "Date": idx})
+                    outlier_table.append(
+                        {
+                            "Variable": col,
+                            "z-score": row[col],
+                            "Threshold": threshold,
+                            "Date": idx,
+                        }
+                    )
         return pd.DataFrame(outlier_table)
 
     def _plot_outliers(self, df, outliers_table):
@@ -440,6 +453,7 @@ class TimeSeriesOutliers(ThresholdTest):
         Returns:
             matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
         """
+        print(outliers_table)
         sns.set(style="darkgrid")
         n_variables = len(df.columns)
         fig, axes = plt.subplots(n_variables, 1, sharex=True)
@@ -447,24 +461,27 @@ class TimeSeriesOutliers(ThresholdTest):
         for i, col in enumerate(df.columns):
             sns.lineplot(data=df, x=df.index, y=col, ax=axes[i], label=col)
 
-            variable_outliers = outliers_table[outliers_table["Variable"] == col]
-            for idx, row in variable_outliers.iterrows():
-                date = row["Date"]
-                outlier_value = df.loc[date, col]
-                axes[i].scatter(date, outlier_value, marker="o", s=100, c="red",
-                                label="Outlier" if idx == 0 else "")
+            if not outliers_table.empty:
+                variable_outliers = outliers_table[outliers_table["Variable"] == col]
+                for idx, row in variable_outliers.iterrows():
+                    date = row["Date"]
+                    outlier_value = df.loc[date, col]
+                    axes[i].scatter(
+                        date,
+                        outlier_value,
+                        marker="o",
+                        s=100,
+                        c="red",
+                        label="Outlier" if idx == 0 else "",
+                    )
 
             axes[i].legend()
-            axes[i].set_ylabel(
-                col, weight="bold", fontsize=16
-            )
+            axes[i].set_ylabel(col, weight="bold", fontsize=16)
             axes[i].set_title(
                 f"Time Series with Outliers for {col}", weight="bold", fontsize=16
             )
 
-        plt.xlabel(
-            "Date", weight="bold", fontsize=16
-        )
+        plt.xlabel("Date", weight="bold", fontsize=16)
         plt.tight_layout()
 
         # Do this if you want to prevent the figure from being displayed
@@ -509,24 +526,21 @@ class TimeSeriesMissingValues(ThresholdTest):
         test_figures = []
         if fig_barplot is not None:
             test_figures.append(
-                Figure(
-                    key=f"{self.name}:barplot",
-                    figure=fig_barplot,
-                    metadata={}
-                )
+                Figure(key=f"{self.name}:barplot", figure=fig_barplot, metadata={})
             )
             test_figures.append(
-                Figure(
-                    key=f"{self.name}:heatmap",
-                    figure=fig_heatmap,
-                    metadata={}
-                )
+                Figure(key=f"{self.name}:heatmap", figure=fig_heatmap, metadata={})
             )
 
-        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+        return self.cache_results(
+            test_results,
+            passed=all([r.passed for r in test_results]),
+            figures=test_figures,
+        )
 
-    def _barplot(self, df: pd.DataFrame, rotation: int = 45,
-                 font_size: int = 18) -> plt.Figure:
+    def _barplot(
+        self, df: pd.DataFrame, rotation: int = 45, font_size: int = 18
+    ) -> plt.Figure:
         """
         Generate a bar plot of missing values in a pandas DataFrame.
 
@@ -541,8 +555,7 @@ class TimeSeriesMissingValues(ThresholdTest):
         # Create a bar plot using seaborn library
         missing_values = df.isnull().sum()
         if sum(missing_values.values) != 0:
-
-            with plt.style.context('seaborn'):
+            with plt.style.context("seaborn"):
                 fig, ax = plt.subplots()
                 sns.barplot(
                     data=missing_values,
@@ -553,15 +566,11 @@ class TimeSeriesMissingValues(ThresholdTest):
                 ax.set_xticklabels(
                     labels=missing_values.index, rotation=rotation, fontsize=font_size
                 )
-                plt.yticks(
-                    rotation=45, fontsize=font_size
-                )
+                plt.yticks(rotation=45, fontsize=font_size)
                 ax.set_ylabel(
                     "Number of Missing Values", weight="bold", fontsize=font_size
                 )
-                ax.set_xlabel(
-                    "Variables (Columns)", weight="bold", fontsize=font_size
-                )
+                ax.set_xlabel("Variables (Columns)", weight="bold", fontsize=font_size)
                 ax.set_title(
                     "Total Number of Missing Values per Variable",
                     weight="bold",
@@ -592,24 +601,20 @@ class TimeSeriesMissingValues(ThresholdTest):
         fig, ax = plt.subplots()
 
         # Plot the heatmap
-        sns.heatmap(missing_mask.T, cmap='viridis', cbar=False, xticklabels=False, ax=ax)
+        sns.heatmap(
+            missing_mask.T, cmap="viridis", cbar=False, xticklabels=False, ax=ax
+        )
 
         # Add actual years on the x-axis
         years = df.index.year.unique()
-        xticks = [df.index.get_loc(df.index[df.index.year == year][0]) for year in years]
-        plt.xticks(
-            xticks, years, rotation=45, fontsize=18
-        )
-        plt.yticks(
-            rotation=45, fontsize=18
-        )
+        xticks = [
+            df.index.get_loc(df.index[df.index.year == year][0]) for year in years
+        ]
+        plt.xticks(xticks, years, rotation=45, fontsize=18)
+        plt.yticks(rotation=45, fontsize=18)
         plt.gca().xaxis.set_major_locator(plt.MultipleLocator(5))
-        ax.set_xlabel(
-            "Rows (Years)", weight="bold", fontsize=18
-        )
-        ax.set_ylabel(
-            "Variables (Columns)", weight="bold", fontsize=18
-        )
+        ax.set_xlabel("Rows (Years)", weight="bold", fontsize=18)
+        ax.set_ylabel("Variables (Columns)", weight="bold", fontsize=18)
         ax.set_title(
             "Missing Values Heatmap with Actual Years in Rows",
             weight="bold",
@@ -647,13 +652,13 @@ class TimeSeriesFrequency(ThresholdTest):
         fig_frequency = self._frequncy_plot(self.df)
         test_figures = []
         test_figures.append(
-            Figure(
-                key=f"{self.name}:frequecyplot",
-                figure=fig_frequency,
-                metadata={}
-            )
+            Figure(key=f"{self.name}:frequecyplot", figure=fig_frequency, metadata={})
         )
-        return self.cache_results(test_results, passed=all([r.passed for r in test_results]), figures=test_figures)
+        return self.cache_results(
+            test_results,
+            passed=all([r.passed for r in test_results]),
+            figures=test_figures,
+        )
 
     def _identify_frequencies(self, df):
         """
@@ -663,9 +668,20 @@ class TimeSeriesFrequency(ThresholdTest):
         :return: DataFrame with two columns: 'Variable' and 'Frequency'
         """
         frequencies = []
-        freq_dict = {'S': 'Second', 'T': 'Minute', 'min': 'Minute', 'H': 'Hourly', 'D': 'Daily',
-                     'B': 'Business day', 'W': 'Weekly', 'MS': 'Monthly', 'M': 'Monthly', 'Q': 'Quarterly',
-                     'A': 'Yearly', 'Y': 'Yearly'}
+        freq_dict = {
+            "S": "Second",
+            "T": "Minute",
+            "min": "Minute",
+            "H": "Hourly",
+            "D": "Daily",
+            "B": "Business day",
+            "W": "Weekly",
+            "MS": "Monthly",
+            "M": "Monthly",
+            "Q": "Quarterly",
+            "A": "Yearly",
+            "Y": "Yearly",
+        }
 
         for column in df.columns:
             series = df[column].dropna()
@@ -675,7 +691,7 @@ class TimeSeriesFrequency(ThresholdTest):
             else:
                 label = None
 
-            frequencies.append({'Variable': column, 'Frequency': label})
+            frequencies.append({"Variable": column, "Frequency": label})
 
         freq_df = pd.DataFrame(frequencies)
 
@@ -699,22 +715,16 @@ class TimeSeriesFrequency(ThresholdTest):
         time_diff_days = time_diff.dt.total_seconds() / (60 * 60 * 24)
 
         # Create a DataFrame with the time differences
-        time_diff_df = pd.DataFrame({'Time Differences (Days)': time_diff_days})
+        time_diff_df = pd.DataFrame({"Time Differences (Days)": time_diff_days})
         fig, ax = plt.subplots()
         # Plot the frequency distribution of the time differences
         sns.histplot(
-            data=time_diff_df, x='Time Differences (Days)', bins=50, kde=False, ax=ax
+            data=time_diff_df, x="Time Differences (Days)", bins=50, kde=False, ax=ax
         )
 
-        plt.yticks(
-            rotation=45, fontsize=18
-        )
-        ax.set_ylabel(
-            "Frequency", weight="bold", fontsize=18
-        )
-        ax.set_xlabel(
-            "Time Differences (Days)", weight="bold", fontsize=18
-        )
+        plt.yticks(rotation=45, fontsize=18)
+        ax.set_ylabel("Frequency", weight="bold", fontsize=18)
+        ax.set_xlabel("Time Differences (Days)", weight="bold", fontsize=18)
         ax.set_title(
             "Frequency",
             weight="bold",
