@@ -9,7 +9,7 @@ SUPPORTED_MODEL_TYPES = [
     "XGBRegressor",
     "LogisticRegression",
     "LinearRegression",
-    "RegressionResultsWrapper"
+    "RegressionResultsWrapper",
 ]
 
 R_MODEL_TYPES = [

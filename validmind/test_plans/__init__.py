@@ -31,6 +31,7 @@ from .statsmodels_timeseries import (
 from .time_series import (
     TimeSeriesUnivariate,
     TimeSeriesMultivariate,
+    TimeSeriesForecast,
 )
 
 core_test_plans = {
@@ -51,6 +52,7 @@ core_test_plans = {
     "time_series_dataset": TimeSeriesDataset,
     "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
+    "time_series_forecast": TimeSeriesForecast,
     "regression_model_performance": RegressionModelPerformance,
 }
 

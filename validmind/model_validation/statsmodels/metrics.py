@@ -4,6 +4,7 @@ a statsmodels-like API
 """
 from dataclasses import dataclass
 import pandas as pd
+import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -480,9 +481,6 @@ class KPSS(Metric):
         return self.cache_results(kpss_values)
 
 
-# AUTOMATIC DECISION ENGINES
-
-
 @dataclass
 class DeterminationOfIntegrationOrderADF(Metric):
     """
@@ -577,6 +575,133 @@ class AutoARIMA(Metric):
         return self.cache_results(results)
 
 
+class ModelPredictionOLS(Metric):
+    """
+    Calculates and plots the model predictions for each of the models
+    """
+
+    type = "dataset"
+    key = "model_prediction_ols"
+    default_params = {"plot_start_date": None, "plot_end_date": None}
+
+    def serialize_time_series_df(self, df):
+        # Convert the DateTimeIndex to strings without specifying a date format
+        df.index = df.index.astype(str)
+
+        # Reset the index and rename the index column to 'Date'
+        df = df.reset_index().rename(columns={"index": "Date"})
+
+        # Convert the DataFrame into a list of dictionaries
+        return df.to_dict("records")
+
+    def get_model_prediction(self, model_list, df_test):
+        # Extract the training target variable from the first model fit
+
+        first_model_fit = model_list[0].model
+
+        train_data = pd.Series(
+            first_model_fit.model.endog, index=first_model_fit.model.data.row_labels
+        )
+        train_data = train_data.to_frame()
+        target_var_name = first_model_fit.model.endog_names
+        train_data.columns = [f"{target_var_name}_train"]
+
+        # Initialize an empty DataFrame to store the predictions
+        prediction_df = pd.DataFrame(index=df_test.index)
+        prediction_df[f"{target_var_name}_test"] = np.nan
+
+        # Concatenate the train_data and prediction_df
+        combined_df = pd.concat([train_data, prediction_df], axis=0)
+
+        # Loop through each model fit
+        for i, model_fit in enumerate(model_list):
+            model_name = f"model_{i+1}"
+
+            # Prepare the test dataset
+            exog_names = model_fit.model.model.exog_names
+            X_test = df_test.copy()
+
+            # Add the constant if it's missing
+            if "const" in exog_names and "const" not in X_test.columns:
+                X_test["const"] = 1.0
+
+            # Select the necessary columns
+            X_test = X_test[exog_names]
+
+            # Generate the predictions
+            predictions = model_fit.model.predict(X_test)
+
+            # Add the predictions to the DataFrame
+            combined_df[model_name] = np.nan
+            combined_df[model_name].iloc[len(train_data) :] = predictions
+
+        # Add the test data to the '<target_variable>_test' column
+        combined_df[f"{target_var_name}_test"].iloc[len(train_data) :] = df_test[
+            target_var_name
+        ]
+
+        return combined_df
+
+    def plot_predictions(self, prediction_df, start_date=None, end_date=None):
+        if start_date and end_date:
+            prediction_df = prediction_df.loc[start_date:end_date]
+
+        n_models = prediction_df.shape[1] - 2
+        fig, axes = plt.subplots(n_models, 1, sharex=True)
+
+        for i in range(n_models):
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, 0],
+                label=prediction_df.columns[0],
+                color="grey",
+            )
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, 1],
+                label=prediction_df.columns[1],
+                color="lightgrey",
+            )
+            axes[i].plot(
+                prediction_df.index,
+                prediction_df.iloc[:, i + 2],
+                label=prediction_df.columns[i + 2],
+                linestyle="-",
+            )
+            axes[i].set_ylabel("Target Variable")
+            axes[i].set_title(f"Test Data vs. {prediction_df.columns[i + 2]}")
+            axes[i].legend()
+            axes[i].grid(True)
+        plt.xlabel("Date")
+        plt.tight_layout()
+
+    def run(self):
+        model_list = self.models
+
+        df_test = self.test_ds.df
+
+        plot_start_date = self.params["plot_start_date"]
+        plot_end_date = self.params["plot_end_date"]
+
+        print(plot_start_date)
+
+        prediction_df = self.get_model_prediction(model_list, df_test)
+        results = self.serialize_time_series_df(prediction_df)
+
+        figures = []
+        self.plot_predictions(
+            prediction_df, start_date=plot_start_date, end_date=plot_end_date
+        )
+
+        # Assuming the plot is the only figure we want to store
+        fig = plt.gcf()
+        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        plt.close("all")
+
+        # Assuming we do not need to cache any results, just the figure
+        return self.cache_results(results, figures=figures)
+
+
 @dataclass
 class RegressionModelSummary(Metric):
     """
@@ -590,11 +715,13 @@ class RegressionModelSummary(Metric):
     def run(self):
         # statsmodels library information
         module_name = self.model.model.__class__.__module__
-        library_name = module_name.split('.')[0]
+        library_name = module_name.split(".")[0]
         model_name = self.model.model.__class__.__name__
 
         if library_name != "statsmodels" or model_name != "RegressionResultsWrapper":
-            raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+            raise ValueError(
+                "Only RegressionResultsWrapper models of statsmodels library supported"
+            )
 
         lib_model = self.model.model
         # List of features columns
@@ -606,14 +733,14 @@ class RegressionModelSummary(Metric):
 
         # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
         mse = lib_model.mse_resid
-        rmse = mse ** 0.5
+        rmse = mse**0.5
 
         results = {
             "Independent Variables": X_columns,
-            'R-Squared': r2,
-            'Adjusted R-Squared': adj_r2,
-            'MSE': mse,
-            'RMSE': rmse,
+            "R-Squared": r2,
+            "Adjusted R-Squared": adj_r2,
+            "MSE": mse,
+            "RMSE": rmse,
         }
         return self.cache_results(results)
 
