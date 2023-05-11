@@ -823,3 +823,89 @@ class RegressionModelInsampleComparison(Metric):
             )
 
         return evaluation_results
+
+
+@dataclass
+class RegressionModelOutsampleComparison(Metric):
+    """
+    Test that evaluates the performance of different regression models on a separate test dataset
+    that was not used to train the models.
+    """
+
+    category = "model_performance"
+    scope = "test"
+    name = "regression_outsample_performance"
+
+    def description(self):
+        return """
+        This section shows Out-of-sample comparison of regression models involves evaluating
+        the performance of different regression models on a separate test dataset that was not
+        used to train the models. This is typically done by calculating a goodness-of-fit statistic
+        such as the R-squared or mean squared error (MSE) for each model, and then comparing these
+        statistics to determine which model has the best fit to the test data.
+        """
+
+    def run(self):
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+        all_models = []
+        for model in self.models:
+            if model.model.__class__.__name__ != "RegressionResultsWrapper":
+                raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+            all_models.append(model.model)
+
+        results = self._out_sample_performance_ols(
+            all_models,
+            self.test_ds.df.copy(deep=True),
+            self.test_ds.target_column
+        )
+        return self.cache_results(results.to_dict("records"))
+
+    def _out_sample_performance_ols(self, model_list, test_data, target_col):
+        """
+        Returns the out-of-sample performance evaluation metrics of a list of OLS regression models.
+
+        Args:
+        model_list (list): A list of OLS models to evaluate.
+        test_data (pandas.DataFrame): The test dataset containing the independent and dependent variables.
+        target_col (str): The name of the target variable column in the test dataset.
+
+        Returns:
+        pandas.DataFrame: A DataFrame containing the evaluation results of the OLS models. The columns are 'Model',
+        'MSE' (Mean Squared Error), and 'RMSE' (Root Mean Squared Error).
+        """
+
+        # Initialize a list to store results
+        results = []
+
+        for fitted_model in model_list:
+            # Extract the column names of the independent variables from the model
+            independent_vars = fitted_model.model.exog_names
+            X_test_data = test_data.copy(deep=True)
+            # Add the constant if it's missing
+            if "const" in independent_vars and "const" not in X_test_data.columns.to_list():
+                X_test_data['const'] = 1.0
+
+            # Separate the target variable and features in the test dataset
+            X_test = X_test_data[independent_vars]
+            y_test = X_test_data[target_col]
+
+            # Predict the test data
+            y_pred = fitted_model.predict(X_test)
+
+            # Calculate the residuals
+            residuals = y_test - y_pred
+
+            # Calculate the mean squared error and root mean squared error
+            mse = np.mean(residuals ** 2)
+            rmse_val = np.sqrt(mse)
+
+            # Store the results
+            model_name_with_vars = f"({', '.join(independent_vars)})"
+            results.append([model_name_with_vars, mse, rmse_val])
+
+        # Create a DataFrame to display the results
+        results_df = pd.DataFrame(results, columns=['Model', 'MSE', 'RMSE'])
+
+        return results_df
