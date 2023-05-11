@@ -79,11 +79,11 @@
 <span class="kn">import</span> <span class="nn">tabulate</span>
 
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">TestPlan</span>
-<span class="kn">from</span> <span class="nn">.sklearn_classifier</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
-    <span class="n">SKLearnClassifier</span><span class="p">,</span>
-    <span class="n">SKLearnClassifierPerformance</span><span class="p">,</span>
-    <span class="n">SKLearnClassifierDiagnosis</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">.binary_classifier</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BinaryClassifierMetrics</span><span class="p">,</span>
+    <span class="n">BinaryClassifier</span><span class="p">,</span>
+    <span class="n">BinaryClassifierPerformance</span><span class="p">,</span>
+    <span class="n">BinaryClassifierDiagnosis</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.tabular_datasets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">TabularDataset</span><span class="p">,</span>
@@ -109,10 +109,10 @@
 <span class="p">)</span>
 
 <span class="n">core_test_plans</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;sklearn_classifier_metrics&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierMetrics</span><span class="p">,</span>
-    <span class="s2">&quot;sklearn_classifier_validation&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierPerformance</span><span class="p">,</span>
-    <span class="s2">&quot;sklearn_classifier_model_diagnosis&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifierDiagnosis</span><span class="p">,</span>
-    <span class="s2">&quot;sklearn_classifier&quot;</span><span class="p">:</span> <span class="n">SKLearnClassifier</span><span class="p">,</span>
+    <span class="s2">&quot;binary_classifier_metrics&quot;</span><span class="p">:</span> <span class="n">BinaryClassifierMetrics</span><span class="p">,</span>
+    <span class="s2">&quot;binary_classifier_validation&quot;</span><span class="p">:</span> <span class="n">BinaryClassifierPerformance</span><span class="p">,</span>
+    <span class="s2">&quot;binary_classifier_model_diagnosis&quot;</span><span class="p">:</span> <span class="n">BinaryClassifierDiagnosis</span><span class="p">,</span>
+    <span class="s2">&quot;binary_classifier&quot;</span><span class="p">:</span> <span class="n">BinaryClassifier</span><span class="p">,</span>
     <span class="s2">&quot;tabular_dataset&quot;</span><span class="p">:</span> <span class="n">TabularDataset</span><span class="p">,</span>
     <span class="s2">&quot;tabular_dataset_description&quot;</span><span class="p">:</span> <span class="n">TabularDatasetDescription</span><span class="p">,</span>
     <span class="s2">&quot;tabular_data_quality&quot;</span><span class="p">:</span> <span class="n">TabularDataQuality</span><span class="p">,</span>

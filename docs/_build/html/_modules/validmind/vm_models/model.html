@@ -76,13 +76,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
 
+<span class="c1"># import torch</span>
+<span class="c1"># import torch.nn as nn</span>
+
 <span class="n">SUPPORTED_MODEL_TYPES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;GLMResultsWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;XGBClassifier&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;XGBRegressor&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LogisticRegression&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LinearRegression&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RegressionResultsWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pytorch.PyTorchModel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sklearn.LogisticRegression&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sklearn.LinearRegression&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;sklearn.RandomForestClassifier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;statsmodels.GLMResultsWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;statsmodels.BinaryResultsWrapper&quot;</span><span class="p">,</span>  <span class="c1"># Logistic Regression results</span>
+    <span class="s2">&quot;statsmodels.RegressionResultsWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xgboost.XGBClassifier&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xgboost.XGBRegressor&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">R_MODEL_TYPES</span> <span class="o">=</span> <span class="p">[</span>
@@ -129,6 +135,16 @@
             <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
         <span class="p">}</span></div>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_pytorch_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the model is a PyTorch model. Need to extend this</span>
+<span class="sd">        method to check for all ways a PyTorch model can be created</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># TBD. Fix setting PyTorch on Ubuntu</span>
+        <span class="c1"># return isinstance(model, nn.Module)</span>
+
 <div class="viewcode-block" id="Model.predict"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict method for the model. This is a wrapper around the model&#39;s</span>
@@ -138,8 +154,35 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;predict_proba&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Model</span><span class="o">.</span><span class="n">_is_pytorch_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+            <span class="c1"># input_df = args[0]</span>
+            <span class="c1"># rest_args = args[1:]</span>
+            <span class="c1"># input_values = torch.tensor(input_df.values, dtype=torch.float32)</span>
+            <span class="c1"># predictions = self.model(input_values, *rest_args, **kwargs)</span>
+            <span class="c1"># return predictions.detach().numpy()</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.model_library"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.model_library">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">model_library</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the model library name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Model</span><span class="o">.</span><span class="n">_is_pytorch_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;pytorch&quot;</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Model.model_class"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.model_class">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">model_class</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the model class name</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Model</span><span class="o">.</span><span class="n">_is_pytorch_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;PyTorchModel&quot;</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
 
 <div class="viewcode-block" id="Model.is_supported_model"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.is_supported_model">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">is_supported_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
@@ -152,7 +195,10 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: True if the model is supported, False otherwise</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">SUPPORTED_MODEL_TYPES</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Model</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="ow">in</span> <span class="n">SUPPORTED_MODEL_TYPES</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.create_from_dict"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.create_from_dict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dict_</span><span class="p">):</span>

@@ -156,7 +156,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">Model</span><span class="o">.</span><span class="n">is_supported_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Model type </span><span class="si">{}</span><span class="s2"> is not supported at the moment.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+                <span class="n">Model</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -248,7 +248,7 @@
 <span class="sd">    run it.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        test_plan_name (str): The test plan name (e.g. &#39;sklearn_classifier&#39;)</span>
+<span class="sd">        test_plan_name (str): The test plan name (e.g. &#39;binary_classifier&#39;)</span>
 <span class="sd">        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</span>
 <span class="sd">        **kwargs: Additional keyword arguments to pass to the test plan. These will provide</span>
 <span class="sd">            the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.</span>
