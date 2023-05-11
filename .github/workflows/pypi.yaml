@@ -30,4 +30,4 @@ jobs:
         run: poetry install
 
       - name: Publish to PyPI
-        run: make compile-publish
+        run: ls -la && make compile-publish
