@@ -7,15 +7,17 @@ dataset_path = os.path.join(
     current_path, "..", "..", "..", "notebooks", "datasets", "time_series"
 )
 
-target_column = ["MORTGAGE30US"]
+target_column = "MORTGAGE30US"
 feature_columns = ["FEDFUNDS", "GS10", "UNRATE"]
 frequency = "MS"
 split_option = "train_test"
+transform_func = "diff"
 
 
 def load_data():
     data_file = os.path.join(dataset_path, "fred_loan_rates.csv")
     df = pd.read_csv(data_file, parse_dates=["DATE"], index_col="DATE")
+    df = df[[target_column] + feature_columns]
     return df
 
 
@@ -62,3 +64,9 @@ def preprocess(df, split_option="train_test_val", train_size=0.6, test_size=0.2)
         raise ValueError(
             "Invalid split_option. Must be 'train_test_val' or 'train_test'."
         )
+
+
+def transform(df, transform_func="diff"):
+    if transform_func == "diff":
+        df = df.diff().dropna()
+    return df

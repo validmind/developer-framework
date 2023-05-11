@@ -62,3 +62,9 @@ def preprocess(df, split_option="train_test_val", train_size=0.6, test_size=0.2)
         raise ValueError(
             "Invalid split_option. Must be 'train_test_val' or 'train_test'."
         )
+
+
+def transform(df, transform_func="diff"):
+    if transform_func == "diff":
+        df = df.diff().dropna()
+    return df
