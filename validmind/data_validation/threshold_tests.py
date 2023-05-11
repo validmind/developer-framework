@@ -395,7 +395,9 @@ class TimeSeriesOutliers(ThresholdTest):
         )
         fig = self._plot_outliers(temp_df, outliers_table)
         passed = outliers_table.empty
-        outliers_table["Date"] = outliers_table["Date"].astype(str)
+
+        if not outliers_table.empty:
+            outliers_table["Date"] = outliers_table["Date"].astype(str)
 
         test_results.append(
             TestResult(
@@ -451,6 +453,7 @@ class TimeSeriesOutliers(ThresholdTest):
         Returns:
             matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
         """
+        print(outliers_table)
         sns.set(style="darkgrid")
         n_variables = len(df.columns)
         fig, axes = plt.subplots(n_variables, 1, sharex=True)
@@ -458,18 +461,19 @@ class TimeSeriesOutliers(ThresholdTest):
         for i, col in enumerate(df.columns):
             sns.lineplot(data=df, x=df.index, y=col, ax=axes[i], label=col)
 
-            variable_outliers = outliers_table[outliers_table["Variable"] == col]
-            for idx, row in variable_outliers.iterrows():
-                date = row["Date"]
-                outlier_value = df.loc[date, col]
-                axes[i].scatter(
-                    date,
-                    outlier_value,
-                    marker="o",
-                    s=100,
-                    c="red",
-                    label="Outlier" if idx == 0 else "",
-                )
+            if not outliers_table.empty:
+                variable_outliers = outliers_table[outliers_table["Variable"] == col]
+                for idx, row in variable_outliers.iterrows():
+                    date = row["Date"]
+                    outlier_value = df.loc[date, col]
+                    axes[i].scatter(
+                        date,
+                        outlier_value,
+                        marker="o",
+                        s=100,
+                        c="red",
+                        label="Outlier" if idx == 0 else "",
+                    )
 
             axes[i].legend()
             axes[i].set_ylabel(col, weight="bold", fontsize=16)
@@ -551,7 +555,6 @@ class TimeSeriesMissingValues(ThresholdTest):
         # Create a bar plot using seaborn library
         missing_values = df.isnull().sum()
         if sum(missing_values.values) != 0:
-
             with plt.style.context("seaborn"):
                 fig, ax = plt.subplots()
                 sns.barplot(

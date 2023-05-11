@@ -689,7 +689,7 @@
             <span class="s2">&quot;resid&quot;</span><span class="p">:</span> <span class="n">sd</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="c1"># Convert pandas Series to DataFrames, reset their indices, and format the dates as strings</span>
+        <span class="c1"># Convert pandas Series to DataFrames, reset their indices, and convert the dates to strings</span>
         <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
             <span class="o">.</span><span class="n">pipe</span><span class="p">(</span>
@@ -698,9 +698,9 @@
                 <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Date&quot;</span><span class="p">})</span>
             <span class="p">)</span>
             <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
-                <span class="n">Date</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">Date</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
                 <span class="k">if</span> <span class="s2">&quot;Date&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">columns</span>
-                <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">series</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
         <span class="p">]</span>
