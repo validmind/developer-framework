@@ -306,6 +306,14 @@ Return the metric description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
 
 
+#### summary(metric_value: dict | list | DataFrame | None = None)
+Return the metric summary. Should be overridden by subclasses. Defaults to None.
+The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the metric results.
+
+We return None here because the metric summary is optional.
+
+
 #### run(\*args, \*\*kwargs)
 Run the metric calculation and cache its results
 
@@ -336,7 +344,7 @@ Cache the results of the metric calculation and do any post-processing if needed
 
 
 
-### _class_ validmind.vm_models.MetricResult(type: str, scope: str, key: dict, value: dict | list | DataFrame, value_formatter: str | None = None)
+### _class_ validmind.vm_models.MetricResult(type: str, scope: str, key: dict, value: dict | list | DataFrame, summary: ResultSummary | None = None, value_formatter: str | None = None)
 Bases: `object`
 
 MetricResult class definition. A MetricResult is returned by any internal method
@@ -352,16 +360,138 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 
 #### value(_: dict | list | DataFram_ )
 
+#### summary(_: ResultSummary | Non_ _ = Non_ )
+
 #### value_formatter(_: str | Non_ _ = Non_ )
 
 #### serialize()
 Serializes the Metric to a dictionary so it can be sent to the API
 
 
-### _class_ validmind.vm_models.Model(attributes: ModelAttributes | None = None, task: str | None = None, subtask: str | None = None, params: dict | None = None, model_id: str = 'main', model: object | None = None)
+### _class_ validmind.vm_models.Model(attributes: ModelAttributes | None = None, task: str | None = None, subtask: str | None = None, params: dict | None = None, model_id: str = 'main', model: object | None = None, train_ds: Dataset | None = None, test_ds: Dataset | None = None, validation_ds: Dataset | None = None, y_train_predict: object | None = None, y_test_predict: object | None = None, y_validation_predict: object | None = None)
 Bases: `object`
 
-Model class wrapper
+A class that wraps a trained model instance and its associated data.
+
+
+#### attributes()
+The attributes of the model. Defaults to None.
+
+
+* **Type**
+
+    ModelAttributes, optional
+
+
+
+#### task()
+The task that the model is intended to solve. Defaults to None.
+
+
+* **Type**
+
+    str, optional
+
+
+
+#### subtask()
+The subtask that the model is intended to solve. Defaults to None.
+
+
+* **Type**
+
+    str, optional
+
+
+
+#### params()
+The parameters of the model. Defaults to None.
+
+
+* **Type**
+
+    dict, optional
+
+
+
+#### model_id()
+The identifier of the model. Defaults to “main”.
+
+
+* **Type**
+
+    str
+
+
+
+#### model()
+The trained model instance. Defaults to None.
+
+
+* **Type**
+
+    object, optional
+
+
+
+#### train_ds()
+The training dataset. Defaults to None.
+
+
+* **Type**
+
+    Dataset, optional
+
+
+
+#### test_ds()
+The test dataset. Defaults to None.
+
+
+* **Type**
+
+    Dataset, optional
+
+
+
+#### validation_ds()
+The validation dataset. Defaults to None.
+
+
+* **Type**
+
+    Dataset, optional
+
+
+
+#### y_train_predict()
+The predicted outputs for the training dataset. Defaults to None.
+
+
+* **Type**
+
+    object, optional
+
+
+
+#### y_test_predict()
+The predicted outputs for the test dataset. Defaults to None.
+
+
+* **Type**
+
+    object, optional
+
+
+
+#### y_validation_predict()
+The predicted outputs for the validation dataset. Defaults to None.
+
+
+* **Type**
+
+    object, optional
+
 
 
 #### attributes(_: ModelAttribute_ _ = Non_ )
@@ -376,8 +506,42 @@ Model class wrapper
 
 #### model(_: objec_ _ = Non_ )
 
+#### train_ds(_: Datase_ _ = Non_ )
+
+#### test_ds(_: Datase_ _ = Non_ )
+
+#### validation_ds(_: Datase_ _ = Non_ )
+
+#### y_train_predict(_: objec_ _ = Non_ )
+
+#### y_test_predict(_: objec_ _ = Non_ )
+
+#### y_validation_predict(_: objec_ _ = Non_ )
+
 #### serialize()
 Serializes the model to a dictionary so it can be sent to the API
+
+
+#### class_predictions(y_predict)
+Converts a set of probability predictions to class predictions
+
+
+* **Parameters**
+
+    **y_predict** (*np.array**, **pd.DataFrame*) – Predictions to convert
+
+
+
+* **Returns**
+
+    Class predictions
+
+
+
+* **Return type**
+
+    (np.array, pd.DataFrame)
+
 
 
 #### predict(\*args, \*\*kwargs)
@@ -385,6 +549,14 @@ Predict method for the model. This is a wrapper around the model’s
 predict_proba (for classification) or predict (for regression) method
 
 NOTE: This only works for sklearn or xgboost models at the moment
+
+
+#### _static_ model_library(model)
+Returns the model library name
+
+
+#### _static_ model_class(model)
+Returns the model class name
 
 
 #### _static_ is_supported_model(model)
@@ -407,6 +579,10 @@ Checks if the model is supported by the API
 
     bool
 
+
+
+#### _classmethod_ init_vm_model(model, train_ds, test_ds, validation_ds, attributes)
+Initializes a model instance from the provided data.
 
 
 #### _classmethod_ create_from_dict(dict_)
@@ -443,26 +619,59 @@ Model attributes definition
 
 #### framework_version(_: st_ _ = Non_ )
 
-### _class_ validmind.vm_models.TestContext(dataset: Dataset | None = None, model: Model | None = None, train_ds: Dataset | None = None, test_ds: Dataset | None = None, y_train_predict: object | None = None, y_test_predict: object | None = None, context_data: dict | None = None)
+### _class_ validmind.vm_models.ResultSummary(results: List[ResultTable])
+Bases: `object`
+
+A dataclass that holds the summary of a metric or threshold test results
+
+
+#### results(_: List[ResultTable_ )
+
+#### add_result(result: ResultTable)
+Adds a result to the list of results
+
+
+#### serialize()
+Serializes the ResultSummary to a list of results
+
+
+### _class_ validmind.vm_models.ResultTable(data: Dict[str, Any] | DataFrame, type: str = 'table', metadata: ResultTableMetadata | None = None)
+Bases: `object`
+
+A dataclass that holds the table summary of result
+
+
+#### data(_: Dict[str, Any] | DataFram_ )
+
+#### type(_: st_ _ = 'table_ )
+
+#### metadata(_: ResultTableMetadat_ _ = Non_ )
+
+#### serialize()
+Serializes the Figure to a dictionary so it can be sent to the API
+
+
+### _class_ validmind.vm_models.ResultTableMetadata(title: str)
+Bases: `object`
+
+A dataclass that holds the metadata of a table summary
+
+
+#### title(_: st_ )
+
+### _class_ validmind.vm_models.TestContext(dataset: Dataset | None = None, model: Model | None = None, models: List[Model] | None = None, context_data: dict | None = None)
 Bases: `object`
 
 Holds context that can be used by tests to run.
 Allows us to store data that needs to be reused
-across different tests/metrics such as model predictions,
-shared dataset metrics, etc.
+across different tests/metrics such as shared dataset metrics, etc.
 
 
 #### dataset(_: Datase_ _ = Non_ )
 
 #### model(_: Mode_ _ = Non_ )
 
-#### train_ds(_: Datase_ _ = Non_ )
-
-#### test_ds(_: Datase_ _ = Non_ )
-
-#### y_train_predict(_: objec_ _ = Non_ )
-
-#### y_test_predict(_: objec_ _ = Non_ )
+#### models(_: List[Model_ _ = Non_ )
 
 #### context_data(_: dic_ _ = Non_ )
 
@@ -484,42 +693,14 @@ TODO: more validation
 
 #### _property_ model()
 
-#### _property_ train_ds()
-
-#### _property_ test_ds()
-
-#### _property_ y_train_predict()
-
-#### _property_ y_test_predict()
-
-#### class_predictions(y_predict)
-Converts a set of probability predictions to class predictions
-
-
-* **Parameters**
-
-    **y_predict** (*np.array**, **pd.DataFrame*) – Predictions to convert
-
-
-
-* **Returns**
-
-    Class predictions
-
-
-
-* **Return type**
-
-    (np.array, pd.DataFrame)
-
-
+#### _property_ models()
 
 #### _property_ df()
 Returns a Pandas DataFrame for the dataset, first checking if
 we passed in a Dataset or a DataFrame
 
 
-### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, train_ds: Dataset = None, test_ds: Dataset = None, pbar: tqdm = None)
+### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
 Bases: `object`
 
 Base class for test plans. Test plans are used to define any
@@ -544,9 +725,7 @@ arbitrary grouping of tests that will be run on a dataset or model.
 
 #### model(_: Mode_ _ = Non_ )
 
-#### train_ds(_: Datase_ _ = Non_ )
-
-#### test_ds(_: Datase_ _ = Non_ )
+#### models(_: List[Model_ _ = Non_ )
 
 #### pbar(_: tqd_ _ = Non_ )
 
@@ -662,22 +841,26 @@ Result wrapper for test results produced by the tests that run as part of a test
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestResult(\*, test_name: str | None = None, column: str | None = None, passed: bool | None = None, values: dict)
-Bases: `BaseResultModel`
+### _class_ validmind.vm_models.TestResult(values: dict, test_name: str | None = None, column: str | None = None, passed: bool | None = None)
+Bases: `object`
 
 TestResult model
 
 
-#### test_name(_: str | Non_ )
-
-#### column(_: str | Non_ )
-
-#### passed(_: bool | Non_ )
-
 #### values(_: dic_ )
 
-### _class_ validmind.vm_models.TestResults(\*, category: str, test_name: str, params: dict, passed: bool, results: List[TestResult])
-Bases: `BaseResultModel`
+#### test_name(_: str | Non_ _ = Non_ )
+
+#### column(_: str | Non_ _ = Non_ )
+
+#### passed(_: bool | Non_ _ = Non_ )
+
+#### serialize()
+Serializes the TestResult to a dictionary so it can be sent to the API
+
+
+### _class_ validmind.vm_models.TestResults(category: str, test_name: str, params: dict, passed: bool, results: List[TestResult], summary: ResultSummary | None)
+Bases: `object`
 
 TestResults model
 
@@ -691,6 +874,12 @@ TestResults model
 #### passed(_: boo_ )
 
 #### results(_: List[TestResult_ )
+
+#### summary(_: ResultSummary | Non_ )
+
+#### serialize()
+Serializes the TestResults to a dictionary so it can be sent to the API
+
 
 ### _class_ validmind.vm_models.ThresholdTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
 Bases: `TestContextUtils`
@@ -719,6 +908,14 @@ TODO: ThresholdTest should validate required context too
 #### description()
 Return the test description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
+
+
+#### summary(test_results: TestResults | None = None)
+Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the test results.
+
+We return None here because the test summary is optional.
 
 
 #### run(\*args, \*\*kwargs)
