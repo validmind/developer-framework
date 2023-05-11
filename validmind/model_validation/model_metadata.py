@@ -1,8 +1,11 @@
 import sys
 
 from dataclasses import dataclass
+from platform import python_version
 
-from ..vm_models import Metric
+import pandas as pd
+
+from ..vm_models import Metric, ResultSummary, ResultTable
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -67,7 +70,7 @@ def get_info_from_model_instance(model):
         framework = "XGBoost"
         framework_version = get_xgboost_version()
     elif model_class == "LogisticRegression":
-        architecture = "Linear Regression"
+        architecture = "Logistic Regression"
         task = "classification"
         subtask = "binary"
         framework = "Scikit-learn"
@@ -84,6 +87,12 @@ def get_info_from_model_instance(model):
         subtask = "regression"
         framework = "statsmodels"
         framework_version = get_statsmodels_version()
+    elif model_class == "RandomForestClassifier":
+        architecture = "Random Forest"
+        task = "classification"
+        subtask = "binary"
+        framework = "Scikit-learn"
+        framework_version = get_sklearn_version()
 
     return {
         "architecture": architecture,
@@ -143,12 +152,26 @@ class ModelMetadata(Metric):
     scope = "test"
     key = "model_metadata"
 
-    def __post_init__(self):
-        """
-        Set default params if not provided
-        """
-        if self.params is None:
-            self.params = self.default_params
+    column_labels = {
+        "architecture": "Modeling Technique",
+        "framework": "Modeling Framework",
+        "framework_version": "Framework Version",
+        "language": "Programming Language",
+        "subtask": "Modeling Subtask",
+        "task": "Modeling Task",
+    }
+
+    def summary(self, metric_value):
+        df = pd.DataFrame(metric_value.items(), columns=["Attribute", "Value"])
+        # Don't serialize the params attribute
+        df = df[df["Attribute"] != "params"]
+        df["Attribute"] = df["Attribute"].map(self.column_labels)
+
+        return ResultSummary(
+            results=[
+                ResultTable(data=df.to_dict(orient="records")),
+            ]
+        )
 
     def description(self):
         return """
@@ -164,6 +187,7 @@ class ModelMetadata(Metric):
         """
         trained_model = self.model.model
         model_info = get_info_from_model_instance(trained_model)
+        model_info["language"] = f"Python {python_version()}"
         model_info["params"] = get_params_from_model_instance(trained_model)
 
         return self.cache_results(model_info)

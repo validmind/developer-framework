@@ -47,8 +47,9 @@ def _generate_shap_plot(type_, shap_values, x_test):
 
     summary_plot_extra_args = {}
     if type_ == "mean":
-        summary_plot_extra_args = {"plot_type": "bar", "color": "#DE257E"}
+        summary_plot_extra_args = {"plot_type": "bar"}
 
+    print(shap_values)
     shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
     figure = plt.gcf()
     # avoid displaying on notebooks and clears the canvas for the next plot
@@ -422,7 +423,7 @@ class SHAPGlobalImportance(TestContextUtils):
         warnings.filterwarnings("ignore", category=UserWarning)
 
         # RandomForestClassifier applies here too
-        if model_class == "XGBClassifier":
+        if model_class == "XGBClassifier" or model_class == "RandomForestClassifier":
             explainer = shap.TreeExplainer(trained_model)
         elif (
             model_class == "LogisticRegression"
