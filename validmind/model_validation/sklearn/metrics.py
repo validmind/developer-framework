@@ -17,6 +17,7 @@ from sklearn.inspection import permutation_importance
 from ...vm_models import (
     Figure,
     Metric,
+    Model,
     TestContext,
     TestContextUtils,
     TestPlanMetricResult,
@@ -154,6 +155,10 @@ class CharacteristicStabilityIndex(Metric):
         """
         Calculates PSI for each of the dataset features
         """
+        if Model.model_library(self.model.model) == "statsmodels":
+            print("Skiping CSI for statsmodels models")
+            return
+
         x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
         x_test = self.test_ds.raw_dataset.drop(columns=self.test_ds.target_column)
 
@@ -241,8 +246,21 @@ class PermutationFeatureImportance(Metric):
 
         model_instance = self.model.model
 
+        if Model.model_library(model_instance) == "statsmodels":
+            print("Skiping PFI for statsmodels models")
+            return
+
+        # Checkf if the model has a fit method. This works for statsmodels
+        # if not hasattr(model_instance, "fit"):
+        #     model_instance.fit = lambda **kwargs: None
+
         pfi_values = permutation_importance(
-            model_instance, x, y, random_state=0, n_jobs=-2
+            model_instance,
+            x,
+            y,
+            random_state=0,
+            n_jobs=-2,
+            # scoring="neg_mean_squared_log_error",
         )
         pfi = {}
         for i, column in enumerate(x.columns):
@@ -416,8 +434,12 @@ class SHAPGlobalImportance(TestContextUtils):
             self.params = self.default_params
 
     def run(self):
+        if Model.model_library(self.model.model) == "statsmodels":
+            print("Skiping SHAP for statsmodels models")
+            return
+
         trained_model = self.model.model
-        model_class = trained_model.__class__.__name__
+        model_class = Model.model_class(trained_model)
 
         # the shap library generates a bunch of annoying warnings that we don't care about
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -435,14 +457,6 @@ class SHAPGlobalImportance(TestContextUtils):
             raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
         shap_values = explainer.shap_values(self.test_ds.x)
-
-        # For models with a single output this returns a numpy.ndarray of SHAP values
-        # if type(shap_values) is numpy.ndarray:
-        #     result_values = shap_values.tolist()
-        # else:
-        #     # For models with vector outputs this returns a list of matrices of SHAP values
-        #     shap_values = shap_values[0]
-        #     result_values = shap_values
 
         self.result = TestPlanMetricResult(
             figures=[
@@ -468,6 +482,10 @@ class PopulationStabilityIndex(Metric):
     value_formatter = "records"
 
     def run(self):
+        if Model.model_library(self.model.model) == "statsmodels":
+            print("Skiping PSI for statsmodels models")
+            return
+
         psi_df = _get_psi(self.y_train_predict, self.y_test_predict)
 
         return self.cache_results(metric_value=psi_df)

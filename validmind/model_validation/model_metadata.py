@@ -5,7 +5,7 @@ from platform import python_version
 
 import pandas as pd
 
-from ..vm_models import Metric, ResultSummary, ResultTable
+from ..vm_models import Metric, Model, ResultSummary, ResultTable
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -93,6 +93,12 @@ def get_info_from_model_instance(model):
         subtask = "binary"
         framework = "Scikit-learn"
         framework_version = get_sklearn_version()
+    elif model_class == "BinaryResultsWrapper":
+        architecture = "Logistic Regression"
+        task = "classification"
+        subtask = "binary"
+        framework = "statsmodels"
+        framework_version = get_statsmodels_version()
 
     return {
         "architecture": architecture,
@@ -107,6 +113,8 @@ def get_statsmodels_model_params(model):
     """
     Extracts the fit() method's parametesr from a
     statsmodels model object instance
+
+    # TODO: generalizer to any statsmodels model
     """
     model_instance = model.model
     family_class = model_instance.family.__class__.__name__
@@ -125,16 +133,19 @@ def get_params_from_model_instance(model):
     """
     Attempts to extract model hyperparameters from a model object instance
     """
-    model_class = model.__class__.__name__
+
+    model_library = Model.model_library(model)
 
     # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier" or model_class == "XGBRegressor":
+    if model_library == "xgboost":
         params = model.get_xgb_params()
-    elif model_class == "GLMResultsWrapper":
-        params = get_statsmodels_model_params(model)
-    # Default to SKLearn models at the moment
-    else:
+    elif model_library == "statsmodels":
+        # params = get_statsmodels_model_params(model)
+        params = {}
+    elif model_library == "sklearn":
         params = model.get_params()
+    else:
+        raise ValueError(f"Model library {model_library} is not supported by this test")
 
     return params
 

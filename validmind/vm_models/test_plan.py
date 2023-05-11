@@ -49,7 +49,7 @@ class TestPlan:
     test_ds: Dataset = None
 
     # Multiple models for model comparison tests
-    models: List[Model] = field(type=list)
+    models: List[Model] = None
 
     # tqdm progress bar
     pbar: tqdm = None

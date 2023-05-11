@@ -82,9 +82,7 @@ def init_model(model: object) -> Model:
 
     if not Model.is_supported_model(model):
         raise ValueError(
-            "Model type {} is not supported at the moment.".format(
-                model.__class__.__name__
-            )
+            "Model type {} is not supported at the moment.".format(model.model_class)
         )
 
     return Model(model=model, attributes=ModelAttributes())

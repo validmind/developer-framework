@@ -22,7 +22,7 @@ class TestContext:
 
     dataset: Dataset = None
     model: Model = None
-    models: List[Model] = field(type=list)
+    models: List[Model] = None
     train_ds: Dataset = None
     test_ds: Dataset = None
     validation_ds: Dataset = None

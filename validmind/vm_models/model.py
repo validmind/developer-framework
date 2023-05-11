@@ -4,13 +4,14 @@ Model class wrapper
 from dataclasses import dataclass, fields
 
 SUPPORTED_MODEL_TYPES = [
-    "GLMResultsWrapper",
-    "XGBClassifier",
-    "XGBRegressor",
-    "LogisticRegression",
-    "LinearRegression",
-    "RandomForestClassifier",
-    "RegressionResultsWrapper",
+    "xgboost.XGBClassifier",
+    "xgboost.XGBRegressor",
+    "sklearn.LogisticRegression",
+    "sklearn.LinearRegression",
+    "sklearn.RandomForestClassifier",
+    "statsmodels.GLMResultsWrapper",
+    "statsmodels.BinaryResultsWrapper",  # Logistic Regression results
+    "statsmodels.RegressionResultsWrapper",
 ]
 
 R_MODEL_TYPES = [
@@ -70,6 +71,20 @@ class Model:
         return self.model.predict(*args, **kwargs)
 
     @staticmethod
+    def model_library(model):
+        """
+        Returns the model library name
+        """
+        return model.__class__.__module__.split(".")[0]
+
+    @staticmethod
+    def model_class(model):
+        """
+        Returns the model class name
+        """
+        return model.__class__.__name__
+
+    @staticmethod
     def is_supported_model(model):
         """
         Checks if the model is supported by the API
@@ -80,7 +95,10 @@ class Model:
         Returns:
             bool: True if the model is supported, False otherwise
         """
-        return model.__class__.__name__ in SUPPORTED_MODEL_TYPES
+        return (
+            f"{Model.model_library(model)}.{Model.model_class(model)}"
+            in SUPPORTED_MODEL_TYPES
+        )
 
     @classmethod
     def create_from_dict(cls, dict_):
