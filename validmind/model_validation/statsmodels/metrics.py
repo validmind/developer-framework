@@ -594,7 +594,7 @@ class ModelPredictionOLS(Metric):
         # Convert the DataFrame into a list of dictionaries
         return df.to_dict("records")
 
-    def get_model_prediction(self, model_list, df_test):
+    def get_model_prediction(self, model_list):
         # Extract the training target variable from the first model fit
 
         first_model_fit = model_list[0].model
@@ -678,14 +678,12 @@ class ModelPredictionOLS(Metric):
     def run(self):
         model_list = self.models
 
-        df_test = self.test_ds.df
-
         plot_start_date = self.params["plot_start_date"]
         plot_end_date = self.params["plot_end_date"]
 
         print(plot_start_date)
 
-        prediction_df = self.get_model_prediction(model_list, df_test)
+        prediction_df = self.get_model_prediction(model_list)
         results = self.serialize_time_series_df(prediction_df)
 
         figures = []
@@ -852,7 +850,9 @@ class RegressionModelOutsampleComparison(Metric):
         all_models = []
         for model in self.models:
             if model.model.__class__.__name__ != "RegressionResultsWrapper":
-                raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+                raise ValueError(
+                    "Only RegressionResultsWrapper models of statsmodels library supported"
+                )
             all_models.append(model)
 
         results = self._out_sample_performance_ols(
@@ -892,7 +892,7 @@ class RegressionModelOutsampleComparison(Metric):
             residuals = y_test - y_pred
 
             # Calculate the mean squared error and root mean squared error
-            mse = np.mean(residuals ** 2)
+            mse = np.mean(residuals**2)
             rmse_val = np.sqrt(mse)
 
             # Store the results
@@ -900,6 +900,106 @@ class RegressionModelOutsampleComparison(Metric):
             results.append([model_name_with_vars, mse, rmse_val])
 
         # Create a DataFrame to display the results
-        results_df = pd.DataFrame(results, columns=['Model', 'MSE', 'RMSE'])
+        results_df = pd.DataFrame(results, columns=["Model", "MSE", "RMSE"])
 
         return results_df
+
+
+@dataclass
+class RegressionModelForecastPlot(Metric):
+    """
+    This metric creates a plot of forecast vs observed for each model in the list.
+    """
+
+    category = "model_forecast"
+    scope = "test"
+    name = "regression_forecast_plot"
+    default_params = {"start_date": None, "end_date": None}
+
+    def description(self):
+        return """
+        This section shows plots of training and test datasets vs forecast trainining and forecast test.
+        """
+
+    def run(self):
+        print(self.params)
+
+        start_date = self.params["start_date"]
+        end_date = self.params["end_date"]
+
+        print(self.params)
+
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+        all_models = []
+        for model in self.models:
+            if model.model.__class__.__name__ != "RegressionResultsWrapper":
+                raise ValueError(
+                    "Only RegressionResultsWrapper models of statsmodels library supported"
+                )
+            all_models.append(model)
+
+        figures = self._plot_forecast(all_models, start_date, end_date)
+
+        return self.cache_results(figures=figures)
+
+    def _plot_forecast(self, model_list, start_date=None, end_date=None):
+        # Convert start_date and end_date to pandas Timestamp for comparison
+        start_date = pd.Timestamp(start_date)
+        end_date = pd.Timestamp(end_date)
+
+        # Initialize a list to store figures
+        figures = []
+
+        for fitted_model in model_list:
+            train_ds = fitted_model.train_ds
+            test_ds = fitted_model.test_ds
+
+            # Check that start_date and end_date are within the data range
+            all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
+            print(all_dates)
+            if start_date < all_dates.min() or end_date > all_dates.max():
+                raise ValueError(
+                    "start_date and end_date must be within the range of dates in the data"
+                )
+
+            fig, ax = plt.subplots()
+            sns.lineplot(
+                x=train_ds.index,
+                y=train_ds.y,
+                ax=ax,
+                label="Train Forecast",
+            )
+            sns.lineplot(
+                x=test_ds.index,
+                y=test_ds.y,
+                ax=ax,
+                label="Test Forecast",
+            )
+            sns.lineplot(
+                x=train_ds.index,
+                y=fitted_model.y_train_predict.loc[train_ds.index],
+                ax=ax,
+                label="Train Dataset",
+                color="grey",
+            )
+            sns.lineplot(
+                x=test_ds.index,
+                y=fitted_model.y_test_predict.loc[test_ds.index],
+                ax=ax,
+                label="Test Dataset",
+                color="black",
+            )
+            plt.title(
+                f"Forecast vs Observed for {fitted_model.model.__class__.__name__}"
+            )
+
+            # Set the x-axis limits to zoom in/out
+            plt.xlim(start_date, end_date)
+
+            plt.legend()
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            plt.close("all")
+
+        return figures
