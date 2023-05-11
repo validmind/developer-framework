@@ -771,7 +771,9 @@ class RegressionModelInsampleComparison(Metric):
         all_models = []
         for model in self.models:
             if model.model.__class__.__name__ != "RegressionResultsWrapper":
-                raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
+                raise ValueError(
+                    "Only RegressionResultsWrapper models of statsmodels library supported"
+                )
             all_models.append(model.model)
 
         results = self._in_sample_performance_ols(all_models)
@@ -806,16 +808,18 @@ class RegressionModelInsampleComparison(Metric):
 
             # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
             mse = model.mse_resid
-            rmse = mse ** 0.5
+            rmse = mse**0.5
 
             # Append the results to the evaluation_results list
-            evaluation_results.append({
-                'Model': f'Model_{i + 1}',
-                'Independent Variables': X_columns,
-                'R-Squared': r2,
-                'Adjusted R-Squared': adj_r2,
-                'MSE': mse,
-                'RMSE': rmse
-            })
+            evaluation_results.append(
+                {
+                    "Model": f"Model_{i + 1}",
+                    "Independent Variables": X_columns,
+                    "R-Squared": r2,
+                    "Adjusted R-Squared": adj_r2,
+                    "MSE": mse,
+                    "RMSE": rmse,
+                }
+            )
 
         return evaluation_results
