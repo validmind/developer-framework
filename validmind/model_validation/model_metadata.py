@@ -1,8 +1,11 @@
 import sys
 
 from dataclasses import dataclass
+from platform import python_version
 
-from ..vm_models import Metric
+import pandas as pd
+
+from ..vm_models import Metric, Model, ResultSummary, ResultTable
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -13,6 +16,13 @@ SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
     "statsmodels.genmod.families.links.log": "log",
     "statsmodels.genmod.families.links.identity": "identity",
 }
+
+
+def get_pytorch_version():
+    if "torch" in sys.modules:
+        return sys.modules["torch"].__version__
+
+    return "n/a"
 
 
 def get_sklearn_version():
@@ -52,8 +62,9 @@ def get_info_from_model_instance(model):
     """
     Attempts to extract all model info from a model object instance
     """
-    model_class = model.__class__.__name__
+    model_class = Model.model_class(model)
 
+    # TODO: refactor
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
@@ -67,7 +78,7 @@ def get_info_from_model_instance(model):
         framework = "XGBoost"
         framework_version = get_xgboost_version()
     elif model_class == "LogisticRegression":
-        architecture = "Linear Regression"
+        architecture = "Logistic Regression"
         task = "classification"
         subtask = "binary"
         framework = "Scikit-learn"
@@ -84,6 +95,26 @@ def get_info_from_model_instance(model):
         subtask = "regression"
         framework = "statsmodels"
         framework_version = get_statsmodels_version()
+    elif model_class == "RandomForestClassifier":
+        architecture = "Random Forest"
+        task = "classification"
+        subtask = "binary"
+        framework = "Scikit-learn"
+        framework_version = get_sklearn_version()
+    elif model_class == "BinaryResultsWrapper":
+        architecture = "Logistic Regression"
+        task = "classification"
+        subtask = "binary"
+        framework = "statsmodels"
+        framework_version = get_statsmodels_version()
+    elif model_class == "PyTorchModel":
+        architecture = "Neural Network"
+        task = "classification"
+        subtask = "binary"
+        framework = "PyTorch"
+        framework_version = get_pytorch_version()
+    else:
+        raise ValueError(f"Model class {model_class} is not supported by this test")
 
     return {
         "architecture": architecture,
@@ -98,6 +129,8 @@ def get_statsmodels_model_params(model):
     """
     Extracts the fit() method's parametesr from a
     statsmodels model object instance
+
+    # TODO: generalizer to any statsmodels model
     """
     model_instance = model.model
     family_class = model_instance.family.__class__.__name__
@@ -116,16 +149,21 @@ def get_params_from_model_instance(model):
     """
     Attempts to extract model hyperparameters from a model object instance
     """
-    model_class = model.__class__.__name__
+
+    model_library = Model.model_library(model)
 
     # Only supports xgboot classifiers at the moment
-    if model_class == "XGBClassifier" or model_class == "XGBRegressor":
+    if model_library == "xgboost":
         params = model.get_xgb_params()
-    elif model_class == "GLMResultsWrapper":
-        params = get_statsmodels_model_params(model)
-    # Default to SKLearn models at the moment
-    else:
+    elif model_library == "statsmodels":
+        # params = get_statsmodels_model_params(model)
+        params = {}
+    elif model_library == "sklearn":
         params = model.get_params()
+    elif model_library == "pytorch":
+        params = {}
+    else:
+        raise ValueError(f"Model library {model_library} is not supported by this test")
 
     return params
 
@@ -143,12 +181,26 @@ class ModelMetadata(Metric):
     scope = "test"
     key = "model_metadata"
 
-    def __post_init__(self):
-        """
-        Set default params if not provided
-        """
-        if self.params is None:
-            self.params = self.default_params
+    column_labels = {
+        "architecture": "Modeling Technique",
+        "framework": "Modeling Framework",
+        "framework_version": "Framework Version",
+        "language": "Programming Language",
+        "subtask": "Modeling Subtask",
+        "task": "Modeling Task",
+    }
+
+    def summary(self, metric_value):
+        df = pd.DataFrame(metric_value.items(), columns=["Attribute", "Value"])
+        # Don't serialize the params attribute
+        df = df[df["Attribute"] != "params"]
+        df["Attribute"] = df["Attribute"].map(self.column_labels)
+
+        return ResultSummary(
+            results=[
+                ResultTable(data=df.to_dict(orient="records")),
+            ]
+        )
 
     def description(self):
         return """
@@ -164,6 +216,7 @@ class ModelMetadata(Metric):
         """
         trained_model = self.model.model
         model_info = get_info_from_model_instance(trained_model)
+        model_info["language"] = f"Python {python_version()}"
         model_info["params"] = get_params_from_model_instance(trained_model)
 
         return self.cache_results(model_info)

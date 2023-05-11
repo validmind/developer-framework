@@ -19,6 +19,7 @@ from ..model_validation.statsmodels.metrics import (
     ResidualsVisualInspection,
     RegressionModelSummary,
     RegressionModelOutsampleComparison,
+    RegressionModelInsampleComparison,
 )
 
 
@@ -116,4 +117,4 @@ class RegressionModelsComparison(TestPlan):
 
     name = "regression_models_comparison"
     required_context = ["models", "test_ds"]
-    tests = [RegressionModelOutsampleComparison]
+    tests = [RegressionModelOutsampleComparison, RegressionModelInsampleComparison]

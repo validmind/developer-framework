@@ -199,7 +199,7 @@ run it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>test_plan_name</strong> (<em>str</em>) – The test plan name (e.g. ‘sklearn_classifier’)</p></li>
+<li><p><strong>test_plan_name</strong> (<em>str</em>) – The test plan name (e.g. ‘binary_classifier’)</p></li>
 <li><p><strong>send</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the test plan. These will provide
 the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
@@ -784,6 +784,18 @@ short summary of the metric results.</p>
 <dd><p>Predict method for the model. This is a wrapper around the model’s
 predict_proba (for classification) or predict (for regression) method</p>
 <p>NOTE: This only works for sklearn or xgboost models at the moment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/vm_models/model.html#Model.model_library"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Returns the model library name</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/vm_models/model.html#Model.model_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Returns the model class name</p>
 </dd></dl>
 
 <dl class="py method">

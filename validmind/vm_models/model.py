@@ -3,13 +3,19 @@ Model class wrapper
 """
 from dataclasses import dataclass, fields
 
+# import torch
+# import torch.nn as nn
+
 SUPPORTED_MODEL_TYPES = [
-    "GLMResultsWrapper",
-    "XGBClassifier",
-    "XGBRegressor",
-    "LogisticRegression",
-    "LinearRegression",
-    "RegressionResultsWrapper",
+    "pytorch.PyTorchModel",
+    "sklearn.LogisticRegression",
+    "sklearn.LinearRegression",
+    "sklearn.RandomForestClassifier",
+    "statsmodels.GLMResultsWrapper",
+    "statsmodels.BinaryResultsWrapper",  # Logistic Regression results
+    "statsmodels.RegressionResultsWrapper",
+    "xgboost.XGBClassifier",
+    "xgboost.XGBRegressor",
 ]
 
 R_MODEL_TYPES = [
@@ -56,6 +62,16 @@ class Model:
             "params": self.params,
         }
 
+    @staticmethod
+    def _is_pytorch_model(model):
+        """
+        Checks if the model is a PyTorch model. Need to extend this
+        method to check for all ways a PyTorch model can be created
+        """
+        return False
+        # TBD. Fix setting PyTorch on Ubuntu
+        # return isinstance(model, nn.Module)
+
     def predict(self, *args, **kwargs):
         """
         Predict method for the model. This is a wrapper around the model's
@@ -65,8 +81,35 @@ class Model:
         """
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
+        if Model._is_pytorch_model(self.model):
+            return []
+            # input_df = args[0]
+            # rest_args = args[1:]
+            # input_values = torch.tensor(input_df.values, dtype=torch.float32)
+            # predictions = self.model(input_values, *rest_args, **kwargs)
+            # return predictions.detach().numpy()
 
         return self.model.predict(*args, **kwargs)
+
+    @staticmethod
+    def model_library(model):
+        """
+        Returns the model library name
+        """
+        if Model._is_pytorch_model(model):
+            return "pytorch"
+
+        return model.__class__.__module__.split(".")[0]
+
+    @staticmethod
+    def model_class(model):
+        """
+        Returns the model class name
+        """
+        if Model._is_pytorch_model(model):
+            return "PyTorchModel"
+
+        return model.__class__.__name__
 
     @staticmethod
     def is_supported_model(model):
@@ -79,7 +122,10 @@ class Model:
         Returns:
             bool: True if the model is supported, False otherwise
         """
-        return model.__class__.__name__ in SUPPORTED_MODEL_TYPES
+        return (
+            f"{Model.model_library(model)}.{Model.model_class(model)}"
+            in SUPPORTED_MODEL_TYPES
+        )
 
     @classmethod
     def create_from_dict(cls, dict_):

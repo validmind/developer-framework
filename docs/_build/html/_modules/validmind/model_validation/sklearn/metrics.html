@@ -77,7 +77,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -90,44 +89,8 @@
 <span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Figure</span><span class="p">,</span>
     <span class="n">Metric</span><span class="p">,</span>
-    <span class="n">TestContext</span><span class="p">,</span>
-    <span class="n">TestContextUtils</span><span class="p">,</span>
-    <span class="n">TestPlanMetricResult</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="c1"># TBD - for regression:</span>
-<span class="c1"># metrics = [</span>
-<span class="c1">#     adjusted_r2_score,</span>
-<span class="c1">#     mae_score,</span>
-<span class="c1">#     mse_score,</span>
-<span class="c1">#     r2_score,</span>
-<span class="c1"># ]</span>
-
-
-<span class="k">def</span> <span class="nf">_generate_shap_plot</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="n">x_test</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plots two types of SHAP global importance (SHAP).</span>
-<span class="sd">    :params type: mean, summary</span>
-<span class="sd">    :params shap_values: a matrix</span>
-<span class="sd">    :params x_test:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
-
-    <span class="c1"># preserve styles</span>
-    <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;grid.color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#CCC&quot;</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-
-    <span class="n">summary_plot_extra_args</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
-        <span class="n">summary_plot_extra_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;plot_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;#DE257E&quot;</span><span class="p">}</span>
-
-    <span class="n">shap</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">(</span><span class="n">shap_values</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">summary_plot_extra_args</span><span class="p">)</span>
-    <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
-    <span class="c1"># avoid displaying on notebooks and clears the canvas for the next plot</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;shap:</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">type_</span><span class="p">})</span>
 
 
 <span class="k">def</span> <span class="nf">_get_psi</span><span class="p">(</span><span class="n">score_initial</span><span class="p">,</span> <span class="n">score_new</span><span class="p">,</span> <span class="n">num_bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -226,6 +189,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates PSI for each of the dataset features</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_library</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;statsmodels&quot;</span> <span class="ow">or</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;pytorch&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skiping CSI for </span><span class="si">{</span><span class="n">model_library</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">x_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">)</span>
         <span class="n">x_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">)</span>
 
@@ -312,9 +280,22 @@
         <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">raw_dataset</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
 
         <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">model_library</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="n">model_instance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;statsmodels&quot;</span> <span class="ow">or</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;pytorch&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skiping PFI for </span><span class="si">{</span><span class="n">model_library</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Check if the model has a fit method. This works for statsmodels</span>
+        <span class="c1"># if not hasattr(model_instance, &quot;fit&quot;):</span>
+        <span class="c1">#     model_instance.fit = lambda **kwargs: None</span>
 
         <span class="n">pfi_values</span> <span class="o">=</span> <span class="n">permutation_importance</span><span class="p">(</span>
-            <span class="n">model_instance</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span>
+            <span class="n">model_instance</span><span class="p">,</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+            <span class="c1"># scoring=&quot;neg_mean_squared_log_error&quot;,</span>
         <span class="p">)</span>
         <span class="n">pfi</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
@@ -463,39 +444,53 @@
 
 
 <div class="viewcode-block" id="SHAPGlobalImportance"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.SHAPGlobalImportance">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">SHAPGlobalImportance</span><span class="p">(</span><span class="n">TestContextUtils</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SHAPGlobalImportance</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    SHAP Global Importance. Custom metric</span>
+<span class="sd">    SHAP Global Importance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Test Context</span>
-    <span class="n">test_context</span><span class="p">:</span> <span class="n">TestContext</span>
-
-    <span class="c1"># Class Variables</span>
-    <span class="n">test_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;SHAPGlobalImportance&quot;</span>
-    <span class="n">default_params</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Instance Variables</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;shap&quot;</span>
-    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">result</span><span class="p">:</span> <span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_shap_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="n">x_test</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set default params if not provided</span>
+<span class="sd">        Plots two types of SHAP global importance (SHAP).</span>
+<span class="sd">        :params type: mean, summary</span>
+<span class="sd">        :params shap_values: a matrix</span>
+<span class="sd">        :params x_test:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_params</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+        <span class="c1"># preserve styles</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;grid.color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;#CCC&quot;</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+
+        <span class="n">summary_plot_extra_args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">type_</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">summary_plot_extra_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;plot_type&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span><span class="p">}</span>
+
+        <span class="n">shap</span><span class="o">.</span><span class="n">summary_plot</span><span class="p">(</span><span class="n">shap_values</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">summary_plot_extra_args</span><span class="p">)</span>
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+        <span class="c1"># avoid displaying on notebooks and clears the canvas for the next plot</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;shap:</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">type_</span><span class="p">})</span>
 
 <div class="viewcode-block" id="SHAPGlobalImportance.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.SHAPGlobalImportance.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_library</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;statsmodels&quot;</span> <span class="ow">or</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;pytorch&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skiping SHAP for </span><span class="si">{</span><span class="n">model_library</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">trained_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span>
-        <span class="n">model_class</span> <span class="o">=</span> <span class="n">trained_model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="n">model_class</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">trained_model</span><span class="p">)</span>
 
         <span class="c1"># the shap library generates a bunch of annoying warnings that we don&#39;t care about</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="c1"># RandomForestClassifier applies here too</span>
-        <span class="k">if</span> <span class="n">model_class</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model_class</span> <span class="o">==</span> <span class="s2">&quot;XGBClassifier&quot;</span> <span class="ow">or</span> <span class="n">model_class</span> <span class="o">==</span> <span class="s2">&quot;RandomForestClassifier&quot;</span><span class="p">:</span>
             <span class="n">explainer</span> <span class="o">=</span> <span class="n">shap</span><span class="o">.</span><span class="n">TreeExplainer</span><span class="p">(</span><span class="n">trained_model</span><span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
             <span class="n">model_class</span> <span class="o">==</span> <span class="s2">&quot;LogisticRegression&quot;</span>
@@ -508,25 +503,15 @@
 
         <span class="n">shap_values</span> <span class="o">=</span> <span class="n">explainer</span><span class="o">.</span><span class="n">shap_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
-        <span class="c1"># For models with a single output this returns a numpy.ndarray of SHAP values</span>
-        <span class="c1"># if type(shap_values) is numpy.ndarray:</span>
-        <span class="c1">#     result_values = shap_values.tolist()</span>
-        <span class="c1"># else:</span>
-        <span class="c1">#     # For models with vector outputs this returns a list of matrices of SHAP values</span>
-        <span class="c1">#     shap_values = shap_values[0]</span>
-        <span class="c1">#     result_values = shap_values</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">TestPlanMetricResult</span><span class="p">(</span>
-            <span class="n">figures</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">_generate_shap_plot</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
-                <span class="n">_generate_shap_plot</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
+        <span class="n">figures</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_shap_plot</span><span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_shap_plot</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">),</span>
+        <span class="p">]</span>
 
         <span class="c1"># restore warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">figures</span><span class="o">=</span><span class="n">figures</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PopulationStabilityIndex"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PopulationStabilityIndex">[docs]</a><span class="nd">@dataclass</span>
@@ -540,6 +525,11 @@
     <span class="n">value_formatter</span> <span class="o">=</span> <span class="s2">&quot;records&quot;</span>
 
 <div class="viewcode-block" id="PopulationStabilityIndex.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PopulationStabilityIndex.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_library</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;statsmodels&quot;</span> <span class="ow">or</span> <span class="n">model_library</span> <span class="o">==</span> <span class="s2">&quot;pytorch&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skiping PSI for </span><span class="si">{</span><span class="n">model_library</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
         <span class="n">psi_df</span> <span class="o">=</span> <span class="n">_get_psi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_train_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">psi_df</span><span class="p">)</span></div></div>

@@ -3,7 +3,6 @@ TestContext
 """
 from dataclasses import dataclass
 from typing import List
-from attr import field
 
 import pandas as pd
 
@@ -22,7 +21,7 @@ class TestContext:
 
     dataset: Dataset = None
     model: Model = None
-    models: List[Model] = field(type=list)
+    models: List[Model] = None
     train_ds: Dataset = None
     test_ds: Dataset = None
     validation_ds: Dataset = None
