@@ -93,6 +93,7 @@ class AccuracyScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "accuracy"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -110,6 +111,7 @@ class CharacteristicStabilityIndex(Metric):
 
     type = "training"
     key = "csi"
+    required_context = ["model"]
     value_formatter = "key_values"
 
     def run(self):
@@ -142,6 +144,7 @@ class ConfusionMatrix(Metric):
     type = "evaluation"
     scope = "test"
     key = "confusion_matrix"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -183,6 +186,7 @@ class F1Score(Metric):
     type = "evaluation"
     scope = "test"
     key = "f1_score"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -201,6 +205,7 @@ class PermutationFeatureImportance(Metric):
     type = "training"
     scope = "training_dataset"
     key = "pfi"
+    required_context = ["model"]
 
     def run(self):
         x = self.model.train_ds.x
@@ -258,6 +263,7 @@ class PrecisionRecallCurve(Metric):
     type = "evaluation"
     scope = "test"
     key = "pr_curve"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
@@ -289,6 +295,7 @@ class PrecisionScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "precision"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
@@ -307,6 +314,7 @@ class RecallScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "recall"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
@@ -325,6 +333,7 @@ class ROCAUCScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "roc_auc"
+    required_context = ["model"]
 
     def run(self):
         return self.cache_results(
@@ -344,6 +353,7 @@ class ROCCurve(Metric):
     type = "evaluation"
     scope = "test"
     key = "roc_curve"
+    required_context = ["model"]
 
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
@@ -375,6 +385,8 @@ class SHAPGlobalImportance(Metric):
     """
     SHAP Global Importance
     """
+
+    required_context = ["model"]
 
     # Instance Variables
     name = "shap"
@@ -449,6 +461,7 @@ class PopulationStabilityIndex(Metric):
 
     type = "training"
     key = "psi"
+    required_context = ["model"]
     value_formatter = "records"
 
     def run(self):

@@ -180,6 +180,7 @@ class ModelMetadata(Metric):
     type = "model"
     scope = "test"
     key = "model_metadata"
+    required_context = ["model"]
 
     column_labels = {
         "architecture": "Modeling Technique",

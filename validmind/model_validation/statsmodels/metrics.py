@@ -71,8 +71,8 @@ class ResidualsVisualInspection(Metric):
         axes[1, 1].set_title(f"ACF Plot of Residuals ({variable_name})")
 
     def run(self):
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
         figures = []
 
         # TODO: specify which columns to plot via params
@@ -145,8 +145,8 @@ class KolmogorovSmirnov(Metric):
         """
         Calculates KS for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ks_values = {}
         for col in x_train.columns:
@@ -170,8 +170,8 @@ class ShapiroWilk(Metric):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         sw_values = {}
         for col in x_train.columns:
@@ -200,8 +200,8 @@ class Lilliefors(Metric):
         """
         Calculates Lilliefors test for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         lilliefors_values = {}
         for col in x_train.columns:
@@ -228,8 +228,8 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         jb_values = {}
         for col in x_train.columns:
@@ -260,8 +260,8 @@ class LJungBox(Metric):
         """
         Calculates Ljung-Box test for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         ljung_box_values = {}
         for col in x_train.columns:
@@ -290,8 +290,8 @@ class BoxPierce(Metric):
         """
         Calculates Box-Pierce test for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         box_pierce_values = {}
         for col in x_train.columns:
@@ -321,8 +321,8 @@ class RunsTest(Metric):
         """
         Calculates the run test for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         runs_test_values = {}
         for col in x_train.columns:
@@ -351,8 +351,8 @@ class DurbinWatsonTest(Metric):
         """
         Calculates DB for each of the dataset features
         """
-        x_train = self.model.train_ds.df
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
+        x_train = self.train_ds.df
 
         dw_values = {}
         for col in x_train.columns:
@@ -499,7 +499,7 @@ class DeterminationOfIntegrationOrderADF(Metric):
         """
         Calculates the ADF order of integration for each of the dataset features.
         """
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
 
         adf_orders = {}
         for col in x_train.columns:
@@ -533,7 +533,7 @@ class AutoARIMA(Metric):
     max_q = 3
 
     def run(self):
-        x_train = self.model.train_ds.df
+        x_train = self.train_ds.df
 
         results = []
 
@@ -678,7 +678,7 @@ class ModelPredictionOLS(Metric):
     def run(self):
         model_list = self.models
 
-        df_test = self.model.test_ds.df
+        df_test = self.test_ds.df
 
         plot_start_date = self.params["plot_start_date"]
         plot_end_date = self.params["plot_end_date"]

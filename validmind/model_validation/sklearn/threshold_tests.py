@@ -24,6 +24,7 @@ class MinimumAccuracy(ThresholdTest):
 
     category = "model_performance"
     name = "accuracy_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.7}
 
     def run(self):
@@ -54,6 +55,7 @@ class MinimumF1Score(ThresholdTest):
 
     category = "model_performance"
     name = "f1_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
     def run(self):
@@ -84,6 +86,7 @@ class MinimumROCAUCScore(ThresholdTest):
 
     category = "model_performance"
     name = "roc_auc_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
     def run(self):
@@ -114,6 +117,8 @@ class TrainingTestDegradation(ThresholdTest):
 
     category = "model_performance"
     name = "training_test_degradation"
+    required_context = ["model"]
+
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
@@ -163,6 +168,7 @@ class OverfitDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "overfit_regions"
+    required_context = ["model"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
     default_metrics = {
@@ -407,6 +413,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "weak_spots"
+    required_context = ["model"]
 
     default_params = {
         "features_columns": None,
@@ -659,6 +666,7 @@ class RobustnessDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "robustness"
+    required_context = ["model"]
 
     default_params = {
         "features_columns": None,

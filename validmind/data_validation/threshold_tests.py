@@ -25,6 +25,7 @@ class ClassImbalance(ThresholdTest):
 
     category = "data_quality"
     name = "class_imbalance"
+    required_context = ["dataset"]
     default_params = {"min_percent_threshold": 0.2}
 
     def run(self):
@@ -62,6 +63,7 @@ class Duplicates(ThresholdTest):
 
     category = "data_quality"
     name = "duplicates"
+    required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
     def run(self):
@@ -113,6 +115,7 @@ class HighCardinality(ThresholdTest):
 
     category = "data_quality"
     name = "cardinality"
+    required_context = ["dataset"]
     default_params = {
         "num_threshold": 100,
         "percent_threshold": 0.1,
@@ -163,6 +166,7 @@ class HighPearsonCorrelation(ThresholdTest):
 
     category = "data_quality"
     name = "pearson_correlation"
+    required_context = ["dataset"]
     default_params = {"max_threshold": 0.3}
 
     def run(self):
@@ -229,6 +233,7 @@ class MissingValues(ThresholdTest):
 
     category = "data_quality"
     name = "missing"
+    required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
     def run(self):
@@ -258,6 +263,7 @@ class Skewness(ThresholdTest):
 
     category = "data_quality"
     name = "skewness"
+    required_context = ["dataset"]
     default_params = {"max_threshold": 1}
 
     def run(self):
@@ -295,6 +301,7 @@ class UniqueRows(ThresholdTest):
 
     category = "data_quality"
     name = "unique"
+    required_context = ["dataset"]
     default_params = {"min_percent_threshold": 1}
 
     def run(self):
@@ -324,6 +331,7 @@ class TooManyZeroValues(ThresholdTest):
 
     category = "data_quality"
     name = "zeros"
+    required_context = ["dataset"]
     default_params = {"max_percent_threshold": 0.03}
 
     def run(self):
@@ -367,6 +375,7 @@ class TimeSeriesOutliers(ThresholdTest):
 
     category = "data_quality"
     name = "time_series_outliers"
+    required_context = ["dataset"]
     default_params = {"zscore_threshold": 3}
 
     def run(self):
@@ -497,6 +506,7 @@ class TimeSeriesMissingValues(ThresholdTest):
 
     category = "data_quality"
     name = "time_series_missing_values"
+    required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
     def run(self):
@@ -634,6 +644,7 @@ class TimeSeriesFrequency(ThresholdTest):
 
     category = "data_quality"
     name = "time_series_frequency"
+    required_context = ["dataset"]
 
     def run(self):
         # Check if the index of dataframe is datetime
