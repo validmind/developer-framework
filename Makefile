@@ -27,7 +27,7 @@ docs-markdown:
 docs: docs-html docs-markdown
 
 compile-publish:
-	find validmind/ -name "*.py" ! -name "__init__.py" -exec bash -c 'mv "$0" "${0%.py}.pyx"' {} \;
+	find validmind/ -name "*.py" ! -name "__init__.py" -exec bash -c 'mv "\$0" "\${0%.py}.pyx"' {} \;
 	poetry run python setup.py build_ext --inplace
 	poetry publish --build
 
