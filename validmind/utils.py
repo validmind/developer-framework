@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 
+from IPython.core import getipython
 from numpy import ndarray
 from tabulate import tabulate
 
@@ -72,15 +73,12 @@ def is_notebook() -> bool:
     https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
     """
     try:
-        shell = get_ipython().__class__.__name__
-        if shell == "ZMQInteractiveShell":
-            return True  # Jupyter notebook or qtconsole
-        elif shell == "TerminalInteractiveShell":
-            return False  # Terminal running IPython
-        else:
-            return False  # Other type (?)
+        if getipython.get_ipython() is not None:
+            return True
     except NameError:
         return False  # Probably standard Python interpreter
+
+    return False
 
 
 def precision_and_scale(x):

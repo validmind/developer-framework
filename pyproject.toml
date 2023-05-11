@@ -1,12 +1,14 @@
 [tool.poetry]
 authors = ["Andres Rodriguez <andres@validmind.ai>"]
-description = "ValidMind SDK"
+description = "ValidMind Developer Framework"
+include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
 name = "validmind"
 version = "1.5.1"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
 click = "^8.0.4"
+cython = "^0.29.34"
 dython = "^0.7.1"
 ipython = "^8.11.0"
 myst-parser = "^1.0.0"
