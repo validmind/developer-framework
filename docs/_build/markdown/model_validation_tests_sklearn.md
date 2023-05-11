@@ -32,8 +32,6 @@ Characteristic Stability Index between two datasets
 
 #### type(_: ClassVar[str_ _ = 'training_ )
 
-#### scope(_: ClassVar[str_ _ = 'training:validation_ )
-
 #### key(_: ClassVar[str_ _ = 'csi_ )
 
 #### value_formatter(_: ClassVar[str | None_ _ = 'key_values_ )
@@ -171,24 +169,16 @@ Run the metric calculation and cache its results
 
 
 ### _class_ validmind.model_validation.sklearn.metrics.SHAPGlobalImportance(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
-Bases: `TestContextUtils`
+Bases: `Metric`
 
-SHAP Global Importance. Custom metric
+SHAP Global Importance
 
-
-#### test_context(_: TestContex_ )
-
-#### test_type(_: ClassVar[str_ _ = 'SHAPGlobalImportance_ )
-
-#### default_params(_: ClassVar[dict_ _ = {_ )
 
 #### name(_ = 'shap_ )
 
-#### params(_: dic_ _ = Non_ )
-
-#### result(_: TestPlanMetricResul_ _ = Non_ )
-
 #### run()
+Run the metric calculation and cache its results
+
 
 ### _class_ validmind.model_validation.sklearn.metrics.PopulationStabilityIndex(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
 Bases: `Metric`
@@ -197,8 +187,6 @@ Population Stability Index between two datasets
 
 
 #### type(_: ClassVar[str_ _ = 'training_ )
-
-#### scope(_: ClassVar[str_ _ = 'training:validation_ )
 
 #### key(_: ClassVar[str_ _ = 'psi_ )
 

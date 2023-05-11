@@ -109,7 +109,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom class to collect a set of descriptive statistics for a dataset.</span>
 <span class="sd">    This class will log dataset metadata via `log_dataset` instead of a metric.</span>
-<span class="sd">    Dataset metadat is necessary to initialize dataset object that can be related</span>
+<span class="sd">    Dataset metadata is necessary to initialize dataset object that can be related</span>
 <span class="sd">    to different metrics and test results</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -156,7 +156,9 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_correlations&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
+    <span class="c1"># TODO: allow more metric metadata to be set, not just scope</span>
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">type</span>
 
@@ -175,6 +177,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_description&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">type</span>
@@ -194,6 +197,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;descriptive_statistics&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="DescriptiveStatistics.get_summary_statistics_numerical"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.get_summary_statistics_numerical">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary_statistics_numerical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_fields</span><span class="p">):</span>
         <span class="n">percentiles</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">]</span>
@@ -272,6 +276,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_split&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
     <span class="n">dataset_labels</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;train_ds&quot;</span><span class="p">:</span> <span class="s2">&quot;Training&quot;</span><span class="p">,</span>
@@ -330,7 +335,7 @@
 
         <span class="c1"># First calculate the total size of the dataset</span>
         <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">total_size</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
 
@@ -355,6 +360,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TimeSeriesLinePlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -403,6 +409,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TimeSeriesHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -444,6 +451,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;scatter_plot&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ScatterPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -480,6 +488,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;lagged_correlation_heatmap&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_compute_correlations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span><span class="p">):</span>
         <span class="n">correlations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">independent_vars</span><span class="p">),</span> <span class="n">num_lags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
@@ -559,6 +568,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>  <span class="c1"># assume this value</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AutoAR.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;max_ar_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -611,6 +621,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AutoMA.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;max_ma_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -663,6 +674,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;seasonal_decompose&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seasonal_model&quot;</span><span class="p">:</span> <span class="s2">&quot;additive&quot;</span><span class="p">}</span>
 
 <div class="viewcode-block" id="SeasonalDecompose.store_seasonal_decompose"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose.store_seasonal_decompose">[docs]</a>    <span class="k">def</span> <span class="nf">store_seasonal_decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">sd_one_column</span><span class="p">):</span>
@@ -791,6 +803,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_seasonality&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_period&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max_period&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
 
 <div class="viewcode-block" id="AutoSeasonality.evaluate_seasonal_periods"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.evaluate_seasonal_periods">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_seasonal_periods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">min_period</span><span class="p">,</span> <span class="n">max_period</span><span class="p">):</span>
@@ -851,6 +864,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;acf_pacf_plot&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ACFandPACFPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -896,6 +910,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_stationarity&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_order&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}</span>
 
 <div class="viewcode-block" id="AutoStationarity.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoStationarity.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -953,6 +968,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;rolling_stats_plot&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
 
 <div class="viewcode-block" id="RollingStatsPlot.plot_rolling_statistics"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.RollingStatsPlot.plot_rolling_statistics">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -1026,6 +1042,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;engle_granger_coint&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}</span>
 
 <div class="viewcode-block" id="EngleGrangerCoint.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.EngleGrangerCoint.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1071,6 +1088,7 @@
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;spread_plot&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SpreadPlot.plot_spread"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.SpreadPlot.plot_spread">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">plot_spread</span><span class="p">(</span><span class="n">series1</span><span class="p">,</span> <span class="n">series2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

@@ -12,7 +12,7 @@ Bases: `TestContextUtils`
 
 Custom class to collect a set of descriptive statistics for a dataset.
 This class will log dataset metadata via log_dataset instead of a metric.
-Dataset metadat is necessary to initialize dataset object that can be related
+Dataset metadata is necessary to initialize dataset object that can be related
 to different metrics and test results
 
 
@@ -47,6 +47,8 @@ are calculated:
 
 #### key(_: ClassVar[str_ _ = 'dataset_correlations_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -60,6 +62,8 @@ Collects a set of descriptive statistics for a dataset
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'dataset_description_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -75,6 +79,8 @@ numerical and categorical variables
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'descriptive_statistics_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### get_summary_statistics_numerical(numerical_fields)
 
@@ -98,6 +104,8 @@ provided training, test and validation datasets.
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'dataset_split_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### dataset_labels(_ = {'test_ds': 'Test', 'total': 'Total', 'train_ds': 'Training', 'validation_ds': 'Validation'_ )
 
@@ -126,6 +134,8 @@ if necessary. In this case we produce a separate plot for each time series.
 
 #### key(_: ClassVar[str_ _ = 'time_series_line_plot_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -142,6 +152,8 @@ necessary. In this case we produce a separate plot for each time series.
 
 #### key(_: ClassVar[str_ _ = 'time_series_histogram_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -157,6 +169,8 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 
 #### key(_: ClassVar[str_ _ = 'scatter_plot_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -170,6 +184,8 @@ Generates a heatmap of correlations between the target variable and the lags of 
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'lagged_correlation_heatmap_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -185,6 +201,8 @@ Automatically detects the AR order of a time series using both BIC and AIC.
 
 #### key(_: ClassVar[str_ _ = 'auto_ar_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -199,6 +217,8 @@ Automatically detects the MA order of a time series using both BIC and AIC.
 
 #### key(_: ClassVar[str_ _ = 'auto_ma_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -212,6 +232,8 @@ Calculates seasonal_decompose metric for each of the dataset features
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'seasonal_decompose_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'seasonal_model': 'additive'_ )
 
@@ -241,6 +263,8 @@ using the seasonal_decompose method.
 
 #### key(_: ClassVar[str_ _ = 'auto_seasonality_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'max_period': 4, 'min_period': 1_ )
 
 #### evaluate_seasonal_periods(series, min_period, max_period)
@@ -259,6 +283,8 @@ Plots ACF and PACF for a given time series dataset.
 
 #### key(_: ClassVar[str_ _ = 'acf_pacf_plot_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -273,6 +299,8 @@ using the Augmented Dickey-Fuller (ADF) test.
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'auto_stationarity_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'max_order': 5, 'threshold': 0.05_ )
 
@@ -289,6 +317,8 @@ This class provides a metric to visualize the stationarity of a given time serie
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'rolling_stats_plot_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'window_size': 12_ )
 
@@ -326,6 +356,8 @@ Test for cointegration between pairs of time series variables in a given dataset
 
 #### key(_: ClassVar[str_ _ = 'engle_granger_coint_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'threshold': 0.05_ )
 
 #### run()
@@ -341,6 +373,8 @@ This class provides a metric to visualize the spread between pairs of time serie
 #### type(_: ClassVar[str_ _ = 'dataset_ )
 
 #### key(_: ClassVar[str_ _ = 'spread_plot_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### _static_ plot_spread(series1, series2, ax=None)
 Plot the spread between two time series variables.
@@ -378,6 +412,8 @@ class and the minority class in the target column.
 
 #### name(_: ClassVar[str_ _ = 'class_imbalance_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'min_percent_threshold': 0.2_ )
 
 #### run()
@@ -396,6 +432,8 @@ checked for duplicate primary keys as well.
 
 #### name(_: ClassVar[str_ _ = 'duplicates_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
 
 #### run()
@@ -412,6 +450,8 @@ values found in categorical columns.
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
 
 #### name(_: ClassVar[str_ _ = 'cardinality_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'num_threshold': 100, 'percent_threshold': 0.1, 'threshold_type': 'percent'_ )
 
@@ -430,6 +470,8 @@ features in the dataset do not exceed a specified threshold.
 
 #### name(_: ClassVar[str_ _ = 'pearson_correlation_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'max_threshold': 0.3_ )
 
 #### run()
@@ -446,6 +488,8 @@ is less than a threshold
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
 
 #### name(_: ClassVar[str_ _ = 'missing_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
 
@@ -466,6 +510,8 @@ longer tail of values in the left.
 
 #### name(_: ClassVar[str_ _ = 'skewness_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'max_threshold': 1_ )
 
 #### run()
@@ -481,6 +527,8 @@ Test that the number of unique rows is greater than a threshold
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
 
 #### name(_: ClassVar[str_ _ = 'unique_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'min_percent_threshold': 1_ )
 
@@ -498,6 +546,8 @@ The zeros test finds columns that have too many zero values.
 
 #### name(_: ClassVar[str_ _ = 'zeros_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'max_percent_threshold': 0.03_ )
 
 #### run()
@@ -513,6 +563,8 @@ Test that find outliers for time series data using the z-score method
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
 
 #### name(_: ClassVar[str_ _ = 'time_series_outliers_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'zscore_threshold': 3_ )
 
@@ -530,6 +582,8 @@ Test that the number of missing values is less than a threshold
 
 #### name(_: ClassVar[str_ _ = 'time_series_missing_values_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
 
 #### run()
@@ -545,6 +599,8 @@ Test that detect frequencies in the data
 #### category(_: ClassVar[str_ _ = 'data_quality_ )
 
 #### name(_: ClassVar[str_ _ = 'time_series_frequency_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### run()
 Run the test and cache its results

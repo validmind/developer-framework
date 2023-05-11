@@ -36,7 +36,7 @@ class DatasetMetadata(TestContextUtils):
     """
     Custom class to collect a set of descriptive statistics for a dataset.
     This class will log dataset metadata via `log_dataset` instead of a metric.
-    Dataset metadat is necessary to initialize dataset object that can be related
+    Dataset metadata is necessary to initialize dataset object that can be related
     to different metrics and test results
     """
 
@@ -83,7 +83,9 @@ class DatasetCorrelations(Metric):
 
     type = "dataset"
     key = "dataset_correlations"
+    required_context = ["dataset"]
 
+    # TODO: allow more metric metadata to be set, not just scope
     def __post_init__(self):
         self.scope = self.dataset.type
 
@@ -102,6 +104,7 @@ class DatasetDescription(Metric):
 
     type = "dataset"
     key = "dataset_description"
+    required_context = ["dataset"]
 
     def __post_init__(self):
         self.scope = self.dataset.type
@@ -121,6 +124,7 @@ class DescriptiveStatistics(Metric):
 
     type = "dataset"
     key = "descriptive_statistics"
+    required_context = ["dataset"]
 
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
@@ -199,6 +203,7 @@ class DatasetSplit(Metric):
 
     type = "dataset"
     key = "dataset_split"
+    required_context = ["model"]
 
     dataset_labels = {
         "train_ds": "Training",
@@ -257,7 +262,7 @@ class DatasetSplit(Metric):
 
         # First calculate the total size of the dataset
         for dataset_name in available_datasets:
-            dataset = getattr(self, dataset_name, None)
+            dataset = getattr(self.model, dataset_name, None)
             if dataset is not None:
                 total_size += len(dataset.df)
 
@@ -282,6 +287,7 @@ class TimeSeriesLinePlot(Metric):
 
     type = "dataset"
     key = "time_series_line_plot"
+    required_context = ["dataset"]
 
     def run(self):
         if "columns" not in self.params:
@@ -330,6 +336,7 @@ class TimeSeriesHistogram(Metric):
 
     type = "dataset"
     key = "time_series_histogram"
+    required_context = ["dataset"]
 
     def run(self):
         if "columns" not in self.params:
@@ -371,6 +378,7 @@ class ScatterPlot(Metric):
 
     type = "dataset"
     key = "scatter_plot"
+    required_context = ["dataset"]
 
     def run(self):
         if "columns" not in self.params:
@@ -407,6 +415,7 @@ class LaggedCorrelationHeatmap(Metric):
 
     type = "dataset"
     key = "lagged_correlation_heatmap"
+    required_context = ["dataset"]
 
     def _compute_correlations(self, df, target_col, independent_vars, num_lags):
         correlations = np.zeros((len(independent_vars), num_lags + 1))
@@ -486,6 +495,7 @@ class AutoAR(Metric):
 
     type = "dataset"  # assume this value
     key = "auto_ar"
+    required_context = ["dataset"]
 
     def run(self):
         if "max_ar_order" not in self.params:
@@ -538,6 +548,7 @@ class AutoMA(Metric):
 
     type = "dataset"
     key = "auto_ma"
+    required_context = ["dataset"]
 
     def run(self):
         if "max_ma_order" not in self.params:
@@ -590,6 +601,7 @@ class SeasonalDecompose(Metric):
 
     type = "dataset"
     key = "seasonal_decompose"
+    required_context = ["dataset"]
     default_params = {"seasonal_model": "additive"}
 
     def store_seasonal_decompose(self, column, sd_one_column):
@@ -718,6 +730,7 @@ class AutoSeasonality(Metric):
 
     type = "dataset"
     key = "auto_seasonality"
+    required_context = ["dataset"]
     default_params = {"min_period": 1, "max_period": 4}
 
     def evaluate_seasonal_periods(self, series, min_period, max_period):
@@ -778,6 +791,7 @@ class ACFandPACFPlot(Metric):
 
     type = "evaluation"
     key = "acf_pacf_plot"
+    required_context = ["dataset"]
 
     def run(self):
         if "columns" not in self.params:
@@ -823,6 +837,7 @@ class AutoStationarity(Metric):
 
     type = "dataset"
     key = "auto_stationarity"
+    required_context = ["dataset"]
     default_params = {"max_order": 5, "threshold": 0.05}
 
     def run(self):
@@ -880,6 +895,7 @@ class RollingStatsPlot(Metric):
 
     type = "dataset"
     key = "rolling_stats_plot"
+    required_context = ["dataset"]
     default_params = {"window_size": 12}
 
     @staticmethod
@@ -953,6 +969,7 @@ class EngleGrangerCoint(Metric):
 
     type = "dataset"
     key = "engle_granger_coint"
+    required_context = ["dataset"]
     default_params = {"threshold": 0.05}
 
     def run(self):
@@ -998,6 +1015,7 @@ class SpreadPlot(Metric):
 
     type = "dataset"
     key = "spread_plot"
+    required_context = ["dataset"]
 
     @staticmethod
     def plot_spread(series1, series2, ax=None):

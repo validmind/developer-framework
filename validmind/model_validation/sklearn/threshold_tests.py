@@ -24,11 +24,12 @@ class MinimumAccuracy(ThresholdTest):
 
     category = "model_performance"
     name = "accuracy_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.7}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         accuracy_score = metrics.accuracy_score(y_true, class_pred)
 
         passed = accuracy_score > self.params["min_threshold"]
@@ -54,11 +55,12 @@ class MinimumF1Score(ThresholdTest):
 
     category = "model_performance"
     name = "f1_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         f1_score = metrics.f1_score(y_true, class_pred)
 
         passed = f1_score > self.params["min_threshold"]
@@ -84,11 +86,12 @@ class MinimumROCAUCScore(ThresholdTest):
 
     category = "model_performance"
     name = "roc_auc_score"
+    required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         roc_auc = metrics.roc_auc_score(y_true, class_pred)
 
         passed = roc_auc > self.params["min_threshold"]
@@ -114,6 +117,8 @@ class TrainingTestDegradation(ThresholdTest):
 
     category = "model_performance"
     name = "training_test_degradation"
+    required_context = ["model"]
+
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
@@ -123,17 +128,17 @@ class TrainingTestDegradation(ThresholdTest):
     }
 
     def run(self):
-        y_true = self.test_ds.y
+        y_true = self.model.test_ds.y
 
-        train_class_pred = self.class_predictions(self.y_train_predict)
-        test_class_pred = self.class_predictions(self.y_test_predict)
+        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
+        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
 
         metrics_to_compare = self.params["metrics"]
         test_results = []
         for metric in metrics_to_compare:
             metric_fn = self.default_metrics[metric]
 
-            train_score = metric_fn(self.train_ds.y, train_class_pred)
+            train_score = metric_fn(self.model.train_ds.y, train_class_pred)
             test_score = metric_fn(y_true, test_class_pred)
             degradation = (train_score - test_score) / train_score
 
@@ -163,6 +168,7 @@ class OverfitDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "overfit_regions"
+    required_context = ["model"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
     default_metrics = {
@@ -177,9 +183,14 @@ class OverfitDiagnosis(ThresholdTest):
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
 
+        if self.model is None:
+            raise ValueError("model must of provided to run this test")
+
         if self.params["features_columns"] is None:
-            features_list = [field_dict["id"] for field_dict in self.train_ds.fields]
-            features_list.remove(self.train_ds.target_column)
+            features_list = [
+                field_dict["id"] for field_dict in self.model.train_ds.fields
+            ]
+            features_list.remove(self.model.train_ds.target_column)
         else:
             features_list = self.params["features_columns"]
 
@@ -188,17 +199,17 @@ class OverfitDiagnosis(ThresholdTest):
                 "features_columns must be a list of features you would like to test"
             )
 
-        target_column = self.train_ds.target_column
+        target_column = self.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
         # Add prediction column in the training dataset
-        train_df = self.train_ds.df.copy(deep=True)
-        train_class_pred = self.class_predictions(self.y_train_predict)
+        train_df = self.model.train_ds.df.copy(deep=True)
+        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
-        test_df = self.test_ds.df.copy(deep=True)
-        test_class_pred = self.class_predictions(self.y_test_predict)
+        test_df = self.model.test_ds.df.copy(deep=True)
+        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
         test_df[prediction_column] = test_class_pred
 
         test_results = []
@@ -402,6 +413,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "weak_spots"
+    required_context = ["model"]
 
     default_params = {
         "features_columns": None,
@@ -429,24 +441,29 @@ class WeakspotsDiagnosis(ThresholdTest):
             if metric not in thresholds:
                 raise ValueError(f"Threshold for metric {metric} is missing")
 
+        if self.model is None:
+            raise ValueError("model must of provided to run this test")
+
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
 
         if self.params["features_columns"] is None:
-            features_list = [field_dict["id"] for field_dict in self.train_ds.fields]
-            features_list.remove(self.train_ds.target_column)
+            features_list = [
+                field_dict["id"] for field_dict in self.model.train_ds.fields
+            ]
+            features_list.remove(self.model.train_ds.target_column)
         else:
             features_list = self.params["features_columns"]
 
-        target_column = self.train_ds.target_column
+        target_column = self.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
-        train_df = self.train_ds.df.copy(deep=True)
-        train_class_pred = self.class_predictions(self.y_train_predict)
+        train_df = self.model.train_ds.df.copy(deep=True)
+        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
         train_df[prediction_column] = train_class_pred
 
-        test_df = self.test_ds.df.copy(deep=True)
-        test_class_pred = self.class_predictions(self.y_test_predict)
+        test_df = self.model.test_ds.df.copy(deep=True)
+        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
         test_df[prediction_column] = test_class_pred
 
         test_results = []
@@ -649,6 +666,7 @@ class RobustnessDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "robustness"
+    required_context = ["model"]
 
     default_params = {
         "features_columns": None,
@@ -664,6 +682,9 @@ class RobustnessDiagnosis(ThresholdTest):
             raise ValueError("scaling_factor_std_dev_list must be provided in params")
         x_std_dev_list = self.params["scaling_factor_std_dev_list"]
 
+        if self.model is None:
+            raise ValueError("model must of provided to run this test")
+
         # Validate list of features columns need to be perterubed
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
@@ -671,7 +692,7 @@ class RobustnessDiagnosis(ThresholdTest):
         # Identify numeric features
         numeric_features_columns = [
             field_dic["id"]
-            for field_dic in self.train_ds.fields
+            for field_dic in self.model.train_ds.fields
             if field_dic["type"] == "Numeric"
         ]
         if self.params["features_columns"] is None:
@@ -680,14 +701,14 @@ class RobustnessDiagnosis(ThresholdTest):
             features_list = self.params["features_columns"]
 
         # Remove target column if it exist in the list
-        if self.train_ds.target_column in features_list:
-            features_list.remove(self.train_ds.target_column)
+        if self.model.train_ds.target_column in features_list:
+            features_list.remove(self.model.train_ds.target_column)
 
-        train_df = self.train_ds.x.copy(deep=True)
-        train_y_true = self.train_ds.y
+        train_df = self.model.train_ds.x.copy(deep=True)
+        train_y_true = self.model.train_ds.y
 
-        test_df = self.test_ds.x.copy(deep=True)
-        test_y_true = self.test_ds.y
+        test_df = self.model.test_ds.x.copy(deep=True)
+        test_y_true = self.model.test_ds.y
 
         test_results = []
         test_figures = []
@@ -764,7 +785,7 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
         y_prediction = self.model.predict(df)
-        y_prediction = self.class_predictions(y_prediction)
+        y_prediction = self.model.class_predictions(y_prediction)
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true.values, y_prediction) * 100)
 

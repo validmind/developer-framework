@@ -1,12 +1,19 @@
 [tool.poetry]
-authors = ["Andres Rodriguez <andres@validmind.ai>"]
-description = "ValidMind SDK"
+authors = [
+  "Andres Rodriguez <andres@validmind.ai>",
+  "Juan Martinez <juan@validmind.ai>",
+  "Anil Sorathiya <anil@validmind.ai>",
+  "Luis Pallares <luis@validmind.ai>",
+]
+description = "ValidMind Developer Framework"
+include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
 name = "validmind"
-version = "1.5.0"
+version = "1.7.0"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
 click = "^8.0.4"
+cython = "^0.29.34"
 dython = "^0.7.1"
 ipython = "^8.11.0"
 myst-parser = "^1.0.0"
@@ -28,6 +35,7 @@ sphinx-rtd-theme = "^1.2.0"
 statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
+twine = "^4.0.2"
 xgboost = "^1.5.2"
 
 [tool.poetry.group.dev.dependencies]

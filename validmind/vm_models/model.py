@@ -79,11 +79,11 @@ class Model:
         Initializes the predicted outputs of the training, test, and validation datasets.
         """
         if self.model and self.train_ds:
-            self.y_train_predict = self.model.predict(self.train_ds.x)
+            self.y_train_predict = self.predict(self.train_ds.x)
         if self.model and self.test_ds:
-            self.y_test_predict = self.model.predict(self.test_ds.x)
+            self.y_test_predict = self.predict(self.test_ds.x)
         if self.model and self.validation_ds:
-            self.y_validation_predict = self.model.predict(self.validation_ds.x)
+            self.y_validation_predict = self.predict(self.validation_ds.x)
 
     def serialize(self):
         """
@@ -176,14 +176,7 @@ class Model:
         )
 
     @classmethod
-    def init_vm_model(
-        cls,
-        model,
-        train_ds,
-        test_ds,
-        validation_ds,
-        attributes
-    ):
+    def init_vm_model(cls, model, train_ds, test_ds, validation_ds, attributes):
         """
         Initializes a model instance from the provided data.
         """
@@ -192,7 +185,7 @@ class Model:
             train_ds=train_ds,
             test_ds=test_ds,
             validation_ds=validation_ds,
-            attributes=attributes
+            attributes=attributes,
         )
 
     @classmethod

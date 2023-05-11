@@ -93,10 +93,11 @@ class AccuracyScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "accuracy"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         accuracy_score = metrics.accuracy_score(y_true, class_pred)
 
         return self.cache_results(metric_value=accuracy_score)
@@ -110,6 +111,7 @@ class CharacteristicStabilityIndex(Metric):
 
     type = "training"
     key = "csi"
+    required_context = ["model"]
     value_formatter = "key_values"
 
     def run(self):
@@ -121,8 +123,8 @@ class CharacteristicStabilityIndex(Metric):
             print(f"Skiping CSI for {model_library} models")
             return
 
-        x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
-        x_test = self.test_ds.raw_dataset.drop(columns=self.test_ds.target_column)
+        x_train = self.model.train_ds.x
+        x_test = self.model.test_ds.x
 
         csi_values = {}
         for col in x_train.columns:
@@ -142,13 +144,14 @@ class ConfusionMatrix(Metric):
     type = "evaluation"
     scope = "test"
     key = "confusion_matrix"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        y_true = self.model.test_ds.y
         y_labels = list(map(lambda x: x.item(), y_true.unique()))
         y_labels.sort()
 
-        class_pred = self.class_predictions(self.y_test_predict)
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
 
         cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
         tn, fp, fn, tp = cm.ravel()
@@ -183,10 +186,11 @@ class F1Score(Metric):
     type = "evaluation"
     scope = "test"
     key = "f1_score"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         f1_score = metrics.f1_score(y_true, class_pred)
 
         return self.cache_results(metric_value=f1_score)
@@ -201,10 +205,11 @@ class PermutationFeatureImportance(Metric):
     type = "training"
     scope = "training_dataset"
     key = "pfi"
+    required_context = ["model"]
 
     def run(self):
-        x = self.train_ds.raw_dataset.drop(self.train_ds.target_column, axis=1)
-        y = self.train_ds.raw_dataset[self.train_ds.target_column]
+        x = self.model.train_ds.x
+        y = self.model.train_ds.y
 
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
@@ -258,11 +263,12 @@ class PrecisionRecallCurve(Metric):
     type = "evaluation"
     scope = "test"
     key = "pr_curve"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
-            y_true, self.y_test_predict
+            y_true, self.model.y_test_predict
         )
         plot = metrics.PrecisionRecallDisplay(
             precision=precision,
@@ -289,10 +295,11 @@ class PrecisionScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "precision"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         precision = metrics.precision_score(y_true, class_pred)
 
         return self.cache_results(metric_value=precision)
@@ -307,10 +314,11 @@ class RecallScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "recall"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         recall = metrics.recall_score(y_true, class_pred)
 
         return self.cache_results(metric_value=recall)
@@ -325,12 +333,13 @@ class ROCAUCScore(Metric):
     type = "evaluation"
     scope = "test"
     key = "roc_auc"
+    required_context = ["model"]
 
     def run(self):
         return self.cache_results(
             metric_value=metrics.roc_auc_score(
-                self.test_ds.raw_dataset[self.test_ds.target_column],
-                self.class_predictions(self.y_test_predict),
+                self.model.test_ds.df[self.model.test_ds.target_column],
+                self.model.class_predictions(self.model.y_test_predict),
             ),
         )
 
@@ -344,12 +353,13 @@ class ROCCurve(Metric):
     type = "evaluation"
     scope = "test"
     key = "roc_curve"
+    required_context = ["model"]
 
     def run(self):
-        y_true = self.test_ds.raw_dataset[self.test_ds.target_column]
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         fpr, tpr, roc_thresholds = metrics.roc_curve(
-            y_true, self.y_test_predict, drop_intermediate=True
+            y_true, self.model.y_test_predict, drop_intermediate=True
         )
         auc = metrics.roc_auc_score(y_true, class_pred)
 
@@ -375,6 +385,8 @@ class SHAPGlobalImportance(Metric):
     """
     SHAP Global Importance
     """
+
+    required_context = ["model"]
 
     # Instance Variables
     name = "shap"
@@ -424,15 +436,15 @@ class SHAPGlobalImportance(Metric):
             or model_class == "XGBRegressor"
             or model_class == "LinearRegression"
         ):
-            explainer = shap.LinearExplainer(trained_model, self.test_ds.x)
+            explainer = shap.LinearExplainer(trained_model, self.model.test_ds.x)
         else:
             raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
-        shap_values = explainer.shap_values(self.test_ds.x)
+        shap_values = explainer.shap_values(self.model.test_ds.x)
 
         figures = [
-            self._generate_shap_plot("mean", shap_values, self.test_ds.x),
-            self._generate_shap_plot("summary", shap_values, self.test_ds.x),
+            self._generate_shap_plot("mean", shap_values, self.model.test_ds.x),
+            self._generate_shap_plot("summary", shap_values, self.model.test_ds.x),
         ]
 
         # restore warnings
@@ -449,6 +461,7 @@ class PopulationStabilityIndex(Metric):
 
     type = "training"
     key = "psi"
+    required_context = ["model"]
     value_formatter = "records"
 
     def run(self):
@@ -457,6 +470,6 @@ class PopulationStabilityIndex(Metric):
             print(f"Skiping PSI for {model_library} models")
             return
 
-        psi_df = _get_psi(self.y_train_predict, self.y_test_predict)
+        psi_df = _get_psi(self.model.y_train_predict, self.model.y_test_predict)
 
         return self.cache_results(metric_value=psi_df)
