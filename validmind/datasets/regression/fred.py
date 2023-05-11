@@ -12,9 +12,6 @@ models_path = os.path.join(
 )
 
 
-file = "../datasets/time_series/fred_loan_rates_test_1.csv"
-
-
 target_column = "MORTGAGE30US"
 feature_columns = ["FEDFUNDS", "GS10", "UNRATE"]
 frequency = "MS"
@@ -80,30 +77,25 @@ def transform(df, transform_func="diff"):
     return df
 
 
-def load_models():
-    model_files = os.listdir(models_path)
+def load_model(model_name):
+    model_file = model_name + ".pkl"
+    model_path = os.path.join(models_path, model_file)
 
-    models = {}
+    if os.path.isfile(model_path):
+        with open(model_path, "rb") as f:
+            model = pickle.load(f)
 
-    for model_file in model_files:
-        if model_file.endswith(".pkl"):
-            model_name = os.path.splitext(model_file)[0]
-            with open(os.path.join(models_path, model_file), "rb") as f:
-                models[model_name] = pickle.load(f)
-    return models
+        train_df = load_train_dataset(model_path)
+        test_df = load_test_dataset(model_name)
 
-
-def load_test_dataset():
-    data_file = os.path.join(dataset_path, "fred_loan_rates_test_1.csv")
-    df = pd.read_csv(data_file, parse_dates=["DATE"], index_col="DATE")
-    df = df.diff().dropna()
-    return df
+        return model, train_df, test_df
+    else:
+        print(f"No model file found with the name: {model_name}")
+        return None, None, None
 
 
-def load_train_dataset():
-    model_file = os.path.join(models_path, "fred_loan_rates_model_5.pkl")
-
-    with open(os.path.join(models_path, model_file), "rb") as f:
+def load_train_dataset(model_path):
+    with open(model_path, "rb") as f:
         model_fit = pickle.load(f)
 
     # Extract the endogenous (target) variable from the model
@@ -123,3 +115,23 @@ def load_train_dataset():
     train_df = pd.concat([train_df, exog_df], axis=1)
 
     return train_df
+
+
+def load_test_dataset(model_name):
+    if model_name == "fred_loan_rates_model_1":
+        filename = "fred_loan_rates_test_1.csv"
+    elif model_name == "fred_loan_rates_model_2":
+        filename = "fred_loan_rates_test_2.csv"
+    elif model_name == "fred_loan_rates_model_3":
+        filename = "fred_loan_rates_test_3.csv"
+    elif model_name == "fred_loan_rates_model_4":
+        filename = "fred_loan_rates_test_4.csv"
+    elif model_name == "fred_loan_rates_model_5":
+        filename = "fred_loan_rates_test_5.csv"
+    else:
+        return None
+
+    data_file = os.path.join(dataset_path, filename)
+    df = pd.read_csv(data_file, parse_dates=["DATE"], index_col="DATE")
+    df = df.diff().dropna()
+    return df
