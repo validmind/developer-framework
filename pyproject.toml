@@ -8,7 +8,7 @@ authors = [
 description = "ValidMind Developer Framework"
 include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
 name = "validmind"
-version = "1.6.0"
+version = "1.7.0"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
