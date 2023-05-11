@@ -7,7 +7,10 @@ dataset_path = os.path.join(
     current_path, "..", "..", "..", "notebooks", "datasets", "time_series"
 )
 
-target_column = "MORTGAGE30US"
+target_column = ["MORTGAGE30US"]
+feature_columns = ["FEDFUNDS", "GS10", "UNRATE"]
+frequency = "MS"
+split_option = "train_test"
 
 
 def load_data():
