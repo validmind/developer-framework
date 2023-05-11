@@ -3,7 +3,7 @@ authors = ["Andres Rodriguez <andres@validmind.ai>"]
 description = "ValidMind Developer Framework"
 include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
 name = "validmind"
-version = "1.5.1"
+version = "1.6.0"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
