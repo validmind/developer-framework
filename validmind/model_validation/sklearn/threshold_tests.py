@@ -764,7 +764,7 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
         y_prediction = self.model.predict(df)
-        y_prediction = [round(value) for value in y_prediction]
+        y_prediction = self.class_predictions(y_prediction)
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true.values, y_prediction) * 100)
 

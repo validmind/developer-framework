@@ -122,8 +122,13 @@ class Dataset:
         Returns:
             list: The list of numberic features columns
         """
-        return [field_dic["id"] for field_dic in self.fields
-                if (field_dic["type"] == "Numeric" and field_dic["id"] != self.target_column)]
+        return [
+            field_dic["id"]
+            for field_dic in self.fields
+            if (
+                field_dic["type"] == "Numeric" and field_dic["id"] != self.target_column
+            )
+        ]
 
     def get_categorical_features_columns(self):
         """
@@ -132,8 +137,14 @@ class Dataset:
         Returns:
             list: The list of categorical features columns
         """
-        return [field_dic["id"] for field_dic in self.fields
-                if (field_dic["type"] == "Categorical" and field_dic["id"] != self.target_column)]
+        return [
+            field_dic["id"]
+            for field_dic in self.fields
+            if (
+                field_dic["type"] == "Categorical"
+                and field_dic["id"] != self.target_column
+            )
+        ]
 
     def serialize(self):
         """

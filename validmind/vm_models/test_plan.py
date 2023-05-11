@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from typing import ClassVar, List
 
 from IPython.display import display, HTML
-from attr import field
 from tqdm import tqdm
 
 from ..utils import is_notebook
@@ -49,7 +48,7 @@ class TestPlan:
     test_ds: Dataset = None
 
     # Multiple models for model comparison tests
-    models: List[Model] = field(type=list)
+    models: List[Model] = None
 
     # tqdm progress bar
     pbar: tqdm = None
