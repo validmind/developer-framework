@@ -913,7 +913,7 @@ class RegressionModelForecastPlot(Metric):
 
     category = "model_forecast"
     scope = "test"
-    name = "regression_forecast_plot"
+    key = "regression_forecast_plot"
     default_params = {"start_date": None, "end_date": None}
 
     def description(self):
