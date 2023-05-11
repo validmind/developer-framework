@@ -39,7 +39,7 @@ class BinaryClassifierMetrics(TestPlan):
     """
 
     name = "binary_classifier_metrics"
-    required_context = ["model", "train_ds", "test_ds"]
+    required_context = ["model"]
     tests = [
         ModelMetadata,
         DatasetSplit,
@@ -64,7 +64,7 @@ class BinaryClassifierPerformance(TestPlan):
     """
 
     name = "binary_classifier_validation"
-    required_context = ["model", "train_ds", "test_ds"]
+    required_context = ["model"]
     tests = [
         MinimumAccuracy,
         MinimumF1Score,
@@ -90,7 +90,7 @@ class BinaryClassifier(TestPlan):
     """
 
     name = "binary_classifier"
-    required_context = ["model", "train_ds", "test_ds"]
+    required_context = ["model"]
     test_plans = [
         BinaryClassifierMetrics,
         BinaryClassifierPerformance,
