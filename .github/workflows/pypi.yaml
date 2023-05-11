@@ -31,6 +31,7 @@ jobs:
 
       - name: Publish to PyPI
         run: |
+          poetry config pypi-token.pypi ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
           find validmind/ -name "*.py" ! -name "__init__.py" -exec bash -c 'mv "$0" "${0%.py}.pyx"' {} \;
           poetry run python setup.py build_ext --inplace
           poetry publish --build
