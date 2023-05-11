@@ -176,14 +176,7 @@ class Model:
         )
 
     @classmethod
-    def init_vm_model(
-        cls,
-        model,
-        train_ds,
-        test_ds,
-        validation_ds,
-        attributes
-    ):
+    def init_vm_model(cls, model, train_ds, test_ds, validation_ds, attributes):
         """
         Initializes a model instance from the provided data.
         """
@@ -192,7 +185,7 @@ class Model:
             train_ds=train_ds,
             test_ds=test_ds,
             validation_ds=validation_ds,
-            attributes=attributes
+            attributes=attributes,
         )
 
     @classmethod

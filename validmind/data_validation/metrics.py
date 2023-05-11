@@ -257,7 +257,7 @@ class DatasetSplit(Metric):
 
         # First calculate the total size of the dataset
         for dataset_name in available_datasets:
-            dataset = getattr(self, dataset_name, None)
+            dataset = getattr(self.model, dataset_name, None)
             if dataset is not None:
                 total_size += len(dataset.df)
 

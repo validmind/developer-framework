@@ -27,8 +27,8 @@ class MinimumAccuracy(ThresholdTest):
     default_params = {"min_threshold": 0.7}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         accuracy_score = metrics.accuracy_score(y_true, class_pred)
 
         passed = accuracy_score > self.params["min_threshold"]
@@ -57,8 +57,8 @@ class MinimumF1Score(ThresholdTest):
     default_params = {"min_threshold": 0.5}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         f1_score = metrics.f1_score(y_true, class_pred)
 
         passed = f1_score > self.params["min_threshold"]
@@ -87,8 +87,8 @@ class MinimumROCAUCScore(ThresholdTest):
     default_params = {"min_threshold": 0.5}
 
     def run(self):
-        y_true = self.test_ds.y
-        class_pred = self.class_predictions(self.y_test_predict)
+        y_true = self.model.test_ds.y
+        class_pred = self.model.class_predictions(self.model.y_test_predict)
         roc_auc = metrics.roc_auc_score(y_true, class_pred)
 
         passed = roc_auc > self.params["min_threshold"]
@@ -123,17 +123,17 @@ class TrainingTestDegradation(ThresholdTest):
     }
 
     def run(self):
-        y_true = self.test_ds.y
+        y_true = self.model.test_ds.y
 
-        train_class_pred = self.class_predictions(self.y_train_predict)
-        test_class_pred = self.class_predictions(self.y_test_predict)
+        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
+        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
 
         metrics_to_compare = self.params["metrics"]
         test_results = []
         for metric in metrics_to_compare:
             metric_fn = self.default_metrics[metric]
 
-            train_score = metric_fn(self.train_ds.y, train_class_pred)
+            train_score = metric_fn(self.model.train_ds.y, train_class_pred)
             test_score = metric_fn(y_true, test_class_pred)
             degradation = (train_score - test_score) / train_score
 
@@ -181,7 +181,9 @@ class OverfitDiagnosis(ThresholdTest):
             raise ValueError("model must of provided to run this test")
 
         if self.params["features_columns"] is None:
-            features_list = [field_dict["id"] for field_dict in self.model.train_ds.fields]
+            features_list = [
+                field_dict["id"] for field_dict in self.model.train_ds.fields
+            ]
             features_list.remove(self.model.train_ds.target_column)
         else:
             features_list = self.params["features_columns"]
@@ -439,7 +441,9 @@ class WeakspotsDiagnosis(ThresholdTest):
             raise ValueError("features_columns must be provided in params")
 
         if self.params["features_columns"] is None:
-            features_list = [field_dict["id"] for field_dict in self.model.train_ds.fields]
+            features_list = [
+                field_dict["id"] for field_dict in self.model.train_ds.fields
+            ]
             features_list.remove(self.model.train_ds.target_column)
         else:
             features_list = self.params["features_columns"]

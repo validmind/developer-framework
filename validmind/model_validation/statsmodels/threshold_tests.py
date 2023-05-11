@@ -15,7 +15,7 @@ class ADFTest(ThresholdTest):
     default_params = {"threshold": 0.05}
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.model.train_ds.raw_dataset
 
         results = []
         for col in x_train.columns:

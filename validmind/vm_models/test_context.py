@@ -2,7 +2,7 @@
 TestContext
 """
 from dataclasses import dataclass
-from typing import List
+from typing import ClassVar, List
 
 import pandas as pd
 
@@ -47,6 +47,7 @@ class TestContextUtils:
 
     # Test Context
     test_context: TestContext
+    required_context: ClassVar[List[str]]
 
     @property
     def dataset(self):
@@ -77,3 +78,19 @@ class TestContextUtils:
         raise ValueError(
             "dataset must be a Pandas DataFrame or a validmind Dataset object"
         )
+
+    def validate_context(self):
+        """
+        Validates that the context elements are present
+        in the instance so that the test plan can be run
+        """
+        for element in self.required_context:
+            if not hasattr(self, element):
+                raise ValueError(
+                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+                )
+
+            if getattr(self, element) is None:
+                raise ValueError(
+                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+                )
