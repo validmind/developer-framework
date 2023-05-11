@@ -1,11 +1,19 @@
 import os
-
+import pickle
 import pandas as pd
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(
     current_path, "..", "..", "..", "notebooks", "datasets", "time_series"
 )
+
+models_path = os.path.join(
+    current_path, "..", "..", "..", "notebooks", "models", "time_series"
+)
+
+
+file = "../datasets/time_series/fred_loan_rates_test_1.csv"
+
 
 target_column = "MORTGAGE30US"
 feature_columns = ["FEDFUNDS", "GS10", "UNRATE"]
@@ -70,3 +78,48 @@ def transform(df, transform_func="diff"):
     if transform_func == "diff":
         df = df.diff().dropna()
     return df
+
+
+def load_models():
+    model_files = os.listdir(models_path)
+
+    models = {}
+
+    for model_file in model_files:
+        if model_file.endswith(".pkl"):
+            model_name = os.path.splitext(model_file)[0]
+            with open(os.path.join(models_path, model_file), "rb") as f:
+                models[model_name] = pickle.load(f)
+    return models
+
+
+def load_test_dataset():
+    data_file = os.path.join(dataset_path, "fred_loan_rates_test_1.csv")
+    df = pd.read_csv(data_file, parse_dates=["DATE"], index_col="DATE")
+    df = df.diff().dropna()
+    return df
+
+
+def load_train_dataset():
+    model_file = os.path.join(models_path, "fred_loan_rates_model_5.pkl")
+
+    with open(os.path.join(models_path, model_file), "rb") as f:
+        model_fit = pickle.load(f)
+
+    # Extract the endogenous (target) variable from the model
+    train_df = pd.Series(model_fit.model.endog, index=model_fit.model.data.row_labels)
+    train_df = train_df.to_frame()
+    target_var_name = model_fit.model.endog_names
+    train_df.columns = [target_var_name]
+
+    # Extract the exogenous (explanatory) variables from the model
+    exog_df = pd.DataFrame(
+        model_fit.model.exog,
+        index=model_fit.model.data.row_labels,
+        columns=model_fit.model.exog_names,
+    )
+
+    # Concatenate the endogenous (target) and exogenous (explanatory) variables
+    train_df = pd.concat([train_df, exog_df], axis=1)
+
+    return train_df
