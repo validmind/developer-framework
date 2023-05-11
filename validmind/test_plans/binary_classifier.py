@@ -79,7 +79,7 @@ class BinaryClassifierDiagnosis(TestPlan):
     """
 
     name = "binary_classifier_model_diagnosis"
-    required_context = ["model", "train_ds", "test_ds"]
+    required_context = ["model"]
     tests = [OverfitDiagnosis, WeakspotsDiagnosis, RobustnessDiagnosis]
 
 
