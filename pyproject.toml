@@ -1,5 +1,10 @@
 [tool.poetry]
-authors = ["Andres Rodriguez <andres@validmind.ai>"]
+authors = [
+  "Andres Rodriguez <andres@validmind.ai>",
+  "Juan Martinez <juan@validmind.ai>",
+  "Anil Sorathiya <anil@validmind.ai>",
+  "Luis Pallares <luis@validmind.ai>",
+]
 description = "ValidMind Developer Framework"
 include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
 name = "validmind"
@@ -30,8 +35,8 @@ sphinx-rtd-theme = "^1.2.0"
 statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
-xgboost = "^1.5.2"
 twine = "^4.0.2"
+xgboost = "^1.5.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

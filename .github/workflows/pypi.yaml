@@ -34,4 +34,4 @@ jobs:
           find validmind/ -name "*.py" ! -name "__init__.py" -exec bash -c 'mv "$0" "${0%.py}.pyx"' {} \;
           poetry run python setup.py build_ext --inplace
           poetry build
-          twine upload -u __token__ -p ${{ secrets.POETRY_PYPI_TOKEN_PYPI }} -r validmind dist/*
+          poetry run twine upload -u __token__ -p ${{ secrets.POETRY_PYPI_TOKEN_PYPI }} -r validmind dist/*
