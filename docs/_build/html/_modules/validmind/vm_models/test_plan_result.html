@@ -228,7 +228,7 @@
 
     <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;h4&gt;Logged the following dataset to the ValidMind platform:&lt;/h4&gt;&quot;</span>
-        <span class="k">return</span> <span class="n">html</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">raw_dataset</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">html</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TestPlanDatasetResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanDatasetResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">log_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span></div></div>
