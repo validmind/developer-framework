@@ -55,7 +55,7 @@ def get_crosstab_plot(vm_dataset, x, y):
     Returns a crosstab plot for a pair of features. If one of the features
     is the target column, we should not use it as an index
     """
-    df = vm_dataset.raw_dataset
+    df = vm_dataset.df
 
     # If dataset targets were specified we try to use the target column as y
     if vm_dataset.targets:
@@ -111,7 +111,7 @@ def get_plot_for_feature_pair(vm_dataset, x, y):
     Checks the data types for each feature pair and creates the
     appropriate plot to represent their relationship
     """
-    df = vm_dataset.raw_dataset
+    df = vm_dataset.df
     x_type = vm_dataset.get_feature_type(x)
     y_type = vm_dataset.get_feature_type(y)
 

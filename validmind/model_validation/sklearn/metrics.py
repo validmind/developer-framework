@@ -121,12 +121,8 @@ class CharacteristicStabilityIndex(Metric):
             print(f"Skiping CSI for {model_library} models")
             return
 
-        x_train = self.model.train_ds.raw_dataset.drop(
-            columns=self.model.train_ds.target_column
-        )
-        x_test = self.model.test_ds.raw_dataset.drop(
-            columns=self.model.test_ds.target_column
-        )
+        x_train = self.model.train_ds.x
+        x_test = self.model.test_ds.x
 
         csi_values = {}
         for col in x_train.columns:
@@ -148,7 +144,7 @@ class ConfusionMatrix(Metric):
     key = "confusion_matrix"
 
     def run(self):
-        y_true = self.model.test_ds.raw_dataset[self.model.test_ds.target_column]
+        y_true = self.model.test_ds.y
         y_labels = list(map(lambda x: x.item(), y_true.unique()))
         y_labels.sort()
 
@@ -189,7 +185,7 @@ class F1Score(Metric):
     key = "f1_score"
 
     def run(self):
-        y_true = self.model.test_ds.raw_dataset[self.model.test_ds.target_column]
+        y_true = self.model.test_ds.y
         class_pred = self.model.class_predictions(self.model.y_test_predict)
         f1_score = metrics.f1_score(y_true, class_pred)
 
@@ -207,10 +203,8 @@ class PermutationFeatureImportance(Metric):
     key = "pfi"
 
     def run(self):
-        x = self.model.train_ds.raw_dataset.drop(
-            self.model.train_ds.target_column, axis=1
-        )
-        y = self.model.train_ds.raw_dataset[self.model.train_ds.target_column]
+        x = self.model.train_ds.x
+        y = self.model.train_ds.y
 
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
@@ -297,7 +291,7 @@ class PrecisionScore(Metric):
     key = "precision"
 
     def run(self):
-        y_true = self.model.test_ds.raw_dataset[self.model.test_ds.target_column]
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         class_pred = self.model.class_predictions(self.model.y_test_predict)
         precision = metrics.precision_score(y_true, class_pred)
 
@@ -315,7 +309,7 @@ class RecallScore(Metric):
     key = "recall"
 
     def run(self):
-        y_true = self.model.test_ds.raw_dataset[self.model.test_ds.target_column]
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         class_pred = self.model.class_predictions(self.model.y_test_predict)
         recall = metrics.recall_score(y_true, class_pred)
 
@@ -335,7 +329,7 @@ class ROCAUCScore(Metric):
     def run(self):
         return self.cache_results(
             metric_value=metrics.roc_auc_score(
-                self.model.test_ds.raw_dataset[self.model.test_ds.target_column],
+                self.model.test_ds.df[self.model.test_ds.target_column],
                 self.model.class_predictions(self.model.y_test_predict),
             ),
         )
@@ -352,7 +346,7 @@ class ROCCurve(Metric):
     key = "roc_curve"
 
     def run(self):
-        y_true = self.model.test_ds.raw_dataset[self.model.test_ds.target_column]
+        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         class_pred = self.model.class_predictions(self.model.y_test_predict)
         fpr, tpr, roc_thresholds = metrics.roc_curve(
             y_true, self.model.y_test_predict, drop_intermediate=True
