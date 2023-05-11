@@ -6,11 +6,11 @@ import inspect
 import tabulate
 
 from ..vm_models import TestPlan
-from .sklearn_classifier import (
-    SKLearnClassifierMetrics,
-    SKLearnClassifier,
-    SKLearnClassifierPerformance,
-    SKLearnClassifierDiagnosis,
+from .binary_classifier import (
+    BinaryClassifierMetrics,
+    BinaryClassifier,
+    BinaryClassifierPerformance,
+    BinaryClassifierDiagnosis,
 )
 from .tabular_datasets import (
     TabularDataset,
@@ -35,10 +35,10 @@ from .time_series import (
 )
 
 core_test_plans = {
-    "sklearn_classifier_metrics": SKLearnClassifierMetrics,
-    "sklearn_classifier_validation": SKLearnClassifierPerformance,
-    "sklearn_classifier_model_diagnosis": SKLearnClassifierDiagnosis,
-    "sklearn_classifier": SKLearnClassifier,
+    "binary_classifier_metrics": BinaryClassifierMetrics,
+    "binary_classifier_validation": BinaryClassifierPerformance,
+    "binary_classifier_model_diagnosis": BinaryClassifierDiagnosis,
+    "binary_classifier": BinaryClassifier,
     "tabular_dataset": TabularDataset,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,

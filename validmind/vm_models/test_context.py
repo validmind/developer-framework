@@ -3,7 +3,6 @@ TestContext
 """
 from dataclasses import dataclass
 from typing import List
-from attr import field
 
 import pandas as pd
 

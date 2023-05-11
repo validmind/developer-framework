@@ -18,6 +18,13 @@ SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
 }
 
 
+def get_pytorch_version():
+    if "torch" in sys.modules:
+        return sys.modules["torch"].__version__
+
+    return "n/a"
+
+
 def get_sklearn_version():
     if "sklearn" in sys.modules:
         return sys.modules["sklearn"].__version__
@@ -55,8 +62,9 @@ def get_info_from_model_instance(model):
     """
     Attempts to extract all model info from a model object instance
     """
-    model_class = model.__class__.__name__
+    model_class = Model.model_class(model)
 
+    # TODO: refactor
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
@@ -99,6 +107,14 @@ def get_info_from_model_instance(model):
         subtask = "binary"
         framework = "statsmodels"
         framework_version = get_statsmodels_version()
+    elif model_class == "PyTorchModel":
+        architecture = "Neural Network"
+        task = "classification"
+        subtask = "binary"
+        framework = "PyTorch"
+        framework_version = get_pytorch_version()
+    else:
+        raise ValueError(f"Model class {model_class} is not supported by this test")
 
     return {
         "architecture": architecture,
@@ -144,6 +160,8 @@ def get_params_from_model_instance(model):
         params = {}
     elif model_library == "sklearn":
         params = model.get_params()
+    elif model_library == "pytorch":
+        params = {}
     else:
         raise ValueError(f"Model library {model_library} is not supported by this test")
 

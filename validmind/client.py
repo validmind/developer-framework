@@ -82,7 +82,9 @@ def init_model(model: object) -> Model:
 
     if not Model.is_supported_model(model):
         raise ValueError(
-            "Model type {} is not supported at the moment.".format(model.model_class)
+            "Model type {} is not supported at the moment.".format(
+                Model.model_class(model)
+            )
         )
 
     return Model(model=model, attributes=ModelAttributes())
@@ -173,7 +175,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     run it.
 
     Args:
-        test_plan_name (str): The test plan name (e.g. 'sklearn_classifier')
+        test_plan_name (str): The test plan name (e.g. 'binary_classifier')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
         **kwargs: Additional keyword arguments to pass to the test plan. These will provide
             the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.

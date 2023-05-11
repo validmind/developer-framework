@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from typing import ClassVar, List
 
 from IPython.display import display, HTML
-from attr import field
 from tqdm import tqdm
 
 from ..utils import is_notebook

@@ -4,7 +4,6 @@ a sklearn-like API
 """
 import warnings
 from dataclasses import dataclass
-from typing import ClassVar
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -18,45 +17,7 @@ from ...vm_models import (
     Figure,
     Metric,
     Model,
-    TestContext,
-    TestContextUtils,
-    TestPlanMetricResult,
 )
-
-# TBD - for regression:
-# metrics = [
-#     adjusted_r2_score,
-#     mae_score,
-#     mse_score,
-#     r2_score,
-# ]
-
-
-def _generate_shap_plot(type_, shap_values, x_test):
-    """
-    Plots two types of SHAP global importance (SHAP).
-    :params type: mean, summary
-    :params shap_values: a matrix
-    :params x_test:
-    """
-    plt.close("all")
-
-    # preserve styles
-    mpl.rcParams["grid.color"] = "#CCC"
-    ax = plt.axes()
-    ax.set_facecolor("white")
-
-    summary_plot_extra_args = {}
-    if type_ == "mean":
-        summary_plot_extra_args = {"plot_type": "bar"}
-
-    print(shap_values)
-    shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
-    figure = plt.gcf()
-    # avoid displaying on notebooks and clears the canvas for the next plot
-    plt.close()
-
-    return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -155,8 +116,9 @@ class CharacteristicStabilityIndex(Metric):
         """
         Calculates PSI for each of the dataset features
         """
-        if Model.model_library(self.model.model) == "statsmodels":
-            print("Skiping CSI for statsmodels models")
+        model_library = Model.model_library(self.model.model)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping CSI for {model_library} models")
             return
 
         x_train = self.train_ds.raw_dataset.drop(columns=self.train_ds.target_column)
@@ -245,12 +207,12 @@ class PermutationFeatureImportance(Metric):
         y = self.train_ds.raw_dataset[self.train_ds.target_column]
 
         model_instance = self.model.model
-
-        if Model.model_library(model_instance) == "statsmodels":
-            print("Skiping PFI for statsmodels models")
+        model_library = Model.model_library(model_instance)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping PFI for {model_library} models")
             return
 
-        # Checkf if the model has a fit method. This works for statsmodels
+        # Check if the model has a fit method. This works for statsmodels
         # if not hasattr(model_instance, "fit"):
         #     model_instance.fit = lambda **kwargs: None
 
@@ -409,33 +371,43 @@ class ROCCurve(Metric):
 
 
 @dataclass
-class SHAPGlobalImportance(TestContextUtils):
+class SHAPGlobalImportance(Metric):
     """
-    SHAP Global Importance. Custom metric
+    SHAP Global Importance
     """
-
-    # Test Context
-    test_context: TestContext
-
-    # Class Variables
-    test_type: ClassVar[str] = "SHAPGlobalImportance"
-    default_params: ClassVar[dict] = {}
 
     # Instance Variables
     name = "shap"
-    params: dict = None
-    result: TestPlanMetricResult = None
 
-    def __post_init__(self):
+    def _generate_shap_plot(self, type_, shap_values, x_test):
         """
-        Set default params if not provided
+        Plots two types of SHAP global importance (SHAP).
+        :params type: mean, summary
+        :params shap_values: a matrix
+        :params x_test:
         """
-        if self.params is None:
-            self.params = self.default_params
+        plt.close("all")
+
+        # preserve styles
+        mpl.rcParams["grid.color"] = "#CCC"
+        ax = plt.axes()
+        ax.set_facecolor("white")
+
+        summary_plot_extra_args = {}
+        if type_ == "mean":
+            summary_plot_extra_args = {"plot_type": "bar"}
+
+        shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
+        figure = plt.gcf()
+        # avoid displaying on notebooks and clears the canvas for the next plot
+        plt.close()
+
+        return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
 
     def run(self):
-        if Model.model_library(self.model.model) == "statsmodels":
-            print("Skiping SHAP for statsmodels models")
+        model_library = Model.model_library(self.model.model)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping SHAP for {model_library} models")
             return
 
         trained_model = self.model.model
@@ -458,17 +430,15 @@ class SHAPGlobalImportance(TestContextUtils):
 
         shap_values = explainer.shap_values(self.test_ds.x)
 
-        self.result = TestPlanMetricResult(
-            figures=[
-                _generate_shap_plot("mean", shap_values, self.test_ds.x),
-                _generate_shap_plot("summary", shap_values, self.test_ds.x),
-            ]
-        )
+        figures = [
+            self._generate_shap_plot("mean", shap_values, self.test_ds.x),
+            self._generate_shap_plot("summary", shap_values, self.test_ds.x),
+        ]
 
         # restore warnings
         warnings.filterwarnings("default", category=UserWarning)
 
-        return self.result
+        return self.cache_results(figures=figures)
 
 
 @dataclass
@@ -482,8 +452,9 @@ class PopulationStabilityIndex(Metric):
     value_formatter = "records"
 
     def run(self):
-        if Model.model_library(self.model.model) == "statsmodels":
-            print("Skiping PSI for statsmodels models")
+        model_library = Model.model_library(self.model.model)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping PSI for {model_library} models")
             return
 
         psi_df = _get_psi(self.y_train_predict, self.y_test_predict)
