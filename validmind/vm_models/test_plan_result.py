@@ -155,7 +155,7 @@ class TestPlanDatasetResult(TestPlanResult):
 
     def _to_html(self):
         html = "<h4>Logged the following dataset to the ValidMind platform:</h4>"
-        return html + self.dataset.raw_dataset.describe().to_html()
+        return html + self.dataset.df.describe().to_html()
 
     def log(self):
         log_dataset(self.dataset)

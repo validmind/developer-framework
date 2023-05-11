@@ -126,7 +126,7 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestContextUtils</span></code></p>
 <p>Custom class to collect a set of descriptive statistics for a dataset.
 This class will log dataset metadata via <cite>log_dataset</cite> instead of a metric.
-Dataset metadat is necessary to initialize dataset object that can be related
+Dataset metadata is necessary to initialize dataset object that can be related
 to different metrics and test results</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetMetadata.test_context">
@@ -186,6 +186,11 @@ are calculated:
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_correlations'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetCorrelations.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#DatasetCorrelations.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.DatasetCorrelations.run" title="Permalink to this definition"></a></dt>
@@ -207,6 +212,11 @@ are calculated:
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_description'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetDescription.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetDescription.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -231,6 +241,11 @@ numerical and categorical variables</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DescriptiveStatistics.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'descriptive_statistics'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DescriptiveStatistics.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DescriptiveStatistics.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DescriptiveStatistics.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -271,6 +286,11 @@ provided training, test and validation datasets.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset_split'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.DatasetSplit.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.DatasetSplit.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -316,6 +336,11 @@ if necessary. In this case we produce a separate plot for each time series.</p>
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_line_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.TimeSeriesLinePlot.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.TimeSeriesLinePlot.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.TimeSeriesLinePlot.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.TimeSeriesLinePlot.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#TimeSeriesLinePlot.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.TimeSeriesLinePlot.run" title="Permalink to this definition"></a></dt>
@@ -339,6 +364,11 @@ necessary. In this case we produce a separate plot for each time series.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.TimeSeriesHistogram.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_histogram'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.TimeSeriesHistogram.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.TimeSeriesHistogram.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.TimeSeriesHistogram.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -365,6 +395,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scatter_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.ScatterPlot.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.ScatterPlot.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.ScatterPlot.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.ScatterPlot.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#ScatterPlot.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.ScatterPlot.run" title="Permalink to this definition"></a></dt>
@@ -386,6 +421,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.LaggedCorrelationHeatmap.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lagged_correlation_heatmap'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.LaggedCorrelationHeatmap.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.LaggedCorrelationHeatmap.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.LaggedCorrelationHeatmap.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -411,6 +451,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_ar'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoAR.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.run" title="Permalink to this definition"></a></dt>
@@ -434,6 +479,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_ma'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoMA.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.run" title="Permalink to this definition"></a></dt>
@@ -455,6 +505,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.SeasonalDecompose.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seasonal_decompose'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SeasonalDecompose.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.SeasonalDecompose.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SeasonalDecompose.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -502,6 +557,11 @@ using the seasonal_decompose method.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoSeasonality.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoSeasonality.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoSeasonality.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_period':</span> <span class="pre">4,</span> <span class="pre">'min_period':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoSeasonality.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -534,6 +594,11 @@ using the seasonal_decompose method.</p>
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'acf_pacf_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.ACFandPACFPlot.key" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.ACFandPACFPlot.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.ACFandPACFPlot.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.ACFandPACFPlot.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#ACFandPACFPlot.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.ACFandPACFPlot.run" title="Permalink to this definition"></a></dt>
@@ -556,6 +621,11 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_stationarity'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -584,6 +654,11 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rolling_stats_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.RollingStatsPlot.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.RollingStatsPlot.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -631,6 +706,11 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'threshold':</span> <span class="pre">0.05}</span></em><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -656,6 +736,11 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.SpreadPlot.key">
 <span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'spread_plot'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SpreadPlot.key" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.SpreadPlot.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SpreadPlot.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -702,6 +787,11 @@ class and the minority class in the target column.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalance.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalance.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalance.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_percent_threshold':</span> <span class="pre">0.2}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalance.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -729,6 +819,11 @@ checked for duplicate primary keys as well.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.Duplicates.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'duplicates'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.Duplicates.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.Duplicates.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.Duplicates.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -761,6 +856,11 @@ values found in categorical columns.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinality.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinality.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighCardinality.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'num_threshold':</span> <span class="pre">100,</span> <span class="pre">'percent_threshold':</span> <span class="pre">0.1,</span> <span class="pre">'threshold_type':</span> <span class="pre">'percent'}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighCardinality.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -790,6 +890,11 @@ features in the dataset do not exceed a specified threshold.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelation.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelation.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.HighPearsonCorrelation.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_threshold':</span> <span class="pre">0.3}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.HighPearsonCorrelation.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -816,6 +921,11 @@ is less than a threshold</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValues.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'missing'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValues.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.MissingValues.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.MissingValues.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -850,6 +960,11 @@ longer tail of values in the left.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.Skewness.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.Skewness.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.Skewness.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.Skewness.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -875,6 +990,11 @@ longer tail of values in the left.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRows.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unique'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRows.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.UniqueRows.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.UniqueRows.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -906,6 +1026,11 @@ longer tail of values in the left.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TooManyZeroValues.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TooManyZeroValues.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TooManyZeroValues.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'max_percent_threshold':</span> <span class="pre">0.03}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TooManyZeroValues.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -931,6 +1056,11 @@ longer tail of values in the left.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesOutliers.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_outliers'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesOutliers.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesOutliers.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesOutliers.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -962,6 +1092,11 @@ longer tail of values in the left.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValues.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValues.required_context" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesMissingValues.default_params">
 <span class="sig-name descname"><span class="pre">default_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'min_threshold':</span> <span class="pre">1}</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesMissingValues.default_params" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -987,6 +1122,11 @@ longer tail of values in the left.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesFrequency.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time_series_frequency'</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesFrequency.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.TimeSeriesFrequency.required_context">
+<span class="sig-name descname"><span class="pre">required_context</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['dataset']</span></em><a class="headerlink" href="#validmind.data_validation.threshold_tests.TimeSeriesFrequency.required_context" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

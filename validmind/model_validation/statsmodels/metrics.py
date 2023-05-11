@@ -906,7 +906,7 @@ class RegressionModelOutsampleComparison(Metric):
             residuals = y_test - y_pred
 
             # Calculate the mean squared error and root mean squared error
-            mse = np.mean(residuals ** 2)
+            mse = np.mean(residuals**2)
             rmse_val = np.sqrt(mse)
 
             # Store the results
@@ -914,6 +914,6 @@ class RegressionModelOutsampleComparison(Metric):
             results.append([model_name_with_vars, mse, rmse_val])
 
         # Create a DataFrame to display the results
-        results_df = pd.DataFrame(results, columns=['Model', 'MSE', 'RMSE'])
+        results_df = pd.DataFrame(results, columns=["Model", "MSE", "RMSE"])
 
         return results_df
