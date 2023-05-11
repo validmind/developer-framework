@@ -64,7 +64,12 @@ def init_dataset(
     return vm_dataset
 
 
-def init_model(model: object) -> Model:
+def init_model(
+        model: object,
+        train_ds: Dataset = None,
+        test_ds: Dataset = None,
+        validation_ds: Dataset = None
+) -> Model:
     """
     Initializes a VM Model, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
@@ -87,7 +92,7 @@ def init_model(model: object) -> Model:
             )
         )
 
-    return Model(model=model, attributes=ModelAttributes())
+    return Model.init_vm_model(model, train_ds, test_ds, validation_ds, attributes=ModelAttributes())
 
 
 def init_r_model(model_path: str, model_type: str) -> Model:

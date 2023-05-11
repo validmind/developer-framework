@@ -2,6 +2,8 @@
 Model class wrapper
 """
 from dataclasses import dataclass, fields
+from .dataset import Dataset
+
 
 # import torch
 # import torch.nn as nn
@@ -40,7 +42,21 @@ class ModelAttributes:
 @dataclass
 class Model:
     """
-    Model class wrapper
+    A class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        task (str, optional): The task that the model is intended to solve. Defaults to None.
+        subtask (str, optional): The subtask that the model is intended to solve. Defaults to None.
+        params (dict, optional): The parameters of the model. Defaults to None.
+        model_id (str): The identifier of the model. Defaults to "main".
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
     """
 
     attributes: ModelAttributes = None
@@ -49,6 +65,25 @@ class Model:
     params: dict = None
     model_id: str = "main"
     model: object = None  # Trained model instance
+    train_ds: Dataset = None
+    test_ds: Dataset = None
+    validation_ds: Dataset = None
+
+    # These variables can be generated dynamically if not passed
+    y_train_predict: object = None
+    y_test_predict: object = None
+    y_validation_predict: object = None
+
+    def __post_init__(self):
+        """
+        Initializes the predicted outputs of the training, test, and validation datasets.
+        """
+        if self.model and self.train_ds:
+            self.y_train_predict = self.model.predict(self.train_ds.x)
+        if self.model and self.test_ds:
+            self.y_test_predict = self.model.predict(self.test_ds.x)
+        if self.model and self.validation_ds:
+            self.y_validation_predict = self.model.predict(self.validation_ds.x)
 
     def serialize(self):
         """
@@ -61,6 +96,19 @@ class Model:
             "subtask": self.subtask,
             "params": self.params,
         }
+
+    def class_predictions(self, y_predict):
+        """
+        Converts a set of probability predictions to class predictions
+
+        Args:
+            y_predict (np.array, pd.DataFrame): Predictions to convert
+
+        Returns:
+            (np.array, pd.DataFrame): Class predictions
+        """
+        # TODO: parametrize at some point
+        return (y_predict > 0.5).astype(int)
 
     @staticmethod
     def _is_pytorch_model(model):
@@ -125,6 +173,26 @@ class Model:
         return (
             f"{Model.model_library(model)}.{Model.model_class(model)}"
             in SUPPORTED_MODEL_TYPES
+        )
+
+    @classmethod
+    def init_vm_model(
+        cls,
+        model,
+        train_ds,
+        test_ds,
+        validation_ds,
+        attributes
+    ):
+        """
+        Initializes a model instance from the provided data.
+        """
+        return cls(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes
         )
 
     @classmethod
