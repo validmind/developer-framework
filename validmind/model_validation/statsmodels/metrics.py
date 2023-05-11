@@ -853,16 +853,14 @@ class RegressionModelOutsampleComparison(Metric):
         for model in self.models:
             if model.model.__class__.__name__ != "RegressionResultsWrapper":
                 raise ValueError("Only RegressionResultsWrapper models of statsmodels library supported")
-            all_models.append(model.model)
+            all_models.append(model)
 
         results = self._out_sample_performance_ols(
             all_models,
-            self.test_ds.df.copy(deep=True),
-            self.test_ds.target_column
         )
         return self.cache_results(results.to_dict("records"))
 
-    def _out_sample_performance_ols(self, model_list, test_data, target_col):
+    def _out_sample_performance_ols(self, model_list):
         """
         Returns the out-of-sample performance evaluation metrics of a list of OLS regression models.
 
@@ -881,15 +879,11 @@ class RegressionModelOutsampleComparison(Metric):
 
         for fitted_model in model_list:
             # Extract the column names of the independent variables from the model
-            independent_vars = fitted_model.model.exog_names
-            X_test_data = test_data.copy(deep=True)
-            # Add the constant if it's missing
-            if "const" in independent_vars and "const" not in X_test_data.columns.to_list():
-                X_test_data['const'] = 1.0
+            independent_vars = fitted_model.model.model.exog_names
 
             # Separate the target variable and features in the test dataset
-            X_test = X_test_data[independent_vars]
-            y_test = X_test_data[target_col]
+            X_test = fitted_model.test_ds.x
+            y_test = fitted_model.test_ds.y
 
             # Predict the test data
             y_pred = fitted_model.predict(X_test)

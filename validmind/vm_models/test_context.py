@@ -15,29 +15,15 @@ class TestContext:
     """
     Holds context that can be used by tests to run.
     Allows us to store data that needs to be reused
-    across different tests/metrics such as model predictions,
-    shared dataset metrics, etc.
+    across different tests/metrics such as shared dataset metrics, etc.
     """
 
     dataset: Dataset = None
     model: Model = None
     models: List[Model] = None
-    train_ds: Dataset = None
-    test_ds: Dataset = None
-    validation_ds: Dataset = None
-
-    # These variables can be generated dynamically if not passed
-    y_train_predict: object = None
-    y_test_predict: object = None
 
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
-
-    def __post_init__(self):
-        if self.model and self.train_ds:
-            self.y_train_predict = self.model.predict(self.train_ds.x)
-        if self.model and self.test_ds:
-            self.y_test_predict = self.model.predict(self.test_ds.x)
 
     def set_context_data(self, key, value):
         if self.context_data is None:
@@ -73,39 +59,6 @@ class TestContextUtils:
     @property
     def models(self):
         return self.test_context.models
-
-    @property
-    def train_ds(self):
-        return self.test_context.train_ds
-
-    @property
-    def test_ds(self):
-        return self.test_context.test_ds
-
-    @property
-    def validation_ds(self):
-        return self.test_context.validation_ds
-
-    @property
-    def y_train_predict(self):
-        return self.test_context.y_train_predict
-
-    @property
-    def y_test_predict(self):
-        return self.test_context.y_test_predict
-
-    def class_predictions(self, y_predict):
-        """
-        Converts a set of probability predictions to class predictions
-
-        Args:
-            y_predict (np.array, pd.DataFrame): Predictions to convert
-
-        Returns:
-            (np.array, pd.DataFrame): Class predictions
-        """
-        # TODO: parametrize at some point
-        return (y_predict > 0.5).astype(int)
 
     @property
     def df(self):

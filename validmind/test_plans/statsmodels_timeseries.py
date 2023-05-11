@@ -116,5 +116,5 @@ class RegressionModelsComparison(TestPlan):
     """
 
     name = "regression_models_comparison"
-    required_context = ["models", "test_ds"]
+    required_context = ["models"]
     tests = [RegressionModelOutsampleComparison, RegressionModelInsampleComparison]
