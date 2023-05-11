@@ -137,7 +137,12 @@
     <span class="k">return</span> <span class="n">vm_dataset</span></div>
 
 
-<div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+        <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">validation_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initializes a VM Model, which can then be passed to other functions</span>
 <span class="sd">    that can perform additional analysis and tests on the data. This function</span>
@@ -160,7 +165,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span></div>
+    <span class="k">return</span> <span class="n">Model</span><span class="o">.</span><span class="n">init_vm_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="p">,</span> <span class="n">test_ds</span><span class="p">,</span> <span class="n">validation_ds</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="init_r_model"><a class="viewcode-back" href="../../api.html#validmind.init_r_model">[docs]</a><span class="k">def</span> <span class="nf">init_r_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>

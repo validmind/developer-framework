@@ -75,6 +75,8 @@
 <span class="sd">Model class wrapper</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
 
 <span class="c1"># import torch</span>
 <span class="c1"># import torch.nn as nn</span>
@@ -113,7 +115,21 @@
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Model class wrapper</span>
+<span class="sd">    A class that wraps a trained model instance and its associated data.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.</span>
+<span class="sd">        task (str, optional): The task that the model is intended to solve. Defaults to None.</span>
+<span class="sd">        subtask (str, optional): The subtask that the model is intended to solve. Defaults to None.</span>
+<span class="sd">        params (dict, optional): The parameters of the model. Defaults to None.</span>
+<span class="sd">        model_id (str): The identifier of the model. Defaults to &quot;main&quot;.</span>
+<span class="sd">        model (object, optional): The trained model instance. Defaults to None.</span>
+<span class="sd">        train_ds (Dataset, optional): The training dataset. Defaults to None.</span>
+<span class="sd">        test_ds (Dataset, optional): The test dataset. Defaults to None.</span>
+<span class="sd">        validation_ds (Dataset, optional): The validation dataset. Defaults to None.</span>
+<span class="sd">        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.</span>
+<span class="sd">        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.</span>
+<span class="sd">        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">attributes</span><span class="p">:</span> <span class="n">ModelAttributes</span> <span class="o">=</span> <span class="kc">None</span>
@@ -122,6 +138,25 @@
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
     <span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Trained model instance</span>
+    <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">validation_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># These variables can be generated dynamically if not passed</span>
+    <span class="n">y_train_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_test_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">y_validation_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the predicted outputs of the training, test, and validation datasets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_train_predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_ds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_validation_predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Model.serialize"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.serialize">[docs]</a>    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -134,6 +169,19 @@
             <span class="s2">&quot;subtask&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtask</span><span class="p">,</span>
             <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
         <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Model.class_predictions"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.class_predictions">[docs]</a>    <span class="k">def</span> <span class="nf">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts a set of probability predictions to class predictions</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y_predict (np.array, pd.DataFrame): Predictions to convert</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (np.array, pd.DataFrame): Class predictions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: parametrize at some point</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">y_predict</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_pytorch_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
@@ -198,6 +246,26 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Model</span><span class="o">.</span><span class="n">model_library</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">Model</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="ow">in</span> <span class="n">SUPPORTED_MODEL_TYPES</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.init_vm_model"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.init_vm_model">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">init_vm_model</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">train_ds</span><span class="p">,</span>
+        <span class="n">test_ds</span><span class="p">,</span>
+        <span class="n">validation_ds</span><span class="p">,</span>
+        <span class="n">attributes</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes a model instance from the provided data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">train_ds</span><span class="o">=</span><span class="n">train_ds</span><span class="p">,</span>
+            <span class="n">test_ds</span><span class="o">=</span><span class="n">test_ds</span><span class="p">,</span>
+            <span class="n">validation_ds</span><span class="o">=</span><span class="n">validation_ds</span><span class="p">,</span>
+            <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.create_from_dict"><a class="viewcode-back" href="../../../vm_models.html#validmind.Model.create_from_dict">[docs]</a>    <span class="nd">@classmethod</span>

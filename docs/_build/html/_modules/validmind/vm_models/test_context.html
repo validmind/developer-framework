@@ -88,29 +88,15 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Holds context that can be used by tests to run.</span>
 <span class="sd">    Allows us to store data that needs to be reused</span>
-<span class="sd">    across different tests/metrics such as model predictions,</span>
-<span class="sd">    shared dataset metrics, etc.</span>
+<span class="sd">    across different tests/metrics such as shared dataset metrics, etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">validation_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="c1"># These variables can be generated dynamically if not passed</span>
-    <span class="n">y_train_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">y_test_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Custom context data that can be set by metrics or tests using this context</span>
     <span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">y_train_predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">y_test_predict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TestContext.set_context_data"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestContext.set_context_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -146,39 +132,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">models</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">train_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">train_ds</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">test_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">test_ds</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">validation_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">validation_ds</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">y_train_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">y_train_predict</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">y_test_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">y_test_predict</span>
-
-<div class="viewcode-block" id="TestContextUtils.class_predictions"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestContextUtils.class_predictions">[docs]</a>    <span class="k">def</span> <span class="nf">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Converts a set of probability predictions to class predictions</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            y_predict (np.array, pd.DataFrame): Predictions to convert</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (np.array, pd.DataFrame): Class predictions</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: parametrize at some point</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">y_predict</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
