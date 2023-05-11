@@ -1,0 +1,35 @@
+# This worklfow pushes the ValidMind Developer Framework package to PyPI
+
+name: Publish to PyPI
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.8"
+          cache: "poetry"
+
+      - name: Install Dependencies
+        run: poetry install
+
+      - name: Publish to PyPI
+        run: |
+          find validmind/ -name "*.py" ! -name "__init__.py" -exec bash -c 'mv "$0" "${0%.py}.pyx"' {} \;
+          poetry run python setup.py build_ext --inplace
+          poetry build
+          poetry run twine upload -u __token__ -p ${{ secrets.POETRY_PYPI_TOKEN_PYPI }} dist/*
