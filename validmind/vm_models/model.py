@@ -3,8 +3,8 @@ Model class wrapper
 """
 from dataclasses import dataclass, fields
 
-import torch
-import torch.nn as nn
+# import torch
+# import torch.nn as nn
 
 SUPPORTED_MODEL_TYPES = [
     "pytorch.PyTorchModel",
@@ -68,7 +68,9 @@ class Model:
         Checks if the model is a PyTorch model. Need to extend this
         method to check for all ways a PyTorch model can be created
         """
-        return isinstance(model, nn.Module)
+        return False
+        # TBD. Fix setting PyTorch on Ubuntu
+        # return isinstance(model, nn.Module)
 
     def predict(self, *args, **kwargs):
         """
@@ -80,11 +82,12 @@ class Model:
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
         if Model._is_pytorch_model(self.model):
-            input_df = args[0]
-            rest_args = args[1:]
-            input_values = torch.tensor(input_df.values, dtype=torch.float32)
-            predictions = self.model(input_values, *rest_args, **kwargs)
-            return predictions.detach().numpy()
+            return []
+            # input_df = args[0]
+            # rest_args = args[1:]
+            # input_values = torch.tensor(input_df.values, dtype=torch.float32)
+            # predictions = self.model(input_values, *rest_args, **kwargs)
+            # return predictions.detach().numpy()
 
         return self.model.predict(*args, **kwargs)
 
