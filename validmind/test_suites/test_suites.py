@@ -10,6 +10,7 @@ class TabularDataset(TestSuite):
     Test suite for tabular datasets.
     """
 
+    name = "tabular_dataset"
     required_context = ["dataset"]
 
     test_plans = [
@@ -23,6 +24,7 @@ class BinaryClassifierModelValidation(TestSuite):
     Test suite for binary classification models.
     """
 
+    name = "binary_classifier_model_validation"
     required_context = ["model"]
 
     test_plans = [
@@ -37,6 +39,7 @@ class BinaryClassifierFullSuite(TestSuite):
     Full test suite for binary classification models.
     """
 
+    name = "binary_classifier_full_suite"
     required_context = ["dataset", "model"]
 
     test_plans = [
