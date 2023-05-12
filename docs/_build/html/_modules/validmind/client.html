@@ -81,7 +81,8 @@
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">LogisticRegression</span>
 
 <span class="c1"># from .model_validation import evaluate_model as mod_evaluate_model</span>
-<span class="kn">from</span> <span class="nn">.test_plans</span> <span class="kn">import</span> <span class="n">get_by_name</span>
+<span class="kn">from</span> <span class="nn">.test_plans</span> <span class="kn">import</span> <span class="n">get_by_name</span> <span class="k">as</span> <span class="n">get_test_plan_by_name</span>
+<span class="kn">from</span> <span class="nn">.test_suites</span> <span class="kn">import</span> <span class="n">get_by_name</span> <span class="k">as</span> <span class="n">get_test_suite_by_name</span>
 <span class="kn">from</span> <span class="nn">.vm_models</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Dataset</span><span class="p">,</span>
     <span class="n">DatasetTargets</span><span class="p">,</span>
@@ -89,6 +90,7 @@
     <span class="n">ModelAttributes</span><span class="p">,</span>
     <span class="n">R_MODEL_TYPES</span><span class="p">,</span>
     <span class="n">TestPlan</span><span class="p">,</span>
+    <span class="n">TestSuite</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -138,10 +140,10 @@
 
 
 <div class="viewcode-block" id="init_model"><a class="viewcode-back" href="../../api.html#validmind.init_model">[docs]</a><span class="k">def</span> <span class="nf">init_model</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
-        <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">validation_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+    <span class="n">train_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">test_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">validation_ds</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Initializes a VM Model, which can then be passed to other functions</span>
@@ -165,7 +167,9 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">Model</span><span class="o">.</span><span class="n">init_vm_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="p">,</span> <span class="n">test_ds</span><span class="p">,</span> <span class="n">validation_ds</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">())</span></div>
+    <span class="k">return</span> <span class="n">Model</span><span class="o">.</span><span class="n">init_vm_model</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="p">,</span> <span class="n">test_ds</span><span class="p">,</span> <span class="n">validation_ds</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">ModelAttributes</span><span class="p">()</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="init_r_model"><a class="viewcode-back" href="../../api.html#validmind.init_r_model">[docs]</a><span class="k">def</span> <span class="nf">init_r_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
@@ -266,7 +270,7 @@
 <span class="sd">        dict: A dictionary of test results</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">Plan</span><span class="p">:</span> <span class="n">TestPlan</span> <span class="o">=</span> <span class="n">get_by_name</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">)</span>
+        <span class="n">Plan</span><span class="p">:</span> <span class="n">TestPlan</span> <span class="o">=</span> <span class="n">get_test_plan_by_name</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Error retrieving test plan </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_plan_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
@@ -284,40 +288,43 @@
     <span class="k">return</span> <span class="n">plan</span></div>
 
 
-<span class="c1"># def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Evaluates a model and logs results to the ValidMind API. This function will log information</span>
-<span class="c1">#     about the trained model (parameters, etc.), training metrics, test metrics, and run model</span>
-<span class="c1">#     evaluation tests.</span>
+<div class="viewcode-block" id="run_test_suite"><a class="viewcode-back" href="../../api.html#validmind.run_test_suite">[docs]</a><span class="k">def</span> <span class="nf">run_test_suite</span><span class="p">(</span><span class="n">test_suite_name</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;High Level function for running a test suite</span>
 
-<span class="c1">#     :param model: The model to evaluate. Only scikit-learn and XGBoost models are supported at the moment</span>
-<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) train_set: (x_train, y_train) tuple</span>
-<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) val_set: (x_val, y_val) tuple</span>
-<span class="c1">#     :param (pd.DataFrame, pd.DataFrame) test_set: (x_test, y_test) tuple</span>
-<span class="c1">#     :param dict eval_opts: A dictionary of options for the model evaluation</span>
-<span class="c1">#     :param bool send: Whether to post the test results to the API. send=False is useful for testing</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     print(&quot;Logging model metadata and parameters...&quot;)</span>
-<span class="c1">#     log_model(model)</span>
+<span class="sd">    This function provides a high level interface for running a test suite. A test suite is</span>
+<span class="sd">    a collection of test plans. This function will automatically find the correct test suite</span>
+<span class="sd">    class based on the test_suite_name, initialize each of the test plans, and run them.</span>
 
-<span class="c1">#     print(&quot;Extracting training/validation set metrics from trained model...&quot;)</span>
-<span class="c1">#     x_train, y_train = train_set</span>
-<span class="c1">#     x_val, y_val = val_set</span>
+<span class="sd">    Args:</span>
+<span class="sd">        test_suite_name (str): The test suite name (e.g. &#39;binary_classifier_full_suite&#39;)</span>
+<span class="sd">        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</span>
+<span class="sd">        **kwargs: Additional keyword arguments to pass to the test suite. These will provide</span>
+<span class="sd">            the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.</span>
+<span class="sd">            See the documentation for the specific test plan, metric or threshold test for more details.</span>
 
-<span class="c1">#     log_training_metrics(</span>
-<span class="c1">#         model, x_train.copy(), y_train.copy(), x_val.copy(), y_val.copy()</span>
-<span class="c1">#     )</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the test suite name is not found or if there is an error initializing the test suite</span>
 
-<span class="c1">#     print(&quot;Running model evaluation tests...&quot;)</span>
-<span class="c1">#     eval_results = mod_evaluate_model(</span>
-<span class="c1">#         model,</span>
-<span class="c1">#         test_set=test_set,</span>
-<span class="c1">#         train_set=train_set,</span>
-<span class="c1">#         eval_opts=eval_opts,</span>
-<span class="c1">#         send=send,</span>
-<span class="c1">#     )</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        TestSuite: the TestSuite instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Suite</span><span class="p">:</span> <span class="n">TestSuite</span> <span class="o">=</span> <span class="n">get_test_suite_by_name</span><span class="p">(</span><span class="n">test_suite_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Error retrieving test suite </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_suite_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="p">)</span>
 
-<span class="c1">#     return eval_results</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">suite</span> <span class="o">=</span> <span class="n">Suite</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Error initializing test suite </span><span class="si">{}</span><span class="s2">. </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_suite_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">suite</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">suite</span></div>
 </pre></div>
 
            </div>

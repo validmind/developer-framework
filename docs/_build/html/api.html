@@ -220,6 +220,35 @@ See the documentation for the specific test plan for more details.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">validmind.</span></span><span class="sig-name descname"><span class="pre">run_test_suite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_suite_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">send</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/client.html#run_test_suite"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>High Level function for running a test suite</p>
+<p>This function provides a high level interface for running a test suite. A test suite is
+a collection of test plans. This function will automatically find the correct test suite
+class based on the test_suite_name, initialize each of the test plans, and run them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_suite_name</strong> (<em>str</em>) – The test suite name (e.g. ‘binary_classifier_full_suite’)</p></li>
+<li><p><strong>send</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the test suite. These will provide
+the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
+See the documentation for the specific test plan, metric or threshold test for more details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the test suite name is not found or if there is an error initializing the test suite</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the TestSuite instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>TestSuite</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">validmind.</span></span><span class="sig-name descname"><span class="pre">log_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vm_dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/api_client.html#log_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Logs metadata and statistics about a dataset to ValidMind API.</p>
 <dl class="field-list simple">
