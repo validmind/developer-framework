@@ -148,6 +148,7 @@ class TestPlanDatasetResult(TestPlanResult):
     Result wrapper for datasets that run as part of a test plan
     """
 
+    result_id: str = None
     dataset: Dataset = None
 
     def __repr__(self) -> str:

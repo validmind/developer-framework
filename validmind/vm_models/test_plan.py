@@ -1,13 +1,12 @@
 """
 TestPlan class
 """
-import os
-
 from dataclasses import dataclass
 from typing import ClassVar, List
 
-from IPython.display import display, HTML
-from tqdm import tqdm
+import ipywidgets as widgets
+
+from IPython.display import display
 
 from ..utils import is_notebook
 from .dataset import Dataset
@@ -15,8 +14,6 @@ from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
 from ..utils import clean_docstring
-
-VM_SUMMARIZE_TEST_PLANS = os.environ.get("VM_SUMMARIZE_TEST_PLANS", "True")
 
 
 @dataclass
@@ -48,8 +45,13 @@ class TestPlan:
     # Multiple models for model comparison tests
     models: List[Model] = None
 
-    # tqdm progress bar
-    pbar: tqdm = None
+    # ipywidgets progress bar
+    pbar: widgets.IntProgress = None
+    pbar_description: widgets.Label = None
+    pbar_box: widgets.HBox = None
+
+    # Stores the HTML summary of the test plan
+    summary: str = None
 
     def __repr__(self):
         class_name = type(self).__name__
@@ -118,9 +120,39 @@ class TestPlan:
 
         return self.config.get(test_name, None)
 
-    def run(self, send=True):  # noqa C901 'TestPlan.run' is too complex
+    def _init_pbar(self, render_summary: bool = True, send: bool = True):
+        """
+        Initializes the progress bar elements
+        """
+        self.pbar = widgets.IntProgress(
+            value=0,
+            min=0,
+            max=len(self.tests) * 2 if send else len(self.results),  # tests and results
+            step=1,
+            bar_style="",
+            orientation="horizontal",
+        )
+        self.pbar_description = widgets.Label(value="Running test plan...")
+        # Display them in a horizontal box
+        self.pbar_box = widgets.HBox([self.pbar_description, self.pbar])
+
+        if render_summary:
+            display(self.pbar_box)
+
+    def run(  # noqa C901 'TestPlan.run' is too complex
+        self, render_summary: bool = True, send: bool = True
+    ):
         """
         Runs the test plan
+
+        Args:
+            render_summary: Defaults to True. Whether to render the summary of the test
+                plan. When it's False, this allows test suites to collect the results of
+                sub test plans and render them all at once with widgets
+            send: Whether to send the results to the backend
+
+        Returns:
+            None
         """
         self.results = []  # Empty the results cache on every run
 
@@ -132,15 +164,7 @@ class TestPlan:
             )
 
         if self.pbar is None:
-            self.pbar = tqdm(
-                total=len(self.tests),
-                desc=f"Running test plan: '{self.name}'",
-                leave=False,
-            )
-        else:
-            # if already initiated (meaning we are in a sub test plan), reset it
-            self.pbar.reset(total=len(self.tests))
-            self.pbar.set_description(f"Running sub test plan: '{self.name}'")
+            self._init_pbar(render_summary=render_summary, send=send)
 
         for test in self.tests:
             # TODO: we need to unify key/name for any object
@@ -152,13 +176,15 @@ class TestPlan:
             test_params = self.get_config_params_for_test(test_name)
             test_instance = test(self.test_context, params=test_params)
 
-            self.pbar.set_description(f"Running {test.test_type}: {test_instance.name}")
+            self.pbar_description.value = (
+                f"Running {test.test_type}: {test_instance.name}"
+            )
 
             result = test_instance.run()
 
             if result is None:
-                self.pbar.set_description("Test returned None, skipping...")
-                self.pbar.update(1)
+                self.pbar_description.value = "Test returned None, skipping..."
+                self.pbar.value += 1
                 continue
 
             if not isinstance(result, TestPlanResult):
@@ -167,19 +193,17 @@ class TestPlan:
                 )
 
             self.results.append(result)
-            self.pbar.update(1)
-
-        # Set the progress bar to 100% if it's not already
-        self.pbar.update(self.pbar.total - self.pbar.n)
+            self.pbar.value += 1
 
         if send:
             self.log_results()
 
+        # TODO: remove
         for test_plan in self.test_plans:
             test_plan_instance = test_plan(
                 config=self.config,
                 test_context=self.test_context,
-                pbar=self.pbar,
+                # pbar=self.pbar,
             )
             test_plan_instance.run(send=send)
 
@@ -189,10 +213,7 @@ class TestPlan:
 
             self._test_plan_instances.append(test_plan_instance)
 
-        self.pbar.close()
-
-        if VM_SUMMARIZE_TEST_PLANS == "True":
-            self.summarize()
+        self.summarize(render_summary)
 
     def log_results(self):
         """Logs the results of the test plan to ValidMind
@@ -200,13 +221,12 @@ class TestPlan:
         This method will be called after the test plan has been run and all results have been
         collected. This method will log the results to ValidMind.
         """
-        self.pbar.reset(total=len(self.results))
-        self.pbar.set_description(
-            f"Sending results of test plan execution '{self.name}' to ValidMind..."
+        self.pbar_description.value = (
+            f"Sending results of test plan '{self.name}' to ValidMind..."
         )
 
         for result in self.results:
-            self.pbar.set_description(f"Logging result: {result}")
+            self.pbar_description.value = f"Logging result: {result.result_id}"
 
             try:
                 result.log()
@@ -217,36 +237,36 @@ class TestPlan:
                 print(e)
                 raise e
 
-            self.pbar.update(1)
+            self.pbar.value += 1
 
-    def _results_title(self, html: str = "") -> str:
+    def _results_title(self) -> str:
         """
         Builds the title for the results of the test plan
         """
-        html += f"<h2>Results for <i>{self.title()}</i> Test Plan:</h2><hr>"
+        return f"<h2>Results for <i>{self.title()}</i> Test Plan:</h2><hr>"
 
-        return html
-
-    def _results_description(self, html: str = "") -> str:
+    def _results_description(self) -> str:
         """
         Builds the description for the results of the test plan. Subclasses
         should override this method to provide an appropriate description
         """
-        html += f'<div class="result">{clean_docstring(self.description())}</div>'
-        return html
+        return f'<div class="result">{clean_docstring(self.description())}</div>'
 
-    def _results_summary(self, html: str = "") -> str:
+    def _results_summary(self) -> str:
         """
         Builds a summary of the results for each of the tests in the test plan
         """
+        accordions = []
         for result in self.results:
             result_html = result._to_html()
             if result_html:
-                html += f'<div class="result">{result_html}</div>'
+                accordions.append(
+                    widgets.HTML(value=f'<div class="result">{result_html}</div>')
+                )
 
-        return html
+        return accordions
 
-    def summarize(self):
+    def summarize(self, render_summary: bool = True):
         """Summarizes the results of the test plan
 
         This method will be called after the test plan has been run and all results have been
@@ -260,12 +280,25 @@ class TestPlan:
         if len(self.results) == 0:
             return
 
-        html = ""
-        html = self._results_title(html)
-        html = self._results_description(html)
-        html = self._results_summary(html)
+        vbox_children = []
 
-        html += """
+        # Only show the title if we are rendering the summary here
+        if render_summary:
+            vbox_children.append(widgets.HTML(value=self._results_title()))
+
+        vbox_children.append(widgets.HTML(value=self._results_description()))
+
+        accordion_contents = self._results_summary()
+        accordion_widget = widgets.Accordion(children=accordion_contents)
+        for i, _ in enumerate(accordion_widget.children):
+            result_id = self.results[i].result_id
+            title = f'{result_id.title().replace("_", " ")} ({result_id})'
+            accordion_widget.set_title(i, title)
+
+        vbox_children.append(accordion_widget)
+
+        style_footer = widgets.HTML(
+            value="""
         <style>
             .result {
                 margin: 10px 0;
@@ -276,8 +309,16 @@ class TestPlan:
             }
         </style>
         """
+        )
 
-        display(HTML(html))
+        # Don't duplicate the footer if we are not rendering the summary here
+        if render_summary:
+            vbox_children.append(style_footer)
+
+        self.summary = widgets.VBox(vbox_children)
+
+        if render_summary:
+            display(self.summary)
 
     def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
         """
