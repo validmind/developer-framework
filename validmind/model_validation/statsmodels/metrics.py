@@ -31,8 +31,7 @@ class ResidualsVisualInspection(Metric):
     Log plots for visual inspection of residuals
     """
 
-    type = "evaluation"
-    key = "residuals_visual_inspection"
+    name = "residuals_visual_inspection"
 
     def get_residuals(self, column, series):
         """
@@ -104,8 +103,7 @@ class ADF(Metric):
     time series
     """
 
-    type = "dataset"  # assume this value
-    key = "adf"
+    name = "adf"
 
     def run(self):
         """
@@ -137,9 +135,7 @@ class KolmogorovSmirnov(Metric):
     whether a given set of data follows a normal distribution.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "kolmogorov_smirnov"
+    name = "kolmogorov_smirnov"
 
     def run(self):
         """
@@ -162,9 +158,7 @@ class ShapiroWilk(Metric):
     whether a given set of data follows a normal distribution.
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "shapiro_wilk"
+    name = "shapiro_wilk"
 
     def run(self):
         """
@@ -192,9 +186,7 @@ class Lilliefors(Metric):
     whether a given set of data follows a normal distribution.
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "lilliefors_test"
+    name = "lilliefors_test"
 
     def run(self):
         """
@@ -220,9 +212,7 @@ class JarqueBera(Metric):
     whether a given set of data follows a normal distribution.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "jarque_bera"
+    name = "jarque_bera"
 
     def run(self):
         """
@@ -252,9 +242,7 @@ class LJungBox(Metric):
     that are different from zero.
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "ljung_box"
+    name = "ljung_box"
 
     def run(self):
         """
@@ -282,9 +270,7 @@ class BoxPierce(Metric):
     that are different from zero.
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "box_pierce"
+    name = "box_pierce"
 
     def run(self):
         """
@@ -313,9 +299,7 @@ class RunsTest(Metric):
     under the null hypothesis of randomness.
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "runs_test"
+    name = "runs_test"
 
     def run(self):
         """
@@ -343,9 +327,7 @@ class DurbinWatsonTest(Metric):
     can be used to detect autocorrelation in a time series.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "durbin_watson"
+    name = "durbin_watson"
 
     def run(self):
         """
@@ -368,9 +350,7 @@ class PhillipsPerronArch(Metric):
     establishing the order of integration of time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "phillips_perron"
+    name = "phillips_perron"
 
     def run(self):
         """
@@ -398,9 +378,7 @@ class ZivotAndrewsArch(Metric):
     establishing the order of integration of time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "zivot_andrews"
+    name = "zivot_andrews"
 
     def run(self):
         """
@@ -428,9 +406,7 @@ class DFGLSArch(Metric):
     establishing the order of integration of time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "dickey_fuller_gls"
+    name = "dickey_fuller_gls"
 
     def run(self):
         """
@@ -458,9 +434,7 @@ class KPSS(Metric):
     establishing the order of integration of time series
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "kpss"
+    name = "kpss"
 
     def run(self):
         """
@@ -490,9 +464,7 @@ class DeterminationOfIntegrationOrderADF(Metric):
     needs to be differenced to make it stationary.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "integration_order_adf"
+    name = "integration_order_adf"
     default_params = {"max_order": 3}
 
     def run(self):
@@ -524,9 +496,7 @@ class AutoARIMA(Metric):
     Automatically fits multiple ARIMA models for each variable and ranks them by BIC and AIC.
     """
 
-    type = "evaluation"  # assume this value
-    scope = "test"  # assume this value (could be "train")
-    key = "auto_arima"
+    name = "auto_arima"
 
     max_p = 3
     max_d = 2
@@ -581,8 +551,6 @@ class RegressionModelSummary(Metric):
     Test that output the summary of regression models of statsmodel library.
     """
 
-    category = "model_performance"
-    scope = "test"
     name = "regression_model_summary"
 
     def run(self):
@@ -624,8 +592,6 @@ class RegressionModelInsampleComparison(Metric):
     Test that output the comparison of stats library regression models.
     """
 
-    category = "model_performance"
-    scope = "test"
     name = "regression_insample_performance"
 
     def description(self):
@@ -708,8 +674,6 @@ class RegressionModelOutsampleComparison(Metric):
     that was not used to train the models.
     """
 
-    category = "model_performance"
-    scope = "test"
     name = "regression_outsample_performance"
 
     def description(self):
@@ -798,9 +762,7 @@ class RegressionModelForecastPlot(Metric):
     This metric creates a plot of forecast vs observed for each model in the list.
     """
 
-    category = "model_forecast"
-    scope = "test"
-    key = "regression_forecast_plot"
+    name = "regression_forecast_plot"
     default_params = {"start_date": None, "end_date": None}
 
     def description(self):

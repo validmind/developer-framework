@@ -29,7 +29,7 @@ class Metric(TestContextUtils):
     test_type: ClassVar[str] = "Metric"
     type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
-    key: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
+    name: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
     default_params: ClassVar[dict] = {}
 
@@ -45,8 +45,11 @@ class Metric(TestContextUtils):
             self.params = self.default_params
 
     @property
-    def name(self):
-        return self.key
+    def key(self):
+        """
+        Keep the key for compatibility reasons
+        """
+        return self.name
 
     def description(self):
         """

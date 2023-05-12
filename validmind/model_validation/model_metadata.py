@@ -177,9 +177,7 @@ class ModelMetadata(Metric):
     - Model task type
     """
 
-    type = "model"
-    scope = "test"
-    key = "model_metadata"
+    name = "model_metadata"
     required_context = ["model"]
 
     column_labels = {

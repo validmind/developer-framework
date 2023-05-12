@@ -10,8 +10,11 @@ from dataclasses import dataclass
 from io import BytesIO, StringIO
 from typing import List, Optional
 import base64
+import json
 
-from IPython.display import display, HTML
+from IPython.display import display
+import ipywidgets as widgets
+import pandas as pd
 
 from ..api_client import (
     get_metadata,
@@ -26,7 +29,9 @@ from .dataset import Dataset
 from .figure import Figure
 from .metric_result import MetricResult
 from .model import Model
+from .result_summary import ResultSummary
 from .test_result import TestResults
+from ..utils import NumpyEncoder
 
 
 def update_metadata(content_id: str, text: str) -> None:
@@ -46,77 +51,38 @@ def update_metadata(content_id: str, text: str) -> None:
         log_metadata(content_id, text)
 
 
-def plot_figures(html: StringIO, figures: List[Figure]) -> None:
+def plot_figures(figures: List[Figure]) -> None:
     """
-    Plot figures to html
+    Plot figures to a ipywidgets GridBox
     """
 
-    plot_htmls = []
+    plots = []
 
     for fig in figures:
         tmpfile = BytesIO()
         fig.figure.savefig(tmpfile, format="png")
         encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-        plot_htmls.append(
-            f"""
-        <div class="metric-plot">
-            <img src="data:image/png;base64,{encoded}"/>
-        </div>
-        """
+        plots.append(
+            widgets.HTML(
+                value=f"""
+                <img src="data:image/png;base64,{encoded}"/>
+                """
+            )
         )
 
-    if len(plot_htmls) > 2:
-        # if theres a lot of plots, we want to only show the first
-        # one and then have an expand button to show the rest
-        html.write(
-            f"""
-        <div class="metric-value">
-            <div class="metric-value-title">
-                Metric Plots
-            </div>
-            <div class="metric-value-value">
-                <a onclick="showMetricPlots(this)" style="cursor: pointer; color: blue;">
-                Show All Plots
-                </a>
-            </div>
-            <div class="metric-value-value">
-                {plot_htmls[0]}
-                <div class="allplots" style="display: none;">
-                    {"".join(plot_htmls[1:])}
-                </div>
-            </div>
-        </div>
-        <script>
-            function showMetricPlots(btn) {{
-                const plots = btn.parentElement.parentElement.querySelector(".allplots");
-                if (plots.style.display === "none") {{
-                    plots.style.display = "block";
-                    btn.innerHTML = "Collapse";
-                }} else {{
-                    plots.style.display = "none";
-                    btn.innerHTML = "Show All Plots";
-                }}
-            }}
-        </script>
-        """
-        )
-    else:
-        html.write(
-            f"""
-        <div class="metric-value">
-            <div class="metric-value-title">Metric Plots</div>
-            <div class="metric-value-value">
-                {"".join(plot_htmls)}
-            </div>
-        </div>
-        """
-        )
+    num_columns = len(figures) if len(figures) <= 3 else 3
+
+    return widgets.GridBox(
+        plots,
+        layout=widgets.Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
+    )
 
 
 @dataclass
 class TestPlanResult(ABC):
     """Base Class for test plan results"""
 
+    name: str = "TestPlanResult"
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
@@ -128,13 +94,28 @@ class TestPlanResult(ABC):
         return self.__class__.__name__
 
     @abstractmethod
-    def _to_html(self):
-        """Create an html representation of the result... Must be overridden by subclasses"""
+    def _to_widget(self):
+        """Create an ipywdiget representation of the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+    def _summary_tables_to_widget(self, summary: ResultSummary):
+        """
+        Create an ipywdiget representation of the summary tables
+        """
+        tables = []
+        for table in summary.results:
+            summary_table = pd.DataFrame(
+                table.data
+            ).to_html()  # table.data is an orient=records dump
+
+            if table.metadata and table.metadata.title:
+                tables.append(widgets.HTML(value=f"<h3>{table.metadata.title}</h3>"))
+            tables.append(widgets.HTML(value=summary_table))
+        return tables
 
     def show(self):
         """Display the result... May be overridden by subclasses"""
-        display(HTML(self._to_html()))
+        display(self._to_widget())
 
     @abstractmethod
     def log(self):
@@ -148,15 +129,15 @@ class TestPlanDatasetResult(TestPlanResult):
     Result wrapper for datasets that run as part of a test plan
     """
 
+    name: str = "Metric"
     result_id: str = None
     dataset: Dataset = None
 
     def __repr__(self) -> str:
         return f'TestPlanDatasetResult(result_id="{self.result_id}")'
 
-    def _to_html(self):
-        html = "<h4>Logged the following dataset to the ValidMind platform:</h4>"
-        return html + self.dataset.df.describe().to_html()
+    def _to_widget(self):
+        return widgets.HTML(value=self.dataset.df.describe().to_html())
 
     def log(self):
         log_dataset(self.dataset)
@@ -168,6 +149,7 @@ class TestPlanMetricResult(TestPlanResult):
     Result wrapper for metrics that run as part of a test plan
     """
 
+    name: str = "Metric"
     figures: Optional[List[Figure]] = None
     metric: Optional[MetricResult] = None
 
@@ -183,64 +165,79 @@ class TestPlanMetricResult(TestPlanResult):
         else:
             return f"{self.__class__.__name__}(result_id={self.result_id}, figures)"
 
-    def _to_html(self):
+    def _to_widget(self):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 
-        html = StringIO()
+        vbox_children = []
 
-        if self.metric:
-            html.write(
-                f"""
-            <h4>Logged the following {self.metric.type} metric to the ValidMind platform:</h4>
-            """
-            )
-        else:
-            html.write(
-                f"""
-            <h4>Logged the following plot{"s" if len(self.figures) > 1 else ""}
-            to the ValidMind platform:</h4>
-            """
+        if self.result_metadata:
+            metric_description = self.result_metadata[0]
+            vbox_children.append(
+                widgets.HTML(value=f"<p>{metric_description.get('text', '')}</p>")
             )
 
         if self.metric:
-            metric_value = self.metric.value
-            # Don't log the entire metric if it has more than 1000 characters
-            if len(metric_value.__str__()) > 1024:
-                metric_value = metric_value.__str__()[:1024] + "..."
+            if self.metric.summary:
+                tables = self._summary_tables_to_widget(self.metric.summary)
+                vbox_children.extend(tables)
+            # else:
+            # vbox_children.append(
+            #     widgets.HTML(
+            #         value=f"""<h4>Unable to display metric summary for {self.result_id}. Please make sure the summary() method is implemented for this metric</h4>"""
+            #     )
+            # )
 
-            html.write(
-                f"""
-            <div class="metric-result">
-                <div class="metric-result-body">
-                    <div class="metric-body-column">
-                        <div class="metric-body-column-title">Metric Name</div>
-                        <div class="metric-body-column-value">{self.metric.key}</div>
-                    </div>
-                    <div class="metric-body-column">
-                        <div class="metric-body-column-title">Metric Type</div>
-                        <div class="metric-body-column-value">{self.metric.type}</div>
-                    </div>
-                    <div class="metric-body-column">
-                        <div class="metric-body-column-title">Metric Scope</div>
-                        <div class="metric-body-column-value">{self.metric.scope}</div>
-                    </div>
-                </div>
-                <div class="metric-value">
-                    <div class="metric-value-title">Metric Value</div>
-                    <div class="metric-value-value">
-                        <pre>{metric_value}</pre>
-                    </div>
-                </div>
-            """
-            )
+            # Disable for now and fix later
+            #
+            # view_raw_data_button = widgets.Button(description="View Raw Data")
+
+            # # Hide raw data by default
+            # output = widgets.Output()
+            # output.layout.display = "none"
+
+            # metric_value = self.metric.value
+            # metric_output = (
+            #     json.dumps(metric_value, indent=2, cls=NumpyEncoder)
+            #     if type(metric_value) == dict
+            #     else str(metric_value)
+            # )
+
+            # with output:
+            #     display(
+            #         widgets.HTML(
+            #             value=f"""
+            #         <div class="metric-result">
+            #             <div class="metric-value">
+            #                 <div class="metric-value-title">Raw Metric Value</div>
+            #                 <div class="metric-value-value">
+            #                     <pre>{metric_output}</pre>
+            #                 </div>
+            #             </div>
+            #         </div>
+            #         """
+            #         )
+            #     )
+
+            # def on_button_clicked(b):
+            #     if output.layout.display == "none":
+            #         output.layout.display = "block"
+            #     else:
+            #         output.layout.display = "none"
+
+            # view_raw_data_button.on_click(on_button_clicked)
+
+            # vbox_children.append(view_raw_data_button)
+            # vbox_children.append(output)
 
         if self.figures:
-            plot_figures(html, self.figures)
+            vbox_children.append(widgets.HTML(value=f"<h3>Plots</h3>"))
+            plot_widgets = plot_figures(self.figures)
+            vbox_children.append(plot_widgets)
 
-        html.write(
-            """
-        </div>
+        vbox_children.append(
+            widgets.HTML(
+                value="""
         <style>
             .metric-result {
                 background-color: #F5F5F5;
@@ -280,19 +277,12 @@ class TestPlanMetricResult(TestPlanResult):
                 font-weight: 500;
                 margin-top: 10px;
             }
-            .metric-plot img {
-                margin-left: auto !important;
-                margin-right: auto !important;
-                max-height: 500px !important;
-                height: 100%;
-                width: auto;
-                max-width: 800px;
-            }
         </style>
         """
+            )
         )
 
-        return html.getvalue()
+        return widgets.VBox(vbox_children)
 
     def log(self):
         if self.metric:
@@ -311,11 +301,12 @@ class TestPlanModelResult(TestPlanResult):
     Result wrapper for models that run as part of a test plan
     """
 
+    name: str = "Metric"
     model: Model = None
 
-    def _to_html(self):
-        return f"""
-        <h4>Logged the following model to the ValidMind platform:</h4>
+    def _to_widget(self):
+        return widgets.HTML(
+            value=f"""
         <div class="model-result">
             <div class="model-result-header">
                 <div class="model-result-header-title">
@@ -383,6 +374,7 @@ class TestPlanModelResult(TestPlanResult):
             }}
         </style>
         """
+        )
 
     def log(self):
         log_model(self.model)
@@ -394,6 +386,7 @@ class TestPlanTestResult(TestPlanResult):
     Result wrapper for test results produced by the tests that run as part of a test plan
     """
 
+    name: str = "Threshold Test"
     figures: Optional[List[Figure]] = None
     test_results: TestResults = None
 
@@ -413,11 +406,11 @@ class TestPlanTestResult(TestPlanResult):
         else:
             return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
 
-    def _to_html(self):
-        html = StringIO()
-        html.write(
-            f"""
-        <h4>Logged the following test result to the ValidMind platform:</h4>
+    def _to_widget(self):
+        vbox_children = []
+        vbox_children.append(
+            widgets.HTML(
+                value=f"""
         <div class="metric-result">
             <div class="metric-result-body">
                 <div class="test-result-header-title">
@@ -456,17 +449,19 @@ class TestPlanTestResult(TestPlanResult):
                     See Result Details
                 </a>
             </div>
-            <div class="metric-result-body">
+        </div>
         """
+            )
         )
 
         if self.figures:
-            plot_figures(html, self.figures)
+            vbox_children.append(widgets.HTML(value=f"<h3>Plots</h3>"))
+            plot_widgets = plot_figures(self.figures)
+            vbox_children.append(plot_widgets)
 
-        html.write(
-            """
-            </div>
-        </div>
+        vbox_children.append(
+            widgets.HTML(
+                value="""
         <style>
             .metric-result {
                 background-color: #F5F5F5;
@@ -505,14 +500,6 @@ class TestPlanTestResult(TestPlanResult):
                 font-size: 14px;
                 font-weight: 500;
                 margin-top: 10px;
-            }
-            .metric-plot img {
-                margin-left: auto !important;
-                margin-right: auto !important;
-                max-height: 500px !important;
-                height: 100%;
-                width: auto;
-                max-width: 800px;
             }
             .test-result {
                 border: 1px solid #ccc;
@@ -560,9 +547,10 @@ class TestPlanTestResult(TestPlanResult):
             }}
         </script>
         """
+            )
         )
 
-        return html.getvalue()
+        return widgets.VBox(vbox_children)
 
     def log(self):
         log_test_result(self.test_results)
