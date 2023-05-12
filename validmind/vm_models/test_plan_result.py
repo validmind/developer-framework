@@ -7,10 +7,9 @@ import os
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from io import BytesIO, StringIO
+from io import BytesIO
 from typing import List, Optional
 import base64
-import json
 
 from IPython.display import display
 import ipywidgets as widgets
@@ -31,7 +30,6 @@ from .metric_result import MetricResult
 from .model import Model
 from .result_summary import ResultSummary
 from .test_result import TestResults
-from ..utils import NumpyEncoder
 
 
 def update_metadata(content_id: str, text: str) -> None:
@@ -231,7 +229,7 @@ class TestPlanMetricResult(TestPlanResult):
             # vbox_children.append(output)
 
         if self.figures:
-            vbox_children.append(widgets.HTML(value=f"<h3>Plots</h3>"))
+            vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
 
@@ -455,7 +453,7 @@ class TestPlanTestResult(TestPlanResult):
         )
 
         if self.figures:
-            vbox_children.append(widgets.HTML(value=f"<h3>Plots</h3>"))
+            vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
 

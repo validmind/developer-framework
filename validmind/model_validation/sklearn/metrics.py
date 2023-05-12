@@ -2,7 +2,6 @@
 Metrics functions models trained with sklearn or that provide
 a sklearn-like API
 """
-from typing import Optional, Union
 import warnings
 from dataclasses import dataclass
 
