@@ -72,19 +72,6 @@ class TimeSeriesDataQuality(TestPlan):
     tests = [TimeSeriesOutliers, TimeSeriesMissingValues, TimeSeriesFrequency]
 
 
-class TabularDataset(TestPlan):
-    """
-    Test plan for generic tabular datasets
-    """
-
-    name = "tabular_dataset"
-    required_context = ["dataset"]
-    test_plans = [
-        TabularDatasetDescription,
-        TabularDataQuality,
-    ]
-
-
 class TimeSeriesDataset(TestPlan):
     """
     Test plan for time series  datasets

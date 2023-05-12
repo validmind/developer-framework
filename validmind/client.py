@@ -8,7 +8,8 @@ import xgboost as xgb
 from sklearn.linear_model import LinearRegression, LogisticRegression
 
 # from .model_validation import evaluate_model as mod_evaluate_model
-from .test_plans import get_by_name
+from .test_plans import get_by_name as get_test_plan_by_name
+from .test_suites import get_by_name as get_test_suite_by_name
 from .vm_models import (
     Dataset,
     DatasetTargets,
@@ -16,6 +17,7 @@ from .vm_models import (
     ModelAttributes,
     R_MODEL_TYPES,
     TestPlan,
+    TestSuite,
 )
 
 
@@ -65,10 +67,10 @@ def init_dataset(
 
 
 def init_model(
-        model: object,
-        train_ds: Dataset = None,
-        test_ds: Dataset = None,
-        validation_ds: Dataset = None
+    model: object,
+    train_ds: Dataset = None,
+    test_ds: Dataset = None,
+    validation_ds: Dataset = None,
 ) -> Model:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -92,7 +94,9 @@ def init_model(
             )
         )
 
-    return Model.init_vm_model(model, train_ds, test_ds, validation_ds, attributes=ModelAttributes())
+    return Model.init_vm_model(
+        model, train_ds, test_ds, validation_ds, attributes=ModelAttributes()
+    )
 
 
 def init_r_model(model_path: str, model_type: str) -> Model:
@@ -193,7 +197,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         dict: A dictionary of test results
     """
     try:
-        Plan: TestPlan = get_by_name(test_plan_name)
+        Plan: TestPlan = get_test_plan_by_name(test_plan_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
@@ -211,37 +215,40 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     return plan
 
 
-# def evaluate_model(model, train_set, val_set, test_set, eval_opts=None, send=True):
-#     """
-#     Evaluates a model and logs results to the ValidMind API. This function will log information
-#     about the trained model (parameters, etc.), training metrics, test metrics, and run model
-#     evaluation tests.
+def run_test_suite(test_suite_name, send=True, **kwargs):
+    """High Level function for running a test suite
 
-#     :param model: The model to evaluate. Only scikit-learn and XGBoost models are supported at the moment
-#     :param (pd.DataFrame, pd.DataFrame) train_set: (x_train, y_train) tuple
-#     :param (pd.DataFrame, pd.DataFrame) val_set: (x_val, y_val) tuple
-#     :param (pd.DataFrame, pd.DataFrame) test_set: (x_test, y_test) tuple
-#     :param dict eval_opts: A dictionary of options for the model evaluation
-#     :param bool send: Whether to post the test results to the API. send=False is useful for testing
-#     """
-#     print("Logging model metadata and parameters...")
-#     log_model(model)
+    This function provides a high level interface for running a test suite. A test suite is
+    a collection of test plans. This function will automatically find the correct test suite
+    class based on the test_suite_name, initialize each of the test plans, and run them.
 
-#     print("Extracting training/validation set metrics from trained model...")
-#     x_train, y_train = train_set
-#     x_val, y_val = val_set
+    Args:
+        test_suite_name (str): The test suite name (e.g. 'binary_classifier_full_suite')
+        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        **kwargs: Additional keyword arguments to pass to the test suite. These will provide
+            the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
+            See the documentation for the specific test plan, metric or threshold test for more details.
 
-#     log_training_metrics(
-#         model, x_train.copy(), y_train.copy(), x_val.copy(), y_val.copy()
-#     )
+    Raises:
+        ValueError: If the test suite name is not found or if there is an error initializing the test suite
 
-#     print("Running model evaluation tests...")
-#     eval_results = mod_evaluate_model(
-#         model,
-#         test_set=test_set,
-#         train_set=train_set,
-#         eval_opts=eval_opts,
-#         send=send,
-#     )
+    Returns:
+        TestSuite: the TestSuite instance
+    """
+    try:
+        Suite: TestSuite = get_test_suite_by_name(test_suite_name)
+    except ValueError as exc:
+        raise ValueError(
+            "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))
+        )
 
-#     return eval_results
+    try:
+        suite = Suite(**kwargs)
+    except ValueError as exc:
+        raise ValueError(
+            "Error initializing test suite {}. {}".format(test_suite_name, str(exc))
+        )
+
+    suite.run(send=send)
+
+    return suite
