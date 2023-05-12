@@ -427,6 +427,10 @@ Returns the dataset’s features
 Returns the dataset’s target column
 
 
+#### _property_ index()
+Returns the dataset’s index.
+
+
 #### get_feature_by_id(feature_id)
 Returns the feature with the given id. We also build a lazy
 lookup cache in case the same feature is requested multiple times.
