@@ -1,7 +1,7 @@
 """
 Dataset class wrapper
 """
-from dataclasses import dataclass, field, fields
+from dataclasses import dataclass, fields
 
 from dython.nominal import associations
 
