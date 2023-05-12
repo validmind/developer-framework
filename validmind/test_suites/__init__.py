@@ -58,9 +58,7 @@ def list_suites(pretty: bool = True):
                 "ID": name,
                 "Name": test_suite.__name__,
                 "Description": test_suite.__doc__.strip(),
-                "Test Plans": ", ".join(
-                    [plan.__name__ for plan in test_suite.test_plans]
-                ),
+                "Test Plans": ", ".join(test_suite.test_plans),
             }
         )
 
