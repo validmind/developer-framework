@@ -642,12 +642,17 @@ class RegressionModelInsampleComparison(Metric):
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
-        for model in self.models:
+        if self.model is not None:
+            all_models.append(self.model)
+
+        if self.models is not None:
+            all_models.extend(self.models)
+
+        for model in all_models:
             if model.model.__class__.__name__ != "RegressionResultsWrapper":
                 raise ValueError(
                     "Only RegressionResultsWrapper models of statsmodels library supported"
                 )
-            all_models.append(model.model)
 
         results = self._in_sample_performance_ols(all_models)
         return self.cache_results(results)
@@ -672,15 +677,13 @@ class RegressionModelInsampleComparison(Metric):
         evaluation_results = []
 
         for i, model in enumerate(models):
-            # print(model.model)
-            X_columns = model.model.exog_names
-
+            X_columns = model.model.model.exog_names
             # Extract R-squared and Adjusted R-squared
-            r2 = model.rsquared
-            adj_r2 = model.rsquared_adj
+            r2 = model.model.rsquared
+            adj_r2 = model.model.rsquared_adj
 
             # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
-            mse = model.mse_resid
+            mse = model.model.mse_resid
             rmse = mse**0.5
 
             # Append the results to the evaluation_results list
@@ -723,12 +726,21 @@ class RegressionModelOutsampleComparison(Metric):
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
-        for model in self.models:
+        if self.model is not None:
+            all_models.append(self.model)
+
+        if self.models is not None:
+            all_models.extend(self.models)
+
+        for model in all_models:
             if model.model.__class__.__name__ != "RegressionResultsWrapper":
                 raise ValueError(
                     "Only RegressionResultsWrapper models of statsmodels library supported"
                 )
-            all_models.append(model)
+            if model.test_ds is None:
+                raise ValueError(
+                    "Test dataset is missing in the ValidMind Model object"
+                )
 
         results = self._out_sample_performance_ols(
             all_models,
@@ -761,7 +773,7 @@ class RegressionModelOutsampleComparison(Metric):
             y_test = fitted_model.test_ds.y
 
             # Predict the test data
-            y_pred = fitted_model.predict(X_test)
+            y_pred = fitted_model.model.predict(X_test)
 
             # Calculate the residuals
             residuals = y_test - y_pred

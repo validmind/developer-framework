@@ -462,7 +462,6 @@ class TimeSeriesOutliers(ThresholdTest):
         Returns:
             matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
         """
-        print(outliers_table)
         sns.set(style="darkgrid")
         n_variables = len(df.columns)
         fig, axes = plt.subplots(n_variables, 1, sharex=True)
