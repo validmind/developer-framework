@@ -203,12 +203,12 @@ class OverfitDiagnosis(ThresholdTest):
         prediction_column = f"{target_column}_pred"
 
         # Add prediction column in the training dataset
-        train_df = self.model.train_ds.df.copy(deep=True)
+        train_df = self.model.train_ds.df.copy()
         train_class_pred = self.model.class_predictions(self.model.y_train_predict)
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
-        test_df = self.model.test_ds.df.copy(deep=True)
+        test_df = self.model.test_ds.df.copy()
         test_class_pred = self.model.class_predictions(self.model.y_test_predict)
         test_df[prediction_column] = test_class_pred
 
@@ -293,7 +293,7 @@ class OverfitDiagnosis(ThresholdTest):
 
         results_train = pd.DataFrame(results_train)
         results_test = pd.DataFrame(results_test)
-        results = results_train.copy(deep=True)
+        results = results_train.copy()
         results.rename(
             columns={"shape": "training records", "accuracy": "training accuracy"},
             inplace=True,
@@ -458,11 +458,11 @@ class WeakspotsDiagnosis(ThresholdTest):
         target_column = self.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
-        train_df = self.model.train_ds.df.copy(deep=True)
+        train_df = self.model.train_ds.df.copy()
         train_class_pred = self.model.class_predictions(self.model.y_train_predict)
         train_df[prediction_column] = train_class_pred
 
-        test_df = self.model.test_ds.df.copy(deep=True)
+        test_df = self.model.test_ds.df.copy()
         test_class_pred = self.model.class_predictions(self.model.y_test_predict)
         test_df[prediction_column] = test_class_pred
 
@@ -704,10 +704,10 @@ class RobustnessDiagnosis(ThresholdTest):
         if self.model.train_ds.target_column in features_list:
             features_list.remove(self.model.train_ds.target_column)
 
-        train_df = self.model.train_ds.x.copy(deep=True)
+        train_df = self.model.train_ds.x.copy()
         train_y_true = self.model.train_ds.y
 
-        test_df = self.model.test_ds.x.copy(deep=True)
+        test_df = self.model.test_ds.x.copy()
         test_y_true = self.model.test_ds.y
 
         test_results = []
@@ -719,8 +719,8 @@ class RobustnessDiagnosis(ThresholdTest):
 
         # Iterate scaling factor for the standard deviation list
         for x_std_dev in x_std_dev_list:
-            temp_train_df = train_df.copy(deep=True)
-            temp_test_df = test_df.copy(deep=True)
+            temp_train_df = train_df.copy()
+            temp_test_df = test_df.copy()
 
             # Add noise to numeric features columns provided by user
             for feature in features_list:

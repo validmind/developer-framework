@@ -6,14 +6,18 @@ authors = [
   "Luis Pallares <luis@validmind.ai>",
 ]
 description = "ValidMind Developer Framework"
-include = ["validmind/*.c", "validmind/*.py", "validmind/*.pyx", "validmind/*.pyd", "validmind/*.so"]
+# include = [
+#   "validmind/**/*.c",
+#   "validmind/**/*.pyx",
+#   "validmind/**/*.pyd",
+#   "validmind/**/*.so",
+# ]
 name = "validmind"
 version = "1.7.1"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
 click = "^8.0.4"
-cython = "^0.29.34"
 dython = "^0.7.1"
 ipython = "^8.11.0"
 myst-parser = "^1.0.0"
@@ -35,17 +39,18 @@ sphinx-rtd-theme = "^1.2.0"
 statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
-twine = "^4.0.2"
 xgboost = "^1.5.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
 click = "^8.1.3"
+cython = "^0.29.34"
 flake8 = "^4.0.1"
 ipykernel = "^6.22.0"
 jupyter = "^1.0.0"
 jupyterlab = "^3.6.3"
 pytest = "^5.2"
+twine = "^4.0.2"
 
 [tool.poetry.extras]
 r-support = ["rpy2"]

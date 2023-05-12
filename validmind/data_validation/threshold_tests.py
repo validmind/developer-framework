@@ -389,7 +389,7 @@ class TimeSeriesOutliers(ThresholdTest):
             raise ValueError("zscore_threshold must be provided in params")
         zscore_threshold = self.params["zscore_threshold"]
 
-        temp_df = self.df.copy(deep=True)
+        temp_df = self.df.copy()
         temp_df = temp_df.dropna()
         typeset = ProfilingTypeSet(Settings())
         dataset_types = typeset.infer_type(temp_df)

@@ -3,13 +3,8 @@ import pickle
 import pandas as pd
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-dataset_path = os.path.join(
-    current_path, "..", "..", "..", "notebooks", "datasets", "time_series"
-)
-
-models_path = os.path.join(
-    current_path, "..", "..", "..", "notebooks", "models", "time_series"
-)
+dataset_path = os.path.join(current_path, "datasets")
+models_path = os.path.join(current_path, "models")
 
 
 target_column = "MORTGAGE30US"

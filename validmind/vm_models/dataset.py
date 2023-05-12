@@ -47,13 +47,15 @@ class Dataset:
     target_column: str = ""
     class_labels: dict = None
 
-    __feature_lookup: dict = field(default_factory=dict)
-    __transformed_df: object = None
+    _feature_lookup: dict = None
+    _transformed_df: object = None
 
     def __post_init__(self):
         """
         Set target_column and class_labels from DatasetTargets
         """
+        self._feature_lookup = {}
+
         if self.targets:
             self.target_column = self.targets.target_column
             self.class_labels = self.targets.class_labels
@@ -100,14 +102,14 @@ class Dataset:
         Returns:
             dict: The feature with the given id
         """
-        if feature_id not in self.__feature_lookup:
+        if feature_id not in self._feature_lookup:
             for feature in self.fields:
                 if feature["id"] == feature_id:
-                    self.__feature_lookup[feature_id] = feature
+                    self._feature_lookup[feature_id] = feature
                     return feature
             raise ValueError(f"Feature with id {feature_id} does not exist")
 
-        return self.__feature_lookup[feature_id]
+        return self._feature_lookup[feature_id]
 
     def get_feature_type(self, feature_id):
         """
@@ -237,8 +239,8 @@ class Dataset:
         Returns:
             pd.DataFrame: The transformed dataset
         """
-        if self.__transformed_df is not None and force_refresh is False:
-            return self.__transformed_df
+        if self._transformed_df is not None and force_refresh is False:
+            return self._transformed_df
 
         # Get the list of features that are of type Dummy
         dataset_options = self.options

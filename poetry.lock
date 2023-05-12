@@ -349,7 +349,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 name = "bleach"
 version = "6.0.0"
 description = "An easy safelist-based HTML-sanitizing tool."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -676,7 +676,7 @@ test-no-images = ["pytest"]
 name = "cryptography"
 version = "40.0.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -730,7 +730,7 @@ files = [
 name = "cython"
 version = "0.29.34"
 description = "The Cython compiler for writing C extensions for the Python language."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 files = [
@@ -1181,7 +1181,7 @@ arrow = ">=0.15.0"
 name = "jaraco-classes"
 version = "3.2.3"
 description = "Utility functions for Python class constructs"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1220,7 +1220,7 @@ testing = ["Django (<3.1)", "attrs", "colorama", "docopt", "pytest (<7.0.0)"]
 name = "jeepney"
 version = "0.8.0"
 description = "Low-level, pure Python DBus protocol wrapper."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1635,7 +1635,7 @@ files = [
 name = "keyring"
 version = "23.13.1"
 description = "Store and access your passwords safely."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2012,7 +2012,7 @@ files = [
 name = "more-itertools"
 version = "9.1.0"
 description = "More routines for operating on iterables, beyond itertools"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2649,7 +2649,7 @@ tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "pa
 name = "pkginfo"
 version = "1.9.6"
 description = "Query metadata from sdists / bdists / installed packages."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -3173,7 +3173,7 @@ files = [
 name = "pywin32-ctypes"
 version = "0.2.0"
 description = ""
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = [
@@ -3386,7 +3386,7 @@ test = ["pytest (>=6,!=7.0.0,!=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-qt"]
 name = "readme-renderer"
 version = "37.3"
 description = "readme_renderer is a library for rendering \"readme\" descriptions for Warehouse"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -3428,7 +3428,7 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 name = "requests-toolbelt"
 version = "1.0.0"
 description = "A utility belt for advanced users of python-requests"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 files = [
@@ -3458,7 +3458,7 @@ six = "*"
 name = "rfc3986"
 version = "2.0.0"
 description = "Validating URI References per RFC 3986"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -3485,7 +3485,7 @@ files = [
 name = "rich"
 version = "13.3.5"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7.0"
 files = [
@@ -3690,7 +3690,7 @@ scipy = ">=1.0"
 name = "secretstorage"
 version = "3.3.3"
 description = "Python bindings to FreeDesktop.org Secret Service API"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -4244,7 +4244,7 @@ test = ["argcomplete (>=2.0)", "pre-commit", "pytest", "pytest-mock"]
 name = "twine"
 version = "4.0.2"
 description = "Collection of utilities for publishing packages on PyPI"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -4427,7 +4427,7 @@ tests = ["pytest", "pytest-cov"]
 name = "webencodings"
 version = "0.5.1"
 description = "Character encoding aliases for legacy web content"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = [
@@ -4625,4 +4625,4 @@ r-support = ["rpy2"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "0e9c93652d844516f24705d993e968097d474d310223f053710bccf07462a327"
+content-hash = "296e0bf2e5e645d30d1665c7db067d8949b6e4e880100bc457abaf5ffb381e5c"
