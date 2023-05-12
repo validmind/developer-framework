@@ -32,7 +32,7 @@ class TimeSeriesUnivariate(TestPlan):
         TimeSeriesLinePlot,
         TimeSeriesHistogram,
         ACFandPACFPlot,
-        SeasonalDecompose,
+        # SeasonalDecompose,
         AutoSeasonality,
         AutoStationarity,
         RollingStatsPlot,

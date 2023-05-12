@@ -49,3 +49,18 @@ class BinaryClassifierFullSuite(TestSuite):
         "binary_classifier_validation",
         "binary_classifier_model_diagnosis",
     ]
+
+
+class TimeSeriesDataValidation(TestSuite):
+    """
+    Full test suite for data validation of time series models.
+    """
+
+    name = "time_series_data_validation"
+    required_context = ["dataset"]
+
+    test_plans = [
+        "time_series_data_quality",
+        "time_series_univariate",
+        "time_series_multivariate",
+    ]

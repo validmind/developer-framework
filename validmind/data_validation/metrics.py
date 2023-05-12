@@ -288,6 +288,7 @@ class TimeSeriesLinePlot(Metric):
     type = "dataset"
     key = "time_series_line_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -297,7 +298,12 @@ class TimeSeriesLinePlot(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
@@ -337,6 +343,7 @@ class TimeSeriesHistogram(Metric):
     type = "dataset"
     key = "time_series_histogram"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -346,7 +353,12 @@ class TimeSeriesHistogram(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
@@ -379,12 +391,18 @@ class ScatterPlot(Metric):
     type = "dataset"
     key = "scatter_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
             raise ValueError("Columns must be provided in params")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df[columns]
 
         if not set(columns).issubset(set(df.columns)):
@@ -455,12 +473,11 @@ class LaggedCorrelationHeatmap(Metric):
         return plt.gcf()
 
     def run(self):
-        if "target_col" not in self.params or "independent_vars" not in self.params:
-            raise ValueError(
-                "Both 'target_col' and 'independent_vars' must be provided in params"
-            )
+        target_col = [self.dataset.y.name]
+        independent_vars = list(self.dataset.x.columns)
 
-        target_col = self.params["target_col"]
+        num_lags = self.params.get("num_lags", 10)
+
         if isinstance(target_col, list) and len(target_col) == 1:
             target_col = target_col[0]
 
@@ -468,9 +485,6 @@ class LaggedCorrelationHeatmap(Metric):
             raise ValueError(
                 "The 'target_col' must be a single string or a list containing a single string"
             )
-
-        independent_vars = self.params["independent_vars"]
-        num_lags = self.params.get("num_lags", 10)
 
         df = self.dataset.df
 
@@ -496,6 +510,7 @@ class AutoAR(Metric):
     type = "dataset"  # assume this value
     key = "auto_ar"
     required_context = ["dataset"]
+    default_params = {"max_ar_order": 3}
 
     def run(self):
         if "max_ar_order" not in self.params:
@@ -549,6 +564,7 @@ class AutoMA(Metric):
     type = "dataset"
     key = "auto_ma"
     required_context = ["dataset"]
+    default_params = {"max_ma_order": 3}
 
     def run(self):
         if "max_ma_order" not in self.params:
@@ -792,6 +808,7 @@ class ACFandPACFPlot(Metric):
     type = "evaluation"
     key = "acf_pacf_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -801,7 +818,12 @@ class ACFandPACFPlot(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df.dropna()
 
         if not set(columns).issubset(set(df.columns)):
