@@ -45,6 +45,10 @@ Returns the dataset’s features
 Returns the dataset’s target column
 
 
+#### _property_ index()
+Returns the dataset’s index.
+
+
 #### get_feature_by_id(feature_id)
 Returns the feature with the given id. We also build a lazy
 lookup cache in case the same feature is requested multiple times.
@@ -343,6 +347,8 @@ Cache the results of the metric calculation and do any post-processing if needed
     TestPlanResult
 
 
+
+#### required_context(_: ClassVar[List[str]_ )
 
 ### _class_ validmind.vm_models.MetricResult(type: str, scope: str, key: dict, value: dict | list | DataFrame, summary: ResultSummary | None = None, value_formatter: str | None = None)
 Bases: `object`
@@ -689,6 +695,8 @@ TODO: more validation
 
 #### test_context(_: TestContex_ )
 
+#### required_context(_: ClassVar[List[str]_ )
+
 #### _property_ dataset()
 
 #### _property_ model()
@@ -698,6 +706,11 @@ TODO: more validation
 #### _property_ df()
 Returns a Pandas DataFrame for the dataset, first checking if
 we passed in a Dataset or a DataFrame
+
+
+#### validate_context()
+Validates that the context elements are present
+in the instance so that the test plan can be run
 
 
 ### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
@@ -945,3 +958,7 @@ Cache the individual results of the threshold test as a list of TestResult objec
 * **Return type**
 
     TestPlanResult
+
+
+
+#### required_context(_: ClassVar[List[str]_ )
