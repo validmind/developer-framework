@@ -4,6 +4,7 @@ Metrics functions for any Pandas-compatible datasets
 
 from dataclasses import dataclass
 from typing import ClassVar
+import warnings
 
 import pandas as pd
 import numpy as np
@@ -676,64 +677,79 @@ class SeasonalDecompose(Metric):
 
         df = self.dataset.df
 
-        # Drop rows with missing values
-        df = df.dropna()
-
         results = {}
         figures = []
 
         for col in df.columns:
-            sd = seasonal_decompose(df[col], model=seasonal_model)
-            self.store_seasonal_decompose(col, sd)
+            series = df[col].dropna()
 
-            results[col] = self.serialize_seasonal_decompose(sd)
+            # Check for non-finite values and handle them
+            if not series[np.isfinite(series)].empty:
+                inferred_freq = pd.infer_freq(series.index)
 
-            # Create subplots
-            fig, axes = plt.subplots(nrows=4, ncols=2)
-            fig.subplots_adjust(hspace=1)
-            fig.suptitle(
-                f"Seasonal Decomposition and Residual Diagnostics for {col}",
-                fontsize=24,
-            )
+                if inferred_freq is not None:
+                    print(f"Frequency of {col}: {inferred_freq}")
 
-            # Original seasonal decomposition plots
-            axes[0, 0].set_title("Observed")
-            sd.observed.plot(ax=axes[0, 0])
+                    # Only take finite values to seasonal_decompose
+                    sd = seasonal_decompose(
+                        series[np.isfinite(series)], model=seasonal_model
+                    )
+                    self.store_seasonal_decompose(col, sd)
 
-            axes[0, 1].set_title("Trend")
-            sd.trend.plot(ax=axes[0, 1])
+                    results[col] = self.serialize_seasonal_decompose(sd)
 
-            axes[1, 0].set_title("Seasonal")
-            sd.seasonal.plot(ax=axes[1, 0])
+                    # Create subplots
+                    fig, axes = plt.subplots(nrows=4, ncols=2)
+                    fig.subplots_adjust(hspace=1)
+                    fig.suptitle(
+                        f"Seasonal Decomposition and Residual Diagnostics for {col}",
+                        fontsize=24,
+                    )
 
-            axes[1, 1].set_title("Residuals")
-            sd.resid.plot(ax=axes[1, 1])
-            axes[1, 1].set_xlabel("Date")
+                    # Original seasonal decomposition plots
+                    axes[0, 0].set_title("Observed")
+                    sd.observed.plot(ax=axes[0, 0])
 
-            # Residual diagnostics plots
-            residuals = sd.resid.dropna()
+                    axes[0, 1].set_title("Trend")
+                    sd.trend.plot(ax=axes[0, 1])
 
-            # Histogram with KDE
-            sns.histplot(residuals, kde=True, ax=axes[2, 0])
-            axes[2, 0].set_title("Histogram and KDE of Residuals")
+                    axes[1, 0].set_title("Seasonal")
+                    sd.seasonal.plot(ax=axes[1, 0])
 
-            # Normal Q-Q plot
-            stats.probplot(residuals, plot=axes[2, 1])
-            axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
+                    axes[1, 1].set_title("Residuals")
+                    sd.resid.plot(ax=axes[1, 1])
+                    axes[1, 1].set_xlabel("Date")
 
-            # ACF plot
-            plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
+                    # Residual diagnostics plots
+                    residuals = sd.resid.dropna()
 
-            # PACF plot
-            plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+                    # Histogram with KDE
+                    sns.histplot(residuals, kde=True, ax=axes[2, 0])
+                    axes[2, 0].set_title("Histogram and KDE of Residuals")
 
-            # Adjust the layout
-            plt.tight_layout()
+                    # Normal Q-Q plot
+                    stats.probplot(residuals, plot=axes[2, 1])
+                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
 
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+                    # ACF plot
+                    plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+                    # PACF plot
+                    plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+
+                    # Adjust the layout
+                    plt.tight_layout()
+
+                    # Do this if you want to prevent the figure from being displayed
+                    plt.close("all")
+
+                    figures.append(
+                        Figure(key=f"{self.key}:{col}", figure=fig, metadata={})
+                    )
+                else:
+                    warnings.warn(
+                        f"No frequency could be inferred for variable '{col}'. Skipping seasonal decomposition and plots for this variable."
+                    )
 
         return self.cache_results(results, figures=figures)
 

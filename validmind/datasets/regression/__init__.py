@@ -16,14 +16,7 @@ def identify_frequencies(df):
         series = df[column].dropna()
         if not series.empty:
             freq = pd.infer_freq(series.index)
-            if freq == "MS" or freq == "M":
-                label = "Monthly"
-            elif freq == "Q":
-                label = "Quarterly"
-            elif freq == "A":
-                label = "Yearly"
-            else:
-                label = freq
+            label = freq
         else:
             label = None
 
