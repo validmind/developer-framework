@@ -11,7 +11,7 @@ from . import (
 )
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-dataset_path = os.path.join(current_path, "..", "..", "..", "notebooks", "datasets")
+dataset_path = os.path.join(current_path, "datasets")
 
 drop_columns = ["RowNumber", "CustomerId", "Surname", "CreditScore"]
 boolean_columns = ["Gender"]
