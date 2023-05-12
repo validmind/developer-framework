@@ -8,12 +8,10 @@ import tabulate
 from ..vm_models import TestPlan
 from .binary_classifier import (
     BinaryClassifierMetrics,
-    BinaryClassifier,
     BinaryClassifierPerformance,
     BinaryClassifierDiagnosis,
 )
 from .tabular_datasets import (
-    TabularDataset,
     TabularDataQuality,
     TabularDatasetDescription,
     TimeSeriesDataQuality,
@@ -39,8 +37,6 @@ core_test_plans = {
     "binary_classifier_metrics": BinaryClassifierMetrics,
     "binary_classifier_validation": BinaryClassifierPerformance,
     "binary_classifier_model_diagnosis": BinaryClassifierDiagnosis,
-    "binary_classifier": BinaryClassifier,
-    "tabular_dataset": TabularDataset,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,
     "normality_test_plan": NormalityTestPlan,

@@ -17,6 +17,7 @@ from .test_plan_result import (
     TestPlanTestResult,
 )
 from .test_result import TestResult, TestResults
+from .test_suite import TestSuite
 from .threshold_test import ThresholdTest
 
 __all__ = [
@@ -40,5 +41,6 @@ __all__ = [
     "TestPlanTestResult",
     "TestResult",
     "TestResults",
+    "TestSuite",
     "ThresholdTest",
 ]

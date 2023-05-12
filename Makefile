@@ -12,6 +12,9 @@ format:
 lint:
 	poetry run flake8 validmind
 
+# Quick target to run all checks
+check: format lint test
+
 build:
 	poetry build
 

@@ -81,18 +81,3 @@ class BinaryClassifierDiagnosis(TestPlan):
     name = "binary_classifier_model_diagnosis"
     required_context = ["model"]
     tests = [OverfitDiagnosis, WeakspotsDiagnosis, RobustnessDiagnosis]
-
-
-class BinaryClassifier(TestPlan):
-    """
-    Test plan for sklearn classifier models that includes
-    both metrics and validation tests
-    """
-
-    name = "binary_classifier"
-    required_context = ["model"]
-    test_plans = [
-        BinaryClassifierMetrics,
-        BinaryClassifierPerformance,
-        BinaryClassifierDiagnosis,
-    ]
