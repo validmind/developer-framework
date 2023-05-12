@@ -32,7 +32,7 @@ Ideal setup is to have the API client to read a
 custom test plan from the project’s configuration
 
 
-### _class_ validmind.test_plans.tabular_datasets.TabularDatasetDescription(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.test_plans.tabular_datasets.TabularDatasetDescription(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `TestPlan`
 
 Test plan to extract metadata and descriptive
@@ -45,7 +45,7 @@ statistics from a tabular dataset
 
 #### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.metrics.DatasetMetadata'>, <class 'validmind.data_validation.metrics.DatasetDescription'>, <class 'validmind.data_validation.metrics.DescriptiveStatistics'>, <class 'validmind.data_validation.metrics.DatasetCorrelations'>_ )
 
-### _class_ validmind.test_plans.tabular_datasets.TabularDataQuality(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.test_plans.tabular_datasets.TabularDataQuality(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `TestPlan`
 
 Test plan for data quality on tabular datasets
@@ -57,7 +57,7 @@ Test plan for data quality on tabular datasets
 
 #### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.ClassImbalance'>, <class 'validmind.data_validation.threshold_tests.Duplicates'>, <class 'validmind.data_validation.threshold_tests.HighCardinality'>, <class 'validmind.data_validation.threshold_tests.HighPearsonCorrelation'>, <class 'validmind.data_validation.threshold_tests.MissingValues'>, <class 'validmind.data_validation.threshold_tests.Skewness'>, <class 'validmind.data_validation.threshold_tests.UniqueRows'>, <class 'validmind.data_validation.threshold_tests.TooManyZeroValues'>_ )
 
-### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataQuality(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataQuality(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `TestPlan`
 
 Test plan for data quality on time series datasets
@@ -69,7 +69,7 @@ Test plan for data quality on time series datasets
 
 #### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.TimeSeriesOutliers'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesMissingValues'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesFrequency'>_ )
 
-### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataset(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataset(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `TestPlan`
 
 Test plan for time series  datasets

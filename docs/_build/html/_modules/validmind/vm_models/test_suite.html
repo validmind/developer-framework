@@ -81,8 +81,13 @@
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">List</span>
 
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+
 <span class="kn">from</span> <span class="nn">.test_context</span> <span class="kn">import</span> <span class="n">TestContext</span>
 <span class="kn">from</span> <span class="nn">.test_plan</span> <span class="kn">import</span> <span class="n">TestPlan</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">is_notebook</span>
 
 
 <div class="viewcode-block" id="TestSuite"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestSuite">[docs]</a><span class="nd">@dataclass</span>
@@ -96,6 +101,44 @@
     <span class="c1"># Stores a reference to the child test plan instances</span>
     <span class="c1"># so we can access their results after running the test suite</span>
     <span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># ipywidgets progress bar</span>
+    <span class="n">pbar</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pbar_description</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pbar_box</span><span class="p">:</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="TestSuite.get_total_tests"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestSuite.get_total_tests">[docs]</a>    <span class="k">def</span> <span class="nf">get_total_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Goes through every test plans and sums the number of tests for each one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Avoid circular import</span>
+        <span class="kn">from</span> <span class="nn">..test_plans</span> <span class="kn">import</span> <span class="n">get_by_name</span>
+
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">test_plan_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_plans</span><span class="p">:</span>
+            <span class="n">test_plan</span> <span class="o">=</span> <span class="n">get_by_name</span><span class="p">(</span><span class="n">test_plan_id</span><span class="p">)</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_plan</span><span class="o">.</span><span class="n">tests</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">total</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_pbar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the progress bar elements</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_tests</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_total_tests</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">IntProgress</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="nb">max</span><span class="o">=</span><span class="n">total_tests</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">send</span> <span class="k">else</span> <span class="n">total_tests</span><span class="p">,</span>  <span class="c1"># tests and results</span>
+            <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">bar_style</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar_description</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;Running test suite...&quot;</span><span class="p">)</span>
+        <span class="c1"># Display them in a horizontal box</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar_box</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HBox</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar_description</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">])</span>
+
+        <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar_box</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TestSuite.run"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestSuite.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -113,14 +156,75 @@
                 <span class="n">models</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">,</span>
             <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_pbar</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">test_plan_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_plans</span><span class="p">:</span>
             <span class="n">test_plan</span> <span class="o">=</span> <span class="n">get_by_name</span><span class="p">(</span><span class="n">test_plan_id</span><span class="p">)</span>
             <span class="n">test_plan_instance</span> <span class="o">=</span> <span class="n">test_plan</span><span class="p">(</span>
                 <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
                 <span class="n">test_context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="p">,</span>
+                <span class="n">pbar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="p">,</span>
+                <span class="n">pbar_description</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar_description</span><span class="p">,</span>
+                <span class="n">pbar_box</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar_box</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">test_plan_instance</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_plan_instance</span><span class="p">)</span></div>
+            <span class="n">test_plan_instance</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">render_summary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_plan_instance</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_results_title</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds the title for the results of the test plan</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;h2&gt;Test Suite Results: &lt;i style=&quot;color: #DE257E&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s1">&lt;/i&gt;&lt;/h2&gt;&lt;hr&gt;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_results_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Builds a summary of the results for each of the test plans in the test suite.</span>
+<span class="sd">        This makes use of the readily available HTML summary of the test plan.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">accordions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="p">:</span>
+            <span class="n">accordions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">summary</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">accordions</span>
+
+<div class="viewcode-block" id="TestSuite.summarize"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestSuite.summarize">[docs]</a>    <span class="k">def</span> <span class="nf">summarize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Summarizes the results of the test suite.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_notebook</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_results_title</span><span class="p">())</span>
+
+        <span class="n">accordion_contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_summary</span><span class="p">()</span>
+        <span class="n">accordion_widget</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">accordion_contents</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">accordion_widget</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+            <span class="n">accordion_widget</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="n">i</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Test Plan: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_plan_instances</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">style_footer</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;style&gt;</span>
+<span class="s2">            .result {</span>
+<span class="s2">                margin: 10px 0;</span>
+<span class="s2">                padding: 10px;</span>
+<span class="s2">                background-color: #f1f1f1;</span>
+<span class="s2">                border: 1px solid #ccc;</span>
+<span class="s2">                border-radius: 5px;</span>
+<span class="s2">            }</span>
+<span class="s2">        &lt;/style&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">html</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">([</span><span class="n">title</span><span class="p">,</span> <span class="n">accordion_widget</span><span class="p">,</span> <span class="n">style_footer</span><span class="p">])</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">html</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
