@@ -74,7 +74,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Dataset class wrapper</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
 
 <span class="kn">from</span> <span class="nn">dython.nominal</span> <span class="kn">import</span> <span class="n">associations</span>
 
@@ -120,13 +120,15 @@
     <span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">__feature_lookup</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">__transformed_df</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_feature_lookup</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_transformed_df</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set target_column and class_labels from DatasetTargets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_feature_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">target_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">target_column</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">class_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">class_labels</span>
@@ -173,14 +175,14 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: The feature with the given id</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">feature_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">feature_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature_lookup</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">feature</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">feature_id</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">feature</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">feature</span>
                     <span class="k">return</span> <span class="n">feature</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Feature with id </span><span class="si">{</span><span class="n">feature_id</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature_lookup</span><span class="p">[</span><span class="n">feature_id</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Dataset.get_feature_type"><a class="viewcode-back" href="../../../vm_models.html#validmind.Dataset.get_feature_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -310,8 +312,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            pd.DataFrame: The transformed dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transformed_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">force_refresh</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__transformed_df</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">force_refresh</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transformed_df</span>
 
         <span class="c1"># Get the list of features that are of type Dummy</span>
         <span class="n">dataset_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span>
