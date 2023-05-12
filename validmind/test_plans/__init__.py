@@ -15,7 +15,6 @@ from .tabular_datasets import (
     TabularDataQuality,
     TabularDatasetDescription,
     TimeSeriesDataQuality,
-    TimeSeriesDataset,
 )
 from .statsmodels_timeseries import (
     NormalityTestPlan,
@@ -46,7 +45,6 @@ core_test_plans = {
     "stationarity_test_plan": StationarityTestPlan,
     "timeseries": TimeSeries,
     "time_series_data_quality": TimeSeriesDataQuality,
-    "time_series_dataset": TimeSeriesDataset,
     "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
     "time_series_forecast": TimeSeriesForecast,
