@@ -180,19 +180,19 @@ class TestPlan:
                 f"Running {test.test_type}: {test_instance.name}"
             )
 
-            result = test_instance.run()
+            test_instance.run()
 
-            if result is None:
+            if test_instance.result is None:
                 self.pbar_description.value = "Test returned None, skipping..."
                 self.pbar.value += 1
                 continue
 
-            if not isinstance(result, TestPlanResult):
+            if not isinstance(test_instance.result, TestPlanResult):
                 raise ValueError(
                     f"'{test_instance.name}' must return an instance of TestPlanResult Base Class"
                 )
 
-            self.results.append(result)
+            self.results.append(test_instance.result)
             self.pbar.value += 1
 
         if send:
@@ -226,7 +226,9 @@ class TestPlan:
         )
 
         for result in self.results:
-            self.pbar_description.value = f"Logging result: {result.result_id}"
+            self.pbar_description.value = (
+                f"Sending result to ValidMind: {result.result_id}..."
+            )
 
             try:
                 result.log()
@@ -256,13 +258,17 @@ class TestPlan:
         """
         Builds a summary of the results for each of the tests in the test plan
         """
-        accordions = []
+        accordions = {}
+        id = 0
         for result in self.results:
-            result_html = result._to_html()
-            if result_html:
-                accordions.append(
-                    widgets.HTML(value=f'<div class="result">{result_html}</div>')
-                )
+            result_widget = result._to_widget()
+            if result_widget:
+                accordions[result.result_id] = {
+                    "id": id,
+                    "widget": result_widget,
+                    "result": result,
+                }
+                id += 1
 
         return accordions
 
@@ -289,11 +295,14 @@ class TestPlan:
         vbox_children.append(widgets.HTML(value=self._results_description()))
 
         accordion_contents = self._results_summary()
-        accordion_widget = widgets.Accordion(children=accordion_contents)
-        for i, _ in enumerate(accordion_widget.children):
-            result_id = self.results[i].result_id
-            title = f'{result_id.title().replace("_", " ")} ({result_id})'
-            accordion_widget.set_title(i, title)
+        accordion_items = [v["widget"] for v in accordion_contents.values()]
+        accordion_widget = widgets.Accordion(children=accordion_items)
+
+        for result_id, accordion_item in accordion_contents.items():
+            result = accordion_item["result"]
+            result_name = f"{result.name}: " if result.name else ""
+            title = f'{result_name }{result_id.title().replace("_", " ")} ({result_id})'
+            accordion_widget.set_title(accordion_item["id"], title)
 
         vbox_children.append(accordion_widget)
 
@@ -319,6 +328,7 @@ class TestPlan:
 
         if render_summary:
             display(self.summary)
+            self.pbar_description.value = "Test plan complete!"
 
     def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
         """
