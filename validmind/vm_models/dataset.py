@@ -79,6 +79,13 @@ class Dataset:
         """
         return self.raw_dataset[self.target_column]
 
+    @property
+    def index(self):
+        """
+        Returns the dataset's index.
+        """
+        return self.raw_dataset.index
+
     def get_feature_by_id(self, feature_id):
         """
         Returns the feature with the given id. We also build a lazy

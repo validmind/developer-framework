@@ -575,133 +575,6 @@ class AutoARIMA(Metric):
         return self.cache_results(results)
 
 
-class ModelPredictionOLS(Metric):
-    """
-    Calculates and plots the model predictions for each of the models
-    """
-
-    type = "dataset"
-    key = "model_prediction_ols"
-    default_params = {"plot_start_date": None, "plot_end_date": None}
-
-    def serialize_time_series_df(self, df):
-        # Convert the DateTimeIndex to strings without specifying a date format
-        df.index = df.index.astype(str)
-
-        # Reset the index and rename the index column to 'Date'
-        df = df.reset_index().rename(columns={"index": "Date"})
-
-        # Convert the DataFrame into a list of dictionaries
-        return df.to_dict("records")
-
-    def get_model_prediction(self, model_list, df_test):
-        # Extract the training target variable from the first model fit
-
-        first_model_fit = model_list[0].model
-
-        train_data = pd.Series(
-            first_model_fit.model.endog, index=first_model_fit.model.data.row_labels
-        )
-        train_data = train_data.to_frame()
-        target_var_name = first_model_fit.model.endog_names
-        train_data.columns = [f"{target_var_name}_train"]
-
-        # Initialize an empty DataFrame to store the predictions
-        prediction_df = pd.DataFrame(index=df_test.index)
-        prediction_df[f"{target_var_name}_test"] = np.nan
-
-        # Concatenate the train_data and prediction_df
-        combined_df = pd.concat([train_data, prediction_df], axis=0)
-
-        # Loop through each model fit
-        for i, model_fit in enumerate(model_list):
-            model_name = f"model_{i+1}"
-
-            # Prepare the test dataset
-            exog_names = model_fit.model.model.exog_names
-            X_test = df_test.copy()
-
-            # Add the constant if it's missing
-            if "const" in exog_names and "const" not in X_test.columns:
-                X_test["const"] = 1.0
-
-            # Select the necessary columns
-            X_test = X_test[exog_names]
-
-            # Generate the predictions
-            predictions = model_fit.model.predict(X_test)
-
-            # Add the predictions to the DataFrame
-            combined_df[model_name] = np.nan
-            combined_df[model_name].iloc[len(train_data) :] = predictions
-
-        # Add the test data to the '<target_variable>_test' column
-        combined_df[f"{target_var_name}_test"].iloc[len(train_data) :] = df_test[
-            target_var_name
-        ]
-
-        return combined_df
-
-    def plot_predictions(self, prediction_df, start_date=None, end_date=None):
-        if start_date and end_date:
-            prediction_df = prediction_df.loc[start_date:end_date]
-
-        n_models = prediction_df.shape[1] - 2
-        fig, axes = plt.subplots(n_models, 1, sharex=True)
-
-        for i in range(n_models):
-            axes[i].plot(
-                prediction_df.index,
-                prediction_df.iloc[:, 0],
-                label=prediction_df.columns[0],
-                color="grey",
-            )
-            axes[i].plot(
-                prediction_df.index,
-                prediction_df.iloc[:, 1],
-                label=prediction_df.columns[1],
-                color="lightgrey",
-            )
-            axes[i].plot(
-                prediction_df.index,
-                prediction_df.iloc[:, i + 2],
-                label=prediction_df.columns[i + 2],
-                linestyle="-",
-            )
-            axes[i].set_ylabel("Target Variable")
-            axes[i].set_title(f"Test Data vs. {prediction_df.columns[i + 2]}")
-            axes[i].legend()
-            axes[i].grid(True)
-        plt.xlabel("Date")
-        plt.tight_layout()
-
-    def run(self):
-        model_list = self.models
-
-        df_test = self.test_ds.df
-
-        plot_start_date = self.params["plot_start_date"]
-        plot_end_date = self.params["plot_end_date"]
-
-        print(plot_start_date)
-
-        prediction_df = self.get_model_prediction(model_list, df_test)
-        results = self.serialize_time_series_df(prediction_df)
-
-        figures = []
-        self.plot_predictions(
-            prediction_df, start_date=plot_start_date, end_date=plot_end_date
-        )
-
-        # Assuming the plot is the only figure we want to store
-        fig = plt.gcf()
-        figures.append(Figure(key=self.key, figure=fig, metadata={}))
-        plt.close("all")
-
-        # Assuming we do not need to cache any results, just the figure
-        return self.cache_results(results, figures=figures)
-
-
 @dataclass
 class RegressionModelSummary(Metric):
     """
@@ -905,3 +778,103 @@ class RegressionModelOutsampleComparison(Metric):
         results_df = pd.DataFrame(results, columns=["Model", "MSE", "RMSE"])
 
         return results_df
+
+
+@dataclass
+class RegressionModelForecastPlot(Metric):
+    """
+    This metric creates a plot of forecast vs observed for each model in the list.
+    """
+
+    category = "model_forecast"
+    scope = "test"
+    key = "regression_forecast_plot"
+    default_params = {"start_date": None, "end_date": None}
+
+    def description(self):
+        return """
+        This section shows plots of training and test datasets vs forecast trainining and forecast test.
+        """
+
+    def run(self):
+        print(self.params)
+
+        start_date = self.params["start_date"]
+        end_date = self.params["end_date"]
+
+        print(self.params)
+
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+        all_models = []
+        for model in self.models:
+            if model.model.__class__.__name__ != "RegressionResultsWrapper":
+                raise ValueError(
+                    "Only RegressionResultsWrapper models of statsmodels library supported"
+                )
+            all_models.append(model)
+
+        figures = self._plot_forecast(all_models, start_date, end_date)
+
+        return self.cache_results(figures=figures)
+
+    def _plot_forecast(self, model_list, start_date=None, end_date=None):
+        # Convert start_date and end_date to pandas Timestamp for comparison
+        start_date = pd.Timestamp(start_date)
+        end_date = pd.Timestamp(end_date)
+
+        # Initialize a list to store figures
+        figures = []
+
+        for fitted_model in model_list:
+            train_ds = fitted_model.train_ds
+            test_ds = fitted_model.test_ds
+
+            # Check that start_date and end_date are within the data range
+            all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
+            print(all_dates)
+            if start_date < all_dates.min() or end_date > all_dates.max():
+                raise ValueError(
+                    "start_date and end_date must be within the range of dates in the data"
+                )
+
+            fig, ax = plt.subplots()
+            sns.lineplot(
+                x=train_ds.index,
+                y=train_ds.y,
+                ax=ax,
+                label="Train Forecast",
+            )
+            sns.lineplot(
+                x=test_ds.index,
+                y=test_ds.y,
+                ax=ax,
+                label="Test Forecast",
+            )
+            sns.lineplot(
+                x=train_ds.index,
+                y=fitted_model.y_train_predict.loc[train_ds.index],
+                ax=ax,
+                label="Train Dataset",
+                color="grey",
+            )
+            sns.lineplot(
+                x=test_ds.index,
+                y=fitted_model.y_test_predict.loc[test_ds.index],
+                ax=ax,
+                label="Test Dataset",
+                color="black",
+            )
+            plt.title(
+                f"Forecast vs Observed for {fitted_model.model.__class__.__name__}"
+            )
+
+            # Set the x-axis limits to zoom in/out
+            plt.xlim(start_date, end_date)
+
+            plt.legend()
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            plt.close("all")
+
+        return figures
