@@ -20,6 +20,8 @@ Accuracy Score
 
 #### key(_: ClassVar[str_ _ = 'accuracy_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -33,6 +35,8 @@ Characteristic Stability Index between two datasets
 #### type(_: ClassVar[str_ _ = 'training_ )
 
 #### key(_: ClassVar[str_ _ = 'csi_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### value_formatter(_: ClassVar[str | None_ _ = 'key_values_ )
 
@@ -52,6 +56,8 @@ Confusion Matrix
 
 #### key(_: ClassVar[str_ _ = 'confusion_matrix_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -67,6 +73,8 @@ F1 Score
 #### scope(_: ClassVar[str_ _ = 'test_ )
 
 #### key(_: ClassVar[str_ _ = 'f1_score_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -84,6 +92,8 @@ Permutation Feature Importance
 
 #### key(_: ClassVar[str_ _ = 'pfi_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -99,6 +109,8 @@ Precision Recall Curve
 #### scope(_: ClassVar[str_ _ = 'test_ )
 
 #### key(_: ClassVar[str_ _ = 'pr_curve_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -116,6 +128,8 @@ Precision Score
 
 #### key(_: ClassVar[str_ _ = 'precision_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -131,6 +145,8 @@ Recall Score
 #### scope(_: ClassVar[str_ _ = 'test_ )
 
 #### key(_: ClassVar[str_ _ = 'recall_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -148,6 +164,8 @@ ROC AUC Score
 
 #### key(_: ClassVar[str_ _ = 'roc_auc_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -164,6 +182,8 @@ ROC Curve
 
 #### key(_: ClassVar[str_ _ = 'roc_curve_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### run()
 Run the metric calculation and cache its results
 
@@ -173,6 +193,8 @@ Bases: `Metric`
 
 SHAP Global Importance
 
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### name(_ = 'shap_ )
 
@@ -189,6 +211,8 @@ Population Stability Index between two datasets
 #### type(_: ClassVar[str_ _ = 'training_ )
 
 #### key(_: ClassVar[str_ _ = 'psi_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### value_formatter(_: ClassVar[str | None_ _ = 'records_ )
 
@@ -211,6 +235,8 @@ exceeds a predefined threshold.
 
 #### name(_: ClassVar[str_ _ = 'accuracy_score_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 0.7_ )
 
 #### run()
@@ -227,6 +253,8 @@ exceeds a predefined threshold.
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
 
 #### name(_: ClassVar[str_ _ = 'f1_score_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 0.5_ )
 
@@ -245,6 +273,8 @@ exceeds a predefined threshold.
 
 #### name(_: ClassVar[str_ _ = 'roc_auc_score_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 0.5_ )
 
 #### run()
@@ -261,6 +291,8 @@ does not exceed a predefined threshold.
 #### category(_: ClassVar[str_ _ = 'model_performance_ )
 
 #### name(_: ClassVar[str_ _ = 'training_test_degradation_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'metrics': ['accuracy', 'precision', 'recall', 'f1']_ )
 
@@ -280,6 +312,8 @@ Test that identify overfit regions with high residuals by histogram slicing tech
 
 #### name(_: ClassVar[str_ _ = 'overfit_regions_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'cut_off_percentage': 4, 'features_columns': None_ )
 
 #### default_metrics(_ = {'accuracy': <function accuracy_score>_ )
@@ -298,6 +332,8 @@ Test that identify weak regions with high residuals by histogram slicing techniq
 
 #### name(_: ClassVar[str_ _ = 'weak_spots_ )
 
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
+
 #### default_params(_: ClassVar[dict_ _ = {'features_columns': None, 'thresholds': {'accuracy': 0.75, 'f1': 0.7, 'precision': 0.5, 'recall': 0.5}_ )
 
 #### default_metrics(_ = {'accuracy': <function accuracy_score>, 'f1': functools.partial(<function f1_score>, zero_division=0), 'precision': functools.partial(<function precision_score>, zero_division=0), 'recall': functools.partial(<function recall_score>, zero_division=0)_ )
@@ -315,6 +351,8 @@ Test robustness of model by perturbing the features column values
 #### category(_: ClassVar[str_ _ = 'model_diagnosis_ )
 
 #### name(_: ClassVar[str_ _ = 'robustness_ )
+
+#### required_context(_: ClassVar[List[str]_ _ = ['model'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'features_columns': None, 'scaling_factor_std_dev_list': [0.01, 0.02]_ )
 

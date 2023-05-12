@@ -210,6 +210,47 @@ run it.
 
 
 
+### validmind.run_test_suite(test_suite_name, send=True, \*\*kwargs)
+High Level function for running a test suite
+
+This function provides a high level interface for running a test suite. A test suite is
+a collection of test plans. This function will automatically find the correct test suite
+class based on the test_suite_name, initialize each of the test plans, and run them.
+
+
+* **Parameters**
+
+    
+    * **test_suite_name** (*str*) – The test suite name (e.g. ‘binary_classifier_full_suite’)
+
+
+    * **send** (*bool**, **optional*) – Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+
+
+    * **\*\*kwargs** – Additional keyword arguments to pass to the test suite. These will provide
+    the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
+    See the documentation for the specific test plan, metric or threshold test for more details.
+
+
+
+* **Raises**
+
+    **ValueError** – If the test suite name is not found or if there is an error initializing the test suite
+
+
+
+* **Returns**
+
+    the TestSuite instance
+
+
+
+* **Return type**
+
+    TestSuite
+
+
+
 ### validmind.log_dataset(vm_dataset)
 Logs metadata and statistics about a dataset to ValidMind API.
 
@@ -385,7 +426,7 @@ running tests but can also be called directly if the user wants to run tests on 
 
 
 
-### _class_ validmind.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
+### _class_ validmind.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _feature_lookup: dict | None = None, _transformed_df: object | None = None)
 Bases: `object`
 
 Model class wrapper

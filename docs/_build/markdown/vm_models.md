@@ -3,7 +3,7 @@
 Models entrypoint
 
 
-### _class_ validmind.vm_models.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _Dataset__feature_lookup: dict = <factory>, _Dataset__transformed_df: object | None = None)
+### _class_ validmind.vm_models.Dataset(raw_dataset: object, fields: list, sample: list, shape: dict, correlation_matrix: object | None = None, correlations: dict | None = None, type: str | None = None, options: dict | None = None, statistics: dict | None = None, targets: dict | None = None, target_column: str = '', class_labels: dict | None = None, _feature_lookup: dict | None = None, _transformed_df: object | None = None)
 Bases: `object`
 
 Model class wrapper
@@ -892,6 +892,23 @@ TestResults model
 
 #### serialize()
 Serializes the TestResults to a dictionary so it can be sent to the API
+
+
+### _class_ validmind.vm_models.TestSuite(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+Bases: `TestPlan`
+
+Base class for test suites. Test suites are used to define any
+arbitrary grouping of test plans that will be run on a dataset and/or model.
+
+
+#### test_plans(_: ClassVar[List[str]_ _ = [_ )
+
+#### run(send=True)
+Runs the test suite.
+
+
+#### _property_ results()
+Returns the results of the test suite.
 
 
 ### _class_ validmind.vm_models.ThresholdTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
