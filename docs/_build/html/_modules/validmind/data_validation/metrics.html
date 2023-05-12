@@ -154,8 +154,7 @@
 <span class="sd">    - Correlation ratios for categorical-numerical variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_correlations&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dataset_correlations&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
     <span class="c1"># TODO: allow more metric metadata to be set, not just scope</span>
@@ -175,8 +174,7 @@
 <span class="sd">    Collects a set of descriptive statistics for a dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_description&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dataset_description&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -195,8 +193,7 @@
 <span class="sd">    numerical and categorical variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;descriptive_statistics&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;descriptive_statistics&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="DescriptiveStatistics.get_summary_statistics_numerical"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.get_summary_statistics_numerical">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary_statistics_numerical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numerical_fields</span><span class="p">):</span>
@@ -274,8 +271,7 @@
 <span class="sd">    provided training, test and validation datasets.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;dataset_split&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dataset_split&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
     <span class="n">dataset_labels</span> <span class="o">=</span> <span class="p">{</span>
@@ -341,7 +337,7 @@
 
         <span class="c1"># Then calculate the proportion of each dataset</span>
         <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">available_datasets</span><span class="p">:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
                 <span class="n">results</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">_proportion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">)</span> <span class="o">/</span> <span class="n">total_size</span>
@@ -358,8 +354,7 @@
 <span class="sd">    if necessary. In this case we produce a separate plot for each time series.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TimeSeriesLinePlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -407,8 +402,7 @@
 <span class="sd">    necessary. In this case we produce a separate plot for each time series.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TimeSeriesHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -449,8 +443,7 @@
 <span class="sd">    in the dataset. The input dataset can have multiple columns (features) if necessary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;scatter_plot&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scatter_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ScatterPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -486,8 +479,7 @@
 <span class="sd">    Generates a heatmap of correlations between the target variable and the lags of independent variables in the dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;lagged_correlation_heatmap&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;lagged_correlation_heatmap&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_compute_correlations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target_col</span><span class="p">,</span> <span class="n">independent_vars</span><span class="p">,</span> <span class="n">num_lags</span><span class="p">):</span>
@@ -566,8 +558,7 @@
 <span class="sd">    Automatically detects the AR order of a time series using both BIC and AIC.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>  <span class="c1"># assume this value</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AutoAR.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -619,8 +610,7 @@
 <span class="sd">    Automatically detects the MA order of a time series using both BIC and AIC.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AutoMA.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -672,8 +662,7 @@
 <span class="sd">    Calculates seasonal_decompose metric for each of the dataset features</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;seasonal_decompose&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;seasonal_decompose&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seasonal_model&quot;</span><span class="p">:</span> <span class="s2">&quot;additive&quot;</span><span class="p">}</span>
 
@@ -801,8 +790,7 @@
 <span class="sd">    using the seasonal_decompose method.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_seasonality&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_seasonality&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_period&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;max_period&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
 
@@ -862,8 +850,7 @@
 <span class="sd">    Plots ACF and PACF for a given time series dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;acf_pacf_plot&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;acf_pacf_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ACFandPACFPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -966,8 +953,7 @@
 <span class="sd">    This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;rolling_stats_plot&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;rolling_stats_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
 
@@ -1040,8 +1026,7 @@
 <span class="sd">    Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;engle_granger_coint&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;engle_granger_coint&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}</span>
 
@@ -1086,8 +1071,7 @@
 <span class="sd">    This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;spread_plot&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;spread_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SpreadPlot.plot_spread"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.SpreadPlot.plot_spread">[docs]</a>    <span class="nd">@staticmethod</span>

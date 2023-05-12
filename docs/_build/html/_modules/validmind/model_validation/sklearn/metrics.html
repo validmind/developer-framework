@@ -163,9 +163,7 @@
 <span class="sd">    Accuracy Score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;accuracy&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;accuracy&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AccuracyScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.AccuracyScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -182,8 +180,7 @@
 <span class="sd">    Characteristic Stability Index between two datasets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;csi&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;csi&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
     <span class="n">value_formatter</span> <span class="o">=</span> <span class="s2">&quot;key_values&quot;</span>
 
@@ -214,10 +211,11 @@
 <span class="sd">    Confusion Matrix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;confusion_matrix&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;confusion_matrix&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ConfusionMatrix.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ConfusionMatrix.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="ConfusionMatrix.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ConfusionMatrix.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
@@ -256,9 +254,7 @@
 <span class="sd">    F1 Score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;f1_score&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;f1_score&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="F1Score.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.F1Score.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -275,9 +271,7 @@
 <span class="sd">    Permutation Feature Importance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;training_dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;pfi&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pfi&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="PermutationFeatureImportance.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PermutationFeatureImportance.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -333,9 +327,7 @@
 <span class="sd">    Precision Recall Curve</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;pr_curve&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pr_curve&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="PrecisionRecallCurve.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PrecisionRecallCurve.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -365,9 +357,7 @@
 <span class="sd">    Precision Score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;precision&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;precision&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="PrecisionScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PrecisionScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -384,9 +374,7 @@
 <span class="sd">    Recall Score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;recall&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;recall&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RecallScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.RecallScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -403,9 +391,7 @@
 <span class="sd">    ROC AUC Score</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;roc_auc&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;roc_auc&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ROCAUCScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCAUCScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -423,9 +409,7 @@
 <span class="sd">    ROC Curve</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;evaluation&quot;</span>
-    <span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;roc_curve&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;roc_curve&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ROCCurve.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCCurve.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -460,8 +444,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Instance Variables</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;shap&quot;</span>
 
     <span class="k">def</span> <span class="nf">_generate_shap_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">shap_values</span><span class="p">,</span> <span class="n">x_test</span><span class="p">):</span>
@@ -532,8 +514,7 @@
 <span class="sd">    Population Stability Index between two datasets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;training&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;psi&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;psi&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
     <span class="n">value_formatter</span> <span class="o">=</span> <span class="s2">&quot;records&quot;</span>
 

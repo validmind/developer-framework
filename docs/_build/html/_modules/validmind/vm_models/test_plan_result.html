@@ -80,11 +80,13 @@
 
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">..api_client</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_metadata</span><span class="p">,</span>
@@ -99,6 +101,7 @@
 <span class="kn">from</span> <span class="nn">.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
 <span class="kn">from</span> <span class="nn">.metric_result</span> <span class="kn">import</span> <span class="n">MetricResult</span>
 <span class="kn">from</span> <span class="nn">.model</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.result_summary</span> <span class="kn">import</span> <span class="n">ResultSummary</span>
 <span class="kn">from</span> <span class="nn">.test_result</span> <span class="kn">import</span> <span class="n">TestResults</span>
 
 
@@ -119,77 +122,38 @@
         <span class="n">log_metadata</span><span class="p">(</span><span class="n">content_id</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">:</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">figures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">plot_figures</span><span class="p">(</span><span class="n">figures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot figures to html</span>
+<span class="sd">    Plot figures to a ipywidgets GridBox</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">plot_htmls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">plots</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">fig</span> <span class="ow">in</span> <span class="n">figures</span><span class="p">:</span>
         <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
         <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">tmpfile</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="n">plot_htmls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;div class=&quot;metric-plot&quot;&gt;</span>
-<span class="s2">            &lt;img src=&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">encoded</span><span class="si">}</span><span class="s2">&quot;/&gt;</span>
-<span class="s2">        &lt;/div&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="n">plots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;img src=&quot;data:image/png;base64,</span><span class="si">{</span><span class="n">encoded</span><span class="si">}</span><span class="s2">&quot;/&gt;</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="c1"># if theres a lot of plots, we want to only show the first</span>
-        <span class="c1"># one and then have an expand button to show the rest</span>
-        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-value-title&quot;&gt;</span>
-<span class="s2">                Metric Plots</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                &lt;a onclick=&quot;showMetricPlots(this)&quot; style=&quot;cursor: pointer; color: blue;&quot;&gt;</span>
-<span class="s2">                Show All Plots</span>
-<span class="s2">                &lt;/a&gt;</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                </span><span class="si">{</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span>
-<span class="s2">                &lt;div class=&quot;allplots&quot; style=&quot;display: none;&quot;&gt;</span>
-<span class="s2">                    </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="si">}</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">        &lt;/div&gt;</span>
-<span class="s2">        &lt;script&gt;</span>
-<span class="s2">            function showMetricPlots(btn) </span><span class="se">{{</span>
-<span class="s2">                const plots = btn.parentElement.parentElement.querySelector(&quot;.allplots&quot;);</span>
-<span class="s2">                if (plots.style.display === &quot;none&quot;) </span><span class="se">{{</span>
-<span class="s2">                    plots.style.display = &quot;block&quot;;</span>
-<span class="s2">                    btn.innerHTML = &quot;Collapse&quot;;</span>
-<span class="s2">                </span><span class="se">}}</span><span class="s2"> else </span><span class="se">{{</span>
-<span class="s2">                    plots.style.display = &quot;none&quot;;</span>
-<span class="s2">                    btn.innerHTML = &quot;Show All Plots&quot;;</span>
-<span class="s2">                </span><span class="se">}}</span>
-<span class="s2">            </span><span class="se">}}</span>
-<span class="s2">        &lt;/script&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-value-title&quot;&gt;Metric Plots&lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plot_htmls</span><span class="p">)</span><span class="si">}</span>
-<span class="s2">            &lt;/div&gt;</span>
-<span class="s2">        &lt;/div&gt;</span>
-<span class="s2">        &quot;&quot;&quot;</span>
-        <span class="p">)</span>
+    <span class="n">num_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">figures</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">figures</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span> <span class="k">else</span> <span class="mi">3</span>
+
+    <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">GridBox</span><span class="p">(</span>
+        <span class="n">plots</span><span class="p">,</span>
+        <span class="n">layout</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">grid_template_columns</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;repeat(</span><span class="si">{</span><span class="n">num_columns</span><span class="si">}</span><span class="s2">, 1fr)&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">TestPlanResult</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base Class for test plan results&quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;TestPlanResult&quot;</span>
     <span class="c1"># id of the result, can be set by the subclass. This helps</span>
     <span class="c1"># looking up results later on</span>
     <span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
@@ -201,13 +165,28 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an html representation of the result... Must be overridden by subclasses&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an ipywdiget representation of the result... Must be overridden by subclasses&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">_summary_tables_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">summary</span><span class="p">:</span> <span class="n">ResultSummary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an ipywdiget representation of the summary tables</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">summary</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
+            <span class="n">summary_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">data</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>  <span class="c1"># table.data is an orient=records dump</span>
+
+            <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">and</span> <span class="n">table</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+                <span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;</span><span class="si">{</span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&quot;</span><span class="p">))</span>
+            <span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">summary_table</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">tables</span>
 
     <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Display the result... May be overridden by subclasses&quot;&quot;&quot;</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_html</span><span class="p">()))</span>
+        <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_widget</span><span class="p">())</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -221,15 +200,15 @@
 <span class="sd">    Result wrapper for datasets that run as part of a test plan</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Metric&quot;</span>
     <span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;TestPlanDatasetResult(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;)&#39;</span>
 
-    <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="s2">&quot;&lt;h4&gt;Logged the following dataset to the ValidMind platform:&lt;/h4&gt;&quot;</span>
-        <span class="k">return</span> <span class="n">html</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">to_html</span><span class="p">())</span>
 
 <div class="viewcode-block" id="TestPlanDatasetResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanDatasetResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">log_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span></div></div>
@@ -241,6 +220,7 @@
 <span class="sd">    Result wrapper for metrics that run as part of a test plan</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Metric&quot;</span>
     <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">metric</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -256,116 +236,124 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(result_id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s2">, figures)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;dataset_description&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="n">html</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">vbox_children</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
-            <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;h4&gt;Logged the following </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> metric to the ValidMind platform:&lt;/h4&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;h4&gt;Logged the following plot</span><span class="si">{</span><span class="s2">&quot;s&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="si">}</span>
-<span class="s2">            to the ValidMind platform:&lt;/h4&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">:</span>
+            <span class="n">metric_description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;p&gt;</span><span class="si">{</span><span class="n">metric_description</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
-            <span class="n">metric_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">value</span>
-            <span class="c1"># Don&#39;t log the entire metric if it has more than 1000 characters</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1024</span><span class="p">:</span>
-                <span class="n">metric_value</span> <span class="o">=</span> <span class="n">metric_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()[:</span><span class="mi">1024</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">summary</span><span class="p">:</span>
+                <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_tables_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">summary</span><span class="p">)</span>
+                <span class="n">vbox_children</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>
+            <span class="c1"># else:</span>
+            <span class="c1"># vbox_children.append(</span>
+            <span class="c1">#     widgets.HTML(</span>
+            <span class="c1">#         value=f&quot;&quot;&quot;&lt;h4&gt;Unable to display metric summary for {self.result_id}. Please make sure the summary() method is implemented for this metric&lt;/h4&gt;&quot;&quot;&quot;</span>
+            <span class="c1">#     )</span>
+            <span class="c1"># )</span>
 
-            <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">            &lt;div class=&quot;metric-result&quot;&gt;</span>
-<span class="s2">                &lt;div class=&quot;metric-result-body&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-body-column&quot;&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-title&quot;&gt;Metric Name&lt;/div&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-body-column&quot;&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-title&quot;&gt;Metric Type&lt;/div&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-body-column&quot;&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-title&quot;&gt;Metric Scope&lt;/div&gt;</span>
-<span class="s2">                        &lt;div class=&quot;metric-body-column-value&quot;&gt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="o">.</span><span class="n">scope</span><span class="si">}</span><span class="s2">&lt;/div&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">                &lt;div class=&quot;metric-value&quot;&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-title&quot;&gt;Metric Value&lt;/div&gt;</span>
-<span class="s2">                    &lt;div class=&quot;metric-value-value&quot;&gt;</span>
-<span class="s2">                        &lt;pre&gt;</span><span class="si">{</span><span class="n">metric_value</span><span class="si">}</span><span class="s2">&lt;/pre&gt;</span>
-<span class="s2">                    &lt;/div&gt;</span>
-<span class="s2">                &lt;/div&gt;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-            <span class="p">)</span>
+            <span class="c1"># Disable for now and fix later</span>
+            <span class="c1">#</span>
+            <span class="c1"># view_raw_data_button = widgets.Button(description=&quot;View Raw Data&quot;)</span>
+
+            <span class="c1"># # Hide raw data by default</span>
+            <span class="c1"># output = widgets.Output()</span>
+            <span class="c1"># output.layout.display = &quot;none&quot;</span>
+
+            <span class="c1"># metric_value = self.metric.value</span>
+            <span class="c1"># metric_output = (</span>
+            <span class="c1">#     json.dumps(metric_value, indent=2, cls=NumpyEncoder)</span>
+            <span class="c1">#     if type(metric_value) == dict</span>
+            <span class="c1">#     else str(metric_value)</span>
+            <span class="c1"># )</span>
+
+            <span class="c1"># with output:</span>
+            <span class="c1">#     display(</span>
+            <span class="c1">#         widgets.HTML(</span>
+            <span class="c1">#             value=f&quot;&quot;&quot;</span>
+            <span class="c1">#         &lt;div class=&quot;metric-result&quot;&gt;</span>
+            <span class="c1">#             &lt;div class=&quot;metric-value&quot;&gt;</span>
+            <span class="c1">#                 &lt;div class=&quot;metric-value-title&quot;&gt;Raw Metric Value&lt;/div&gt;</span>
+            <span class="c1">#                 &lt;div class=&quot;metric-value-value&quot;&gt;</span>
+            <span class="c1">#                     &lt;pre&gt;{metric_output}&lt;/pre&gt;</span>
+            <span class="c1">#                 &lt;/div&gt;</span>
+            <span class="c1">#             &lt;/div&gt;</span>
+            <span class="c1">#         &lt;/div&gt;</span>
+            <span class="c1">#         &quot;&quot;&quot;</span>
+            <span class="c1">#         )</span>
+            <span class="c1">#     )</span>
+
+            <span class="c1"># def on_button_clicked(b):</span>
+            <span class="c1">#     if output.layout.display == &quot;none&quot;:</span>
+            <span class="c1">#         output.layout.display = &quot;block&quot;</span>
+            <span class="c1">#     else:</span>
+            <span class="c1">#         output.layout.display = &quot;none&quot;</span>
+
+            <span class="c1"># view_raw_data_button.on_click(on_button_clicked)</span>
+
+            <span class="c1"># vbox_children.append(view_raw_data_button)</span>
+            <span class="c1"># vbox_children.append(output)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
-            <span class="n">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;&lt;h3&gt;Plots&lt;/h3&gt;&quot;</span><span class="p">))</span>
+            <span class="n">plot_widgets</span> <span class="o">=</span> <span class="n">plot_figures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plot_widgets</span><span class="p">)</span>
 
-        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        &lt;/div&gt;</span>
-<span class="sd">        &lt;style&gt;</span>
-<span class="sd">            .metric-result {</span>
-<span class="sd">                background-color: #F5F5F5;</span>
-<span class="sd">                border: 1px solid #e0e0e0;</span>
-<span class="sd">                border-radius: 4px;</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">                margin: 10px 0;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-result-body {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                gap: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-body-column {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                width: 33%;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-body-column-title {</span>
-<span class="sd">                font-size: 16px;</span>
-<span class="sd">                font-weight: 600;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                margin-top: 15px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value-title {</span>
-<span class="sd">                font-size: 16px;</span>
-<span class="sd">                font-weight: 600;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value-value {</span>
-<span class="sd">                font-size: 14px;</span>
-<span class="sd">                font-weight: 500;</span>
-<span class="sd">                margin-top: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-plot img {</span>
-<span class="sd">                margin-left: auto !important;</span>
-<span class="sd">                margin-right: auto !important;</span>
-<span class="sd">                max-height: 500px !important;</span>
-<span class="sd">                height: 100%;</span>
-<span class="sd">                width: auto;</span>
-<span class="sd">                max-width: 800px;</span>
-<span class="sd">            }</span>
-<span class="sd">        &lt;/style&gt;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;style&gt;</span>
+<span class="s2">            .metric-result {</span>
+<span class="s2">                background-color: #F5F5F5;</span>
+<span class="s2">                border: 1px solid #e0e0e0;</span>
+<span class="s2">                border-radius: 4px;</span>
+<span class="s2">                padding: 10px;</span>
+<span class="s2">                margin: 10px 0;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-result-body {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                gap: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-body-column {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                width: 33%;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-body-column-title {</span>
+<span class="s2">                font-size: 16px;</span>
+<span class="s2">                font-weight: 600;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                margin-top: 15px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value-title {</span>
+<span class="s2">                font-size: 16px;</span>
+<span class="s2">                font-weight: 600;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value-value {</span>
+<span class="s2">                font-size: 14px;</span>
+<span class="s2">                font-weight: 500;</span>
+<span class="s2">                margin-top: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">        &lt;/style&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">vbox_children</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TestPlanMetricResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanMetricResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
@@ -384,11 +372,12 @@
 <span class="sd">    Result wrapper for models that run as part of a test plan</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Metric&quot;</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;h4&gt;Logged the following model to the ValidMind platform:&lt;/h4&gt;</span>
+    <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;div class=&quot;model-result&quot;&gt;</span>
 <span class="s2">            &lt;div class=&quot;model-result-header&quot;&gt;</span>
 <span class="s2">                &lt;div class=&quot;model-result-header-title&quot;&gt;</span>
@@ -456,6 +445,7 @@
 <span class="s2">            </span><span class="se">}}</span>
 <span class="s2">        &lt;/style&gt;</span>
 <span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="TestPlanModelResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanModelResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">log_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span></div></div>
@@ -467,6 +457,7 @@
 <span class="sd">    Result wrapper for test results produced by the tests that run as part of a test plan</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Threshold Test&quot;</span>
     <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">test_results</span><span class="p">:</span> <span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -486,11 +477,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(result_id=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_id</span><span class="si">}</span><span class="s1">&quot;, figures)&#39;</span>
 
-    <span class="k">def</span> <span class="nf">_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        &lt;h4&gt;Logged the following test result to the ValidMind platform:&lt;/h4&gt;</span>
+    <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">vbox_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        &lt;div class=&quot;metric-result&quot;&gt;</span>
 <span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
 <span class="s2">                &lt;div class=&quot;test-result-header-title&quot;&gt;</span>
@@ -529,113 +520,108 @@
 <span class="s2">                    See Result Details</span>
 <span class="s2">                &lt;/a&gt;</span>
 <span class="s2">            &lt;/div&gt;</span>
-<span class="s2">            &lt;div class=&quot;metric-result-body&quot;&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
 <span class="s2">        &quot;&quot;&quot;</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">:</span>
-            <span class="n">plot_figures</span><span class="p">(</span><span class="n">html</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;&lt;h3&gt;Plots&lt;/h3&gt;&quot;</span><span class="p">))</span>
+            <span class="n">plot_widgets</span> <span class="o">=</span> <span class="n">plot_figures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figures</span><span class="p">)</span>
+            <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plot_widgets</span><span class="p">)</span>
 
-        <span class="n">html</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            &lt;/div&gt;</span>
-<span class="sd">        &lt;/div&gt;</span>
-<span class="sd">        &lt;style&gt;</span>
-<span class="sd">            .metric-result {</span>
-<span class="sd">                background-color: #F5F5F5;</span>
-<span class="sd">                border: 1px solid #e0e0e0;</span>
-<span class="sd">                border-radius: 4px;</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">                margin: 10px 0;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-result-body {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                gap: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-body-column {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                width: 33%;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-body-column-title {</span>
-<span class="sd">                font-size: 16px;</span>
-<span class="sd">                font-weight: 600;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                flex-direction: column;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                margin-top: 15px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value-title {</span>
-<span class="sd">                font-size: 16px;</span>
-<span class="sd">                font-weight: 600;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-value-value {</span>
-<span class="sd">                font-size: 14px;</span>
-<span class="sd">                font-weight: 500;</span>
-<span class="sd">                margin-top: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .metric-plot img {</span>
-<span class="sd">                margin-left: auto !important;</span>
-<span class="sd">                margin-right: auto !important;</span>
-<span class="sd">                max-height: 500px !important;</span>
-<span class="sd">                height: 100%;</span>
-<span class="sd">                width: auto;</span>
-<span class="sd">                max-width: 800px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .test-result {</span>
-<span class="sd">                border: 1px solid #ccc;</span>
-<span class="sd">                border-radius: 5px;</span>
-<span class="sd">                margin-bottom: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .test-result-header {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                justify-content: space-between;</span>
-<span class="sd">                align-items: center;</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .test-result-header-title {</span>
-<span class="sd">                display: flex;</span>
-<span class="sd">                align-items: center;</span>
-<span class="sd">            }</span>
-<span class="sd">            .test-result-header-title-text {</span>
-<span class="sd">                text-decoration: underline;</span>
-<span class="sd">                font-size: 18px;</span>
-<span class="sd">                font-weight: 600;</span>
-<span class="sd">            }</span>
-<span class="sd">            .test-result-header-title-icon {</span>
-<span class="sd">                margin-left: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .results-objs {</span>
-<span class="sd">                padding: 10px;</span>
-<span class="sd">            }</span>
-<span class="sd">            .results-objs-title {</span>
-<span class="sd">                font-weight: bold;</span>
-<span class="sd">            }</span>
-<span class="sd">            .results-objs-body {</span>
-<span class="sd">                margin-top: 5px;</span>
-<span class="sd">            }</span>
-<span class="sd">        &lt;/style&gt;</span>
-<span class="sd">        &lt;script&gt;</span>
-<span class="sd">            function toggleTestResults(btn) {{</span>
-<span class="sd">                const rslts = btn.parentElement.parentElement.querySelector(&#39;.results-objs&#39;);</span>
-<span class="sd">                if (rslts.style.display === &#39;none&#39;) {{</span>
-<span class="sd">                    rslts.style.display = &#39;block&#39;;</span>
-<span class="sd">                    btn.innerHTML = &#39;Hide Result Details&#39;;</span>
-<span class="sd">                }} else {{</span>
-<span class="sd">                    rslts.style.display = &#39;none&#39;;</span>
-<span class="sd">                    btn.innerHTML = &#39;See Result Details&#39;;</span>
-<span class="sd">                }}</span>
-<span class="sd">            }}</span>
-<span class="sd">        &lt;/script&gt;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;style&gt;</span>
+<span class="s2">            .metric-result {</span>
+<span class="s2">                background-color: #F5F5F5;</span>
+<span class="s2">                border: 1px solid #e0e0e0;</span>
+<span class="s2">                border-radius: 4px;</span>
+<span class="s2">                padding: 10px;</span>
+<span class="s2">                margin: 10px 0;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-result-body {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                gap: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-body-column {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                width: 33%;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-body-column-title {</span>
+<span class="s2">                font-size: 16px;</span>
+<span class="s2">                font-weight: 600;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                flex-direction: column;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                margin-top: 15px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value-title {</span>
+<span class="s2">                font-size: 16px;</span>
+<span class="s2">                font-weight: 600;</span>
+<span class="s2">            }</span>
+<span class="s2">            .metric-value-value {</span>
+<span class="s2">                font-size: 14px;</span>
+<span class="s2">                font-weight: 500;</span>
+<span class="s2">                margin-top: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .test-result {</span>
+<span class="s2">                border: 1px solid #ccc;</span>
+<span class="s2">                border-radius: 5px;</span>
+<span class="s2">                margin-bottom: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .test-result-header {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                justify-content: space-between;</span>
+<span class="s2">                align-items: center;</span>
+<span class="s2">                padding: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .test-result-header-title {</span>
+<span class="s2">                display: flex;</span>
+<span class="s2">                align-items: center;</span>
+<span class="s2">            }</span>
+<span class="s2">            .test-result-header-title-text {</span>
+<span class="s2">                text-decoration: underline;</span>
+<span class="s2">                font-size: 18px;</span>
+<span class="s2">                font-weight: 600;</span>
+<span class="s2">            }</span>
+<span class="s2">            .test-result-header-title-icon {</span>
+<span class="s2">                margin-left: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .results-objs {</span>
+<span class="s2">                padding: 10px;</span>
+<span class="s2">            }</span>
+<span class="s2">            .results-objs-title {</span>
+<span class="s2">                font-weight: bold;</span>
+<span class="s2">            }</span>
+<span class="s2">            .results-objs-body {</span>
+<span class="s2">                margin-top: 5px;</span>
+<span class="s2">            }</span>
+<span class="s2">        &lt;/style&gt;</span>
+<span class="s2">        &lt;script&gt;</span>
+<span class="s2">            function toggleTestResults(btn) {{</span>
+<span class="s2">                const rslts = btn.parentElement.parentElement.querySelector(&#39;.results-objs&#39;);</span>
+<span class="s2">                if (rslts.style.display === &#39;none&#39;) {{</span>
+<span class="s2">                    rslts.style.display = &#39;block&#39;;</span>
+<span class="s2">                    btn.innerHTML = &#39;Hide Result Details&#39;;</span>
+<span class="s2">                }} else {{</span>
+<span class="s2">                    rslts.style.display = &#39;none&#39;;</span>
+<span class="s2">                    btn.innerHTML = &#39;See Result Details&#39;;</span>
+<span class="s2">                }}</span>
+<span class="s2">            }}</span>
+<span class="s2">        &lt;/script&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">html</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">vbox_children</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TestPlanTestResult.log"><a class="viewcode-back" href="../../../vm_models.html#validmind.vm_models.TestPlanTestResult.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">log_test_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">)</span>
