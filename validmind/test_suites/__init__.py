@@ -7,6 +7,7 @@ from .test_suites import (
     BinaryClassifierFullSuite,
     BinaryClassifierModelValidation,
     TabularDataset,
+    TimeSeriesDataset,
 )
 from ..vm_models import TestSuite
 
@@ -14,6 +15,7 @@ core_test_suites = {
     "binary_classifier_full_suite": BinaryClassifierFullSuite,
     "binary_classifier_model_validation": BinaryClassifierModelValidation,
     "tabular_dataset": TabularDataset,
+    "time_series_dataset": TimeSeriesDataset,
 }
 
 # These test suites can be added by the user
