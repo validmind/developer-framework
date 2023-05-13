@@ -22,7 +22,13 @@ from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
-from ...vm_models import Figure, Metric
+from ...vm_models import (
+    Figure,
+    Metric,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+)
 
 
 @dataclass
@@ -576,14 +582,37 @@ class RegressionModelSummary(Metric):
         mse = lib_model.mse_resid
         rmse = mse**0.5
 
-        results = {
-            "Independent Variables": X_columns,
-            "R-Squared": r2,
-            "Adjusted R-Squared": adj_r2,
-            "MSE": mse,
-            "RMSE": rmse,
-        }
-        return self.cache_results(results)
+        # Create a DataFrame for the results
+        summary_regression = pd.DataFrame(
+            {
+                "Independent Variables": [X_columns],
+                "R-Squared": [r2],
+                "Adjusted R-Squared": [adj_r2],
+                "MSE": [mse],
+                "RMSE": [rmse],
+            }
+        )
+
+        return self.cache_results(
+            {
+                "regression_analysis": summary_regression.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the regression analysis results
+        """
+        summary_regression = metric_value["regression_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_regression,
+                    metadata=ResultTableMetadata(title="Regression Analysis Results"),
+                ),
+            ]
+        )
 
 
 @dataclass
