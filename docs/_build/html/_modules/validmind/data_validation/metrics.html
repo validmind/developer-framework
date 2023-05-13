@@ -77,6 +77,7 @@
 
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">ClassVar</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -356,6 +357,7 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_line_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 <div class="viewcode-block" id="TimeSeriesLinePlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesLinePlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -365,7 +367,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Index must be a datetime type&quot;</span><span class="p">)</span>
 
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+        <span class="c1"># If no columns are specified in the config, we plot all columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
@@ -404,6 +411,7 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;time_series_histogram&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 <div class="viewcode-block" id="TimeSeriesHistogram.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.TimeSeriesHistogram.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -413,7 +421,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Index must be a datetime type&quot;</span><span class="p">)</span>
 
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+        <span class="c1"># If no columns are specified in the config, we plot all columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
@@ -445,12 +458,18 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;scatter_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 <div class="viewcode-block" id="ScatterPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ScatterPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Columns must be provided in params&quot;</span><span class="p">)</span>
 
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+        <span class="c1"># If no columns are specified in the config, we plot all columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
@@ -520,12 +539,11 @@
         <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
 
 <div class="viewcode-block" id="LaggedCorrelationHeatmap.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.LaggedCorrelationHeatmap.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;target_col&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="ow">or</span> <span class="s2">&quot;independent_vars&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Both &#39;target_col&#39; and &#39;independent_vars&#39; must be provided in params&quot;</span>
-            <span class="p">)</span>
+        <span class="n">target_col</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">independent_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
-        <span class="n">target_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;target_col&quot;</span><span class="p">]</span>
+        <span class="n">num_lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_lags&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_col</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_col</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">target_col</span> <span class="o">=</span> <span class="n">target_col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -533,9 +551,6 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;The &#39;target_col&#39; must be a single string or a list containing a single string&quot;</span>
             <span class="p">)</span>
-
-        <span class="n">independent_vars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;independent_vars&quot;</span><span class="p">]</span>
-        <span class="n">num_lags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_lags&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
@@ -560,6 +575,7 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_ar_order&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 
 <div class="viewcode-block" id="AutoAR.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;max_ar_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -612,6 +628,7 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_ma_order&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 
 <div class="viewcode-block" id="AutoMA.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;max_ma_order&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -722,64 +739,79 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
-        <span class="c1"># Drop rows with missing values</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">figures</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">sd</span> <span class="o">=</span> <span class="n">seasonal_decompose</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="n">seasonal_model</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">store_seasonal_decompose</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
+            <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-            <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_seasonal_decompose</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
+            <span class="c1"># Check for non-finite values and handle them</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">series</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">series</span><span class="p">)]</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">inferred_freq</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">infer_freq</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
-            <span class="c1"># Create subplots</span>
-            <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Seasonal Decomposition and Residual Diagnostics for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">fontsize</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
-            <span class="p">)</span>
+                <span class="k">if</span> <span class="n">inferred_freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Frequency of </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">inferred_freq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Original seasonal decomposition plots</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Observed&quot;</span><span class="p">)</span>
-            <span class="n">sd</span><span class="o">.</span><span class="n">observed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                    <span class="c1"># Only take finite values to seasonal_decompose</span>
+                    <span class="n">sd</span> <span class="o">=</span> <span class="n">seasonal_decompose</span><span class="p">(</span>
+                        <span class="n">series</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">series</span><span class="p">)],</span> <span class="n">model</span><span class="o">=</span><span class="n">seasonal_model</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">store_seasonal_decompose</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span>
 
-            <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Trend&quot;</span><span class="p">)</span>
-            <span class="n">sd</span><span class="o">.</span><span class="n">trend</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                    <span class="n">results</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_seasonal_decompose</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span>
 
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Seasonal&quot;</span><span class="p">)</span>
-            <span class="n">sd</span><span class="o">.</span><span class="n">seasonal</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                    <span class="c1"># Create subplots</span>
+                    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Seasonal Decomposition and Residual Diagnostics for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+                    <span class="p">)</span>
 
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
-            <span class="n">sd</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+                    <span class="c1"># Original seasonal decomposition plots</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Observed&quot;</span><span class="p">)</span>
+                    <span class="n">sd</span><span class="o">.</span><span class="n">observed</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
-            <span class="c1"># Residual diagnostics plots</span>
-            <span class="n">residuals</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Trend&quot;</span><span class="p">)</span>
+                    <span class="n">sd</span><span class="o">.</span><span class="n">trend</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 
-            <span class="c1"># Histogram with KDE</span>
-            <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Histogram and KDE of Residuals&quot;</span><span class="p">)</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Seasonal&quot;</span><span class="p">)</span>
+                    <span class="n">sd</span><span class="o">.</span><span class="n">seasonal</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
-            <span class="c1"># Normal Q-Q plot</span>
-            <span class="n">stats</span><span class="o">.</span><span class="n">probplot</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-            <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Normal Q-Q Plot of Residuals&quot;</span><span class="p">)</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
+                    <span class="n">sd</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
 
-            <span class="c1"># ACF plot</span>
-            <span class="n">plot_acf</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ACF of Residuals&quot;</span><span class="p">)</span>
+                    <span class="c1"># Residual diagnostics plots</span>
+                    <span class="n">residuals</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-            <span class="c1"># PACF plot</span>
-            <span class="n">plot_pacf</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;PACF of Residuals&quot;</span><span class="p">)</span>
+                    <span class="c1"># Histogram with KDE</span>
+                    <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Histogram and KDE of Residuals&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Adjust the layout</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+                    <span class="c1"># Normal Q-Q plot</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">probplot</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+                    <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Normal Q-Q Plot of Residuals&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Do this if you want to prevent the figure from being displayed</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+                    <span class="c1"># ACF plot</span>
+                    <span class="n">plot_acf</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;ACF of Residuals&quot;</span><span class="p">)</span>
 
-            <span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{}))</span>
+                    <span class="c1"># PACF plot</span>
+                    <span class="n">plot_pacf</span><span class="p">(</span><span class="n">residuals</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;PACF of Residuals&quot;</span><span class="p">)</span>
+
+                    <span class="c1"># Adjust the layout</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+                    <span class="c1"># Do this if you want to prevent the figure from being displayed</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+                    <span class="n">figures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">Figure</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{})</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;No frequency could be inferred for variable &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39;. Skipping seasonal decomposition and plots for this variable.&quot;</span>
+                    <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">figures</span><span class="o">=</span><span class="n">figures</span><span class="p">)</span></div></div>
 
@@ -852,6 +884,7 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;acf_pacf_plot&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
 
 <div class="viewcode-block" id="ACFandPACFPlot.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -861,7 +894,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Index must be a datetime type&quot;</span><span class="p">)</span>
 
-        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+        <span class="c1"># If no columns are specified in the config, we plot all columns</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;columns&quot;</span><span class="p">]</span>
+
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
