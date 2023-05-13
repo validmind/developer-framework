@@ -732,7 +732,7 @@ class RobustnessDiagnosis(ThresholdTest):
                 )
 
             self._compute_metrics(
-                results, temp_train_df, train_y_true, x_std_dev, "Traning"
+                results, temp_train_df, train_y_true, x_std_dev, "Training"
             )
             self._compute_metrics(results, temp_test_df, test_y_true, x_std_dev, "Test")
 
@@ -851,7 +851,7 @@ class RobustnessDiagnosis(ThresholdTest):
         ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
         ax.legend(fontsize=22)
         ax.set_xlabel(
-            "Perturbation Size ( X * Standard Deviation)", weight="bold", fontsize=22
+            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=22
         )
         ax.set_title(
             f"Perturbed Features: {', '.join(features_columns)}",

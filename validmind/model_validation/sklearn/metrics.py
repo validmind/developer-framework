@@ -383,7 +383,7 @@ class SHAPGlobalImportance(Metric):
         plt.close("all")
 
         # preserve styles
-        mpl.rcParams["grid.color"] = "#CCC"
+        # mpl.rcParams["grid.color"] = "#CCC"
         ax = plt.axes()
         ax.set_facecolor("white")
 
