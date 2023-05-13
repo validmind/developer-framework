@@ -657,7 +657,6 @@ class RegressionModelInsampleComparison(Metric):
 
         return evaluation_results
 
-    
 
 @dataclass
 class RegressionModelOutsampleComparison(Metric):
