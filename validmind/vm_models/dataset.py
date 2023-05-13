@@ -134,6 +134,21 @@ class Dataset:
         feature = self.get_feature_by_id(feature_id)
         return feature["type"]
 
+    def get_features_columns(self):
+        """
+        Returns list of features columns
+
+        Returns:
+            list: The list of features columns
+        """
+        return [
+            field_dic["id"]
+            for field_dic in self.fields
+            if (
+                field_dic["id"] != self.target_column
+            )
+        ]
+
     def get_numeric_features_columns(self):
         """
         Returns list of numeric features columns
