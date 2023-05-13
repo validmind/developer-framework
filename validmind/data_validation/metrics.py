@@ -781,27 +781,53 @@ class AutoSeasonality(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_auto_seasonality = pd.DataFrame()
 
         for col_name, col in df.iteritems():
             series = col.dropna()
+
+            # Directly insert the results into the DataFrame
             seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
                 series, min_period, max_period
             )
-
             best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
-            decision = "Seasonality" if best_seasonal_period > 1 else "Not Seasonality"
+            decision = "Seasonality" if best_seasonal_period > 1 else "No Seasonality"
 
-            result = {
-                "Variable": col_name,
-                "Seasonal Periods": seasonal_periods,
-                "Residual Errors": residual_errors,
-                "Best Period": best_seasonal_period,
-                "Decision": decision,
+            summary_auto_seasonality = summary_auto_seasonality.append(
+                {
+                    "Variable": col_name,
+                    "Tested Seasonal Periods": seasonal_periods,
+                    "Best Period": best_seasonal_period,
+                    "Decision": decision,
+                },
+                ignore_index=True,
+            )
+            # Convert the 'Best Period' column to integer
+            summary_auto_seasonality["Best Period"] = summary_auto_seasonality[
+                "Best Period"
+            ].astype(int)
+
+        return self.cache_results(
+            {
+                "auto_seasonality": summary_auto_seasonality.to_dict(orient="records"),
             }
-            results.append(result)
+        )
 
-        return self.cache_results(results)
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto seasonality results
+        """
+        summary_auto_seasonality = metric_value["auto_seasonality"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_auto_seasonality,
+                    metadata=ResultTableMetadata(title="Auto Seasonality Results"),
+                ),
+            ]
+        )
 
 
 class ACFandPACFPlot(Metric):
