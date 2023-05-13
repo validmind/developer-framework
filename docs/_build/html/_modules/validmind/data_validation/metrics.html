@@ -573,6 +573,7 @@
 <span class="sd">    Automatically detects the AR order of a time series using both BIC and AIC.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ar&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_ar_order&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
@@ -585,7 +586,8 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create an empty DataFrame to store the results</span>
+        <span class="n">summary_ar_analysis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -595,30 +597,47 @@
             <span class="k">if</span> <span class="n">adf_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> is not stationary. Results may be inaccurate.&quot;</span><span class="p">)</span>
 
-            <span class="n">ar_orders</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">bic_values</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">aic_values</span> <span class="o">=</span> <span class="p">[]</span>
-
             <span class="k">for</span> <span class="n">ar_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_ar_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">model</span> <span class="o">=</span> <span class="n">AutoReg</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="n">ar_order</span><span class="p">,</span> <span class="n">old_names</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                     <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
-                    <span class="n">ar_orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ar_order</span><span class="p">)</span>
-                    <span class="n">bic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">)</span>
-                    <span class="n">aic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+                    <span class="c1"># Append the result of each AR order directly into the DataFrame</span>
+                    <span class="n">summary_ar_analysis</span> <span class="o">=</span> <span class="n">summary_ar_analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                            <span class="s2">&quot;AR Order&quot;</span><span class="p">:</span> <span class="n">ar_order</span><span class="p">,</span>
+                            <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">,</span>
+                            <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">,</span>
+                        <span class="p">},</span>
+                        <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fitting AR(</span><span class="si">{</span><span class="n">ar_order</span><span class="si">}</span><span class="s2">) model for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
-                <span class="s2">&quot;AR orders&quot;</span><span class="p">:</span> <span class="n">ar_orders</span><span class="p">,</span>
-                <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">bic_values</span><span class="p">,</span>
-                <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">aic_values</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># Convert the &#39;AR Order&#39; column to integer</span>
+        <span class="n">summary_ar_analysis</span><span class="p">[</span><span class="s2">&quot;AR Order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_ar_analysis</span><span class="p">[</span><span class="s2">&quot;AR Order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;auto_ar_analysis&quot;</span><span class="p">:</span> <span class="n">summary_ar_analysis</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AutoAR.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoAR.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one table for summarizing the auto AR results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_ar_analysis</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;auto_ar_analysis&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_ar_analysis</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Auto AR Analysis Results&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="AutoMA"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA">[docs]</a><span class="k">class</span> <span class="nc">AutoMA</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
@@ -626,6 +645,7 @@
 <span class="sd">    Automatically detects the MA order of a time series using both BIC and AIC.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_ma&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_ma_order&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
@@ -638,7 +658,8 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create an empty DataFrame to store the results</span>
+        <span class="n">summary_ma_analysis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">series</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
@@ -648,30 +669,47 @@
             <span class="k">if</span> <span class="n">adf_test</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> is not stationary. Results may be inaccurate.&quot;</span><span class="p">)</span>
 
-            <span class="n">ma_orders</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">bic_values</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">aic_values</span> <span class="o">=</span> <span class="p">[]</span>
-
             <span class="k">for</span> <span class="n">ma_order</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_ma_order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">model</span> <span class="o">=</span> <span class="n">ARIMA</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ma_order</span><span class="p">))</span>
                     <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 
-                    <span class="n">ma_orders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ma_order</span><span class="p">)</span>
-                    <span class="n">bic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">)</span>
-                    <span class="n">aic_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+                    <span class="c1"># Append the result of each MA order directly into the DataFrame</span>
+                    <span class="n">summary_ma_analysis</span> <span class="o">=</span> <span class="n">summary_ma_analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                            <span class="s2">&quot;MA Order&quot;</span><span class="p">:</span> <span class="n">ma_order</span><span class="p">,</span>
+                            <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">bic</span><span class="p">,</span>
+                            <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">aic</span><span class="p">,</span>
+                        <span class="p">},</span>
+                        <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fitting MA(</span><span class="si">{</span><span class="n">ma_order</span><span class="si">}</span><span class="s2">) model for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
-                <span class="s2">&quot;MA orders&quot;</span><span class="p">:</span> <span class="n">ma_orders</span><span class="p">,</span>
-                <span class="s2">&quot;BIC&quot;</span><span class="p">:</span> <span class="n">bic_values</span><span class="p">,</span>
-                <span class="s2">&quot;AIC&quot;</span><span class="p">:</span> <span class="n">aic_values</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># Convert the &#39;MA Order&#39; column to integer</span>
+        <span class="n">summary_ma_analysis</span><span class="p">[</span><span class="s2">&quot;MA Order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_ma_analysis</span><span class="p">[</span><span class="s2">&quot;MA Order&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;auto_ma_analysis&quot;</span><span class="p">:</span> <span class="n">summary_ma_analysis</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AutoMA.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoMA.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one table for summarizing the auto MA results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_ma_analysis</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;auto_ma_analysis&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_ma_analysis</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Auto MA Analysis Results&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SeasonalDecompose"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.SeasonalDecompose">[docs]</a><span class="k">class</span> <span class="nc">SeasonalDecompose</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
@@ -854,27 +892,53 @@
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create an empty DataFrame to store the results</span>
+        <span class="n">summary_auto_seasonality</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="n">series</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+            <span class="c1"># Directly insert the results into the DataFrame</span>
             <span class="n">seasonal_periods</span><span class="p">,</span> <span class="n">residual_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_seasonal_periods</span><span class="p">(</span>
                 <span class="n">series</span><span class="p">,</span> <span class="n">min_period</span><span class="p">,</span> <span class="n">max_period</span>
             <span class="p">)</span>
-
             <span class="n">best_seasonal_period</span> <span class="o">=</span> <span class="n">seasonal_periods</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">residual_errors</span><span class="p">)]</span>
-            <span class="n">decision</span> <span class="o">=</span> <span class="s2">&quot;Seasonality&quot;</span> <span class="k">if</span> <span class="n">best_seasonal_period</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;Not Seasonality&quot;</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="s2">&quot;Seasonality&quot;</span> <span class="k">if</span> <span class="n">best_seasonal_period</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;No Seasonality&quot;</span>
 
-            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col_name</span><span class="p">,</span>
-                <span class="s2">&quot;Seasonal Periods&quot;</span><span class="p">:</span> <span class="n">seasonal_periods</span><span class="p">,</span>
-                <span class="s2">&quot;Residual Errors&quot;</span><span class="p">:</span> <span class="n">residual_errors</span><span class="p">,</span>
-                <span class="s2">&quot;Best Period&quot;</span><span class="p">:</span> <span class="n">best_seasonal_period</span><span class="p">,</span>
-                <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">decision</span><span class="p">,</span>
+            <span class="n">summary_auto_seasonality</span> <span class="o">=</span> <span class="n">summary_auto_seasonality</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col_name</span><span class="p">,</span>
+                    <span class="s2">&quot;Tested Seasonal Periods&quot;</span><span class="p">:</span> <span class="n">seasonal_periods</span><span class="p">,</span>
+                    <span class="s2">&quot;Best Period&quot;</span><span class="p">:</span> <span class="n">best_seasonal_period</span><span class="p">,</span>
+                    <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">decision</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># Convert the &#39;Best Period&#39; column to integer</span>
+            <span class="n">summary_auto_seasonality</span><span class="p">[</span><span class="s2">&quot;Best Period&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_auto_seasonality</span><span class="p">[</span>
+                <span class="s2">&quot;Best Period&quot;</span>
+            <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;auto_seasonality&quot;</span><span class="p">:</span> <span class="n">summary_auto_seasonality</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
             <span class="p">}</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="AutoSeasonality.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoSeasonality.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one table for summarizing the auto seasonality results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_auto_seasonality</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;auto_seasonality&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_auto_seasonality</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Auto Seasonality Results&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ACFandPACFPlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.ACFandPACFPlot">[docs]</a><span class="k">class</span> <span class="nc">ACFandPACFPlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
@@ -934,7 +998,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;auto_stationarity&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;auto_stationarity&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_order&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}</span>
 
@@ -948,7 +1012,9 @@
         <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Create an empty DataFrame to store the results</span>
+        <span class="n">summary_stationarity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
         <span class="c1"># Loop over each column in the input DataFrame and perform stationarity tests</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -967,23 +1033,50 @@
                 <span class="n">adf_pass_fail</span> <span class="o">=</span> <span class="n">adf_pvalue</span> <span class="o">&lt;</span> <span class="n">threshold</span>
                 <span class="n">adf_decision</span> <span class="o">=</span> <span class="s2">&quot;Stationary&quot;</span> <span class="k">if</span> <span class="n">adf_pass_fail</span> <span class="k">else</span> <span class="s2">&quot;Non-stationary&quot;</span>
 
-                <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
-                    <span class="s2">&quot;Integration Order&quot;</span><span class="p">:</span> <span class="n">order</span><span class="p">,</span>
-                    <span class="s2">&quot;Test&quot;</span><span class="p">:</span> <span class="s2">&quot;ADF&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;p-value&quot;</span><span class="p">:</span> <span class="n">adf_pvalue</span><span class="p">,</span>
-                    <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span>
-                    <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">adf_pass_fail</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">adf_decision</span><span class="p">,</span>
-                <span class="p">}</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="c1"># Append the result of each test directly into the DataFrame</span>
+                <span class="n">summary_stationarity</span> <span class="o">=</span> <span class="n">summary_stationarity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                        <span class="s2">&quot;Integration Order&quot;</span><span class="p">:</span> <span class="n">order</span><span class="p">,</span>
+                        <span class="s2">&quot;Test&quot;</span><span class="p">:</span> <span class="s2">&quot;ADF&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;p-value&quot;</span><span class="p">:</span> <span class="n">adf_pvalue</span><span class="p">,</span>
+                        <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span>
+                        <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">adf_pass_fail</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">adf_decision</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">adf_pass_fail</span><span class="p">:</span>
                     <span class="n">is_stationary</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+        <span class="c1"># Convert the &#39;Integration Order&#39; column to integer</span>
+        <span class="n">summary_stationarity</span><span class="p">[</span><span class="s2">&quot;Integration Order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary_stationarity</span><span class="p">[</span>
+            <span class="s2">&quot;Integration Order&quot;</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;stationarity_analysis&quot;</span><span class="p">:</span> <span class="n">summary_stationarity</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AutoStationarity.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.AutoStationarity.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one table for summarizing the stationarity results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_stationarity</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;stationarity_analysis&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_stationarity</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Stationarity Analysis Results&quot;</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="RollingStatsPlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.RollingStatsPlot">[docs]</a><span class="k">class</span> <span class="nc">RollingStatsPlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
@@ -1064,6 +1157,7 @@
 <span class="sd">    Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;engle_granger_coint&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;threshold&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">}</span>
@@ -1072,7 +1166,9 @@
         <span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Create an empty DataFrame to store the results</span>
+        <span class="n">summary_cointegration</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
         <span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
         <span class="n">num_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
 
@@ -1090,18 +1186,44 @@
                 <span class="p">)</span>
                 <span class="n">pass_fail</span> <span class="o">=</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;=</span> <span class="n">threshold</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span>
 
-                <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;Variable 1&quot;</span><span class="p">:</span> <span class="n">var1</span><span class="p">,</span>
-                    <span class="s2">&quot;Variable 2&quot;</span><span class="p">:</span> <span class="n">var2</span><span class="p">,</span>
-                    <span class="s2">&quot;Test&quot;</span><span class="p">:</span> <span class="s2">&quot;Engle-Granger&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;p-value&quot;</span><span class="p">:</span> <span class="n">p_value</span><span class="p">,</span>
-                    <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span>
-                    <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="n">pass_fail</span><span class="p">,</span>
-                    <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">decision</span><span class="p">,</span>
-                <span class="p">}</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="c1"># Append the result of each test directly into the DataFrame</span>
+                <span class="n">summary_cointegration</span> <span class="o">=</span> <span class="n">summary_cointegration</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;Variable 1&quot;</span><span class="p">:</span> <span class="n">var1</span><span class="p">,</span>
+                        <span class="s2">&quot;Variable 2&quot;</span><span class="p">:</span> <span class="n">var2</span><span class="p">,</span>
+                        <span class="s2">&quot;Test&quot;</span><span class="p">:</span> <span class="s2">&quot;Engle-Granger&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;p-value&quot;</span><span class="p">:</span> <span class="n">p_value</span><span class="p">,</span>
+                        <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">threshold</span><span class="p">,</span>
+                        <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="n">pass_fail</span><span class="p">,</span>
+                        <span class="s2">&quot;Decision&quot;</span><span class="p">:</span> <span class="n">decision</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;cointegration_analysis&quot;</span><span class="p">:</span> <span class="n">summary_cointegration</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span>
+                    <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="EngleGrangerCoint.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.EngleGrangerCoint.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build one table for summarizing the cointegration results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">summary_cointegration</span> <span class="o">=</span> <span class="n">metric_value</span><span class="p">[</span><span class="s2">&quot;cointegration_analysis&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_cointegration</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Cointegration Analysis Results&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SpreadPlot"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.SpreadPlot">[docs]</a><span class="k">class</span> <span class="nc">SpreadPlot</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
