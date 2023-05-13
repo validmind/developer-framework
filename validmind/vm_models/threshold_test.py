@@ -37,7 +37,7 @@ class ThresholdTest(TestContextUtils):
 
     # Instance Variables
     params: dict = None
-    test_results: TestResults = None
+    result: TestResults = None
 
     def __post_init__(self):
         """
@@ -55,7 +55,7 @@ class ThresholdTest(TestContextUtils):
         """
         return self.__doc__.strip()
 
-    def summary(self, test_results: Optional[TestResults] = None):
+    def summary(self, result: Optional[TestResults] = None):
         """
         Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
         The test summary allows renderers (e.g. Word and ValidMind UI) to display a
@@ -73,7 +73,7 @@ class ThresholdTest(TestContextUtils):
 
     def cache_results(
         self,
-        results: List[TestResult],
+        test_results_list: List[TestResult],
         passed: bool,
         figures: Optional[List[Figure]] = None,
     ):
@@ -81,7 +81,7 @@ class ThresholdTest(TestContextUtils):
         Cache the individual results of the threshold test as a list of TestResult objects
 
         Args:
-            results (List[TestResult]): The results of the threshold test
+            result (List[TestResult]): The results of the threshold test
             passed (bool): Whether the threshold test passed or failed
 
         Returns:
@@ -96,9 +96,9 @@ class ThresholdTest(TestContextUtils):
             }
         ]
 
-        result_summary = self.summary(results)
+        result_summary = self.summary(test_results_list)
 
-        self.test_results = TestPlanTestResult(
+        self.result = TestPlanTestResult(
             result_id=self.name,
             result_metadata=result_metadata,
             test_results=TestResults(
@@ -106,13 +106,13 @@ class ThresholdTest(TestContextUtils):
                 test_name=self.name,
                 params=self.params,
                 passed=passed,
-                results=results,
+                results=test_results_list,
                 summary=result_summary,
             ),
         )
 
         # Allow test results to attach figures to the test plan result
         if figures:
-            self.test_results.figures = figures
+            self.result.figures = figures
 
-        return self.test_results
+        return self.result

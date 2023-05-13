@@ -68,15 +68,3 @@ Test plan for data quality on time series datasets
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### tests(_: ClassVar[List[object]_ _ = [<class 'validmind.data_validation.threshold_tests.TimeSeriesOutliers'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesMissingValues'>, <class 'validmind.data_validation.threshold_tests.TimeSeriesFrequency'>_ )
-
-### _class_ validmind.test_plans.tabular_datasets.TimeSeriesDataset(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
-Bases: `TestPlan`
-
-Test plan for time series  datasets
-
-
-#### name(_: ClassVar[str_ _ = 'time_series_dataset_ )
-
-#### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
-
-#### test_plans(_: ClassVar[List[object]_ _ = [<class 'validmind.test_plans.tabular_datasets.TimeSeriesDataQuality'>_ )

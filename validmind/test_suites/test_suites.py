@@ -50,13 +50,11 @@ class BinaryClassifierFullSuite(TestSuite):
         "binary_classifier_model_diagnosis",
     ]
 
-
-class TimeSeriesDataValidation(TestSuite):
+class TimeSeriesDataset(TestSuite):
     """
-    Full test suite for data validation of time series models.
+    Test suite for time series datasets.
     """
-
-    name = "time_series_data_validation"
+    name = "time_series_dataset"
     required_context = ["dataset"]
 
     test_plans = [

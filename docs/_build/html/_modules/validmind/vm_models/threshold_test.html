@@ -110,7 +110,7 @@
 
     <span class="c1"># Instance Variables</span>
     <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">test_results</span><span class="p">:</span> <span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -128,7 +128,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ThresholdTest.summary"><a class="viewcode-back" href="../../../vm_models.html#validmind.ThresholdTest.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ThresholdTest.summary"><a class="viewcode-back" href="../../../vm_models.html#validmind.ThresholdTest.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TestResults</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the threshold test summary. Should be overridden by subclasses. Defaults to None.</span>
 <span class="sd">        The test summary allows renderers (e.g. Word and ValidMind UI) to display a</span>
@@ -146,7 +146,7 @@
 
 <div class="viewcode-block" id="ThresholdTest.cache_results"><a class="viewcode-back" href="../../../vm_models.html#validmind.ThresholdTest.cache_results">[docs]</a>    <span class="k">def</span> <span class="nf">cache_results</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span>
+        <span class="n">test_results_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span>
         <span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Figure</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -154,7 +154,7 @@
 <span class="sd">        Cache the individual results of the threshold test as a list of TestResult objects</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            results (List[TestResult]): The results of the threshold test</span>
+<span class="sd">            result (List[TestResult]): The results of the threshold test</span>
 <span class="sd">            passed (bool): Whether the threshold test passed or failed</span>
 
 <span class="sd">        Returns:</span>
@@ -169,9 +169,9 @@
             <span class="p">}</span>
         <span class="p">]</span>
 
-        <span class="n">result_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">result_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">test_results_list</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span> <span class="o">=</span> <span class="n">TestPlanTestResult</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">TestPlanTestResult</span><span class="p">(</span>
             <span class="n">result_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">result_metadata</span><span class="o">=</span><span class="n">result_metadata</span><span class="p">,</span>
             <span class="n">test_results</span><span class="o">=</span><span class="n">TestResults</span><span class="p">(</span>
@@ -179,16 +179,16 @@
                 <span class="n">test_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                 <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                 <span class="n">passed</span><span class="o">=</span><span class="n">passed</span><span class="p">,</span>
-                <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+                <span class="n">results</span><span class="o">=</span><span class="n">test_results_list</span><span class="p">,</span>
                 <span class="n">summary</span><span class="o">=</span><span class="n">result_summary</span><span class="p">,</span>
             <span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c1"># Allow test results to attach figures to the test plan result</span>
         <span class="k">if</span> <span class="n">figures</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="n">figures</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">figures</span> <span class="o">=</span> <span class="n">figures</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span></div></div>
 </pre></div>
 
            </div>

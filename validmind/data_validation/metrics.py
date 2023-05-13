@@ -82,8 +82,7 @@ class DatasetCorrelations(Metric):
     - Correlation ratios for categorical-numerical variables
     """
 
-    type = "dataset"
-    key = "dataset_correlations"
+    name = "dataset_correlations"
     required_context = ["dataset"]
 
     # TODO: allow more metric metadata to be set, not just scope
@@ -103,8 +102,7 @@ class DatasetDescription(Metric):
     Collects a set of descriptive statistics for a dataset
     """
 
-    type = "dataset"
-    key = "dataset_description"
+    name = "dataset_description"
     required_context = ["dataset"]
 
     def __post_init__(self):
@@ -123,8 +121,7 @@ class DescriptiveStatistics(Metric):
     numerical and categorical variables
     """
 
-    type = "dataset"
-    key = "descriptive_statistics"
+    name = "descriptive_statistics"
     required_context = ["dataset"]
 
     def get_summary_statistics_numerical(self, numerical_fields):
@@ -202,8 +199,7 @@ class DatasetSplit(Metric):
     provided training, test and validation datasets.
     """
 
-    type = "dataset"
-    key = "dataset_split"
+    name = "dataset_split"
     required_context = ["model"]
 
     dataset_labels = {
@@ -269,7 +265,7 @@ class DatasetSplit(Metric):
 
         # Then calculate the proportion of each dataset
         for dataset_name in available_datasets:
-            dataset = getattr(self, dataset_name, None)
+            dataset = getattr(self.model, dataset_name, None)
             if dataset is not None:
                 results[f"{dataset_name}_size"] = len(dataset.df)
                 results[f"{dataset_name}_proportion"] = len(dataset.df) / total_size
@@ -286,8 +282,7 @@ class TimeSeriesLinePlot(Metric):
     if necessary. In this case we produce a separate plot for each time series.
     """
 
-    type = "dataset"
-    key = "time_series_line_plot"
+    name = "time_series_line_plot"
     required_context = ["dataset"]
     default_params = {"columns": None}
 
@@ -341,8 +336,7 @@ class TimeSeriesHistogram(Metric):
     necessary. In this case we produce a separate plot for each time series.
     """
 
-    type = "dataset"
-    key = "time_series_histogram"
+    name = "time_series_histogram"
     required_context = ["dataset"]
     default_params = {"columns": None}
 
@@ -389,8 +383,7 @@ class ScatterPlot(Metric):
     in the dataset. The input dataset can have multiple columns (features) if necessary.
     """
 
-    type = "dataset"
-    key = "scatter_plot"
+    name = "scatter_plot"
     required_context = ["dataset"]
     default_params = {"columns": None}
 
@@ -432,8 +425,7 @@ class LaggedCorrelationHeatmap(Metric):
     Generates a heatmap of correlations between the target variable and the lags of independent variables in the dataset.
     """
 
-    type = "dataset"
-    key = "lagged_correlation_heatmap"
+    name = "lagged_correlation_heatmap"
     required_context = ["dataset"]
 
     def _compute_correlations(self, df, target_col, independent_vars, num_lags):
@@ -508,8 +500,7 @@ class AutoAR(Metric):
     Automatically detects the AR order of a time series using both BIC and AIC.
     """
 
-    type = "dataset"  # assume this value
-    key = "auto_ar"
+    name = "auto_ar"
     required_context = ["dataset"]
     default_params = {"max_ar_order": 3}
 
@@ -562,8 +553,7 @@ class AutoMA(Metric):
     Automatically detects the MA order of a time series using both BIC and AIC.
     """
 
-    type = "dataset"
-    key = "auto_ma"
+    name = "auto_ma"
     required_context = ["dataset"]
     default_params = {"max_ma_order": 3}
 
@@ -616,8 +606,7 @@ class SeasonalDecompose(Metric):
     Calculates seasonal_decompose metric for each of the dataset features
     """
 
-    type = "dataset"
-    key = "seasonal_decompose"
+    name = "seasonal_decompose"
     required_context = ["dataset"]
     default_params = {"seasonal_model": "additive"}
 
@@ -760,8 +749,7 @@ class AutoSeasonality(Metric):
     using the seasonal_decompose method.
     """
 
-    type = "dataset"
-    key = "auto_seasonality"
+    name = "auto_seasonality"
     required_context = ["dataset"]
     default_params = {"min_period": 1, "max_period": 4}
 
@@ -821,8 +809,7 @@ class ACFandPACFPlot(Metric):
     Plots ACF and PACF for a given time series dataset.
     """
 
-    type = "evaluation"
-    key = "acf_pacf_plot"
+    name = "acf_pacf_plot"
     required_context = ["dataset"]
     default_params = {"columns": None}
 
@@ -931,8 +918,7 @@ class RollingStatsPlot(Metric):
     This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.
     """
 
-    type = "dataset"
-    key = "rolling_stats_plot"
+    name = "rolling_stats_plot"
     required_context = ["dataset"]
     default_params = {"window_size": 12}
 
@@ -1005,8 +991,7 @@ class EngleGrangerCoint(Metric):
     Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.
     """
 
-    type = "dataset"
-    key = "engle_granger_coint"
+    name = "engle_granger_coint"
     required_context = ["dataset"]
     default_params = {"threshold": 0.05}
 
@@ -1051,8 +1036,7 @@ class SpreadPlot(Metric):
     This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.
     """
 
-    type = "dataset"
-    key = "spread_plot"
+    name = "spread_plot"
     required_context = ["dataset"]
 
     @staticmethod

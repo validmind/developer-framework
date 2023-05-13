@@ -98,6 +98,7 @@ class TestSuite(TestPlan):
             self._test_plan_instances.append(test_plan_instance)
 
         self.summarize()
+        self.pbar_description.value = "Test suite complete!"
 
     def _results_title(self) -> str:
         """

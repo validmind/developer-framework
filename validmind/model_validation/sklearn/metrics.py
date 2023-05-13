@@ -90,9 +90,7 @@ class AccuracyScore(Metric):
     Accuracy Score
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "accuracy"
+    name = "accuracy"
     required_context = ["model"]
 
     def run(self):
@@ -109,8 +107,7 @@ class CharacteristicStabilityIndex(Metric):
     Characteristic Stability Index between two datasets
     """
 
-    type = "training"
-    key = "csi"
+    name = "csi"
     required_context = ["model"]
     value_formatter = "key_values"
 
@@ -141,10 +138,11 @@ class ConfusionMatrix(Metric):
     Confusion Matrix
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "confusion_matrix"
+    name = "confusion_matrix"
     required_context = ["model"]
+
+    def summary(self, metric_value):
+        return None
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -183,9 +181,7 @@ class F1Score(Metric):
     F1 Score
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "f1_score"
+    name = "f1_score"
     required_context = ["model"]
 
     def run(self):
@@ -202,9 +198,7 @@ class PermutationFeatureImportance(Metric):
     Permutation Feature Importance
     """
 
-    type = "training"
-    scope = "training_dataset"
-    key = "pfi"
+    name = "pfi"
     required_context = ["model"]
 
     def run(self):
@@ -260,9 +254,7 @@ class PrecisionRecallCurve(Metric):
     Precision Recall Curve
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "pr_curve"
+    name = "pr_curve"
     required_context = ["model"]
 
     def run(self):
@@ -292,9 +284,7 @@ class PrecisionScore(Metric):
     Precision Score
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "precision"
+    name = "precision"
     required_context = ["model"]
 
     def run(self):
@@ -311,9 +301,7 @@ class RecallScore(Metric):
     Recall Score
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "recall"
+    name = "recall"
     required_context = ["model"]
 
     def run(self):
@@ -330,9 +318,7 @@ class ROCAUCScore(Metric):
     ROC AUC Score
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "roc_auc"
+    name = "roc_auc"
     required_context = ["model"]
 
     def run(self):
@@ -350,9 +336,7 @@ class ROCCurve(Metric):
     ROC Curve
     """
 
-    type = "evaluation"
-    scope = "test"
-    key = "roc_curve"
+    name = "roc_curve"
     required_context = ["model"]
 
     def run(self):
@@ -387,8 +371,6 @@ class SHAPGlobalImportance(Metric):
     """
 
     required_context = ["model"]
-
-    # Instance Variables
     name = "shap"
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
@@ -459,8 +441,7 @@ class PopulationStabilityIndex(Metric):
     Population Stability Index between two datasets
     """
 
-    type = "training"
-    key = "psi"
+    name = "psi"
     required_context = ["model"]
     value_formatter = "records"
 
