@@ -64,3 +64,18 @@ class TimeSeriesDataset(TestSuite):
         "time_series_univariate",
         "time_series_multivariate",
     ]
+
+
+class TimeSeriesModelValidation(TestSuite):
+    """
+    Test suite for time series model validation.
+    """
+
+    name = "time_series_model_validation"
+    required_context = ["model", "models"]
+
+    test_plans = [
+        "regression_model_performance",
+        "regression_models_comparison",
+        "time_series_forecast",
+    ]

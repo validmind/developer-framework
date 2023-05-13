@@ -22,7 +22,13 @@ from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
-from ...vm_models import Figure, Metric
+from ...vm_models import (
+    Figure,
+    Metric,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+)
 
 
 @dataclass
@@ -576,14 +582,37 @@ class RegressionModelSummary(Metric):
         mse = lib_model.mse_resid
         rmse = mse**0.5
 
-        results = {
-            "Independent Variables": X_columns,
-            "R-Squared": r2,
-            "Adjusted R-Squared": adj_r2,
-            "MSE": mse,
-            "RMSE": rmse,
-        }
-        return self.cache_results(results)
+        # Create a DataFrame for the results
+        summary_regression = pd.DataFrame(
+            {
+                "Independent Variables": [X_columns],
+                "R-Squared": [r2],
+                "Adjusted R-Squared": [adj_r2],
+                "MSE": [mse],
+                "RMSE": [rmse],
+            }
+        )
+
+        return self.cache_results(
+            {
+                "regression_analysis": summary_regression.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the regression analysis results
+        """
+        summary_regression = metric_value["regression_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_regression,
+                    metadata=ResultTableMetadata(title="Regression Analysis Results"),
+                ),
+            ]
+        )
 
 
 @dataclass
@@ -621,7 +650,13 @@ class RegressionModelInsampleComparison(Metric):
                 )
 
         results = self._in_sample_performance_ols(all_models)
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "in_sample_performance": pd.DataFrame(results).to_dict(
+                    orient="records"
+                ),
+            }
+        )
 
     def _in_sample_performance_ols(self, models):
         """
@@ -666,6 +701,21 @@ class RegressionModelInsampleComparison(Metric):
 
         return evaluation_results
 
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the in-sample performance results
+        """
+        summary_in_sample_performance = metric_value["in_sample_performance"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_in_sample_performance,
+                    metadata=ResultTableMetadata(title="In-Sample Performance Results"),
+                ),
+            ]
+        )
+
 
 @dataclass
 class RegressionModelOutsampleComparison(Metric):
@@ -709,7 +759,11 @@ class RegressionModelOutsampleComparison(Metric):
         results = self._out_sample_performance_ols(
             all_models,
         )
-        return self.cache_results(results.to_dict("records"))
+        return self.cache_results(
+            {
+                "out_sample_performance": results.to_dict(orient="records"),
+            }
+        )
 
     def _out_sample_performance_ols(self, model_list):
         """
@@ -748,12 +802,35 @@ class RegressionModelOutsampleComparison(Metric):
 
             # Store the results
             model_name_with_vars = f"({', '.join(independent_vars)})"
-            results.append([model_name_with_vars, mse, rmse_val])
+            results.append(
+                {
+                    "Model": model_name_with_vars,
+                    "MSE": mse,
+                    "RMSE": rmse_val,
+                }
+            )
 
         # Create a DataFrame to display the results
-        results_df = pd.DataFrame(results, columns=["Model", "MSE", "RMSE"])
+        results_df = pd.DataFrame(results)
 
         return results_df
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the out-of-sample performance results
+        """
+        summary_out_sample_performance = metric_value["out_sample_performance"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_out_sample_performance,
+                    metadata=ResultTableMetadata(
+                        title="Out-of-Sample Performance Results"
+                    ),
+                ),
+            ]
+        )
 
 
 @dataclass
@@ -790,10 +867,6 @@ class RegressionModelForecastPlot(Metric):
         return self.cache_results(figures=figures)
 
     def _plot_forecast(self, model_list, start_date=None, end_date=None):
-        # Convert start_date and end_date to pandas Timestamp for comparison
-        start_date = pd.Timestamp(start_date)
-        end_date = pd.Timestamp(end_date)
-
         # Initialize a list to store figures
         figures = []
 
@@ -803,6 +876,18 @@ class RegressionModelForecastPlot(Metric):
 
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
+
+            # If start_date or end_date are None, set them to the min/max of all_dates
+            if start_date is None:
+                start_date = all_dates.min()
+            else:
+                start_date = pd.Timestamp(start_date)
+
+            if end_date is None:
+                end_date = all_dates.max()
+            else:
+                end_date = pd.Timestamp(end_date)
+
             if start_date < all_dates.min() or end_date > all_dates.max():
                 raise ValueError(
                     "start_date and end_date must be within the range of dates in the data"

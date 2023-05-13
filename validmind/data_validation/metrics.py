@@ -500,6 +500,7 @@ class AutoAR(Metric):
     Automatically detects the AR order of a time series using both BIC and AIC.
     """
 
+    type = "dataset"
     name = "auto_ar"
     required_context = ["dataset"]
     default_params = {"max_ar_order": 3}
@@ -512,7 +513,8 @@ class AutoAR(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_ar_analysis = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -522,30 +524,47 @@ class AutoAR(Metric):
             if adf_test[1] > 0.05:
                 print(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
-            ar_orders = []
-            bic_values = []
-            aic_values = []
-
             for ar_order in range(0, max_ar_order + 1):
                 try:
                     model = AutoReg(series, lags=ar_order, old_names=False)
                     model_fit = model.fit()
 
-                    ar_orders.append(ar_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
+                    # Append the result of each AR order directly into the DataFrame
+                    summary_ar_analysis = summary_ar_analysis.append(
+                        {
+                            "Variable": col,
+                            "AR Order": ar_order,
+                            "BIC": model_fit.bic,
+                            "AIC": model_fit.aic,
+                        },
+                        ignore_index=True,
+                    )
                 except Exception as e:
                     print(f"Error fitting AR({ar_order}) model for {col}: {e}")
 
-            result = {
-                "Variable": col,
-                "AR orders": ar_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
+        # Convert the 'AR Order' column to integer
+        summary_ar_analysis["AR Order"] = summary_ar_analysis["AR Order"].astype(int)
 
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "auto_ar_analysis": summary_ar_analysis.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto AR results
+        """
+        summary_ar_analysis = metric_value["auto_ar_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_ar_analysis,
+                    metadata=ResultTableMetadata(title="Auto AR Analysis Results"),
+                ),
+            ]
+        )
 
 
 class AutoMA(Metric):
@@ -553,6 +572,7 @@ class AutoMA(Metric):
     Automatically detects the MA order of a time series using both BIC and AIC.
     """
 
+    type = "dataset"
     name = "auto_ma"
     required_context = ["dataset"]
     default_params = {"max_ma_order": 3}
@@ -565,7 +585,8 @@ class AutoMA(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_ma_analysis = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -575,30 +596,47 @@ class AutoMA(Metric):
             if adf_test[1] > 0.05:
                 print(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
-            ma_orders = []
-            bic_values = []
-            aic_values = []
-
             for ma_order in range(0, max_ma_order + 1):
                 try:
                     model = ARIMA(series, order=(0, 0, ma_order))
                     model_fit = model.fit()
 
-                    ma_orders.append(ma_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
+                    # Append the result of each MA order directly into the DataFrame
+                    summary_ma_analysis = summary_ma_analysis.append(
+                        {
+                            "Variable": col,
+                            "MA Order": ma_order,
+                            "BIC": model_fit.bic,
+                            "AIC": model_fit.aic,
+                        },
+                        ignore_index=True,
+                    )
                 except Exception as e:
                     print(f"Error fitting MA({ma_order}) model for {col}: {e}")
 
-            result = {
-                "Variable": col,
-                "MA orders": ma_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
+        # Convert the 'MA Order' column to integer
+        summary_ma_analysis["MA Order"] = summary_ma_analysis["MA Order"].astype(int)
 
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "auto_ma_analysis": summary_ma_analysis.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto MA results
+        """
+        summary_ma_analysis = metric_value["auto_ma_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_ma_analysis,
+                    metadata=ResultTableMetadata(title="Auto MA Analysis Results"),
+                ),
+            ]
+        )
 
 
 class SeasonalDecompose(Metric):
@@ -781,27 +819,53 @@ class AutoSeasonality(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_auto_seasonality = pd.DataFrame()
 
         for col_name, col in df.iteritems():
             series = col.dropna()
+
+            # Directly insert the results into the DataFrame
             seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
                 series, min_period, max_period
             )
-
             best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
-            decision = "Seasonality" if best_seasonal_period > 1 else "Not Seasonality"
+            decision = "Seasonality" if best_seasonal_period > 1 else "No Seasonality"
 
-            result = {
-                "Variable": col_name,
-                "Seasonal Periods": seasonal_periods,
-                "Residual Errors": residual_errors,
-                "Best Period": best_seasonal_period,
-                "Decision": decision,
+            summary_auto_seasonality = summary_auto_seasonality.append(
+                {
+                    "Variable": col_name,
+                    "Tested Seasonal Periods": seasonal_periods,
+                    "Best Period": best_seasonal_period,
+                    "Decision": decision,
+                },
+                ignore_index=True,
+            )
+            # Convert the 'Best Period' column to integer
+            summary_auto_seasonality["Best Period"] = summary_auto_seasonality[
+                "Best Period"
+            ].astype(int)
+
+        return self.cache_results(
+            {
+                "auto_seasonality": summary_auto_seasonality.to_dict(orient="records"),
             }
-            results.append(result)
+        )
 
-        return self.cache_results(results)
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto seasonality results
+        """
+        summary_auto_seasonality = metric_value["auto_seasonality"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_auto_seasonality,
+                    metadata=ResultTableMetadata(title="Auto Seasonality Results"),
+                ),
+            ]
+        )
 
 
 class ACFandPACFPlot(Metric):
@@ -861,7 +925,7 @@ class AutoStationarity(Metric):
     """
 
     type = "dataset"
-    key = "auto_stationarity"
+    name = "auto_stationarity"
     required_context = ["dataset"]
     default_params = {"max_order": 5, "threshold": 0.05}
 
@@ -875,7 +939,9 @@ class AutoStationarity(Metric):
         threshold = self.params["threshold"]
 
         df = self.dataset.df.dropna()
-        results = []
+
+        # Create an empty DataFrame to store the results
+        summary_stationarity = pd.DataFrame()
 
         # Loop over each column in the input DataFrame and perform stationarity tests
         for col in df.columns:
@@ -894,23 +960,50 @@ class AutoStationarity(Metric):
                 adf_pass_fail = adf_pvalue < threshold
                 adf_decision = "Stationary" if adf_pass_fail else "Non-stationary"
 
-                result = {
-                    "Variable": col,
-                    "Integration Order": order,
-                    "Test": "ADF",
-                    "p-value": adf_pvalue,
-                    "Threshold": threshold,
-                    "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
-                    "Decision": adf_decision,
-                }
-                results.append(result)
+                # Append the result of each test directly into the DataFrame
+                summary_stationarity = summary_stationarity.append(
+                    {
+                        "Variable": col,
+                        "Integration Order": order,
+                        "Test": "ADF",
+                        "p-value": adf_pvalue,
+                        "Threshold": threshold,
+                        "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
+                        "Decision": adf_decision,
+                    },
+                    ignore_index=True,
+                )
 
                 if adf_pass_fail:
                     is_stationary = True
 
                 order += 1
 
-        return self.cache_results(results)
+        # Convert the 'Integration Order' column to integer
+        summary_stationarity["Integration Order"] = summary_stationarity[
+            "Integration Order"
+        ].astype(int)
+
+        return self.cache_results(
+            {
+                "stationarity_analysis": summary_stationarity.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the stationarity results
+        """
+        summary_stationarity = metric_value["stationarity_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_stationarity,
+                    metadata=ResultTableMetadata(title="Stationarity Analysis Results"),
+                ),
+            ]
+        )
 
 
 class RollingStatsPlot(Metric):
@@ -991,6 +1084,7 @@ class EngleGrangerCoint(Metric):
     Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.
     """
 
+    type = "dataset"
     name = "engle_granger_coint"
     required_context = ["dataset"]
     default_params = {"threshold": 0.05}
@@ -999,7 +1093,9 @@ class EngleGrangerCoint(Metric):
         threshold = self.params["threshold"]
         df = self.dataset.df.dropna()
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_cointegration = pd.DataFrame()
+
         columns = df.columns
         num_vars = len(columns)
 
@@ -1017,18 +1113,44 @@ class EngleGrangerCoint(Metric):
                 )
                 pass_fail = "Pass" if p_value <= threshold else "Fail"
 
-                result = {
-                    "Variable 1": var1,
-                    "Variable 2": var2,
-                    "Test": "Engle-Granger",
-                    "p-value": p_value,
-                    "Threshold": threshold,
-                    "Pass/Fail": pass_fail,
-                    "Decision": decision,
-                }
-                results.append(result)
+                # Append the result of each test directly into the DataFrame
+                summary_cointegration = summary_cointegration.append(
+                    {
+                        "Variable 1": var1,
+                        "Variable 2": var2,
+                        "Test": "Engle-Granger",
+                        "p-value": p_value,
+                        "Threshold": threshold,
+                        "Pass/Fail": pass_fail,
+                        "Decision": decision,
+                    },
+                    ignore_index=True,
+                )
 
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "cointegration_analysis": summary_cointegration.to_dict(
+                    orient="records"
+                ),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the cointegration results
+        """
+        summary_cointegration = metric_value["cointegration_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_cointegration,
+                    metadata=ResultTableMetadata(
+                        title="Cointegration Analysis Results"
+                    ),
+                ),
+            ]
+        )
 
 
 class SpreadPlot(Metric):
