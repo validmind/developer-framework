@@ -417,6 +417,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
 <p>Automatically detects the AR order of a time series using both BIC and AIC.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_ar'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -437,6 +442,12 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dd><p>Run the metric calculation and cache its results</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoAR.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Build one table for summarizing the auto AR results</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -444,6 +455,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">AutoMA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoMA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
 <p>Automatically detects the MA order of a time series using both BIC and AIC.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_ma'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.name" title="Permalink to this definition"></a></dt>
@@ -463,6 +479,12 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoMA.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoMA.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Build one table for summarizing the auto MA results</p>
 </dd></dl>
 
 </dd></dl>
@@ -542,6 +564,12 @@ using the seasonal_decompose method.</p>
 <dd><p>Run the metric calculation and cache its results</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoSeasonality.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoSeasonality.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoSeasonality.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Build one table for summarizing the auto seasonality results</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -584,8 +612,8 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.key">
-<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_stationarity'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.key" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto_stationarity'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -602,6 +630,12 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoStationarity.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoStationarity.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Build one table for summarizing the stationarity results</p>
 </dd></dl>
 
 </dd></dl>
@@ -656,6 +690,11 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
 <p>Test for cointegration between pairs of time series variables in a given dataset using the Engle-Granger test.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dataset'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'engle_granger_coint'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.name" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -674,6 +713,12 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#EngleGrangerCoint.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the metric calculation and cache its results</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.EngleGrangerCoint.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#EngleGrangerCoint.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.EngleGrangerCoint.summary" title="Permalink to this definition"></a></dt>
+<dd><p>Build one table for summarizing the cointegration results</p>
 </dd></dl>
 
 </dd></dl>
