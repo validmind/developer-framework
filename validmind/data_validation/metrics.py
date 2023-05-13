@@ -4,6 +4,7 @@ Metrics functions for any Pandas-compatible datasets
 
 from dataclasses import dataclass
 from typing import ClassVar
+import warnings
 
 import pandas as pd
 import numpy as np
@@ -283,6 +284,7 @@ class TimeSeriesLinePlot(Metric):
 
     name = "time_series_line_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -292,7 +294,12 @@ class TimeSeriesLinePlot(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
@@ -331,6 +338,7 @@ class TimeSeriesHistogram(Metric):
 
     name = "time_series_histogram"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -340,7 +348,12 @@ class TimeSeriesHistogram(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
@@ -372,12 +385,18 @@ class ScatterPlot(Metric):
 
     name = "scatter_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
             raise ValueError("Columns must be provided in params")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df[columns]
 
         if not set(columns).issubset(set(df.columns)):
@@ -447,12 +466,11 @@ class LaggedCorrelationHeatmap(Metric):
         return plt.gcf()
 
     def run(self):
-        if "target_col" not in self.params or "independent_vars" not in self.params:
-            raise ValueError(
-                "Both 'target_col' and 'independent_vars' must be provided in params"
-            )
+        target_col = [self.dataset.y.name]
+        independent_vars = list(self.dataset.x.columns)
 
-        target_col = self.params["target_col"]
+        num_lags = self.params.get("num_lags", 10)
+
         if isinstance(target_col, list) and len(target_col) == 1:
             target_col = target_col[0]
 
@@ -460,9 +478,6 @@ class LaggedCorrelationHeatmap(Metric):
             raise ValueError(
                 "The 'target_col' must be a single string or a list containing a single string"
             )
-
-        independent_vars = self.params["independent_vars"]
-        num_lags = self.params.get("num_lags", 10)
 
         df = self.dataset.df
 
@@ -487,6 +502,7 @@ class AutoAR(Metric):
 
     name = "auto_ar"
     required_context = ["dataset"]
+    default_params = {"max_ar_order": 3}
 
     def run(self):
         if "max_ar_order" not in self.params:
@@ -539,6 +555,7 @@ class AutoMA(Metric):
 
     name = "auto_ma"
     required_context = ["dataset"]
+    default_params = {"max_ma_order": 3}
 
     def run(self):
         if "max_ma_order" not in self.params:
@@ -649,64 +666,79 @@ class SeasonalDecompose(Metric):
 
         df = self.dataset.df
 
-        # Drop rows with missing values
-        df = df.dropna()
-
         results = {}
         figures = []
 
         for col in df.columns:
-            sd = seasonal_decompose(df[col], model=seasonal_model)
-            self.store_seasonal_decompose(col, sd)
+            series = df[col].dropna()
 
-            results[col] = self.serialize_seasonal_decompose(sd)
+            # Check for non-finite values and handle them
+            if not series[np.isfinite(series)].empty:
+                inferred_freq = pd.infer_freq(series.index)
 
-            # Create subplots
-            fig, axes = plt.subplots(nrows=4, ncols=2)
-            fig.subplots_adjust(hspace=1)
-            fig.suptitle(
-                f"Seasonal Decomposition and Residual Diagnostics for {col}",
-                fontsize=24,
-            )
+                if inferred_freq is not None:
+                    print(f"Frequency of {col}: {inferred_freq}")
 
-            # Original seasonal decomposition plots
-            axes[0, 0].set_title("Observed")
-            sd.observed.plot(ax=axes[0, 0])
+                    # Only take finite values to seasonal_decompose
+                    sd = seasonal_decompose(
+                        series[np.isfinite(series)], model=seasonal_model
+                    )
+                    self.store_seasonal_decompose(col, sd)
 
-            axes[0, 1].set_title("Trend")
-            sd.trend.plot(ax=axes[0, 1])
+                    results[col] = self.serialize_seasonal_decompose(sd)
 
-            axes[1, 0].set_title("Seasonal")
-            sd.seasonal.plot(ax=axes[1, 0])
+                    # Create subplots
+                    fig, axes = plt.subplots(nrows=4, ncols=2)
+                    fig.subplots_adjust(hspace=1)
+                    fig.suptitle(
+                        f"Seasonal Decomposition and Residual Diagnostics for {col}",
+                        fontsize=24,
+                    )
 
-            axes[1, 1].set_title("Residuals")
-            sd.resid.plot(ax=axes[1, 1])
-            axes[1, 1].set_xlabel("Date")
+                    # Original seasonal decomposition plots
+                    axes[0, 0].set_title("Observed")
+                    sd.observed.plot(ax=axes[0, 0])
 
-            # Residual diagnostics plots
-            residuals = sd.resid.dropna()
+                    axes[0, 1].set_title("Trend")
+                    sd.trend.plot(ax=axes[0, 1])
 
-            # Histogram with KDE
-            sns.histplot(residuals, kde=True, ax=axes[2, 0])
-            axes[2, 0].set_title("Histogram and KDE of Residuals")
+                    axes[1, 0].set_title("Seasonal")
+                    sd.seasonal.plot(ax=axes[1, 0])
 
-            # Normal Q-Q plot
-            stats.probplot(residuals, plot=axes[2, 1])
-            axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
+                    axes[1, 1].set_title("Residuals")
+                    sd.resid.plot(ax=axes[1, 1])
+                    axes[1, 1].set_xlabel("Date")
 
-            # ACF plot
-            plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
+                    # Residual diagnostics plots
+                    residuals = sd.resid.dropna()
 
-            # PACF plot
-            plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+                    # Histogram with KDE
+                    sns.histplot(residuals, kde=True, ax=axes[2, 0])
+                    axes[2, 0].set_title("Histogram and KDE of Residuals")
 
-            # Adjust the layout
-            plt.tight_layout()
+                    # Normal Q-Q plot
+                    stats.probplot(residuals, plot=axes[2, 1])
+                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
 
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+                    # ACF plot
+                    plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+                    # PACF plot
+                    plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
+
+                    # Adjust the layout
+                    plt.tight_layout()
+
+                    # Do this if you want to prevent the figure from being displayed
+                    plt.close("all")
+
+                    figures.append(
+                        Figure(key=f"{self.key}:{col}", figure=fig, metadata={})
+                    )
+                else:
+                    warnings.warn(
+                        f"No frequency could be inferred for variable '{col}'. Skipping seasonal decomposition and plots for this variable."
+                    )
 
         return self.cache_results(results, figures=figures)
 
@@ -779,6 +811,7 @@ class ACFandPACFPlot(Metric):
 
     name = "acf_pacf_plot"
     required_context = ["dataset"]
+    default_params = {"columns": None}
 
     def run(self):
         if "columns" not in self.params:
@@ -788,7 +821,12 @@ class ACFandPACFPlot(Metric):
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = self.params["columns"]
+        # If no columns are specified in the config, we plot all columns
+        if self.params["columns"] is None:
+            columns = list(self.dataset.df.columns)
+        else:
+            columns = self.params["columns"]
+
         df = self.dataset.df.dropna()
 
         if not set(columns).issubset(set(df.columns)):

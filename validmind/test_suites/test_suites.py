@@ -55,9 +55,12 @@ class TimeSeriesDataset(TestSuite):
     """
     Test suite for time series datasets.
     """
+
     name = "time_series_dataset"
     required_context = ["dataset"]
 
     test_plans = [
         "time_series_data_quality",
+        "time_series_univariate",
+        "time_series_multivariate",
     ]
