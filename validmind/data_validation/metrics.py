@@ -512,7 +512,8 @@ class AutoAR(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_ar_analysis = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -522,30 +523,47 @@ class AutoAR(Metric):
             if adf_test[1] > 0.05:
                 print(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
-            ar_orders = []
-            bic_values = []
-            aic_values = []
-
             for ar_order in range(0, max_ar_order + 1):
                 try:
                     model = AutoReg(series, lags=ar_order, old_names=False)
                     model_fit = model.fit()
 
-                    ar_orders.append(ar_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
+                    # Append the result of each AR order directly into the DataFrame
+                    summary_ar_analysis = summary_ar_analysis.append(
+                        {
+                            "Variable": col,
+                            "AR Order": ar_order,
+                            "BIC": model_fit.bic,
+                            "AIC": model_fit.aic,
+                        },
+                        ignore_index=True,
+                    )
                 except Exception as e:
                     print(f"Error fitting AR({ar_order}) model for {col}: {e}")
 
-            result = {
-                "Variable": col,
-                "AR orders": ar_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
+        # Convert the 'AR Order' column to integer
+        summary_ar_analysis["AR Order"] = summary_ar_analysis["AR Order"].astype(int)
 
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "auto_ar_analysis": summary_ar_analysis.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto AR results
+        """
+        summary_ar_analysis = metric_value["auto_ar_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_ar_analysis,
+                    metadata=ResultTableMetadata(title="Auto AR Analysis Results"),
+                ),
+            ]
+        )
 
 
 class AutoMA(Metric):
