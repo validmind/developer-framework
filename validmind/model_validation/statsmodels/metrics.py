@@ -794,10 +794,6 @@ class RegressionModelForecastPlot(Metric):
         return self.cache_results(figures=figures)
 
     def _plot_forecast(self, model_list, start_date=None, end_date=None):
-        # Convert start_date and end_date to pandas Timestamp for comparison
-        start_date = pd.Timestamp(start_date)
-        end_date = pd.Timestamp(end_date)
-
         # Initialize a list to store figures
         figures = []
 
@@ -807,7 +803,18 @@ class RegressionModelForecastPlot(Metric):
 
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
-            print(all_dates)
+
+            # If start_date or end_date are None, set them to the min/max of all_dates
+            if start_date is None:
+                start_date = all_dates.min()
+            else:
+                start_date = pd.Timestamp(start_date)
+
+            if end_date is None:
+                end_date = all_dates.max()
+            else:
+                end_date = pd.Timestamp(end_date)
+
             if start_date < all_dates.min() or end_date > all_dates.max():
                 raise ValueError(
                     "start_date and end_date must be within the range of dates in the data"

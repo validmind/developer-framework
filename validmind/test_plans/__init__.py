@@ -17,12 +17,6 @@ from .tabular_datasets import (
     TimeSeriesDataQuality,
 )
 from .statsmodels_timeseries import (
-    NormalityTestPlan,
-    AutocorrelationTestPlan,
-    SesonalityTestPlan,
-    UnitRoot,
-    StationarityTestPlan,
-    TimeSeries,
     RegressionModelPerformance,
     RegressionModelsComparison,
 )
@@ -38,12 +32,6 @@ core_test_plans = {
     "binary_classifier_model_diagnosis": BinaryClassifierDiagnosis,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,
-    "normality_test_plan": NormalityTestPlan,
-    "autocorrelation_test_plan": AutocorrelationTestPlan,
-    "seasonality_test_plan": SesonalityTestPlan,
-    "unit_root": UnitRoot,
-    "stationarity_test_plan": StationarityTestPlan,
-    "timeseries": TimeSeries,
     "time_series_data_quality": TimeSeriesDataQuality,
     "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,

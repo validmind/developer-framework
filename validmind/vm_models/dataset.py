@@ -88,6 +88,16 @@ class Dataset:
         """
         return self.raw_dataset.index
 
+    @property
+    def isnull(self):
+        """
+        Returns True if there are any null values in the dataset or the index, False otherwise.
+        """
+        return (
+            self.raw_dataset.isnull().values.any()
+            or self.raw_dataset.index.isnull().any()
+        )
+
     def get_feature_by_id(self, feature_id):
         """
         Returns the feature with the given id. We also build a lazy
