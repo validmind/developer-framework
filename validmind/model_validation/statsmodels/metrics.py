@@ -564,7 +564,8 @@ class RegressionModelSummary(Metric):
 
     def run(self):
         if not Model.is_supported_model(self.model.model):
-            raise ValueError("Model is not supported by ValidMind framework yet")
+            raise ValueError(f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
+                              is not supported by ValidMind framework yet")
 
         X_columns = self.model.train_ds.get_features_columns()
 
@@ -637,7 +638,8 @@ class RegressionModelInsampleComparison(Metric):
 
         for m in all_models:
             if not Model.is_supported_model(m.model):
-                raise ValueError("Model is not supported by ValidMind framework yet")
+                raise ValueError(f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
+                              is not supported by ValidMind framework yet")
         results = self._in_sample_performance_ols(all_models)
         return self.cache_results(
             {
@@ -738,7 +740,8 @@ class RegressionModelOutsampleComparison(Metric):
 
         for model in all_models:
             if not Model.is_supported_model(model.model):
-                raise ValueError("Model is not supported by ValidMind framework yet")
+                raise ValueError(f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
+                                is not supported by ValidMind framework yet")
             if model.test_ds is None:
                 raise ValueError(
                     "Test dataset is missing in the ValidMind Model object"
@@ -845,7 +848,8 @@ class RegressionModelForecastPlot(Metric):
         all_models = []
         for model in self.models:
             if not Model.is_supported_model(model.model):
-                raise ValueError("Model is not supported by ValidMind framework yet")
+                raise ValueError(f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
+                                 is not supported by ValidMind framework yet")
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, start_date, end_date)
