@@ -565,7 +565,8 @@ class AutoMA(Metric):
 
         df = self.dataset.df
 
-        results = []
+        # Create an empty DataFrame to store the results
+        summary_ma_analysis = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -575,30 +576,47 @@ class AutoMA(Metric):
             if adf_test[1] > 0.05:
                 print(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
-            ma_orders = []
-            bic_values = []
-            aic_values = []
-
             for ma_order in range(0, max_ma_order + 1):
                 try:
                     model = ARIMA(series, order=(0, 0, ma_order))
                     model_fit = model.fit()
 
-                    ma_orders.append(ma_order)
-                    bic_values.append(model_fit.bic)
-                    aic_values.append(model_fit.aic)
+                    # Append the result of each MA order directly into the DataFrame
+                    summary_ma_analysis = summary_ma_analysis.append(
+                        {
+                            "Variable": col,
+                            "MA Order": ma_order,
+                            "BIC": model_fit.bic,
+                            "AIC": model_fit.aic,
+                        },
+                        ignore_index=True,
+                    )
                 except Exception as e:
                     print(f"Error fitting MA({ma_order}) model for {col}: {e}")
 
-            result = {
-                "Variable": col,
-                "MA orders": ma_orders,
-                "BIC": bic_values,
-                "AIC": aic_values,
-            }
-            results.append(result)
+        # Convert the 'MA Order' column to integer
+        summary_ma_analysis["MA Order"] = summary_ma_analysis["MA Order"].astype(int)
 
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "auto_ma_analysis": summary_ma_analysis.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the auto MA results
+        """
+        summary_ma_analysis = metric_value["auto_ma_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_ma_analysis,
+                    metadata=ResultTableMetadata(title="Auto MA Analysis Results"),
+                ),
+            ]
+        )
 
 
 class SeasonalDecompose(Metric):
