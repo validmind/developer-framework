@@ -500,6 +500,7 @@ class AutoAR(Metric):
     Automatically detects the AR order of a time series using both BIC and AIC.
     """
 
+    type = "dataset"
     name = "auto_ar"
     required_context = ["dataset"]
     default_params = {"max_ar_order": 3}
@@ -571,6 +572,7 @@ class AutoMA(Metric):
     Automatically detects the MA order of a time series using both BIC and AIC.
     """
 
+    type = "dataset"
     name = "auto_ma"
     required_context = ["dataset"]
     default_params = {"max_ma_order": 3}
@@ -923,7 +925,7 @@ class AutoStationarity(Metric):
     """
 
     type = "dataset"
-    key = "auto_stationarity"
+    name = "auto_stationarity"
     required_context = ["dataset"]
     default_params = {"max_order": 5, "threshold": 0.05}
 
@@ -937,7 +939,9 @@ class AutoStationarity(Metric):
         threshold = self.params["threshold"]
 
         df = self.dataset.df.dropna()
-        results = []
+
+        # Create an empty DataFrame to store the results
+        summary_stationarity = pd.DataFrame()
 
         # Loop over each column in the input DataFrame and perform stationarity tests
         for col in df.columns:
@@ -956,23 +960,50 @@ class AutoStationarity(Metric):
                 adf_pass_fail = adf_pvalue < threshold
                 adf_decision = "Stationary" if adf_pass_fail else "Non-stationary"
 
-                result = {
-                    "Variable": col,
-                    "Integration Order": order,
-                    "Test": "ADF",
-                    "p-value": adf_pvalue,
-                    "Threshold": threshold,
-                    "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
-                    "Decision": adf_decision,
-                }
-                results.append(result)
+                # Append the result of each test directly into the DataFrame
+                summary_stationarity = summary_stationarity.append(
+                    {
+                        "Variable": col,
+                        "Integration Order": order,
+                        "Test": "ADF",
+                        "p-value": adf_pvalue,
+                        "Threshold": threshold,
+                        "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
+                        "Decision": adf_decision,
+                    },
+                    ignore_index=True,
+                )
 
                 if adf_pass_fail:
                     is_stationary = True
 
                 order += 1
 
-        return self.cache_results(results)
+        # Convert the 'Integration Order' column to integer
+        summary_stationarity["Integration Order"] = summary_stationarity[
+            "Integration Order"
+        ].astype(int)
+
+        return self.cache_results(
+            {
+                "stationarity_analysis": summary_stationarity.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the stationarity results
+        """
+        summary_stationarity = metric_value["stationarity_analysis"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_stationarity,
+                    metadata=ResultTableMetadata(title="Stationarity Analysis Results"),
+                ),
+            ]
+        )
 
 
 class RollingStatsPlot(Metric):
