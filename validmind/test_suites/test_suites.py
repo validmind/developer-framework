@@ -50,10 +50,12 @@ class BinaryClassifierFullSuite(TestSuite):
         "binary_classifier_model_diagnosis",
     ]
 
+
 class TimeSeriesDataset(TestSuite):
     """
     Test suite for time series datasets.
     """
+
     name = "time_series_dataset"
     required_context = ["dataset"]
 
