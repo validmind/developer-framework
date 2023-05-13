@@ -771,12 +771,8 @@ class RegressionModelForecastPlot(Metric):
         """
 
     def run(self):
-        print(self.params)
-
         start_date = self.params["start_date"]
         end_date = self.params["end_date"]
-
-        print(self.params)
 
         # Check models list is not empty
         if not self.models:
@@ -807,7 +803,6 @@ class RegressionModelForecastPlot(Metric):
 
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
-            print(all_dates)
             if start_date < all_dates.min() or end_date > all_dates.max():
                 raise ValueError(
                     "start_date and end_date must be within the range of dates in the data"
