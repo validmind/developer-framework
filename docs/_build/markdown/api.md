@@ -472,6 +472,10 @@ Returns the dataset’s target column
 Returns the dataset’s index.
 
 
+#### _property_ isnull()
+Returns True if there are any null values in the dataset or the index, False otherwise.
+
+
 #### get_feature_by_id(feature_id)
 Returns the feature with the given id. We also build a lazy
 lookup cache in case the same feature is requested multiple times.
@@ -520,6 +524,22 @@ Returns the type of the feature with the given id
 * **Return type**
 
     str
+
+
+
+#### get_features_columns()
+Returns list of features columns
+
+
+* **Returns**
+
+    The list of features columns
+
+
+
+* **Return type**
+
+    list
 
 
 
@@ -716,7 +736,7 @@ TODO: Metric should validate required context too
 
 #### scope(_: ClassVar[str_ _ = '_ )
 
-#### key(_: ClassVar[str_ _ = '_ )
+#### name(_: ClassVar[str_ _ = '_ )
 
 #### value_formatter(_: ClassVar[str | None_ _ = Non_ )
 
@@ -726,7 +746,9 @@ TODO: Metric should validate required context too
 
 #### result(_: TestPlanMetricResul_ _ = Non_ )
 
-#### _property_ name()
+#### _property_ key()
+Keep the key for compatibility reasons
+
 
 #### description()
 Return the metric description. Should be overridden by subclasses. Defaults
@@ -1062,7 +1084,7 @@ TestResults model
 Serializes the TestResults to a dictionary so it can be sent to the API
 
 
-### _class_ validmind.ThresholdTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.ThresholdTest(test_context: TestContext, params: dict | None = None, result: TestResults | None = None)
 Bases: `TestContextUtils`
 
 A threshold test is a combination of a metric/plot we track and a
@@ -1084,14 +1106,14 @@ TODO: ThresholdTest should validate required context too
 
 #### params(_: dic_ _ = Non_ )
 
-#### test_results(_: TestResult_ _ = Non_ )
+#### result(_: TestResult_ _ = Non_ )
 
 #### description()
 Return the test description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
 
 
-#### summary(test_results: TestResults | None = None)
+#### summary(result: TestResults | None = None)
 Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
 The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.
@@ -1103,14 +1125,14 @@ We return None here because the test summary is optional.
 Run the test and cache its results
 
 
-#### cache_results(results: List[TestResult], passed: bool, figures: List[Figure] | None = None)
+#### cache_results(test_results_list: List[TestResult], passed: bool, figures: List[Figure] | None = None)
 Cache the individual results of the threshold test as a list of TestResult objects
 
 
 * **Parameters**
 
     
-    * **results** (*List**[**TestResult**]*) – The results of the threshold test
+    * **result** (*List**[**TestResult**]*) – The results of the threshold test
 
 
     * **passed** (*bool*) – Whether the threshold test passed or failed
