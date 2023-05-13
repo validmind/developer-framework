@@ -759,7 +759,11 @@ class RegressionModelOutsampleComparison(Metric):
         results = self._out_sample_performance_ols(
             all_models,
         )
-        return self.cache_results(results.to_dict("records"))
+        return self.cache_results(
+            {
+                "out_sample_performance": results.to_dict(orient="records"),
+            }
+        )
 
     def _out_sample_performance_ols(self, model_list):
         """
@@ -798,12 +802,35 @@ class RegressionModelOutsampleComparison(Metric):
 
             # Store the results
             model_name_with_vars = f"({', '.join(independent_vars)})"
-            results.append([model_name_with_vars, mse, rmse_val])
+            results.append(
+                {
+                    "Model": model_name_with_vars,
+                    "MSE": mse,
+                    "RMSE": rmse_val,
+                }
+            )
 
         # Create a DataFrame to display the results
-        results_df = pd.DataFrame(results, columns=["Model", "MSE", "RMSE"])
+        results_df = pd.DataFrame(results)
 
         return results_df
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the out-of-sample performance results
+        """
+        summary_out_sample_performance = metric_value["out_sample_performance"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_out_sample_performance,
+                    metadata=ResultTableMetadata(
+                        title="Out-of-Sample Performance Results"
+                    ),
+                ),
+            ]
+        )
 
 
 @dataclass
