@@ -805,7 +805,7 @@
                 <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_metrics</span><span class="p">(</span>
-                <span class="n">results</span><span class="p">,</span> <span class="n">temp_train_df</span><span class="p">,</span> <span class="n">train_y_true</span><span class="p">,</span> <span class="n">x_std_dev</span><span class="p">,</span> <span class="s2">&quot;Traning&quot;</span>
+                <span class="n">results</span><span class="p">,</span> <span class="n">temp_train_df</span><span class="p">,</span> <span class="n">train_y_true</span><span class="p">,</span> <span class="n">x_std_dev</span><span class="p">,</span> <span class="s2">&quot;Training&quot;</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_compute_metrics</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">temp_test_df</span><span class="p">,</span> <span class="n">test_y_true</span><span class="p">,</span> <span class="n">x_std_dev</span><span class="p">,</span> <span class="s2">&quot;Test&quot;</span><span class="p">)</span>
 
@@ -924,7 +924,7 @@
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Accuracy&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
-            <span class="s2">&quot;Perturbation Size ( X * Standard Deviation)&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span>
+            <span class="s2">&quot;Perturbation Size (X * Standard Deviation)&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span>
         <span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Perturbed Features: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">features_columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
