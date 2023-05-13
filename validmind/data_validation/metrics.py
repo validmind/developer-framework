@@ -384,7 +384,7 @@ class ScatterPlot(Metric):
     """
 
     name = "scatter_plot"
-    required_context = ["dataset"]
+    required_context = ["dataset", "dataset.target_column"]
     default_params = {"columns": None}
 
     def run(self):
@@ -466,9 +466,8 @@ class LaggedCorrelationHeatmap(Metric):
         return plt.gcf()
 
     def run(self):
-        target_col = [self.dataset.y.name]
-        independent_vars = list(self.dataset.x.columns)
-
+        target_col = [self.dataset.target_column]
+        independent_vars = list(self.dataset.get_features_columns())
         num_lags = self.params.get("num_lags", 10)
 
         if isinstance(target_col, list) and len(target_col) == 1:

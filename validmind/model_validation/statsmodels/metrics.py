@@ -8,6 +8,7 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import r2_score, mean_squared_error
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import kpss
@@ -22,7 +23,8 @@ from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
-from ...vm_models import Figure, Metric
+from ...vm_models import Figure, Metric, Model
+from ...statsutils import adj_r2_score
 
 
 @dataclass
@@ -554,27 +556,18 @@ class RegressionModelSummary(Metric):
     name = "regression_model_summary"
 
     def run(self):
-        # statsmodels library information
-        module_name = self.model.model.__class__.__module__
-        library_name = module_name.split(".")[0]
-        model_name = self.model.model.__class__.__name__
+        if not Model.is_supported_model(self.model.model):
+            raise ValueError("Model is not supported by ValidMind framework yet")
 
-        if library_name != "statsmodels" or model_name != "RegressionResultsWrapper":
-            raise ValueError(
-                "Only RegressionResultsWrapper models of statsmodels library supported"
-            )
+        X_columns = self.model.train_ds.get_features_columns()
 
-        lib_model = self.model.model
-        # List of features columns
-        X_columns = lib_model.model.exog_names
+        y_true = self.model.train_ds.y
+        y_pred = self.model.model.predict(self.model.train_ds.x)
 
-        # Extract R-squared and Adjusted R-squared
-        r2 = lib_model.rsquared
-        adj_r2 = lib_model.rsquared_adj
-
-        # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
-        mse = lib_model.mse_resid
-        rmse = mse**0.5
+        r2 = r2_score(y_true, y_pred)
+        adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(X_columns))
+        mse = mean_squared_error(y_true=y_true, y_pred=y_pred, squared=True)
+        rmse = mean_squared_error(y_true=y_true, y_pred=y_pred, squared=False)
 
         results = {
             "Independent Variables": X_columns,
@@ -583,7 +576,7 @@ class RegressionModelSummary(Metric):
             "MSE": mse,
             "RMSE": rmse,
         }
-        return self.cache_results(results)
+        return self.cache_results(pd.DataFrame(results).to_dict("records"))
 
 
 @dataclass
@@ -614,12 +607,9 @@ class RegressionModelInsampleComparison(Metric):
         if self.models is not None:
             all_models.extend(self.models)
 
-        for model in all_models:
-            if model.model.__class__.__name__ != "RegressionResultsWrapper":
-                raise ValueError(
-                    "Only RegressionResultsWrapper models of statsmodels library supported"
-                )
-
+        for m in all_models:
+            if not Model.is_supported_model(m.model):
+                raise ValueError("Model is not supported by ValidMind framework yet")
         results = self._in_sample_performance_ols(all_models)
         return self.cache_results(results)
 
@@ -643,14 +633,15 @@ class RegressionModelInsampleComparison(Metric):
         evaluation_results = []
 
         for i, model in enumerate(models):
-            X_columns = model.model.model.exog_names
-            # Extract R-squared and Adjusted R-squared
-            r2 = model.model.rsquared
-            adj_r2 = model.model.rsquared_adj
+            X_columns = model.train_ds.get_features_columns()
+            y_true = self.model.train_ds.y
+            y_pred = self.model.model.predict(self.model.train_ds.x)
 
-            # Calculate the Mean Squared Error (MSE) and Root Mean Squared Error (RMSE)
-            mse = model.model.mse_resid
-            rmse = mse**0.5
+            # Extract R-squared and Adjusted R-squared
+            r2 = r2_score(y_true, y_pred)
+            adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(X_columns))
+            mse = mean_squared_error(y_true=y_true, y_pred=y_pred, squared=True)
+            rmse = mean_squared_error(y_true=y_true, y_pred=y_pred, squared=False)
 
             # Append the results to the evaluation_results list
             evaluation_results.append(
@@ -666,6 +657,7 @@ class RegressionModelInsampleComparison(Metric):
 
         return evaluation_results
 
+    
 
 @dataclass
 class RegressionModelOutsampleComparison(Metric):
@@ -697,10 +689,8 @@ class RegressionModelOutsampleComparison(Metric):
             all_models.extend(self.models)
 
         for model in all_models:
-            if model.model.__class__.__name__ != "RegressionResultsWrapper":
-                raise ValueError(
-                    "Only RegressionResultsWrapper models of statsmodels library supported"
-                )
+            if not Model.is_supported_model(model.model):
+                raise ValueError("Model is not supported by ValidMind framework yet")
             if model.test_ds is None:
                 raise ValueError(
                     "Test dataset is missing in the ValidMind Model object"
@@ -730,7 +720,7 @@ class RegressionModelOutsampleComparison(Metric):
 
         for fitted_model in model_list:
             # Extract the column names of the independent variables from the model
-            independent_vars = fitted_model.model.model.exog_names
+            independent_vars = fitted_model.train_ds.get_features_columns()
 
             # Separate the target variable and features in the test dataset
             X_test = fitted_model.test_ds.x
@@ -779,10 +769,8 @@ class RegressionModelForecastPlot(Metric):
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
         for model in self.models:
-            if model.model.__class__.__name__ != "RegressionResultsWrapper":
-                raise ValueError(
-                    "Only RegressionResultsWrapper models of statsmodels library supported"
-                )
+            if not Model.is_supported_model(model.model):
+                raise ValueError("Model is not supported by ValidMind framework yet")
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, start_date, end_date)
@@ -791,8 +779,6 @@ class RegressionModelForecastPlot(Metric):
 
     def _plot_forecast(self, model_list, start_date=None, end_date=None):
         # Convert start_date and end_date to pandas Timestamp for comparison
-        start_date = pd.Timestamp(start_date)
-        end_date = pd.Timestamp(end_date)
 
         # Initialize a list to store figures
         figures = []
@@ -800,9 +786,22 @@ class RegressionModelForecastPlot(Metric):
         for fitted_model in model_list:
             train_ds = fitted_model.train_ds
             test_ds = fitted_model.test_ds
-
+            y_pred = fitted_model.model.predict(fitted_model.train_ds.x)
+            y_pred_test = fitted_model.model.predict(fitted_model.test_ds.x)
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
+
+            # If start_date or end_date are None, set them to the min/max of all_dates
+            if start_date is None:
+                start_date = all_dates.min()
+            else:
+                start_date = pd.Timestamp(start_date)
+
+            if end_date is None:
+                end_date = all_dates.max()
+            else:
+                end_date = pd.Timestamp(end_date)
+
             if start_date < all_dates.min() or end_date > all_dates.max():
                 raise ValueError(
                     "start_date and end_date must be within the range of dates in the data"
@@ -823,14 +822,14 @@ class RegressionModelForecastPlot(Metric):
             )
             sns.lineplot(
                 x=train_ds.index,
-                y=fitted_model.y_train_predict.loc[train_ds.index],
+                y=y_pred,
                 ax=ax,
                 label="Train Dataset",
                 color="grey",
             )
             sns.lineplot(
                 x=test_ds.index,
-                y=fitted_model.y_test_predict.loc[test_ds.index],
+                y=y_pred_test,
                 ax=ax,
                 label="Test Dataset",
                 color="black",
@@ -840,7 +839,7 @@ class RegressionModelForecastPlot(Metric):
             )
 
             # Set the x-axis limits to zoom in/out
-            plt.xlim(start_date, end_date)
+            # plt.xlim(start_date, end_date)
 
             plt.legend()
             figures.append(Figure(key=self.key, figure=fig, metadata={}))
