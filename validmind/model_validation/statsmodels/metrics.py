@@ -650,7 +650,13 @@ class RegressionModelInsampleComparison(Metric):
                 )
 
         results = self._in_sample_performance_ols(all_models)
-        return self.cache_results(results)
+        return self.cache_results(
+            {
+                "in_sample_performance": pd.DataFrame(results).to_dict(
+                    orient="records"
+                ),
+            }
+        )
 
     def _in_sample_performance_ols(self, models):
         """
@@ -694,6 +700,21 @@ class RegressionModelInsampleComparison(Metric):
             )
 
         return evaluation_results
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the in-sample performance results
+        """
+        summary_in_sample_performance = metric_value["in_sample_performance"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_in_sample_performance,
+                    metadata=ResultTableMetadata(title="In-Sample Performance Results"),
+                ),
+            ]
+        )
 
 
 @dataclass
