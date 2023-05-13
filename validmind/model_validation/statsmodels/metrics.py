@@ -771,8 +771,6 @@ class RegressionModelForecastPlot(Metric):
         """
 
     def run(self):
-        print(self.params)
-
         start_date = self.params["start_date"]
         end_date = self.params["end_date"]
 
