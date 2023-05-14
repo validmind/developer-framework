@@ -827,44 +827,73 @@ class AutoSeasonality(Metric):
         for col_name, col in df.iteritems():
             series = col.dropna()
 
-            # Directly insert the results into the DataFrame
+            # Evaluate seasonal periods
             seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
                 series, min_period, max_period
             )
-            best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
-            decision = "Seasonality" if best_seasonal_period > 1 else "No Seasonality"
 
-            summary_auto_seasonality = summary_auto_seasonality.append(
-                {
-                    "Variable": col_name,
-                    "Tested Seasonal Periods": seasonal_periods,
-                    "Best Period": best_seasonal_period,
-                    "Decision": decision,
-                },
-                ignore_index=True,
-            )
-            # Convert the 'Best Period' column to integer
-            summary_auto_seasonality["Best Period"] = summary_auto_seasonality[
-                "Best Period"
-            ].astype(int)
+            for i, period in enumerate(seasonal_periods):
+                decision = "Seasonality" if period > 1 else "No Seasonality"
+                summary_auto_seasonality = summary_auto_seasonality.append(
+                    {
+                        "Variable": col_name,
+                        "Seasonal Period": period,
+                        "Residual Error": residual_errors[i],
+                        "Decision": decision,
+                    },
+                    ignore_index=True,
+                )
+
+        # Convert the 'Seasonal Period' column to integer
+        summary_auto_seasonality["Seasonal Period"] = summary_auto_seasonality[
+            "Seasonal Period"
+        ].astype(int)
+
+        # Create a DataFrame to store the best seasonality period for each variable
+        best_seasonality_period = pd.DataFrame()
+
+        for variable in summary_auto_seasonality["Variable"].unique():
+            temp_df = summary_auto_seasonality[
+                summary_auto_seasonality["Variable"] == variable
+            ]
+            best_row = temp_df[
+                temp_df["Residual Error"] == temp_df["Residual Error"].min()
+            ]
+            best_seasonality_period = pd.concat([best_seasonality_period, best_row])
+
+        # Convert the 'Seasonal Period' column to integer
+        best_seasonality_period["Seasonal Period"] = best_seasonality_period[
+            "Seasonal Period"
+        ].astype(int)
 
         return self.cache_results(
             {
                 "auto_seasonality": summary_auto_seasonality.to_dict(orient="records"),
+                "best_seasonality_period": best_seasonality_period.to_dict(
+                    orient="records"
+                ),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto seasonality results
+        and another for the best seasonality period results
         """
         summary_auto_seasonality = metric_value["auto_seasonality"]
+        best_seasonality_period = metric_value["best_seasonality_period"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_auto_seasonality,
                     metadata=ResultTableMetadata(title="Auto Seasonality Results"),
+                ),
+                ResultTable(
+                    data=best_seasonality_period,
+                    metadata=ResultTableMetadata(
+                        title="Best Seasonality Period Results"
+                    ),
                 ),
             ]
         )
