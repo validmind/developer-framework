@@ -5,14 +5,23 @@ from dataclasses import dataclass
 from functools import partial
 from operator import add
 from sklearn import metrics
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
-from ...vm_models import TestResult, Figure, ThresholdTest
+from validmind.vm_models.test_result import TestResult
+
+from ...vm_models import (
+    Figure,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
+)
 
 
 @dataclass
@@ -26,6 +35,31 @@ class MinimumAccuracy(ThresholdTest):
     name = "accuracy_score"
     required_context = ["model"]
     default_params = {"min_threshold": 0.7}
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The accuracy score test returns results like these:
+        [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
+        """
+        result = results[0]
+        results_table = [
+            {
+                "Score": result.values["score"],
+                "Threshold": result.values["threshold"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title=f"Minimum Accuracy Test on Test Data"
+                    ),
+                )
+            ]
+        )
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -58,6 +92,29 @@ class MinimumF1Score(ThresholdTest):
     required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The f1 score test returns results like these:
+        [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
+        """
+        result = results[0]
+        results_table = [
+            {
+                "Score": result.values["score"],
+                "Threshold": result.values["threshold"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title=f"Minimum F1 Score Test"),
+                )
+            ]
+        )
+
     def run(self):
         y_true = self.model.test_ds.y
         class_pred = self.model.class_predictions(self.model.y_test_predict)
@@ -89,6 +146,29 @@ class MinimumROCAUCScore(ThresholdTest):
     required_context = ["model"]
     default_params = {"min_threshold": 0.5}
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The roc auc score test returns results like these:
+        [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
+        """
+        result = results[0]
+        results_table = [
+            {
+                "Score": result.values["score"],
+                "Threshold": result.values["threshold"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title=f"Minimum ROC AUC Score Test"),
+                )
+            ]
+        )
+
     def run(self):
         y_true = self.model.test_ds.y
         class_pred = self.model.class_predictions(self.model.y_test_predict)
@@ -119,13 +199,44 @@ class TrainingTestDegradation(ThresholdTest):
     name = "training_test_degradation"
     required_context = ["model"]
 
-    default_params = {"metrics": ["accuracy", "precision", "recall", "f1"]}
+    default_params = {
+        "metrics": ["accuracy", "precision", "recall", "f1"],
+        "max_threshold": 0.10,  # Maximum 10% degradation
+    }
     default_metrics = {
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0),
         "recall": partial(metrics.recall_score, zero_division=0),
         "f1": partial(metrics.f1_score, zero_division=0),
     }
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The training test degradation test returns results like these:
+        [{"values":
+            {"test_score": 0.7225, "train_score": 0.7316666666666667, "degradation": 0.012528473804100214}, "test_name": "accuracy", "passed": true}, ...]
+        """
+        results_table = [
+            {
+                "Metric": result.test_name.title(),
+                "Train Score": result.values["train_score"],
+                "Test Score": result.values["test_score"],
+                "Degradation (%)": result.values["degradation"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title=f"Training-Test Degradation Test"
+                    ),
+                )
+            ]
+        )
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -142,7 +253,7 @@ class TrainingTestDegradation(ThresholdTest):
             test_score = metric_fn(y_true, test_class_pred)
             degradation = (train_score - test_score) / train_score
 
-            passed = train_score > test_score
+            passed = degradation < self.params["max_threshold"]
             test_results.append(
                 TestResult(
                     test_name=metric,
@@ -190,7 +301,6 @@ class OverfitDiagnosis(ThresholdTest):
         Overall, analyzing the train-test performance gap can provide valuable insights into the performance of
         a machine learning model and help identify overfitting regions that need to be addressed to improve
         the model's generalization performance.
-
         """
 
     def run(self):

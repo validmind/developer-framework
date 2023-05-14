@@ -1,8 +1,7 @@
 """
 TestPlanResult
 """
-# TODO: we are probably going to want to move all this html generation into an html template file
-# and use something like jinja to render it. This is fine for now, but the html is a bit messy
+import base64
 import json
 import os
 
@@ -10,7 +9,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from io import BytesIO
 from typing import List, Optional
-import base64
+
+import markdown
 
 from IPython.display import display
 import ipywidgets as widgets
@@ -96,15 +96,26 @@ class TestPlanResult(ABC):
         """Create an ipywdiget representation of the result... Must be overridden by subclasses"""
         raise NotImplementedError
 
+    def _markdown_description_to_html(self, description: str):
+        """
+        Convert a markdown string to html
+        """
+
+        return markdown.markdown(description, extensions=["markdown.extensions.tables"])
+
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
         Create an ipywdiget representation of the summary tables
         """
         tables = []
         for table in summary.results:
-            summary_table = pd.DataFrame(
-                table.data
-            ).to_html()  # table.data is an orient=records dump
+            # Explore advanced styling
+            summary_table = (
+                pd.DataFrame(table.data)
+                .style.format(precision=4)
+                .hide_index()
+                .to_html()
+            )  # table.data is an orient=records dump
 
             if table.metadata and table.metadata.title:
                 tables.append(widgets.HTML(value=f"<h3>{table.metadata.title}</h3>"))
@@ -172,7 +183,11 @@ class TestPlanMetricResult(TestPlanResult):
         if self.result_metadata:
             metric_description = self.result_metadata[0]
             vbox_children.append(
-                widgets.HTML(value=f"<p>{metric_description.get('text', '')}</p>")
+                widgets.HTML(
+                    value=self._markdown_description_to_html(
+                        metric_description.get("text", "")
+                    )
+                )
             )
 
         if self.metric:
@@ -406,18 +421,30 @@ class TestPlanTestResult(TestPlanResult):
 
     def _to_widget(self):
         vbox_children = []
+        description_html = []
 
         test_params = json.dumps(self.test_results.params, cls=NumpyEncoder)
 
-        vbox_children.append(
-            widgets.HTML(
-                value=f"""
-                <h2>{" ".join(self.test_results.test_name.split("_")).title()} {"✅" if self.test_results.passed else "❌"}</h2>
+        description_html.append(
+            f"""
+            <h2>{" ".join(self.test_results.test_name.split("_")).title()} {"✅" if self.test_results.passed else "❌"}</h2>
+            """
+        )
+
+        if self.result_metadata:
+            metric_description = self.result_metadata[0]
+            description_html.append(
+                self._markdown_description_to_html(metric_description.get("text", ""))
+            )
+
+        description_html.append(
+            f"""
                 <h4>Test Parameters</h4>
                 <pre>{test_params}</pre>
-                """
-            )
+            """
         )
+
+        vbox_children.append(widgets.HTML(value="".join(description_html)))
 
         if self.test_results.summary:
             tables = self._summary_tables_to_widget(self.test_results.summary)

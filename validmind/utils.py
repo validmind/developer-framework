@@ -197,14 +197,19 @@ def clean_docstring(docstring: str) -> str:
     Clean up docstrings by removing leading and trailing whitespace and
     replacing newlines with spaces.
     """
-    # Remove leading and trailing whitespace
-    cleandoc = inspect.cleandoc(docstring)
+    description = docstring.strip()
+    paragraphs = description.split("\n\n")  # Split into paragraphs
+    paragraphs = [
+        " ".join([line.strip() for line in paragraph.split("\n")])
+        for paragraph in paragraphs
+    ]
+    paragraphs = [
+        paragraph.replace(" - ", "\n- ") for paragraph in paragraphs
+    ]  # Add newline before list items
+    # Join paragraphs with double newlines for markdown
+    description = "\n\n".join(paragraphs)
 
-    # Replace newlines with spaces, leave double newlines \n\n alone
-    pattern = r"(?<!\n)\n(?!\n)"
-    replacement = " "
-
-    return re.sub(pattern, replacement, cleandoc)
+    return description
 
 
 def format_number(number):
