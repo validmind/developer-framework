@@ -168,12 +168,30 @@ class OverfitDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "overfit_regions"
-    required_context = ["model"]
+    required_context = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
+
+    def description(self):
+        return """
+        Test that identify overfitting regions based on the train-test performance gap,
+        one can divide the feature space into regions and analyze the train-test performance
+        gap for each region. Regions with a large train-test performance gap can be considered as
+        overfitting regions, indicating that the model is overfitting in those regions.
+
+        Once overfitting regions have been identified, one can use various techniques to address the overfitting.
+        For example, one could use regularization techniques such as L1 or L2 regularization, dropout, or early
+        stopping to prevent the model from overfitting. Alternatively, one could use data augmentation techniques
+        to increase the size of the training data and reduce overfitting.
+
+        Overall, analyzing the train-test performance gap can provide valuable insights into the performance of
+        a machine learning model and help identify overfitting regions that need to be addressed to improve
+        the model's generalization performance.
+
+        """
 
     def run(self):
         if "cut_off_percentage" not in self.params:
@@ -413,7 +431,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "weak_spots"
-    required_context = ["model"]
+    required_context = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {
         "features_columns": None,
@@ -432,6 +450,19 @@ class WeakspotsDiagnosis(ThresholdTest):
         "recall": partial(metrics.recall_score, zero_division=0),
         "f1": partial(metrics.f1_score, zero_division=0),
     }
+
+    def description(self):
+        return """
+        A weak spots test is a type of testing that is performed on a machine learning model
+        to identify areas where the model may not perform well or may be vulnerable to errors.
+        The purpose of this testing is to identify the limitations and weaknesses of the model
+        so that appropriate measures can be taken to improve its performance.
+        The weak spots test typically involves subjecting the model to different types of data
+        that are different from the data used to train the model. For example, the test data may
+        contain outliers, missing data, or noise that was not present in the training data. The model
+        is then evaluated on this test data using appropriate metrics such as accuracy, precision,
+        recall, F1 score, etc.
+        """
 
     def run(self):
         thresholds = self.params["thresholds"]
@@ -661,12 +692,13 @@ class WeakspotsDiagnosis(ThresholdTest):
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
     """
-    Test robustness of model by perturbing the features column values
+    Test robustness of model by perturbing the features column values by adding noise within scale
+    stardard deviation.
     """
 
     category = "model_diagnosis"
     name = "robustness"
-    required_context = ["model"]
+    required_context = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {
         "features_columns": None,
@@ -675,6 +707,23 @@ class RobustnessDiagnosis(ThresholdTest):
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
+
+    def description(self):
+        return """
+        The robustness of a machine learning model refers to its ability to maintain performance
+        in the face of perturbations or changes to the input data. One way to test the robustness
+        of a model is by perturbing its input features and observing how the model's performance changes.
+
+        To perturb the input features, one can add random noise or modify the values of the features
+        within a certain range. By perturbing the input features, one can simulate different scenarios
+        in which the input data may be corrupted or incomplete, and test whether the model is able to
+        handle such scenarios.
+
+        The performance of the model can be measured in terms of its accuracy, precision, recall,
+        or any other relevant metric, both before and after perturbing the input features. A model
+        that is robust to perturbations should maintain a high level of performance even after the
+        input features have been perturbed.
+        """
 
     def run(self):
         # Validate X std deviation parameter
