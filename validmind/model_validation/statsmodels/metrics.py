@@ -847,7 +847,7 @@ class RegressionModelForecastPlot(Metric):
     def run(self):
         start_date = self.params["start_date"]
         end_date = self.params["end_date"]
-
+        print(self.params)
         # Check models list is not empty
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
