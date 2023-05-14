@@ -78,6 +78,7 @@ class DatasetCorrelations(Metric):
     """
     Extracts the correlation matrix for a dataset. The following coefficients
     are calculated:
+
     - Pearson's R for numerical variables
     - Cramer's V for categorical variables
     - Correlation ratios for categorical-numerical variables

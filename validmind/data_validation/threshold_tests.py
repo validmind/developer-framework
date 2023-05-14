@@ -38,7 +38,7 @@ class ClassImbalance(ThresholdTest):
 
     def summary(self, results: List[TestResult], all_passed: bool):
         """
-        The class imbalance test returns a single result like this:
+        The class imbalance test returns results like these:
         [{"values": {"0": 0.798, "1": 0.202}, "column": "Exited", "passed": true}]
 
         So we build a table with 2 rows, one for each class.
@@ -103,6 +103,32 @@ class Duplicates(ThresholdTest):
     required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The duplicates test returns results like these:
+        [{"values": {"n_duplicates": 0, "p_duplicates": 0.0}, "passed": true}]
+
+        So we build a table with 1 row and show number of duplicates and percentage of duplicates.
+        """
+        result = results[0]
+        results_table = [
+            {
+                "Number of Duplicates": result.values["n_duplicates"],
+                "Percentage of Duplicates (%)": result.values["p_duplicates"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Duplicate Rows Results for Dataset"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         rows = self.df.shape[0]
 
@@ -159,6 +185,31 @@ class HighCardinality(ThresholdTest):
         "threshold_type": "percent",  # or "num"
     }
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The high cardinality test returns results like these:
+        [{"values": {"n_distinct": 0, "p_distinct": 0.0}, "column": "Exited", "passed": true}]
+        """
+        results_table = [
+            {
+                "Column": result.column,
+                "Number of Distinct Values": result.values["n_distinct"],
+                "Percentage of Distinct Values (%)": result.values["p_distinct"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="High Cardinality Results for Dataset"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         typeset = ProfilingTypeSet(Settings())
         dataset_types = typeset.infer_type(self.df)
@@ -205,6 +256,30 @@ class HighPearsonCorrelation(ThresholdTest):
     name = "pearson_correlation"
     required_context = ["dataset"]
     default_params = {"max_threshold": 0.3}
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The high pearson correlation test returns results like these:
+        [{"values": {"correlations": [{"column": "NumOfProducts", "correlation": -0.3044645622389459}]}, "column": "Balance", "passed": false}]
+        """
+        results_table = [
+            {
+                "Columns": f'({result.column}, {result.values["correlations"][0]["column"]})',
+                "Coefficient": result.values["correlations"][0]["correlation"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="High Pearson Correlation Results for Dataset"
+                    ),
+                )
+            ]
+        )
 
     def run(self):
         corr = self.df.corr()
@@ -273,6 +348,31 @@ class MissingValues(ThresholdTest):
     required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The missing values test returns results like these:
+        [{"values": {"n_missing": 0, "p_missing": 0.0}, "column": "Exited", "passed": true}]
+        """
+        results_table = [
+            {
+                "Column": result.column,
+                "Number of Missing Values": result.values["n_missing"],
+                "Percentage of Missing Values (%)": result.values["p_missing"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Missing Values Results for Dataset"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         rows = self.df.shape[0]
 
@@ -302,6 +402,28 @@ class Skewness(ThresholdTest):
     name = "skewness"
     required_context = ["dataset"]
     default_params = {"max_threshold": 1}
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The skewness test returns results like these:
+        [{"values": {"skewness": 1.0}, "column": "NumOfProducts", "passed": false}]
+        """
+        results_table = [
+            {
+                "Column": result.column,
+                "Skewness": result.values["skewness"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title="Skewness Results for Dataset"),
+                )
+            ]
+        )
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
@@ -341,6 +463,31 @@ class UniqueRows(ThresholdTest):
     required_context = ["dataset"]
     default_params = {"min_percent_threshold": 1}
 
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The unique rows test returns results like these:
+        [{"values": {"n_unique": 10000, "p_unique": 1.0}, "column": "Exited", "passed": true}]
+        """
+        results_table = [
+            {
+                "Column": result.column,
+                "Number of Unique Values": result.values["n_unique"],
+                "Percentage of Unique Values (%)": result.values["p_unique"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Unique Rows Results for Dataset"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         rows = self.df.shape[0]
 
@@ -370,6 +517,29 @@ class TooManyZeroValues(ThresholdTest):
     name = "zeros"
     required_context = ["dataset"]
     default_params = {"max_percent_threshold": 0.03}
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The zeros test returns results like these:
+        [{"values": {"n_zeros": 10000, "p_zeros": 1.0}, "column": "Exited", "passed": true}]
+        """
+        results_table = [
+            {
+                "Column": result.column,
+                "Number of Zero Values": result.values["n_zeros"],
+                "Percentage of Zero Values (%)": result.values["p_zeros"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title="Zeros Results for Dataset"),
+                )
+            ]
+        )
 
     def run(self):
         rows = self.df.shape[0]

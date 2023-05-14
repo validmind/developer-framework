@@ -20,6 +20,8 @@ from .vm_models import (
     TestSuite,
 )
 
+pd.option_context("format.precision", 2)
+
 
 def init_dataset(
     dataset: pd.DataFrame,
