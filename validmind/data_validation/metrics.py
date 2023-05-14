@@ -307,13 +307,13 @@ class TimeSeriesLinePlot(Metric):
 
         figures = []
         for col in columns:
-            plt.figure(figsize=(10, 6))
+            plt.figure()
             fig, _ = plt.subplots()
             column_index_name = df.index.name
             ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
-            plt.title(f"Time Series: {col}")
-            plt.xlabel(column_index_name)
-            plt.ylabel(col)
+            plt.title(f"Time Series: {col}", weight="bold", fontsize=16)
+            plt.xlabel(column_index_name, weight="bold", fontsize=16)
+            plt.ylabel(col, weight="bold", fontsize=16)
 
             # Rotate x-axis labels and set the number of x-axis ticks
             ax.xaxis.set_major_locator(mdates.AutoDateLocator())
@@ -643,6 +643,7 @@ class SeasonalDecompose(Metric):
     Calculates seasonal_decompose metric for each of the dataset features
     """
 
+    category = "univariate_analysis"
     name = "seasonal_decompose"
     required_context = ["dataset"]
     default_params = {"seasonal_model": "additive"}
