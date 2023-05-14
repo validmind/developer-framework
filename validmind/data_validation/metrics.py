@@ -514,8 +514,9 @@ class AutoAR(Metric):
 
         df = self.dataset.df
 
-        # Create an empty DataFrame to store the results
+        # Create empty DataFrames to store the results
         summary_ar_analysis = pd.DataFrame()
+        best_ar_order = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -543,26 +544,43 @@ class AutoAR(Metric):
                 except Exception as e:
                     print(f"Error fitting AR({ar_order}) model for {col}: {e}")
 
+            # Find the best AR Order for this variable based on the minimum BIC
+            variable_summary = summary_ar_analysis[
+                summary_ar_analysis["Variable"] == col
+            ]
+            best_bic_row = variable_summary[
+                variable_summary["BIC"] == variable_summary["BIC"].min()
+            ]
+            best_ar_order = pd.concat([best_ar_order, best_bic_row])
+
         # Convert the 'AR Order' column to integer
         summary_ar_analysis["AR Order"] = summary_ar_analysis["AR Order"].astype(int)
+        best_ar_order["AR Order"] = best_ar_order["AR Order"].astype(int)
 
         return self.cache_results(
             {
                 "auto_ar_analysis": summary_ar_analysis.to_dict(orient="records"),
+                "best_ar_order": best_ar_order.to_dict(orient="records"),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto AR results
+        and another for the best AR Order results
         """
         summary_ar_analysis = metric_value["auto_ar_analysis"]
+        best_ar_order = metric_value["best_ar_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_ar_analysis,
                     metadata=ResultTableMetadata(title="Auto AR Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_ar_order,
+                    metadata=ResultTableMetadata(title="Best AR Order Results"),
                 ),
             ]
         )
@@ -586,8 +604,9 @@ class AutoMA(Metric):
 
         df = self.dataset.df
 
-        # Create an empty DataFrame to store the results
+        # Create empty DataFrames to store the results
         summary_ma_analysis = pd.DataFrame()
+        best_ma_order = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -615,26 +634,43 @@ class AutoMA(Metric):
                 except Exception as e:
                     print(f"Error fitting MA({ma_order}) model for {col}: {e}")
 
+            # Find the best MA Order for this variable based on the minimum BIC
+            variable_summary = summary_ma_analysis[
+                summary_ma_analysis["Variable"] == col
+            ]
+            best_bic_row = variable_summary[
+                variable_summary["BIC"] == variable_summary["BIC"].min()
+            ]
+            best_ma_order = pd.concat([best_ma_order, best_bic_row])
+
         # Convert the 'MA Order' column to integer
         summary_ma_analysis["MA Order"] = summary_ma_analysis["MA Order"].astype(int)
+        best_ma_order["MA Order"] = best_ma_order["MA Order"].astype(int)
 
         return self.cache_results(
             {
                 "auto_ma_analysis": summary_ma_analysis.to_dict(orient="records"),
+                "best_ma_order": best_ma_order.to_dict(orient="records"),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto MA results
+        and another for the best MA Order results
         """
         summary_ma_analysis = metric_value["auto_ma_analysis"]
+        best_ma_order = metric_value["best_ma_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_ma_analysis,
                     metadata=ResultTableMetadata(title="Auto MA Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_ma_order,
+                    metadata=ResultTableMetadata(title="Best MA Order Results"),
                 ),
             ]
         )
