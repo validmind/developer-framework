@@ -11,12 +11,21 @@ from .utils import NumpyEncoder
 from .utils import get_full_typename, is_matplotlib_typename
 
 API_HOST = os.environ.get("VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking")
+API_PROJECT = os.environ.get("VM_API_PROJECT")
 VALID_DATASET_TYPES = ["training", "test", "validation"]
 
 vm_api_key = None
 vm_api_secret = None
 
 api_session = requests.Session()
+
+
+def get_api_host():
+    return API_HOST
+
+
+def get_api_project():
+    return API_PROJECT
 
 
 def __ping():
@@ -68,6 +77,7 @@ def init(project, api_key=None, api_secret=None, api_host=None):
         bool: True if the ping was successful
     """
     global API_HOST
+    global API_PROJECT
 
     ENV_API_KEY = os.environ.get("VM_API_KEY")
     ENV_API_SECRET = os.environ.get("VM_API_SECRET")
@@ -90,6 +100,8 @@ def init(project, api_key=None, api_secret=None, api_host=None):
             "X-PROJECT-CUID": project,
         }
     )
+
+    API_PROJECT = project
 
     return __ping()
 
