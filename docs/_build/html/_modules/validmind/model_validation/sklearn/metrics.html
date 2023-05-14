@@ -77,8 +77,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -86,11 +86,8 @@
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
 <span class="kn">from</span> <span class="nn">sklearn.inspection</span> <span class="kn">import</span> <span class="n">permutation_importance</span>
 
-<span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Figure</span><span class="p">,</span>
-    <span class="n">Metric</span><span class="p">,</span>
-    <span class="n">Model</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ResultSummary</span><span class="p">,</span> <span class="n">ResultTable</span>
+<span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">format_number</span>
 
 
 <span class="k">def</span> <span class="nf">_get_psi</span><span class="p">(</span><span class="n">score_initial</span><span class="p">,</span> <span class="n">score_new</span><span class="p">,</span> <span class="n">num_bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fixed&quot;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -155,23 +152,6 @@
 
     <span class="c1"># Return the psi values dataframe</span>
     <span class="k">return</span> <span class="n">psi_df</span>
-
-
-<div class="viewcode-block" id="AccuracyScore"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.AccuracyScore">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">AccuracyScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Accuracy Score</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;accuracy&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
-
-<div class="viewcode-block" id="AccuracyScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.AccuracyScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
-        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
-        <span class="n">accuracy_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">accuracy_score</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="CharacteristicStabilityIndex"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.CharacteristicStabilityIndex">[docs]</a><span class="nd">@dataclass</span>
@@ -246,23 +226,6 @@
                 <span class="p">)</span>
             <span class="p">],</span>
         <span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="F1Score"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.F1Score">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">F1Score</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    F1 Score</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;f1_score&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
-
-<div class="viewcode-block" id="F1Score.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.F1Score.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
-        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
-        <span class="n">f1_score</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">f1_score</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="PermutationFeatureImportance"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PermutationFeatureImportance">[docs]</a><span class="nd">@dataclass</span>
@@ -351,56 +314,127 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="PrecisionScore"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PrecisionScore">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PrecisionScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="ClassifierPerformance"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierPerformance">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ClassifierPerformance</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Precision Score</span>
+<span class="sd">    Test that outputs the performance of the model on the training or test data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;precision&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;metrics&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;roc_auc&quot;</span><span class="p">]}</span>
+    <span class="n">default_metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
+        <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;roc_auc&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="p">}</span>
 
-<div class="viewcode-block" id="PrecisionScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.PrecisionScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
-        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
-        <span class="n">precision</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
+    <span class="c1"># This will need to be moved to the backend</span>
+    <span class="n">metric_definitions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="s2">&quot;Overall, how often is the model correct?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="s1">&#39;When the model predicts &quot;</span><span class="si">{target_column}</span><span class="s1">&quot;, how often is it correct?&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="s1">&#39;When it</span><span class="se">\&#39;</span><span class="s1">s actually &quot;</span><span class="si">{target_column}</span><span class="s1">&quot;, how often does the model predict &quot;</span><span class="si">{target_column}</span><span class="s1">&quot;?&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="s2">&quot;Harmonic mean of precision and recall&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;roc_auc&quot;</span><span class="p">:</span> <span class="s2">&quot;Area under the Receiver Operating Characteristic curve&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span></div></div>
+    <span class="n">metric_formulas</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="s2">&quot;TP + TN / (TP + TN + FP + FN)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="s2">&quot;TP / (TP + FP)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="s2">&quot;TP / (TP + FN)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="s2">&quot;2 x (Precision x Recall) / (Precision + Recall)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;roc_auc&quot;</span><span class="p">:</span> <span class="s2">&quot;TPR / FPR&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="ClassifierPerformance.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierPerformance.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># Turns the metric value into a table of [{metric_name: value}]</span>
+        <span class="n">summary_in_sample_performance</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_value</span> <span class="ow">in</span> <span class="n">metric_value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">summary_in_sample_performance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Metric&quot;</span><span class="p">:</span> <span class="n">metric_name</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span>
+                    <span class="s2">&quot;Definition&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_definitions</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">target_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;Formula&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_formulas</span><span class="p">[</span><span class="n">metric_name</span><span class="p">],</span>
+                    <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">format_number</span><span class="p">(</span><span class="n">metric_value</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">summary_in_sample_performance</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ClassifierPerformance.y_true"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierPerformance.y_true">[docs]</a>    <span class="k">def</span> <span class="nf">y_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ClassifierPerformance.y_pred"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierPerformance.y_pred">[docs]</a>    <span class="k">def</span> <span class="nf">y_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ClassifierPerformance.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierPerformance.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_true</span><span class="p">()</span>
+        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_pred</span><span class="p">())</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">metric_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metric </span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2"> not supported.&quot;</span><span class="p">)</span>
+            <span class="n">metric_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_func</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="RecallScore"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.RecallScore">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">RecallScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="ClassifierInSamplePerformance"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierInSamplePerformance">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ClassifierInSamplePerformance</span><span class="p">(</span><span class="n">ClassifierPerformance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Recall Score</span>
+<span class="sd">    Test that outputs the performance of the model on the training data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;recall&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;classifier_in_sample_performance&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;model.train_ds&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="RecallScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.RecallScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
-        <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
-        <span class="n">recall</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">class_pred</span><span class="p">)</span>
+<div class="viewcode-block" id="ClassifierInSamplePerformance.description"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierInSamplePerformance.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This section shows the performance of the model on the training data. Popular</span>
+<span class="s2">        metrics such as the accuracy, precision, recall, F1 score, etc. are</span>
+<span class="s2">        used to evaluate the model.</span>
+<span class="s2">        &quot;&quot;&quot;</span></div>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">recall</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="ClassifierInSamplePerformance.y_true"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierInSamplePerformance.y_true">[docs]</a>    <span class="k">def</span> <span class="nf">y_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">y</span></div>
+
+<div class="viewcode-block" id="ClassifierInSamplePerformance.y_pred"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierInSamplePerformance.y_pred">[docs]</a>    <span class="k">def</span> <span class="nf">y_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_train_predict</span></div></div>
 
 
-<div class="viewcode-block" id="ROCAUCScore"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCAUCScore">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ROCAUCScore</span><span class="p">(</span><span class="n">Metric</span><span class="p">):</span>
+<div class="viewcode-block" id="ClassifierOutOfSamplePerformance"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierOutOfSamplePerformance">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ClassifierOutOfSamplePerformance</span><span class="p">(</span><span class="n">ClassifierPerformance</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ROC AUC Score</span>
+<span class="sd">    Test that outputs the performance of the model on the test data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;roc_auc&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;classifier_out_of_sample_performance&quot;</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;model.test_ds&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ROCAUCScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCAUCScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
-            <span class="n">metric_value</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">roc_auc_score</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">),</span>
-            <span class="p">),</span>
-        <span class="p">)</span></div></div>
+<div class="viewcode-block" id="ClassifierOutOfSamplePerformance.description"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierOutOfSamplePerformance.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        This section shows the performance of the model on the test data. Popular</span>
+<span class="s2">        metrics such as the accuracy, precision, recall, F1 score, etc. are</span>
+<span class="s2">        used to evaluate the model.</span>
+<span class="s2">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="ClassifierOutOfSamplePerformance.y_true"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierOutOfSamplePerformance.y_true">[docs]</a>    <span class="k">def</span> <span class="nf">y_true</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span></div>
+
+<div class="viewcode-block" id="ClassifierOutOfSamplePerformance.y_pred"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ClassifierOutOfSamplePerformance.y_pred">[docs]</a>    <span class="k">def</span> <span class="nf">y_pred</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span></div></div>
 
 
 <div class="viewcode-block" id="ROCCurve"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.metrics.ROCCurve">[docs]</a><span class="nd">@dataclass</span>

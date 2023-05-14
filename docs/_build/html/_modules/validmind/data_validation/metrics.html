@@ -93,6 +93,7 @@
 <span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="kn">import</span> <span class="n">coint</span>
 
 
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">format_records</span>
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Figure</span><span class="p">,</span>
     <span class="n">Metric</span><span class="p">,</span>
@@ -206,7 +207,8 @@
         <span class="n">summary_stats</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">summary_stats</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
         <span class="n">summary_stats</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">summary_stats</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">summary_stats</span></div>
+
+        <span class="k">return</span> <span class="n">format_records</span><span class="p">(</span><span class="n">summary_stats</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DescriptiveStatistics.get_summary_statistics_categorical"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.get_summary_statistics_categorical">[docs]</a>    <span class="k">def</span> <span class="nf">get_summary_statistics_categorical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categorical_fields</span><span class="p">):</span>
         <span class="n">summary_stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
@@ -226,7 +228,7 @@
         <span class="n">summary_stats</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">summary_stats</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;Name&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">summary_stats</span></div>
+        <span class="k">return</span> <span class="n">format_records</span><span class="p">(</span><span class="n">summary_stats</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DescriptiveStatistics.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.metrics.DescriptiveStatistics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -260,8 +262,8 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;numerical&quot;</span><span class="p">:</span> <span class="n">summary_stats_numerical</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
-                <span class="s2">&quot;categorical&quot;</span><span class="p">:</span> <span class="n">summary_stats_categorical</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;records&quot;</span><span class="p">),</span>
+                <span class="s2">&quot;numerical&quot;</span><span class="p">:</span> <span class="n">summary_stats_numerical</span><span class="p">,</span>
+                <span class="s2">&quot;categorical&quot;</span><span class="p">:</span> <span class="n">summary_stats_categorical</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">)</span></div></div>
 
