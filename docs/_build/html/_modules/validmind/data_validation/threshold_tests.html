@@ -75,6 +75,7 @@
 <span class="sd">Threshold based tests</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -85,8 +86,15 @@
 <span class="kn">from</span> <span class="nn">pandas_profiling.model.typeset</span> <span class="kn">import</span> <span class="n">ProfilingTypeSet</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
-
-<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ThresholdTest</span>
+<span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">TestResult</span><span class="p">,</span>
+    <span class="n">Figure</span><span class="p">,</span>
+    <span class="n">ThresholdTest</span><span class="p">,</span>
+    <span class="n">ResultSummary</span><span class="p">,</span>
+    <span class="n">ResultTable</span><span class="p">,</span>
+    <span class="n">ResultTableMetadata</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="ClassImbalance"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance">[docs]</a><span class="nd">@dataclass</span>
@@ -100,6 +108,35 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;class_imbalance&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
+
+<div class="viewcode-block" id="ClassImbalance.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The class imbalance test returns a single result like this:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;0&quot;: 0.798, &quot;1&quot;: 0.202}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
+
+<span class="sd">        So we build a table with 2 rows, one for each class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">class_percent</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">results_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Class&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="s2">&quot;Negative&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">class_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;0&quot;</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">class_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;Positive&quot;</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+                    <span class="s2">&quot;Percentage of Rows (%)&quot;</span><span class="p">:</span> <span class="n">class_percent</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Class Imbalance Results for Column </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">target_column</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ClassImbalance.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Can only run this test if we have a Dataset object</span>

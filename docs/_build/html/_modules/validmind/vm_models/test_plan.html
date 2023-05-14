@@ -306,9 +306,8 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Failed to log result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2"> for test plan result &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-                <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pbar_description</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to log result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2"> for test plan result &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
 

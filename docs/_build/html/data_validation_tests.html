@@ -792,6 +792,14 @@ class and the minority class in the target column.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalance.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TestResult</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_passed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ClassImbalance.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalance.summary" title="Permalink to this definition"></a></dt>
+<dd><p>The class imbalance test returns a single result like this:
+[{“values”: {“0”: 0.798, “1”: 0.202}, “column”: “Exited”, “passed”: true}]</p>
+<p>So we build a table with 2 rows, one for each class.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.threshold_tests.ClassImbalance.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/threshold_tests.html#ClassImbalance.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.threshold_tests.ClassImbalance.run" title="Permalink to this definition"></a></dt>
 <dd><p>Run the test and cache its results</p>
