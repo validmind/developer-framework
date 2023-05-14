@@ -3,6 +3,7 @@ TestPlanResult
 """
 # TODO: we are probably going to want to move all this html generation into an html template file
 # and use something like jinja to render it. This is fine for now, but the html is a bit messy
+import json
 import os
 
 from abc import ABC, abstractmethod
@@ -30,6 +31,7 @@ from .metric_result import MetricResult
 from .model import Model
 from .result_summary import ResultSummary
 from .test_result import TestResults
+from ..utils import NumpyEncoder
 
 
 def update_metadata(content_id: str, text: str) -> None:
@@ -63,16 +65,14 @@ def plot_figures(figures: List[Figure]) -> None:
         plots.append(
             widgets.HTML(
                 value=f"""
-                <img src="data:image/png;base64,{encoded}"/>
+                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
                 """
             )
         )
 
-    num_columns = len(figures) if len(figures) <= 3 else 3
-
     return widgets.GridBox(
         plots,
-        layout=widgets.Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
+        layout=widgets.Layout(grid_template_columns="repeat(3, 1fr)"),
     )
 
 
@@ -406,147 +406,27 @@ class TestPlanTestResult(TestPlanResult):
 
     def _to_widget(self):
         vbox_children = []
+
+        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder)
+
         vbox_children.append(
             widgets.HTML(
                 value=f"""
-        <div class="metric-result">
-            <div class="metric-result-body">
-                <div class="test-result-header-title">
-                    <span class="test-result-header-title-text">
-                        {" ".join(self.test_results.test_name.split("_")).title()}
-                    </span>
-                    <span class="test-result-header-title-icon">
-                        {"✅" if self.test_results.passed else "❌"}
-                    </span>
-                </div>
-            </div>
-            <div class="metric-result-body">
-                <div class="metric-body-column">
-                    <div class="metric-body-column-title">Test Name</div>
-                    <div class="metric-body-column-value">{self.test_results.test_name}</div>
-                </div>
-                <div class="metric-body-column">
-                    <div class="metric-body-column-title">Category</div>
-                    <div class="metric-body-column-value">{self.test_results.category}</div>
-                </div>
-                <div class="metric-body-column">
-                    <div class="metric-body-column-title">Passed</div>
-                    <div class="metric-body-column-value">{self.test_results.passed}</div>
-                </div>
-                <div class="metric-body-column">
-                    <div class="metric-body-column-title">Params</div>
-                    <div class="metric-body-column-value">{self.test_results.params}</div>
-                </div>
-            </div>
-            <div class="results-objs" style="display: none;">
-                <div class="results-objs-title">Results</div>
-                <div class="results-objs-body">{self.test_results.results}</div>
-            </div>
-            <div class="metric-result-body">
-                <a onclick="toggleTestResults(this)" style="margin-top: 10px; cursor: pointer; color: blue;">
-                    See Result Details
-                </a>
-            </div>
-        </div>
-        """
+                <h2>{" ".join(self.test_results.test_name.split("_")).title()} {"✅" if self.test_results.passed else "❌"}</h2>
+                <h4>Test Parameters</h4>
+                <pre>{test_params}</pre>
+                """
             )
         )
+
+        if self.test_results.summary:
+            tables = self._summary_tables_to_widget(self.test_results.summary)
+            vbox_children.extend(tables)
 
         if self.figures:
             vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
-
-        vbox_children.append(
-            widgets.HTML(
-                value="""
-        <style>
-            .metric-result {
-                background-color: #F5F5F5;
-                border: 1px solid #e0e0e0;
-                border-radius: 4px;
-                padding: 10px;
-                margin: 10px 0;
-            }
-            .metric-result-body {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                gap: 10px;
-            }
-            .metric-body-column {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                width: 33%;
-            }
-            .metric-body-column-title {
-                font-size: 16px;
-                font-weight: 600;
-            }
-            .metric-value {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                margin-top: 15px;
-            }
-            .metric-value-title {
-                font-size: 16px;
-                font-weight: 600;
-            }
-            .metric-value-value {
-                font-size: 14px;
-                font-weight: 500;
-                margin-top: 10px;
-            }
-            .test-result {
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
-            .test-result-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 10px;
-            }
-            .test-result-header-title {
-                display: flex;
-                align-items: center;
-            }
-            .test-result-header-title-text {
-                text-decoration: underline;
-                font-size: 18px;
-                font-weight: 600;
-            }
-            .test-result-header-title-icon {
-                margin-left: 10px;
-            }
-            .results-objs {
-                padding: 10px;
-            }
-            .results-objs-title {
-                font-weight: bold;
-            }
-            .results-objs-body {
-                margin-top: 5px;
-            }
-        </style>
-        <script>
-            function toggleTestResults(btn) {{
-                const rslts = btn.parentElement.parentElement.querySelector('.results-objs');
-                if (rslts.style.display === 'none') {{
-                    rslts.style.display = 'block';
-                    btn.innerHTML = 'Hide Result Details';
-                }} else {{
-                    rslts.style.display = 'none';
-                    btn.innerHTML = 'See Result Details';
-                }}
-            }}
-        </script>
-        """
-            )
-        )
 
         return widgets.VBox(vbox_children)
 

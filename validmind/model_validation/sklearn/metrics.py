@@ -4,8 +4,8 @@ a sklearn-like API
 """
 import warnings
 from dataclasses import dataclass
+from functools import partial
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -13,11 +13,8 @@ import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import (
-    Figure,
-    Metric,
-    Model,
-)
+from ...vm_models import Figure, Metric, Model, ResultSummary, ResultTable
+from ...utils import format_number
 
 
 def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
@@ -82,23 +79,6 @@ def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False)
 
     # Return the psi values dataframe
     return psi_df
-
-
-@dataclass
-class AccuracyScore(Metric):
-    """
-    Accuracy Score
-    """
-
-    name = "accuracy"
-    required_context = ["model"]
-
-    def run(self):
-        y_true = self.model.test_ds.y
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
-        accuracy_score = metrics.accuracy_score(y_true, class_pred)
-
-        return self.cache_results(metric_value=accuracy_score)
 
 
 @dataclass
@@ -173,23 +153,6 @@ class ConfusionMatrix(Metric):
                 )
             ],
         )
-
-
-@dataclass
-class F1Score(Metric):
-    """
-    F1 Score
-    """
-
-    name = "f1_score"
-    required_context = ["model"]
-
-    def run(self):
-        y_true = self.model.test_ds.y
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
-        f1_score = metrics.f1_score(y_true, class_pred)
-
-        return self.cache_results(metric_value=f1_score)
 
 
 @dataclass
@@ -279,55 +242,126 @@ class PrecisionRecallCurve(Metric):
 
 
 @dataclass
-class PrecisionScore(Metric):
+class ClassifierPerformance(Metric):
     """
-    Precision Score
-    """
-
-    name = "precision"
-    required_context = ["model"]
-
-    def run(self):
-        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
-        precision = metrics.precision_score(y_true, class_pred)
-
-        return self.cache_results(metric_value=precision)
-
-
-@dataclass
-class RecallScore(Metric):
-    """
-    Recall Score
+    Test that outputs the performance of the model on the training or test data.
     """
 
-    name = "recall"
-    required_context = ["model"]
+    default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
+    default_metrics = {
+        "accuracy": metrics.accuracy_score,
+        "precision": partial(metrics.precision_score, zero_division=0),
+        "recall": partial(metrics.recall_score, zero_division=0),
+        "f1": partial(metrics.f1_score, zero_division=0),
+        "roc_auc": metrics.roc_auc_score,
+    }
 
-    def run(self):
-        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
-        recall = metrics.recall_score(y_true, class_pred)
+    # This will need to be moved to the backend
+    metric_definitions = {
+        "accuracy": "Overall, how often is the model correct?",
+        "precision": 'When the model predicts "{target_column}", how often is it correct?',
+        "recall": 'When it\'s actually "{target_column}", how often does the model predict "{target_column}"?',
+        "f1": "Harmonic mean of precision and recall",
+        "roc_auc": "Area under the Receiver Operating Characteristic curve",
+    }
 
-        return self.cache_results(metric_value=recall)
+    metric_formulas = {
+        "accuracy": "TP + TN / (TP + TN + FP + FN)",
+        "precision": "TP / (TP + FP)",
+        "recall": "TP / (TP + FN)",
+        "f1": "2 x (Precision x Recall) / (Precision + Recall)",
+        "roc_auc": "TPR / FPR",
+    }
 
+    def summary(self, metric_value: dict):
+        # Turns the metric value into a table of [{metric_name: value}]
+        summary_in_sample_performance = []
+        for metric_name, metric_value in metric_value.items():
+            summary_in_sample_performance.append(
+                {
+                    "Metric": metric_name.title(),
+                    "Definition": self.metric_definitions[metric_name].format(
+                        target_column=self.model.train_ds.target_column
+                    ),
+                    "Formula": self.metric_formulas[metric_name],
+                    "Value": format_number(metric_value),
+                }
+            )
 
-@dataclass
-class ROCAUCScore(Metric):
-    """
-    ROC AUC Score
-    """
-
-    name = "roc_auc"
-    required_context = ["model"]
-
-    def run(self):
-        return self.cache_results(
-            metric_value=metrics.roc_auc_score(
-                self.model.test_ds.df[self.model.test_ds.target_column],
-                self.model.class_predictions(self.model.y_test_predict),
-            ),
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_in_sample_performance,
+                ),
+            ]
         )
+
+    def y_true(self):
+        raise NotImplementedError
+
+    def y_pred(self):
+        raise NotImplementedError
+
+    def run(self):
+        y_true = self.y_true()
+        class_pred = self.model.class_predictions(self.y_pred())
+
+        results = {}
+
+        metrics = self.params["metrics"]
+        for metric_name in metrics:
+            if metric_name not in self.default_metrics:
+                raise ValueError(f"Metric {metric_name} not supported.")
+            metric_func = self.default_metrics[metric_name]
+            results[metric_name] = metric_func(y_true, class_pred)
+
+        return self.cache_results(results)
+
+
+@dataclass
+class ClassifierInSamplePerformance(ClassifierPerformance):
+    """
+    Test that outputs the performance of the model on the training data.
+    """
+
+    name = "classifier_in_sample_performance"
+    required_context = ["model", "model.train_ds"]
+
+    def description(self):
+        return """
+        This section shows the performance of the model on the training data. Popular
+        metrics such as the accuracy, precision, recall, F1 score, etc. are
+        used to evaluate the model.
+        """
+
+    def y_true(self):
+        return self.model.train_ds.y
+
+    def y_pred(self):
+        return self.model.y_train_predict
+
+
+@dataclass
+class ClassifierOutOfSamplePerformance(ClassifierPerformance):
+    """
+    Test that outputs the performance of the model on the test data.
+    """
+
+    name = "classifier_out_of_sample_performance"
+    required_context = ["model", "model.test_ds"]
+
+    def description(self):
+        return """
+        This section shows the performance of the model on the test data. Popular
+        metrics such as the accuracy, precision, recall, F1 score, etc. are
+        used to evaluate the model.
+        """
+
+    def y_true(self):
+        return self.model.test_ds.y
+
+    def y_pred(self):
+        return self.model.y_test_predict
 
 
 @dataclass
@@ -383,7 +417,7 @@ class SHAPGlobalImportance(Metric):
         plt.close("all")
 
         # preserve styles
-        mpl.rcParams["grid.color"] = "#CCC"
+        # mpl.rcParams["grid.color"] = "#CCC"
         ax = plt.axes()
         ax.set_facecolor("white")
 

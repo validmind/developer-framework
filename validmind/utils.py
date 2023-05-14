@@ -13,7 +13,7 @@ from tabulate import tabulate
 
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
-DEFAULT_SMALL_NUMBER_DECIMALS = 6
+DEFAULT_SMALL_NUMBER_DECIMALS = 4
 
 
 def nan_to_none(obj):
@@ -114,6 +114,8 @@ def format_records(df):
     - If the column's smallest number has less decimals than 6, use 6 decimal places
     """
     for col in df.columns:
+        if df[col].dtype == "object":
+            continue
         not_zero = df[col][df[col] != 0]
         min_number = not_zero.min()
         _, min_scale = precision_and_scale(min_number)
@@ -203,3 +205,14 @@ def clean_docstring(docstring: str) -> str:
     replacement = " "
 
     return re.sub(pattern, replacement, cleandoc)
+
+
+def format_number(number):
+    """
+    Format a number for display purposes. If the number is a float, round it
+    to 4 decimal places.
+    """
+    if isinstance(number, float):
+        return round(number, 4)
+    else:
+        return number

@@ -1225,11 +1225,11 @@ to returning the class’ docstring</p>
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestResults</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/vm_models/threshold_test.html#ThresholdTest.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
-The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">TestResult</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_passed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/vm_models/threshold_test.html#ThresholdTest.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+a table with test_name(optional), column and passed.</p>
+<p>The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.</p>
-<p>We return None here because the test summary is optional.</p>
 </dd></dl>
 
 <dl class="py method">

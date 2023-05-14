@@ -87,6 +87,7 @@
 
 <span class="kn">from</span> <span class="nn">.test_context</span> <span class="kn">import</span> <span class="n">TestContext</span>
 <span class="kn">from</span> <span class="nn">.test_plan</span> <span class="kn">import</span> <span class="n">TestPlan</span>
+<span class="kn">from</span> <span class="nn">..api_client</span> <span class="kn">import</span> <span class="n">get_api_host</span><span class="p">,</span> <span class="n">get_api_project</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">is_notebook</span>
 
 
@@ -201,6 +202,10 @@
             <span class="k">return</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_results_title</span><span class="p">())</span>
+        <span class="n">ui_host</span> <span class="o">=</span> <span class="n">get_api_host</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/api/v1/tracking&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">results_link</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&lt;h3&gt;Click &lt;a href=&quot;</span><span class="si">{</span><span class="n">ui_host</span><span class="si">}</span><span class="s1">/projects/</span><span class="si">{</span><span class="n">get_api_project</span><span class="p">()</span><span class="si">}</span><span class="s1">/project-overview&quot;&gt;here&lt;/a&gt; to view the updated model documentation for this project.&lt;/h3&gt;&#39;</span>
+        <span class="p">)</span>
 
         <span class="n">accordion_contents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_summary</span><span class="p">()</span>
         <span class="n">accordion_widget</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Accordion</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">accordion_contents</span><span class="p">)</span>
@@ -224,7 +229,7 @@
 <span class="s2">        &quot;&quot;&quot;</span>
         <span class="p">)</span>
 
-        <span class="n">html</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">([</span><span class="n">title</span><span class="p">,</span> <span class="n">accordion_widget</span><span class="p">,</span> <span class="n">style_footer</span><span class="p">])</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">([</span><span class="n">title</span><span class="p">,</span> <span class="n">results_link</span><span class="p">,</span> <span class="n">accordion_widget</span><span class="p">,</span> <span class="n">style_footer</span><span class="p">])</span>
         <span class="n">display</span><span class="p">(</span><span class="n">html</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
