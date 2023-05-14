@@ -241,12 +241,30 @@
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_diagnosis&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;overfit_regions&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;model.train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;model.test_ds&quot;</span><span class="p">]</span>
 
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;features_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;cut_off_percentage&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
     <span class="n">default_metrics</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
     <span class="p">}</span>
+
+<div class="viewcode-block" id="OverfitDiagnosis.description"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Test that identify overfitting regions based on the train-test performance gap,</span>
+<span class="s2">        one can divide the feature space into regions and analyze the train-test performance</span>
+<span class="s2">        gap for each region. Regions with a large train-test performance gap can be considered as</span>
+<span class="s2">        overfitting regions, indicating that the model is overfitting in those regions.</span>
+
+<span class="s2">        Once overfitting regions have been identified, one can use various techniques to address the overfitting.</span>
+<span class="s2">        For example, one could use regularization techniques such as L1 or L2 regularization, dropout, or early</span>
+<span class="s2">        stopping to prevent the model from overfitting. Alternatively, one could use data augmentation techniques</span>
+<span class="s2">        to increase the size of the training data and reduce overfitting.</span>
+
+<span class="s2">        Overall, analyzing the train-test performance gap can provide valuable insights into the performance of</span>
+<span class="s2">        a machine learning model and help identify overfitting regions that need to be addressed to improve</span>
+<span class="s2">        the model&#39;s generalization performance.</span>
+
+<span class="s2">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="OverfitDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;cut_off_percentage&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
@@ -486,7 +504,7 @@
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_diagnosis&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;weak_spots&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;model.train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;model.test_ds&quot;</span><span class="p">]</span>
 
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;features_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -505,6 +523,19 @@
         <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="p">}</span>
+
+<div class="viewcode-block" id="WeakspotsDiagnosis.description"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        A weak spots test is a type of testing that is performed on a machine learning model</span>
+<span class="s2">        to identify areas where the model may not perform well or may be vulnerable to errors.</span>
+<span class="s2">        The purpose of this testing is to identify the limitations and weaknesses of the model</span>
+<span class="s2">        so that appropriate measures can be taken to improve its performance.</span>
+<span class="s2">        The weak spots test typically involves subjecting the model to different types of data</span>
+<span class="s2">        that are different from the data used to train the model. For example, the test data may</span>
+<span class="s2">        contain outliers, missing data, or noise that was not present in the training data. The model</span>
+<span class="s2">        is then evaluated on this test data using appropriate metrics such as accuracy, precision,</span>
+<span class="s2">        recall, F1 score, etc.</span>
+<span class="s2">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="WeakspotsDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.WeakspotsDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;thresholds&quot;</span><span class="p">]</span>
@@ -734,12 +765,13 @@
 <div class="viewcode-block" id="RobustnessDiagnosis"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">RobustnessDiagnosis</span><span class="p">(</span><span class="n">ThresholdTest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Test robustness of model by perturbing the features column values</span>
+<span class="sd">    Test robustness of model by perturbing the features column values by adding noise within scale</span>
+<span class="sd">    stardard deviation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">category</span> <span class="o">=</span> <span class="s2">&quot;model_diagnosis&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;robustness&quot;</span>
-    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
+    <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;model.train_ds&quot;</span><span class="p">,</span> <span class="s2">&quot;model.test_ds&quot;</span><span class="p">]</span>
 
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;features_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -748,6 +780,23 @@
     <span class="n">default_metrics</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
     <span class="p">}</span>
+
+<div class="viewcode-block" id="RobustnessDiagnosis.description"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.description">[docs]</a>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        The robustness of a machine learning model refers to its ability to maintain performance</span>
+<span class="s2">        in the face of perturbations or changes to the input data. One way to test the robustness</span>
+<span class="s2">        of a model is by perturbing its input features and observing how the model&#39;s performance changes.</span>
+
+<span class="s2">        To perturb the input features, one can add random noise or modify the values of the features</span>
+<span class="s2">        within a certain range. By perturbing the input features, one can simulate different scenarios</span>
+<span class="s2">        in which the input data may be corrupted or incomplete, and test whether the model is able to</span>
+<span class="s2">        handle such scenarios.</span>
+
+<span class="s2">        The performance of the model can be measured in terms of its accuracy, precision, recall,</span>
+<span class="s2">        or any other relevant metric, both before and after perturbing the input features. A model</span>
+<span class="s2">        that is robust to perturbations should maintain a high level of performance even after the</span>
+<span class="s2">        input features have been perturbed.</span>
+<span class="s2">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="RobustnessDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Validate X std deviation parameter</span>
