@@ -240,11 +240,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_init_pbar</span><span class="p">(</span><span class="n">render_summary</span><span class="o">=</span><span class="n">render_summary</span><span class="p">,</span> <span class="n">send</span><span class="o">=</span><span class="n">send</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
-            <span class="c1"># TODO: we need to unify key/name for any object</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">):</span>
-                <span class="n">test_name</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">key</span>
-            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
-                <span class="n">test_name</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">test_name</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">name</span>
 
             <span class="n">test_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_params_for_test</span><span class="p">(</span><span class="n">test_name</span><span class="p">)</span>
             <span class="n">test_instance</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_context</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">test_params</span><span class="p">)</span>
