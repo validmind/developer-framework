@@ -233,9 +233,8 @@ class TestPlan:
             try:
                 result.log()
             except Exception as e:
-                self.pbar.set_description(
-                    f"Failed to log result: {result} for test plan result '{str(result)}'"
-                )
+                print(result)
+                self.pbar_description.value = f"Failed to log result: {result} for test plan result '{str(result)}'"
                 print(e)
                 raise e
 

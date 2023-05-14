@@ -2,6 +2,7 @@
 Threshold based tests
 """
 
+from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,8 +13,15 @@ from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from scipy import stats
 
-
-from ..vm_models import Dataset, TestResult, Figure, ThresholdTest
+from ..vm_models import (
+    Dataset,
+    TestResult,
+    Figure,
+    ThresholdTest,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+)
 
 
 @dataclass
@@ -27,6 +35,35 @@ class ClassImbalance(ThresholdTest):
     name = "class_imbalance"
     required_context = ["dataset"]
     default_params = {"min_percent_threshold": 0.2}
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        """
+        The class imbalance test returns a single result like this:
+        [{"values": {"0": 0.798, "1": 0.202}, "column": "Exited", "passed": true}]
+
+        So we build a table with 2 rows, one for each class.
+        """
+
+        results_table = []
+        result = results[0]
+        for class_name, class_percent in result.values.items():
+            results_table.append(
+                {
+                    "Class": f'{class_name} ({"Negative" if class_name == "0" or class_name == 0 else "Positive"})',
+                    "Percentage of Rows (%)": class_percent * 100,
+                }
+            )
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title=f"Class Imbalance Results for Column {self.dataset.target_column}"
+                    ),
+                )
+            ]
+        )
 
     def run(self):
         # Can only run this test if we have a Dataset object

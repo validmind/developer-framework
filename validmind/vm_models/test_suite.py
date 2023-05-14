@@ -14,6 +14,7 @@ from IPython.display import display
 
 from .test_context import TestContext
 from .test_plan import TestPlan
+from ..api_client import get_api_host, get_api_project
 from ..utils import is_notebook
 
 
@@ -128,6 +129,10 @@ class TestSuite(TestPlan):
             return
 
         title = widgets.HTML(value=self._results_title())
+        ui_host = get_api_host().replace("/api/v1/tracking", "")
+        results_link = widgets.HTML(
+            value=f'<h3>Click <a href="{ui_host}/projects/{get_api_project()}/project-overview">here</a> to view the updated model documentation for this project.</h3>'
+        )
 
         accordion_contents = self._results_summary()
         accordion_widget = widgets.Accordion(children=accordion_contents)
@@ -151,7 +156,7 @@ class TestSuite(TestPlan):
         """
         )
 
-        html = widgets.VBox([title, accordion_widget, style_footer])
+        html = widgets.VBox([title, results_link, accordion_widget, style_footer])
         display(html)
 
     @property

@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
 from .figure import Figure
+from .result_summary import ResultSummary, ResultTable
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanTestResult
 from .test_result import TestResult, TestResults
@@ -55,15 +56,31 @@ class ThresholdTest(TestContextUtils):
         """
         return self.__doc__.strip()
 
-    def summary(self, result: Optional[TestResults] = None):
+    def summary(self, results: Optional[List[TestResult]], all_passed: bool):
         """
-        Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+        Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+        a table with test_name(optional), column and passed.
+
         The test summary allows renderers (e.g. Word and ValidMind UI) to display a
         short summary of the test results.
-
-        We return None here because the test summary is optional.
         """
-        return None
+        if results is None:
+            return None
+
+        results_table = []
+        for test_result in results:
+            result_object = {
+                "passed": test_result.passed,
+            }
+
+            if test_result.test_name is not None:
+                result_object["test_name"] = test_result.test_name
+            if test_result.column is not None:
+                result_object["column"] = test_result.column
+
+            results_table.append(result_object)
+
+        return ResultSummary(results=[ResultTable(data=results_table)])
 
     def run(self, *args, **kwargs):
         """
@@ -96,7 +113,7 @@ class ThresholdTest(TestContextUtils):
             }
         ]
 
-        result_summary = self.summary(test_results_list)
+        result_summary = self.summary(test_results_list, passed)
 
         self.result = TestPlanTestResult(
             result_id=self.name,
