@@ -9,14 +9,11 @@ from ..vm_models import TestPlan
 from ..data_validation.metrics import DatasetSplit
 from ..model_validation.model_metadata import ModelMetadata
 from ..model_validation.sklearn.metrics import (
-    AccuracyScore,
+    ClassifierInSamplePerformance,
+    ClassifierOutOfSamplePerformance,
     ConfusionMatrix,
-    F1Score,
     PermutationFeatureImportance,
     PrecisionRecallCurve,
-    PrecisionScore,
-    RecallScore,
-    ROCAUCScore,
     ROCCurve,
     CharacteristicStabilityIndex,
     PopulationStabilityIndex,
@@ -43,14 +40,11 @@ class BinaryClassifierMetrics(TestPlan):
     tests = [
         ModelMetadata,
         DatasetSplit,
-        AccuracyScore,
         ConfusionMatrix,
-        F1Score,
+        ClassifierInSamplePerformance,
+        ClassifierOutOfSamplePerformance,
         PermutationFeatureImportance,
         PrecisionRecallCurve,
-        PrecisionScore,
-        RecallScore,
-        ROCAUCScore,
         ROCCurve,
         CharacteristicStabilityIndex,
         PopulationStabilityIndex,
