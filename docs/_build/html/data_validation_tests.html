@@ -445,7 +445,8 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoAR.summary">
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoAR.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoAR.summary" title="Permalink to this definition"></a></dt>
-<dd><p>Build one table for summarizing the auto AR results</p>
+<dd><p>Build one table for summarizing the auto AR results
+and another for the best AR Order results</p>
 </dd></dl>
 
 </dd></dl>
@@ -484,7 +485,8 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoMA.summary">
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoMA.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoMA.summary" title="Permalink to this definition"></a></dt>
-<dd><p>Build one table for summarizing the auto MA results</p>
+<dd><p>Build one table for summarizing the auto MA results
+and another for the best MA Order results</p>
 </dd></dl>
 
 </dd></dl>
@@ -494,6 +496,11 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">validmind.data_validation.metrics.</span></span><span class="sig-name descname"><span class="pre">SeasonalDecompose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestContext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TestPlanMetricResult</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#SeasonalDecompose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.SeasonalDecompose" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></p>
 <p>Calculates seasonal_decompose metric for each of the dataset features</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="validmind.data_validation.metrics.SeasonalDecompose.category">
+<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'univariate_analysis'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SeasonalDecompose.category" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.SeasonalDecompose.name">
 <span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'seasonal_decompose'</span></em><a class="headerlink" href="#validmind.data_validation.metrics.SeasonalDecompose.name" title="Permalink to this definition"></a></dt>
@@ -567,7 +574,8 @@ using the seasonal_decompose method.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoSeasonality.summary">
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoSeasonality.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoSeasonality.summary" title="Permalink to this definition"></a></dt>
-<dd><p>Build one table for summarizing the auto seasonality results</p>
+<dd><p>Build one table for summarizing the auto seasonality results
+and another for the best seasonality period results</p>
 </dd></dl>
 
 </dd></dl>
@@ -635,7 +643,8 @@ using the Augmented Dickey-Fuller (ADF) test.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="validmind.data_validation.metrics.AutoStationarity.summary">
 <span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/validmind/data_validation/metrics.html#AutoStationarity.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#validmind.data_validation.metrics.AutoStationarity.summary" title="Permalink to this definition"></a></dt>
-<dd><p>Build one table for summarizing the stationarity results</p>
+<dd><p>Build one table for summarizing the stationarity results
+and another for the best integration order results</p>
 </dd></dl>
 
 </dd></dl>
