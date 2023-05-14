@@ -861,9 +861,14 @@ class AutoSeasonality(Metric):
             ]
             best_seasonality_period = pd.concat([best_seasonality_period, best_row])
 
-        # Convert the 'Seasonal Period' column to integer
-        best_seasonality_period["Seasonal Period"] = best_seasonality_period[
-            "Seasonal Period"
+        # Rename the 'Seasonal Period' column to 'Best Period'
+        best_seasonality_period = best_seasonality_period.rename(
+            columns={"Seasonal Period": "Best Period"}
+        )
+
+        # Convert the 'Best Period' column to integer
+        best_seasonality_period["Best Period"] = best_seasonality_period[
+            "Best Period"
         ].astype(int)
 
         return self.cache_results(
@@ -973,6 +978,7 @@ class AutoStationarity(Metric):
 
         # Create an empty DataFrame to store the results
         summary_stationarity = pd.DataFrame()
+        best_integration_order = pd.DataFrame()  # New DataFrame
 
         # Loop over each column in the input DataFrame and perform stationarity tests
         for col in df.columns:
@@ -1007,31 +1013,56 @@ class AutoStationarity(Metric):
 
                 if adf_pass_fail:
                     is_stationary = True
+                    best_integration_order = best_integration_order.append(
+                        {
+                            "Variable": col,
+                            "Best Integration Order": order,
+                            "Test": "ADF",
+                            "p-value": adf_pvalue,
+                            "Threshold": threshold,
+                            "Decision": adf_decision,
+                        },
+                        ignore_index=True,
+                    )
 
                 order += 1
 
-        # Convert the 'Integration Order' column to integer
+        # Convert the 'Integration Order' and 'Best Integration Order' column to integer
         summary_stationarity["Integration Order"] = summary_stationarity[
             "Integration Order"
+        ].astype(int)
+        best_integration_order["Best Integration Order"] = best_integration_order[
+            "Best Integration Order"
         ].astype(int)
 
         return self.cache_results(
             {
                 "stationarity_analysis": summary_stationarity.to_dict(orient="records"),
+                "best_integration_order": best_integration_order.to_dict(
+                    orient="records"
+                ),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the stationarity results
+        and another for the best integration order results
         """
         summary_stationarity = metric_value["stationarity_analysis"]
+        best_integration_order = metric_value["best_integration_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_stationarity,
                     metadata=ResultTableMetadata(title="Stationarity Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_integration_order,
+                    metadata=ResultTableMetadata(
+                        title="Best Integration Order Results"
+                    ),
                 ),
             ]
         )
