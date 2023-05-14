@@ -144,9 +144,7 @@ class Dataset:
         return [
             field_dic["id"]
             for field_dic in self.fields
-            if (
-                field_dic["id"] != self.target_column
-            )
+            if (field_dic["id"] != self.target_column)
         ]
 
     def get_numeric_features_columns(self):

@@ -20,6 +20,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import coint
 
 
+from ..utils import format_records
 from ..vm_models import (
     Figure,
     Metric,
@@ -133,7 +134,8 @@ class DescriptiveStatistics(Metric):
         summary_stats.columns = summary_stats.columns.str.title()
         summary_stats.reset_index(inplace=True)
         summary_stats.rename(columns={"index": "Name"}, inplace=True)
-        return summary_stats
+
+        return format_records(summary_stats)
 
     def get_summary_statistics_categorical(self, categorical_fields):
         summary_stats = pd.DataFrame()
@@ -153,7 +155,7 @@ class DescriptiveStatistics(Metric):
         summary_stats.reset_index(inplace=True)
         summary_stats.rename(columns={"index": "Name"}, inplace=True)
 
-        return summary_stats
+        return format_records(summary_stats)
 
     def summary(self, metric_value):
         """
@@ -187,8 +189,8 @@ class DescriptiveStatistics(Metric):
         )
         return self.cache_results(
             {
-                "numerical": summary_stats_numerical.to_dict(orient="records"),
-                "categorical": summary_stats_categorical.to_dict(orient="records"),
+                "numerical": summary_stats_numerical,
+                "categorical": summary_stats_categorical,
             }
         )
 
