@@ -464,42 +464,6 @@ class KPSS(Metric):
         return self.cache_results(kpss_values)
 
 
-@dataclass
-class DeterminationOfIntegrationOrderADF(Metric):
-    """
-    This class calculates the order of integration for each feature
-    in a dataset using the Augmented Dickey-Fuller (ADF) test.
-    The order of integration is the number of times a series
-    needs to be differenced to make it stationary.
-    """
-
-    name = "integration_order_adf"
-    default_params = {"max_order": 3}
-
-    def run(self):
-        """
-        Calculates the ADF order of integration for each of the dataset features.
-        """
-        x_train = self.train_ds.df
-
-        adf_orders = {}
-        for col in x_train.columns:
-            order = 0
-            orders_pvalues = []
-
-            while order <= self.params["max_order"]:
-                diff_series = x_train[col].diff(order).dropna()
-                adf, pvalue, _, _, _, _ = adfuller(diff_series)
-                orders_pvalues.append({"order": order, "pvalue": pvalue})
-                if pvalue <= 0.05:
-                    break
-                order += 1
-
-            adf_orders[col] = orders_pvalues
-
-        return self.cache_results(adf_orders)
-
-
 class AutoARIMA(Metric):
     """
     Automatically fits multiple ARIMA models for each variable and ranks them by BIC and AIC.

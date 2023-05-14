@@ -167,11 +167,7 @@ class TestPlan:
             self._init_pbar(render_summary=render_summary, send=send)
 
         for test in self.tests:
-            # TODO: we need to unify key/name for any object
-            if hasattr(test, "key"):
-                test_name = test.key
-            elif hasattr(test, "name"):
-                test_name = test.name
+            test_name = test.name
 
             test_params = self.get_config_params_for_test(test_name)
             test_instance = test(self.test_context, params=test_params)

@@ -309,13 +309,13 @@ class TimeSeriesLinePlot(Metric):
 
         figures = []
         for col in columns:
-            plt.figure(figsize=(10, 6))
+            plt.figure()
             fig, _ = plt.subplots()
             column_index_name = df.index.name
             ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
-            plt.title(f"Time Series: {col}")
-            plt.xlabel(column_index_name)
-            plt.ylabel(col)
+            plt.title(f"Time Series: {col}", weight="bold", fontsize=16)
+            plt.xlabel(column_index_name, weight="bold", fontsize=16)
+            plt.ylabel(col, weight="bold", fontsize=16)
 
             # Rotate x-axis labels and set the number of x-axis ticks
             ax.xaxis.set_major_locator(mdates.AutoDateLocator())
@@ -514,8 +514,9 @@ class AutoAR(Metric):
 
         df = self.dataset.df
 
-        # Create an empty DataFrame to store the results
+        # Create empty DataFrames to store the results
         summary_ar_analysis = pd.DataFrame()
+        best_ar_order = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -543,26 +544,43 @@ class AutoAR(Metric):
                 except Exception as e:
                     print(f"Error fitting AR({ar_order}) model for {col}: {e}")
 
+            # Find the best AR Order for this variable based on the minimum BIC
+            variable_summary = summary_ar_analysis[
+                summary_ar_analysis["Variable"] == col
+            ]
+            best_bic_row = variable_summary[
+                variable_summary["BIC"] == variable_summary["BIC"].min()
+            ]
+            best_ar_order = pd.concat([best_ar_order, best_bic_row])
+
         # Convert the 'AR Order' column to integer
         summary_ar_analysis["AR Order"] = summary_ar_analysis["AR Order"].astype(int)
+        best_ar_order["AR Order"] = best_ar_order["AR Order"].astype(int)
 
         return self.cache_results(
             {
                 "auto_ar_analysis": summary_ar_analysis.to_dict(orient="records"),
+                "best_ar_order": best_ar_order.to_dict(orient="records"),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto AR results
+        and another for the best AR Order results
         """
         summary_ar_analysis = metric_value["auto_ar_analysis"]
+        best_ar_order = metric_value["best_ar_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_ar_analysis,
                     metadata=ResultTableMetadata(title="Auto AR Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_ar_order,
+                    metadata=ResultTableMetadata(title="Best AR Order Results"),
                 ),
             ]
         )
@@ -586,8 +604,9 @@ class AutoMA(Metric):
 
         df = self.dataset.df
 
-        # Create an empty DataFrame to store the results
+        # Create empty DataFrames to store the results
         summary_ma_analysis = pd.DataFrame()
+        best_ma_order = pd.DataFrame()
 
         for col in df.columns:
             series = df[col].dropna()
@@ -615,26 +634,43 @@ class AutoMA(Metric):
                 except Exception as e:
                     print(f"Error fitting MA({ma_order}) model for {col}: {e}")
 
+            # Find the best MA Order for this variable based on the minimum BIC
+            variable_summary = summary_ma_analysis[
+                summary_ma_analysis["Variable"] == col
+            ]
+            best_bic_row = variable_summary[
+                variable_summary["BIC"] == variable_summary["BIC"].min()
+            ]
+            best_ma_order = pd.concat([best_ma_order, best_bic_row])
+
         # Convert the 'MA Order' column to integer
         summary_ma_analysis["MA Order"] = summary_ma_analysis["MA Order"].astype(int)
+        best_ma_order["MA Order"] = best_ma_order["MA Order"].astype(int)
 
         return self.cache_results(
             {
                 "auto_ma_analysis": summary_ma_analysis.to_dict(orient="records"),
+                "best_ma_order": best_ma_order.to_dict(orient="records"),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto MA results
+        and another for the best MA Order results
         """
         summary_ma_analysis = metric_value["auto_ma_analysis"]
+        best_ma_order = metric_value["best_ma_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_ma_analysis,
                     metadata=ResultTableMetadata(title="Auto MA Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_ma_order,
+                    metadata=ResultTableMetadata(title="Best MA Order Results"),
                 ),
             ]
         )
@@ -645,6 +681,7 @@ class SeasonalDecompose(Metric):
     Calculates seasonal_decompose metric for each of the dataset features
     """
 
+    category = "univariate_analysis"
     name = "seasonal_decompose"
     required_context = ["dataset"]
     default_params = {"seasonal_model": "additive"}
@@ -826,44 +863,78 @@ class AutoSeasonality(Metric):
         for col_name, col in df.iteritems():
             series = col.dropna()
 
-            # Directly insert the results into the DataFrame
+            # Evaluate seasonal periods
             seasonal_periods, residual_errors = self.evaluate_seasonal_periods(
                 series, min_period, max_period
             )
-            best_seasonal_period = seasonal_periods[np.argmin(residual_errors)]
-            decision = "Seasonality" if best_seasonal_period > 1 else "No Seasonality"
 
-            summary_auto_seasonality = summary_auto_seasonality.append(
-                {
-                    "Variable": col_name,
-                    "Tested Seasonal Periods": seasonal_periods,
-                    "Best Period": best_seasonal_period,
-                    "Decision": decision,
-                },
-                ignore_index=True,
-            )
-            # Convert the 'Best Period' column to integer
-            summary_auto_seasonality["Best Period"] = summary_auto_seasonality[
-                "Best Period"
-            ].astype(int)
+            for i, period in enumerate(seasonal_periods):
+                decision = "Seasonality" if period > 1 else "No Seasonality"
+                summary_auto_seasonality = summary_auto_seasonality.append(
+                    {
+                        "Variable": col_name,
+                        "Seasonal Period": period,
+                        "Residual Error": residual_errors[i],
+                        "Decision": decision,
+                    },
+                    ignore_index=True,
+                )
+
+        # Convert the 'Seasonal Period' column to integer
+        summary_auto_seasonality["Seasonal Period"] = summary_auto_seasonality[
+            "Seasonal Period"
+        ].astype(int)
+
+        # Create a DataFrame to store the best seasonality period for each variable
+        best_seasonality_period = pd.DataFrame()
+
+        for variable in summary_auto_seasonality["Variable"].unique():
+            temp_df = summary_auto_seasonality[
+                summary_auto_seasonality["Variable"] == variable
+            ]
+            best_row = temp_df[
+                temp_df["Residual Error"] == temp_df["Residual Error"].min()
+            ]
+            best_seasonality_period = pd.concat([best_seasonality_period, best_row])
+
+        # Rename the 'Seasonal Period' column to 'Best Period'
+        best_seasonality_period = best_seasonality_period.rename(
+            columns={"Seasonal Period": "Best Period"}
+        )
+
+        # Convert the 'Best Period' column to integer
+        best_seasonality_period["Best Period"] = best_seasonality_period[
+            "Best Period"
+        ].astype(int)
 
         return self.cache_results(
             {
                 "auto_seasonality": summary_auto_seasonality.to_dict(orient="records"),
+                "best_seasonality_period": best_seasonality_period.to_dict(
+                    orient="records"
+                ),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the auto seasonality results
+        and another for the best seasonality period results
         """
         summary_auto_seasonality = metric_value["auto_seasonality"]
+        best_seasonality_period = metric_value["best_seasonality_period"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_auto_seasonality,
                     metadata=ResultTableMetadata(title="Auto Seasonality Results"),
+                ),
+                ResultTable(
+                    data=best_seasonality_period,
+                    metadata=ResultTableMetadata(
+                        title="Best Seasonality Period Results"
+                    ),
                 ),
             ]
         )
@@ -943,6 +1014,7 @@ class AutoStationarity(Metric):
 
         # Create an empty DataFrame to store the results
         summary_stationarity = pd.DataFrame()
+        best_integration_order = pd.DataFrame()  # New DataFrame
 
         # Loop over each column in the input DataFrame and perform stationarity tests
         for col in df.columns:
@@ -977,31 +1049,56 @@ class AutoStationarity(Metric):
 
                 if adf_pass_fail:
                     is_stationary = True
+                    best_integration_order = best_integration_order.append(
+                        {
+                            "Variable": col,
+                            "Best Integration Order": order,
+                            "Test": "ADF",
+                            "p-value": adf_pvalue,
+                            "Threshold": threshold,
+                            "Decision": adf_decision,
+                        },
+                        ignore_index=True,
+                    )
 
                 order += 1
 
-        # Convert the 'Integration Order' column to integer
+        # Convert the 'Integration Order' and 'Best Integration Order' column to integer
         summary_stationarity["Integration Order"] = summary_stationarity[
             "Integration Order"
+        ].astype(int)
+        best_integration_order["Best Integration Order"] = best_integration_order[
+            "Best Integration Order"
         ].astype(int)
 
         return self.cache_results(
             {
                 "stationarity_analysis": summary_stationarity.to_dict(orient="records"),
+                "best_integration_order": best_integration_order.to_dict(
+                    orient="records"
+                ),
             }
         )
 
     def summary(self, metric_value):
         """
         Build one table for summarizing the stationarity results
+        and another for the best integration order results
         """
         summary_stationarity = metric_value["stationarity_analysis"]
+        best_integration_order = metric_value["best_integration_order"]
 
         return ResultSummary(
             results=[
                 ResultTable(
                     data=summary_stationarity,
                     metadata=ResultTableMetadata(title="Stationarity Analysis Results"),
+                ),
+                ResultTable(
+                    data=best_integration_order,
+                    metadata=ResultTableMetadata(
+                        title="Best Integration Order Results"
+                    ),
                 ),
             ]
         )
