@@ -13,8 +13,6 @@ from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 from scipy import stats
 
-from validmind.vm_models.test_result import TestResult
-
 from ..vm_models import (
     Dataset,
     TestResult,
@@ -125,7 +123,7 @@ class Duplicates(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"Duplicate Rows Results for Dataset"
+                        title="Duplicate Rows Results for Dataset"
                     ),
                 )
             ]
@@ -206,7 +204,7 @@ class HighCardinality(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"High Cardinality Results for Dataset"
+                        title="High Cardinality Results for Dataset"
                     ),
                 )
             ]
@@ -277,7 +275,7 @@ class HighPearsonCorrelation(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"High Pearson Correlation Results for Dataset"
+                        title="High Pearson Correlation Results for Dataset"
                     ),
                 )
             ]
@@ -369,7 +367,7 @@ class MissingValues(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"Missing Values Results for Dataset"
+                        title="Missing Values Results for Dataset"
                     ),
                 )
             ]
@@ -422,7 +420,7 @@ class Skewness(ThresholdTest):
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(title=f"Skewness Results for Dataset"),
+                    metadata=ResultTableMetadata(title="Skewness Results for Dataset"),
                 )
             ]
         )
@@ -484,7 +482,7 @@ class UniqueRows(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"Unique Rows Results for Dataset"
+                        title="Unique Rows Results for Dataset"
                     ),
                 )
             ]
@@ -538,7 +536,7 @@ class TooManyZeroValues(ThresholdTest):
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(title=f"Zeros Results for Dataset"),
+                    metadata=ResultTableMetadata(title="Zeros Results for Dataset"),
                 )
             ]
         )

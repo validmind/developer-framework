@@ -70,9 +70,10 @@ def plot_figures(figures: List[Figure]) -> None:
             )
         )
 
+    num_columns = 2 if len(figures) > 1 else 1
     return widgets.GridBox(
         plots,
-        layout=widgets.Layout(grid_template_columns="repeat(3, 1fr)"),
+        layout=widgets.Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
     )
 
 

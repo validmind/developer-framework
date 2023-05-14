@@ -5,14 +5,12 @@ from dataclasses import dataclass
 from functools import partial
 from operator import add
 from sklearn import metrics
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-
-from validmind.vm_models.test_result import TestResult
 
 from ...vm_models import (
     Figure,
@@ -55,7 +53,7 @@ class MinimumAccuracy(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"Minimum Accuracy Test on Test Data"
+                        title="Minimum Accuracy Test on Test Data"
                     ),
                 )
             ]
@@ -110,7 +108,7 @@ class MinimumF1Score(ThresholdTest):
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(title=f"Minimum F1 Score Test"),
+                    metadata=ResultTableMetadata(title="Minimum F1 Score Test"),
                 )
             ]
         )
@@ -164,7 +162,7 @@ class MinimumROCAUCScore(ThresholdTest):
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(title=f"Minimum ROC AUC Score Test"),
+                    metadata=ResultTableMetadata(title="Minimum ROC AUC Score Test"),
                 )
             ]
         )
@@ -232,7 +230,7 @@ class TrainingTestDegradation(ThresholdTest):
                 ResultTable(
                     data=results_table,
                     metadata=ResultTableMetadata(
-                        title=f"Training-Test Degradation Test"
+                        title="Training-Test Degradation Test"
                     ),
                 )
             ]
