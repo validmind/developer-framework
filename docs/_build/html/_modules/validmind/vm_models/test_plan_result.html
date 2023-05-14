@@ -74,8 +74,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">TestPlanResult</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1"># TODO: we are probably going to want to move all this html generation into an html template file</span>
-<span class="c1"># and use something like jinja to render it. This is fine for now, but the html is a bit messy</span>
+<span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -83,7 +82,8 @@
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">base64</span>
+
+<span class="kn">import</span> <span class="nn">markdown</span>
 
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 <span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
@@ -143,9 +143,10 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
+    <span class="n">num_columns</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">figures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">widgets</span><span class="o">.</span><span class="n">GridBox</span><span class="p">(</span>
         <span class="n">plots</span><span class="p">,</span>
-        <span class="n">layout</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">grid_template_columns</span><span class="o">=</span><span class="s2">&quot;repeat(3, 1fr)&quot;</span><span class="p">),</span>
+        <span class="n">layout</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">grid_template_columns</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;repeat(</span><span class="si">{</span><span class="n">num_columns</span><span class="si">}</span><span class="s2">, 1fr)&quot;</span><span class="p">),</span>
     <span class="p">)</span>
 
 
@@ -169,15 +170,26 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an ipywdiget representation of the result... Must be overridden by subclasses&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
+    <span class="k">def</span> <span class="nf">_markdown_description_to_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a markdown string to html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">markdown</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;markdown.extensions.tables&quot;</span><span class="p">])</span>
+
     <span class="k">def</span> <span class="nf">_summary_tables_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">summary</span><span class="p">:</span> <span class="n">ResultSummary</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create an ipywdiget representation of the summary tables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tables</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">summary</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
-            <span class="n">summary_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                <span class="n">table</span><span class="o">.</span><span class="n">data</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">to_html</span><span class="p">()</span>  <span class="c1"># table.data is an orient=records dump</span>
+            <span class="c1"># Explore advanced styling</span>
+            <span class="n">summary_table</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">hide_index</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">to_html</span><span class="p">()</span>
+            <span class="p">)</span>  <span class="c1"># table.data is an orient=records dump</span>
 
             <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">and</span> <span class="n">table</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
                 <span class="n">tables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;</span><span class="si">{</span><span class="n">table</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&lt;/h3&gt;&quot;</span><span class="p">))</span>
@@ -245,7 +257,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">:</span>
             <span class="n">metric_description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&lt;p&gt;</span><span class="si">{</span><span class="n">metric_description</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+                <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_markdown_description_to_html</span><span class="p">(</span>
+                        <span class="n">metric_description</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">:</span>
@@ -479,18 +495,30 @@
 
     <span class="k">def</span> <span class="nf">_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">vbox_children</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">description_html</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">test_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyEncoder</span><span class="p">)</span>
 
-        <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span>
-                <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                &lt;h2&gt;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s2">&quot;✅&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">passed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;❌&quot;</span><span class="si">}</span><span class="s2">&lt;/h2&gt;</span>
+        <span class="n">description_html</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;h2&gt;</span><span class="si">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">test_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s2">&quot;✅&quot;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">passed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s2">&quot;❌&quot;</span><span class="si">}</span><span class="s2">&lt;/h2&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">:</span>
+            <span class="n">metric_description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">description_html</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_markdown_description_to_html</span><span class="p">(</span><span class="n">metric_description</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="n">description_html</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                &lt;h4&gt;Test Parameters&lt;/h4&gt;</span>
 <span class="s2">                &lt;pre&gt;</span><span class="si">{</span><span class="n">test_params</span><span class="si">}</span><span class="s2">&lt;/pre&gt;</span>
-<span class="s2">                &quot;&quot;&quot;</span>
-            <span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span>
         <span class="p">)</span>
+
+        <span class="n">vbox_children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">HTML</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">description_html</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">summary</span><span class="p">:</span>
             <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_summary_tables_to_widget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="o">.</span><span class="n">summary</span><span class="p">)</span>

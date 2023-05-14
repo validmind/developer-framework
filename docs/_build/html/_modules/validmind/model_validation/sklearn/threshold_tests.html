@@ -85,7 +85,14 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
-<span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">Figure</span><span class="p">,</span> <span class="n">ThresholdTest</span>
+<span class="kn">from</span> <span class="nn">...vm_models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Figure</span><span class="p">,</span>
+    <span class="n">ResultSummary</span><span class="p">,</span>
+    <span class="n">ResultTable</span><span class="p">,</span>
+    <span class="n">ResultTableMetadata</span><span class="p">,</span>
+    <span class="n">TestResult</span><span class="p">,</span>
+    <span class="n">ThresholdTest</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="MinimumAccuracy"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy">[docs]</a><span class="nd">@dataclass</span>
@@ -99,6 +106,31 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;accuracy_score&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">}</span>
+
+<div class="viewcode-block" id="MinimumAccuracy.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The accuracy score test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;score&quot;: 0.734375, &quot;threshold&quot;: 0.7}, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Minimum Accuracy Test on Test Data&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MinimumAccuracy.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumAccuracy.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
@@ -131,6 +163,29 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
 
+<div class="viewcode-block" id="MinimumF1Score.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumF1Score.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The f1 score test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;score&quot;: 0.734375, &quot;threshold&quot;: 0.7}, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Minimum F1 Score Test&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="MinimumF1Score.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumF1Score.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
         <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
@@ -162,6 +217,29 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
 
+<div class="viewcode-block" id="MinimumROCAUCScore.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The roc auc score test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;score&quot;: 0.734375, &quot;threshold&quot;: 0.7}, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Threshold&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;threshold&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Minimum ROC AUC Score Test&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="MinimumROCAUCScore.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.MinimumROCAUCScore.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
         <span class="n">class_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_predictions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
@@ -192,13 +270,44 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;training_test_degradation&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span>
 
-    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;metrics&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">]}</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;metrics&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span> <span class="s2">&quot;precision&quot;</span><span class="p">,</span> <span class="s2">&quot;recall&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;max_threshold&quot;</span><span class="p">:</span> <span class="mf">0.10</span><span class="p">,</span>  <span class="c1"># Maximum 10% degradation</span>
+    <span class="p">}</span>
     <span class="n">default_metrics</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
         <span class="s2">&quot;precision&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">precision_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;recall&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">recall_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
     <span class="p">}</span>
+
+<div class="viewcode-block" id="TrainingTestDegradation.summary"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The training test degradation test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;:</span>
+<span class="sd">            {&quot;test_score&quot;: 0.7225, &quot;train_score&quot;: 0.7316666666666667, &quot;degradation&quot;: 0.012528473804100214}, &quot;test_name&quot;: &quot;accuracy&quot;, &quot;passed&quot;: true}, ...]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Metric&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">test_name</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span>
+                <span class="s2">&quot;Train Score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;train_score&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Test Score&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;test_score&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Degradation (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;degradation&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Training-Test Degradation Test&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="TrainingTestDegradation.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.TrainingTestDegradation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">test_ds</span><span class="o">.</span><span class="n">y</span>
@@ -215,7 +324,7 @@
             <span class="n">test_score</span> <span class="o">=</span> <span class="n">metric_fn</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">test_class_pred</span><span class="p">)</span>
             <span class="n">degradation</span> <span class="o">=</span> <span class="p">(</span><span class="n">train_score</span> <span class="o">-</span> <span class="n">test_score</span><span class="p">)</span> <span class="o">/</span> <span class="n">train_score</span>
 
-            <span class="n">passed</span> <span class="o">=</span> <span class="n">train_score</span> <span class="o">&gt;</span> <span class="n">test_score</span>
+            <span class="n">passed</span> <span class="o">=</span> <span class="n">degradation</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">]</span>
             <span class="n">test_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">TestResult</span><span class="p">(</span>
                     <span class="n">test_name</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
@@ -263,7 +372,6 @@
 <span class="s2">        Overall, analyzing the train-test performance gap can provide valuable insights into the performance of</span>
 <span class="s2">        a machine learning model and help identify overfitting regions that need to be addressed to improve</span>
 <span class="s2">        the model&#39;s generalization performance.</span>
-
 <span class="s2">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="OverfitDiagnosis.run"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.OverfitDiagnosis.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

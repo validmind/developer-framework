@@ -111,7 +111,7 @@
 
 <div class="viewcode-block" id="ClassImbalance.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.ClassImbalance.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The class imbalance test returns a single result like this:</span>
+<span class="sd">        The class imbalance test returns results like these:</span>
 <span class="sd">        [{&quot;values&quot;: {&quot;0&quot;: 0.798, &quot;1&quot;: 0.202}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
 
 <span class="sd">        So we build a table with 2 rows, one for each class.</span>
@@ -176,6 +176,32 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 
+<div class="viewcode-block" id="Duplicates.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.Duplicates.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The duplicates test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;n_duplicates&quot;: 0, &quot;p_duplicates&quot;: 0.0}, &quot;passed&quot;: true}]</span>
+
+<span class="sd">        So we build a table with 1 row and show number of duplicates and percentage of duplicates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Number of Duplicates&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;n_duplicates&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Percentage of Duplicates (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;p_duplicates&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Duplicate Rows Results for Dataset&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="Duplicates.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.Duplicates.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -232,6 +258,31 @@
         <span class="s2">&quot;threshold_type&quot;</span><span class="p">:</span> <span class="s2">&quot;percent&quot;</span><span class="p">,</span>  <span class="c1"># or &quot;num&quot;</span>
     <span class="p">}</span>
 
+<div class="viewcode-block" id="HighCardinality.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighCardinality.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The high cardinality test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;n_distinct&quot;: 0, &quot;p_distinct&quot;: 0.0}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Column&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="s2">&quot;Number of Distinct Values&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;n_distinct&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Percentage of Distinct Values (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;p_distinct&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;High Cardinality Results for Dataset&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="HighCardinality.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighCardinality.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
         <span class="n">dataset_types</span> <span class="o">=</span> <span class="n">typeset</span><span class="o">.</span><span class="n">infer_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
@@ -278,6 +329,30 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pearson_correlation&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">}</span>
+
+<div class="viewcode-block" id="HighPearsonCorrelation.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighPearsonCorrelation.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The high pearson correlation test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;correlations&quot;: [{&quot;column&quot;: &quot;NumOfProducts&quot;, &quot;correlation&quot;: -0.3044645622389459}]}, &quot;column&quot;: &quot;Balance&quot;, &quot;passed&quot;: false}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Columns&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;correlations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;column&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+                <span class="s2">&quot;Coefficient&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;correlations&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;correlation&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;High Pearson Correlation Results for Dataset&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="HighPearsonCorrelation.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighPearsonCorrelation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
@@ -346,6 +421,31 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 
+<div class="viewcode-block" id="MissingValues.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.MissingValues.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The missing values test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;n_missing&quot;: 0, &quot;p_missing&quot;: 0.0}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Column&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="s2">&quot;Number of Missing Values&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;n_missing&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Percentage of Missing Values (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;p_missing&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Missing Values Results for Dataset&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="MissingValues.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.MissingValues.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -375,6 +475,28 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;skewness&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<div class="viewcode-block" id="Skewness.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.Skewness.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The skewness test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;skewness&quot;: 1.0}, &quot;column&quot;: &quot;NumOfProducts&quot;, &quot;passed&quot;: false}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Column&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="s2">&quot;Skewness&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;skewness&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Skewness Results for Dataset&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Skewness.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.Skewness.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">typeset</span> <span class="o">=</span> <span class="n">ProfilingTypeSet</span><span class="p">(</span><span class="n">Settings</span><span class="p">())</span>
@@ -414,6 +536,31 @@
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;min_percent_threshold&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
 
+<div class="viewcode-block" id="UniqueRows.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.UniqueRows.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The unique rows test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;n_unique&quot;: 10000, &quot;p_unique&quot;: 1.0}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Column&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="s2">&quot;Number of Unique Values&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;n_unique&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Percentage of Unique Values (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;p_unique&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span>
+                        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Unique Rows Results for Dataset&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="UniqueRows.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.UniqueRows.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -443,6 +590,29 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;zeros&quot;</span>
     <span class="n">required_context</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_percent_threshold&quot;</span><span class="p">:</span> <span class="mf">0.03</span><span class="p">}</span>
+
+<div class="viewcode-block" id="TooManyZeroValues.summary"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.TooManyZeroValues.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TestResult</span><span class="p">],</span> <span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The zeros test returns results like these:</span>
+<span class="sd">        [{&quot;values&quot;: {&quot;n_zeros&quot;: 10000, &quot;p_zeros&quot;: 1.0}, &quot;column&quot;: &quot;Exited&quot;, &quot;passed&quot;: true}]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results_table</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;Column&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">column</span><span class="p">,</span>
+                <span class="s2">&quot;Number of Zero Values&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;n_zeros&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;Percentage of Zero Values (%)&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">&quot;p_zeros&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s2">&quot;Pass/Fail&quot;</span><span class="p">:</span> <span class="s2">&quot;Pass&quot;</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">passed</span> <span class="k">else</span> <span class="s2">&quot;Fail&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">ResultSummary</span><span class="p">(</span>
+            <span class="n">results</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">ResultTable</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">results_table</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">ResultTableMetadata</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Zeros Results for Dataset&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="TooManyZeroValues.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.TooManyZeroValues.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
