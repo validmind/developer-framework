@@ -386,12 +386,14 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;model must of provided to run this test&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">field_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">field_dict</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">fields</span>
-            <span class="p">]</span>
-            <span class="n">features_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">)</span>
+            <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_features_columns</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Check if all elements from features_list are present in the feature columns</span>
+        <span class="n">all_present</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_features_columns</span><span class="p">()</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_present</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The list of feature columns provided do not match with training dataset feature columns&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -417,7 +419,11 @@
         <span class="n">results_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">feature_column</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">:</span>
-            <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature_column</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="n">feature_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_categorical_features_columns</span><span class="p">():</span>
+                <span class="n">bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+            <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature_column</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+
             <span class="n">results_train</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">results_headers</span><span class="p">}</span>
             <span class="n">results_test</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">results_headers</span><span class="p">}</span>
 
@@ -656,16 +662,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;model must of provided to run this test&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;features_columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;features_columns must be provided in params&quot;</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">field_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">field_dict</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">fields</span>
-            <span class="p">]</span>
-            <span class="n">features_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">)</span>
+            <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_features_columns</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Check if all elements from features_list are present in the feature columns</span>
+        <span class="n">all_present</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_features_columns</span><span class="p">()</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_present</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The list of feature columns provided do not match with &quot;</span>
+                             <span class="o">+</span> <span class="s2">&quot;training dataset feature columns&quot;</span><span class="p">)</span>
 
         <span class="n">target_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span>
         <span class="n">prediction_column</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_column</span><span class="si">}</span><span class="s2">_pred&quot;</span>
@@ -683,7 +689,11 @@
         <span class="n">results_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;slice&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">]</span>
         <span class="n">results_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">:</span>
-            <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="n">feature</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_categorical_features_columns</span><span class="p">():</span>
+                <span class="n">bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+            <span class="n">train_df</span><span class="p">[</span><span class="s2">&quot;bin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+
             <span class="n">results_train</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">results_headers</span><span class="p">}</span>
             <span class="n">results_test</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">results_headers</span><span class="p">}</span>
 
@@ -884,6 +894,7 @@
     <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;features_columns&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="s2">&quot;scaling_factor_std_dev_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span>
+        <span class="s2">&quot;accuracy_decay_threshold&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">default_metrics</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
@@ -912,6 +923,10 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scaling_factor_std_dev_list must be provided in params&quot;</span><span class="p">)</span>
         <span class="n">x_std_dev_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;scaling_factor_std_dev_list&quot;</span><span class="p">]</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;accuracy_decay_threshold&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;accuracy_decay_threshold must be provided in params&quot;</span><span class="p">)</span>
+        <span class="n">accuracy_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;accuracy_decay_threshold&quot;</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;model must of provided to run this test&quot;</span><span class="p">)</span>
 
@@ -919,20 +934,19 @@
         <span class="k">if</span> <span class="s2">&quot;features_columns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;features_columns must be provided in params&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Identify numeric features</span>
-        <span class="n">numeric_features_columns</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">field_dic</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">field_dic</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">fields</span>
-            <span class="k">if</span> <span class="n">field_dic</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Numeric&quot;</span>
-        <span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">features_list</span> <span class="o">=</span> <span class="n">numeric_features_columns</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span>
+        <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;features_columns&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">features_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">features_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_numeric_features_columns</span><span class="p">()</span>
+
+        <span class="c1"># Check if all elements from features_list are present in the numerical feature columns</span>
+        <span class="n">all_present</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">get_numeric_features_columns</span><span class="p">()</span>
+                          <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_present</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The list of feature columns provided do not match with training &quot;</span>
+                             <span class="o">+</span> <span class="s2">&quot;dataset numerical feature columns&quot;</span><span class="p">)</span>
 
         <span class="c1"># Remove target column if it exist in the list</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">:</span>
-            <span class="n">features_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">)</span>
+        <span class="n">features_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">features_list</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">target_column</span><span class="p">]</span>
 
         <span class="n">train_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">train_y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train_ds</span><span class="o">.</span><span class="n">y</span>
@@ -943,8 +957,7 @@
         <span class="n">test_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">test_figures</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">results_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Perturbation Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Dataset Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Records&quot;</span><span class="p">]</span>
-        <span class="n">results_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">results_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Perturbation Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Dataset Type&quot;</span><span class="p">,</span> <span class="s2">&quot;Records&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">results_headers</span><span class="p">}</span>
 
         <span class="c1"># Iterate scaling factor for the standard deviation list</span>
@@ -954,10 +967,10 @@
 
             <span class="c1"># Add noise to numeric features columns provided by user</span>
             <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">features_list</span><span class="p">:</span>
-                <span class="n">temp_train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_noise_std_dev</span><span class="p">(</span>
+                <span class="n">temp_train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_noise_std_dev</span><span class="p">(</span>
                     <span class="n">temp_train_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">x_std_dev</span>
                 <span class="p">)</span>
-                <span class="n">temp_test_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_noise_std_dev</span><span class="p">(</span>
+                <span class="n">temp_test_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_noise_std_dev</span><span class="p">(</span>
                     <span class="n">temp_test_df</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">x_std_dev</span>
                 <span class="p">)</span>
 
@@ -980,15 +993,23 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
+        <span class="n">train_acc</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Dataset Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Training&quot;</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;accuracy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">test_acc</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Dataset Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span><span class="p">)</span> <span class="p">,</span> <span class="s1">&#39;accuracy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Passed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Dataset Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Training&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">train_acc</span> <span class="o">-</span> <span class="n">accuracy_threshold</span><span class="p">)),</span>
+                                <span class="kc">True</span><span class="p">,</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Dataset Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Test&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">test_acc</span> <span class="o">-</span> <span class="n">accuracy_threshold</span><span class="p">)),</span>
+                                         <span class="kc">True</span><span class="p">,</span>
+                                         <span class="kc">False</span><span class="p">))</span>
         <span class="n">test_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">TestResult</span><span class="p">(</span>
                 <span class="n">test_name</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
-                <span class="n">column</span><span class="o">=</span><span class="n">features_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">column</span><span class="o">=</span><span class="n">features_list</span><span class="p">,</span>
                 <span class="n">passed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">values</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figures</span><span class="o">=</span><span class="n">test_figures</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">test_results</span><span class="p">,</span> <span class="n">passed</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Passed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">figures</span><span class="o">=</span><span class="n">test_figures</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_compute_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1019,7 +1040,7 @@
         <span class="k">for</span> <span class="n">metric</span><span class="p">,</span> <span class="n">metric_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">results</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">y_prediction</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
 
-<div class="viewcode-block" id="RobustnessDiagnosis.add_noise_std_dev"><a class="viewcode-back" href="../../../../model_validation_tests_sklearn.html#validmind.model_validation.sklearn.threshold_tests.RobustnessDiagnosis.add_noise_std_dev">[docs]</a>    <span class="k">def</span> <span class="nf">add_noise_std_dev</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_add_noise_std_dev</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">x_std_dev</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1040,7 +1061,7 @@
         <span class="n">noise_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_std_dev</span> <span class="o">*</span> <span class="n">std_dev</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
         <span class="n">noisy_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">noise_list</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">noisy_values</span></div>
+        <span class="k">return</span> <span class="n">noisy_values</span>
 
     <span class="k">def</span> <span class="nf">_plot_robustness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">features_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
