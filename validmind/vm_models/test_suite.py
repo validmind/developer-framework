@@ -129,7 +129,7 @@ class TestSuite(TestPlan):
             return
 
         title = widgets.HTML(value=self._results_title())
-        ui_host = get_api_host().replace("/api/v1/tracking", "")
+        ui_host = get_api_host().replace("/api/v1/tracking", "").replace("api", "app")
         results_link = widgets.HTML(
             value=f'<h3>Click <a href="{ui_host}/projects/{get_api_project()}/project-overview">here</a> to view the updated model documentation for this project.</h3>'
         )
