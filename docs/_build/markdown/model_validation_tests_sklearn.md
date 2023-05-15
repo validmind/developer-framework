@@ -353,7 +353,7 @@ stardard deviation.
 
 #### required_context(_: ClassVar[List[str]_ _ = ['model', 'model.train_ds', 'model.test_ds'_ )
 
-#### default_params(_: ClassVar[dict_ _ = {'features_columns': None, 'scaling_factor_std_dev_list': [0.01, 0.02]_ )
+#### default_params(_: ClassVar[dict_ _ = {'accuracy_decay_threshold': 3, 'features_columns': None, 'scaling_factor_std_dev_list': [0.01, 0.02]_ )
 
 #### default_metrics(_ = {'accuracy': <function accuracy_score>_ )
 
@@ -364,36 +364,3 @@ to returning the class’ docstring
 
 #### run()
 Run the test and cache its results
-
-
-#### add_noise_std_dev(values: List[float], x_std_dev: float)
-Adds Gaussian noise to a list of values.
-
-
-* **Parameters**
-
-    
-    * **values** (*list**[**float**]*) – A list of numerical values to which noise is added.
-
-
-    * **x_std_dev** (*float*) – A scaling factor for the standard deviation of the noise.
-
-
-
-* **Returns**
-
-    A tuple containing:
-
-
-        * A list of noisy values, where each value is the sum of the corresponding value
-
-        in the input list and a randomly generated value sampled from a Gaussian distribution
-        with mean 0 and standard deviation x_std_dev times the standard deviation of the input list.
-        - The standard deviation of the input list of values.
-
-
-
-
-* **Return type**
-
-    tuple[list[float], float]

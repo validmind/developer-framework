@@ -49,6 +49,10 @@ Returns the dataset’s target column
 Returns the dataset’s index.
 
 
+#### _property_ isnull()
+Returns True if there are any null values in the dataset or the index, False otherwise.
+
+
 #### get_feature_by_id(feature_id)
 Returns the feature with the given id. We also build a lazy
 lookup cache in case the same feature is requested multiple times.
@@ -97,6 +101,22 @@ Returns the type of the feature with the given id
 * **Return type**
 
     str
+
+
+
+#### get_features_columns()
+Returns list of features columns
+
+
+* **Returns**
+
+    The list of features columns
+
+
+
+* **Return type**
+
+    list
 
 
 
@@ -293,7 +313,7 @@ TODO: Metric should validate required context too
 
 #### scope(_: ClassVar[str_ _ = '_ )
 
-#### key(_: ClassVar[str_ _ = '_ )
+#### name(_: ClassVar[str_ _ = '_ )
 
 #### value_formatter(_: ClassVar[str | None_ _ = Non_ )
 
@@ -303,7 +323,9 @@ TODO: Metric should validate required context too
 
 #### result(_: TestPlanMetricResul_ _ = Non_ )
 
-#### _property_ name()
+#### _property_ key()
+Keep the key for compatibility reasons
+
 
 #### description()
 Return the metric description. Should be overridden by subclasses. Defaults
@@ -713,7 +735,7 @@ Validates that the context elements are present
 in the instance so that the test plan can be run
 
 
-### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.vm_models.TestPlan(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `object`
 
 Base class for test plans. Test plans are used to define any
@@ -740,7 +762,13 @@ arbitrary grouping of tests that will be run on a dataset or model.
 
 #### models(_: List[Model_ _ = Non_ )
 
-#### pbar(_: tqd_ _ = Non_ )
+#### pbar(_: IntProgres_ _ = Non_ )
+
+#### pbar_description(_: Labe_ _ = Non_ )
+
+#### pbar_box(_: HBo_ _ = Non_ )
+
+#### summary(_: st_ _ = Non_ )
 
 #### title()
 Returns the title of the test plan. Defaults to the title
@@ -777,8 +805,26 @@ pass a config like this:
 }
 
 
-#### run(send=True)
+#### run(render_summary: bool = True, send: bool = True)
 Runs the test plan
+
+
+* **Parameters**
+
+    
+    * **render_summary** – Defaults to True. Whether to render the summary of the test
+    plan. When it’s False, this allows test suites to collect the results of
+    sub test plans and render them all at once with widgets
+
+
+    * **send** – Whether to send the results to the backend
+
+
+
+* **Returns**
+
+    None
+
 
 
 #### log_results()
@@ -788,7 +834,7 @@ This method will be called after the test plan has been run and all results have
 collected. This method will log the results to ValidMind.
 
 
-#### summarize()
+#### summarize(render_summary: bool = True)
 Summarizes the results of the test plan
 
 This method will be called after the test plan has been run and all results have been
@@ -802,11 +848,15 @@ Returns one or more results of the test plan. Includes results from
 sub test plans.
 
 
-### _class_ validmind.vm_models.TestPlanDatasetResult(result_id: str | None = None, result_metadata: List[dict] | None = None, dataset: Dataset | None = None)
+### _class_ validmind.vm_models.TestPlanDatasetResult(name: str = 'Metric', result_id: str | None = None, result_metadata: List[dict] | None = None, dataset: Dataset | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for datasets that run as part of a test plan
 
+
+#### name(_: st_ _ = 'Metric_ )
+
+#### result_id(_: st_ _ = Non_ )
 
 #### dataset(_: Datase_ _ = Non_ )
 
@@ -814,11 +864,13 @@ Result wrapper for datasets that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanMetricResult(result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, metric: MetricResult | None = None)
+### _class_ validmind.vm_models.TestPlanMetricResult(name: str = 'Metric', result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, metric: MetricResult | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for metrics that run as part of a test plan
 
+
+#### name(_: st_ _ = 'Metric_ )
 
 #### figures(_: List[Figure] | Non_ _ = Non_ )
 
@@ -828,11 +880,13 @@ Result wrapper for metrics that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanModelResult(result_id: str | None = None, result_metadata: List[dict] | None = None, model: Model | None = None)
+### _class_ validmind.vm_models.TestPlanModelResult(name: str = 'Metric', result_id: str | None = None, result_metadata: List[dict] | None = None, model: Model | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for models that run as part of a test plan
 
+
+#### name(_: st_ _ = 'Metric_ )
 
 #### model(_: Mode_ _ = Non_ )
 
@@ -840,11 +894,13 @@ Result wrapper for models that run as part of a test plan
 Log the result… Must be overridden by subclasses
 
 
-### _class_ validmind.vm_models.TestPlanTestResult(result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, test_results: TestResults | None = None)
+### _class_ validmind.vm_models.TestPlanTestResult(name: str = 'Threshold Test', result_id: str | None = None, result_metadata: List[dict] | None = None, figures: List[Figure] | None = None, test_results: TestResults | None = None)
 Bases: `TestPlanResult`
 
 Result wrapper for test results produced by the tests that run as part of a test plan
 
+
+#### name(_: st_ _ = 'Threshold Test_ )
 
 #### figures(_: List[Figure] | Non_ _ = Non_ )
 
@@ -894,7 +950,7 @@ TestResults model
 Serializes the TestResults to a dictionary so it can be sent to the API
 
 
-### _class_ validmind.vm_models.TestSuite(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: tqdm = None)
+### _class_ validmind.vm_models.TestSuite(config: {} = None, test_context: TestContext = None, _test_plan_instances: List[object] = None, dataset: Dataset = None, model: Model = None, models: List[Model] = None, pbar: IntProgress = None, pbar_description: Label = None, pbar_box: HBox = None, summary: str = None)
 Bases: `TestPlan`
 
 Base class for test suites. Test suites are used to define any
@@ -903,15 +959,29 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.
 
 #### test_plans(_: ClassVar[List[str]_ _ = [_ )
 
+#### pbar(_: IntProgres_ _ = Non_ )
+
+#### pbar_description(_: Labe_ _ = Non_ )
+
+#### pbar_box(_: HBo_ _ = Non_ )
+
+#### get_total_tests()
+Goes through every test plans and sums the number of tests for each one.
+
+
 #### run(send=True)
 Runs the test suite.
+
+
+#### summarize()
+Summarizes the results of the test suite.
 
 
 #### _property_ results()
 Returns the results of the test suite.
 
 
-### _class_ validmind.vm_models.ThresholdTest(test_context: TestContext, params: dict | None = None, test_results: TestResults | None = None)
+### _class_ validmind.vm_models.ThresholdTest(test_context: TestContext, params: dict | None = None, result: TestResults | None = None)
 Bases: `TestContextUtils`
 
 A threshold test is a combination of a metric/plot we track and a
@@ -933,33 +1003,33 @@ TODO: ThresholdTest should validate required context too
 
 #### params(_: dic_ _ = Non_ )
 
-#### test_results(_: TestResult_ _ = Non_ )
+#### result(_: TestResult_ _ = Non_ )
 
 #### description()
 Return the test description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
 
 
-#### summary(test_results: TestResults | None = None)
-Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+#### summary(results: List[TestResult] | None, all_passed: bool)
+Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+a table with test_name(optional), column and passed.
+
 The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.
-
-We return None here because the test summary is optional.
 
 
 #### run(\*args, \*\*kwargs)
 Run the test and cache its results
 
 
-#### cache_results(results: List[TestResult], passed: bool, figures: List[Figure] | None = None)
+#### cache_results(test_results_list: List[TestResult], passed: bool, figures: List[Figure] | None = None)
 Cache the individual results of the threshold test as a list of TestResult objects
 
 
 * **Parameters**
 
     
-    * **results** (*List**[**TestResult**]*) – The results of the threshold test
+    * **result** (*List**[**TestResult**]*) – The results of the threshold test
 
 
     * **passed** (*bool*) – Whether the threshold test passed or failed
