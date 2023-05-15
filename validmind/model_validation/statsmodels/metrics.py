@@ -837,6 +837,7 @@ class RegressionModelForecastPlot(Metric):
         figures = []
 
         for fitted_model in model_list:
+            feature_columns = fitted_model.train_ds.get_features_columns()
             train_ds = fitted_model.train_ds
             test_ds = fitted_model.test_ds
             y_pred = fitted_model.model.predict(fitted_model.train_ds.x)
@@ -872,38 +873,15 @@ class RegressionModelForecastPlot(Metric):
                 )
 
             fig, ax = plt.subplots()
-            sns.lineplot(
-                x=train_ds.index,
-                y=train_ds.y,
-                ax=ax,
-                label="Train Forecast",
-            )
-            sns.lineplot(
-                x=test_ds.index,
-                y=test_ds.y,
-                ax=ax,
-                label="Test Forecast",
-            )
-            sns.lineplot(
-                x=train_ds.index,
-                y=y_pred,
-                ax=ax,
-                label="Train Dataset",
-                color="grey",
-            )
-            sns.lineplot(
-                x=test_ds.index,
-                y=y_pred_test,
-                ax=ax,
-                label="Test Dataset",
-                color="black",
-            )
-            plt.title(
-                f"Forecast vs Observed for {fitted_model.model.__class__.__name__}"
-            )
+            ax.plot(train_ds.index, train_ds.y, label="Train Forecast")
+            ax.plot(test_ds.index, test_ds.y, label="Test Forecast")
+            ax.plot(train_ds.index, y_pred, label="Train Dataset", color="grey")
+            ax.plot(test_ds.index, y_pred_test, label="Test Dataset", color="black")
+
+            plt.title(f"Forecast vs Observed for features {feature_columns}")
 
             # Set the x-axis limits to zoom in/out
-            # plt.xlim(start_date, end_date)
+            plt.xlim(start_date, end_date)
 
             plt.legend()
             figures.append(Figure(key=self.key, figure=fig, metadata={}))

@@ -287,21 +287,13 @@ class TimeSeriesLinePlot(Metric):
 
     name = "time_series_line_plot"
     required_context = ["dataset"]
-    default_params = {"columns": None}
 
     def run(self):
-        if "columns" not in self.params:
-            raise ValueError("Time series columns must be provided in params")
-
         # Check if index is datetime
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        # If no columns are specified in the config, we plot all columns
-        if self.params["columns"] is None:
-            columns = list(self.dataset.df.columns)
-        else:
-            columns = self.params["columns"]
+        columns = list(self.dataset.df.columns)
 
         df = self.dataset.df
 
@@ -341,21 +333,13 @@ class TimeSeriesHistogram(Metric):
 
     name = "time_series_histogram"
     required_context = ["dataset"]
-    default_params = {"columns": None}
 
     def run(self):
-        if "columns" not in self.params:
-            raise ValueError("Time series columns must be provided in params")
-
         # Check if index is datetime
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        # If no columns are specified in the config, we plot all columns
-        if self.params["columns"] is None:
-            columns = list(self.dataset.df.columns)
-        else:
-            columns = self.params["columns"]
+        columns = list(self.dataset.df.columns)
 
         df = self.dataset.df
 
@@ -388,17 +372,9 @@ class ScatterPlot(Metric):
 
     name = "scatter_plot"
     required_context = ["dataset", "dataset.target_column"]
-    default_params = {"columns": None}
 
     def run(self):
-        if "columns" not in self.params:
-            raise ValueError("Columns must be provided in params")
-
-        # If no columns are specified in the config, we plot all columns
-        if self.params["columns"] is None:
-            columns = list(self.dataset.df.columns)
-        else:
-            columns = self.params["columns"]
+        columns = list(self.dataset.df.columns)
 
         df = self.dataset.df[columns]
 
@@ -765,7 +741,7 @@ class SeasonalDecompose(Metric):
                     results[col] = self.serialize_seasonal_decompose(sd)
 
                     # Create subplots
-                    fig, axes = plt.subplots(nrows=4, ncols=2)
+                    fig, axes = plt.subplots(3, 2)
                     fig.subplots_adjust(hspace=1)
                     fig.suptitle(
                         f"Seasonal Decomposition and Residual Diagnostics for {col}",
@@ -773,23 +749,25 @@ class SeasonalDecompose(Metric):
                     )
 
                     # Original seasonal decomposition plots
+                    # Observed
                     axes[0, 0].set_title("Observed")
                     sd.observed.plot(ax=axes[0, 0])
 
+                    # Trend
                     axes[0, 1].set_title("Trend")
                     sd.trend.plot(ax=axes[0, 1])
 
+                    # Seasonal
                     axes[1, 0].set_title("Seasonal")
                     sd.seasonal.plot(ax=axes[1, 0])
 
+                    # Residuals
                     axes[1, 1].set_title("Residuals")
                     sd.resid.plot(ax=axes[1, 1])
                     axes[1, 1].set_xlabel("Date")
 
-                    # Residual diagnostics plots
-                    residuals = sd.resid.dropna()
-
                     # Histogram with KDE
+                    residuals = sd.resid.dropna()
                     sns.histplot(residuals, kde=True, ax=axes[2, 0])
                     axes[2, 0].set_title("Histogram and KDE of Residuals")
 
@@ -797,13 +775,6 @@ class SeasonalDecompose(Metric):
                     stats.probplot(residuals, plot=axes[2, 1])
                     axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
 
-                    # ACF plot
-                    plot_acf(residuals, ax=axes[3, 0], title="ACF of Residuals")
-
-                    # PACF plot
-                    plot_pacf(residuals, ax=axes[3, 1], title="PACF of Residuals")
-
-                    # Adjust the layout
                     plt.tight_layout()
 
                     # Do this if you want to prevent the figure from being displayed
