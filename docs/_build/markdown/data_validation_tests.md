@@ -38,9 +38,15 @@ Bases: `Metric`
 
 Extracts the correlation matrix for a dataset. The following coefficients
 are calculated:
-- Pearson’s R for numerical variables
-- Cramer’s V for categorical variables
-- Correlation ratios for categorical-numerical variables
+
+
+* Pearson’s R for numerical variables
+
+
+* Cramer’s V for categorical variables
+
+
+* Correlation ratios for categorical-numerical variables
 
 
 #### name(_: ClassVar[str_ _ = 'dataset_correlations_ )
@@ -126,8 +132,6 @@ if necessary. In this case we produce a separate plot for each time series.
 
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
-#### default_params(_: ClassVar[dict_ _ = {'columns': None_ )
-
 #### run()
 Run the metric calculation and cache its results
 
@@ -144,8 +148,6 @@ necessary. In this case we produce a separate plot for each time series.
 
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
-#### default_params(_: ClassVar[dict_ _ = {'columns': None_ )
-
 #### run()
 Run the metric calculation and cache its results
 
@@ -160,8 +162,6 @@ in the dataset. The input dataset can have multiple columns (features) if necess
 #### name(_: ClassVar[str_ _ = 'scatter_plot_ )
 
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset', 'dataset.target_column'_ )
-
-#### default_params(_: ClassVar[dict_ _ = {'columns': None_ )
 
 #### run()
 Run the metric calculation and cache its results
@@ -201,6 +201,7 @@ Run the metric calculation and cache its results
 
 #### summary(metric_value)
 Build one table for summarizing the auto AR results
+and another for the best AR Order results
 
 
 ### _class_ validmind.data_validation.metrics.AutoMA(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
@@ -223,6 +224,7 @@ Run the metric calculation and cache its results
 
 #### summary(metric_value)
 Build one table for summarizing the auto MA results
+and another for the best MA Order results
 
 
 ### _class_ validmind.data_validation.metrics.SeasonalDecompose(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
@@ -230,6 +232,8 @@ Bases: `Metric`
 
 Calculates seasonal_decompose metric for each of the dataset features
 
+
+#### category(_ = 'univariate_analysis_ )
 
 #### name(_: ClassVar[str_ _ = 'seasonal_decompose_ )
 
@@ -273,6 +277,7 @@ Run the metric calculation and cache its results
 
 #### summary(metric_value)
 Build one table for summarizing the auto seasonality results
+and another for the best seasonality period results
 
 
 ### _class_ validmind.data_validation.metrics.ACFandPACFPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
@@ -312,6 +317,7 @@ Run the metric calculation and cache its results
 
 #### summary(metric_value)
 Build one table for summarizing the stationarity results
+and another for the best integration order results
 
 
 ### _class_ validmind.data_validation.metrics.RollingStatsPlot(test_context: TestContext, params: dict | None = None, result: TestPlanMetricResult | None = None)
@@ -422,6 +428,13 @@ class and the minority class in the target column.
 
 #### default_params(_: ClassVar[dict_ _ = {'min_percent_threshold': 0.2_ )
 
+#### summary(results: List[TestResult], all_passed: bool)
+The class imbalance test returns results like these:
+[{“values”: {“0”: 0.798, “1”: 0.202}, “column”: “Exited”, “passed”: true}]
+
+So we build a table with 2 rows, one for each class.
+
+
 #### run()
 Run the test and cache its results
 
@@ -442,6 +455,13 @@ checked for duplicate primary keys as well.
 
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
 
+#### summary(results: List[TestResult], all_passed: bool)
+The duplicates test returns results like these:
+[{“values”: {“n_duplicates”: 0, “p_duplicates”: 0.0}, “passed”: true}]
+
+So we build a table with 1 row and show number of duplicates and percentage of duplicates.
+
+
 #### run()
 Run the test and cache its results
 
@@ -460,6 +480,11 @@ values found in categorical columns.
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'num_threshold': 100, 'percent_threshold': 0.1, 'threshold_type': 'percent'_ )
+
+#### summary(results: List[TestResult], all_passed: bool)
+The high cardinality test returns results like these:
+[{“values”: {“n_distinct”: 0, “p_distinct”: 0.0}, “column”: “Exited”, “passed”: true}]
+
 
 #### run()
 Run the test and cache its results
@@ -480,6 +505,11 @@ features in the dataset do not exceed a specified threshold.
 
 #### default_params(_: ClassVar[dict_ _ = {'max_threshold': 0.3_ )
 
+#### summary(results: List[TestResult], all_passed: bool)
+The high pearson correlation test returns results like these:
+[{“values”: {“correlations”: [{“column”: “NumOfProducts”, “correlation”: -0.3044645622389459}]}, “column”: “Balance”, “passed”: false}]
+
+
 #### run()
 Run the test and cache its results
 
@@ -498,6 +528,11 @@ is less than a threshold
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'min_threshold': 1_ )
+
+#### summary(results: List[TestResult], all_passed: bool)
+The missing values test returns results like these:
+[{“values”: {“n_missing”: 0, “p_missing”: 0.0}, “column”: “Exited”, “passed”: true}]
+
 
 #### run()
 Run the test and cache its results
@@ -520,6 +555,11 @@ longer tail of values in the left.
 
 #### default_params(_: ClassVar[dict_ _ = {'max_threshold': 1_ )
 
+#### summary(results: List[TestResult], all_passed: bool)
+The skewness test returns results like these:
+[{“values”: {“skewness”: 1.0}, “column”: “NumOfProducts”, “passed”: false}]
+
+
 #### run()
 Run the test and cache its results
 
@@ -538,6 +578,11 @@ Test that the number of unique rows is greater than a threshold
 
 #### default_params(_: ClassVar[dict_ _ = {'min_percent_threshold': 1_ )
 
+#### summary(results: List[TestResult], all_passed: bool)
+The unique rows test returns results like these:
+[{“values”: {“n_unique”: 10000, “p_unique”: 1.0}, “column”: “Exited”, “passed”: true}]
+
+
 #### run()
 Run the test and cache its results
 
@@ -555,6 +600,11 @@ The zeros test finds columns that have too many zero values.
 #### required_context(_: ClassVar[List[str]_ _ = ['dataset'_ )
 
 #### default_params(_: ClassVar[dict_ _ = {'max_percent_threshold': 0.03_ )
+
+#### summary(results: List[TestResult], all_passed: bool)
+The zeros test returns results like these:
+[{“values”: {“n_zeros”: 10000, “p_zeros”: 1.0}, “column”: “Exited”, “passed”: true}]
+
 
 #### run()
 Run the test and cache its results

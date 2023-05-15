@@ -13,7 +13,7 @@ description = "ValidMind Developer Framework"
 #   "validmind/**/*.so",
 # ]
 name = "validmind"
-version = "1.11.3"
+version = "1.11.4"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
