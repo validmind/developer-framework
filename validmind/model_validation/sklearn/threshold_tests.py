@@ -313,12 +313,14 @@ class OverfitDiagnosis(ThresholdTest):
             raise ValueError("model must of provided to run this test")
 
         if self.params["features_columns"] is None:
-            features_list = [
-                field_dict["id"] for field_dict in self.model.train_ds.fields
-            ]
-            features_list.remove(self.model.train_ds.target_column)
+            features_list = self.model.train_ds.get_features_columns()
         else:
             features_list = self.params["features_columns"]
+
+        # Check if all elements from features_list are present in the feature columns
+        all_present = all(elem in self.model.train_ds.get_features_columns() for elem in features_list)
+        if not all_present:
+            raise ValueError("The list of feature columns provided do not match with training dataset feature columns")
 
         if not isinstance(features_list, list):
             raise ValueError(
@@ -344,7 +346,11 @@ class OverfitDiagnosis(ThresholdTest):
         results_headers.extend(self.default_metrics.keys())
 
         for feature_column in features_list:
-            train_df["bin"] = pd.cut(train_df[feature_column], bins=10)
+            bins = 10
+            if feature_column in self.model.train_ds.get_categorical_features_columns():
+                bins = len(train_df[feature_column].unique())
+            train_df["bin"] = pd.cut(train_df[feature_column], bins=bins)
+
             results_train = {k: [] for k in results_headers}
             results_test = {k: [] for k in results_headers}
 
@@ -583,16 +589,16 @@ class WeakspotsDiagnosis(ThresholdTest):
         if self.model is None:
             raise ValueError("model must of provided to run this test")
 
-        if "features_columns" not in self.params:
-            raise ValueError("features_columns must be provided in params")
-
         if self.params["features_columns"] is None:
-            features_list = [
-                field_dict["id"] for field_dict in self.model.train_ds.fields
-            ]
-            features_list.remove(self.model.train_ds.target_column)
+            features_list = self.model.train_ds.get_features_columns()
         else:
             features_list = self.params["features_columns"]
+
+        # Check if all elements from features_list are present in the feature columns
+        all_present = all(elem in self.model.train_ds.get_features_columns() for elem in features_list)
+        if not all_present:
+            raise ValueError("The list of feature columns provided do not match with "
+                             + "training dataset feature columns")
 
         target_column = self.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
@@ -610,7 +616,11 @@ class WeakspotsDiagnosis(ThresholdTest):
         results_headers = ["slice", "shape"]
         results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
-            train_df["bin"] = pd.cut(train_df[feature], bins=10)
+            bins = 10
+            if feature in self.model.train_ds.get_categorical_features_columns():
+                bins = len(train_df[feature].unique())
+            train_df["bin"] = pd.cut(train_df[feature], bins=bins)
+
             results_train = {k: [] for k in results_headers}
             results_test = {k: [] for k in results_headers}
 
@@ -811,6 +821,7 @@ class RobustnessDiagnosis(ThresholdTest):
     default_params = {
         "features_columns": None,
         "scaling_factor_std_dev_list": [0.01, 0.02],
+        "accuracy_decay_threshold": 3,
     }
     default_metrics = {
         "accuracy": metrics.accuracy_score,
@@ -839,6 +850,10 @@ class RobustnessDiagnosis(ThresholdTest):
             raise ValueError("scaling_factor_std_dev_list must be provided in params")
         x_std_dev_list = self.params["scaling_factor_std_dev_list"]
 
+        if self.params["accuracy_decay_threshold"] is None:
+            raise ValueError("accuracy_decay_threshold must be provided in params")
+        accuracy_threshold = self.params["accuracy_decay_threshold"]
+
         if self.model is None:
             raise ValueError("model must of provided to run this test")
 
@@ -846,20 +861,19 @@ class RobustnessDiagnosis(ThresholdTest):
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
 
-        # Identify numeric features
-        numeric_features_columns = [
-            field_dic["id"]
-            for field_dic in self.model.train_ds.fields
-            if field_dic["type"] == "Numeric"
-        ]
-        if self.params["features_columns"] is None:
-            features_list = numeric_features_columns
-        else:
-            features_list = self.params["features_columns"]
+        features_list = self.params["features_columns"]
+        if features_list is None:
+            features_list = self.model.train_ds.get_numeric_features_columns()
+
+        # Check if all elements from features_list are present in the numerical feature columns
+        all_present = all(elem in self.model.train_ds.get_numeric_features_columns()
+                          for elem in features_list)
+        if not all_present:
+            raise ValueError("The list of feature columns provided do not match with training "
+                             + "dataset numerical feature columns")
 
         # Remove target column if it exist in the list
-        if self.model.train_ds.target_column in features_list:
-            features_list.remove(self.model.train_ds.target_column)
+        features_list = [col for col in features_list if col != self.model.train_ds.target_column]
 
         train_df = self.model.train_ds.x.copy()
         train_y_true = self.model.train_ds.y
@@ -870,8 +884,7 @@ class RobustnessDiagnosis(ThresholdTest):
         test_results = []
         test_figures = []
 
-        results_headers = ["Perturbation Size", "Dataset Type", "Records"]
-        results_headers.extend(self.default_metrics.keys())
+        results_headers = ["Perturbation Size", "Dataset Type", "Records"] + list(self.default_metrics.keys())
         results = {k: [] for k in results_headers}
 
         # Iterate scaling factor for the standard deviation list
@@ -881,10 +894,10 @@ class RobustnessDiagnosis(ThresholdTest):
 
             # Add noise to numeric features columns provided by user
             for feature in features_list:
-                temp_train_df[feature] = self.add_noise_std_dev(
+                temp_train_df[feature] = self._add_noise_std_dev(
                     temp_train_df[feature].to_list(), x_std_dev
                 )
-                temp_test_df[feature] = self.add_noise_std_dev(
+                temp_test_df[feature] = self._add_noise_std_dev(
                     temp_test_df[feature].to_list(), x_std_dev
                 )
 
@@ -907,15 +920,23 @@ class RobustnessDiagnosis(ThresholdTest):
             )
         )
 
+        train_acc = df.loc[(df['Dataset Type'] == "Training") , 'accuracy'].values[0]
+        test_acc = df.loc[(df['Dataset Type'] == "Test") , 'accuracy'].values[0]
+
+        df["Passed"] = np.where((df['Dataset Type'] == "Training") & (df['accuracy'] >= (train_acc - accuracy_threshold)),
+                                True,
+                                np.where((df['Dataset Type'] == "Test") & (df['accuracy'] >= (test_acc - accuracy_threshold)),
+                                         True,
+                                         False))
         test_results.append(
             TestResult(
                 test_name="accuracy",
-                column=features_list[0],
+                column=features_list,
                 passed=True,
-                values=df.to_dict(orient="list"),
+                values=df.to_dict(),
             )
         )
-        return self.cache_results(test_results, passed=True, figures=test_figures)
+        return self.cache_results(test_results, passed=df['Passed'].all(), figures=test_figures)
 
     def _compute_metrics(
         self,
@@ -946,7 +967,7 @@ class RobustnessDiagnosis(ThresholdTest):
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true.values, y_prediction) * 100)
 
-    def add_noise_std_dev(
+    def _add_noise_std_dev(
         self, values: List[float], x_std_dev: float
     ) -> Tuple[List[float], float]:
         """
