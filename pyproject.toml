@@ -41,6 +41,7 @@ tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
 markdown = "^3.4.3"
+catboost = "^1.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
