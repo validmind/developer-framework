@@ -1113,12 +1113,12 @@ Return the test description. Should be overridden by subclasses. Defaults
 to returning the class’ docstring
 
 
-#### summary(result: TestResults | None = None)
-Return the threshold test summary. Should be overridden by subclasses. Defaults to None.
+#### summary(results: List[TestResult] | None, all_passed: bool)
+Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+a table with test_name(optional), column and passed.
+
 The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.
-
-We return None here because the test summary is optional.
 
 
 #### run(\*args, \*\*kwargs)
