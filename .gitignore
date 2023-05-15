@@ -176,3 +176,6 @@ notebooks/r_demo/*model.json
 
 # Don't force Python versions from peynv into the repo
 .python-version
+
+# CatBoost geneated files
+catboost_info

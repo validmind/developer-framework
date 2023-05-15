@@ -18,6 +18,13 @@ SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
 }
 
 
+def get_catboost_version():
+    if "catboost" in sys.modules:
+        return sys.modules["catboost"].__version__
+
+    return "n/a"
+
+
 def get_pytorch_version():
     if "torch" in sys.modules:
         return sys.modules["torch"].__version__
@@ -113,6 +120,12 @@ def get_info_from_model_instance(model):
         subtask = "binary"
         framework = "PyTorch"
         framework_version = get_pytorch_version()
+    elif model_class == "CatBoostClassifier":
+        architecture = "Gradient Boosting"
+        task = "classification"
+        subtask = "binary"
+        framework = "CatBoost"
+        framework_version = get_catboost_version()
     else:
         raise ValueError(f"Model class {model_class} is not supported by this test")
 
@@ -162,6 +175,8 @@ def get_params_from_model_instance(model):
         params = model.get_params()
     elif model_library == "pytorch":
         params = {}
+    elif model_library == "catboost":
+        params = model.get_all_params()
     else:
         raise ValueError(f"Model library {model_library} is not supported by this test")
 
