@@ -282,7 +282,7 @@ class HighPearsonCorrelation(ThresholdTest):
         )
 
     def run(self):
-        corr = self.df.corr()
+        corr = self.df.corr(numeric_only=True)
         cols = corr.columns
 
         # Matrix of True/False where True means the correlation is above the threshold
