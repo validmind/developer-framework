@@ -318,9 +318,13 @@ class OverfitDiagnosis(ThresholdTest):
             features_list = self.params["features_columns"]
 
         # Check if all elements from features_list are present in the feature columns
-        all_present = all(elem in self.model.train_ds.get_features_columns() for elem in features_list)
+        all_present = all(
+            elem in self.model.train_ds.get_features_columns() for elem in features_list
+        )
         if not all_present:
-            raise ValueError("The list of feature columns provided do not match with training dataset feature columns")
+            raise ValueError(
+                "The list of feature columns provided do not match with training dataset feature columns"
+            )
 
         if not isinstance(features_list, list):
             raise ValueError(
@@ -595,10 +599,14 @@ class WeakspotsDiagnosis(ThresholdTest):
             features_list = self.params["features_columns"]
 
         # Check if all elements from features_list are present in the feature columns
-        all_present = all(elem in self.model.train_ds.get_features_columns() for elem in features_list)
+        all_present = all(
+            elem in self.model.train_ds.get_features_columns() for elem in features_list
+        )
         if not all_present:
-            raise ValueError("The list of feature columns provided do not match with "
-                             + "training dataset feature columns")
+            raise ValueError(
+                "The list of feature columns provided do not match with "
+                + "training dataset feature columns"
+            )
 
         target_column = self.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
@@ -866,14 +874,20 @@ class RobustnessDiagnosis(ThresholdTest):
             features_list = self.model.train_ds.get_numeric_features_columns()
 
         # Check if all elements from features_list are present in the numerical feature columns
-        all_present = all(elem in self.model.train_ds.get_numeric_features_columns()
-                          for elem in features_list)
+        all_present = all(
+            elem in self.model.train_ds.get_numeric_features_columns()
+            for elem in features_list
+        )
         if not all_present:
-            raise ValueError("The list of feature columns provided do not match with training "
-                             + "dataset numerical feature columns")
+            raise ValueError(
+                "The list of feature columns provided do not match with training "
+                + "dataset numerical feature columns"
+            )
 
         # Remove target column if it exist in the list
-        features_list = [col for col in features_list if col != self.model.train_ds.target_column]
+        features_list = [
+            col for col in features_list if col != self.model.train_ds.target_column
+        ]
 
         train_df = self.model.train_ds.x.copy()
         train_y_true = self.model.train_ds.y
@@ -884,7 +898,9 @@ class RobustnessDiagnosis(ThresholdTest):
         test_results = []
         test_figures = []
 
-        results_headers = ["Perturbation Size", "Dataset Type", "Records"] + list(self.default_metrics.keys())
+        results_headers = ["Perturbation Size", "Dataset Type", "Records"] + list(
+            self.default_metrics.keys()
+        )
         results = {k: [] for k in results_headers}
 
         # Iterate scaling factor for the standard deviation list
@@ -920,14 +936,20 @@ class RobustnessDiagnosis(ThresholdTest):
             )
         )
 
-        train_acc = df.loc[(df['Dataset Type'] == "Training") , 'accuracy'].values[0]
-        test_acc = df.loc[(df['Dataset Type'] == "Test") , 'accuracy'].values[0]
+        train_acc = df.loc[(df["Dataset Type"] == "Training"), "accuracy"].values[0]
+        test_acc = df.loc[(df["Dataset Type"] == "Test"), "accuracy"].values[0]
 
-        df["Passed"] = np.where((df['Dataset Type'] == "Training") & (df['accuracy'] >= (train_acc - accuracy_threshold)),
-                                True,
-                                np.where((df['Dataset Type'] == "Test") & (df['accuracy'] >= (test_acc - accuracy_threshold)),
-                                         True,
-                                         False))
+        df["Passed"] = np.where(
+            (df["Dataset Type"] == "Training")
+            & (df["accuracy"] >= (train_acc - accuracy_threshold)),
+            True,
+            np.where(
+                (df["Dataset Type"] == "Test")
+                & (df["accuracy"] >= (test_acc - accuracy_threshold)),
+                True,
+                False,
+            ),
+        )
         test_results.append(
             TestResult(
                 test_name="accuracy",
@@ -936,7 +958,9 @@ class RobustnessDiagnosis(ThresholdTest):
                 values=df.to_dict(),
             )
         )
-        return self.cache_results(test_results, passed=df['Passed'].all(), figures=test_figures)
+        return self.cache_results(
+            test_results, passed=df["Passed"].all(), figures=test_figures
+        )
 
     def _compute_metrics(
         self,

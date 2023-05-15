@@ -489,6 +489,8 @@ class PopulationStabilityIndex(Metric):
             print(f"Skiping PSI for {model_library} models")
             return
 
-        psi_df = _get_psi(self.model.y_train_predict, self.model.y_test_predict)
+        psi_df = _get_psi(
+            self.model.y_train_predict.copy(), self.model.y_test_predict.copy()
+        )
 
         return self.cache_results(metric_value=psi_df)
