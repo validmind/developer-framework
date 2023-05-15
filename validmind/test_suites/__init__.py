@@ -1,7 +1,7 @@
 """
 Entrypoint for test suites.
 """
-import tabulate
+import pandas as pd
 
 from .test_suites import (
     BinaryClassifierFullSuite,
@@ -66,7 +66,7 @@ def list_suites(pretty: bool = True):
             }
         )
 
-    return tabulate.tabulate(table, headers="keys", tablefmt="html")
+    return pd.DataFrame(table).style.hide_index()
 
 
 def register_test_suite(suite_id: str, suite: TestSuite):

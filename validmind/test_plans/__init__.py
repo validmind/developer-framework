@@ -3,7 +3,7 @@ Test Plans entry point
 """
 import inspect
 
-import tabulate
+import pandas as pd
 
 from ..vm_models import TestPlan
 from .binary_classifier import (
@@ -100,7 +100,7 @@ def list_plans(pretty: bool = True):
             }
         )
 
-    return tabulate.tabulate(table, headers="keys", tablefmt="html")
+    return pd.DataFrame(table).style.hide_index()
 
 
 def list_tests(test_type: str = "all", pretty: bool = True):
@@ -136,7 +136,7 @@ def list_tests(test_type: str = "all", pretty: bool = True):
                 }
             )
 
-    return tabulate.tabulate(table, headers="keys", tablefmt="html")
+    return pd.DataFrame(table).style.hide_index()
 
 
 def get_by_name(name: str):
@@ -158,16 +158,15 @@ def describe_plan(plan_id: str):
     tests = [f"{test.__name__} ({_get_test_type(test)})" for test in plan.tests]
     tests = ", ".join(tests)
 
-    table = [
-        ["ID", plan.name],
-        ["Name", plan.__name__],
-        ["Description", plan.__doc__.strip()],
-        ["Required Context", plan.required_context],
-        ["Tests", tests],
-        ["Test Plans", [test_plan.name for test_plan in plan.test_plans]],
-    ]
+    table = {
+        "ID": plan.name,
+        "Name": plan.__name__,
+        "Description": plan.__doc__.strip(),
+        "Required Context": plan.required_context,
+        "Tests": tests,
+    }
 
-    return tabulate.tabulate(table, headers=["Attribute", "Value"], tablefmt="html")
+    return pd.DataFrame(table).style.hide_index()
 
 
 def register_test_plan(plan_id: str, plan: TestPlan):
