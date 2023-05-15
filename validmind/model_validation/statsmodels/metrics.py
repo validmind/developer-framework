@@ -878,7 +878,7 @@ class RegressionModelForecastPlot(Metric):
             ax.plot(train_ds.index, y_pred, label="Train Dataset", color="grey")
             ax.plot(test_ds.index, y_pred_test, label="Test Dataset", color="black")
 
-            plt.title(f"Forecast vs Observed for {feature_columns}")
+            plt.title(f"Forecast vs Observed for features {feature_columns}")
 
             # Set the x-axis limits to zoom in/out
             plt.xlim(start_date, end_date)
