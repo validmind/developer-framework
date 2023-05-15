@@ -76,7 +76,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 
-<span class="kn">import</span> <span class="nn">tabulate</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">..vm_models</span> <span class="kn">import</span> <span class="n">TestPlan</span>
 <span class="kn">from</span> <span class="nn">.binary_classifier</span> <span class="kn">import</span> <span class="p">(</span>
@@ -173,7 +173,7 @@
             <span class="p">}</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="list_tests"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.list_tests">[docs]</a><span class="k">def</span> <span class="nf">list_tests</span><span class="p">(</span><span class="n">test_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -209,7 +209,7 @@
                 <span class="p">}</span>
             <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_by_name"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.get_by_name">[docs]</a><span class="k">def</span> <span class="nf">get_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -231,16 +231,15 @@
     <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">_get_test_type</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">tests</span><span class="p">]</span>
     <span class="n">tests</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span>
 
-    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__name__</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()],</span>
-        <span class="p">[</span><span class="s2">&quot;Required Context&quot;</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="n">required_context</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;Tests&quot;</span><span class="p">,</span> <span class="n">tests</span><span class="p">],</span>
-        <span class="p">[</span><span class="s2">&quot;Test Plans&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">test_plan</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">test_plan</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">test_plans</span><span class="p">]],</span>
-    <span class="p">]</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="s2">&quot;Required Context&quot;</span><span class="p">:</span> <span class="n">plan</span><span class="o">.</span><span class="n">required_context</span><span class="p">,</span>
+        <span class="s2">&quot;Tests&quot;</span><span class="p">:</span> <span class="n">tests</span><span class="p">,</span>
+    <span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">tabulate</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Attribute&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;html&quot;</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table</span><span class="p">)</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="register_test_plan"><a class="viewcode-back" href="../../test_plans.html#validmind.test_plans.register_test_plan">[docs]</a><span class="k">def</span> <span class="nf">register_test_plan</span><span class="p">(</span><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plan</span><span class="p">:</span> <span class="n">TestPlan</span><span class="p">):</span>

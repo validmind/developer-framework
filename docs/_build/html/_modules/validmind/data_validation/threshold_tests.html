@@ -355,7 +355,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="HighPearsonCorrelation.run"><a class="viewcode-back" href="../../../data_validation_tests.html#validmind.data_validation.threshold_tests.HighPearsonCorrelation.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="n">corr</span><span class="o">.</span><span class="n">columns</span>
 
         <span class="c1"># Matrix of True/False where True means the correlation is above the threshold</span>
