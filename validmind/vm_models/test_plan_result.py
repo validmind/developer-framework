@@ -114,7 +114,7 @@ class TestPlanResult(ABC):
             summary_table = (
                 pd.DataFrame(table.data)
                 .style.format(precision=4)
-                .hide_index()
+                .hide(axis="index")
                 .to_html()
             )  # table.data is an orient=records dump
 

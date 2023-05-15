@@ -66,7 +66,7 @@ def list_suites(pretty: bool = True):
             }
         )
 
-    return pd.DataFrame(table).style.hide_index()
+    return pd.DataFrame(table).style.hide(axis="index")
 
 
 def register_test_suite(suite_id: str, suite: TestSuite):

@@ -100,7 +100,7 @@ def list_plans(pretty: bool = True):
             }
         )
 
-    return pd.DataFrame(table).style.hide_index()
+    return pd.DataFrame(table).style.hide(axis="index")
 
 
 def list_tests(test_type: str = "all", pretty: bool = True):
@@ -136,7 +136,7 @@ def list_tests(test_type: str = "all", pretty: bool = True):
                 }
             )
 
-    return pd.DataFrame(table).style.hide_index()
+    return pd.DataFrame(table).style.hide(axis="index")
 
 
 def get_by_name(name: str):
@@ -166,7 +166,7 @@ def describe_plan(plan_id: str):
         "Tests": tests,
     }
 
-    return pd.DataFrame(table).style.hide_index()
+    return pd.DataFrame(table).style.hide(axis="index")
 
 
 def register_test_plan(plan_id: str, plan: TestPlan):
