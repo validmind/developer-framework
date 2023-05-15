@@ -342,7 +342,7 @@ class OverfitDiagnosis(ThresholdTest):
 
         test_results = []
         test_figures = []
-        results_headers = ["slice", "shape"]
+        results_headers = ["slice", "shape", "feature"]
         results_headers.extend(self.default_metrics.keys())
 
         for feature_column in features_list:
@@ -356,7 +356,12 @@ class OverfitDiagnosis(ThresholdTest):
 
             for region, df_region in train_df.groupby("bin"):
                 self._compute_metrics(
-                    results_train, region, df_region, target_column, prediction_column
+                    results_train,
+                    region,
+                    df_region,
+                    target_column,
+                    prediction_column,
+                    feature_column
                 )
                 df_test_region = test_df[
                     (test_df[feature_column] > region.left)
@@ -368,6 +373,7 @@ class OverfitDiagnosis(ThresholdTest):
                     df_test_region,
                     target_column,
                     prediction_column,
+                    feature_column
                 )
 
             results = self._prepare_results(results_train, results_test)
@@ -391,19 +397,35 @@ class OverfitDiagnosis(ThresholdTest):
 
             results = results[results["gap"] > cut_off_percentage]
             passed = results.empty
-            results = results.to_dict(orient="list")
+            results = results.to_dict(orient="records")
             test_results.append(
                 TestResult(
                     test_name="accuracy",
                     column=feature_column,
                     passed=passed,
-                    values=results,
+                    values={"records": results},
                 )
             )
         return self.cache_results(
             test_results,
             passed=all([r.passed for r in test_results]),
-            figures=test_figures,
+            figures=test_figures
+        )
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        results_table = [
+            record
+            for result in results for record in result.values["records"]
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Overfit Regions Data"
+                    ),
+                )
+            ]
         )
 
     def _prepare_results(self, results_train: dict, results_test: dict) -> pd.DataFrame:
@@ -443,6 +465,7 @@ class OverfitDiagnosis(ThresholdTest):
         df_region: pd.DataFrame,
         target_column: str,
         prediction_column: str,
+        feature_column: str,
     ) -> None:
         """
         Computes and appends the evaluation metrics for a given region.
@@ -460,6 +483,7 @@ class OverfitDiagnosis(ThresholdTest):
 
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+        results["feature"].append(feature_column)
 
         # Check if df_region is an empty dataframe and if so, append 0 to all metrics
         if df_region.empty:
@@ -613,7 +637,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
         test_results = []
         test_figures = []
-        results_headers = ["slice", "shape"]
+        results_headers = ["slice", "shape", "feature"]
         results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
             bins = 10
@@ -626,7 +650,12 @@ class WeakspotsDiagnosis(ThresholdTest):
 
             for region, df_region in train_df.groupby("bin"):
                 self._compute_metrics(
-                    results_train, region, df_region, target_column, prediction_column
+                    results_train,
+                    region,
+                    df_region,
+                    target_column,
+                    prediction_column,
+                    feature
                 )
                 df_test_region = test_df[
                     (test_df[feature] > region.left)
@@ -638,6 +667,7 @@ class WeakspotsDiagnosis(ThresholdTest):
                     df_test_region,
                     target_column,
                     prediction_column,
+                    feature
                 )
 
             # Make one plot per metric
@@ -666,24 +696,36 @@ class WeakspotsDiagnosis(ThresholdTest):
             # For simplicity, test has failed if any of the metrics is below the threshold. We will
             # rely on visual assessment for this test for now.
             results_passed = df[df[list(thresholds.keys())].lt(thresholds).any(axis=1)]
-
             passed = results_passed.empty
-            results = pd.concat(
-                [pd.DataFrame(results_train), pd.DataFrame(results_test)]
-            ).to_dict(orient="list")
 
             test_results.append(
                 TestResult(
                     test_name="accuracy",
                     column=feature,
                     passed=passed,
-                    values=results,
+                    values={"records": df.to_dict("records")}
                 )
             )
         return self.cache_results(
             test_results,
             passed=all([r.passed for r in test_results]),
             figures=test_figures,
+        )
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        results_table = [
+            record
+            for result in results for record in result.values["records"]
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Weakspots Test"
+                    ),
+                )
+            ]
         )
 
     def _compute_metrics(
@@ -693,6 +735,7 @@ class WeakspotsDiagnosis(ThresholdTest):
         df_region: pd.DataFrame,
         target_column: str,
         prediction_column: str,
+        feature_column: str,
     ) -> None:
         """
         Computes and appends the default metrics for a given DataFrame slice to the results dictionary.
@@ -709,6 +752,7 @@ class WeakspotsDiagnosis(ThresholdTest):
         """
         results["slice"].append(str(region))
         results["shape"].append(df_region.shape[0])
+        results["feature"].append(feature_column)
 
         # Check if df_region is an empty dataframe and if so, append 0 to all metrics
         if df_region.empty:
@@ -933,10 +977,26 @@ class RobustnessDiagnosis(ThresholdTest):
                 test_name="accuracy",
                 column=features_list,
                 passed=True,
-                values=df.to_dict(),
+                values={"records": df.to_dict("records")},
             )
         )
         return self.cache_results(test_results, passed=df['Passed'].all(), figures=test_figures)
+
+    def summary(self, results: List[TestResult], all_passed: bool):
+        results_table = [
+            record
+            for result in results for record in result.values["records"]
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Robustness test"
+                    ),
+                )
+            ]
+        )
 
     def _compute_metrics(
         self,
