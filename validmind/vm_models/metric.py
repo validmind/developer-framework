@@ -89,7 +89,7 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
-        if not metric_value and not figures:
+        if metric_value is None and figures is None:
             raise ValueError(
                 "Metric must provide a metric value or figures to cache_results"
             )
@@ -110,7 +110,7 @@ class Metric(TestContextUtils):
         )
 
         # We can send an empty result to push an empty metric with a summary and plots
-        metric_result_value = metric_value or {}
+        metric_result_value = metric_value if metric_value is not None else {}
 
         test_plan_result.metric = MetricResult(
             type=self.type,

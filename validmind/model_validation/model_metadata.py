@@ -218,11 +218,10 @@ class ModelMetadata(Metric):
 
     def description(self):
         return """
-        The model metadata test collects attributes about the model such as
-        the model architecture, training parameters, and task type. This helps
-        understand the model's capabilities and limitations in the context of
-        a modeling framework.
-        """.strip()
+        This section describes attributes of the selected model such as its modeling
+        technique, training parameters, and task type. This helps understand the model's
+        capabilities and limitations in the context of a modeling framework.
+        """
 
     def run(self):
         """

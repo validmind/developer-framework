@@ -126,6 +126,12 @@ class DescriptiveStatistics(Metric):
     name = "descriptive_statistics"
     required_context = ["dataset"]
 
+    def description(self):
+        return """
+        This section provides descriptive statistics for numerical
+        and categorical variables found in the dataset.
+        """
+
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
         summary_stats = self.df[numerical_fields].describe(percentiles=percentiles).T
