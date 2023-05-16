@@ -444,8 +444,12 @@ class SHAPGlobalImportance(Metric):
         # the shap library generates a bunch of annoying warnings that we don't care about
         warnings.filterwarnings("ignore", category=UserWarning)
 
-        # RandomForestClassifier applies here too
-        if model_class == "XGBClassifier" or model_class == "RandomForestClassifier":
+        # Any tree based model can go here
+        if (
+            model_class == "XGBClassifier"
+            or model_class == "RandomForestClassifier"
+            or model_class == "CatBoostClassifier"
+        ):
             explainer = shap.TreeExplainer(trained_model)
         elif (
             model_class == "LogisticRegression"
@@ -485,6 +489,8 @@ class PopulationStabilityIndex(Metric):
             print(f"Skiping PSI for {model_library} models")
             return
 
-        psi_df = _get_psi(self.model.y_train_predict, self.model.y_test_predict)
+        psi_df = _get_psi(
+            self.model.y_train_predict.copy(), self.model.y_test_predict.copy()
+        )
 
         return self.cache_results(metric_value=psi_df)
