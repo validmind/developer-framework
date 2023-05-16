@@ -888,3 +888,131 @@ class RegressionModelForecastPlot(Metric):
             plt.close("all")
 
         return figures
+
+
+@dataclass
+class RegressionModelForecastPlotLevels(Metric):
+    """
+    This metric creates a plot of forecast vs observed for each model in the list.
+    """
+
+    name = "regression_forecast_plot_levels"
+    default_params = {
+        "start_date": None,
+        "end_date": None,
+        "transformation": None,
+        "start_value": None,
+    }
+
+    def description(self):
+        return """
+        This section shows plots of training and test datasets vs forecast training and test.
+        """
+
+    def run(self):
+        start_date = self.params["start_date"]
+        end_date = self.params["end_date"]
+        transformation = self.params["transformation"]
+        start_value = self.params["start_value"]
+
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+
+        all_models = []
+        for model in self.models:
+            if not Model.is_supported_model(model.model):
+                raise ValueError(
+                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
+                                 is not supported by ValidMind framework yet"
+                )
+            all_models.append(model)
+
+        figures = self._plot_forecast(
+            all_models, start_date, end_date, transformation, start_value
+        )
+
+        return self.cache_results(figures=figures)
+
+    def integrate_diff(self, series_diff, start_value):
+        series_diff = np.array(series_diff)
+        series_orig = np.cumsum(series_diff)
+        series_orig += start_value
+        return series_orig
+
+    def _plot_forecast(
+        self,
+        model_list,
+        start_date=None,
+        end_date=None,
+        transformation=None,
+        start_value=None,
+    ):
+        start_date = pd.Timestamp(start_date)
+        end_date = pd.Timestamp(end_date)
+
+        figures = []
+
+        for fitted_model in model_list:
+            feature_columns = fitted_model.train_ds.get_features_columns()
+            train_ds = fitted_model.train_ds
+            test_ds = fitted_model.test_ds
+
+            y_pred = fitted_model.model.predict(fitted_model.train_ds.x)
+            y_pred_test = fitted_model.model.predict(fitted_model.test_ds.x)
+
+            all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
+
+            if start_date is None:
+                start_date = all_dates.min()
+            else:
+                start_date = pd.Timestamp(start_date)
+
+            if end_date is None:
+                end_date = all_dates.max()
+            else:
+                end_date = pd.Timestamp(end_date)
+
+            if start_date < all_dates.min() or end_date > all_dates.max():
+                raise ValueError(
+                    "start_date and end_date must be within the range of dates in the data"
+                )
+
+            fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+
+            # First subplot: original data
+            axs[0].plot(train_ds.index, train_ds.y, label="Train Forecast")
+            axs[0].plot(test_ds.index, test_ds.y, label="Test Forecast")
+            axs[0].plot(train_ds.index, y_pred, label="Train Dataset", color="grey")
+            axs[0].plot(test_ds.index, y_pred_test, label="Test Dataset", color="black")
+            axs[0].set_title(f"Forecast vs Observed for features {feature_columns}")
+            axs[0].set_xlim(start_date, end_date)
+            axs[0].legend()
+
+            # Second subplot: integrated data (if specified)
+            if transformation == "integrate":
+                train_ds.y = self.integrate_diff(train_ds.y, start_value)
+                test_ds.y = self.integrate_diff(test_ds.y, train_ds.y[-1])
+                y_pred = self.integrate_diff(y_pred, train_ds.y[-1])
+                y_pred_test = self.integrate_diff(y_pred_test, y_pred[-1])
+
+                axs[1].plot(train_ds.index, train_ds.y, label="Train Forecast")
+                axs[1].plot(test_ds.index, test_ds.y, label="Test Forecast")
+                axs[1].plot(train_ds.index, y_pred, label="Train Dataset", color="grey")
+                axs[1].plot(
+                    test_ds.index, y_pred_test, label="Test Dataset", color="black"
+                )
+                axs[1].set_title(
+                    f"Integrated Forecast vs Observed for features {feature_columns}"
+                )
+                axs[1].set_xlim(start_date, end_date)
+                axs[1].legend()
+
+            # Store metadata
+            # metadata = {"Model": str(fitted_model.model), "Features": feature_columns}
+
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+
+            # Close the figure to prevent it from displaying
+            plt.close(fig)
+
+        return figures

@@ -18,7 +18,7 @@ from ..data_validation.metrics import (
     SpreadPlot,
 )
 
-from ..model_validation.statsmodels.metrics import RegressionModelForecastPlot
+from ..model_validation.statsmodels.metrics import RegressionModelForecastPlotLevels
 
 
 class TimeSeriesUnivariate(TestPlan):
@@ -91,7 +91,7 @@ class TimeSeriesForecast(TestPlan):
 
     name = "time_series_forecast"
     required_context = ["models"]
-    tests = [RegressionModelForecastPlot]
+    tests = [RegressionModelForecastPlotLevels]
 
     def description(self):
         return """
