@@ -102,7 +102,15 @@ class ResidualsVisualInspection(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    key=self.key,
+                    figure=fig,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            )
         return self.cache_results(figures=figures)
 
 

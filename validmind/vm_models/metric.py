@@ -89,6 +89,11 @@ class Metric(TestContextUtils):
         Returns:
             TestPlanResult: The test plan result object
         """
+        if not metric_value and not figures:
+            raise ValueError(
+                "Metric must provide a metric value or figures to cache_results"
+            )
+
         # At a minimum, send the metric description
         result_metadata = [
             {
@@ -104,15 +109,17 @@ class Metric(TestContextUtils):
             result_metadata=result_metadata,
         )
 
-        if metric_value is not None:
-            test_plan_result.metric = MetricResult(
-                type=self.type,
-                scope=self.scope,
-                key=self.key,
-                value=metric_value,
-                value_formatter=self.value_formatter,
-                summary=result_summary,
-            )
+        # We can send an empty result to push an empty metric with a summary and plots
+        metric_result_value = metric_value or {}
+
+        test_plan_result.metric = MetricResult(
+            type=self.type,
+            scope=self.scope,
+            key=self.key,
+            value=metric_result_value,
+            value_formatter=self.value_formatter,
+            summary=result_summary,
+        )
 
         # Allow metrics to attach figures to the test plan result
         if figures:

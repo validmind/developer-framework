@@ -315,7 +315,15 @@ class TimeSeriesLinePlot(Metric):
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
             plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            )
 
         plt.close("all")
 
@@ -355,7 +363,15 @@ class TimeSeriesHistogram(Metric):
             plt.xlabel(col)
             plt.ylabel("Frequency")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            )
 
         plt.close("all")
 
@@ -390,7 +406,15 @@ class ScatterPlot(Metric):
         fig = plt.gcf()
 
         figures = []
-        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        figures.append(
+            Figure(
+                key=self.key,
+                figure=fig,
+                metadata={
+                    "metric": self.name,
+                },
+            )
+        )
 
         plt.close("all")
 
@@ -465,7 +489,15 @@ class LaggedCorrelationHeatmap(Metric):
         fig = self._plot_heatmap(correlations, independent_vars, num_lags)
 
         figures = []
-        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        figures.append(
+            Figure(
+                key=self.key,
+                figure=fig,
+                metadata={
+                    "metric": self.name,
+                },
+            )
+        )
         plt.close("all")
 
         return self.cache_results(
@@ -781,7 +813,13 @@ class SeasonalDecompose(Metric):
                     plt.close("all")
 
                     figures.append(
-                        Figure(key=f"{self.key}:{col}", figure=fig, metadata={})
+                        Figure(
+                            key=f"{self.key}:{col}",
+                            figure=fig,
+                            metadata={
+                                "metric": self.name,
+                            },
+                        )
                     )
                 else:
                     warnings.warn(
@@ -957,7 +995,15 @@ class ACFandPACFPlot(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            )
 
         return self.cache_results(figures=figures)
 
@@ -1144,7 +1190,15 @@ class RollingStatsPlot(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            )
 
         return self.cache_results(figures=figures)
 
@@ -1276,7 +1330,13 @@ class SpreadPlot(Metric):
                 plt.close("all")
 
                 figures.append(
-                    Figure(key=f"{self.key}:{var1}_{var2}", figure=fig, metadata={})
+                    Figure(
+                        key=f"{self.key}:{var1}_{var2}",
+                        figure=fig,
+                        metadata={
+                            "metric": self.name,
+                        },
+                    )
                 )
 
         return self.cache_results(figures=figures)

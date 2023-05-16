@@ -385,9 +385,9 @@ class OverfitDiagnosis(ThresholdTest):
                     key=f"{self.name}:accuracy:{feature_column}",
                     figure=fig,
                     metadata={
+                        "metric": self.name,
+                        "plot_metric": "accuracy",
                         "cut_off_percentage": cut_off_percentage,
-                        "key": self.name,
-                        "metric": "accuracy",
                         "feature": feature_column,
                     },
                 )
@@ -663,9 +663,9 @@ class WeakspotsDiagnosis(ThresholdTest):
                         key=f"{self.name}:{metric}:{feature}",
                         figure=fig,
                         metadata={
+                            "metric": self.name,
+                            "plot_metric": metric,
                             "threshold": thresholds[metric],
-                            "key": self.name,
-                            "metric": metric,
                             "feature": feature,
                         },
                     )
@@ -929,8 +929,8 @@ class RobustnessDiagnosis(ThresholdTest):
                 key=f"{self.name}:accuracy",
                 figure=fig,
                 metadata={
-                    "key": self.name,
-                    "metric": "accuracy",
+                    "metric": self.name,
+                    "plot_metric": "accuracy",
                     "features_list": features_list,
                 },
             )

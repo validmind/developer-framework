@@ -149,7 +149,9 @@ class ConfusionMatrix(Metric):
                 Figure(
                     key="confusion_matrix",
                     figure=plot.figure_,
-                    metadata={},
+                    metadata={
+                        "metric": self.name,
+                    },
                 )
             ],
         )
@@ -205,7 +207,9 @@ class PermutationFeatureImportance(Metric):
                 Figure(
                     key="pfi",
                     figure=fig,
-                    metadata={},
+                    metadata={
+                        "metric": self.name,
+                    },
                 ),
             ],
         )
@@ -237,7 +241,15 @@ class PrecisionRecallCurve(Metric):
                 "recall": recall,
                 "thresholds": pr_thresholds,
             },
-            figures=[Figure(key="pr_curve", figure=plot.figure_, metadata={})],
+            figures=[
+                Figure(
+                    key="pr_curve",
+                    figure=plot.figure_,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            ],
         )
 
 
@@ -394,7 +406,15 @@ class ROCCurve(Metric):
                 "tpr": tpr,
                 "thresholds": roc_thresholds,
             },
-            figures=[Figure(key="roc_auc_curve", figure=plot.figure_, metadata={})],
+            figures=[
+                Figure(
+                    key="roc_auc_curve",
+                    figure=plot.figure_,
+                    metadata={
+                        "metric": self.name,
+                    },
+                )
+            ],
         )
 
 
@@ -430,7 +450,11 @@ class SHAPGlobalImportance(Metric):
         # avoid displaying on notebooks and clears the canvas for the next plot
         plt.close()
 
-        return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
+        return Figure(
+            figure=figure,
+            key=f"shap:{type_}",
+            metadata={"metric": self.name, "type": type_},
+        )
 
     def run(self):
         model_library = Model.model_library(self.model.model)
