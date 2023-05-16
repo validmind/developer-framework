@@ -147,11 +147,9 @@ class ConfusionMatrix(Metric):
             },
             figures=[
                 Figure(
+                    for_object=self,
                     key="confusion_matrix",
                     figure=plot.figure_,
-                    metadata={
-                        "metric": self.name,
-                    },
                 )
             ],
         )
@@ -223,11 +221,9 @@ class PermutationFeatureImportance(Metric):
             metric_value=pfi,
             figures=[
                 Figure(
+                    for_object=self,
                     key="pfi",
                     figure=fig,
-                    metadata={
-                        "metric": self.name,
-                    },
                 ),
             ],
         )
@@ -261,11 +257,9 @@ class PrecisionRecallCurve(Metric):
             },
             figures=[
                 Figure(
+                    for_object=self,
                     key="pr_curve",
                     figure=plot.figure_,
-                    metadata={
-                        "metric": self.name,
-                    },
                 )
             ],
         )
@@ -426,11 +420,9 @@ class ROCCurve(Metric):
             },
             figures=[
                 Figure(
+                    for_object=self,
                     key="roc_auc_curve",
                     figure=plot.figure_,
-                    metadata={
-                        "metric": self.name,
-                    },
                 )
             ],
         )
@@ -486,9 +478,10 @@ class SHAPGlobalImportance(Metric):
         plt.close()
 
         return Figure(
+            for_object=self,
             figure=figure,
             key=f"shap:{type_}",
-            metadata={"metric": self.name, "type": type_},
+            metadata={"type": type_},
         )
 
     def run(self):

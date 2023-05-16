@@ -3,6 +3,8 @@ Time Series Test Plans from statsmodels
 """
 
 from ..vm_models import TestPlan
+from ..data_validation.metrics import DatasetSplit
+from ..model_validation.model_metadata import ModelMetadata
 from ..model_validation.statsmodels.metrics import (
     RegressionModelSummary,
     RegressionModelOutsampleComparison,
@@ -17,7 +19,7 @@ class RegressionModelPerformance(TestPlan):
 
     name = "regression_model_performance"
     required_context = ["model"]
-    tests = [RegressionModelSummary]
+    tests = [DatasetSplit, ModelMetadata, RegressionModelSummary]
 
 
 class RegressionModelsComparison(TestPlan):

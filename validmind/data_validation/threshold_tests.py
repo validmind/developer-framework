@@ -624,11 +624,9 @@ class TimeSeriesOutliers(ThresholdTest):
         )
         test_figures.append(
             Figure(
+                for_object=self,
                 key=self.name,
                 figure=fig,
-                metadata={
-                    "test": self.name,
-                },
             )
         )
 
@@ -751,16 +749,18 @@ class TimeSeriesMissingValues(ThresholdTest):
         if fig_barplot is not None:
             test_figures.append(
                 Figure(
+                    for_object=self,
                     key=f"{self.name}:barplot",
                     figure=fig_barplot,
-                    metadata={"test": self.name, "type": "barplot"},
+                    metadata={"type": "barplot"},
                 )
             )
             test_figures.append(
                 Figure(
+                    for_object=self,
                     key=f"{self.name}:heatmap",
                     figure=fig_heatmap,
-                    metadata={"test": self.name, "type": "heatmap"},
+                    metadata={"type": "heatmap"},
                 )
             )
 
@@ -886,9 +886,10 @@ class TimeSeriesFrequency(ThresholdTest):
         test_figures = []
         test_figures.append(
             Figure(
+                for_object=self,
                 key=f"{self.name}:frequencyplot",
                 figure=fig_frequency,
-                metadata={"test": self.name, "type": "frequencyplot"},
+                metadata={"type": "frequencyplot"},
             )
         )
         return self.cache_results(

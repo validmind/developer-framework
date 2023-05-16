@@ -104,11 +104,9 @@ class ResidualsVisualInspection(Metric):
 
             figures.append(
                 Figure(
+                    for_object=self,
                     key=self.key,
                     figure=fig,
-                    metadata={
-                        "metric": self.name,
-                    },
                 )
             )
         return self.cache_results(figures=figures)
@@ -899,9 +897,10 @@ class RegressionModelForecastPlot(Metric):
 
             figures.append(
                 Figure(
+                    for_object=self,
                     key=f"{self.key}:{i}",
                     figure=fig,
-                    metadata={"metric": self.key, "model": str(feature_columns)},
+                    metadata={"model": str(feature_columns)},
                 )
             )
 

@@ -65,11 +65,30 @@ def get_xgboost_version():
     return "n/a"
 
 
+def get_model_info_from_statsmodels_summary(model):
+    """
+    Attempts to extract all model info from a statsmodels summary object
+    """
+    # summary2 is a pandas DataFrame
+    summary = model.summary2()
+    model_info = summary.tables[0]
+    architecture = model_info[1][0]
+
+    return {
+        "architecture": architecture,
+        "task": "regression",
+        "subtask": "regression",
+        "framework": "statsmodels",
+        "framework_version": get_statsmodels_version(),
+    }
+
+
 def get_info_from_model_instance(model):
     """
     Attempts to extract all model info from a model object instance
     """
     model_class = Model.model_class(model)
+    model_library = Model.model_library(model)
 
     # TODO: refactor
     if model_class == "XGBClassifier":
@@ -126,8 +145,12 @@ def get_info_from_model_instance(model):
         subtask = "binary"
         framework = "CatBoost"
         framework_version = get_catboost_version()
+    elif model_class == "RegressionResultsWrapper":
+        return get_model_info_from_statsmodels_summary(model)
     else:
-        raise ValueError(f"Model class {model_class} is not supported by this test")
+        raise ValueError(
+            f"Model type {model_library}.{model_class} is not supported by this test"
+        )
 
     return {
         "architecture": architecture,
