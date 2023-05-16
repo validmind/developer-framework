@@ -836,7 +836,7 @@ class RegressionModelForecastPlot(Metric):
         # Initialize a list to store figures
         figures = []
 
-        for fitted_model in model_list:
+        for i, fitted_model in enumerate(model_list):
             feature_columns = fitted_model.train_ds.get_features_columns()
             train_ds = fitted_model.train_ds
             test_ds = fitted_model.test_ds
@@ -884,7 +884,17 @@ class RegressionModelForecastPlot(Metric):
             plt.xlim(start_date, end_date)
 
             plt.legend()
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            # TODO: define a proper key for each plot
+            print(f"Plotting forecast vs observed for model {fitted_model.model}")
+
             plt.close("all")
+
+            figures.append(
+                Figure(
+                    key=f"{self.key}:{i}",
+                    figure=fig,
+                    metadata={"metric": self.key, "model": str(feature_columns)},
+                )
+            )
 
         return figures

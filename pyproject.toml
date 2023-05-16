@@ -42,6 +42,7 @@ tqdm = "^4.64.0"
 xgboost = "^1.5.2"
 markdown = "^3.4.3"
 catboost = "^1.2"
+pdoc = "^13.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
