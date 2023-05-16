@@ -622,7 +622,15 @@ class TimeSeriesOutliers(ThresholdTest):
                 values=outliers_table.to_dict(orient="list"),
             )
         )
-        test_figures.append(Figure(key=self.name, figure=fig, metadata={}))
+        test_figures.append(
+            Figure(
+                key=self.name,
+                figure=fig,
+                metadata={
+                    "test": self.name,
+                },
+            )
+        )
 
         return self.cache_results(test_results, passed=passed, figures=test_figures)
 
@@ -742,10 +750,18 @@ class TimeSeriesMissingValues(ThresholdTest):
         test_figures = []
         if fig_barplot is not None:
             test_figures.append(
-                Figure(key=f"{self.name}:barplot", figure=fig_barplot, metadata={})
+                Figure(
+                    key=f"{self.name}:barplot",
+                    figure=fig_barplot,
+                    metadata={"test": self.name, "type": "barplot"},
+                )
             )
             test_figures.append(
-                Figure(key=f"{self.name}:heatmap", figure=fig_heatmap, metadata={})
+                Figure(
+                    key=f"{self.name}:heatmap",
+                    figure=fig_heatmap,
+                    metadata={"test": self.name, "type": "heatmap"},
+                )
             )
 
         return self.cache_results(
@@ -866,10 +882,14 @@ class TimeSeriesFrequency(ThresholdTest):
                 values=freq_df.to_dict(orient="list"),
             )
         ]
-        fig_frequency = self._frequncy_plot(self.df)
+        fig_frequency = self._frequency_plot(self.df)
         test_figures = []
         test_figures.append(
-            Figure(key=f"{self.name}:frequecyplot", figure=fig_frequency, metadata={})
+            Figure(
+                key=f"{self.name}:frequencyplot",
+                figure=fig_frequency,
+                metadata={"test": self.name, "type": "frequencyplot"},
+            )
         )
         return self.cache_results(
             test_results,
@@ -914,7 +934,7 @@ class TimeSeriesFrequency(ThresholdTest):
 
         return freq_df
 
-    def _frequncy_plot(self, df):
+    def _frequency_plot(self, df):
         """
         Creates a frequency plot of time differences between consecutive entries in a DataFrame index.
 
