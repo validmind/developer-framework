@@ -83,14 +83,16 @@ def get_model_info_from_statsmodels_summary(model):
     }
 
 
-def get_info_from_model_instance(model):
+# TODO: refactor
+def get_info_from_model_instance(  # noqa C901 'get_info_from_model_instance' is too complex
+    model,
+):
     """
     Attempts to extract all model info from a model object instance
     """
     model_class = Model.model_class(model)
     model_library = Model.model_library(model)
 
-    # TODO: refactor
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
