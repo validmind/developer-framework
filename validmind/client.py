@@ -91,9 +91,7 @@ def init_model(
 
     if not Model.is_supported_model(model):
         raise ValueError(
-            "Model type {} is not supported at the moment.".format(
-                Model.model_class(model)
-            )
+            f"Model type {Model.model_library(model)}.{Model.model_class(model)} is not supported at the moment."
         )
 
     return Model.init_vm_model(

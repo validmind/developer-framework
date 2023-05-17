@@ -18,6 +18,13 @@ SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
 }
 
 
+def get_catboost_version():
+    if "catboost" in sys.modules:
+        return sys.modules["catboost"].__version__
+
+    return "n/a"
+
+
 def get_pytorch_version():
     if "torch" in sys.modules:
         return sys.modules["torch"].__version__
@@ -58,13 +65,34 @@ def get_xgboost_version():
     return "n/a"
 
 
-def get_info_from_model_instance(model):
+def get_model_info_from_statsmodels_summary(model):
+    """
+    Attempts to extract all model info from a statsmodels summary object
+    """
+    # summary2 is a pandas DataFrame
+    summary = model.summary2()
+    model_info = summary.tables[0]
+    architecture = model_info[1][0]
+
+    return {
+        "architecture": architecture,
+        "task": "regression",
+        "subtask": "regression",
+        "framework": "statsmodels",
+        "framework_version": get_statsmodels_version(),
+    }
+
+
+# TODO: refactor
+def get_info_from_model_instance(  # noqa C901 'get_info_from_model_instance' is too complex
+    model,
+):
     """
     Attempts to extract all model info from a model object instance
     """
     model_class = Model.model_class(model)
+    model_library = Model.model_library(model)
 
-    # TODO: refactor
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
@@ -113,8 +141,18 @@ def get_info_from_model_instance(model):
         subtask = "binary"
         framework = "PyTorch"
         framework_version = get_pytorch_version()
+    elif model_class == "CatBoostClassifier":
+        architecture = "Gradient Boosting"
+        task = "classification"
+        subtask = "binary"
+        framework = "CatBoost"
+        framework_version = get_catboost_version()
+    elif model_class == "RegressionResultsWrapper":
+        return get_model_info_from_statsmodels_summary(model)
     else:
-        raise ValueError(f"Model class {model_class} is not supported by this test")
+        raise ValueError(
+            f"Model type {model_library}.{model_class} is not supported by this test"
+        )
 
     return {
         "architecture": architecture,
@@ -162,6 +200,8 @@ def get_params_from_model_instance(model):
         params = model.get_params()
     elif model_library == "pytorch":
         params = {}
+    elif model_library == "catboost":
+        params = model.get_all_params()
     else:
         raise ValueError(f"Model library {model_library} is not supported by this test")
 
@@ -203,11 +243,10 @@ class ModelMetadata(Metric):
 
     def description(self):
         return """
-        The model metadata test collects attributes about the model such as
-        the model architecture, training parameters, and task type. This helps
-        understand the model's capabilities and limitations in the context of
-        a modeling framework.
-        """.strip()
+        This section describes attributes of the selected model such as its modeling
+        technique, training parameters, and task type. This helps understand the model's
+        capabilities and limitations in the context of a modeling framework.
+        """
 
     def run(self):
         """

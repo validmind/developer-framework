@@ -159,7 +159,7 @@ class TestSuite(TestPlan):
         title = widgets.HTML(value=self._results_title())
         ui_host = get_api_host().replace("/api/v1/tracking", "").replace("api", "app")
         results_link = widgets.HTML(
-            value=f'<h3>Click <a href="{ui_host}/projects/{get_api_project()}/project-overview" target="_blank">here</a> to view the updated model documentation for this project.</h3>'
+            value=f'<h3>Check out the updated documentation in your <a href="{ui_host}/projects/{get_api_project()}/project-overview" target="_blank">ValidMind project</a>.</h3>'
         )
 
         accordion_contents = self._results_summary()

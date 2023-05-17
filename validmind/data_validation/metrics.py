@@ -3,7 +3,6 @@ Metrics functions for any Pandas-compatible datasets
 """
 
 from dataclasses import dataclass
-from typing import ClassVar
 import warnings
 
 import pandas as pd
@@ -27,50 +26,7 @@ from ..vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestContext,
-    TestContextUtils,
-    TestPlanDatasetResult,
 )
-
-
-@dataclass
-class DatasetMetadata(TestContextUtils):
-    """
-    Custom class to collect a set of descriptive statistics for a dataset.
-    This class will log dataset metadata via `log_dataset` instead of a metric.
-    Dataset metadata is necessary to initialize dataset object that can be related
-    to different metrics and test results
-    """
-
-    # Test Context
-    test_context: TestContext
-
-    # Class Variables
-    test_type: ClassVar[str] = "DatasetMetadata"
-    default_params: ClassVar[dict] = {}
-
-    # Instance Variables
-    name = "dataset_metadata"
-    params: dict = None
-    result: TestPlanDatasetResult = None
-
-    def __post_init__(self):
-        """
-        Set default params if not provided
-        """
-        if self.params is None:
-            self.params = self.default_params
-
-    def run(self):
-        """
-        Just set the dataset to the result attribute of the test plan result
-        and it will be logged via the `log_dataset` function
-        """
-        self.result = TestPlanDatasetResult(
-            result_id="dataset_metadata", dataset=self.dataset
-        )
-
-        return self.result
 
 
 @dataclass
@@ -125,6 +81,12 @@ class DescriptiveStatistics(Metric):
 
     name = "descriptive_statistics"
     required_context = ["dataset"]
+
+    def description(self):
+        return """
+        This section provides descriptive statistics for numerical
+        and categorical variables found in the dataset.
+        """
 
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
@@ -315,7 +277,13 @@ class TimeSeriesLinePlot(Metric):
             ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
             plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
 
         plt.close("all")
 
@@ -355,7 +323,13 @@ class TimeSeriesHistogram(Metric):
             plt.xlabel(col)
             plt.ylabel("Frequency")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
 
         plt.close("all")
 
@@ -390,7 +364,13 @@ class ScatterPlot(Metric):
         fig = plt.gcf()
 
         figures = []
-        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        figures.append(
+            Figure(
+                for_object=self,
+                key=self.key,
+                figure=fig,
+            )
+        )
 
         plt.close("all")
 
@@ -465,7 +445,13 @@ class LaggedCorrelationHeatmap(Metric):
         fig = self._plot_heatmap(correlations, independent_vars, num_lags)
 
         figures = []
-        figures.append(Figure(key=self.key, figure=fig, metadata={}))
+        figures.append(
+            Figure(
+                for_object=self,
+                key=self.key,
+                figure=fig,
+            )
+        )
         plt.close("all")
 
         return self.cache_results(
@@ -781,7 +767,11 @@ class SeasonalDecompose(Metric):
                     plt.close("all")
 
                     figures.append(
-                        Figure(key=f"{self.key}:{col}", figure=fig, metadata={})
+                        Figure(
+                            for_object=self,
+                            key=f"{self.key}:{col}",
+                            figure=fig,
+                        )
                     )
                 else:
                     warnings.warn(
@@ -957,7 +947,13 @@ class ACFandPACFPlot(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
 
         return self.cache_results(figures=figures)
 
@@ -1144,7 +1140,13 @@ class RollingStatsPlot(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=f"{self.key}:{col}", figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
 
         return self.cache_results(figures=figures)
 
@@ -1276,7 +1278,11 @@ class SpreadPlot(Metric):
                 plt.close("all")
 
                 figures.append(
-                    Figure(key=f"{self.key}:{var1}_{var2}", figure=fig, metadata={})
+                    Figure(
+                        for_object=self,
+                        key=f"{self.key}:{var1}_{var2}",
+                        figure=fig,
+                    )
                 )
 
         return self.cache_results(figures=figures)

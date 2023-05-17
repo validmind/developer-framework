@@ -19,14 +19,12 @@ import pandas as pd
 
 from ..api_client import (
     get_metadata,
-    log_dataset,
     log_figure,
     log_metadata,
     log_metrics,
     log_model,
     log_test_result,
 )
-from .dataset import Dataset
 from .figure import Figure
 from .metric_result import MetricResult
 from .model import Model

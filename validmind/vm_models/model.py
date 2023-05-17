@@ -9,6 +9,7 @@ from .dataset import Dataset
 # import torch.nn as nn
 
 SUPPORTED_MODEL_TYPES = [
+    "catboost.CatBoostClassifier",
     "pytorch.PyTorchModel",
     "sklearn.LogisticRegression",
     "sklearn.LinearRegression",
