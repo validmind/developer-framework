@@ -7,30 +7,28 @@ from ..data_validation.metrics import DatasetSplit
 from ..model_validation.model_metadata import ModelMetadata
 from ..model_validation.statsmodels.metrics import (
     RegressionModelsCoeffs,
-    RegressionModelOutsampleComparison,
-    RegressionModelInsampleComparison,
+    RegressionModelsPerformance,
 )
 
 
-class RegressionModelPerformance(TestPlan):
+class RegressionModelDescription(TestPlan):
     """
     Test plan for performance metric of regression model of statsmodels library
     """
 
-    name = "regression_model_performance"
+    name = "regression_model_description"
     required_context = ["model"]
     tests = [DatasetSplit, ModelMetadata]
 
 
-class RegressionModelsComparison(TestPlan):
+class RegressionModelsEvaluation(TestPlan):
     """
     Test plan for metrics comparison of regression model of statsmodels library
     """
 
-    name = "regression_models_comparison"
+    name = "regression_models_evaluation"
     required_context = ["models", "model"]
     tests = [
         RegressionModelsCoeffs,
-        RegressionModelInsampleComparison,
-        RegressionModelOutsampleComparison,
+        RegressionModelsPerformance,
     ]
