@@ -59,13 +59,6 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 
-# TODO: need to fix this import * situation
-from .datasets import *  # noqa
-from .data_validation import *  # noqa
-from .model_validation import *  # noqa
-from .test_plans import *  # noqa
-from .test_suites import *  # noqa
-
 __all__ = [  # noqa
     # Framework High Level API
     "datasets",
