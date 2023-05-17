@@ -365,7 +365,7 @@ class OverfitDiagnosis(ThresholdTest):
                     df_region,
                     target_column,
                     prediction_column,
-                    feature_column
+                    feature_column,
                 )
                 df_test_region = test_df[
                     (test_df[feature_column] > region.left)
@@ -377,7 +377,7 @@ class OverfitDiagnosis(ThresholdTest):
                     df_test_region,
                     target_column,
                     prediction_column,
-                    feature_column
+                    feature_column,
                 )
 
             results = self._prepare_results(results_train, results_test)
@@ -413,21 +413,18 @@ class OverfitDiagnosis(ThresholdTest):
         return self.cache_results(
             test_results,
             passed=all([r.passed for r in test_results]),
-            figures=test_figures
+            figures=test_figures,
         )
 
     def summary(self, results: List[TestResult], all_passed: bool):
         results_table = [
-            record
-            for result in results for record in result.values["records"]
+            record for result in results for record in result.values["records"]
         ]
         return ResultSummary(
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(
-                        title="Overfit Regions Data"
-                    ),
+                    metadata=ResultTableMetadata(title="Overfit Regions Data"),
                 )
             ]
         )
@@ -663,7 +660,7 @@ class WeakspotsDiagnosis(ThresholdTest):
                     df_region,
                     target_column,
                     prediction_column,
-                    feature
+                    feature,
                 )
                 df_test_region = test_df[
                     (test_df[feature] > region.left)
@@ -675,7 +672,7 @@ class WeakspotsDiagnosis(ThresholdTest):
                     df_test_region,
                     target_column,
                     prediction_column,
-                    feature
+                    feature,
                 )
 
             # Make one plot per metric
@@ -711,7 +708,7 @@ class WeakspotsDiagnosis(ThresholdTest):
                     test_name="accuracy",
                     column=feature,
                     passed=passed,
-                    values={"records": df.to_dict("records")}
+                    values={"records": df.to_dict("records")},
                 )
             )
         return self.cache_results(
@@ -722,16 +719,13 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     def summary(self, results: List[TestResult], all_passed: bool):
         results_table = [
-            record
-            for result in results for record in result.values["records"]
+            record for result in results for record in result.values["records"]
         ]
         return ResultSummary(
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(
-                        title="Weakspots Test"
-                    ),
+                    metadata=ResultTableMetadata(title="Weakspots Test"),
                 )
             ]
         )
@@ -1008,16 +1002,13 @@ class RobustnessDiagnosis(ThresholdTest):
 
     def summary(self, results: List[TestResult], all_passed: bool):
         results_table = [
-            record
-            for result in results for record in result.values["records"]
+            record for result in results for record in result.values["records"]
         ]
         return ResultSummary(
             results=[
                 ResultTable(
                     data=results_table,
-                    metadata=ResultTableMetadata(
-                        title="Robustness test"
-                    ),
+                    metadata=ResultTableMetadata(title="Robustness test"),
                 )
             ]
         )

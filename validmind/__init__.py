@@ -42,8 +42,6 @@ from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWa
 warnings.simplefilter("ignore", category=NumbaDeprecationWarning)
 warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
-import validmind.vm_models as vm_models
-
 from .api_client import (  # noqa: E402
     init,
     log_metrics,
