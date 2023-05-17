@@ -36,12 +36,8 @@ def _get_all_test_suites():
 
 
 def _format_dataframe(df):
-    df = df.style.set_properties(**{'text-align': 'left'}).hide(axis="index")
-    df = df.set_table_styles(
-        [
-            dict(selector='th', props=[('text-align', 'left')])
-        ]
-    )
+    df = df.style.set_properties(**{"text-align": "left"}).hide(axis="index")
+    df = df.set_table_styles([dict(selector="th", props=[("text-align", "left")])])
     return df
 
 
@@ -116,20 +112,24 @@ def describe_test_suites_plans_tests():
     # Test suites
     for _, test_suite in test_suites.data.iterrows():
         # Test plans
-        for p in test_suite['Test Plans'].split(","):
+        for p in test_suite["Test Plans"].split(","):
             plan = test_plans.describe_plan(p.strip()).data
             # List of tests from test plan
             for t in plan["Tests"]:
                 tests = t.split(",")
                 # Iterate tests
                 for test in tests:
-                    test = list(filter(None, test.split(' ')))
-                    test_dict = test_plans.describe_test(test[0]).data.reset_index(drop=True).to_dict("records")[0]
+                    test = list(filter(None, test.split(" ")))
+                    test_dict = (
+                        test_plans.describe_test(test[0])
+                        .data.reset_index(drop=True)
+                        .to_dict("records")[0]
+                    )
                     table.append(
                         {
-                            "Test suite": test_suite['ID'],
-                            "Test plan": p,
-                            "Test Type": test_dict['Test Type'],
+                            "Test Suite": test_suite["ID"],
+                            "Test Plan": p,
+                            "Test Type": test_dict["Test Type"],
                             "Test ID": test_dict["ID"],
                             "Test Name": test_dict["Name"],
                             "Test Description": test_dict["Description"],
