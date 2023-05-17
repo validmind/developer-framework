@@ -46,7 +46,7 @@ poetry install --extras r-support
 Make sure you bump the package version before merging a PR with the following command:
 
 ```bash
-make version tag=prepatch
+make version tag=patch
 ```
 
 The value of `tag` corresponds to one of the options provided by Poetry: <https://python-poetry.org/docs/cli/#version>
