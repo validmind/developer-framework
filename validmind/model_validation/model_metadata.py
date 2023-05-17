@@ -18,35 +18,35 @@ SUPPORTED_STATSMODELS_LINK_FUNCTIONS = {
 }
 
 
-def get_catboost_version():
+def _get_catboost_version():
     if "catboost" in sys.modules:
         return sys.modules["catboost"].__version__
 
     return "n/a"
 
 
-def get_pytorch_version():
+def _get_pytorch_version():
     if "torch" in sys.modules:
         return sys.modules["torch"].__version__
 
     return "n/a"
 
 
-def get_sklearn_version():
+def _get_sklearn_version():
     if "sklearn" in sys.modules:
         return sys.modules["sklearn"].__version__
 
     return "n/a"
 
 
-def get_statsmodels_version():
+def _get_statsmodels_version():
     if "statsmodels" in sys.modules:
         return sys.modules["statsmodels"].__version__
 
     return "n/a"
 
 
-def get_xgboost_objective(model):
+def _get_xgboost_objective(model):
     """
     Attempts to extract the model subtask (binary, multi-class, etc.)
     from the model's objective. Only binary classification is supported
@@ -58,14 +58,14 @@ def get_xgboost_objective(model):
     return "n/a"
 
 
-def get_xgboost_version():
+def _get_xgboost_version():
     if "xgboost" in sys.modules:
         return sys.modules["xgboost"].__version__
 
     return "n/a"
 
 
-def get_model_info_from_statsmodels_summary(model):
+def _get_model_info_from_statsmodels_summary(model):
     """
     Attempts to extract all model info from a statsmodels summary object
     """
@@ -79,12 +79,12 @@ def get_model_info_from_statsmodels_summary(model):
         "task": "regression",
         "subtask": "regression",
         "framework": "statsmodels",
-        "framework_version": get_statsmodels_version(),
+        "framework_version": _get_statsmodels_version(),
     }
 
 
 # TODO: refactor
-def get_info_from_model_instance(  # noqa C901 'get_info_from_model_instance' is too complex
+def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' is too complex
     model,
 ):
     """
@@ -96,59 +96,59 @@ def get_info_from_model_instance(  # noqa C901 'get_info_from_model_instance' is
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
-        subtask = get_xgboost_objective(model)
+        subtask = _get_xgboost_objective(model)
         framework = "XGBoost"
-        framework_version = get_xgboost_version()
+        framework_version = _get_xgboost_version()
     elif model_class == "XGBRegressor":
         architecture = "Extreme Gradient Boosting"
         task = "regression"
         subtask = "regression"
         framework = "XGBoost"
-        framework_version = get_xgboost_version()
+        framework_version = _get_xgboost_version()
     elif model_class == "LogisticRegression":
         architecture = "Logistic Regression"
         task = "classification"
         subtask = "binary"
         framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
+        framework_version = _get_sklearn_version()
     elif model_class == "LinearRegression":
         architecture = "Ordinary least squares Linear Regression"
         task = "regression"
         subtask = "regression"
         framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
+        framework_version = _get_sklearn_version()
     elif model_class == "GLMResultsWrapper":
         architecture = "Generalized Linear Model (GLM)"
         task = "regression"
         subtask = "regression"
         framework = "statsmodels"
-        framework_version = get_statsmodels_version()
+        framework_version = _get_statsmodels_version()
     elif model_class == "RandomForestClassifier":
         architecture = "Random Forest"
         task = "classification"
         subtask = "binary"
         framework = "Scikit-learn"
-        framework_version = get_sklearn_version()
+        framework_version = _get_sklearn_version()
     elif model_class == "BinaryResultsWrapper":
         architecture = "Logistic Regression"
         task = "classification"
         subtask = "binary"
         framework = "statsmodels"
-        framework_version = get_statsmodels_version()
+        framework_version = _get_statsmodels_version()
     elif model_class == "PyTorchModel":
         architecture = "Neural Network"
         task = "classification"
         subtask = "binary"
         framework = "PyTorch"
-        framework_version = get_pytorch_version()
+        framework_version = _get_pytorch_version()
     elif model_class == "CatBoostClassifier":
         architecture = "Gradient Boosting"
         task = "classification"
         subtask = "binary"
         framework = "CatBoost"
-        framework_version = get_catboost_version()
+        framework_version = _get_catboost_version()
     elif model_class == "RegressionResultsWrapper":
-        return get_model_info_from_statsmodels_summary(model)
+        return _get_model_info_from_statsmodels_summary(model)
     else:
         raise ValueError(
             f"Model type {model_library}.{model_class} is not supported by this test"
@@ -163,27 +163,27 @@ def get_info_from_model_instance(  # noqa C901 'get_info_from_model_instance' is
     }
 
 
-def get_statsmodels_model_params(model):
-    """
-    Extracts the fit() method's parametesr from a
-    statsmodels model object instance
+# def _get_statsmodels_model_params(model):
+#     """
+#     Extracts the fit() method's parametesr from a
+#     statsmodels model object instance
 
-    # TODO: generalizer to any statsmodels model
-    """
-    model_instance = model.model
-    family_class = model_instance.family.__class__.__name__
-    link_class = model_instance.family.link.__class__.__name__
+#     TODO: generalize to any statsmodels model
+#     """
+#     model_instance = model.model
+#     family_class = model_instance.family.__class__.__name__
+#     link_class = model_instance.family.link.__class__.__name__
 
-    return {
-        "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
-        "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
-        "formula": model_instance.formula,
-        "method": model.method,
-        "cov_type": model.cov_type,
-    }
+#     return {
+#         "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
+#         "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
+#         "formula": model_instance.formula,
+#         "method": model.method,
+#         "cov_type": model.cov_type,
+#     }
 
 
-def get_params_from_model_instance(model):
+def _get_params_from_model_instance(model):
     """
     Attempts to extract model hyperparameters from a model object instance
     """
@@ -194,7 +194,7 @@ def get_params_from_model_instance(model):
     if model_library == "xgboost":
         params = model.get_xgb_params()
     elif model_library == "statsmodels":
-        # params = get_statsmodels_model_params(model)
+        # params = _get_statsmodels_model_params(model)
         params = {}
     elif model_library == "sklearn":
         params = model.get_params()
@@ -253,8 +253,8 @@ class ModelMetadata(Metric):
         Extracts model metadata from a model object instance
         """
         trained_model = self.model.model
-        model_info = get_info_from_model_instance(trained_model)
+        model_info = _get_info_from_model_instance(trained_model)
         model_info["language"] = f"Python {python_version()}"
-        model_info["params"] = get_params_from_model_instance(trained_model)
+        model_info["params"] = _get_params_from_model_instance(trained_model)
 
         return self.cache_results(model_info)
