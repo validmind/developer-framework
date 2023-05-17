@@ -13,7 +13,7 @@ description = "ValidMind Developer Framework"
 #   "validmind/**/*.so",
 # ]
 name = "validmind"
-version = "1.11.7"
+version = "1.12.0"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
@@ -42,6 +42,7 @@ tqdm = "^4.64.0"
 xgboost = "^1.5.2"
 markdown = "^3.4.3"
 catboost = "^1.2"
+pdoc = "^13.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

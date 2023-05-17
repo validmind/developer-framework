@@ -11,7 +11,6 @@ from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
 from .test_plan_result import (
-    TestPlanDatasetResult,
     TestPlanMetricResult,
     TestPlanModelResult,
     TestPlanTestResult,
@@ -35,7 +34,6 @@ __all__ = [
     "TestContext",
     "TestContextUtils",
     "TestPlan",
-    "TestPlanDatasetResult",
     "TestPlanMetricResult",
     "TestPlanModelResult",
     "TestPlanTestResult",

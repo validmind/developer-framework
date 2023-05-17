@@ -147,9 +147,9 @@ class ConfusionMatrix(Metric):
             },
             figures=[
                 Figure(
+                    for_object=self,
                     key="confusion_matrix",
                     figure=plot.figure_,
-                    metadata={},
                 )
             ],
         )
@@ -163,6 +163,24 @@ class PermutationFeatureImportance(Metric):
 
     name = "pfi"
     required_context = ["model"]
+
+    def description(self):
+        return """
+        The Feature Importance plot below calculates a score representing the
+        importance of each feature in the model. A higher score indicates
+        that the specific input feature will have a larger effect on the
+        predictive power of the model.
+
+        The importance score is calculated using Permutation Feature
+        Importance. Permutation feature importance measures the decrease of
+        model performance after the feature''s values have been permuted, which
+        breaks the relationship between the feature and the true outcome. A
+        feature is "important" if shuffling its values increases the model
+        error, because in this case the model relied on the feature for the
+        prediction. A feature is "unimportant" if shuffling its values leaves
+        the model error unchanged, because in this case the model ignored the
+        feature for the prediction.
+        """
 
     def run(self):
         x = self.model.train_ds.x
@@ -203,9 +221,9 @@ class PermutationFeatureImportance(Metric):
             metric_value=pfi,
             figures=[
                 Figure(
+                    for_object=self,
                     key="pfi",
                     figure=fig,
-                    metadata={},
                 ),
             ],
         )
@@ -237,7 +255,13 @@ class PrecisionRecallCurve(Metric):
                 "recall": recall,
                 "thresholds": pr_thresholds,
             },
-            figures=[Figure(key="pr_curve", figure=plot.figure_, metadata={})],
+            figures=[
+                Figure(
+                    for_object=self,
+                    key="pr_curve",
+                    figure=plot.figure_,
+                )
+            ],
         )
 
 
@@ -394,7 +418,13 @@ class ROCCurve(Metric):
                 "tpr": tpr,
                 "thresholds": roc_thresholds,
             },
-            figures=[Figure(key="roc_auc_curve", figure=plot.figure_, metadata={})],
+            figures=[
+                Figure(
+                    for_object=self,
+                    key="roc_auc_curve",
+                    figure=plot.figure_,
+                )
+            ],
         )
 
 
@@ -406,6 +436,23 @@ class SHAPGlobalImportance(Metric):
 
     required_context = ["model"]
     name = "shap"
+
+    def description(self):
+        return """
+        The Mean Importance plot below shows the significance of each feature
+        based on its absolute Shapley values. As we are measuring global importance,
+        the process involves computing the average of these absolute Shapley values
+        for each feature throughout the data.
+
+        The Summary Plot displayed further combines the importance of each feature
+        with their respective effects. Every dot in this plot represents a Shapley value
+        for a certain feature in a particular instance. The y-axis positioning is
+        determined by the feature, while the x-axis positioning is decided by the
+        Shapley value. The color gradation represents the feature's value, transitioning
+        from low to high. Points that overlap are scattered slightly in the y-axis
+        direction, giving us an idea of the Shapley values distribution for each feature.
+        The features are then arranged based on their importance levels.
+        """
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
         """
@@ -430,7 +477,12 @@ class SHAPGlobalImportance(Metric):
         # avoid displaying on notebooks and clears the canvas for the next plot
         plt.close()
 
-        return Figure(figure=figure, key=f"shap:{type_}", metadata={"type": type_})
+        return Figure(
+            for_object=self,
+            figure=figure,
+            key=f"shap:{type_}",
+            metadata={"type": type_},
+        )
 
     def run(self):
         model_library = Model.model_library(self.model.model)

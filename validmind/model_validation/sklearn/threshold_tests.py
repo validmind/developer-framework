@@ -388,12 +388,12 @@ class OverfitDiagnosis(ThresholdTest):
             # We're currently plotting accuracy gap only
             test_figures.append(
                 Figure(
+                    for_object=self,
                     key=f"{self.name}:accuracy:{feature_column}",
                     figure=fig,
                     metadata={
-                        "cut_off_percentage": cut_off_percentage,
-                        "key": self.name,
                         "metric": "accuracy",
+                        "cut_off_percentage": cut_off_percentage,
                         "feature": feature_column,
                     },
                 )
@@ -690,12 +690,12 @@ class WeakspotsDiagnosis(ThresholdTest):
 
                 test_figures.append(
                     Figure(
+                        for_object=self,
                         key=f"{self.name}:{metric}:{feature}",
                         figure=fig,
                         metadata={
-                            "threshold": thresholds[metric],
-                            "key": self.name,
                             "metric": metric,
+                            "threshold": thresholds[metric],
                             "feature": feature,
                         },
                     )
@@ -970,10 +970,10 @@ class RobustnessDiagnosis(ThresholdTest):
 
         test_figures.append(
             Figure(
+                for_object=self,
                 key=f"{self.name}:accuracy",
                 figure=fig,
                 metadata={
-                    "key": self.name,
                     "metric": "accuracy",
                     "features_list": features_list,
                 },

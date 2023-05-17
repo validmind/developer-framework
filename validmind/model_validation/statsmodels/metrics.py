@@ -102,7 +102,13 @@ class ResidualsVisualInspection(Metric):
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=self.key,
+                    figure=fig,
+                )
+            )
         return self.cache_results(figures=figures)
 
 
@@ -836,7 +842,7 @@ class RegressionModelForecastPlot(Metric):
         # Initialize a list to store figures
         figures = []
 
-        for fitted_model in model_list:
+        for i, fitted_model in enumerate(model_list):
             feature_columns = fitted_model.train_ds.get_features_columns()
 
             train_ds = fitted_model.train_ds
@@ -887,8 +893,19 @@ class RegressionModelForecastPlot(Metric):
             plt.xlim(start_date, end_date)
 
             plt.legend()
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            # TODO: define a proper key for each plot
+            print(f"Plotting forecast vs observed for model {fitted_model.model}")
+
             plt.close("all")
+
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{i}",
+                    figure=fig,
+                    metadata={"model": str(feature_columns)},
+                )
+            )
 
         return figures
 
