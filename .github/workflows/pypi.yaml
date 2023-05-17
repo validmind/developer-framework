@@ -4,7 +4,7 @@ name: Publish to PyPI
 
 on:
   push:
-    branches: [prod]
+    branches: [main]
 
 permissions:
   contents: read

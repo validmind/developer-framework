@@ -18,7 +18,7 @@ pip install validmind[r-support]
 
 ### Install dependencies
 
-- Ensure you have `poetry` installed: https://python-poetry.org/
+- Ensure you have `poetry` installed: <https://python-poetry.org/>
 
 - After cloning this repo run:
 
@@ -29,7 +29,7 @@ poetry install
 
 ### Installing R dependencies
 
-If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from https://cran.r-project.org/. If you are on a Mac, you can install R using Homebrew:
+If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. If you are on a Mac, you can install R using Homebrew:
 
 ```bash
 brew install r
@@ -46,10 +46,10 @@ poetry install --extras r-support
 Make sure you bump the package version before merging a PR with the following command:
 
 ```bash
-make version tag=patch
+make version tag=prepatch
 ```
 
-The value of `tag` corresponds to one of the options provided by Poetry: https://python-poetry.org/docs/cli/#version
+The value of `tag` corresponds to one of the options provided by Poetry: <https://python-poetry.org/docs/cli/#version>
 
 ## Integrating the ValidMind Developer Framework to your development environment
 
