@@ -6,7 +6,7 @@ from ..vm_models import TestPlan
 from ..data_validation.metrics import DatasetSplit
 from ..model_validation.model_metadata import ModelMetadata
 from ..model_validation.statsmodels.metrics import (
-    RegressionModelSummary,
+    RegressionModelsCoeffs,
     RegressionModelOutsampleComparison,
     RegressionModelInsampleComparison,
 )
@@ -19,7 +19,7 @@ class RegressionModelPerformance(TestPlan):
 
     name = "regression_model_performance"
     required_context = ["model"]
-    tests = [DatasetSplit, ModelMetadata, RegressionModelSummary]
+    tests = [DatasetSplit, ModelMetadata]
 
 
 class RegressionModelsComparison(TestPlan):
@@ -29,4 +29,8 @@ class RegressionModelsComparison(TestPlan):
 
     name = "regression_models_comparison"
     required_context = ["models", "model"]
-    tests = [RegressionModelInsampleComparison, RegressionModelOutsampleComparison]
+    tests = [
+        RegressionModelsCoeffs,
+        RegressionModelInsampleComparison,
+        RegressionModelOutsampleComparison,
+    ]
