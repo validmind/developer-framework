@@ -136,26 +136,6 @@ class TestPlanResult(ABC):
 
 
 @dataclass
-class TestPlanDatasetResult(TestPlanResult):
-    """
-    Result wrapper for datasets that run as part of a test plan
-    """
-
-    name: str = "Metric"
-    result_id: str = None
-    dataset: Dataset = None
-
-    def __repr__(self) -> str:
-        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
-
-    def _to_widget(self):
-        return widgets.HTML(value=self.dataset.df.describe().to_html())
-
-    async def log(self):
-        await log_dataset(self.dataset)
-
-
-@dataclass
 class TestPlanMetricResult(TestPlanResult):
     """
     Result wrapper for metrics that run as part of a test plan
