@@ -3,6 +3,11 @@ Entrypoint for regression datasets
 """
 import pandas as pd
 
+__all__ = [
+    "fred",
+    "lending_club",
+]
+
 
 def identify_frequencies(df):
     """

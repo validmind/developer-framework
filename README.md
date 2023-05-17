@@ -62,30 +62,15 @@ wheel first, since we have not pushed the package to a public PyPI repository ye
 
 ## Generating Docs
 
-API documentation can be generated in Markdown or HTML format. Our documentation pipeline
-uses Markdown documentation before generating the final HTML assets for the documentation site.
-
-For local testing, HTML docs can be generated with Sphinx. Note that the output template
-is different since the documentation pipeline uses the source Markdown files for the final
-HTML output.
-
-Markdown and HTML docs can be generated with the following commands:
+API documentation can be generated as HTML format with `pdoc` with the following
+command:
 
 ```bash
-# Navigate to the docs folder
-cd docs/
-
-# Generate HTML and Markdown docs
+# Generate HTML
 make docs
-
-# Generate Markdown docs only
-make docs-markdown
-
-# Generate HTML docs only
-make docs-html
 ```
 
-The resulting `markdown` and `html` under `docs/_build` folders will contain the generated documentation.
+The resulting docs will be written to `docs/pdoc/_build`.
 
 ## Known Issues
 
