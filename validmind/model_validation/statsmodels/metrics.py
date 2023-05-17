@@ -602,8 +602,6 @@ class RegressionModelInsampleComparison(Metric):
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
-        if self.model is not None:
-            all_models.append(self.model)
 
         if self.models is not None:
             all_models.extend(self.models)
@@ -656,7 +654,7 @@ class RegressionModelInsampleComparison(Metric):
             # Append the results to the evaluation_results list
             evaluation_results.append(
                 {
-                    "Model": f"Model_{i + 1}",
+                    "Model": f"Model {i + 1}",
                     "Independent Variables": X_columns,
                     "R-Squared": r2,
                     "Adjusted R-Squared": adj_r2,
@@ -1055,3 +1053,205 @@ class RegressionModelForecastPlotLevels(Metric):
             plt.close(fig)
 
         return figures
+
+
+@dataclass
+class RegressionModelsCoeffs(Metric):
+    """
+    Test that outputs the coefficients of stats library regression models.
+    """
+
+    name = "regression_models_coefficients"
+
+    def description(self):
+        return """
+        This section shows the coefficients of different regression models that were
+        trained on the same dataset. This can be useful for comparing how different
+        models weigh the importance of various features in the dataset.
+        """
+
+    def extract_coef_stats(self, summary, model_name):
+        table = summary.tables[1].data
+        headers = table.pop(0)
+        headers[0] = "Feature"
+        df = pd.DataFrame(table, columns=headers)
+        df["Model"] = model_name
+        return df
+
+    def extract_coefficients_summary(self, summaries):
+        coef_stats_df = pd.DataFrame()
+
+        for i, summary in enumerate(summaries):
+            model_name = f"Model {i+1}"
+            coef_stats_df = pd.concat(
+                [coef_stats_df, self.extract_coef_stats(summary, model_name)]
+            )
+
+        # Reorder columns to have 'Model' as the first column and reset the index
+        coef_stats_df = coef_stats_df.reset_index(drop=True)[
+            ["Model"] + [col for col in coef_stats_df.columns if col != "Model"]
+        ]
+
+        return coef_stats_df
+
+    def run(self):
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+
+        all_models = []
+
+        if self.models is not None:
+            all_models.extend(self.models)
+
+        for m in all_models:
+            if not Model.is_supported_model(m.model):
+                raise ValueError(
+                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
+                              is not supported by ValidMind framework yet"
+                )
+
+        summaries = [m.model.summary() for m in all_models]
+        coef_stats_df = self.extract_coefficients_summary(summaries)
+
+        return self.cache_results(
+            {
+                "coefficients_summary": coef_stats_df.to_dict(orient="records"),
+            }
+        )
+
+    def summary(self, metric_value):
+        """
+        Build one table for summarizing the regression models' coefficients
+        """
+        summary_coefficients = metric_value["coefficients_summary"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_coefficients,
+                    metadata=ResultTableMetadata(
+                        title="Regression Models' Coefficients"
+                    ),
+                ),
+            ]
+        )
+
+
+@dataclass
+class RegressionModelsPerformance(Metric):
+    """
+    Test that outputs the comparison of stats library regression models.
+    """
+
+    name = "regression_models_performance"
+
+    def description(self):
+        return """
+        This section shows the in-sample and out-of-sample comparison of regression models. In-sample comparison involves comparing the performance of different regression models on the same dataset that was used to train the models. Out-of-sample comparison evaluates the performance of the models on unseen data. This is typically done by calculating goodness-of-fit statistics such as R-squared and mean squared error (MSE) for each model, and then comparing these statistics to determine which model has the best fit to the data.
+        """
+
+    def run(self):
+        # Check models list is not empty
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+
+        all_models = []
+
+        if self.models is not None:
+            all_models.extend(self.models)
+
+        for m in all_models:
+            if not Model.is_supported_model(m.model):
+                raise ValueError(
+                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
+                              is not supported by ValidMind framework yet"
+                )
+
+        in_sample_results = self._in_sample_performance_ols(all_models)
+        out_of_sample_results = self._out_sample_performance_ols(all_models)
+
+        return self.cache_results(
+            {
+                "in_sample_performance": in_sample_results,
+                "out_of_sample_performance": out_of_sample_results,
+            }
+        )
+
+    def _in_sample_performance_ols(self, models):
+        evaluation_results = []
+
+        for i, model in enumerate(models):
+            X_columns = model.train_ds.get_features_columns()
+            y_true = model.train_ds.y
+            y_pred = model.model.predict(model.train_ds.x)
+
+            # Extract R-squared and Adjusted R-squared
+            r2 = r2_score(y_true, y_pred)
+            mse = mean_squared_error(y_true, y_pred)
+            adj_r2 = 1 - ((1 - r2) * (len(y_true) - 1)) / (
+                len(y_true) - len(X_columns) - 1
+            )
+
+            # Append the results to the evaluation_results list
+            evaluation_results.append(
+                {
+                    "Model": f"Model {i + 1}",
+                    "Independent Variables": X_columns,
+                    "R-Squared": r2,
+                    "Adjusted R-Squared": adj_r2,
+                    "MSE": mse,
+                }
+            )
+
+        return evaluation_results
+
+    def _out_sample_performance_ols(self, models):
+        evaluation_results = []
+
+        for i, model in enumerate(models):
+            X_columns = model.train_ds.get_features_columns()
+            y_true = model.test_ds.y
+            y_pred = model.model.predict(model.test_ds.x)
+
+            # Extract R-squared and Adjusted R-squared
+            r2 = r2_score(y_true, y_pred)
+            mse = mean_squared_error(y_true, y_pred)
+            adj_r2 = 1 - ((1 - r2) * (len(y_true) - 1)) / (
+                len(y_true) - len(X_columns) - 1
+            )
+
+            # Append the results to the evaluation_results list
+            evaluation_results.append(
+                {
+                    "Model": f"Model {i + 1}",
+                    "Independent Variables": X_columns,
+                    "R-Squared": r2,
+                    "Adjusted R-Squared": adj_r2,
+                    "MSE": mse,
+                }
+            )
+
+        return evaluation_results
+
+    def summary(self, metric_value):
+        """
+        Build a table for summarizing the in-sample and out-of-sample performance results
+        """
+        summary_in_sample_performance = metric_value["in_sample_performance"]
+        summary_out_of_sample_performance = metric_value["out_of_sample_performance"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_in_sample_performance,
+                    metadata=ResultTableMetadata(title="In-Sample Performance Results"),
+                ),
+                ResultTable(
+                    data=summary_out_of_sample_performance,
+                    metadata=ResultTableMetadata(
+                        title="Out-of-Sample Performance Results"
+                    ),
+                ),
+            ]
+        )
