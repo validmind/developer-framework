@@ -1,8 +1,10 @@
+import asyncio
 import json
 import math
 
 from typing import Any
 
+import nest_asyncio
 import numpy as np
 
 from IPython.core import getipython
@@ -219,3 +221,26 @@ def format_number(number):
         return round(number, 4)
     else:
         return number
+
+
+def run_async(func, *args, **kwargs):
+    """Helper function to run functions asynchronously
+
+    This takes care of the complexity of running the logging functions asynchronously. It will
+    detect the type of environment we are running in (ipython notebook or not) and run the
+    function accordingly.
+
+    Args:
+        func (function): The function to run asynchronously
+        *args: The arguments to pass to the function
+        **kwargs: The keyword arguments to pass to the function
+
+    Returns:
+        The result of the function
+    """
+    if asyncio.get_event_loop().is_running():
+        # we are in an async context (ipython notebook)
+        # use nest_asyncio to allow nested async calls
+        nest_asyncio.apply()
+
+    return asyncio.run(func(*args, **kwargs))

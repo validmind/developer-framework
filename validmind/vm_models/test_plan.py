@@ -8,12 +8,11 @@ import ipywidgets as widgets
 
 from IPython.display import display
 
-from ..utils import is_notebook
+from ..utils import clean_docstring, is_notebook, run_async
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
-from ..utils import clean_docstring
 
 
 @dataclass
@@ -227,7 +226,7 @@ class TestPlan:
             )
 
             try:
-                result.log()
+                run_async(result.log)
             except Exception as e:
                 print(result)
                 self.pbar_description.value = f"Failed to log result: {result} for test plan result '{str(result)}'"

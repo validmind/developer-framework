@@ -5,35 +5,17 @@ created for a specific use case or model methodology, to run a colllection
 of plans for data validation and model validation with a single function call.
 """
 
-import os
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from typing import ClassVar, List
 
 import ipywidgets as widgets
+
 from IPython.display import display
 
 from .test_context import TestContext
 from .test_plan import TestPlan
-from ..api_client import get_api_config, get_api_host, get_api_project, start_run
+from ..api_client import get_api_host, get_api_project
 from ..utils import is_notebook
-
-
-def run_test_plan(test_plan_id, config, context, send=True):
-    """
-    Runs a test plan by its ID.
-    """
-    # Avoid circular import
-    from ..test_plans import get_by_name
-
-    test_plan = get_by_name(test_plan_id)
-    test_plan_instance = test_plan(
-        config=config,
-        test_context=context,
-    )
-    test_plan_instance.run(render_summary=False, send=send)
-
-    return test_plan_instance
 
 
 @dataclass
@@ -90,6 +72,8 @@ class TestSuite(TestPlan):
         """
         Runs the test suite.
         """
+        # Avoid circular import
+        from ..test_plans import get_by_name
 
         self._test_plan_instances = []
 
@@ -102,29 +86,17 @@ class TestSuite(TestPlan):
 
         self._init_pbar(send=send)
 
-        # for test_plan_id in self.test_plans:
-        #     self._test_plan_instances.append(
-        #         run_test_plan(test_plan_id, self.config, self.test_context, send=send)
-        #     )
-        start_run()
-
-        for key, value in get_api_config().items():
-            os.environ[key] = value # explicitly set env vars for subprocesses
-
-        with ProcessPoolExecutor() as executor:
-            futures = [
-                executor.submit(
-                    run_test_plan,
-                    test_plan_id,
-                    self.config,
-                    self.test_context,
-                    send=send,
-                )
-                for test_plan_id in self.test_plans
-            ]
-
-            for future in futures:
-                self._test_plan_instances.append(future.result())
+        for test_plan_id in self.test_plans:
+            test_plan = get_by_name(test_plan_id)
+            test_plan_instance = test_plan(
+                config=self.config,
+                test_context=self.test_context,
+                pbar=self.pbar,
+                pbar_description=self.pbar_description,
+                pbar_box=self.pbar_box,
+            )
+            test_plan_instance.run(render_summary=False, send=send)
+            self._test_plan_instances.append(test_plan_instance)
 
         self.summarize()
         self.pbar_description.value = "Test suite complete!"
@@ -159,7 +131,12 @@ class TestSuite(TestPlan):
         title = widgets.HTML(value=self._results_title())
         ui_host = get_api_host().replace("/api/v1/tracking", "").replace("api", "app")
         results_link = widgets.HTML(
-            value=f'<h3>Click <a href="{ui_host}/projects/{get_api_project()}/project-overview" target="_blank">here</a> to view the updated model documentation for this project.</h3>'
+            value=f"""
+            <h3>
+              Click <a href="{ui_host}/projects/{get_api_project()}/project-overview"target="_blank">here</a>
+              to view the updated model documentation for this project.
+            </h3>
+            """
         )
 
         accordion_contents = self._results_summary()

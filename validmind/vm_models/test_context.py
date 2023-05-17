@@ -22,6 +22,8 @@ class TestContext:
     model: Model = None
     models: List[Model] = None
 
+    api_client: ClassVar = None
+
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
 

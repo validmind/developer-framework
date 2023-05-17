@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from io import BytesIO
 from typing import List, Optional
 
+import asyncio
 import markdown
 
 from IPython.display import display
@@ -34,21 +35,24 @@ from .test_result import TestResults
 from ..utils import NumpyEncoder
 
 
-def update_metadata(content_id: str, text: str) -> None:
+async def update_metadata(content_id: str, text: str) -> None:
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
     setting the VM_OVERRIDE_METADATA environment variable to True
     """
     VM_OVERRIDE_METADATA = os.environ.get("VM_OVERRIDE_METADATA", False)
-    existing_metadata = get_metadata(content_id)
+    try:
+        existing_metadata = await get_metadata(content_id)
+    except Exception:
+        existing_metadata = None # TODO: handle this better
 
     if (
         existing_metadata is None
         or VM_OVERRIDE_METADATA == "True"
         or VM_OVERRIDE_METADATA is True
     ):
-        log_metadata(content_id, text)
+        await log_metadata(content_id, text)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -128,7 +132,7 @@ class TestPlanResult(ABC):
         display(self._to_widget())
 
     @abstractmethod
-    def log(self):
+    async def log(self):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
 
@@ -149,8 +153,8 @@ class TestPlanDatasetResult(TestPlanResult):
     def _to_widget(self):
         return widgets.HTML(value=self.dataset.df.describe().to_html())
 
-    def log(self):
-        log_dataset(self.dataset)
+    async def log(self):
+        await log_dataset(self.dataset)
 
 
 @dataclass
@@ -298,15 +302,19 @@ class TestPlanMetricResult(TestPlanResult):
 
         return widgets.VBox(vbox_children)
 
-    def log(self):
+    async def log(self):
+        tasks = [] # collect tasks to run in parallel (async)
+
         if self.metric:
-            log_metrics([self.metric])
+            tasks.append(log_metrics([self.metric]))
         if self.figures:
             for fig in self.figures:
-                log_figure(fig.figure, fig.key, fig.metadata)
+                tasks.append(log_figure(fig.figure, fig.key, fig.metadata))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
-                update_metadata(metadata["content_id"], metadata["text"])
+                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
+
+        await asyncio.gather(*tasks)
 
 
 @dataclass
@@ -390,8 +398,8 @@ class TestPlanModelResult(TestPlanResult):
         """
         )
 
-    def log(self):
-        log_model(self.model)
+    async def log(self):
+        await log_model(self.model)
 
 
 @dataclass
@@ -458,11 +466,14 @@ class TestPlanTestResult(TestPlanResult):
 
         return widgets.VBox(vbox_children)
 
-    def log(self):
-        log_test_result(self.test_results)
+    async def log(self):
+        tasks = [log_test_result(self.test_results)]
+    
         if self.figures:
             for fig in self.figures:
-                log_figure(fig.figure, fig.key, fig.metadata)
+                tasks.append(log_figure(fig.figure, fig.key, fig.metadata))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
-                update_metadata(metadata["content_id"], metadata["text"])
+                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
+
+        await asyncio.gather(*tasks)
