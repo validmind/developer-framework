@@ -4,6 +4,12 @@ Entrypoint for classification datasets.
 import pandas as pd
 
 
+__all__ = [
+    "customer_churn",
+    "taiwan_credit",
+]
+
+
 def simple_preprocess_booleans(df, columns):
     """
     Preprocess boolean columns.

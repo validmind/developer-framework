@@ -1,5 +1,38 @@
 """
-Main entrypoint to the ValidMind Python Library
+ValidMind’s Python Developer Framework is a library of developer tools and methods designed to automate
+the documentation and validation of your models.
+
+The Developer Framework is designed to be model agnostic. If your model is built in Python, ValidMind's
+Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
+
+The Developer Framework provides a rich suite of documentation tools and test plans, from documenting
+descriptions of your dataset to testing your models for weak spots and overfit areas. The Developer Framework
+helps you automate the generation of model documentation by feeding the ValidMind platform with documentation
+artifacts and test results to the ValidMind platform.
+
+To install the client library:
+
+```bash
+pip install validmind
+```
+
+To initialize the client library, paste the code snippet with the client integration details directly into your
+development source code, replacing this example with your own:
+
+```python
+import validmind as vm
+
+vm.init(
+  api_host = "https://api.dev.vm.validmind.ai/api/v1/tracking/tracking",
+  api_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  api_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  project = "<project-identifier>"
+)
+```
+
+After you have pasted the code snippet into your development source code and executed the code, the Python client
+library will register with ValidMind. You can now use the Developer Framework to document and test your models,
+and to upload to the ValidMind Platform.
 """
 import warnings
 
@@ -13,9 +46,7 @@ import validmind.vm_models as vm_models
 
 from .api_client import (  # noqa: E402
     init,
-    log_dataset,
     log_metrics,
-    log_model,
     log_test_results,
     log_figure,
 )
@@ -50,9 +81,7 @@ __all__ = [  # noqa
     "test_suites",
     "vm_models",
     # Framework Logging API
-    "log_dataset",
     "log_figure",
     "log_metrics",
-    "log_model",
     "log_test_results",
 ]

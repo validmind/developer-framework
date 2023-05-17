@@ -12,7 +12,6 @@ from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
 from .test_plan_result import (
     TestPlanMetricResult,
-    TestPlanModelResult,
     TestPlanTestResult,
 )
 from .test_result import TestResult, TestResults
@@ -35,7 +34,6 @@ __all__ = [
     "TestContextUtils",
     "TestPlan",
     "TestPlanMetricResult",
-    "TestPlanModelResult",
     "TestPlanTestResult",
     "TestResult",
     "TestResults",

@@ -22,7 +22,10 @@ test:
 	poetry run python -m unittest discover tests
 
 docs:
-	poetry run pdoc validmind -d google --no-show-source --logo https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg -o docs/pdoc/_build
+	poetry run pdoc validmind -d google -t docs/templates --no-show-source --logo https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg --favicon https://vmai.s3.us-west-1.amazonaws.com/favicon.ico -o docs/_build
+
+docs-serve:
+	poetry run pdoc validmind -d google -t docs/templates --no-show-source --logo https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg --favicon https://vmai.s3.us-west-1.amazonaws.com/favicon.ico
 
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)

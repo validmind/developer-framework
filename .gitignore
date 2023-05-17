@@ -181,4 +181,4 @@ notebooks/r_demo/*model.json
 catboost_info
 
 # pdoc documentation
-docs/pdoc/_build
+docs/_build
