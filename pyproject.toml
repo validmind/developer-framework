@@ -15,7 +15,7 @@ license = "Proprietary"
 # ]
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.12.2a0"
+version = "1.12.2a1"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
