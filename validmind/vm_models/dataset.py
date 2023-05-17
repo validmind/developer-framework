@@ -98,6 +98,13 @@ class Dataset:
             or self.raw_dataset.index.isnull().any()
         )
 
+    @property
+    def copy(self):
+        """
+        Returns a copy of the raw_dataset.
+        """
+        return self.raw_dataset.copy()
+
     def get_feature_by_id(self, feature_id):
         """
         Returns the feature with the given id. We also build a lazy
