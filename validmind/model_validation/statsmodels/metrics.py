@@ -1138,11 +1138,6 @@ class RegressionModelsCoeffs(Metric):
         )
 
 
-from dataclasses import dataclass
-import pandas as pd
-from sklearn.metrics import mean_squared_error, r2_score
-
-
 @dataclass
 class RegressionModelsPerformance(Metric):
     """
@@ -1153,13 +1148,7 @@ class RegressionModelsPerformance(Metric):
 
     def description(self):
         return """
-        This section shows the in-sample and out-of-sample comparison of regression models. 
-        In-sample comparison involves comparing the performance of different regression models 
-        on the same dataset that was used to train the models. Out-of-sample comparison 
-        evaluates the performance of the models on unseen data. This is typically done by 
-        calculating goodness-of-fit statistics such as R-squared and mean squared error (MSE) 
-        for each model, and then comparing these statistics to determine which model has the 
-        best fit to the data.
+        This section shows the in-sample and out-of-sample comparison of regression models. In-sample comparison involves comparing the performance of different regression models on the same dataset that was used to train the models. Out-of-sample comparison evaluates the performance of the models on unseen data. This is typically done by calculating goodness-of-fit statistics such as R-squared and mean squared error (MSE) for each model, and then comparing these statistics to determine which model has the best fit to the data.
         """
 
     def run(self):
