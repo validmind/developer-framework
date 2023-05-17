@@ -175,3 +175,35 @@ def register_test_plan(plan_id: str, plan: TestPlan):
     """
     custom_test_plans[plan_id] = plan
     print(f"Registered test plan: {plan_id}")
+
+
+def describe_test(name: str):
+    """
+    Returns the test by name
+    """
+    all_test_plans = _get_all_test_plans()
+    tests = set()
+    for test_plan in all_test_plans.values():
+        tests.update(_get_test_plan_tests(test_plan))
+
+    # Sort by test type and then by name
+    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
+    table = []
+    for test in tests:
+        if inspect.isclass(test):
+            test_type = _get_test_type(test)
+            if test_type == "Metric":
+                test_id = test.key
+            else:
+                test_id = test.name
+            if test.__name__ == name:
+                table.append(
+                    {
+                        "Test Type": test_type,
+                        "ID": test_id,
+                        "Name": test.__name__,
+                        "Description": test.__doc__.strip(),
+                    }
+                )
+
+    return pd.DataFrame(table).style.hide(axis="index")
