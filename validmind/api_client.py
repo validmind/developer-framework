@@ -64,6 +64,16 @@ def init(project, api_key=None, api_secret=None, api_host=None):
     If the API key and secret are not provided, the client will attempt to
     retrieve them from the environment variables `VM_API_KEY` and `VM_API_SECRET`.
 
+    This is an example of how to initialize the client
+
+
+            import validmind as vm
+
+            vm.init(
+                api_host = "http://localhost:3000/api/v1/tracking",
+                project = "clho9pot100005n8hz1574d8w"
+            )
+
     Args:
         project (str): The project CUID
         api_key (str, optional): The API key. Defaults to None.

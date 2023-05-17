@@ -21,14 +21,11 @@ build:
 test:
 	poetry run python -m unittest discover tests
 
-docs-html:
-	poetry run sphinx-build -M html docs/ docs/_build
-
-docs-markdown:
-	poetry run sphinx-build -M markdown docs/ docs/_build
-
-docs: docs-html docs-markdown
+docs:
+	poetry run pdoc validmind -d google --no-show-source --logo https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg -o docs/pdoc/_build
 
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
 	poetry version $(tag)
+
+.PHONY: docs
