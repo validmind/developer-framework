@@ -562,7 +562,9 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skiping PSI for </span><span class="si">{</span><span class="n">model_library</span><span class="si">}</span><span class="s2"> models&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="n">psi_df</span> <span class="o">=</span> <span class="n">_get_psi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_train_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="p">)</span>
+        <span class="n">psi_df</span> <span class="o">=</span> <span class="n">_get_psi</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_train_predict</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">y_test_predict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_results</span><span class="p">(</span><span class="n">metric_value</span><span class="o">=</span><span class="n">psi_df</span><span class="p">)</span></div></div>
 </pre></div>
