@@ -9,6 +9,7 @@ from ..vm_models import TestPlan
 from ..data_validation.metrics import (
     DatasetCorrelations,
     DatasetDescription,
+    DatasetMetadata,
     DescriptiveStatistics,
 )
 from ..data_validation.threshold_tests import (
@@ -35,6 +36,7 @@ class TabularDatasetDescription(TestPlan):
     name = "tabular_dataset_description"
     required_context = ["dataset"]
     tests = [
+        DatasetMetadata,
         DatasetDescription,
         DescriptiveStatistics,
         DatasetCorrelations,
