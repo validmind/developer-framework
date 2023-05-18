@@ -6,7 +6,7 @@ authors = [
   "Luis Pallares <luis@validmind.ai>",
 ]
 description = "ValidMind Developer Framework"
-license = "Proprietary"
+license = "Commercial License"
 # include = [
 #   "validmind/**/*.c",
 #   "validmind/**/*.pyx",
@@ -15,7 +15,7 @@ license = "Proprietary"
 # ]
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.12.5"
+version = "1.12.6"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
