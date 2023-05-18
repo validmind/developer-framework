@@ -1,27 +1,16 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# # Quickstart for Classification Models (Full Suite)
-
-# This notebooks provides a quick introduction to documenting a model using the ValidMind developer framework. We will use sample datasets provided by the library and train a simple classification model.
-
-# ## Initialize ValidMind
-
-# In[1]:
-
-
 import dotenv
 
 import validmind as vm
 import xgboost as xgb
 from validmind.datasets.classification import customer_churn as demo_dataset
 
+
 if __name__ == "__main__":
     dotenv.load_dotenv()
 
     vm.init(
-    api_host = "http://localhost:3000/api/v1/tracking",
-    project = "clhp5cxgm0007tuoore6ll2nn"
+        api_host = "http://localhost:3000/api/v1/tracking",
+        project = "clhp5cxgm0007tuoore6ll2nn"
     )
 
     df = demo_dataset.load_data()
@@ -69,4 +58,3 @@ if __name__ == "__main__":
     )
 
     vm.run_test_suite("binary_classifier_full_suite", dataset=vm_dataset, model=vm_model)
-# vm.run_test_plan("binary_classifier_metrics", dataset=vm_dataset, model=vm_model)
