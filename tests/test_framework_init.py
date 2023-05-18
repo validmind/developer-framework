@@ -1,6 +1,7 @@
 """
 Unit tests for the framewor's init() method
 """
+import os
 import unittest
 
 from unittest import mock
@@ -45,6 +46,16 @@ def mocked_requests_get(*args, **kwargs):
 
 
 class TestFrameworkInit(unittest.TestCase):
+    def setUp(self):
+        self.api_key = os.environ.pop("VM_API_KEY")
+        self.api_secret = os.environ.pop("VM_API_SECRET")
+        self.api_project = os.environ.pop("VM_API_PROJECT")
+
+    def tearDown(self):
+        os.environ["VM_API_KEY"] = self.api_key
+        os.environ["VM_API_SECRET"] = self.api_secret
+        os.environ["VM_API_PROJECT"] = self.api_project
+
     def test_no_args(self):
         """
         Test that init() raises a TypeError when no arguments are passed.
@@ -91,4 +102,4 @@ class TestFrameworkInit(unittest.TestCase):
         client_ok = vm.init(
             api_key="api_key", api_secret="api_secret", project="project"
         )
-        self.assertIsNone(client_ok)
+        self.assertTrue(client_ok)

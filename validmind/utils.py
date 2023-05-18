@@ -222,7 +222,7 @@ def format_number(number):
         return number
 
 
-def run_async(func, name=None, *args, **kwargs):
+def run_async(func, *args, name=None, **kwargs):
     """Helper function to run functions asynchronously
 
     This takes care of the complexity of running the logging functions asynchronously. It will

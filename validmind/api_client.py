@@ -20,7 +20,7 @@ _api_key = os.environ.get("VM_API_KEY")
 _api_secret = os.environ.get("VM_API_SECRET")
 _api_host = os.environ.get("VM_API_HOST")
 
-_project = os.environ.get("VM_PROJECT")
+_project = os.environ.get("VM_API_PROJECT")
 _run_cuid = os.environ.get("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
@@ -31,7 +31,7 @@ def get_api_config():
         "VM_API_KEY": _api_key,
         "VM_API_SECRET": _api_secret,
         "VM_API_HOST": _api_host,
-        "VM_PROJECT": _project,
+        "VM_API_PROJECT": _project,
         "VM_RUN_CUID": _run_cuid,
     }
 
@@ -116,19 +116,19 @@ def __ping():
             "X-PROJECT-CUID": _project,
         },
     )
-
     if r.status_code != 200:
         print("Unsuccessful ping to ValidMind API")
         raise Exception(r.text)
 
     project_info = r.json()
-
     if "name" in project_info:
         print(
             f"Connected to ValidMind. Project: {project_info['name']} ({project_info['cuid']})"
         )
     else:
         print("Connected to ValidMind")
+
+    return True
 
 
 async def __get_url(endpoint, params=None):
@@ -321,28 +321,6 @@ async def log_metrics(metrics):
         raise e
 
 
-async def log_model(vm_model):
-    """Logs model metadata and hyperparameters to ValidMind API.
-
-    Args:
-        vm_model (validmind.VMModel): A VM model object
-
-    Raises:
-        Exception: If the API call fails
-
-    Returns:
-        dict: The response from the API
-    """
-    try:
-        return await _post(
-            "log_model",
-            data=json.dumps(vm_model.serialize(), cls=NumpyEncoder, allow_nan=False),
-        )
-    except Exception as e:
-        print("Error logging model to ValidMind API")
-        raise e
-
-
 async def log_test_result(result, dataset_type="training"):
     """Logs test results information
 
@@ -389,14 +367,14 @@ def log_test_results(results, dataset_type="training"):
         list: list of responses from the API
     """
     try:
-        return run_async(
-            asyncio.gather(
-                *[log_test_result(result, dataset_type) for result in results]
-            )
-        )
+        responses = []
+        for result in results:
+            responses.append(run_async(log_test_result, result, dataset_type))
     except Exception as e:
         print("Error logging test results to ValidMind API")
         raise e
+
+    return responses
 
 
 def start_run():
