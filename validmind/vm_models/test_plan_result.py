@@ -17,14 +17,7 @@ from IPython.display import display
 import ipywidgets as widgets
 import pandas as pd
 
-from ..api_client import (
-    get_metadata,
-    log_dataset,
-    log_figure,
-    log_metadata,
-    log_metrics,
-    log_test_result,
-)
+from .. import api_client
 from .dataset import Dataset
 from .figure import Figure
 from .metric_result import MetricResult
@@ -41,7 +34,7 @@ async def update_metadata(content_id: str, text: str) -> None:
     """
     VM_OVERRIDE_METADATA = os.environ.get("VM_OVERRIDE_METADATA", False)
     try:
-        existing_metadata = await get_metadata(content_id)
+        existing_metadata = await api_client.get_metadata(content_id)
     except Exception:
         existing_metadata = None  # TODO: handle this better
 
@@ -50,7 +43,7 @@ async def update_metadata(content_id: str, text: str) -> None:
         or VM_OVERRIDE_METADATA == "True"
         or VM_OVERRIDE_METADATA is True
     ):
-        await log_metadata(content_id, text)
+        await api_client.log_metadata(content_id, text)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -152,7 +145,7 @@ class TestPlanDatasetResult(TestPlanResult):
         return widgets.HTML(value=self.dataset.df.describe().to_html())
 
     async def log(self):
-        await log_dataset(self.dataset)
+        await api_client.log_dataset(self.dataset)
 
 
 @dataclass
@@ -304,10 +297,10 @@ class TestPlanMetricResult(TestPlanResult):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
-            tasks.append(log_metrics([self.metric]))
+            tasks.append(api_client.log_metrics([self.metric]))
         if self.figures:
             for fig in self.figures:
-                tasks.append(log_figure(fig.figure, fig.key, fig.metadata))
+                tasks.append(api_client.log_figure(fig.figure, fig.key, fig.metadata))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
@@ -380,11 +373,11 @@ class TestPlanTestResult(TestPlanResult):
         return widgets.VBox(vbox_children)
 
     async def log(self):
-        tasks = [log_test_result(self.test_results)]
+        tasks = [api_client.log_test_result(self.test_results)]
 
         if self.figures:
             for fig in self.figures:
-                tasks.append(log_figure(fig.figure, fig.key, fig.metadata))
+                tasks.append(api_client.log_figure(fig.figure, fig.key, fig.metadata))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))

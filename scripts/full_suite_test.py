@@ -10,7 +10,7 @@ if __name__ == "__main__":
 
     vm.init(
         api_host = "http://localhost:3000/api/v1/tracking",
-        project = "clhp5cxgm0007tuoore6ll2nn"
+        project = "clhqxa93500vh0i8hxz2gfzzo"
     )
 
     df = demo_dataset.load_data()

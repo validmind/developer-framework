@@ -4,6 +4,7 @@ Note that this takes advantage of the fact that python modules are singletons to
 the configuration and session across the entire project regardless of where the client is imported.
 """
 import asyncio
+import atexit
 import json
 import os
 import urllib.parse
@@ -24,6 +25,18 @@ _project = os.environ.get("VM_API_PROJECT")
 _run_cuid = os.environ.get("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
+
+
+@atexit.register
+def _close_session():
+    """Closes the async client session"""
+    global __api_session
+
+    if __api_session is not None:
+        try:
+            asyncio.run(__api_session.close())
+        except Exception:
+            pass
 
 
 def get_api_config():

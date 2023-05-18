@@ -1,6 +1,7 @@
 # this will run a test suite while simulating the event loop that runs in a jupyter notebook
 # between this file and test_full_suite.py, we test running in a notebook and running in a script
 
+import asyncio
 import unittest
 from unittest.mock import patch
 
@@ -31,6 +32,7 @@ class TestValidmind(unittest.TestCase):
             verbose=False,
         )
 
+    @patch("validmind.utils.is_notebook")
     @patch.multiple(
         "validmind.api_client",
         log_dataset=unittest.mock.DEFAULT,
@@ -39,7 +41,9 @@ class TestValidmind(unittest.TestCase):
         log_metrics=unittest.mock.DEFAULT,
         log_test_result=unittest.mock.DEFAULT,
     )
-    def test_run_full_suite(self, **mocks):
+    def test_run_full_suite(self, mock_ipython, **mocks):
+        mock_ipython.return_value = True
+
         import validmind as vm
         from validmind.vm_models.dataset import Dataset
         from validmind.vm_models.model import Model
@@ -73,11 +77,14 @@ class TestValidmind(unittest.TestCase):
         )
         self.assertIsInstance(self.vm_model, Model)
 
-        result = vm.run_test_suite(
-            "binary_classifier_full_suite",
-            dataset=self.vm_dataset,
-            model=self.vm_model,
-        )
+        async def run_test_suite():
+            return vm.run_test_suite(
+                "binary_classifier_full_suite",
+                dataset=self.vm_dataset,
+                model=self.vm_model,
+            )
+
+        result = asyncio.run(run_test_suite())
 
         self.assertIsInstance(result, TestSuite)
         self.assertTrue(len(result.results) > 0)

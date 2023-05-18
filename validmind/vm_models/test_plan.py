@@ -8,7 +8,7 @@ from typing import ClassVar, List
 import ipywidgets as widgets
 from IPython.display import display
 
-from ..utils import clean_docstring, is_notebook, run_async, run_async_if_not_exists
+from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -192,7 +192,7 @@ class TestPlan:
 
         if send:
             run_async(self.log_results)
-            run_async_if_not_exists(self.check_progress, name="check_progress")
+            run_async_check(self.check_progress)
 
         # TODO: remove
         for test_plan in self.test_plans:
