@@ -75,7 +75,7 @@ class TimeSeriesModelValidation(TestSuite):
     required_context = ["model", "models"]
 
     test_plans = [
-        "regression_model_performance",
-        "regression_models_comparison",
+        "regression_model_description",
+        "regression_models_evaluation",
         "time_series_forecast",
     ]

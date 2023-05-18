@@ -5,7 +5,7 @@ import inspect
 
 import pandas as pd
 
-from ..vm_models import TestPlan
+from ..vm_models import Metric, TestPlan, ThresholdTest
 from .binary_classifier import (
     BinaryClassifierMetrics,
     BinaryClassifierPerformance,
@@ -17,8 +17,8 @@ from .tabular_datasets import (
     TimeSeriesDataQuality,
 )
 from .statsmodels_timeseries import (
-    RegressionModelPerformance,
-    RegressionModelsComparison,
+    RegressionModelDescription,
+    RegressionModelsEvaluation,
 )
 from .time_series import (
     TimeSeriesUnivariate,
@@ -36,8 +36,8 @@ core_test_plans = {
     "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
     "time_series_forecast": TimeSeriesForecast,
-    "regression_model_performance": RegressionModelPerformance,
-    "regression_models_comparison": RegressionModelsComparison,
+    "regression_model_description": RegressionModelDescription,
+    "regression_models_evaluation": RegressionModelsEvaluation,
 }
 
 # These test plans can be added by the user
@@ -73,11 +73,12 @@ def _get_test_type(test):
     """
     Returns the test type by inspecting the test class hierarchy
     """
-    super_class = inspect.getmro(test)[1].__name__
-    if super_class != "Metric" and super_class != "ThresholdTest":
-        return "Custom Test"
-
-    return super_class
+    if issubclass(test, Metric):
+        return "Metric"
+    elif issubclass(test, ThresholdTest):
+        return "ThresholdTest"
+    else:
+        return "CustomTest"
 
 
 def list_plans(pretty: bool = True):
@@ -122,15 +123,10 @@ def list_tests(test_type: str = "all", pretty: bool = True):
     for test in tests:
         if inspect.isclass(test):
             test_type = _get_test_type(test)
-            if test_type == "Metric":
-                test_id = test.key
-            else:
-                test_id = test.name
-
             table.append(
                 {
                     "Test Type": test_type,
-                    "ID": test_id,
+                    "ID": test.name,
                     "Name": test.__name__,
                     "Description": test.__doc__.strip(),
                 }
@@ -175,3 +171,32 @@ def register_test_plan(plan_id: str, plan: TestPlan):
     """
     custom_test_plans[plan_id] = plan
     print(f"Registered test plan: {plan_id}")
+
+
+def describe_test(name: str):
+    """
+    Returns the test by name
+    """
+    all_test_plans = _get_all_test_plans()
+    tests = set()
+    for test_plan in all_test_plans.values():
+        tests.update(_get_test_plan_tests(test_plan))
+
+    # Sort by test type and then by name
+    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
+    table = []
+    for test in tests:
+        if inspect.isclass(test):
+            test_type = _get_test_type(test)
+
+            if test.__name__ == name:
+                table.append(
+                    {
+                        "Test Type": test_type,
+                        "ID": test.name,
+                        "Name": test.__name__,
+                        "Description": test.__doc__.strip(),
+                    }
+                )
+
+    return pd.DataFrame(table).style.hide(axis="index")

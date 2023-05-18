@@ -19,15 +19,15 @@ import pandas as pd
 
 from ..api_client import (
     get_metadata,
+    log_dataset,
     log_figure,
     log_metadata,
     log_metrics,
-    log_model,
     log_test_result,
 )
+from .dataset import Dataset
 from .figure import Figure
 from .metric_result import MetricResult
-from .model import Model
 from .result_summary import ResultSummary
 from .test_result import TestResults
 from ..utils import NumpyEncoder
@@ -133,6 +133,26 @@ class TestPlanResult(ABC):
     async def log(self):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+
+@dataclass
+class TestPlanDatasetResult(TestPlanResult):
+    """
+    Result wrapper for datasets that run as part of a test plan
+    """
+
+    name: str = "Metric"
+    result_id: str = None
+    dataset: Dataset = None
+
+    def __repr__(self) -> str:
+        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
+
+    def _to_widget(self):
+        return widgets.HTML(value=self.dataset.df.describe().to_html())
+
+    def log(self):
+        log_dataset(self.dataset)
 
 
 @dataclass
@@ -293,91 +313,6 @@ class TestPlanMetricResult(TestPlanResult):
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
 
         await asyncio.gather(*tasks)
-
-
-@dataclass
-class TestPlanModelResult(TestPlanResult):
-    """
-    Result wrapper for models that run as part of a test plan
-    """
-
-    name: str = "Metric"
-    model: Model = None
-
-    def _to_widget(self):
-        return widgets.HTML(
-            value=f"""
-        <div class="model-result">
-            <div class="model-result-header">
-                <div class="model-result-header-title">
-                    <span class="model-result-header-title-text">
-                        {self.model.model.__class__.__name__} ({self.model.model_id})
-                    </span>
-                    <span class="model-result-header-title-icon">📦</span>
-                </div>
-            </div>
-            <div class="model-result-body">
-                <div class="model-body-column">
-                    <div class="model-body-column-title">Framework</div>
-                    <div class="model-body-column-value">
-                        {self.model.attributes.framework}
-                        <span>(v{self.model.attributes.framework_version})</span>
-                    </div>
-                </div>
-                <div class="model-body-column">
-                    <div class="model-body-column-title">Architecture</div>
-                    <div class="model-body-column-value">{self.model.attributes.architecture}</div>
-                </div>
-                <div class="model-body-column">
-                    <div class="model-body-column-title">Task</div>
-                    <div class="model-body-column-value">{self.model.task}</div>
-                </div>
-                <div class="model-body-column">
-                    <div class="model-body-column-title">Subtask</div>
-                    <div class="model-body-column-value">{self.model.subtask}</div>
-                </div>
-            </div>
-        </div>
-        <style>
-            .model-result {{
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                margin: 10px 0;
-            }}
-            .model-result-header {{
-                padding: 10px;
-                background-color: #eee;
-                border-radius: 5px 5px 0 0;
-            }}
-            .model-result-header-title {{
-                display: flex;
-                align-items: center;
-            }}
-            .model-result-header-title-text {{
-                font-weight: bold;
-                font-size: 1.2em;
-            }}
-            .model-result-header-title-icon {{
-                margin-left: 10px;
-            }}
-            .model-result-body {{
-                padding: 10px;
-                display: flex;
-                flex-wrap: wrap;
-            }}
-            .model-body-column {{
-                flex: 1 1 50%;
-                padding: 5px;
-            }}
-            .model-body-column-title {{
-                font-weight: bold;
-            }}
-        </style>
-        """
-        )
-
-    async def log(self):
-        await log_model(self.model)
 
 
 @dataclass

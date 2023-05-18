@@ -196,6 +196,7 @@ async def get_metadata(content_id):
     return await _get(f"get_metadata/{content_id}")
 
 
+<<<<<<< HEAD
 async def log_dataset(vm_dataset):
     """Logs metadata and statistics about a dataset to ValidMind API.
 
@@ -219,6 +220,124 @@ async def log_dataset(vm_dataset):
 
 async def log_figure(data_or_path, key, metadata):
     """Logs a figure
+=======
+def log_metrics(metrics, run_cuid=None):
+    """
+    Logs metrics to ValidMind API.
+
+    Args:
+        metrics (list): A list of Metric objects
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
+    """
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    serialized_metrics = [m.serialize() for m in metrics]
+
+    r = api_session.post(
+        f"{API_HOST}/log_metrics?run_cuid={run_cuid}",
+        data=json.dumps(serialized_metrics, cls=NumpyEncoder, allow_nan=False),
+        headers={"Content-Type": "application/json"},
+    )
+
+    if r.status_code != 200:
+        print("Could not log metrics to ValidMind API")
+        raise Exception(r.text)
+
+    return True
+
+
+def log_test_result(result, run_cuid=None, dataset_type="training"):
+    """
+    Logs test results information. This method will be called automatically be any function
+    running tests but can also be called directly if the user wants to run tests on their own.
+
+    Args:
+        result (validmind.TestResults): A TestResults object
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
+    """
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    r = api_session.post(
+        f"{API_HOST}/log_test_results?run_cuid={run_cuid}&dataset_type={dataset_type}",
+        data=json.dumps(result.serialize(), cls=NumpyEncoder, allow_nan=False),
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Exit on the first error
+    if r.status_code != 200:
+        print("Could not log test results to ValidMind API")
+        raise Exception(r.text)
+
+    return True
+
+
+def log_test_results(results, run_cuid=None, dataset_type="training"):
+    """
+    Logs test results information. This method will be called automatically be any function
+    running tests but can also be called directly if the user wants to run tests on their own.
+
+    Args:
+        results (list): A list of TestResults objects
+        run_cuid (str, optional): The run CUID. If not provided, a new run will be created. Defaults to None.
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        bool: True if the API call was successful
+    """
+    if run_cuid is None:
+        run_cuid = start_run()
+
+    # TBD - parallelize API requests
+    for result in results:
+        log_test_result(result, run_cuid, dataset_type)
+
+    return True
+
+
+def start_run():
+    """
+    Starts a new test run. This method will return a test run CUID that needs to be
+    passed to any functions logging test results to the ValidMind API.
+
+    If "X-RUN-CUID" was already set as an HTTP header to the session, we reuse it
+    """
+    if api_session.headers.get("X-RUN-CUID") is not None:
+        return api_session.headers.get("X-RUN-CUID")
+
+    r = api_session.post(f"{API_HOST}/start_run")
+
+    if r.status_code != 200:
+        print("Could not start data logging run with ValidMind API")
+        raise Exception(r.text)
+
+    test_run = r.json()
+    test_run_cuid = test_run["cuid"]
+    api_session.headers.update({"X-RUN-CUID": test_run_cuid})
+    return test_run_cuid
+
+
+def log_figure(data_or_path, key, metadata, run_cuid=None):
+    """
+    Logs a figure
+>>>>>>> main
 
     Args:
         data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot

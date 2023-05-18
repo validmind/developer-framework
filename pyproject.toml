@@ -6,6 +6,7 @@ authors = [
   "Luis Pallares <luis@validmind.ai>",
 ]
 description = "ValidMind Developer Framework"
+license = "Commercial License"
 # include = [
 #   "validmind/**/*.c",
 #   "validmind/**/*.pyx",
@@ -13,17 +14,21 @@ description = "ValidMind Developer Framework"
 #   "validmind/**/*.so",
 # ]
 name = "validmind"
-version = "1.12.1"
+readme = "README.pypi.md"
+version = "1.12.6"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
+catboost = "^1.2"
 click = "^8.0.4"
 dython = "^0.7.1"
 ipython = "7.34.0"
+markdown = "^3.4.3"
 myst-parser = "^1.0.0"
 numpy = "1.22.3"
 pandas = "1.5.3"
 pandas-profiling = "^3.6.6"
+pdoc = "^13.1.1"
 pydantic = "^1.9.1"
 pypmml = "^0.9.17"
 python = ">=3.8,<3.11"
@@ -40,10 +45,6 @@ statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
-markdown = "^3.4.3"
-aiohttp = {extras = ["speedups"], version = "^3.8.4"}
-catboost = "^1.2"
-pdoc = "^13.1.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
