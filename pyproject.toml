@@ -45,6 +45,8 @@ statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
+plotly = "^5.14.1"
+kaleido = "0.2.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
