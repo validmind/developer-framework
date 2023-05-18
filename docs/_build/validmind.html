@@ -45,6 +45,9 @@
                     <a class="function" href="#run_test_suite">run_test_suite</a>
             </li>
             <li>
+                    <a class="function" href="#log_dataset">log_dataset</a>
+            </li>
+            <li>
                     <a class="function" href="#log_figure">log_figure</a>
             </li>
             <li>
@@ -359,6 +362,43 @@ See the documentation for the specific test plan, metric or threshold test for m
 
 <blockquote>
   <p>TestSuite: the TestSuite instance</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="log_dataset">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">log_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">vm_dataset</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#log_dataset"></a>
+    
+            <div class="docstring"><p>Logs metadata and statistics about a dataset to ValidMind API.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>vm_dataset (validmind.VMDataset):</strong>  A VM dataset object</li>
+<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".</li>
+<li><strong>dataset_options (dict, optional):</strong>  Additional dataset options for analysis. Defaults to None.</li>
+<li><strong>dataset_targets (validmind.DatasetTargets, optional):</strong>  A list of targets for the dataset. Defaults to None.</li>
+<li><strong>features (list, optional):</strong>  Optional. A list of features metadata. Defaults to None.</li>
+</ul>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>Exception:</strong>  If the API call fails</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>validmind.VMDataset: The VMDataset object</p>
 </blockquote>
 </div>
 

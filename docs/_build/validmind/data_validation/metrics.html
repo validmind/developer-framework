@@ -32,6 +32,18 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="class" href="#DatasetMetadata">DatasetMetadata</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#DatasetMetadata.__init__">DatasetMetadata</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DatasetMetadata.run">run</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#DatasetCorrelations">DatasetCorrelations</a>
                             <ul class="memberlist">
                         <li>
@@ -265,9 +277,67 @@
                 
                 
             </section>
+                <section id="DatasetMetadata">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">DatasetMetadata</span><wbr>(<span class="base">validmind.vm_models.test_context.TestContextUtils</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetMetadata"></a>
+    
+            <div class="docstring"><p>Custom class to collect a set of descriptive statistics for a dataset.
+This class will log dataset metadata via <code>log_dataset</code> instead of a metric.
+Dataset metadata is necessary to initialize dataset object that can be related
+to different metrics and test results</p>
+</div>
+
+
+                            <div id="DatasetMetadata.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">DatasetMetadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanDatasetResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetMetadata.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="DatasetMetadata.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetMetadata.run"></a>
+    
+            <div class="docstring"><p>Just set the dataset to the result attribute of the test plan result
+and it will be logged via the <code>log_dataset</code> function</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                <dd id="DatasetMetadata.df" class="variable">df</dd>
+                <dd id="DatasetMetadata.validate_context" class="function">validate_context</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="DatasetCorrelations">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">DatasetCorrelations</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
 
@@ -333,7 +403,8 @@ are calculated:</p>
                 </section>
                 <section id="DatasetDescription">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">DatasetDescription</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
 
@@ -392,7 +463,8 @@ are calculated:</p>
                 </section>
                 <section id="DescriptiveStatistics">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">DescriptiveStatistics</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
 
