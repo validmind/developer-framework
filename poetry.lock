@@ -2684,7 +2684,7 @@ test = ["pep440", "pre-commit", "pytest", "testpath"]
 name = "nest-asyncio"
 version = "1.5.6"
 description = "Patch asyncio to allow nested event loops"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 files = [
@@ -5336,4 +5336,4 @@ r-support = ["rpy2"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "59a2307dafa5ca6c455b7266b5a08a9be19077922f7c1bb92e789b95506d56b8"
+content-hash = "d2ca83ee0fac5f04ac88b0a34be2f9fe90b8961d57f4438e0af0133b3424dae8"

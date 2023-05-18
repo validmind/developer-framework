@@ -24,14 +24,7 @@ _api_host = os.environ.get("VM_API_HOST")
 _project = os.environ.get("VM_PROJECT")
 _run_cuid = os.environ.get("VM_RUN_CUID")
 
-api_session: aiohttp.ClientSession = aiohttp.ClientSession()
-api_session.headers.update(
-    {
-        "X-API-KEY": _api_key,
-        "X-API-SECRET": _api_secret,
-        "X-PROJECT-CUID": _project,
-    }
-)
+__api_session: aiohttp.ClientSession = None
 
 
 def get_api_config():
@@ -50,7 +43,7 @@ def get_api_host():
 
 def get_api_project():
     return _project
-    
+
 
 def init(project=None, api_key=None, api_secret=None, api_host=None):
     """
@@ -86,22 +79,38 @@ def init(project=None, api_key=None, api_secret=None, api_host=None):
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
     )
     _project = project or os.environ.get("VM_API_PROJECT")
-    _run_cuid = os.environ.get("VM_RUN_CUID", None) # this is for sub-processes
-
-    api_session.headers.update(
-        {
-            "X-API-KEY": _api_key,
-            "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _project,
-        }
-    ) # we do this again to pick up any dynamicly loaded env vars or args passed to init
+    _run_cuid = os.environ.get("VM_RUN_CUID", None)  # this is for sub-processes
 
     return __ping()
 
 
+async def _get_session():
+    """Initializes the async client session"""
+    global __api_session
+
+    if __api_session is None:
+        __api_session = aiohttp.ClientSession(loop=asyncio.get_event_loop())
+        __api_session.headers.update(
+            {
+                "X-API-KEY": _api_key,
+                "X-API-SECRET": _api_secret,
+                "X-PROJECT-CUID": _project,
+            }
+        )
+
+    return __api_session
+
+
 def __ping():
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
-    r = requests.get(f"{_api_host}/ping", headers=api_session.headers)
+    r = requests.get(
+        f"{_api_host}/ping",
+        headers={
+            "X-API-KEY": _api_key,
+            "X-API-SECRET": _api_secret,
+            "X-PROJECT-CUID": _project,
+        },
+    )
 
     if r.status_code != 200:
         print("Unsuccessful ping to ValidMind API")
@@ -119,18 +128,22 @@ def __ping():
 
 async def __get_url(endpoint, params=None):
     if not _run_cuid:
-        await start_run()
+        start_run()
 
     params = params or {}
 
     params["run_cuid"] = _run_cuid
-    api_session.headers["X-RUN-CUID"] = _run_cuid
+    # api_session.headers["X-RUN-CUID"] = _run_cuid
 
     return f"{_api_host}/{endpoint}?{urllib.parse.urlencode(params)}"
 
 
 async def _get(endpoint, params=None):
-    async with api_session.get(endpoint, params) as r:
+    url = await __get_url(endpoint, params)
+    session = await _get_session()
+    session.headers.update({"X-RUN-CUID": _run_cuid})
+
+    async with session.get(url) as r:
         if r.status != 200:
             raise Exception(await r.text())
 
@@ -138,6 +151,10 @@ async def _get(endpoint, params=None):
 
 
 async def _post(endpoint, params=None, data=None, files=None):
+    url = await __get_url(endpoint, params)
+    session = await _get_session()
+    session.headers.update({"X-RUN-CUID": _run_cuid})
+
     if not isinstance(data, dict) and files is not None:
         raise ValueError("Cannot pass both non-json data and file objects to _post")
 
@@ -157,7 +174,7 @@ async def _post(endpoint, params=None, data=None, files=None):
     else:
         _data = data
 
-    async with api_session.post(await __get_url(endpoint, params), data=_data) as r:
+    async with session.post(url, data=_data) as r:
         if r.status != 200:
             raise Exception(await r.text())
 
@@ -386,14 +403,21 @@ def start_run():
     """
     global _run_cuid
 
-    r = requests.post(f"{_api_host}/start_run", headers=api_session.headers)
+    r = requests.post(
+        f"{_api_host}/start_run",
+        headers={
+            "X-API-KEY": _api_key,
+            "X-API-SECRET": _api_secret,
+            "X-PROJECT-CUID": _project,
+        },
+    )
 
     if r.status_code != 200:
         print("Could not start data logging run with ValidMind API")
         raise Exception(r.text)
 
     test_run = r.json()
-    api_session.headers["X-RUN-CUID"] = test_run["cuid"]
+    # api_session.headers["X-RUN-CUID"] = test_run["cuid"]
     _run_cuid = test_run["cuid"]
 
     return test_run["cuid"]
