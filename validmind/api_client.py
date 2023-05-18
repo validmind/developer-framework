@@ -106,6 +106,37 @@ def init(project, api_key=None, api_secret=None, api_host=None):
     return __ping()
 
 
+def log_dataset(vm_dataset):
+    """
+    Logs metadata and statistics about a dataset to ValidMind API.
+
+    Args:
+        vm_dataset (validmind.VMDataset): A VM dataset object
+        dataset_type (str, optional): The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".
+        dataset_options (dict, optional): Additional dataset options for analysis. Defaults to None.
+        dataset_targets (validmind.DatasetTargets, optional): A list of targets for the dataset. Defaults to None.
+        features (list, optional): Optional. A list of features metadata. Defaults to None.
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        validmind.VMDataset: The VMDataset object
+    """
+    payload = json.dumps(vm_dataset.serialize(), cls=NumpyEncoder, allow_nan=False)
+    r = api_session.post(
+        f"{API_HOST}/log_dataset",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+    )
+
+    if r.status_code != 200:
+        print("Could not log dataset to ValidMind API")
+        raise Exception(r.text)
+
+    return vm_dataset
+
+
 def log_metadata(content_id, text=None, extra_json=None):
     """
     Logs free-form metadata to ValidMind API. This function is not exported on purpose.

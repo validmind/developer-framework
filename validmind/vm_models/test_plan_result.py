@@ -18,11 +18,13 @@ import pandas as pd
 
 from ..api_client import (
     get_metadata,
+    log_dataset,
     log_figure,
     log_metadata,
     log_metrics,
     log_test_result,
 )
+from .dataset import Dataset
 from .figure import Figure
 from .metric_result import MetricResult
 from .result_summary import ResultSummary
@@ -127,6 +129,26 @@ class TestPlanResult(ABC):
     def log(self):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+
+@dataclass
+class TestPlanDatasetResult(TestPlanResult):
+    """
+    Result wrapper for datasets that run as part of a test plan
+    """
+
+    name: str = "Metric"
+    result_id: str = None
+    dataset: Dataset = None
+
+    def __repr__(self) -> str:
+        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
+
+    def _to_widget(self):
+        return widgets.HTML(value=self.dataset.df.describe().to_html())
+
+    def log(self):
+        log_dataset(self.dataset)
 
 
 @dataclass

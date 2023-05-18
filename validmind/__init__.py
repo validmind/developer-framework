@@ -44,6 +44,7 @@ warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
 from .api_client import (  # noqa: E402
     init,
+    log_dataset,
     log_metrics,
     log_test_results,
     log_figure,
@@ -72,6 +73,7 @@ __all__ = [  # noqa
     "test_suites",
     "vm_models",
     # Framework Logging API
+    "log_dataset",
     "log_figure",
     "log_metrics",
     "log_test_results",
