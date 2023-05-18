@@ -179,6 +179,3 @@ notebooks/r_demo/*model.json
 
 # CatBoost geneated files
 catboost_info
-
-# pdoc documentation
-docs/_build
