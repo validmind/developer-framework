@@ -13,8 +13,7 @@ from IPython.display import display
 
 from .test_context import TestContext
 from .test_plan import TestPlan
-from .test_plan_parallel import run_test_plan
-from ..api_client import get_api_config, get_api_host, get_api_project, start_run
+from ..api_client import get_api_host, get_api_project
 from ..utils import is_notebook
 
 
@@ -72,6 +71,8 @@ class TestSuite(TestPlan):
         """
         Runs the test suite.
         """
+        # Avoid circular import
+        from ..test_plans import get_by_name
 
         self._test_plan_instances = []
 
@@ -84,7 +85,6 @@ class TestSuite(TestPlan):
 
         self._init_pbar(send=send)
 
-        from ..test_plans import get_by_name
         for test_plan_id in self.test_plans:
             test_plan = get_by_name(test_plan_id)
             test_plan_instance = test_plan(
@@ -96,35 +96,6 @@ class TestSuite(TestPlan):
             )
             test_plan_instance.run(render_summary=False, send=send)
             self._test_plan_instances.append(test_plan_instance)
-
-        # start_time = time.perf_counter()
-
-        # # TODO: use initializer instead of this hack
-        # start_run()
-
-        # for key, value in get_api_config().items():
-        #     os.environ[key] = value # explicitly set env vars for subprocesses
-
-        # executor = ProcessPoolExecutor()
-
-        # futures = [
-        #     executor.submit(
-        #         run_test_plan,
-        #         test_plan_id,
-        #         self.config,
-        #         self.test_context,
-        #         send=send,
-        #     )
-        #     for test_plan_id in self.test_plans
-        # ]
-
-        # for future in futures:
-        #     self._test_plan_instances.append(future.result())
-
-        # executor.shutdown(wait=False)
-
-        # end_time = time.perf_counter()
-        # print(f"Finished running test suite in {end_time - start_time:0.4f} seconds")
 
         self.summarize()
         self.pbar_description.value = "Test suite complete!"
@@ -159,7 +130,12 @@ class TestSuite(TestPlan):
         title = widgets.HTML(value=self._results_title())
         ui_host = get_api_host().replace("/api/v1/tracking", "").replace("api", "app")
         results_link = widgets.HTML(
-            value=f'<h3>Check out the updated documentation in your <a href="{ui_host}/projects/{get_api_project()}/project-overview" target="_blank">ValidMind project</a>.</h3>'
+            value=f"""
+            <h3>
+              Click <a href="{ui_host}/projects/{get_api_project()}/project-overview"target="_blank">here</a>
+              to view the updated model documentation for this project.
+            </h3>
+            """
         )
 
         accordion_contents = self._results_summary()

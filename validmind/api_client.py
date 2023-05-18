@@ -13,8 +13,7 @@ import aiohttp
 import requests
 from aiohttp import FormData
 
-from .utils import NumpyEncoder
-from .utils import get_full_typename, is_matplotlib_typename
+from .utils import get_full_typename, is_matplotlib_typename, NumpyEncoder, run_async
 
 
 _api_key = os.environ.get("VM_API_KEY")
@@ -367,8 +366,9 @@ async def log_test_result(result, dataset_type="training"):
 
 
 def log_test_results(results, dataset_type="training"):
-    """
-    Logs test results information. This method will be called automatically be any function
+    """Logs test results information
+
+    This method will be called automatically be any function
     running tests but can also be called directly if the user wants to run tests on their own.
 
     Args:
@@ -383,8 +383,7 @@ def log_test_results(results, dataset_type="training"):
         list: list of responses from the API
     """
     try:
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(
+        return run_async(
             asyncio.gather(
                 *[log_test_result(result, dataset_type) for result in results]
             )
