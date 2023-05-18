@@ -49,13 +49,10 @@ class TestFrameworkInit(unittest.TestCase):
         """
         Test that init() raises a TypeError when no arguments are passed.
         """
-        with self.assertRaises(TypeError) as err:
+        with self.assertRaises(ValueError) as err:
             vm.init()
 
-        self.assertEqual(
-            str(err.exception),
-            "init() missing 1 required positional argument: 'project'",
-        )
+        self.assertIn("Project ID must be provided", str(err.exception))
 
     def test_project_id_only(self):
         """
@@ -67,7 +64,7 @@ class TestFrameworkInit(unittest.TestCase):
         self.assertIn("API key", str(err.exception))
 
     @mock.patch(
-        "requests.Session.get",
+        "requests.get",
         return_value=MockResponse(INVALID_CREDENTIALS_JSON_RESPONSE, 401),
     )
     def test_all_args_ok_bad_credentials(self, mock_get):
@@ -77,7 +74,7 @@ class TestFrameworkInit(unittest.TestCase):
         self.assertIn("invalid_credentials", str(err.exception))
 
     @mock.patch(
-        "requests.Session.get",
+        "requests.get",
         return_value=MockResponse(INVALID_PROJECT_JSON_RESPONSE, 401),
     )
     def test_all_args_ok_bad_project(self, mock_get):
@@ -87,7 +84,7 @@ class TestFrameworkInit(unittest.TestCase):
         self.assertIn("invalid_project", str(err.exception))
 
     @mock.patch(
-        "requests.Session.get",
+        "requests.get",
         return_value=MockResponse(SUCCESSFUL_PING_JSON_RESPONSE, 200),
     )
     def test_all_args_ok(self, mock_get):

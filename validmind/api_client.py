@@ -66,6 +66,13 @@ def init(project=None, api_key=None, api_secret=None, api_host=None):
     """
     global _api_key, _api_secret, _api_host, _run_cuid, _project, api_session
 
+    _project = project or os.environ.get("VM_API_PROJECT")
+
+    if _project is None:
+        raise ValueError(
+            "Project ID must be provided either as an environment variable or as an argument to init."
+        )
+
     _api_key = api_key or os.environ.get("VM_API_KEY")
     _api_secret = api_secret or os.environ.get("VM_API_SECRET")
 
@@ -77,8 +84,7 @@ def init(project=None, api_key=None, api_secret=None, api_host=None):
     _api_host = api_host or os.environ.get(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
     )
-    _project = project or os.environ.get("VM_API_PROJECT")
-    _run_cuid = os.environ.get("VM_RUN_CUID", None)  # this is for sub-processes
+    _run_cuid = os.environ.get("VM_RUN_CUID", None)
 
     return __ping()
 
