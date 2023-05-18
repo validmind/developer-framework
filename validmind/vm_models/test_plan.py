@@ -1,14 +1,14 @@
 """
 TestPlan class
 """
+import asyncio
 from dataclasses import dataclass
 from typing import ClassVar, List
 
 import ipywidgets as widgets
-
 from IPython.display import display
 
-from ..utils import clean_docstring, is_notebook, run_async
+from ..utils import clean_docstring, is_notebook, run_async, run_async_if_not_exists
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
@@ -192,6 +192,7 @@ class TestPlan:
 
         if send:
             run_async(self.log_results)
+            run_async_if_not_exists(self.check_progress, name="check_progress")
 
         # TODO: remove
         for test_plan in self.test_plans:
@@ -209,6 +210,14 @@ class TestPlan:
             self._test_plan_instances.append(test_plan_instance)
 
         self.summarize(render_summary)
+
+    async def check_progress(self):
+        done = False
+        while not done:
+            if self.pbar.value == self.pbar.max:
+                self.pbar_description.value = "Test plan complete!"
+                done = True
+            await asyncio.sleep(0.5)
 
     async def log_results(self):
         """Logs the results of the test plan to ValidMind
@@ -323,7 +332,6 @@ class TestPlan:
 
         if render_summary:
             display(self.summary)
-            self.pbar_description.value = "Test plan complete!"
 
     def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
         """

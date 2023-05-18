@@ -222,7 +222,7 @@ def format_number(number):
         return number
 
 
-def run_async(func, *args, **kwargs):
+def run_async(func, name=None, *args, **kwargs):
     """Helper function to run functions asynchronously
 
     This takes care of the complexity of running the logging functions asynchronously. It will
@@ -239,8 +239,17 @@ def run_async(func, *args, **kwargs):
     """
     try:
         if asyncio.get_event_loop().is_running() and is_notebook():
-            return asyncio.get_event_loop().create_task(func(*args, **kwargs))
+            return asyncio.get_event_loop().create_task(func(*args, **kwargs), name=name)
     except RuntimeError:
         pass
 
     return asyncio.get_event_loop().run_until_complete(func(*args, **kwargs))
+
+
+def run_async_if_not_exists(func, name=None, *args, **kwargs):
+    """Helper function to run functions asynchronously if the task doesn't already exist"""
+    for task in asyncio.all_tasks():
+        if task.get_name() == name:
+            return task
+
+    return run_async(func, name=name, *args, **kwargs)
