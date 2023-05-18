@@ -43,7 +43,7 @@ async def update_metadata(content_id: str, text: str) -> None:
     try:
         existing_metadata = await get_metadata(content_id)
     except Exception:
-        existing_metadata = None # TODO: handle this better
+        existing_metadata = None  # TODO: handle this better
 
     if (
         existing_metadata is None
@@ -301,7 +301,7 @@ class TestPlanMetricResult(TestPlanResult):
         return widgets.VBox(vbox_children)
 
     async def log(self):
-        tasks = [] # collect tasks to run in parallel (async)
+        tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
             tasks.append(log_metrics([self.metric]))
@@ -381,7 +381,7 @@ class TestPlanTestResult(TestPlanResult):
 
     async def log(self):
         tasks = [log_test_result(self.test_results)]
-    
+
         if self.figures:
             for fig in self.figures:
                 tasks.append(log_figure(fig.figure, fig.key, fig.metadata))
