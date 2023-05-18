@@ -29,8 +29,8 @@ class BinaryClassifierModelValidation(TestSuite):
 
     test_plans = [
         "binary_classifier_metrics",
-        "binary_classifier_model_diagnosis",  # in this order for performance reasons
         "binary_classifier_validation",
+        "binary_classifier_model_diagnosis",
     ]
 
 
@@ -46,8 +46,8 @@ class BinaryClassifierFullSuite(TestSuite):
         "tabular_dataset_description",
         "tabular_data_quality",
         "binary_classifier_metrics",
-        "binary_classifier_model_diagnosis",  # in this order for performance reasons
         "binary_classifier_validation",
+        "binary_classifier_model_diagnosis",
     ]
 
 
