@@ -4,7 +4,6 @@ import math
 
 from typing import Any
 
-import nest_asyncio
 import numpy as np
 
 from IPython.core import getipython
@@ -238,9 +237,10 @@ def run_async(func, *args, **kwargs):
     Returns:
         The result of the function
     """
-    if asyncio.get_event_loop().is_running():
-        # we are in an async context (ipython notebook)
-        # use nest_asyncio to allow nested async calls
-        nest_asyncio.apply()
+    try:
+        if asyncio.get_event_loop().is_running() and is_notebook():
+            return asyncio.get_event_loop().create_task(func(*args, **kwargs))
+    except RuntimeError:
+        pass
 
-    return asyncio.run(func(*args, **kwargs))
+    return asyncio.get_event_loop().run_until_complete(func(*args, **kwargs))
