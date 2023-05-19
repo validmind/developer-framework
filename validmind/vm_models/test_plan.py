@@ -69,6 +69,16 @@ class TestPlan:
 
         self.validate_context()
 
+    def _merge_config(self, config):
+        """Merges global config with individual test configs if they exist"""
+        if self.config is None:
+            return config
+
+        if config is None:
+            return self.config
+
+        return {**self.config, **config}
+
     def title(self):
         """
         Returns the title of the test plan. Defaults to the title
