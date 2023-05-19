@@ -77,8 +77,6 @@ def _get_test_type(test):
         return "Metric"
     elif issubclass(test, ThresholdTest):
         return "ThresholdTest"
-    else:
-        return "CustomTest"
 
 
 def list_plans(pretty: bool = True):
