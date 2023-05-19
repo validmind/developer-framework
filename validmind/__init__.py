@@ -56,7 +56,7 @@ from .client import (  # noqa: E402
     run_test_plan,
     run_test_suite,
 )
-from .utils import run_async
+from .utils import run_async # noqa: E402
 
 
 def log_dataset(dataset):
