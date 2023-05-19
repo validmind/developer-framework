@@ -217,7 +217,6 @@ class TestPlan:
 
         # TODO: remove
         for test_plan in self.test_plans:
-            print(f"here... {test_plan}")
             test_plan_instance = test_plan(
                 config=self.config,
                 test_context=self.test_context,
