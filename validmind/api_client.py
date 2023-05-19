@@ -237,6 +237,7 @@ async def log_dataset(vm_dataset):
 
 async def log_figure(data_or_path, key, metadata):
     """Logs a figure
+
     Args:
         data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot
         key (str): Identifier of the figure
