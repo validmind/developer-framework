@@ -43,7 +43,7 @@ class MockResponse:
         return self
 
 
-class TestYourModule(unittest.TestCase):
+class TestAPIClient(unittest.TestCase):
     def tearDownClass():
         loop.close()
 

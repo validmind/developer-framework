@@ -9,7 +9,7 @@ import xgboost as xgb
 from validmind.datasets.classification import customer_churn as demo_dataset
 
 
-class TestValidmind(unittest.TestCase):
+class TestFullTestSuite(unittest.TestCase):
     def setUp(self):
         self.df = demo_dataset.load_data()
 
