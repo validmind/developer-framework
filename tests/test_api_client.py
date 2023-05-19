@@ -270,6 +270,9 @@ class TestAPIClient(unittest.TestCase):
             },
         )
 
+        # reset the run cuid
+        api_client._run_cuid = os.environ["VM_RUN_CUID"]
+
     @patch("requests.post")
     def test_start_run_unsuccessful(self, mock_requests_post):
         mock_response = Mock(status_code=500)
