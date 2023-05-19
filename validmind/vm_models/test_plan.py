@@ -192,7 +192,7 @@ class TestPlan:
 
         if send:
             run_async(self.log_results)
-            run_async_check(self.check_progress)
+            run_async_check(self._check_progress)
 
         # TODO: remove
         for test_plan in self.test_plans:
@@ -211,7 +211,7 @@ class TestPlan:
 
         self.summarize(render_summary)
 
-    async def check_progress(self):
+    async def _check_progress(self):
         done = False
         while not done:
             if self.pbar.value == self.pbar.max:
