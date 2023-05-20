@@ -149,9 +149,7 @@ async def __get_url(endpoint, params=None):
         start_run()
 
     params = params or {}
-
     params["run_cuid"] = _run_cuid
-    # api_session.headers["X-RUN-CUID"] = _run_cuid
 
     return f"{_api_host}/{endpoint}?{urllib.parse.urlencode(params)}"
 
@@ -413,7 +411,6 @@ def start_run():
         raise Exception(r.text)
 
     test_run = r.json()
-    # api_session.headers["X-RUN-CUID"] = test_run["cuid"]
     _run_cuid = test_run["cuid"]
 
     return test_run["cuid"]
