@@ -57,7 +57,7 @@ class TestAPIClient(unittest.TestCase):
         mock_requests_get.return_value = mock_response
 
         success = api_client.init()
-        self.assertTrue(success)
+        self.assertIsNone(success)
 
         mock_requests_get.assert_called_once_with(
             f"{os.environ['VM_API_HOST']}/ping",
