@@ -15,7 +15,7 @@ license = "Commercial License"
 # ]
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.12.7a1"
+version = "1.13.0"
 
 [tool.poetry.dependencies]
 arch = "^5.4.0"
@@ -45,6 +45,7 @@ statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 tqdm = "^4.64.0"
 xgboost = "^1.5.2"
+aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
