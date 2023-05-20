@@ -17,8 +17,9 @@ INVALID_PROJECT_JSON_RESPONSE = {
     "description": "Invalid project",
 }
 
-# TODO: fix typo on flask code: `return flask.jsonify({"stauts": "OK"})`
-SUCCESSFUL_PING_JSON_RESPONSE = {"stauts": "OK"}
+SUCCESSFUL_PING_JSON_RESPONSE = {
+    "project": {"name": "Test Project", "cuid": "clhoavbng001p5n8he0titquj"}
+}
 
 
 class MockResponse:
