@@ -44,11 +44,11 @@ warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
 from .api_client import (  # noqa: E402
     init,
-    log_metrics,
+    log_dataset as _log_dataset_async,
+    log_metrics as _log_metrics_async,
     log_test_results,
-    log_figure,
+    log_figure as _log_figure_async,
 )
-
 from .client import (  # noqa: E402
     init_dataset,
     init_model,
@@ -56,6 +56,52 @@ from .client import (  # noqa: E402
     run_test_plan,
     run_test_suite,
 )
+from .utils import run_async  # noqa: E402
+
+
+def log_dataset(dataset):
+    """Logs metadata and statistics about a dataset to ValidMind API.
+
+    Args:
+        vm_dataset (validmind.VMDataset): A VM dataset object
+
+    Returns:
+        validmind.VMDataset: The VMDataset object
+    """
+    run_async(_log_dataset_async, dataset)
+
+
+def log_metrics(metrics):
+    """Logs metrics to ValidMind API.
+
+    Args:
+        metrics (list): A list of Metric objects
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    run_async(_log_metrics_async, metrics)
+
+
+def log_figure(data_or_path, key, metadata):
+    """Logs a figure
+
+    Args:
+        data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot
+        key (str): Identifier of the figure
+        metadata (dict): Python data structure
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    run_async(_log_figure_async, data_or_path, key, metadata)
+
 
 __all__ = [  # noqa
     # Framework High Level API
@@ -72,6 +118,7 @@ __all__ = [  # noqa
     "test_suites",
     "vm_models",
     # Framework Logging API
+    "log_dataset",
     "log_figure",
     "log_metrics",
     "log_test_results",
