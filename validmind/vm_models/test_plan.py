@@ -1,19 +1,18 @@
 """
 TestPlan class
 """
+import asyncio
 from dataclasses import dataclass
 from typing import ClassVar, List
 
 import ipywidgets as widgets
-
 from IPython.display import display
 
-from ..utils import is_notebook
+from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
-from ..utils import clean_docstring
 
 
 @dataclass
@@ -192,7 +191,8 @@ class TestPlan:
             self.pbar.value += 1
 
         if send:
-            self.log_results()
+            run_async(self.log_results)
+            run_async_check(self._check_progress)
 
         # TODO: remove
         for test_plan in self.test_plans:
@@ -211,7 +211,15 @@ class TestPlan:
 
         self.summarize(render_summary)
 
-    def log_results(self):
+    async def _check_progress(self):
+        done = False
+        while not done:
+            if self.pbar.value == self.pbar.max:
+                self.pbar_description.value = "Test plan complete!"
+                done = True
+            await asyncio.sleep(0.5)
+
+    async def log_results(self):
         """Logs the results of the test plan to ValidMind
 
         This method will be called after the test plan has been run and all results have been
@@ -227,7 +235,7 @@ class TestPlan:
             )
 
             try:
-                result.log()
+                await result.log()
             except Exception as e:
                 print(result)
                 self.pbar_description.value = f"Failed to log result: {result} for test plan result '{str(result)}'"
@@ -275,7 +283,8 @@ class TestPlan:
         html table with the results of each test. This html table will be displayed in an
         VS Code, Jupyter or other notebook environment.
         """
-        if not is_notebook():
+        if render_summary and not is_notebook():
+            print("Cannot render summary outside of a notebook environment")
             return
 
         if len(self.results) == 0:
@@ -323,7 +332,6 @@ class TestPlan:
 
         if render_summary:
             display(self.summary)
-            self.pbar_description.value = "Test plan complete!"
 
     def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
         """
