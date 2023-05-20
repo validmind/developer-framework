@@ -275,7 +275,7 @@ async def log_figure(figure, run_cuid=None):
         }
     else:
         raise ValueError(
-            f"data_or_path type not supported: {get_full_typename(figure)}."
+            f"data_or_path type not supported: {get_full_typename(raw_figure)}."
         )
 
     try:

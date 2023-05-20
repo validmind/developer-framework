@@ -9,6 +9,7 @@ from typing import Optional
 import base64
 import matplotlib
 import plotly
+import plotly.graph_objs as go
 import ipywidgets as widgets
 
 
@@ -36,6 +37,12 @@ class Figure:
                 self.for_object.name if hasattr(self.for_object, "name") else None
             )
             self.metadata = metadata
+
+        # Wrap around with FigureWidget so that we can display it in Jupyter
+        if self.figure is not None and isinstance(
+            self.figure, plotly.graph_objs._figure.Figure
+        ):
+            self.figure = go.FigureWidget(self.figure)
 
     def is_matplotlib_figure(self) -> bool:
         """

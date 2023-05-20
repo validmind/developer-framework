@@ -283,54 +283,41 @@ class HighPearsonCorrelation(ThresholdTest):
 
     def run(self):
         corr = self.df.corr(numeric_only=True)
-        cols = corr.columns
 
-        # Matrix of True/False where True means the correlation is above the threshold
-        # Fill diagonal with False since all diagonal values are 1
-        bool_index = abs(corr.values) >= self.params["max_threshold"]
-        np.fill_diagonal(bool_index, False)
+        # Create a table of correlation coefficients and column pairs
+        corr_table = corr.unstack().sort_values(
+            kind="quicksort", key=abs, ascending=False
+        )
+        corr_df = pd.DataFrame(corr_table).reset_index()
+        corr_df.columns = ["Column1", "Column2", "Coefficient"]
 
-        # Simple cache to avoid a->b and b->a correlation entries
-        correlation_mapping_cache = {}
+        # Remove duplicate correlations and self-correlations
+        corr_df = corr_df.loc[corr_df["Column1"] < corr_df["Column2"]]
 
-        def cache_hit(from_field, to_field):
-            correlation_keys = [from_field, to_field]
-            correlation_keys.sort()
-            cache_key = "-".join(correlation_keys)
+        # Assign Pass/Fail based on correlation coefficient
+        corr_df["Pass/Fail"] = np.where(
+            corr_df["Coefficient"].abs() <= self.params["max_threshold"], "Pass", "Fail"
+        )
 
-            if cache_key in correlation_mapping_cache:
-                return True
+        # Only keep the top 10 correlations. TODO: configurable
+        corr_df = corr_df.head(10)
 
-            correlation_mapping_cache[cache_key] = True
-            return False
-
-        def corr_items(from_field, to_fields):
-            return [
-                {
-                    "column": to_field,
-                    "correlation": corr.loc[from_field, to_field],
-                }
-                for to_field in to_fields
-                if cache_hit(from_field, to_field) is False
-            ]
-
-        res = {
-            col: corr_items(col, cols[bool_index[i]].values.tolist())
-            for i, col in enumerate(cols)
-            if any(bool_index[i])
-        }
-
-        # Cleanup keys with no values
-        res = {k: v for k, v in res.items() if len(v) > 0}
-        passed = len(res) == 0
+        passed = corr_df["Pass/Fail"].eq("Pass").all()
 
         results = [
             TestResult(
-                column=col,
-                values={"correlations": correlations},
-                passed=False,
+                column=col1,
+                values={
+                    "correlations": [
+                        {
+                            "column": col2,
+                            "correlation": coeff,
+                        }
+                    ]
+                },
+                passed=pass_fail == "Pass",
             )
-            for col, correlations in res.items()
+            for _, (col1, col2, coeff, pass_fail) in corr_df.iterrows()
         ]
 
         return self.cache_results(results, passed=passed)
