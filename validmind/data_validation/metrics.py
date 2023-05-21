@@ -91,19 +91,25 @@ class PearsonCorrelationMatrix(Metric):
 
         corr_matrix = self.df[columns].corr(numeric_only=True)
         heatmap = go.Heatmap(
-            z=corr_matrix.values, x=list(corr_matrix.columns), y=list(corr_matrix.index)
+            z=corr_matrix.values,
+            x=list(corr_matrix.columns),
+            y=list(corr_matrix.index),
+            colorscale="rdbu",
+            zmin=-1,
+            zmax=1,
         )
 
         annotations = []
         for i, row in enumerate(corr_matrix.values):
             for j, value in enumerate(row):
+                color = "#ffffff" if abs(value) > 0.7 else "#000000"
                 annotations.append(
                     go.layout.Annotation(
                         text=str(round(value, 2)),
                         x=corr_matrix.columns[j],
                         y=corr_matrix.index[i],
                         showarrow=False,
-                        font=dict(color="white"),
+                        font=dict(color=color),
                     )
                 )
 
