@@ -18,8 +18,9 @@ INVALID_PROJECT_JSON_RESPONSE = {
     "description": "Invalid project",
 }
 
-# TODO: fix typo on flask code: `return flask.jsonify({"stauts": "OK"})`
-SUCCESSFUL_PING_JSON_RESPONSE = {"stauts": "OK"}
+SUCCESSFUL_PING_JSON_RESPONSE = {
+    "project": {"name": "Test Project", "cuid": "clhoavbng001p5n8he0titquj"}
+}
 
 
 class MockResponse:
@@ -47,9 +48,15 @@ def mocked_requests_get(*args, **kwargs):
 
 class TestFrameworkInit(unittest.TestCase):
     def setUp(self):
-        self.api_key = os.environ.pop("VM_API_KEY") if "VM_API_KEY" in os.environ else ""
-        self.api_secret = os.environ.pop("VM_API_SECRET") if "VM_API_SECRET" in os.environ else ""
-        self.api_project = os.environ.pop("VM_API_PROJECT") if "VM_API_PROJECT" in os.environ else ""
+        self.api_key = (
+            os.environ.pop("VM_API_KEY") if "VM_API_KEY" in os.environ else ""
+        )
+        self.api_secret = (
+            os.environ.pop("VM_API_SECRET") if "VM_API_SECRET" in os.environ else ""
+        )
+        self.api_project = (
+            os.environ.pop("VM_API_PROJECT") if "VM_API_PROJECT" in os.environ else ""
+        )
 
     def tearDown(self):
         os.environ["VM_API_KEY"] = self.api_key
@@ -102,7 +109,7 @@ class TestFrameworkInit(unittest.TestCase):
         client_ok = vm.init(
             api_key="api_key", api_secret="api_secret", project="project"
         )
-        self.assertTrue(client_ok)
+        self.assertIsNone(client_ok)
 
 
 if __name__ == "__main__":

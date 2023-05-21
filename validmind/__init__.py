@@ -86,13 +86,11 @@ def log_metrics(metrics):
     run_async(_log_metrics_async, metrics)
 
 
-def log_figure(data_or_path, key, metadata):
+def log_figure(figure):
     """Logs a figure
 
     Args:
-        data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot
-        key (str): Identifier of the figure
-        metadata (dict): Python data structure
+        figure (Figure): The Figure object wrapper
 
     Raises:
         Exception: If the API call fails
@@ -100,7 +98,7 @@ def log_figure(data_or_path, key, metadata):
     Returns:
         dict: The response from the API
     """
-    run_async(_log_figure_async, data_or_path, key, metadata)
+    run_async(_log_figure_async, figure)
 
 
 __all__ = [  # noqa

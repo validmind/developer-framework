@@ -13,7 +13,7 @@ from . import (
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(current_path, "datasets")
 
-drop_columns = ["RowNumber", "CustomerId", "Surname", "CreditScore"]
+drop_columns = ["RowNumber", "CustomerId", "Surname"]
 boolean_columns = ["Gender"]
 categorical_columns = ["Geography"]
 
@@ -24,15 +24,20 @@ class_labels = {
 }
 
 
-def load_data():
+def load_data(full_dataset=False):
     data_file = os.path.join(dataset_path, "bank_customer_churn.csv")
     df = pd.read_csv(data_file)
+
+    # Drop these unnecessary columns when loading since they won't be
+    # helpful for showing data quality issues
+    if full_dataset is False:
+        df.drop(drop_columns, axis=1, inplace=True)
+
     return df
 
 
 def preprocess(df):
     df = df.copy()
-    df.drop(drop_columns, axis=1, inplace=True)
     df = simple_preprocess_booleans(df, boolean_columns)
     df = simple_preprocess_categoricals(df, categorical_columns)
     numerical_columns = [

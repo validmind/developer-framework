@@ -1,13 +1,12 @@
 """
 TestPlanResult
 """
-import base64
 import json
 import os
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from io import BytesIO
+
 from typing import List, Optional
 
 import asyncio
@@ -51,19 +50,7 @@ def plot_figures(figures: List[Figure]) -> None:
     Plot figures to a ipywidgets GridBox
     """
 
-    plots = []
-
-    for fig in figures:
-        tmpfile = BytesIO()
-        fig.figure.savefig(tmpfile, format="png")
-        encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
-        plots.append(
-            widgets.HTML(
-                value=f"""
-                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
-                """
-            )
-        )
+    plots = [figure._to_widget() for figure in figures]
 
     num_columns = 2 if len(figures) > 1 else 1
     return widgets.GridBox(
@@ -300,7 +287,7 @@ class TestPlanMetricResult(TestPlanResult):
             tasks.append(api_client.log_metrics([self.metric]))
         if self.figures:
             for fig in self.figures:
-                tasks.append(api_client.log_figure(fig.figure, fig.key, fig.metadata))
+                tasks.append(api_client.log_figure(fig))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
@@ -377,7 +364,7 @@ class TestPlanTestResult(TestPlanResult):
 
         if self.figures:
             for fig in self.figures:
-                tasks.append(api_client.log_figure(fig.figure, fig.key, fig.metadata))
+                tasks.append(api_client.log_figure(fig))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))

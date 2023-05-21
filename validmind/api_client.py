@@ -14,7 +14,8 @@ import aiohttp
 import requests
 from aiohttp import FormData
 
-from .utils import get_full_typename, is_matplotlib_typename, NumpyEncoder, run_async
+from .client_config import client_config
+from .utils import get_full_typename, NumpyEncoder, run_async
 
 
 _api_key = os.environ.get("VM_API_KEY")
@@ -133,15 +134,21 @@ def __ping():
         print("Unsuccessful ping to ValidMind API")
         raise Exception(r.text)
 
-    project_info = r.json()
-    if "name" in project_info:
-        print(
-            f"Connected to ValidMind. Project: {project_info['name']} ({project_info['cuid']})"
-        )
-    else:
-        print("Connected to ValidMind")
+    client_info = r.json()
+    feature_flags = {}
 
-    return True
+    # Check if we have received a legacy payload from the API. The legacy response
+    # will have the project name in the root object, otherwse it will be in the "project" key.
+    if "project" in client_info:
+        project = client_info["project"]
+        feature_flags = client_info.get("feature_flags", {})
+    else:
+        project = client_info
+
+    client_config.project = project
+    client_config.feature_flags = feature_flags
+
+    print(f"Connected to ValidMind. Project: {project['name']} ({project['cuid']})")
 
 
 async def __get_url(endpoint, params=None):
@@ -235,13 +242,11 @@ async def log_dataset(vm_dataset):
     return vm_dataset
 
 
-async def log_figure(data_or_path, key, metadata):
+async def log_figure(figure, run_cuid=None):
     """Logs a figure
 
     Args:
-        data_or_path (str or matplotlib.figure.Figure): The path of the image or the data of the plot
-        key (str): Identifier of the figure
-        metadata (dict): Python data structure
+        figure (Figure): The Figure object wrapper
 
     Raises:
         Exception: If the API call fails
@@ -249,31 +254,39 @@ async def log_figure(data_or_path, key, metadata):
     Returns:
         dict: The response from the API
     """
-    if isinstance(data_or_path, str):
-        type_ = "file_path"
-        _, extension = os.path.splitext(data_or_path)
-        files = {"image": (f"{key}{extension}", open(data_or_path, "rb"))}
-    elif is_matplotlib_typename(get_full_typename(data_or_path)):
+    raw_figure = figure.figure
+
+    if figure.is_matplotlib_figure():
         type_ = "plot"
         buffer = BytesIO()
-        data_or_path.savefig(buffer, bbox_inches="tight")
+        raw_figure.savefig(buffer, bbox_inches="tight")
         buffer.seek(0)
-        files = {"image": (f"{key}.png", buffer, "image/png")}
+        files = {"image": (f"{figure.key}.png", buffer, "image/png")}
+    elif figure.is_plotly_figure():
+        # When using plotly, we need to use we will produce two files:
+        # - a JSON file that will be used to display the figure in the UI
+        # - a PNG file that will be used to display the figure in documents
+        type_ = "plot"
+        png_file = raw_figure.to_image(format="png")
+        json_file = raw_figure.to_json()
+        files = {
+            "image": (f"{figure.key}.png", png_file, "image/png"),
+            "json_image": (f"{figure.key}.json", json_file, "application/json"),
+        }
     else:
         raise ValueError(
-            f"data_or_path type not supported: {get_full_typename(data_or_path)}. "
-            f"Available supported types: string path or matplotlib"
+            f"data_or_path type not supported: {get_full_typename(raw_figure)}."
         )
 
     try:
-        metadata_json = json.dumps(metadata, allow_nan=False)
+        metadata_json = json.dumps(figure.metadata, allow_nan=False)
     except TypeError:
         raise
 
     try:
         return await _post(
             "log_figure",
-            data={"type": type_, "key": key, "metadata": metadata_json},
+            data={"type": type_, "key": figure.key, "metadata": metadata_json},
             files=files,
         )
     except Exception as e:

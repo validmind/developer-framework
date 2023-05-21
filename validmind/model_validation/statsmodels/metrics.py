@@ -925,8 +925,6 @@ class RegressionModelForecastPlotLevels(Metric):
         """
 
     def run(self):
-        print(self.params)
-
         transformation = self.params["transformation"]
 
         if not self.models:
