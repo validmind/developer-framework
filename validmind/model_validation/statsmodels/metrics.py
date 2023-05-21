@@ -1056,6 +1056,127 @@ class RegressionModelForecastPlotLevels(Metric):
 
 
 @dataclass
+class RegressionModelSensitivityPlot(Metric):
+    """
+    This metric creates a plot of forecast vs observed for each model in the list.
+    """
+
+    name = "regression_sensitivity_plot"
+    default_params = {
+        "transformation": None,
+    }
+
+    def description(self):
+        return """
+        This section shows plots of training and test datasets vs forecast training and test.
+        """
+
+    def run(self):
+        print(self.params)
+
+        transformation = self.params["transformation"]
+
+        if not self.models:
+            raise ValueError("List of models must be provided in the models parameter")
+
+        all_models = []
+        for model in self.models:
+            if not Model.is_supported_model(model.model):
+                raise ValueError(
+                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
+                                 is not supported by ValidMind framework yet"
+                )
+            all_models.append(model)
+
+        figures = self._plot_forecast(all_models, transformation)
+
+        return self.cache_results(figures=figures)
+
+    def integrate_diff(self, series_diff, start_value):
+        series_diff = np.array(series_diff)
+        series_orig = np.cumsum(series_diff)
+        series_orig += start_value
+        return series_orig
+
+    def apply_shock(self, df, shocks, target_col):
+        shocked_dfs = [df.copy()]  # Start with the original dataset
+        cols_to_shock = df.drop(columns=target_col).columns  # All columns except target
+
+        # apply shock one variable at a time
+        for shock in shocks:
+            for col in cols_to_shock:
+                temp_df = df.copy()
+                temp_df[col] = temp_df[col] * (1 + shock)
+                shocked_dfs.append(temp_df)
+
+        return shocked_dfs
+
+    def _plot_forecast(self, model_list, transformation=None, shocks=[0.1]):
+        figures = []
+
+        for fitted_model in model_list:
+            feature_columns = fitted_model.train_ds.get_features_columns()
+            train_ds = fitted_model.train_ds
+
+            all_dates = pd.concat([pd.Series(train_ds.index)])
+
+            if all_dates.empty:
+                raise ValueError(
+                    "No dates in the data. Unable to determine start and end dates."
+                )
+
+            shocked_test_dfs = self.apply_shock(
+                fitted_model.train_ds.df, shocks, fitted_model.train_ds.target_column
+            )
+
+            for i, shocked_test_ds in enumerate(shocked_test_dfs):
+                print(shocked_test_ds[feature_columns])
+                y_pred_test = fitted_model.model.predict(
+                    shocked_test_ds[feature_columns]
+                )
+
+                fig, axs = plt.subplots()
+
+                if transformation == "integrate":
+                    test_ds_y_transformed = self.integrate_diff(
+                        shocked_test_ds[feature_columns].values,
+                        start_value=shocked_test_ds[feature_columns][0],
+                    )
+
+                    # Use the first value of the transformed train dataset as the start_value for predicted datasets
+                    y_pred_test_transformed = self.integrate_diff(
+                        y_pred_test, start_value=test_ds_y_transformed[0]
+                    )
+
+                    # Transformed test vs forecast
+                    axs.plot(
+                        fitted_model.test_ds.index,
+                        test_ds_y_transformed,
+                        label="Test Dataset",
+                        color="grey",
+                    )
+
+                    axs.plot(
+                        fitted_model.test_ds.index,
+                        y_pred_test_transformed,
+                        label=f"Test Forecast, shock: {shocks[i]}"
+                        if i != 0
+                        else "Test Forecast, baseline",
+                    )
+                    axs.set_title(
+                        f"Integrated Forecast vs Observed for features {feature_columns}"
+                    )
+                    axs.legend()
+
+                figures.append(Figure(key=self.key, figure=fig, metadata={}))
+
+                # Close the figure to prevent it from displaying
+                plt.close(fig)
+
+        return figures
+
+
+@dataclass
 class RegressionModelsCoeffs(Metric):
     """
     Test that outputs the coefficients of stats library regression models.
