@@ -110,6 +110,12 @@
                                 <a class="function" href="#Figure.__init__">Figure</a>
                         </li>
                         <li>
+                                <a class="function" href="#Figure.is_matplotlib_figure">is_matplotlib_figure</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Figure.is_plotly_figure">is_plotly_figure</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Figure.serialize">serialize</a>
                         </li>
                 </ul>
@@ -850,6 +856,36 @@ reverse the one hot encoding and drop the individual dummy columns</p>
     
 
                             </div>
+                            <div id="Figure.is_matplotlib_figure" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">is_matplotlib_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Figure.is_matplotlib_figure"></a>
+    
+            <div class="docstring"><p>Returns True if the figure is a matplotlib figure</p>
+</div>
+
+
+                            </div>
+                            <div id="Figure.is_plotly_figure" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">is_plotly_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Figure.is_plotly_figure"></a>
+    
+            <div class="docstring"><p>Returns True if the figure is a plotly figure</p>
+</div>
+
+
+                            </div>
                             <div id="Figure.serialize" class="classattr">
                                 <div class="attr function">
             
@@ -1367,7 +1403,7 @@ predict_proba (for classification) or predict (for regression) method</p>
                             <div id="ResultTable.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ResultTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;table&#39;</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n"><a href="#ResultTableMetadata">validmind.vm_models.ResultTableMetadata</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ResultTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;table&#39;</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n"><a href="#ResultTableMetadata">validmind.vm_models.ResultTableMetadata</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1659,7 +1695,7 @@ sub test plans and render them all at once with widgets</li>
                             <div id="TestPlan.log_results" class="classattr">
                                 <div class="attr function">
             
-        <span class="def">def</span>
+        <span class="def">async def</span>
         <span class="name">log_results</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
@@ -1741,7 +1777,7 @@ sub test plans.</p>
                             <div id="TestPlanMetricResult.log" class="classattr">
                                 <div class="attr function">
             
-        <span class="def">def</span>
+        <span class="def">async def</span>
         <span class="name">log</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
@@ -1793,7 +1829,7 @@ sub test plans.</p>
                             <div id="TestPlanTestResult.log" class="classattr">
                                 <div class="attr function">
             
-        <span class="def">def</span>
+        <span class="def">async def</span>
         <span class="name">log</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         

@@ -129,7 +129,7 @@ and to upload to the ValidMind Platform.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">project</span>, </span><span class="param"><span class="n">api_key</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">api_secret</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">api_host</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">init</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">project</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">api_key</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">api_secret</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">api_host</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -371,7 +371,7 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">vm_dataset</span></span><span class="return-annotation">):</span></span>
+        <span class="name">log_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -383,16 +383,6 @@ See the documentation for the specific test plan, metric or threshold test for m
 
 <ul>
 <li><strong>vm_dataset (validmind.VMDataset):</strong>  A VM dataset object</li>
-<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".</li>
-<li><strong>dataset_options (dict, optional):</strong>  Additional dataset options for analysis. Defaults to None.</li>
-<li><strong>dataset_targets (validmind.DatasetTargets, optional):</strong>  A list of targets for the dataset. Defaults to None.</li>
-<li><strong>features (list, optional):</strong>  Optional. A list of features metadata. Defaults to None.</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>Exception:</strong>  If the API call fails</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -408,7 +398,7 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">data_or_path</span>, </span><span class="param"><span class="n">key</span>, </span><span class="param"><span class="n">metadata</span>, </span><span class="param"><span class="n">run_cuid</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">log_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">figure</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -419,10 +409,7 @@ See the documentation for the specific test plan, metric or threshold test for m
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>data_or_path (str or matplotlib.figure.Figure):</strong>  The path of the image or the data of the plot</li>
-<li><strong>key (str):</strong>  Identifier of the figure</li>
-<li><strong>metadata (dict):</strong>  Python data structure</li>
-<li><strong>run_cuid (str, optional):</strong>  The run CUID. If not provided, a new run will be created. Defaults to None.</li>
+<li><strong>figure (Figure):</strong>  The Figure object wrapper</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -434,7 +421,7 @@ See the documentation for the specific test plan, metric or threshold test for m
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>bool: True if the API call was successful</p>
+  <p>dict: The response from the API</p>
 </blockquote>
 </div>
 
@@ -444,7 +431,7 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metrics</span>, </span><span class="param"><span class="n">run_cuid</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">log_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metrics</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -456,7 +443,6 @@ See the documentation for the specific test plan, metric or threshold test for m
 
 <ul>
 <li><strong>metrics (list):</strong>  A list of Metric objects</li>
-<li><strong>run_cuid (str, optional):</strong>  The run CUID. If not provided, a new run will be created. Defaults to None.</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -468,7 +454,7 @@ See the documentation for the specific test plan, metric or threshold test for m
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>bool: True if the API call was successful</p>
+  <p>dict: The response from the API</p>
 </blockquote>
 </div>
 
@@ -478,21 +464,23 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_test_results</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">results</span>, </span><span class="param"><span class="n">run_cuid</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">dataset_type</span><span class="o">=</span><span class="s1">&#39;training&#39;</span></span><span class="return-annotation">):</span></span>
+        <span class="name">log_test_results</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">results</span>, </span><span class="param"><span class="n">dataset_type</span><span class="o">=</span><span class="s1">&#39;training&#39;</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#log_test_results"></a>
     
-            <div class="docstring"><p>Logs test results information. This method will be called automatically be any function
+            <div class="docstring"><p>Logs test results information</p>
+
+<p>This method will be called automatically be any function
 running tests but can also be called directly if the user wants to run tests on their own.</p>
 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
 <li><strong>results (list):</strong>  A list of TestResults objects</li>
-<li><strong>run_cuid (str, optional):</strong>  The run CUID. If not provided, a new run will be created. Defaults to None.</li>
-<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training", "test", or "validation". Defaults to "training".</li>
+<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training",
+"test", or "validation". Defaults to "training".</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -504,7 +492,7 @@ running tests but can also be called directly if the user wants to run tests on 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>bool: True if the API call was successful</p>
+  <p>list: list of responses from the API</p>
 </blockquote>
 </div>
 
