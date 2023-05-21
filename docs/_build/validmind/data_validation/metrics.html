@@ -44,6 +44,18 @@
 
             </li>
             <li>
+                    <a class="class" href="#PearsonCorrelationMatrix">PearsonCorrelationMatrix</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PearsonCorrelationMatrix.__init__">PearsonCorrelationMatrix</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PearsonCorrelationMatrix.run">run</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#DatasetCorrelations">DatasetCorrelations</a>
                             <ul class="memberlist">
                         <li>
@@ -329,6 +341,68 @@ and it will be logged via the <code>log_dataset</code> function</p>
                                     <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
                                 <dd id="DatasetMetadata.df" class="variable">df</dd>
                 <dd id="DatasetMetadata.validate_context" class="function">validate_context</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="PearsonCorrelationMatrix">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">PearsonCorrelationMatrix</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#PearsonCorrelationMatrix"></a>
+    
+            <div class="docstring"><p>Extracts the Pearson correlation coefficient for all pairs of numerical variables
+in the dataset. This metric is useful to identify highly correlated variables
+that can be removed from the dataset to reduce dimensionality.</p>
+</div>
+
+
+                            <div id="PearsonCorrelationMatrix.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">PearsonCorrelationMatrix</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#PearsonCorrelationMatrix.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="PearsonCorrelationMatrix.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PearsonCorrelationMatrix.run"></a>
+    
+            <div class="docstring"><p>Run the metric calculation and cache its results</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                <dd id="PearsonCorrelationMatrix.key" class="variable">key</dd>
+                <dd id="PearsonCorrelationMatrix.description" class="function">description</dd>
+                <dd id="PearsonCorrelationMatrix.summary" class="function">summary</dd>
+                <dd id="PearsonCorrelationMatrix.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                <dd id="PearsonCorrelationMatrix.df" class="variable">df</dd>
+                <dd id="PearsonCorrelationMatrix.validate_context" class="function">validate_context</dd>
 
             </div>
                                 </dl>

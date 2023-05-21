@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from functools import partial
 
 import matplotlib.pyplot as plt
+import plotly.figure_factory as ff
 import numpy as np
 import pandas as pd
 import shap
@@ -121,8 +122,14 @@ class ConfusionMatrix(Metric):
     name = "confusion_matrix"
     required_context = ["model"]
 
-    def summary(self, metric_value):
-        return None
+    def description(self):
+        return """
+        A confusion matrix is a table that is used to describe the performance of a classification
+        model. For metrics such as **True Positives (TP)** and **True Negatives (TN)**, the higher their
+        values the better as the model is able to distinguish the correct class from the incorrect
+        class more effectively. For **False Positives (FP)** and **False Negatives (FN)**, the lower
+        their values the better.
+        """
 
     def run(self):
         y_true = self.model.test_ds.y
@@ -134,9 +141,39 @@ class ConfusionMatrix(Metric):
         cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
         tn, fp, fn, tp = cm.ravel()
 
-        plot = metrics.ConfusionMatrixDisplay(
-            confusion_matrix=cm, display_labels=y_labels
-        ).plot()
+        # Custom text to display on the heatmap cells
+        text = [
+            [
+                f"<b>True Negatives (TN)</b><br />{tn}",
+                f"<b>False Positives (FP)</b><br />{fp}",
+            ],
+            [
+                f"<b>False Negatives (FN)</b><br />{fn}",
+                f"<b>True Positives (TP)</b><br />{tp}",
+            ],
+        ]
+
+        fig = ff.create_annotated_heatmap(
+            [[tn, fp], [fn, tp]],
+            x=[0, 1],
+            y=[0, 1],
+            colorscale="Blues",
+            annotation_text=text,
+        )
+        # Reverse the xaxis so that 1 is on the left
+        fig["layout"]["xaxis"]["autorange"] = "reversed"
+
+        fig["data"][0][
+            "hovertemplate"
+        ] = "True Label:%{y}<br>Predicted Label:%{x}<br>Count:%{z}<extra></extra>"
+
+        fig.update_layout(
+            xaxis=dict(title="Predicted label", constrain="domain"),
+            yaxis=dict(title="True label", scaleanchor="x", scaleratio=1),
+            autosize=False,
+            width=600,
+            height=600,
+        )
 
         return self.cache_results(
             metric_value={
@@ -149,7 +186,7 @@ class ConfusionMatrix(Metric):
                 Figure(
                     for_object=self,
                     key="confusion_matrix",
-                    figure=plot.figure_,
+                    figure=fig,
                 )
             ],
         )

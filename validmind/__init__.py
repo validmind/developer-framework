@@ -44,12 +44,11 @@ warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
 from .api_client import (  # noqa: E402
     init,
-    log_dataset,
-    log_metrics,
+    log_dataset as _log_dataset_async,
+    log_metrics as _log_metrics_async,
     log_test_results,
-    log_figure,
+    log_figure as _log_figure_async,
 )
-
 from .client import (  # noqa: E402
     init_dataset,
     init_model,
@@ -57,6 +56,50 @@ from .client import (  # noqa: E402
     run_test_plan,
     run_test_suite,
 )
+from .utils import run_async  # noqa: E402
+
+
+def log_dataset(dataset):
+    """Logs metadata and statistics about a dataset to ValidMind API.
+
+    Args:
+        vm_dataset (validmind.VMDataset): A VM dataset object
+
+    Returns:
+        validmind.VMDataset: The VMDataset object
+    """
+    run_async(_log_dataset_async, dataset)
+
+
+def log_metrics(metrics):
+    """Logs metrics to ValidMind API.
+
+    Args:
+        metrics (list): A list of Metric objects
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    run_async(_log_metrics_async, metrics)
+
+
+def log_figure(figure):
+    """Logs a figure
+
+    Args:
+        figure (Figure): The Figure object wrapper
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    run_async(_log_figure_async, figure)
+
 
 __all__ = [  # noqa
     # Framework High Level API
