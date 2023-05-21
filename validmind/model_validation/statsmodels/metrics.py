@@ -1045,7 +1045,7 @@ class RegressionModelForecastPlotLevels(Metric):
                 )
                 axs[1, 1].legend()
 
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
+            figures.append(Figure(for_object=self, key=self.key, figure=fig, metadata={}))
 
             # Close the figure to prevent it from displaying
             plt.close(fig)
