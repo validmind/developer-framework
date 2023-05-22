@@ -1058,7 +1058,7 @@ class RegressionModelForecastPlotLevels(Metric):
 @dataclass
 class RegressionModelSensitivityPlot(Metric):
     """
-    This metric creates a plot of forecast vs observed for each model in the list.
+    This metric performs sensitivity analysis applying shocks to one variable at a time.
     """
 
     name = "regression_sensitivity_plot"
@@ -1185,7 +1185,7 @@ class RegressionModelSensitivityPlot(Metric):
 
     def description(self):
         return """
-        This section shows plots of training and test datasets vs forecast training and test.
+        The sensitivity analysis metric applies various shocks or adjustments to one variable at a time while keeping all other variables constant. This allows for the examination of how changes in a specific variable affect the overall outcome or response of the system being analyzed.
         """
 
 
