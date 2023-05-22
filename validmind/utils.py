@@ -18,8 +18,6 @@ DEFAULT_SMALL_NUMBER_DECIMALS = 4
 
 # hacky way to make async code run "synchronously" in colab
 __loop: asyncio.AbstractEventLoop = None
-__loop = asyncio.new_event_loop()
-nest_asyncio.apply(__loop)
 try:
     from google.colab._shell import Shell  # type: ignore
 
