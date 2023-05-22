@@ -1161,8 +1161,6 @@ class RegressionModelSensitivityPlot(Metric):
         return fig
 
     def integrate_diff(self, series_diff, start_value):
-        print(type(series_diff))
-        print(series_diff)
         series_diff = np.asarray(series_diff, dtype=np.float64)  # Convert to float64
         series = np.cumsum(series_diff)
         series += start_value
@@ -1177,7 +1175,10 @@ class RegressionModelSensitivityPlot(Metric):
             for col in cols_to_shock:
                 temp_df = df.copy()
                 temp_df[col] = temp_df[col] * (1 + shock)
-                shocked_dfs[f"Shock to {col}"] = temp_df
+                shock_percentage = shock * 100  # Convert the shock value to percentage
+                shocked_dfs[
+                    f"Shock of {shock_percentage}% to {col}"
+                ] = temp_df  # Include shock value in the key
 
         return shocked_dfs
 
