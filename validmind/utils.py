@@ -4,6 +4,7 @@ import math
 
 from typing import Any
 
+import nest_asyncio
 import numpy as np
 
 from IPython.core import getipython
@@ -13,6 +14,17 @@ from tabulate import tabulate
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
+
+
+# hacky way to make async code run "synchronously" in colab
+__loop: asyncio.AbstractEventLoop = None
+try:
+    from google.colab._shell import Shell  # type: ignore
+    if isinstance(getipython.get_ipython(), Shell):
+        __loop = asyncio.new_event_loop()
+        nest_asyncio.apply(__loop)
+except ModuleNotFoundError:
+    pass
 
 
 def nan_to_none(obj):
@@ -239,19 +251,10 @@ def run_async(func, *args, name=None, **kwargs):
     """
     try:
         if asyncio.get_event_loop().is_running() and is_notebook():
-            try:
-                from google.colab._shell import Shell
-                if isinstance(getipython.get_ipython(), Shell):
-                    # hacky way to make async code run "sync" in colab
-                    # this will make the progress bar work properly
-                    import nest_asyncio  # noqa: F401
-                    loop = asyncio.new_event_loop()
-                    nest_asyncio.apply(loop)
-                    res = loop.run_until_complete(func(*args, **kwargs))
-                    loop.close()
-                    return res
-            except ModuleNotFoundError:
-                pass
+            if __loop:
+                future = __loop.create_task(func(*args, **kwargs), name=name)
+                # wait for the future result
+                return __loop.run_until_complete(future)
 
             return asyncio.get_event_loop().create_task(
                 func(*args, **kwargs), name=name
