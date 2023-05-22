@@ -9,7 +9,6 @@ from typing import Optional
 import base64
 import matplotlib
 import plotly
-import plotly.graph_objs as go
 import ipywidgets as widgets
 
 
