@@ -1064,12 +1064,14 @@ class RegressionModelSensitivityPlot(Metric):
     name = "regression_sensitivity_plot"
     default_params = {
         "transformation": None,
+        "shocks": [0.1],
     }
 
     def run(self):
         print(self.params)
 
         transformation = self.params["transformation"]
+        shocks = self.params["shocks"]
 
         if not self.models:
             raise ValueError("List of models must be provided in the models parameter")
@@ -1083,59 +1085,91 @@ class RegressionModelSensitivityPlot(Metric):
                 )
             all_models.append(model)
 
+        figures = []
         for model in all_models:
-            feature_columns = model.train_ds.get_features_columns()
-            shocked_datasets = self.apply_shock(
-                model.train_ds.df[feature_columns], shocks=[0.1]
+            features_df = model.test_ds.drop_columns(
+                model.test_ds.target_column
+            )  # dataframe
+            target_df = model.test_ds.y  # series
+
+            shocked_datasets = self.apply_shock(features_df, shocks)
+
+            predictions = self.predict_shocked_datasets(shocked_datasets, model)
+
+            if transformation == "integrate":
+                transformed_predictions = []
+                start_value = model.train_ds.y[0]
+                transformed_target = self.integrate_diff(
+                    model.test_ds.y.values, start_value
+                )
+
+                predictions = self.predict_shocked_datasets(shocked_datasets, model)
+                transformed_predictions = self.transform_predictions(
+                    predictions, start_value
+                )
+
+            else:
+                transformed_target = target_df.values
+                transformed_predictions = predictions
+
+            fig = self._plot_predictions(transformed_target, transformed_predictions)
+            figures.append(
+                Figure(for_object=self, key=self.key, figure=fig, metadata={})
             )
-
-            print(shocked_datasets)
-
-            (
-                transformed_targets,
-                transformed_predictions,
-            ) = self.predict_shocked_datasets(shocked_datasets, model, transformation)
-
-        figures = self._plot_forecast(transformed_targets, transformed_predictions)
 
         return self.cache_results(figures=figures)
 
-    def predict_shocked_datasets(self, shocked_datasets, model, transformation):
-        transformed_targets = []
-        transformed_predictions = []
+    def transform_predictions(self, predictions, start_value):
+        transformed_predictions = (
+            {}
+        )  # Initialize an empty dictionary to store the transformed predictions
 
-        for shocked_dataset in shocked_datasets:
+        for (
+            label,
+            pred,
+        ) in predictions.items():  # Here, label is the key, pred is the value
+            transformed_pred = self.integrate_diff(pred, start_value)
+            transformed_predictions[
+                label
+            ] = transformed_pred  # Store transformed dataframe in the new dictionary
+
+        return transformed_predictions
+
+    def predict_shocked_datasets(self, shocked_datasets, model):
+        predictions = {}
+
+        for label, shocked_dataset in shocked_datasets.items():
             y_pred = model.model.predict(shocked_dataset)
-            print(y_pred)
-            if transformation == "integrate":
-                y_transformed = self.integrate_diff(
-                    model.test_ds.target_column,
-                    model.test_ds.target_column[0],
-                )
-                y_pred_transformed = self.integrate_diff(y_pred, y_transformed[0])
-                transformed_targets.append(y_transformed)
-                transformed_predictions.append(y_pred_transformed)
-            else:
-                transformed_targets.append(shocked_dataset.values)
-                transformed_predictions.append(y_pred)
+            predictions[label] = y_pred
 
-        return transformed_targets, transformed_predictions
+        return predictions
 
-    def integrate_diff(self, series_diff, start_values):
-        series_diff = np.array(series_diff)
-        series_orig = np.cumsum(series_diff, axis=0)
+    def _plot_predictions(self, target, predictions):
+        fig = plt.figure()
 
-        # Ensure start_values has same number of elements as there are columns in series_orig
-        if series_orig.ndim == 1 and start_values.shape[0] != series_orig.shape[0]:
-            raise ValueError("Start values and series_diff have mismatched shapes")
-        elif series_orig.ndim > 1 and start_values.shape[0] != series_orig.shape[1]:
-            raise ValueError("Start values and series_diff have mismatched shapes")
+        # Plot the target
+        plt.plot(target, label="Observed")
 
-        series_orig += start_values
-        return series_orig
+        # Plot each prediction
+        for label, pred in predictions.items():
+            plt.plot(pred, label=label)
+
+        plt.legend()
+
+        # Close the figure to prevent it from displaying
+        plt.close(fig)
+        return fig
+
+    def integrate_diff(self, series_diff, start_value):
+        print(type(series_diff))
+        print(series_diff)
+        series_diff = np.asarray(series_diff, dtype=np.float64)  # Convert to float64
+        series = np.cumsum(series_diff)
+        series += start_value
+        return series
 
     def apply_shock(self, df, shocks):
-        shocked_dfs = [df.copy()]  # Start with the original dataset
+        shocked_dfs = {"Baseline": df.copy()}  # Start with the original dataset
         cols_to_shock = df.columns  # All columns
 
         # Apply shock one variable at a time
@@ -1143,34 +1177,9 @@ class RegressionModelSensitivityPlot(Metric):
             for col in cols_to_shock:
                 temp_df = df.copy()
                 temp_df[col] = temp_df[col] * (1 + shock)
-                shocked_dfs.append(temp_df)
+                shocked_dfs[f"Shock to {col}"] = temp_df
 
         return shocked_dfs
-
-    def _plot_forecast(self, transformed_targets, transformed_predictions):
-        figures = []
-
-        for i, (transformed_target, transformed_prediction) in enumerate(
-            zip(transformed_targets, transformed_predictions)
-        ):
-            fig, axs = plt.subplots()
-
-            axs.plot(
-                transformed_target,
-                label="Test Dataset",
-                color="grey",
-            )
-
-            axs.plot(transformed_prediction, label=f"Test Forecast, {i+1}")
-            axs.set_title(f"Integrated Forecast vs Observed")
-            axs.legend()
-
-            figures.append(Figure(key=self.key, figure=fig, metadata={}))
-
-            # Close the figure to prevent it from displaying
-            plt.close(fig)
-
-        return figures
 
     def description(self):
         return """
