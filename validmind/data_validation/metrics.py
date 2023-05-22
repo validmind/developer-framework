@@ -603,13 +603,20 @@ class AutoAR(Metric):
                     model_fit = model.fit()
 
                     # Append the result of each AR order directly into the DataFrame
-                    summary_ar_analysis = summary_ar_analysis.append(
-                        {
-                            "Variable": col,
-                            "AR Order": ar_order,
-                            "BIC": model_fit.bic,
-                            "AIC": model_fit.aic,
-                        },
+                    summary_ar_analysis = pd.concat(
+                        [
+                            summary_ar_analysis,
+                            pd.DataFrame(
+                                [
+                                    {
+                                        "Variable": col,
+                                        "AR Order": ar_order,
+                                        "BIC": model_fit.bic,
+                                        "AIC": model_fit.aic,
+                                    }
+                                ]
+                            ),
+                        ],
                         ignore_index=True,
                     )
                 except Exception as e:
@@ -693,13 +700,20 @@ class AutoMA(Metric):
                     model_fit = model.fit()
 
                     # Append the result of each MA order directly into the DataFrame
-                    summary_ma_analysis = summary_ma_analysis.append(
-                        {
-                            "Variable": col,
-                            "MA Order": ma_order,
-                            "BIC": model_fit.bic,
-                            "AIC": model_fit.aic,
-                        },
+                    summary_ma_analysis = pd.concat(
+                        [
+                            summary_ma_analysis,
+                            pd.DataFrame(
+                                [
+                                    {
+                                        "Variable": col,
+                                        "MA Order": ma_order,
+                                        "BIC": model_fit.bic,
+                                        "AIC": model_fit.aic,
+                                    }
+                                ]
+                            ),
+                        ],
                         ignore_index=True,
                     )
                 except Exception as e:
@@ -930,7 +944,7 @@ class AutoSeasonality(Metric):
         # Create an empty DataFrame to store the results
         summary_auto_seasonality = pd.DataFrame()
 
-        for col_name, col in df.iteritems():
+        for col_name, col in df.items():
             series = col.dropna()
 
             # Evaluate seasonal periods
@@ -940,13 +954,20 @@ class AutoSeasonality(Metric):
 
             for i, period in enumerate(seasonal_periods):
                 decision = "Seasonality" if period > 1 else "No Seasonality"
-                summary_auto_seasonality = summary_auto_seasonality.append(
-                    {
-                        "Variable": col_name,
-                        "Seasonal Period": period,
-                        "Residual Error": residual_errors[i],
-                        "Decision": decision,
-                    },
+                summary_auto_seasonality = pd.concat(
+                    [
+                        summary_auto_seasonality,
+                        pd.DataFrame(
+                            [
+                                {
+                                    "Variable": col_name,
+                                    "Seasonal Period": period,
+                                    "Residual Error": residual_errors[i],
+                                    "Decision": decision,
+                                }
+                            ]
+                        ),
+                    ],
                     ignore_index=True,
                 )
 
@@ -1110,30 +1131,44 @@ class AutoStationarity(Metric):
                 adf_decision = "Stationary" if adf_pass_fail else "Non-stationary"
 
                 # Append the result of each test directly into the DataFrame
-                summary_stationarity = summary_stationarity.append(
-                    {
-                        "Variable": col,
-                        "Integration Order": order,
-                        "Test": "ADF",
-                        "p-value": adf_pvalue,
-                        "Threshold": threshold,
-                        "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
-                        "Decision": adf_decision,
-                    },
+                summary_stationarity = pd.concat(
+                    [
+                        summary_stationarity,
+                        pd.DataFrame(
+                            [
+                                {
+                                    "Variable": col,
+                                    "Integration Order": order,
+                                    "Test": "ADF",
+                                    "p-value": adf_pvalue,
+                                    "Threshold": threshold,
+                                    "Pass/Fail": "Pass" if adf_pass_fail else "Fail",
+                                    "Decision": adf_decision,
+                                }
+                            ]
+                        ),
+                    ],
                     ignore_index=True,
                 )
 
                 if adf_pass_fail:
                     is_stationary = True
-                    best_integration_order = best_integration_order.append(
-                        {
-                            "Variable": col,
-                            "Best Integration Order": order,
-                            "Test": "ADF",
-                            "p-value": adf_pvalue,
-                            "Threshold": threshold,
-                            "Decision": adf_decision,
-                        },
+                    best_integration_order = pd.concat(
+                        [
+                            best_integration_order,
+                            pd.DataFrame(
+                                [
+                                    {
+                                        "Variable": col,
+                                        "Best Integration Order": order,
+                                        "Test": "ADF",
+                                        "p-value": adf_pvalue,
+                                        "Threshold": threshold,
+                                        "Decision": adf_decision,
+                                    }
+                                ]
+                            ),
+                        ],
                         ignore_index=True,
                     )
 
@@ -1294,16 +1329,23 @@ class EngleGrangerCoint(Metric):
                 pass_fail = "Pass" if p_value <= threshold else "Fail"
 
                 # Append the result of each test directly into the DataFrame
-                summary_cointegration = summary_cointegration.append(
-                    {
-                        "Variable 1": var1,
-                        "Variable 2": var2,
-                        "Test": "Engle-Granger",
-                        "p-value": p_value,
-                        "Threshold": threshold,
-                        "Pass/Fail": pass_fail,
-                        "Decision": decision,
-                    },
+                summary_cointegration = pd.concat(
+                    [
+                        summary_cointegration,
+                        pd.DataFrame(
+                            [
+                                {
+                                    "Variable 1": var1,
+                                    "Variable 2": var2,
+                                    "Test": "Engle-Granger",
+                                    "p-value": p_value,
+                                    "Threshold": threshold,
+                                    "Pass/Fail": pass_fail,
+                                    "Decision": decision,
+                                }
+                            ]
+                        ),
+                    ],
                     ignore_index=True,
                 )
 
