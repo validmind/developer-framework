@@ -369,7 +369,7 @@ class ClassifierPerformance(Metric):
 
         results = {}
 
-        metrics = self.params["metrics"]
+        metrics = self.params.get("metrics", self.default_params["metrics"])
         for metric_name in metrics:
             if metric_name not in self.default_metrics:
                 raise ValueError(f"Metric {metric_name} not supported.")
