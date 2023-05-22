@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Union
+from typing import Any, List, Union
 
 import pandas as pd
 
@@ -19,7 +19,7 @@ class ResultTable:
     A dataclass that holds the table summary of result
     """
 
-    data: Union[Dict[str, Any], pd.DataFrame]
+    data: Union[List[Any], pd.DataFrame]
     type: str = "table"
     metadata: ResultTableMetadata = None
 
@@ -31,10 +31,9 @@ class ResultTable:
             "type": self.type,
         }
 
-        if isinstance(self.data, pd.DataFrame):
-            table_result["data"] = self.data.to_dict(orient="records")
-        else:
-            table_result["data"] = self.data
+        # Convert to a DataFrame so that we can round the values in a standard way
+        table_df = pd.DataFrame(self.data) if isinstance(self.data, list) else self.data
+        table_result["data"] = table_df.round(4).to_dict(orient="records")
 
         if self.metadata is not None:
             table_result["metadata"] = vars(self.metadata)

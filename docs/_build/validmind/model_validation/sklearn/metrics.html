@@ -50,7 +50,7 @@
                                 <a class="function" href="#ConfusionMatrix.__init__">ConfusionMatrix</a>
                         </li>
                         <li>
-                                <a class="function" href="#ConfusionMatrix.summary">summary</a>
+                                <a class="function" href="#ConfusionMatrix.description">description</a>
                         </li>
                         <li>
                                 <a class="function" href="#ConfusionMatrix.run">run</a>
@@ -293,21 +293,18 @@ a sklearn-like API</p>
     
 
                             </div>
-                            <div id="ConfusionMatrix.summary" class="classattr">
+                            <div id="ConfusionMatrix.description" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#ConfusionMatrix.summary"></a>
+    <a class="headerlink" href="#ConfusionMatrix.description"></a>
     
-            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
-The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
-short summary of the metric results.</p>
-
-<p>We return None here because the metric summary is optional.</p>
+            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class' docstring</p>
 </div>
 
 
@@ -332,7 +329,7 @@ short summary of the metric results.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="ConfusionMatrix.key" class="variable">key</dd>
-                <dd id="ConfusionMatrix.description" class="function">description</dd>
+                <dd id="ConfusionMatrix.summary" class="function">summary</dd>
                 <dd id="ConfusionMatrix.cache_results" class="function">cache_results</dd>
 
             </div>

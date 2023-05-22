@@ -51,7 +51,7 @@ class MinimumAccuracy(ThresholdTest):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
+                    data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(
                         title="Minimum Accuracy Test on Test Data"
                     ),
@@ -107,7 +107,7 @@ class MinimumF1Score(ThresholdTest):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
+                    data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(title="Minimum F1 Score Test"),
                 )
             ]
@@ -161,7 +161,7 @@ class MinimumROCAUCScore(ThresholdTest):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
+                    data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(title="Minimum ROC AUC Score Test"),
                 )
             ]
@@ -228,7 +228,7 @@ class TrainingTestDegradation(ThresholdTest):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
+                    data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(
                         title="Training-Test Degradation Test"
                     ),
