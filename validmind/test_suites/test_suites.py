@@ -78,4 +78,5 @@ class TimeSeriesModelValidation(TestSuite):
         "regression_model_description",
         "regression_models_evaluation",
         "time_series_forecast",
+        "time_series_sensitivity",
     ]
