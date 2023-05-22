@@ -18,6 +18,8 @@ DEFAULT_SMALL_NUMBER_DECIMALS = 4
 
 # hacky way to make async code run "synchronously" in colab
 __loop: asyncio.AbstractEventLoop = None
+__loop = asyncio.new_event_loop()
+nest_asyncio.apply(__loop)
 try:
     from google.colab._shell import Shell  # type: ignore
     if isinstance(getipython.get_ipython(), Shell):
@@ -267,6 +269,9 @@ def run_async(func, *args, name=None, **kwargs):
 
 def run_async_check(func, *args, **kwargs):
     """Helper function to run functions asynchronously if the task doesn't already exist"""
+    if __loop:
+        return  # we don't need this if we are using our own loop
+
     try:
         name = func.__name__
 
