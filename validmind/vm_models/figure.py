@@ -39,10 +39,10 @@ class Figure:
             self.metadata = metadata
 
         # Wrap around with FigureWidget so that we can display it in Jupyter
-        if self.figure is not None and isinstance(
-            self.figure, plotly.graph_objs._figure.Figure
-        ):
-            self.figure = go.FigureWidget(self.figure)
+        # if self.figure is not None and isinstance(
+        #     self.figure, plotly.graph_objs._figure.Figure
+        # ):
+        #     self.figure = go.FigureWidget(self.figure)
 
     def is_matplotlib_figure(self) -> bool:
         """
@@ -54,7 +54,9 @@ class Figure:
         """
         Returns True if the figure is a plotly figure
         """
-        return isinstance(self.figure, plotly.graph_objs._figurewidget.FigureWidget)
+        return isinstance(self.figure, plotly.graph_objs._figure.Figure) or isinstance(
+            self.figure, plotly.graph_objs._figurewidget.FigureWidget
+        )
 
     def _get_for_object_type(self):
         """
@@ -89,7 +91,15 @@ class Figure:
 
         elif self.is_plotly_figure():
             # FigureWidget can be displayed as-is
-            return self.figure
+            # TODO: This doesn't work on Google Colab
+            # return self.figure
+            png_file = self.figure.to_image(format="png")
+            encoded = base64.b64encode(png_file).decode("utf-8")
+            return widgets.HTML(
+                value=f"""
+                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
+                """
+            )
         else:
             raise ValueError(
                 f"Figure type {type(self.figure)} not supported for plotting"
