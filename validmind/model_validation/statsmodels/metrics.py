@@ -1112,7 +1112,9 @@ class RegressionModelSensitivityPlot(Metric):
                 transformed_target = target_df.values
                 transformed_predictions = predictions
 
-            fig = self._plot_predictions(transformed_target, transformed_predictions)
+            fig = self._plot_predictions(
+                target_df.index, transformed_target, transformed_predictions
+            )
             figures.append(
                 Figure(for_object=self, key=self.key, figure=fig, metadata={})
             )
@@ -1144,15 +1146,15 @@ class RegressionModelSensitivityPlot(Metric):
 
         return predictions
 
-    def _plot_predictions(self, target, predictions):
+    def _plot_predictions(self, index, target, predictions):
         fig = plt.figure()
 
         # Plot the target
-        plt.plot(target, label="Observed")
+        plt.plot(index, target, label="Observed")
 
         # Plot each prediction
         for label, pred in predictions.items():
-            plt.plot(pred, label=label)
+            plt.plot(index, pred, label=label)
 
         plt.legend()
 
@@ -1175,9 +1177,8 @@ class RegressionModelSensitivityPlot(Metric):
             for col in cols_to_shock:
                 temp_df = df.copy()
                 temp_df[col] = temp_df[col] * (1 + shock)
-                shock_percentage = shock * 100  # Convert the shock value to percentage
                 shocked_dfs[
-                    f"Shock of {shock_percentage}% to {col}"
+                    f"Shock of {shock} to {col}"
                 ] = temp_df  # Include shock value in the key
 
         return shocked_dfs
