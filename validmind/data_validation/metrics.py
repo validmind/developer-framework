@@ -124,7 +124,7 @@ class PearsonCorrelationMatrix(Metric):
             plot_bgcolor="rgba(0,0,0,0)",
         )
 
-        fig = go.FigureWidget(data=[heatmap], layout=layout)
+        fig = go.Figure(data=[heatmap], layout=layout)
 
         return self.cache_results(
             figures=[

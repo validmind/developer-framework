@@ -16,6 +16,19 @@ class ClientConfig:
     project: object
     feature_flags: dict
     template: object
+    running_on_colab: bool = False
+
+    def __post_init__(self):
+        """
+        Set additional attributes when initializing the class
+        """
+        # check if running on notebook and set running_on_colab
+        try:
+            from google.colab import drive  # noqa
+
+            self.running_on_colab = True
+        except ImportError:
+            self.running_on_colab = False
 
     def is_json_plots_enabled(self):
         """
