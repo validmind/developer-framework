@@ -1066,11 +1066,6 @@ class RegressionModelSensitivityPlot(Metric):
         "transformation": None,
     }
 
-    def description(self):
-        return """
-        This section shows plots of training and test datasets vs forecast training and test.
-        """
-
     def run(self):
         print(self.params)
 
@@ -1088,21 +1083,62 @@ class RegressionModelSensitivityPlot(Metric):
                 )
             all_models.append(model)
 
-        figures = self._plot_forecast(all_models, transformation)
+        for model in all_models:
+            feature_columns = model.train_ds.get_features_columns()
+            shocked_datasets = self.apply_shock(
+                model.train_ds.df[feature_columns], shocks=[0.1]
+            )
+
+            print(shocked_datasets)
+
+            (
+                transformed_targets,
+                transformed_predictions,
+            ) = self.predict_shocked_datasets(shocked_datasets, model, transformation)
+
+        figures = self._plot_forecast(transformed_targets, transformed_predictions)
 
         return self.cache_results(figures=figures)
 
-    def integrate_diff(self, series_diff, start_value):
+    def predict_shocked_datasets(self, shocked_datasets, model, transformation):
+        transformed_targets = []
+        transformed_predictions = []
+
+        for shocked_dataset in shocked_datasets:
+            y_pred = model.model.predict(shocked_dataset)
+            print(y_pred)
+            if transformation == "integrate":
+                y_transformed = self.integrate_diff(
+                    model.test_ds.target_column,
+                    model.test_ds.target_column[0],
+                )
+                y_pred_transformed = self.integrate_diff(y_pred, y_transformed[0])
+                transformed_targets.append(y_transformed)
+                transformed_predictions.append(y_pred_transformed)
+            else:
+                transformed_targets.append(shocked_dataset.values)
+                transformed_predictions.append(y_pred)
+
+        return transformed_targets, transformed_predictions
+
+    def integrate_diff(self, series_diff, start_values):
         series_diff = np.array(series_diff)
-        series_orig = np.cumsum(series_diff)
-        series_orig += start_value
+        series_orig = np.cumsum(series_diff, axis=0)
+
+        # Ensure start_values has same number of elements as there are columns in series_orig
+        if series_orig.ndim == 1 and start_values.shape[0] != series_orig.shape[0]:
+            raise ValueError("Start values and series_diff have mismatched shapes")
+        elif series_orig.ndim > 1 and start_values.shape[0] != series_orig.shape[1]:
+            raise ValueError("Start values and series_diff have mismatched shapes")
+
+        series_orig += start_values
         return series_orig
 
-    def apply_shock(self, df, shocks, target_col):
+    def apply_shock(self, df, shocks):
         shocked_dfs = [df.copy()]  # Start with the original dataset
-        cols_to_shock = df.drop(columns=target_col).columns  # All columns except target
+        cols_to_shock = df.columns  # All columns
 
-        # apply shock one variable at a time
+        # Apply shock one variable at a time
         for shock in shocks:
             for col in cols_to_shock:
                 temp_df = df.copy()
@@ -1111,69 +1147,35 @@ class RegressionModelSensitivityPlot(Metric):
 
         return shocked_dfs
 
-    def _plot_forecast(self, model_list, transformation=None, shocks=[0.1]):
+    def _plot_forecast(self, transformed_targets, transformed_predictions):
         figures = []
 
-        for fitted_model in model_list:
-            feature_columns = fitted_model.train_ds.get_features_columns()
-            train_ds = fitted_model.train_ds
+        for i, (transformed_target, transformed_prediction) in enumerate(
+            zip(transformed_targets, transformed_predictions)
+        ):
+            fig, axs = plt.subplots()
 
-            all_dates = pd.concat([pd.Series(train_ds.index)])
-
-            if all_dates.empty:
-                raise ValueError(
-                    "No dates in the data. Unable to determine start and end dates."
-                )
-
-            shocked_test_dfs = self.apply_shock(
-                fitted_model.train_ds.df, shocks, fitted_model.train_ds.target_column
+            axs.plot(
+                transformed_target,
+                label="Test Dataset",
+                color="grey",
             )
 
-            for i, shocked_test_ds in enumerate(shocked_test_dfs):
-                print(shocked_test_ds[feature_columns])
-                y_pred_test = fitted_model.model.predict(
-                    shocked_test_ds[feature_columns]
-                )
+            axs.plot(transformed_prediction, label=f"Test Forecast, {i+1}")
+            axs.set_title(f"Integrated Forecast vs Observed")
+            axs.legend()
 
-                fig, axs = plt.subplots()
+            figures.append(Figure(key=self.key, figure=fig, metadata={}))
 
-                if transformation == "integrate":
-                    test_ds_y_transformed = self.integrate_diff(
-                        shocked_test_ds[feature_columns].values,
-                        start_value=shocked_test_ds[feature_columns][0],
-                    )
-
-                    # Use the first value of the transformed train dataset as the start_value for predicted datasets
-                    y_pred_test_transformed = self.integrate_diff(
-                        y_pred_test, start_value=test_ds_y_transformed[0]
-                    )
-
-                    # Transformed test vs forecast
-                    axs.plot(
-                        fitted_model.test_ds.index,
-                        test_ds_y_transformed,
-                        label="Test Dataset",
-                        color="grey",
-                    )
-
-                    axs.plot(
-                        fitted_model.test_ds.index,
-                        y_pred_test_transformed,
-                        label=f"Test Forecast, shock: {shocks[i]}"
-                        if i != 0
-                        else "Test Forecast, baseline",
-                    )
-                    axs.set_title(
-                        f"Integrated Forecast vs Observed for features {feature_columns}"
-                    )
-                    axs.legend()
-
-                figures.append(Figure(key=self.key, figure=fig, metadata={}))
-
-                # Close the figure to prevent it from displaying
-                plt.close(fig)
+            # Close the figure to prevent it from displaying
+            plt.close(fig)
 
         return figures
+
+    def description(self):
+        return """
+        This section shows plots of training and test datasets vs forecast training and test.
+        """
 
 
 @dataclass
