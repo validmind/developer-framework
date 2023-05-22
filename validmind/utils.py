@@ -239,6 +239,20 @@ def run_async(func, *args, name=None, **kwargs):
     """
     try:
         if asyncio.get_event_loop().is_running() and is_notebook():
+            try:
+                from google.colab._shell import Shell
+                if isinstance(getipython.get_ipython(), Shell):
+                    # hacky way to make async code run "sync" in colab
+                    # this will make the progress bar work properly
+                    import nest_asyncio  # noqa: F401
+                    loop = asyncio.new_event_loop()
+                    nest_asyncio.apply(loop)
+                    res = loop.run_until_complete(func(*args, **kwargs))
+                    loop.close()
+                    return res
+            except ModuleNotFoundError:
+                pass
+
             return asyncio.get_event_loop().create_task(
                 func(*args, **kwargs), name=name
             )
