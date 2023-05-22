@@ -9,7 +9,10 @@ from typing import Optional
 import base64
 import matplotlib
 import plotly
+import plotly.graph_objs as go
 import ipywidgets as widgets
+
+from ..client_config import client_config
 
 
 @dataclass
@@ -37,11 +40,14 @@ class Figure:
             )
             self.metadata = metadata
 
-        # Wrap around with FigureWidget so that we can display it in Jupyter
-        # if self.figure is not None and isinstance(
-        #     self.figure, plotly.graph_objs._figure.Figure
-        # ):
-        #     self.figure = go.FigureWidget(self.figure)
+        # Wrap around with FigureWidget so that we can display interactive Plotly
+        # plots in regular Jupyter notebooks. This is not supported on Google Colab.
+        if (
+            not client_config.running_on_colab
+            and self.figure is not None
+            and isinstance(self.figure, plotly.graph_objs._figure.Figure)
+        ):
+            self.figure = go.FigureWidget(self.figure)
 
     def is_matplotlib_figure(self) -> bool:
         """
@@ -76,7 +82,9 @@ class Figure:
 
     def _to_widget(self):
         """
-        Returns the ipywidget compatible representation of the figure
+        Returns the ipywidget compatible representation of the figure. Ideally
+        we would render images as-is, but Plotly FigureWidgets don't work well
+        on Google Colab when they are combined with ipywidgets.
         """
         if self.is_matplotlib_figure():
             tmpfile = BytesIO()
@@ -89,16 +97,18 @@ class Figure:
             )
 
         elif self.is_plotly_figure():
-            # FigureWidget can be displayed as-is
-            # TODO: This doesn't work on Google Colab
-            # return self.figure
-            png_file = self.figure.to_image(format="png")
-            encoded = base64.b64encode(png_file).decode("utf-8")
-            return widgets.HTML(
-                value=f"""
-                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
-                """
-            )
+            # FigureWidget can be displayed as-is but not on Google Colab. In this case
+            # we just return the image representation of the figure.
+            if client_config.running_on_colab:
+                png_file = self.figure.to_image(format="png")
+                encoded = base64.b64encode(png_file).decode("utf-8")
+                return widgets.HTML(
+                    value=f"""
+                    <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
+                    """
+                )
+            else:
+                return self.figure
         else:
             raise ValueError(
                 f"Figure type {type(self.figure)} not supported for plotting"
