@@ -23,13 +23,13 @@ class Figure:
     Figure objects track the schema supported by the ValidMind API
     """
 
-    _type: str = "plot"
-
     key: str
     figure: object
     metadata: Optional[dict] = None
     for_object: Optional[object] = None
     extras: Optional[dict] = None
+
+    _type: str = "plot"
 
     def __post_init__(self):
         """

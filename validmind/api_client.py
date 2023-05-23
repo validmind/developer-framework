@@ -16,11 +16,9 @@ import requests
 from aiohttp import FormData
 
 from .client_config import client_config
-from .utils import get_full_typename, NumpyEncoder, run_async
-from .vm_models.dataset import Dataset
-from .vm_models.figure import Figure
-from .vm_models.metric import Metric
-from .vm_models.test_result import TestResult
+from .utils import NumpyEncoder, run_async
+
+# TODO: can't import types from vm_models because of circular dependency
 
 
 _api_key = os.environ.get("VM_API_KEY")
@@ -194,7 +192,7 @@ async def _post(
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
-    if not isinstance(data, dict) and files is not None:
+    if not isinstance(data, (dict)) and files is not None:
         raise ValueError("Cannot pass both non-json data and file objects to _post")
 
     if files:
@@ -236,7 +234,7 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
     return await _get(f"get_metadata/{content_id}")
 
 
-async def log_dataset(vm_dataset: Dataset) -> Dict[str, Any]:
+async def log_dataset(vm_dataset) -> Dict[str, Any]:
     """Logs metadata and statistics about a dataset to ValidMind API.
 
     Args:
@@ -255,7 +253,7 @@ async def log_dataset(vm_dataset: Dataset) -> Dict[str, Any]:
         raise e
 
 
-async def log_figure(figure: Figure) -> Dict[str, Any]:
+async def log_figure(figure: Any) -> Dict[str, Any]:
     """Logs a figure
 
     Args:
@@ -278,7 +276,7 @@ async def log_figure(figure: Figure) -> Dict[str, Any]:
         raise e
 
 
-async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
+async def log_figures(figures: List[Any]) -> Dict[str, Any]:
     """Logs a list of figures
 
     Args:
@@ -292,10 +290,15 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
     """
     if client_config.can_log_figures():  # check if the backend supports batch logging
         try:
-            data = []
+            data = {}
             files = {}
             for figure in figures:
-                data.append(figure.serialize())
+                data.update(
+                    {
+                        f"{k}-{figure.key}": v
+                        for k, v in figure.serialize().items()
+                    }
+                )
                 files.update(
                     {
                         f"{k}-{figure.key}": v
@@ -312,7 +315,8 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
             print("Error logging figures to ValidMind API")
             raise e
 
-    return await asyncio.gather(*[log_figure(figure) for figure in figures])
+    else:
+        return await asyncio.gather(*[log_figure(figure) for figure in figures])
 
 
 async def log_metadata(
@@ -349,7 +353,7 @@ async def log_metadata(
         raise e
 
 
-async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
+async def log_metrics(metrics: List[Any]) -> Dict[str, Any]:
     """Logs metrics to ValidMind API.
 
     Args:
@@ -374,7 +378,7 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
 
 
 async def log_test_result(
-    result: TestResult, dataset_type: str = "training"
+    result: Any, dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -404,7 +408,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[TestResult], dataset_type: str = "training"
+    results: List[Any], dataset_type: str = "training"
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
