@@ -376,15 +376,12 @@ class TimeSeriesLinePlot(Metric):
             fig, _ = plt.subplots()
             column_index_name = df.index.name
             ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
-            plt.title(f"Time Series: {col}", weight="bold", fontsize=16)
-            plt.xlabel(column_index_name, weight="bold", fontsize=16)
-            plt.ylabel(col, weight="bold", fontsize=16)
+            plt.title(f"Time Series for {col}", weight="bold", fontsize=20)
 
-            # Rotate x-axis labels and set the number of x-axis ticks
-            ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-            ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-            plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
-
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             figures.append(
                 Figure(
                     for_object=self,
@@ -424,13 +421,15 @@ class TimeSeriesHistogram(Metric):
 
         figures = []
         for col in columns:
-            plt.figure(figsize=(10, 6))
+            plt.figure()
             fig, _ = plt.subplots()
-            sns.histplot(data=df, x=col, kde=True)
-            plt.title(f"Histogram: {col}")
-            plt.xlabel(col)
-            plt.ylabel("Frequency")
+            ax = sns.histplot(data=df, x=col, kde=True)
+            plt.title(f"Histogram for {col}", weight="bold", fontsize=20)
 
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             figures.append(
                 Figure(
                     for_object=self,
@@ -1062,12 +1061,20 @@ class ACFandPACFPlot(Metric):
             plot_acf(series, ax=ax1)
             plot_pacf(series, ax=ax2)
 
-            # Adjust the layout
-            plt.tight_layout()
+            # Get the current y-axis limits
+            ymin, ymax = ax1.get_ylim()
+            # Set new limits - adding a bit of space
+            ax1.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
 
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+            ymin, ymax = ax2.get_ylim()
+            ax2.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
 
+            ax1.tick_params(axis="both", labelsize=18)
+            ax2.tick_params(axis="both", labelsize=18)
+            ax1.set_title(f"ACF for {col}", weight="bold", fontsize=20)
+            ax2.set_title(f"PACF for {col}", weight="bold", fontsize=20)
+            ax1.set_xlabel("Lag", fontsize=18)
+            ax2.set_xlabel("Lag", fontsize=18)
             figures.append(
                 Figure(
                     for_object=self,
@@ -1075,6 +1082,9 @@ class ACFandPACFPlot(Metric):
                     figure=fig,
                 )
             )
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
 
         return self.cache_results(figures=figures)
 
