@@ -1241,8 +1241,7 @@ class RollingStatsPlot(Metric):
     required_context = ["dataset"]
     default_params = {"window_size": 12}
 
-    @staticmethod
-    def plot_rolling_statistics(series, window_size=12, ax1=None, ax2=None):
+    def plot_rolling_statistics(self, col, window_size=12):
         """
         Plot rolling mean and rolling standard deviation in different subplots for a given series.
 
@@ -1251,20 +1250,34 @@ class RollingStatsPlot(Metric):
         :param ax1: Axis object for the rolling mean plot
         :param ax2: Axis object for the rolling standard deviation plot
         """
-        rolling_mean = series.rolling(window=window_size).mean()
-        rolling_std = series.rolling(window=window_size).std()
+        rolling_mean = self.df[col].rolling(window=window_size).mean()
+        rolling_std = self.df[col].rolling(window=window_size).std()
 
-        if ax1 is None or ax2 is None:
-            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+        # Create a new figure and axis objects
+        fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
-        ax1.plot(rolling_mean, label="Rolling Mean")
+        ax1.plot(rolling_mean)
         ax1.legend()
-        ax1.set_ylabel("Value")
+        ax1.set_title(
+            f"Rolling Mean for {col}",
+            fontsize=20,
+            weight="bold",
+        )
+        ax1.set_ylabel("")
+        ax1.tick_params(axis="both", labelsize=18)
 
         ax2.plot(rolling_std, label="Rolling Standard Deviation", color="orange")
         ax2.legend()
-        ax2.set_xlabel("Time")
-        ax2.set_ylabel("Value")
+        ax2.set_title(
+            f"Rolling STD for {col}",
+            fontsize=20,
+            weight="bold",
+        )
+        ax2.set_xlabel("")
+        ax2.set_ylabel("")
+        ax2.tick_params(axis="both", labelsize=18)
+
+        return fig
 
     def run(self):
         if "window_size" not in self.params:
@@ -1283,22 +1296,7 @@ class RollingStatsPlot(Metric):
         figures = []
 
         for col in df.columns:
-            series = df[col]
-
-            # Create a new figure and axis objects
-            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
-            fig.suptitle(col)
-
-            # Call the plot_rolling_statistics function
-            self.plot_rolling_statistics(
-                series, window_size=window_size, ax1=ax1, ax2=ax2
-            )
-
-            # Adjust the layout
-            plt.tight_layout()
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+            fig = self.plot_rolling_statistics(col, window_size=window_size)
 
             figures.append(
                 Figure(
@@ -1307,6 +1305,9 @@ class RollingStatsPlot(Metric):
                     figure=fig,
                 )
             )
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
 
         return self.cache_results(figures=figures)
 
