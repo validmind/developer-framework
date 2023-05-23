@@ -464,9 +464,6 @@ class ScatterPlot(Metric):
 
         sns.pairplot(data=df, diag_kind="kde")
 
-        plt.title("Scatter Plot Matrix")
-        plt.tight_layout()
-
         # Get the current figure
         fig = plt.gcf()
 
@@ -514,22 +511,35 @@ class LaggedCorrelationHeatmap(Metric):
 
         return correlations
 
-    def _plot_heatmap(self, correlations, independent_vars, num_lags):
+    def _plot_heatmap(self, correlations, independent_vars, target_col, num_lags):
         correlation_df = pd.DataFrame(
             correlations,
-            columns=[f"lag_{i}" for i in range(num_lags + 1)],
+            columns=[f"{i}" for i in range(num_lags + 1)],
             index=independent_vars,
         )
 
-        plt.figure()
-        sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
-        plt.title(
-            "Heatmap of Correlations between Target Variable and Lags of Independent Variables"
+        fig, ax = plt.subplots()
+        sns.heatmap(
+            correlation_df,
+            annot=True,
+            cmap="coolwarm",
+            vmin=-1,
+            vmax=1,
+            annot_kws={"size": 16},
         )
-        plt.xlabel("Lags")
-        plt.ylabel("Independent Variables")
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=16)  # Here you can set the font size
+        fig.suptitle(
+            f"Correlations between {target_col} and Lags of Features",
+            fontsize=20,
+            weight="bold",
+            y=0.95,
+        )
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.xlabel("Lags", fontsize=18)
 
-        return plt.gcf()
+        return fig
 
     def run(self):
         target_col = [self.dataset.target_column]
@@ -549,7 +559,7 @@ class LaggedCorrelationHeatmap(Metric):
         correlations = self._compute_correlations(
             df, target_col, independent_vars, num_lags
         )
-        fig = self._plot_heatmap(correlations, independent_vars, num_lags)
+        fig = self._plot_heatmap(correlations, independent_vars, target_col, num_lags)
 
         figures = []
         figures.append(
@@ -1435,12 +1445,17 @@ class SpreadPlot(Metric):
                 series2 = df[var2]
 
                 fig, ax = plt.subplots()
-                fig.suptitle(f"Spread between {var1} and {var2}")
+                fig.suptitle(
+                    f"Spread between {var1} and {var2}",
+                    fontsize=20,
+                    weight="bold",
+                    y=0.95,
+                )
 
                 self.plot_spread(series1, series2, ax=ax)
 
-                # Adjust the layout
-                plt.tight_layout()
+                ax.set_xlabel("")
+                ax.tick_params(axis="both", labelsize=18)
 
                 # Do this if you want to prevent the figure from being displayed
                 plt.close("all")
