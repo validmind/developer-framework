@@ -849,40 +849,53 @@ class SeasonalDecompose(Metric):
 
                     # Create subplots
                     fig, axes = plt.subplots(3, 2)
-                    fig.subplots_adjust(hspace=1)
+                    width, _ = fig.get_size_inches()
+                    fig.set_size_inches(width, 15)
+                    fig.subplots_adjust(hspace=0.3)
                     fig.suptitle(
-                        f"Seasonal Decomposition and Residual Diagnostics for {col}",
-                        fontsize=24,
+                        f"Seasonal Decomposition for {col}",
+                        fontsize=20,
+                        weight="bold",
+                        y=0.95,
                     )
 
                     # Original seasonal decomposition plots
                     # Observed
-                    axes[0, 0].set_title("Observed")
                     sd.observed.plot(ax=axes[0, 0])
+                    axes[0, 0].set_title("Observed", fontsize=18)
+                    axes[0, 0].set_xlabel("")
+                    axes[0, 0].tick_params(axis="both", labelsize=18)
 
                     # Trend
-                    axes[0, 1].set_title("Trend")
                     sd.trend.plot(ax=axes[0, 1])
+                    axes[0, 1].set_title("Trend", fontsize=18)
+                    axes[0, 1].set_xlabel("")
+                    axes[0, 1].tick_params(axis="both", labelsize=18)
 
                     # Seasonal
-                    axes[1, 0].set_title("Seasonal")
                     sd.seasonal.plot(ax=axes[1, 0])
+                    axes[1, 0].set_title("Seasonal", fontsize=18)
+                    axes[1, 0].set_xlabel("")
+                    axes[1, 0].tick_params(axis="both", labelsize=18)
 
                     # Residuals
-                    axes[1, 1].set_title("Residuals")
                     sd.resid.plot(ax=axes[1, 1])
-                    axes[1, 1].set_xlabel("Date")
+                    axes[1, 1].set_title("Residuals", fontsize=18)
+                    axes[1, 1].set_xlabel("")
+                    axes[1, 1].tick_params(axis="both", labelsize=18)
 
                     # Histogram with KDE
                     residuals = sd.resid.dropna()
                     sns.histplot(residuals, kde=True, ax=axes[2, 0])
-                    axes[2, 0].set_title("Histogram and KDE of Residuals")
+                    axes[2, 0].set_title("Histogram and KDE of Residuals", fontsize=18)
+                    axes[2, 0].set_xlabel("")
+                    axes[2, 0].tick_params(axis="both", labelsize=18)
 
                     # Normal Q-Q plot
                     stats.probplot(residuals, plot=axes[2, 1])
-                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
-
-                    plt.tight_layout()
+                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals", fontsize=18)
+                    axes[2, 1].set_xlabel("")
+                    axes[2, 1].tick_params(axis="both", labelsize=18)
 
                     # Do this if you want to prevent the figure from being displayed
                     plt.close("all")
@@ -1057,6 +1070,8 @@ class ACFandPACFPlot(Metric):
 
             # Create subplots
             fig, (ax1, ax2) = plt.subplots(1, 2)
+            width, _ = fig.get_size_inches()
+            fig.set_size_inches(width, 5)
 
             plot_acf(series, ax=ax1)
             plot_pacf(series, ax=ax2)
