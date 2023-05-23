@@ -177,54 +177,6 @@ class TestPlanMetricResult(TestPlanResult):
             if self.metric.summary:
                 tables = self._summary_tables_to_widget(self.metric.summary)
                 vbox_children.extend(tables)
-            # else:
-            # vbox_children.append(
-            #     widgets.HTML(
-            #         value=f"""<h4>Unable to display metric summary for {self.result_id}. Please make sure the summary() method is implemented for this metric</h4>"""
-            #     )
-            # )
-
-            # Disable for now and fix later
-            #
-            # view_raw_data_button = widgets.Button(description="View Raw Data")
-
-            # # Hide raw data by default
-            # output = widgets.Output()
-            # output.layout.display = "none"
-
-            # metric_value = self.metric.value
-            # metric_output = (
-            #     json.dumps(metric_value, indent=2, cls=NumpyEncoder)
-            #     if type(metric_value) == dict
-            #     else str(metric_value)
-            # )
-
-            # with output:
-            #     display(
-            #         widgets.HTML(
-            #             value=f"""
-            #         <div class="metric-result">
-            #             <div class="metric-value">
-            #                 <div class="metric-value-title">Raw Metric Value</div>
-            #                 <div class="metric-value-value">
-            #                     <pre>{metric_output}</pre>
-            #                 </div>
-            #             </div>
-            #         </div>
-            #         """
-            #         )
-            #     )
-
-            # def on_button_clicked(b):
-            #     if output.layout.display == "none":
-            #         output.layout.display = "block"
-            #     else:
-            #         output.layout.display = "none"
-
-            # view_raw_data_button.on_click(on_button_clicked)
-
-            # vbox_children.append(view_raw_data_button)
-            # vbox_children.append(output)
 
         if self.figures:
             vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
@@ -286,8 +238,7 @@ class TestPlanMetricResult(TestPlanResult):
         if self.metric:
             tasks.append(api_client.log_metrics([self.metric]))
         if self.figures:
-            for fig in self.figures:
-                tasks.append(api_client.log_figure(fig))
+            tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
@@ -363,8 +314,7 @@ class TestPlanTestResult(TestPlanResult):
         tasks = [api_client.log_test_result(self.test_results)]
 
         if self.figures:
-            for fig in self.figures:
-                tasks.append(api_client.log_figure(fig))
+            tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
