@@ -7,7 +7,6 @@ from typing import ClassVar
 import warnings
 
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -376,15 +375,12 @@ class TimeSeriesLinePlot(Metric):
             fig, _ = plt.subplots()
             column_index_name = df.index.name
             ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
-            plt.title(f"Time Series: {col}", weight="bold", fontsize=16)
-            plt.xlabel(column_index_name, weight="bold", fontsize=16)
-            plt.ylabel(col, weight="bold", fontsize=16)
+            plt.title(f"Time Series for {col}", weight="bold", fontsize=20)
 
-            # Rotate x-axis labels and set the number of x-axis ticks
-            ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-            ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-            plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
-
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             figures.append(
                 Figure(
                     for_object=self,
@@ -424,13 +420,15 @@ class TimeSeriesHistogram(Metric):
 
         figures = []
         for col in columns:
-            plt.figure(figsize=(10, 6))
+            plt.figure()
             fig, _ = plt.subplots()
-            sns.histplot(data=df, x=col, kde=True)
-            plt.title(f"Histogram: {col}")
-            plt.xlabel(col)
-            plt.ylabel("Frequency")
+            ax = sns.histplot(data=df, x=col, kde=True)
+            plt.title(f"Histogram for {col}", weight="bold", fontsize=20)
 
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             figures.append(
                 Figure(
                     for_object=self,
@@ -464,9 +462,6 @@ class ScatterPlot(Metric):
             raise ValueError("Provided 'columns' must exist in the dataset")
 
         sns.pairplot(data=df, diag_kind="kde")
-
-        plt.title("Scatter Plot Matrix")
-        plt.tight_layout()
 
         # Get the current figure
         fig = plt.gcf()
@@ -515,22 +510,35 @@ class LaggedCorrelationHeatmap(Metric):
 
         return correlations
 
-    def _plot_heatmap(self, correlations, independent_vars, num_lags):
+    def _plot_heatmap(self, correlations, independent_vars, target_col, num_lags):
         correlation_df = pd.DataFrame(
             correlations,
-            columns=[f"lag_{i}" for i in range(num_lags + 1)],
+            columns=[f"{i}" for i in range(num_lags + 1)],
             index=independent_vars,
         )
 
-        plt.figure()
-        sns.heatmap(correlation_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
-        plt.title(
-            "Heatmap of Correlations between Target Variable and Lags of Independent Variables"
+        fig, ax = plt.subplots()
+        sns.heatmap(
+            correlation_df,
+            annot=True,
+            cmap="coolwarm",
+            vmin=-1,
+            vmax=1,
+            annot_kws={"size": 16},
         )
-        plt.xlabel("Lags")
-        plt.ylabel("Independent Variables")
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=16)  # Here you can set the font size
+        fig.suptitle(
+            f"Correlations between {target_col} and Lags of Features",
+            fontsize=20,
+            weight="bold",
+            y=0.95,
+        )
+        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=18)
+        plt.xlabel("Lags", fontsize=18)
 
-        return plt.gcf()
+        return fig
 
     def run(self):
         target_col = [self.dataset.target_column]
@@ -550,7 +558,7 @@ class LaggedCorrelationHeatmap(Metric):
         correlations = self._compute_correlations(
             df, target_col, independent_vars, num_lags
         )
-        fig = self._plot_heatmap(correlations, independent_vars, num_lags)
+        fig = self._plot_heatmap(correlations, independent_vars, target_col, num_lags)
 
         figures = []
         figures.append(
@@ -850,40 +858,53 @@ class SeasonalDecompose(Metric):
 
                     # Create subplots
                     fig, axes = plt.subplots(3, 2)
-                    fig.subplots_adjust(hspace=1)
+                    width, _ = fig.get_size_inches()
+                    fig.set_size_inches(width, 15)
+                    fig.subplots_adjust(hspace=0.3)
                     fig.suptitle(
-                        f"Seasonal Decomposition and Residual Diagnostics for {col}",
-                        fontsize=24,
+                        f"Seasonal Decomposition for {col}",
+                        fontsize=20,
+                        weight="bold",
+                        y=0.95,
                     )
 
                     # Original seasonal decomposition plots
                     # Observed
-                    axes[0, 0].set_title("Observed")
                     sd.observed.plot(ax=axes[0, 0])
+                    axes[0, 0].set_title("Observed", fontsize=18)
+                    axes[0, 0].set_xlabel("")
+                    axes[0, 0].tick_params(axis="both", labelsize=18)
 
                     # Trend
-                    axes[0, 1].set_title("Trend")
                     sd.trend.plot(ax=axes[0, 1])
+                    axes[0, 1].set_title("Trend", fontsize=18)
+                    axes[0, 1].set_xlabel("")
+                    axes[0, 1].tick_params(axis="both", labelsize=18)
 
                     # Seasonal
-                    axes[1, 0].set_title("Seasonal")
                     sd.seasonal.plot(ax=axes[1, 0])
+                    axes[1, 0].set_title("Seasonal", fontsize=18)
+                    axes[1, 0].set_xlabel("")
+                    axes[1, 0].tick_params(axis="both", labelsize=18)
 
                     # Residuals
-                    axes[1, 1].set_title("Residuals")
                     sd.resid.plot(ax=axes[1, 1])
-                    axes[1, 1].set_xlabel("Date")
+                    axes[1, 1].set_title("Residuals", fontsize=18)
+                    axes[1, 1].set_xlabel("")
+                    axes[1, 1].tick_params(axis="both", labelsize=18)
 
                     # Histogram with KDE
                     residuals = sd.resid.dropna()
                     sns.histplot(residuals, kde=True, ax=axes[2, 0])
-                    axes[2, 0].set_title("Histogram and KDE of Residuals")
+                    axes[2, 0].set_title("Histogram and KDE of Residuals", fontsize=18)
+                    axes[2, 0].set_xlabel("")
+                    axes[2, 0].tick_params(axis="both", labelsize=18)
 
                     # Normal Q-Q plot
                     stats.probplot(residuals, plot=axes[2, 1])
-                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals")
-
-                    plt.tight_layout()
+                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals", fontsize=18)
+                    axes[2, 1].set_xlabel("")
+                    axes[2, 1].tick_params(axis="both", labelsize=18)
 
                     # Do this if you want to prevent the figure from being displayed
                     plt.close("all")
@@ -1038,21 +1059,13 @@ class ACFandPACFPlot(Metric):
 
     name = "acf_pacf_plot"
     required_context = ["dataset"]
-    default_params = {"columns": None}
 
     def run(self):
-        if "columns" not in self.params:
-            raise ValueError("Time series columns must be provided in params")
-
         # Check if index is datetime
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        # If no columns are specified in the config, we plot all columns
-        if self.params["columns"] is None:
-            columns = list(self.dataset.df.columns)
-        else:
-            columns = self.params["columns"]
+        columns = list(self.dataset.df.columns)
 
         df = self.dataset.df.dropna()
 
@@ -1066,16 +1079,26 @@ class ACFandPACFPlot(Metric):
 
             # Create subplots
             fig, (ax1, ax2) = plt.subplots(1, 2)
+            width, _ = fig.get_size_inches()
+            fig.set_size_inches(width, 5)
 
             plot_acf(series, ax=ax1)
             plot_pacf(series, ax=ax2)
 
-            # Adjust the layout
-            plt.tight_layout()
+            # Get the current y-axis limits
+            ymin, ymax = ax1.get_ylim()
+            # Set new limits - adding a bit of space
+            ax1.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
 
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+            ymin, ymax = ax2.get_ylim()
+            ax2.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
 
+            ax1.tick_params(axis="both", labelsize=18)
+            ax2.tick_params(axis="both", labelsize=18)
+            ax1.set_title(f"ACF for {col}", weight="bold", fontsize=20)
+            ax2.set_title(f"PACF for {col}", weight="bold", fontsize=20)
+            ax1.set_xlabel("Lag", fontsize=18)
+            ax2.set_xlabel("Lag", fontsize=18)
             figures.append(
                 Figure(
                     for_object=self,
@@ -1083,6 +1106,9 @@ class ACFandPACFPlot(Metric):
                     figure=fig,
                 )
             )
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
 
         return self.cache_results(figures=figures)
 
@@ -1224,8 +1250,7 @@ class RollingStatsPlot(Metric):
     required_context = ["dataset"]
     default_params = {"window_size": 12}
 
-    @staticmethod
-    def plot_rolling_statistics(series, window_size=12, ax1=None, ax2=None):
+    def plot_rolling_statistics(self, col, window_size=12):
         """
         Plot rolling mean and rolling standard deviation in different subplots for a given series.
 
@@ -1234,20 +1259,34 @@ class RollingStatsPlot(Metric):
         :param ax1: Axis object for the rolling mean plot
         :param ax2: Axis object for the rolling standard deviation plot
         """
-        rolling_mean = series.rolling(window=window_size).mean()
-        rolling_std = series.rolling(window=window_size).std()
+        rolling_mean = self.df[col].rolling(window=window_size).mean()
+        rolling_std = self.df[col].rolling(window=window_size).std()
 
-        if ax1 is None or ax2 is None:
-            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+        # Create a new figure and axis objects
+        fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
-        ax1.plot(rolling_mean, label="Rolling Mean")
+        ax1.plot(rolling_mean)
         ax1.legend()
-        ax1.set_ylabel("Value")
+        ax1.set_title(
+            f"Rolling Mean for {col}",
+            fontsize=20,
+            weight="bold",
+        )
+        ax1.set_ylabel("")
+        ax1.tick_params(axis="both", labelsize=18)
 
         ax2.plot(rolling_std, label="Rolling Standard Deviation", color="orange")
         ax2.legend()
-        ax2.set_xlabel("Time")
-        ax2.set_ylabel("Value")
+        ax2.set_title(
+            f"Rolling STD for {col}",
+            fontsize=20,
+            weight="bold",
+        )
+        ax2.set_xlabel("")
+        ax2.set_ylabel("")
+        ax2.tick_params(axis="both", labelsize=18)
+
+        return fig
 
     def run(self):
         if "window_size" not in self.params:
@@ -1266,22 +1305,7 @@ class RollingStatsPlot(Metric):
         figures = []
 
         for col in df.columns:
-            series = df[col]
-
-            # Create a new figure and axis objects
-            fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
-            fig.suptitle(col)
-
-            # Call the plot_rolling_statistics function
-            self.plot_rolling_statistics(
-                series, window_size=window_size, ax1=ax1, ax2=ax2
-            )
-
-            # Adjust the layout
-            plt.tight_layout()
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+            fig = self.plot_rolling_statistics(col, window_size=window_size)
 
             figures.append(
                 Figure(
@@ -1290,6 +1314,9 @@ class RollingStatsPlot(Metric):
                     figure=fig,
                 )
             )
+
+            # Do this if you want to prevent the figure from being displayed
+            plt.close("all")
 
         return self.cache_results(figures=figures)
 
@@ -1417,12 +1444,17 @@ class SpreadPlot(Metric):
                 series2 = df[var2]
 
                 fig, ax = plt.subplots()
-                fig.suptitle(f"Spread between {var1} and {var2}")
+                fig.suptitle(
+                    f"Spread between {var1} and {var2}",
+                    fontsize=20,
+                    weight="bold",
+                    y=0.95,
+                )
 
                 self.plot_spread(series1, series2, ax=ax)
 
-                # Adjust the layout
-                plt.tight_layout()
+                ax.set_xlabel("")
+                ax.tick_params(axis="both", labelsize=18)
 
                 # Do this if you want to prevent the figure from being displayed
                 plt.close("all")
