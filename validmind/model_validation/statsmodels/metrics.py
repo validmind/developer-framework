@@ -956,7 +956,7 @@ class RegressionModelForecastPlotLevels(Metric):
     ):
         figures = []
 
-        for fitted_model in model_list:
+        for i, fitted_model in enumerate(model_list):
             feature_columns = fitted_model.train_ds.get_features_columns()
             train_ds = fitted_model.train_ds
             test_ds = fitted_model.test_ds
@@ -1046,7 +1046,7 @@ class RegressionModelForecastPlotLevels(Metric):
                 axs[1, 1].legend()
 
             figures.append(
-                Figure(for_object=self, key=self.key, figure=fig, metadata={})
+                Figure(for_object=self, key=f"{self.key}:{i}", figure=fig, metadata={})
             )
 
             # Close the figure to prevent it from displaying
@@ -1086,10 +1086,8 @@ class RegressionModelSensitivityPlot(Metric):
             all_models.append(model)
 
         figures = []
-        for model in all_models:
-            features_df = model.test_ds.drop_columns(
-                model.test_ds.target_column
-            )  # dataframe
+        for i, model in enumerate(all_models):
+            features_df = model.test_ds.x
             target_df = model.test_ds.y  # series
 
             shocked_datasets = self.apply_shock(features_df, shocks)
@@ -1116,9 +1114,9 @@ class RegressionModelSensitivityPlot(Metric):
                 target_df.index, transformed_target, transformed_predictions
             )
             figures.append(
-                Figure(for_object=self, key=self.key, figure=fig, metadata={})
+                Figure(for_object=self, key=f"{self.key}:{i}", figure=fig, metadata={})
             )
-
+            print(f"{self.key}:{i}")
         return self.cache_results(figures=figures)
 
     def transform_predictions(self, predictions, start_value):
