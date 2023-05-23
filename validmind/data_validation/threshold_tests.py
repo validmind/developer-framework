@@ -679,14 +679,14 @@ class TimeSeriesOutliers(ThresholdTest):
                         label="Outlier" if idx == 0 else "",
                     )
 
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
             ax.legend()
-            ax.set_ylabel(col, weight="bold", fontsize=16)
             ax.set_title(
-                f"Time Series with Outliers for {col}", weight="bold", fontsize=16
+                f"Time Series with Outliers for {col}", weight="bold", fontsize=20
             )
-
-            plt.xlabel(column_index_name, weight="bold", fontsize=16)
-            plt.ylabel(col, weight="bold", fontsize=16)
 
             figures.append(
                 Figure(
@@ -825,9 +825,11 @@ class TimeSeriesMissingValues(ThresholdTest):
         xticks = [
             df.index.get_loc(df.index[df.index.year == year][0]) for year in years
         ]
+
         plt.xticks(xticks, years, rotation=45, fontsize=18)
         plt.yticks(rotation=45, fontsize=18)
         plt.gca().xaxis.set_major_locator(plt.MultipleLocator(5))
+        ax.set_xlabel("")
         ax.set_title(
             "Missing Values Heatmap",
             weight="bold",
@@ -937,15 +939,14 @@ class TimeSeriesFrequency(ThresholdTest):
         time_diff_df = pd.DataFrame({"Time Differences (Days)": time_diff_days})
         fig, ax = plt.subplots()
         # Plot the frequency distribution of the time differences
-        sns.histplot(
-            data=time_diff_df, x="Time Differences (Days)", bins=50, kde=False, ax=ax
-        )
+        sns.histplot(data=time_diff_df, bins=50, kde=False, ax=ax)
 
+        plt.xticks(rotation=45, fontsize=18)
         plt.yticks(rotation=45, fontsize=18)
-        ax.set_ylabel("Frequency", weight="bold", fontsize=18)
-        ax.set_xlabel("Time Differences (Days)", weight="bold", fontsize=18)
+        ax.set_xlabel("")
+        ax.set_ylabel("")
         ax.set_title(
-            "Frequency",
+            "Histogram of Time Differences (Days)",
             weight="bold",
             fontsize=20,
         )
