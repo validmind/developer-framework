@@ -36,5 +36,9 @@ class ClientConfig:
         """
         return self.feature_flags.get("generate_json_plots", False)
 
+    def can_log_figures(self):
+        """Returns True if the client can log figures to the API"""
+        return self.feature_flags.get("log_figures", False)
+
 
 client_config = ClientConfig(project=None, feature_flags={}, template=None)
