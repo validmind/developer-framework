@@ -281,6 +281,33 @@
 
             </li>
             <li>
+                    <a class="class" href="#RegressionModelSensitivityPlot">RegressionModelSensitivityPlot</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.__init__">RegressionModelSensitivityPlot</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.run">run</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.transform_predictions">transform_predictions</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.predict_shocked_datasets">predict_shocked_datasets</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.integrate_diff">integrate_diff</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.apply_shock">apply_shock</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#RegressionModelSensitivityPlot.description">description</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#RegressionModelsCoeffs">RegressionModelsCoeffs</a>
                             <ul class="memberlist">
                         <li>
@@ -1621,6 +1648,133 @@ to returning the class' docstring</p>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
                                 <dd id="RegressionModelForecastPlotLevels.df" class="variable">df</dd>
                 <dd id="RegressionModelForecastPlotLevels.validate_context" class="function">validate_context</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="RegressionModelSensitivityPlot">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">RegressionModelSensitivityPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot"></a>
+    
+            <div class="docstring"><p>This metric performs sensitivity analysis applying shocks to one variable at a time.</p>
+</div>
+
+
+                            <div id="RegressionModelSensitivityPlot.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">RegressionModelSensitivityPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.run"></a>
+    
+            <div class="docstring"><p>Run the metric calculation and cache its results</p>
+</div>
+
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.transform_predictions" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">transform_predictions</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">predictions</span>, </span><span class="param"><span class="n">start_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.transform_predictions"></a>
+    
+    
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.predict_shocked_datasets" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">predict_shocked_datasets</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">shocked_datasets</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.predict_shocked_datasets"></a>
+    
+    
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.integrate_diff" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">integrate_diff</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">series_diff</span>, </span><span class="param"><span class="n">start_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.integrate_diff"></a>
+    
+    
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.apply_shock" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">apply_shock</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">shocks</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.apply_shock"></a>
+    
+    
+
+                            </div>
+                            <div id="RegressionModelSensitivityPlot.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#RegressionModelSensitivityPlot.description"></a>
+    
+            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                <dd id="RegressionModelSensitivityPlot.key" class="variable">key</dd>
+                <dd id="RegressionModelSensitivityPlot.summary" class="function">summary</dd>
+                <dd id="RegressionModelSensitivityPlot.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                <dd id="RegressionModelSensitivityPlot.df" class="variable">df</dd>
+                <dd id="RegressionModelSensitivityPlot.validate_context" class="function">validate_context</dd>
 
             </div>
                                 </dl>

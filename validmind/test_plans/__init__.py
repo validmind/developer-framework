@@ -24,6 +24,7 @@ from .time_series import (
     TimeSeriesUnivariate,
     TimeSeriesMultivariate,
     TimeSeriesForecast,
+    TimeSeriesSensitivity,
 )
 
 core_test_plans = {
@@ -36,6 +37,7 @@ core_test_plans = {
     "time_series_univariate": TimeSeriesUnivariate,
     "time_series_multivariate": TimeSeriesMultivariate,
     "time_series_forecast": TimeSeriesForecast,
+    "time_series_sensitivity": TimeSeriesSensitivity,
     "regression_model_description": RegressionModelDescription,
     "regression_models_evaluation": RegressionModelsEvaluation,
 }
