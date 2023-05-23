@@ -24,6 +24,12 @@ from validmind.utils import NumpyEncoder
 loop = asyncio.new_event_loop()
 
 
+def mock_figure():
+    fig = plt.figure()
+    plt.plot([1, 2, 3])
+    return Figure(key="key", figure=fig, metadata={"asdf": 1234})
+
+
 class MockResponse:
     def __init__(self, status, text=None, json=None):
         self.status = status
@@ -165,13 +171,24 @@ class TestAPIClient(unittest.TestCase):
         mock_response = MockResponse(200, json={"cuid": "1234"})
         mock_post.return_value = mock_response
 
-        fig = plt.figure()
-        plt.plot([1, 2, 3])
-        figure = Figure(key="key", figure=fig, metadata={"asdf": 1234})
-        self.run_async(api_client.log_figure, figure)
+        self.run_async(api_client.log_figure, mock_figure())
 
         url = f"{os.environ['VM_API_HOST']}/log_figure?run_cuid={os.environ['VM_RUN_CUID']}"
         mock_post.assert_called_once()
+        self.assertEqual(mock_post.call_args[0][0], url)
+        self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
+
+    @patch("aiohttp.ClientSession.post")
+    def test_log_figures(self, mock_post: MagicMock):
+        mock_response = MockResponse(200, json=[{"cuid": "1234"}, {"cuid": "5678"}])
+        mock_post.return_value = mock_response
+        api_client.client_config.feature_flags["log_figures"] = True
+
+        self.run_async(api_client.log_figures, [mock_figure(), mock_figure()])
+
+        url = f"{os.environ['VM_API_HOST']}/log_figures?run_cuid={os.environ['VM_RUN_CUID']}"
+        mock_post.assert_called_once()
+        self.assertEqual(len(mock_post.call_args), 2)
         self.assertEqual(mock_post.call_args[0][0], url)
         self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
 

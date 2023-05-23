@@ -427,9 +427,9 @@ def log_test_results(
         list: list of responses from the API
     """
     try:
-        responses = run_async(
-            asyncio.gather(*[log_test_result(r, dataset_type) for r in results])
-        )
+        responses = []  # TODO: use asyncio.gather
+        for result in results:
+            responses.append(run_async(log_test_result, result, dataset_type))
     except Exception as e:
         print("Error logging test results to ValidMind API")
         raise e
