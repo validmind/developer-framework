@@ -1038,21 +1038,13 @@ class ACFandPACFPlot(Metric):
 
     name = "acf_pacf_plot"
     required_context = ["dataset"]
-    default_params = {"columns": None}
 
     def run(self):
-        if "columns" not in self.params:
-            raise ValueError("Time series columns must be provided in params")
-
         # Check if index is datetime
         if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        # If no columns are specified in the config, we plot all columns
-        if self.params["columns"] is None:
-            columns = list(self.dataset.df.columns)
-        else:
-            columns = self.params["columns"]
+        columns = list(self.dataset.df.columns)
 
         df = self.dataset.df.dropna()
 
