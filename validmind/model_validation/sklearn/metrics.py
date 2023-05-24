@@ -8,6 +8,7 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 import plotly.figure_factory as ff
+import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 import shap
@@ -80,37 +81,6 @@ def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False)
 
     # Return the psi values dataframe
     return psi_df
-
-
-@dataclass
-class CharacteristicStabilityIndex(Metric):
-    """
-    Characteristic Stability Index between two datasets
-    """
-
-    name = "csi"
-    required_context = ["model"]
-    value_formatter = "key_values"
-
-    def run(self):
-        """
-        Calculates PSI for each of the dataset features
-        """
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping CSI for {model_library} models")
-            return
-
-        x_train = self.model.train_ds.x
-        x_test = self.model.test_ds.x
-
-        csi_values = {}
-        for col in x_train.columns:
-            psi_df = _get_psi(x_train[col].values, x_test[col].values)
-            csi_value = np.mean(psi_df["psi"])
-            csi_values[col] = csi_value
-
-        return self.cache_results(metric_value=csi_values)
 
 
 @dataclass
@@ -275,16 +245,39 @@ class PrecisionRecallCurve(Metric):
     name = "pr_curve"
     required_context = ["model"]
 
+    def description(self):
+        return """
+        The precision-recall curve shows the trade-off between precision and recall for different thresholds.
+        A high area under the curve represents both high recall and high precision, where high precision
+        relates to a low false positive rate, and high recall relates to a low false negative rate. High scores
+        for both show that the classifier is returning accurate results (high precision), as well as returning
+        a majority of all positive results (high recall).
+        """
+
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
             y_true, self.model.y_test_predict
         )
-        plot = metrics.PrecisionRecallDisplay(
-            precision=precision,
-            recall=recall,
-            average_precision=None,
-        ).plot()
+
+        trace = go.Scatter(
+            x=recall,
+            y=precision,
+            mode="lines",
+            name="Precision-Recall Curve",
+            line=dict(color="#DE257E"),
+        )
+        layout = go.Layout(
+            title="Precision-Recall Curve",
+            xaxis=dict(title="Recall"),
+            yaxis=dict(title="Precision"),
+            autosize=False,
+            width=750,
+            height=500,
+            margin=go.layout.Margin(l=50, r=50, b=100, t=100, pad=4),
+        )
+
+        fig = go.Figure(data=[trace], layout=layout)
 
         return self.cache_results(
             metric_value={
@@ -296,7 +289,7 @@ class PrecisionRecallCurve(Metric):
                 Figure(
                     for_object=self,
                     key="pr_curve",
-                    figure=plot.figure_,
+                    figure=fig,
                 )
             ],
         )
@@ -434,6 +427,14 @@ class ROCCurve(Metric):
     name = "roc_curve"
     required_context = ["model"]
 
+    def description(self):
+        return """
+        The ROC curve shows the trade-off between the true positive rate (TPR) and false positive rate (FPR)
+        for different thresholds. The area under the curve (AUC) is a measure of how well a model can
+        distinguish between two groups (e.g. default/non-default). The higher the AUC, the better the model is
+        at distinguishing between positive and negative classes.
+        """
+
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         class_pred = self.model.class_predictions(self.model.y_test_predict)
@@ -442,11 +443,32 @@ class ROCCurve(Metric):
         )
         auc = metrics.roc_auc_score(y_true, class_pred)
 
-        plot = metrics.RocCurveDisplay(
-            fpr=fpr,
-            tpr=tpr,
-            roc_auc=auc,
-        ).plot()
+        trace0 = go.Scatter(
+            x=fpr,
+            y=tpr,
+            mode="lines",
+            name=f"ROC curve (AUC = {auc:.2f})",
+            line=dict(color="#DE257E"),
+        )
+        trace1 = go.Scatter(
+            x=[0, 1],
+            y=[0, 1],
+            mode="lines",
+            name="Random (AUC = 0.5)",
+            line=dict(color="grey", dash="dash"),
+        )
+
+        layout = go.Layout(
+            title="ROC Curve",
+            xaxis=dict(title="False Positive Rate"),
+            yaxis=dict(title="True Positive Rate"),
+            autosize=False,
+            width=750,
+            height=500,
+            margin=go.layout.Margin(l=50, r=50, b=100, t=100, pad=4),
+        )
+
+        fig = go.Figure(data=[trace0, trace1], layout=layout)
 
         return self.cache_results(
             metric_value={
@@ -459,7 +481,7 @@ class ROCCurve(Metric):
                 Figure(
                     for_object=self,
                     key="roc_auc_curve",
-                    figure=plot.figure_,
+                    figure=fig,
                 )
             ],
         )
