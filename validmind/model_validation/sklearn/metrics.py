@@ -8,109 +8,22 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 import plotly.figure_factory as ff
+import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
-from ...vm_models import Figure, Metric, Model, ResultSummary, ResultTable
+from ...vm_models import (
+    Figure,
+    Metric,
+    Model,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+)
 from ...utils import format_number
-
-
-def _get_psi(score_initial, score_new, num_bins=10, mode="fixed", as_dict=False):
-    """
-    Taken from:
-    https://towardsdatascience.com/checking-model-stability-and-population-shift-with-psi-and-csi-6d12af008783
-    """
-    eps = 1e-4
-
-    # Sort the data
-    score_initial.sort()
-    score_new.sort()
-
-    # Prepare the bins
-    min_val = min(min(score_initial), min(score_new))
-    max_val = max(max(score_initial), max(score_new))
-    if mode == "fixed":
-        bins = [
-            min_val + (max_val - min_val) * (i) / num_bins for i in range(num_bins + 1)
-        ]
-    elif mode == "quantile":
-        bins = pd.qcut(score_initial, q=num_bins, retbins=True)[
-            1
-        ]  # Create the quantiles based on the initial population
-    else:
-        raise ValueError(
-            f"Mode '{mode}' not recognized. Your options are 'fixed' and 'quantile'"
-        )
-    bins[0] = min_val - eps  # Correct the lower boundary
-    bins[-1] = max_val + eps  # Correct the higher boundary
-
-    # Bucketize the initial population and count the sample inside each bucket
-    bins_initial = pd.cut(score_initial, bins=bins, labels=range(1, num_bins + 1))
-    df_initial = pd.DataFrame({"initial": score_initial, "bin": bins_initial})
-    grp_initial = df_initial.groupby("bin").count()
-    grp_initial["percent_initial"] = grp_initial["initial"] / sum(
-        grp_initial["initial"]
-    )
-
-    # Bucketize the new population and count the sample inside each bucket
-    bins_new = pd.cut(score_new, bins=bins, labels=range(1, num_bins + 1))
-    df_new = pd.DataFrame({"new": score_new, "bin": bins_new})
-    grp_new = df_new.groupby("bin").count()
-    grp_new["percent_new"] = grp_new["new"] / sum(grp_new["new"])
-
-    # Compare the bins to calculate PSI
-    psi_df = grp_initial.join(grp_new, on="bin", how="inner")
-
-    # Add a small value for when the percent is zero
-    psi_df["percent_initial"] = psi_df["percent_initial"].apply(
-        lambda x: eps if x == 0 else x
-    )
-    psi_df["percent_new"] = psi_df["percent_new"].apply(lambda x: eps if x == 0 else x)
-
-    # Calculate the psi
-    psi_df["psi"] = (psi_df["percent_initial"] - psi_df["percent_new"]) * np.log(
-        psi_df["percent_initial"] / psi_df["percent_new"]
-    )
-
-    if as_dict:
-        return psi_df.to_dict(orient="records")
-
-    # Return the psi values dataframe
-    return psi_df
-
-
-@dataclass
-class CharacteristicStabilityIndex(Metric):
-    """
-    Characteristic Stability Index between two datasets
-    """
-
-    name = "csi"
-    required_context = ["model"]
-    value_formatter = "key_values"
-
-    def run(self):
-        """
-        Calculates PSI for each of the dataset features
-        """
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping CSI for {model_library} models")
-            return
-
-        x_train = self.model.train_ds.x
-        x_test = self.model.test_ds.x
-
-        csi_values = {}
-        for col in x_train.columns:
-            psi_df = _get_psi(x_train[col].values, x_test[col].values)
-            csi_value = np.mean(psi_df["psi"])
-            csi_values[col] = csi_value
-
-        return self.cache_results(metric_value=csi_values)
 
 
 @dataclass
@@ -275,16 +188,35 @@ class PrecisionRecallCurve(Metric):
     name = "pr_curve"
     required_context = ["model"]
 
+    def description(self):
+        return """
+        The precision-recall curve shows the trade-off between precision and recall for different thresholds.
+        A high area under the curve represents both high recall and high precision, where high precision
+        relates to a low false positive rate, and high recall relates to a low false negative rate. High scores
+        for both show that the classifier is returning accurate results (high precision), as well as returning
+        a majority of all positive results (high recall).
+        """
+
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
             y_true, self.model.y_test_predict
         )
-        plot = metrics.PrecisionRecallDisplay(
-            precision=precision,
-            recall=recall,
-            average_precision=None,
-        ).plot()
+
+        trace = go.Scatter(
+            x=recall,
+            y=precision,
+            mode="lines",
+            name="Precision-Recall Curve",
+            line=dict(color="#DE257E"),
+        )
+        layout = go.Layout(
+            title="Precision-Recall Curve",
+            xaxis=dict(title="Recall"),
+            yaxis=dict(title="Precision"),
+        )
+
+        fig = go.Figure(data=[trace], layout=layout)
 
         return self.cache_results(
             metric_value={
@@ -296,7 +228,7 @@ class PrecisionRecallCurve(Metric):
                 Figure(
                     for_object=self,
                     key="pr_curve",
-                    figure=plot.figure_,
+                    figure=fig,
                 )
             ],
         )
@@ -434,6 +366,14 @@ class ROCCurve(Metric):
     name = "roc_curve"
     required_context = ["model"]
 
+    def description(self):
+        return """
+        The ROC curve shows the trade-off between the true positive rate (TPR) and false positive rate (FPR)
+        for different thresholds. The area under the curve (AUC) is a measure of how well a model can
+        distinguish between two groups (e.g. default/non-default). The higher the AUC, the better the model is
+        at distinguishing between positive and negative classes.
+        """
+
     def run(self):
         y_true = self.model.test_ds.df[self.model.test_ds.target_column]
         class_pred = self.model.class_predictions(self.model.y_test_predict)
@@ -442,11 +382,28 @@ class ROCCurve(Metric):
         )
         auc = metrics.roc_auc_score(y_true, class_pred)
 
-        plot = metrics.RocCurveDisplay(
-            fpr=fpr,
-            tpr=tpr,
-            roc_auc=auc,
-        ).plot()
+        trace0 = go.Scatter(
+            x=fpr,
+            y=tpr,
+            mode="lines",
+            name=f"ROC curve (AUC = {auc:.2f})",
+            line=dict(color="#DE257E"),
+        )
+        trace1 = go.Scatter(
+            x=[0, 1],
+            y=[0, 1],
+            mode="lines",
+            name="Random (AUC = 0.5)",
+            line=dict(color="grey", dash="dash"),
+        )
+
+        layout = go.Layout(
+            title="ROC Curve",
+            xaxis=dict(title="False Positive Rate"),
+            yaxis=dict(title="True Positive Rate"),
+        )
+
+        fig = go.Figure(data=[trace0, trace1], layout=layout)
 
         return self.cache_results(
             metric_value={
@@ -459,7 +416,7 @@ class ROCCurve(Metric):
                 Figure(
                     for_object=self,
                     key="roc_auc_curve",
-                    figure=plot.figure_,
+                    figure=fig,
                 )
             ],
         )
@@ -570,7 +527,106 @@ class PopulationStabilityIndex(Metric):
 
     name = "psi"
     required_context = ["model"]
-    value_formatter = "records"
+
+    def description(self):
+        return """
+        PSI is a widely-used metric to assess the stability of a predictive model's score distribution when comparing
+        two separate samples (usually a development and a validation dataset or two separate time periods). It helps
+        determine if a model's performance has changed significantly over time or if there is a major shift in the
+        population characteristics.
+
+        In this section, we compare the PSI between the training and test datasets.
+        """
+
+    def summary(self, metric_value):
+        # Add a table with the PSI values for each feature
+        # The data looks like this: [{"initial": 2652, "percent_initial": 0.5525, "new": 830, "percent_new": 0.5188, "psi": 0.0021},...
+        psi_table = [
+            {
+                "Bin": i,
+                "Count Initial": values["initial"],
+                "Percent Initial (%)": values["percent_initial"] * 100,
+                "Count New": values["new"],
+                "Percent New (%)": values["percent_new"] * 100,
+                "PSI": values["psi"],
+            }
+            for i, values in enumerate(metric_value)
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=psi_table,
+                    metadata=ResultTableMetadata(
+                        title="Population Stability Index for Training and Test Datasets"
+                    ),
+                ),
+            ]
+        )
+
+    def _get_psi(
+        self, score_initial, score_new, num_bins=10, mode="fixed", as_dict=False
+    ):
+        """
+        Taken from:
+        https://towardsdatascience.com/checking-model-stability-and-population-shift-with-psi-and-csi-6d12af008783
+        """
+        eps = 1e-4
+
+        # Sort the data
+        score_initial.sort()
+        score_new.sort()
+
+        # Prepare the bins
+        min_val = min(min(score_initial), min(score_new))
+        max_val = max(max(score_initial), max(score_new))
+        if mode == "fixed":
+            bins = [
+                min_val + (max_val - min_val) * (i) / num_bins
+                for i in range(num_bins + 1)
+            ]
+        elif mode == "quantile":
+            bins = pd.qcut(score_initial, q=num_bins, retbins=True)[
+                1
+            ]  # Create the quantiles based on the initial population
+        else:
+            raise ValueError(
+                f"Mode '{mode}' not recognized. Allowed options are 'fixed' and 'quantile'"
+            )
+        bins[0] = min_val - eps  # Correct the lower boundary
+        bins[-1] = max_val + eps  # Correct the higher boundary
+
+        # Bucketize the initial population and count the sample inside each bucket
+        bins_initial = pd.cut(score_initial, bins=bins, labels=range(1, num_bins + 1))
+        df_initial = pd.DataFrame({"initial": score_initial, "bin": bins_initial})
+        grp_initial = df_initial.groupby("bin").count()
+        grp_initial["percent_initial"] = grp_initial["initial"] / sum(
+            grp_initial["initial"]
+        )
+
+        # Bucketize the new population and count the sample inside each bucket
+        bins_new = pd.cut(score_new, bins=bins, labels=range(1, num_bins + 1))
+        df_new = pd.DataFrame({"new": score_new, "bin": bins_new})
+        grp_new = df_new.groupby("bin").count()
+        grp_new["percent_new"] = grp_new["new"] / sum(grp_new["new"])
+
+        # Compare the bins to calculate PSI
+        psi_df = grp_initial.join(grp_new, on="bin", how="inner")
+
+        # Add a small value for when the percent is zero
+        psi_df["percent_initial"] = psi_df["percent_initial"].apply(
+            lambda x: eps if x == 0 else x
+        )
+        psi_df["percent_new"] = psi_df["percent_new"].apply(
+            lambda x: eps if x == 0 else x
+        )
+
+        # Calculate the psi
+        psi_df["psi"] = (psi_df["percent_initial"] - psi_df["percent_new"]) * np.log(
+            psi_df["percent_initial"] / psi_df["percent_new"]
+        )
+
+        return psi_df.to_dict(orient="records")
 
     def run(self):
         model_library = Model.model_library(self.model.model)
@@ -578,8 +634,52 @@ class PopulationStabilityIndex(Metric):
             print(f"Skiping PSI for {model_library} models")
             return
 
-        psi_df = _get_psi(
+        psi_results = self._get_psi(
             self.model.y_train_predict.copy(), self.model.y_test_predict.copy()
         )
 
-        return self.cache_results(metric_value=psi_df)
+        trace1 = go.Bar(
+            x=list(range(len(psi_results))),
+            y=[d["percent_initial"] for d in psi_results],
+            name="Initial",
+            marker=dict(color="#DE257E"),
+        )
+        trace2 = go.Bar(
+            x=list(range(len(psi_results))),
+            y=[d["percent_new"] for d in psi_results],
+            name="New",
+            marker=dict(color="#E8B1F8"),
+        )
+
+        trace3 = go.Scatter(
+            x=list(range(len(psi_results))),
+            y=[d["psi"] for d in psi_results],
+            name="PSI",
+            yaxis="y2",
+            line=dict(color="#257EDE"),
+        )
+
+        layout = go.Layout(
+            title="Population Stability Index (PSI) Plot",
+            xaxis=dict(title="Bin"),
+            yaxis=dict(title="Population Ratio"),
+            yaxis2=dict(
+                title="PSI",
+                overlaying="y",
+                side="right",
+                range=[
+                    0,
+                    max(d["psi"] for d in psi_results) + 0.005,
+                ],  # Adjust as needed
+            ),
+            barmode="group",
+        )
+
+        fig = go.Figure(data=[trace1, trace2, trace3], layout=layout)
+        figure = Figure(
+            for_object=self,
+            key=self.key,
+            figure=fig,
+        )
+
+        return self.cache_results(metric_value=psi_results, figures=[figure])

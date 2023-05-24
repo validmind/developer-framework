@@ -572,6 +572,50 @@ class TimeSeriesOutliers(ThresholdTest):
     required_context = ["dataset"]
     default_params = {"zscore_threshold": 3}
 
+    def summary(self, results, all_passed: bool):
+        """
+        Example output:
+
+        [
+            {
+                "values": {
+                    "Variable": [...],
+                    "z-score": [...],
+                    "Threshold": [3, 3, 3, 3, 3, 3],
+                    "Date": [...]
+                },
+                "test_name": "outliers",
+                "passed": false
+            }
+        ]
+        """
+        first_result = results[0]
+        variables = first_result.values["Variable"]
+        zScores = first_result.values["z-score"]
+        dates = first_result.values["Date"]
+        passFail = [
+            "Pass" if z < self.params["zscore_threshold"] else "Fail" for z in zScores
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    # Sort by variable and then by date
+                    data=pd.DataFrame(
+                        {
+                            "Variable": variables,
+                            "Date": dates,
+                            "z-Score": zScores,
+                            "Pass/Fail": passFail,
+                        }
+                    ).sort_values(["Variable", "Date"]),
+                    metadata=ResultTableMetadata(
+                        title="Outliers Results with z-Score Test"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         # Check if the index of dataframe is datetime
         is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
@@ -712,6 +756,27 @@ class TimeSeriesMissingValues(ThresholdTest):
     required_context = ["dataset"]
     default_params = {"min_threshold": 1}
 
+    def summary(self, results, all_passed):
+        results_table = [
+            {
+                "Column": result.column,
+                "Number of Missing Values": result.values["n_missing"],
+                "Percentage of Missing Values (%)": result.values["p_missing"] * 100,
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+            for result in results
+        ]
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(
+                        title="Missing Values Results for Dataset"
+                    ),
+                )
+            ]
+        )
+
     def run(self):
         # Check if the index of dataframe is datetime
         is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
@@ -758,7 +823,9 @@ class TimeSeriesMissingValues(ThresholdTest):
         return self.cache_results(
             test_results,
             passed=all([r.passed for r in test_results]),
-            figures=test_figures,
+            # Don't pass figures until we figure out how to group metric-figures for multiple
+            # executions inside a single test run
+            # figures=test_figures,
         )
 
     def _barplot(self, df: pd.DataFrame, rotation: int = 45) -> plt.Figure:
@@ -850,6 +917,37 @@ class TimeSeriesFrequency(ThresholdTest):
     category = "data_quality"
     name = "time_series_frequency"
     required_context = ["dataset"]
+
+    def summary(self, results, all_passed):
+        """
+        Example output:
+
+        [
+            {
+                "values": {
+                    "Variable": ["MORTGAGE30US", "GS10", "FEDFUNDS"],
+                    "Frequency": ["Monthly", "Monthly", "Monthly"]
+                },
+                "passed": true
+            }
+        ]
+        """
+        first_result = results[0]
+        variables = first_result.values["Variable"]
+        frequencies = first_result.values["Frequency"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=pd.DataFrame(
+                        {"Variable": variables, "Frequency": frequencies}
+                    ),
+                    metadata=ResultTableMetadata(
+                        title="Frequency of Time Series Variables"
+                    ),
+                )
+            ]
+        )
 
     def run(self):
         # Check if the index of dataframe is datetime
