@@ -9,13 +9,16 @@ import json
 import os
 import urllib.parse
 from io import BytesIO
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 import requests
 from aiohttp import FormData
 
 from .client_config import client_config
-from .utils import get_full_typename, NumpyEncoder, run_async
+from .utils import NumpyEncoder, run_async
+
+# TODO: can't import types from vm_models because of circular dependency
 
 
 _api_key = os.environ.get("VM_API_KEY")
@@ -26,6 +29,8 @@ _project = os.environ.get("VM_API_PROJECT")
 _run_cuid = os.environ.get("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
+
+__initialized = False
 
 
 @atexit.register
@@ -40,7 +45,7 @@ def _close_session():
             pass
 
 
-def get_api_config():
+def get_api_config() -> Dict[str, Optional[str]]:
     return {
         "VM_API_KEY": _api_key,
         "VM_API_SECRET": _api_secret,
@@ -50,15 +55,20 @@ def get_api_config():
     }
 
 
-def get_api_host():
+def get_api_host() -> Optional[str]:
     return _api_host
 
 
-def get_api_project():
+def get_api_project() -> Optional[str]:
     return _project
 
 
-def init(project=None, api_key=None, api_secret=None, api_host=None):
+def init(
+    project: Optional[str] = None,
+    api_key: Optional[str] = None,
+    api_secret: Optional[str] = None,
+    api_host: Optional[str] = None,
+):
     """
     Initializes the API client instances and calls the /ping endpoint to ensure
     the provided credentials are valid and we can connect to the ValidMind API.
@@ -74,11 +84,8 @@ def init(project=None, api_key=None, api_secret=None, api_host=None):
 
     Raises:
         ValueError: If the API key and secret are not provided
-
-    Returns:
-        bool: True if the ping was successful
     """
-    global _api_key, _api_secret, _api_host, _run_cuid, _project, api_session
+    global _api_key, _api_secret, _api_host, _run_cuid, _project, __initialized
 
     _project = project or os.environ.get("VM_API_PROJECT")
 
@@ -100,10 +107,10 @@ def init(project=None, api_key=None, api_secret=None, api_host=None):
     )
     _run_cuid = os.environ.get("VM_RUN_CUID", None)
 
-    return __ping()
+    __ping()
 
 
-async def _get_session():
+async def _get_session() -> aiohttp.ClientSession:
     """Initializes the async client session"""
     global __api_session
 
@@ -120,7 +127,7 @@ async def _get_session():
     return __api_session
 
 
-def __ping():
+def __ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
         f"{_api_host}/ping",
@@ -151,7 +158,7 @@ def __ping():
     print(f"Connected to ValidMind. Project: {project['name']} ({project['cuid']})")
 
 
-async def __get_url(endpoint, params=None):
+async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
     if not _run_cuid:
         start_run()
 
@@ -161,7 +168,9 @@ async def __get_url(endpoint, params=None):
     return f"{_api_host}/{endpoint}?{urllib.parse.urlencode(params)}"
 
 
-async def _get(endpoint, params=None):
+async def _get(
+    endpoint: str, params: Optional[Dict[str, str]] = None
+) -> Dict[str, Any]:
     url = await __get_url(endpoint, params)
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
@@ -173,12 +182,17 @@ async def _get(endpoint, params=None):
         return await r.json()
 
 
-async def _post(endpoint, params=None, data=None, files=None):
+async def _post(
+    endpoint: str,
+    params: Optional[Dict[str, str]] = None,
+    data: Optional[Union[dict, FormData]] = None,
+    files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
+) -> Dict[str, Any]:
     url = await __get_url(endpoint, params)
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
-    if not isinstance(data, dict) and files is not None:
+    if not isinstance(data, (dict)) and files is not None:
         raise ValueError("Cannot pass both non-json data and file objects to _post")
 
     if files:
@@ -204,7 +218,7 @@ async def _post(endpoint, params=None, data=None, files=None):
         return await r.json()
 
 
-async def get_metadata(content_id):
+async def get_metadata(content_id: str) -> Dict[str, Any]:
     """Gets a metadata object from ValidMind API.
 
     Args:
@@ -214,22 +228,23 @@ async def get_metadata(content_id):
         Exception: If the API call fails
 
     Returns:
-        bool: Metadata object
+        dict: Metadata object
     """
+    # TODO: add a more accurate type hint/documentation
     return await _get(f"get_metadata/{content_id}")
 
 
-async def log_dataset(vm_dataset):
+async def log_dataset(vm_dataset) -> Dict[str, Any]:
     """Logs metadata and statistics about a dataset to ValidMind API.
 
     Args:
         vm_dataset (validmind.VMDataset): A VM dataset object
 
     Returns:
-        validmind.VMDataset: The VMDataset object
+        dict: The response from the API
     """
     try:
-        await _post(
+        return await _post(
             "log_dataset",
             data=json.dumps(vm_dataset.serialize(), cls=NumpyEncoder, allow_nan=False),
         )
@@ -237,10 +252,8 @@ async def log_dataset(vm_dataset):
         print("Error logging dataset to ValidMind API")
         raise e
 
-    return vm_dataset
 
-
-async def log_figure(figure, run_cuid=None):
+async def log_figure(figure: Any) -> Dict[str, Any]:
     """Logs a figure
 
     Args:
@@ -252,47 +265,65 @@ async def log_figure(figure, run_cuid=None):
     Returns:
         dict: The response from the API
     """
-    raw_figure = figure.figure
-
-    if figure.is_matplotlib_figure():
-        type_ = "plot"
-        buffer = BytesIO()
-        raw_figure.savefig(buffer, bbox_inches="tight")
-        buffer.seek(0)
-        files = {"image": (f"{figure.key}.png", buffer, "image/png")}
-    elif figure.is_plotly_figure():
-        # When using plotly, we need to use we will produce two files:
-        # - a JSON file that will be used to display the figure in the UI
-        # - a PNG file that will be used to display the figure in documents
-        type_ = "plot"
-        png_file = raw_figure.to_image(format="png")
-        json_file = raw_figure.to_json()
-        files = {
-            "image": (f"{figure.key}.png", png_file, "image/png"),
-            "json_image": (f"{figure.key}.json", json_file, "application/json"),
-        }
-    else:
-        raise ValueError(
-            f"data_or_path type not supported: {get_full_typename(raw_figure)}."
-        )
-
-    try:
-        metadata_json = json.dumps(figure.metadata, allow_nan=False)
-    except TypeError:
-        raise
-
     try:
         return await _post(
             "log_figure",
-            data={"type": type_, "key": figure.key, "metadata": metadata_json},
-            files=files,
+            data=figure.serialize(),
+            files=figure.serialize_files(),
         )
     except Exception as e:
         print("Error logging figure to ValidMind API")
         raise e
 
 
-async def log_metadata(content_id, text=None, extra_json=None):
+async def log_figures(figures: List[Any]) -> Dict[str, Any]:
+    """Logs a list of figures
+
+    Args:
+        figures (list): A list of Figure objects
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    if client_config.can_log_figures():  # check if the backend supports batch logging
+        try:
+            data = {}
+            files = {}
+            for figure in figures:
+                data.update(
+                    {
+                        f"{k}-{figure.key}": v
+                        for k, v in figure.serialize().items()
+                    }
+                )
+                files.update(
+                    {
+                        f"{k}-{figure.key}": v
+                        for k, v in figure.serialize_files().items()
+                    }
+                )
+
+            return await _post(
+                "log_figures",
+                data=data,
+                files=files,
+            )
+        except Exception as e:
+            print("Error logging figures to ValidMind API")
+            raise e
+
+    else:
+        return await asyncio.gather(*[log_figure(figure) for figure in figures])
+
+
+async def log_metadata(
+    content_id: str,
+    text: Optional[str] = None,
+    extra_json: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
     """Logs free-form metadata to ValidMind API.
 
     Args:
@@ -322,7 +353,7 @@ async def log_metadata(content_id, text=None, extra_json=None):
         raise e
 
 
-async def log_metrics(metrics):
+async def log_metrics(metrics: List[Any]) -> Dict[str, Any]:
     """Logs metrics to ValidMind API.
 
     Args:
@@ -346,7 +377,9 @@ async def log_metrics(metrics):
         raise e
 
 
-async def log_test_result(result, dataset_type="training"):
+async def log_test_result(
+    result: Any, dataset_type: str = "training"
+) -> Dict[str, Any]:
     """Logs test results information
 
     This method will be called automatically from any function running tests but
@@ -374,7 +407,9 @@ async def log_test_result(result, dataset_type="training"):
         raise e
 
 
-def log_test_results(results, dataset_type="training"):
+def log_test_results(
+    results: List[Any], dataset_type: str = "training"
+) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
     This method will be called automatically be any function
@@ -392,7 +427,7 @@ def log_test_results(results, dataset_type="training"):
         list: list of responses from the API
     """
     try:
-        responses = []
+        responses = []  # TODO: use asyncio.gather
         for result in results:
             responses.append(run_async(log_test_result, result, dataset_type))
     except Exception as e:
@@ -402,11 +437,17 @@ def log_test_results(results, dataset_type="training"):
     return responses
 
 
-def start_run():
-    """Starts a new test run.
+def start_run() -> str:
+    """Starts a new test run
 
-    This method will return a test run CUID that needs to be
-    passed to any functions logging test results to the ValidMind API.
+    This function will take care of updating the api client with the new run CUID
+    and will be called automatically when logging starts if no run CUID is set.
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        str: The test run CUID
     """
     global _run_cuid
 

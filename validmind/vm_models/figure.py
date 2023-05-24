@@ -2,6 +2,7 @@
 Figure objects track the figure schema supported by the ValidMind API
 """
 
+import json
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Optional
@@ -13,6 +14,7 @@ import plotly.graph_objs as go
 import ipywidgets as widgets
 
 from ..client_config import client_config
+from ..utils import get_full_typename
 
 
 @dataclass
@@ -26,6 +28,8 @@ class Figure:
     metadata: Optional[dict] = None
     for_object: Optional[object] = None
     extras: Optional[dict] = None
+
+    _type: str = "plot"
 
     def __post_init__(self):
         """
@@ -119,7 +123,34 @@ class Figure:
         Serializes the Figure to a dictionary so it can be sent to the API
         """
         return {
+            "type": self._type,
             "key": self.key,
-            "metadata": self.metadata or {},
-            "figure": self.figure,
+            "metadata": json.dumps(self.metadata, allow_nan=False),
         }
+
+    def serialize_files(self):
+        """Creates a `requests`-compatible files object to be sent to the API"""
+        if self.is_matplotlib_figure():
+            buffer = BytesIO()
+            self.figure.savefig(buffer, bbox_inches="tight")
+            buffer.seek(0)
+            return {"image": (f"{self.key}.png", buffer, "image/png")}
+
+        elif self.is_plotly_figure():
+            # When using plotly, we need to use we will produce two files:
+            # - a JSON file that will be used to display the figure in the UI
+            # - a PNG file that will be used to display the figure in documents
+            return {
+                "image": (
+                    f"{self.key}.png",
+                    self.figure.to_image(format="png"),
+                    "image/png",
+                ),
+                "json_image": (
+                    f"{self.key}.json",
+                    self.figure.to_json(),
+                    "application/json",
+                ),
+            }
+
+        raise ValueError(f"Unrecognized figure type: {get_full_typename(self.figure)}")
