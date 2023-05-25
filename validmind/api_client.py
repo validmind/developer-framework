@@ -13,10 +13,11 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 import requests
+import sentry_sdk
 from aiohttp import FormData
 
 from .client_config import client_config
-from .logging import get_logger, init_sentry
+from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 
 # TODO: can't import types from vm_models because of circular dependency
@@ -31,8 +32,6 @@ _project = os.environ.get("VM_API_PROJECT")
 _run_cuid = os.environ.get("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
-
-__initialized = False
 
 
 @atexit.register
@@ -87,7 +86,7 @@ def init(
     Raises:
         ValueError: If the API key and secret are not provided
     """
-    global _api_key, _api_secret, _api_host, _run_cuid, _project, __initialized
+    global _api_key, _api_secret, _api_host, _run_cuid, _project
 
     _project = project or os.environ.get("VM_API_PROJECT")
 
@@ -109,7 +108,13 @@ def init(
     )
     _run_cuid = os.environ.get("VM_RUN_CUID", None)
 
-    __ping()
+    try:
+        __ping()
+    except Exception as e:
+        # if the api host is https, assume we're not in dev mode and send to sentry
+        if _api_host.startswith("https://"):
+            send_single_error(e)
+        raise e
 
 
 async def _get_session() -> aiohttp.ClientSession:
