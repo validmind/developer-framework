@@ -23,6 +23,7 @@ def init_sentry(config):
         "dsn": os.environ.get("VM_SENTRY_DSN"),
         "traces_sample_rate": 1.0,
         "release": f"validmind-python@{__version__}",
+        "in_app_include": ["validmind"],
     }
     config = {**default_config, **config}
 
