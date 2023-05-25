@@ -8,11 +8,14 @@ from typing import ClassVar, List
 import ipywidgets as widgets
 from IPython.display import display
 
+from ..logging import get_logger, log_performance
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
 from .test_plan_result import TestPlanResult
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -196,7 +199,12 @@ class TestPlan:
 
             self.pbar_description.value = f"Running {test.test_type}: {test.name}"
 
-            test_instance.run()
+            log_performance(
+                test_instance.run,
+                test_instance.name,
+                logger=logger,
+                force=True,
+            )()  # run the test and log the performance
 
             if test_instance.result is None:
                 self.pbar_description.value = "Test returned None, skipping..."
@@ -258,9 +266,9 @@ class TestPlan:
             try:
                 await result.log()
             except Exception as e:
-                print(result)
-                self.pbar_description.value = f"Failed to log result: {result} for test plan result '{str(result)}'"
-                print(e)
+                log = f"Failed to log result: {result} for test plan result '{str(result)}'"
+                self.pbar_description.value = log
+                logger.error(log)
                 raise e
 
             self.pbar.value += 1
@@ -305,7 +313,7 @@ class TestPlan:
         VS Code, Jupyter or other notebook environment.
         """
         if render_summary and not is_notebook():
-            print("Cannot render summary outside of a notebook environment")
+            logger.info("Cannot render summary outside of a notebook environment")
             return
 
         if len(self.results) == 0:

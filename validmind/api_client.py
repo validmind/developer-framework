@@ -146,7 +146,7 @@ def __ping() -> Dict[str, Any]:
     )
     if r.status_code != 200:
         logger.error(f"Failed to connect to ValidMind API: {r.text}")
-        raise Exception(r.text)
+        raise ConnectionError(r.text)
 
     client_info = r.json()
     feature_flags = {}

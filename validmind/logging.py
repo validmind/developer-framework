@@ -11,6 +11,8 @@ from .__version__ import __version__
 
 __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505239625465856"
 
+__perf_log_on = os.environ.get("VM_LOG_PERFORMANCE", "").upper() in ["1", "TRUE"]
+
 
 def init_sentry(config):
     """Initialize Sentry SDK for sending logs back to ValidMind
@@ -58,18 +60,26 @@ def get_logger(name="validmind", log_level=None):
     return logger
 
 
-def log_performance(func, logger=None):
+def log_performance(func, name=None, logger=None, force=False):
     """Decorator to log the time it takes to run a function
 
     Args:
         func (function): The function to decorate
+        name (str, optional): The name of the function. Defaults to None.
         logger (logging.Logger, optional): The logger to use. Defaults to None.
+        force (bool, optional): Whether to force logging even if env var is off
 
     Returns:
         function: The decorated function
     """
+    if __perf_log_on is False and force is False:
+        return func
+
     if logger is None:
         logger = get_logger()
+
+    if name is None:
+        name = func.__name__
 
     def wrap(*args, **kwargs):
         time1 = time.perf_counter()
@@ -77,7 +87,7 @@ def log_performance(func, logger=None):
         time2 = time.perf_counter()
 
         logger.info(
-            "%s function took %0.3f ms" % (func.__name__, (time2 - time1) * 1000.0)
+            "%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0)
         )
 
         return return_val
