@@ -16,10 +16,12 @@ import requests
 from aiohttp import FormData
 
 from .client_config import client_config
+from .logging import get_logger, init_sentry
 from .utils import NumpyEncoder, run_async
 
 # TODO: can't import types from vm_models because of circular dependency
 
+logger = get_logger("validmind.api_client")
 
 _api_key = os.environ.get("VM_API_KEY")
 _api_secret = os.environ.get("VM_API_SECRET")
@@ -138,7 +140,7 @@ def __ping() -> Dict[str, Any]:
         },
     )
     if r.status_code != 200:
-        print("Unsuccessful ping to ValidMind API")
+        logger.error(f"Failed to connect to ValidMind API: {r.text}")
         raise Exception(r.text)
 
     client_info = r.json()
@@ -155,7 +157,11 @@ def __ping() -> Dict[str, Any]:
     client_config.project = project
     client_config.feature_flags = feature_flags
 
-    print(f"Connected to ValidMind. Project: {project['name']} ({project['cuid']})")
+    init_sentry(client_info.get("sentry_config", {}))
+
+    logger.info(
+        f"Connected to ValidMind. Project: {project['name']} ({project['cuid']})"
+    )
 
 
 async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
@@ -249,7 +255,7 @@ async def log_dataset(vm_dataset) -> Dict[str, Any]:
             data=json.dumps(vm_dataset.serialize(), cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
-        print("Error logging dataset to ValidMind API")
+        logger.error("Error logging dataset to ValidMind API")
         raise e
 
 
@@ -272,7 +278,7 @@ async def log_figure(figure: Any) -> Dict[str, Any]:
             files=figure.serialize_files(),
         )
     except Exception as e:
-        print("Error logging figure to ValidMind API")
+        logger.error("Error logging figure to ValidMind API")
         raise e
 
 
@@ -312,7 +318,7 @@ async def log_figures(figures: List[Any]) -> Dict[str, Any]:
                 files=files,
             )
         except Exception as e:
-            print("Error logging figures to ValidMind API")
+            logger.error("Error logging figures to ValidMind API")
             raise e
 
     else:
@@ -349,7 +355,7 @@ async def log_metadata(
             data=json.dumps(metadata_dict, cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
-        print("Error logging metadata to ValidMind API")
+        logger.error("Error logging metadata to ValidMind API")
         raise e
 
 
@@ -373,7 +379,7 @@ async def log_metrics(metrics: List[Any]) -> Dict[str, Any]:
             ),
         )
     except Exception as e:
-        print("Error logging metrics to ValidMind API")
+        logger.error("Error logging metrics to ValidMind API")
         raise e
 
 
@@ -403,7 +409,7 @@ async def log_test_result(
             data=json.dumps(result.serialize(), cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
-        print("Error logging test results to ValidMind API")
+        logger.error("Error logging test results to ValidMind API")
         raise e
 
 
@@ -431,7 +437,7 @@ def log_test_results(
         for result in results:
             responses.append(run_async(log_test_result, result, dataset_type))
     except Exception as e:
-        print("Error logging test results to ValidMind API")
+        logger.error("Error logging test results to ValidMind API")
         raise e
 
     return responses
@@ -461,7 +467,7 @@ def start_run() -> str:
     )
 
     if r.status_code != 200:
-        print("Could not start data logging run with ValidMind API")
+        logger.error("Could not start data logging run with ValidMind API")
         raise Exception(r.text)
 
     test_run = r.json()
