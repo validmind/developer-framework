@@ -158,6 +158,9 @@
                                 <a class="function" href="#TimeSeriesOutliers.__init__">TimeSeriesOutliers</a>
                         </li>
                         <li>
+                                <a class="function" href="#TimeSeriesOutliers.summary">summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#TimeSeriesOutliers.run">run</a>
                         </li>
                 </ul>
@@ -170,6 +173,9 @@
                                 <a class="function" href="#TimeSeriesMissingValues.__init__">TimeSeriesMissingValues</a>
                         </li>
                         <li>
+                                <a class="function" href="#TimeSeriesMissingValues.summary">summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#TimeSeriesMissingValues.run">run</a>
                         </li>
                 </ul>
@@ -180,6 +186,9 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#TimeSeriesFrequency.__init__">TimeSeriesFrequency</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TimeSeriesFrequency.summary">summary</a>
                         </li>
                         <li>
                                 <a class="function" href="#TimeSeriesFrequency.run">run</a>
@@ -843,6 +852,34 @@ longer tail of values in the left.</p>
     
 
                             </div>
+                            <div id="TimeSeriesOutliers.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">results</span>, </span><span class="param"><span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TimeSeriesOutliers.summary"></a>
+    
+            <div class="docstring"><p>Example output:</p>
+
+<p>[
+    {
+        "values": {
+            "Variable": [...],
+            "z-score": [...],
+            "Threshold": [3, 3, 3, 3, 3, 3],
+            "Date": [...]
+        },
+        "test_name": "outliers",
+        "passed": false
+    }
+]</p>
+</div>
+
+
+                            </div>
                             <div id="TimeSeriesOutliers.run" class="classattr">
                                 <div class="attr function">
             
@@ -863,7 +900,6 @@ longer tail of values in the left.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="TimeSeriesOutliers.description" class="function">description</dd>
-                <dd id="TimeSeriesOutliers.summary" class="function">summary</dd>
                 <dd id="TimeSeriesOutliers.cache_results" class="function">cache_results</dd>
 
             </div>
@@ -902,6 +938,25 @@ longer tail of values in the left.</p>
     
 
                             </div>
+                            <div id="TimeSeriesMissingValues.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">results</span>, </span><span class="param"><span class="n">all_passed</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TimeSeriesMissingValues.summary"></a>
+    
+            <div class="docstring"><p>Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+a table with test_name(optional), column and passed.</p>
+
+<p>The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the test results.</p>
+</div>
+
+
+                            </div>
                             <div id="TimeSeriesMissingValues.run" class="classattr">
                                 <div class="attr function">
             
@@ -922,7 +977,6 @@ longer tail of values in the left.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="TimeSeriesMissingValues.description" class="function">description</dd>
-                <dd id="TimeSeriesMissingValues.summary" class="function">summary</dd>
                 <dd id="TimeSeriesMissingValues.cache_results" class="function">cache_results</dd>
 
             </div>
@@ -961,6 +1015,31 @@ longer tail of values in the left.</p>
     
 
                             </div>
+                            <div id="TimeSeriesFrequency.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">results</span>, </span><span class="param"><span class="n">all_passed</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TimeSeriesFrequency.summary"></a>
+    
+            <div class="docstring"><p>Example output:</p>
+
+<p>[
+    {
+        "values": {
+            "Variable": ["MORTGAGE30US", "GS10", "FEDFUNDS"],
+            "Frequency": ["Monthly", "Monthly", "Monthly"]
+        },
+        "passed": true
+    }
+]</p>
+</div>
+
+
+                            </div>
                             <div id="TimeSeriesFrequency.run" class="classattr">
                                 <div class="attr function">
             
@@ -981,7 +1060,6 @@ longer tail of values in the left.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="TimeSeriesFrequency.description" class="function">description</dd>
-                <dd id="TimeSeriesFrequency.summary" class="function">summary</dd>
                 <dd id="TimeSeriesFrequency.cache_results" class="function">cache_results</dd>
 
             </div>

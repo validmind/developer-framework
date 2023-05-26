@@ -32,18 +32,6 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#CharacteristicStabilityIndex">CharacteristicStabilityIndex</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#CharacteristicStabilityIndex.__init__">CharacteristicStabilityIndex</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#CharacteristicStabilityIndex.run">run</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#ConfusionMatrix">ConfusionMatrix</a>
                             <ul class="memberlist">
                         <li>
@@ -78,6 +66,9 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#PrecisionRecallCurve.__init__">PrecisionRecallCurve</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PrecisionRecallCurve.description">description</a>
                         </li>
                         <li>
                                 <a class="function" href="#PrecisionRecallCurve.run">run</a>
@@ -149,6 +140,9 @@
                                 <a class="function" href="#ROCCurve.__init__">ROCCurve</a>
                         </li>
                         <li>
+                                <a class="function" href="#ROCCurve.description">description</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#ROCCurve.run">run</a>
                         </li>
                 </ul>
@@ -174,6 +168,12 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#PopulationStabilityIndex.__init__">PopulationStabilityIndex</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PopulationStabilityIndex.description">description</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PopulationStabilityIndex.summary">summary</a>
                         </li>
                         <li>
                                 <a class="function" href="#PopulationStabilityIndex.run">run</a>
@@ -206,66 +206,6 @@ a sklearn-like API</p>
                 
                 
             </section>
-                <section id="CharacteristicStabilityIndex">
-                    <div class="attr class">
-                    <div class="decorator">@dataclass</div>
-
-    <span class="def">class</span>
-    <span class="name">CharacteristicStabilityIndex</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
-
-        
-    </div>
-    <a class="headerlink" href="#CharacteristicStabilityIndex"></a>
-    
-            <div class="docstring"><p>Characteristic Stability Index between two datasets</p>
-</div>
-
-
-                            <div id="CharacteristicStabilityIndex.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">CharacteristicStabilityIndex</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#CharacteristicStabilityIndex.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="CharacteristicStabilityIndex.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#CharacteristicStabilityIndex.run"></a>
-    
-            <div class="docstring"><p>Calculates PSI for each of the dataset features</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
-                                <dd id="CharacteristicStabilityIndex.key" class="variable">key</dd>
-                <dd id="CharacteristicStabilityIndex.description" class="function">description</dd>
-                <dd id="CharacteristicStabilityIndex.summary" class="function">summary</dd>
-                <dd id="CharacteristicStabilityIndex.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
-                                <dd id="CharacteristicStabilityIndex.df" class="variable">df</dd>
-                <dd id="CharacteristicStabilityIndex.validate_context" class="function">validate_context</dd>
-
-            </div>
-                                </dl>
-                            </div>
-                </section>
                 <section id="ConfusionMatrix">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -443,6 +383,22 @@ to returning the class' docstring</p>
     
 
                             </div>
+                            <div id="PrecisionRecallCurve.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PrecisionRecallCurve.description"></a>
+    
+            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
                             <div id="PrecisionRecallCurve.run" class="classattr">
                                 <div class="attr function">
             
@@ -463,7 +419,6 @@ to returning the class' docstring</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="PrecisionRecallCurve.key" class="variable">key</dd>
-                <dd id="PrecisionRecallCurve.description" class="function">description</dd>
                 <dd id="PrecisionRecallCurve.summary" class="function">summary</dd>
                 <dd id="PrecisionRecallCurve.cache_results" class="function">cache_results</dd>
 
@@ -787,6 +742,22 @@ to returning the class' docstring</p>
     
 
                             </div>
+                            <div id="ROCCurve.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ROCCurve.description"></a>
+    
+            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
                             <div id="ROCCurve.run" class="classattr">
                                 <div class="attr function">
             
@@ -807,7 +778,6 @@ to returning the class' docstring</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="ROCCurve.key" class="variable">key</dd>
-                <dd id="ROCCurve.description" class="function">description</dd>
                 <dd id="ROCCurve.summary" class="function">summary</dd>
                 <dd id="ROCCurve.cache_results" class="function">cache_results</dd>
 
@@ -922,6 +892,41 @@ to returning the class' docstring</p>
     
 
                             </div>
+                            <div id="PopulationStabilityIndex.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PopulationStabilityIndex.description"></a>
+    
+            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
+                            <div id="PopulationStabilityIndex.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#PopulationStabilityIndex.summary"></a>
+    
+            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
+The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the metric results.</p>
+
+<p>We return None here because the metric summary is optional.</p>
+</div>
+
+
+                            </div>
                             <div id="PopulationStabilityIndex.run" class="classattr">
                                 <div class="attr function">
             
@@ -942,8 +947,6 @@ to returning the class' docstring</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="PopulationStabilityIndex.key" class="variable">key</dd>
-                <dd id="PopulationStabilityIndex.description" class="function">description</dd>
-                <dd id="PopulationStabilityIndex.summary" class="function">summary</dd>
                 <dd id="PopulationStabilityIndex.cache_results" class="function">cache_results</dd>
 
             </div>

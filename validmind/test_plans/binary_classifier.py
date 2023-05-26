@@ -15,7 +15,6 @@ from ..model_validation.sklearn.metrics import (
     PermutationFeatureImportance,
     PrecisionRecallCurve,
     ROCCurve,
-    CharacteristicStabilityIndex,
     PopulationStabilityIndex,
     SHAPGlobalImportance,
 )
@@ -46,7 +45,6 @@ class BinaryClassifierMetrics(TestPlan):
         PermutationFeatureImportance,
         PrecisionRecallCurve,
         ROCCurve,
-        CharacteristicStabilityIndex,
         PopulationStabilityIndex,
         SHAPGlobalImportance,
     ]

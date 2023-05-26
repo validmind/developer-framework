@@ -56,6 +56,9 @@
                                 <a class="variable" href="#Dataset.copy">copy</a>
                         </li>
                         <li>
+                                <a class="function" href="#Dataset.drop_columns">drop_columns</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#Dataset.get_feature_by_id">get_feature_by_id</a>
                         </li>
                         <li>
@@ -117,6 +120,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#Figure.serialize">serialize</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Figure.serialize_files">serialize_files</a>
                         </li>
                 </ul>
 
@@ -517,6 +523,21 @@
 
 
                             </div>
+                            <div id="Dataset.drop_columns" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">drop_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">columns_to_drop</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Dataset.drop_columns"></a>
+    
+            <div class="docstring"><p>Drop specified columns of the raw_dataset.</p>
+</div>
+
+
+                            </div>
                             <div id="Dataset.get_feature_by_id" class="classattr">
                                 <div class="attr function">
             
@@ -847,7 +868,7 @@ reverse the one hot encoding and drop the individual dummy columns</p>
                             <div id="Figure.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Figure</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">figure</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">for_object</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extras</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Figure</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">figure</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">for_object</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extras</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;plot&#39;</span></span>)</span>
 
         
     </div>
@@ -897,6 +918,21 @@ reverse the one hot encoding and drop the individual dummy columns</p>
     <a class="headerlink" href="#Figure.serialize"></a>
     
             <div class="docstring"><p>Serializes the Figure to a dictionary so it can be sent to the API</p>
+</div>
+
+
+                            </div>
+                            <div id="Figure.serialize_files" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">serialize_files</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Figure.serialize_files"></a>
+    
+            <div class="docstring"><p>Creates a <code>requests</code>-compatible files object to be sent to the API</p>
 </div>
 
 
@@ -1578,7 +1614,7 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
                             <div id="TestPlan.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1956,7 +1992,7 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
                             <div id="TestSuite.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>

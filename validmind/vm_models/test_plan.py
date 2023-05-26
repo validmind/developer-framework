@@ -31,6 +31,8 @@ class TestPlan:
 
     # Instance Variables
     config: dict() = None
+    _global_config: dict() = None
+    _test_configs: dict() = None
     test_context: TestContext = None
     # Stores a reference to the child test plan instances
     _test_plan_instances: List[object] = None
@@ -67,6 +69,24 @@ class TestPlan:
             self.models = self.test_context.models
 
         self.validate_context()
+
+        self._split_configs()
+
+    def _split_configs(self):
+        """Splits the config into a global config and test configs"""
+        if self.config is None:
+            return
+
+        self._global_config = {}
+        self._test_configs = {}
+
+        test_names = [test.name for test in self.tests]
+
+        for key, value in self.config.items():
+            if key in test_names:
+                self._test_configs[key] = value
+            else:
+                self._global_config[key] = value
 
     def title(self):
         """
@@ -117,7 +137,10 @@ class TestPlan:
         if self.config is None:
             return None
 
-        return self.config.get(test_name, None)
+        return {
+            **self._global_config,
+            **self._test_configs.get(test_name, {}),
+        }  # merges the global config with the test config
 
     def _init_pbar(self, render_summary: bool = True, send: bool = True):
         """
@@ -166,14 +189,12 @@ class TestPlan:
             self._init_pbar(render_summary=render_summary, send=send)
 
         for test in self.tests:
-            test_name = test.name
-
-            test_params = self.get_config_params_for_test(test_name)
-            test_instance = test(self.test_context, params=test_params)
-
-            self.pbar_description.value = (
-                f"Running {test.test_type}: {test_instance.name}"
+            test_instance = test(
+                test_context=self.test_context,
+                params=self.get_config_params_for_test(test.name),
             )
+
+            self.pbar_description.value = f"Running {test.test_type}: {test.name}"
 
             test_instance.run()
 
