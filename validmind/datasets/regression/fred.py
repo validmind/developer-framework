@@ -21,6 +21,13 @@ def load_data():
     return df
 
 
+def load_processed_data():
+    df = load_data()
+
+    # Sample frequencies to Monthly
+    df = df.resample("MS").last()
+
+
 def preprocess(df, split_option="train_test_val", train_size=0.6, test_size=0.2):
     """
     Split a time series DataFrame into train, validation, and test sets.
