@@ -642,8 +642,6 @@ class TimeSeriesOutliers(ThresholdTest):
             temp_df[num_features_columns], zscore_threshold
         )
 
-        print(outliers_table)
-
         test_figures = self._plot_outliers(temp_df, outliers_table)
         passed = outliers_table.empty
 
@@ -679,7 +677,7 @@ class TimeSeriesOutliers(ThresholdTest):
         z_scores = pd.DataFrame(
             self.z_score_with_na(df), index=df.index, columns=df.columns
         )
-        print(z_scores)
+
         outliers = z_scores[(z_scores.abs() > threshold).any(axis=1)]
         outlier_table = []
         for idx, row in outliers.iterrows():
@@ -734,11 +732,11 @@ class TimeSeriesOutliers(ThresholdTest):
             plt.yticks(fontsize=18)
             ax.set_xlabel("")
             ax.set_ylabel("")
-            ax.legend()
             ax.set_title(
                 f"Time Series with Outliers for {col}", weight="bold", fontsize=20
             )
 
+            ax.legend()
             figures.append(
                 Figure(
                     for_object=self,
