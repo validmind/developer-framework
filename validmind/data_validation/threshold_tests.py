@@ -11,7 +11,6 @@ import seaborn as sns
 from dataclasses import dataclass
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
-from scipy import stats
 
 from ..vm_models import (
     Dataset,
@@ -589,7 +588,9 @@ class TimeSeriesOutliers(ThresholdTest):
             }
         ]
         """
+
         first_result = results[0]
+
         variables = first_result.values["Variable"]
         zScores = first_result.values["z-score"]
         dates = first_result.values["Date"]
@@ -628,7 +629,7 @@ class TimeSeriesOutliers(ThresholdTest):
         zscore_threshold = self.params["zscore_threshold"]
 
         temp_df = self.df.copy()
-        temp_df = temp_df.dropna()
+        # temp_df = temp_df.dropna()
         typeset = ProfilingTypeSet(Settings())
         dataset_types = typeset.infer_type(temp_df)
         test_results = []
@@ -637,9 +638,12 @@ class TimeSeriesOutliers(ThresholdTest):
             k for k, v in dataset_types.items() if str(v) == "Numeric"
         ]
 
-        outliers_table = self._identify_outliers(
+        outliers_table = self.identify_outliers(
             temp_df[num_features_columns], zscore_threshold
         )
+
+        print(outliers_table)
+
         test_figures = self._plot_outliers(temp_df, outliers_table)
         passed = outliers_table.empty
 
@@ -656,7 +660,12 @@ class TimeSeriesOutliers(ThresholdTest):
 
         return self.cache_results(test_results, passed=passed, figures=test_figures)
 
-    def _identify_outliers(self, df, threshold):
+    def z_score_with_na(self, df):
+        return df.apply(
+            lambda x: (x - x.mean()) / x.std() if x.dtype.kind in "biufc" else x
+        )
+
+    def identify_outliers(self, df, threshold):
         """
         Identifies and returns outliers in a pandas DataFrame using the z-score method.
 
@@ -666,14 +675,12 @@ class TimeSeriesOutliers(ThresholdTest):
 
         Returns:
         pandas.DataFrame: A DataFrame containing the variables, z-scores, threshold, and dates of the identified outliers.
-
-        Example:
-        df = pd.DataFrame({'A': [1, 2, 3, 4, 5], 'B': [6, 7, 8, 9, 10], 'C': [11, 12, 13, 14, 15]})
-        threshold = 2.5
-        outliers = _identify_outliers(df, threshold)
         """
-        z_scores = pd.DataFrame(stats.zscore(df), index=df.index, columns=df.columns)
-        outliers = z_scores[(z_scores > threshold).any(axis=1)]
+        z_scores = pd.DataFrame(
+            self.z_score_with_na(df), index=df.index, columns=df.columns
+        )
+        print(z_scores)
+        outliers = z_scores[(z_scores.abs() > threshold).any(axis=1)]
         outlier_table = []
         for idx, row in outliers.iterrows():
             for col in df.columns:
