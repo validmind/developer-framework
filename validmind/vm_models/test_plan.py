@@ -200,7 +200,11 @@ class TestPlan:
             self.pbar_description.value = f"Running {test.test_type}: {test.name}"
 
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
-            log_performance(test_instance.run, test_instance.name, logger=logger,)()
+            log_performance(
+                test_instance.run,
+                test_instance.name,
+                logger=logger,
+            )()
 
             if test_instance.result is None:
                 self.pbar_description.value = "Test returned None, skipping..."

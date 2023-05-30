@@ -95,9 +95,7 @@ def log_performance(func, name=None, logger=None, force=False):
         return_val = func(*args, **kwargs)
         time2 = time.perf_counter()
 
-        logger.info(
-            "%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0)
-        )
+        logger.info("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
 
         return return_val
 
@@ -131,9 +129,7 @@ async def log_performance_async(func, name=None, logger=None, force=False):
         return_val = await func(*args, **kwargs)
         time2 = time.perf_counter()
 
-        logger.info(
-            "%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0)
-        )
+        logger.info("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
 
         return return_val
 
@@ -150,4 +146,4 @@ def send_single_error(error: Exception):
     client = sentry_sdk.Client(__dsn, release=f"validmind-python@{__version__}")
     client.capture_event(event, hint=hint)
 
-    time.sleep(.25)  # wait for the event to be sent
+    time.sleep(0.25)  # wait for the event to be sent

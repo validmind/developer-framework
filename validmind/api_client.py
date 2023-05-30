@@ -13,7 +13,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 import requests
-import sentry_sdk
 from aiohttp import FormData
 
 from .client_config import client_config
@@ -313,10 +312,7 @@ async def log_figures(figures: List[Any]) -> Dict[str, Any]:
             files = {}
             for figure in figures:
                 data.update(
-                    {
-                        f"{k}-{figure.key}": v
-                        for k, v in figure.serialize().items()
-                    }
+                    {f"{k}-{figure.key}": v for k, v in figure.serialize().items()}
                 )
                 files.update(
                     {
