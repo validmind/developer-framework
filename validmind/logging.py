@@ -9,9 +9,20 @@ from sentry_sdk.utils import event_from_exception, exc_info_from_error
 
 from .__version__ import __version__
 
+__log_level = None
 __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505239625465856"
 
-__perf_log_on = os.environ.get("VM_LOG_PERFORMANCE", "").upper() in ["1", "TRUE"]
+
+def _get_log_level():
+    """Get the log level from the environment variable if not already set"""
+    if __log_level is not None:
+        return __log_level
+
+    log_level_str = os.environ.get("LOG_LEVEL", "INFO").upper()
+    if log_level_str not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
+        raise ValueError(f"Invalid log level: {log_level_str}")
+
+    return logging.getLevelName(log_level_str)
 
 
 def init_sentry(config):
@@ -43,9 +54,6 @@ def init_sentry(config):
 
 def get_logger(name="validmind", log_level=None):
     """Get a logger for the given name"""
-    if log_level is None:
-        log_level = os.environ.get("VM_LOG_LEVEL", "INFO")
-
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
     )
@@ -54,7 +62,7 @@ def get_logger(name="validmind", log_level=None):
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
-    logger.setLevel(log_level)
+    logger.setLevel(log_level or _get_log_level())
     logger.addHandler(handler)
 
     return logger
@@ -72,7 +80,8 @@ def log_performance(func, name=None, logger=None, force=False):
     Returns:
         function: The decorated function
     """
-    if __perf_log_on is False and force is False:
+    # check if log level is set to debug
+    if _get_log_level() != logging.DEBUG and not force:
         return func
 
     if logger is None:
@@ -84,6 +93,42 @@ def log_performance(func, name=None, logger=None, force=False):
     def wrap(*args, **kwargs):
         time1 = time.perf_counter()
         return_val = func(*args, **kwargs)
+        time2 = time.perf_counter()
+
+        logger.info(
+            "%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0)
+        )
+
+        return return_val
+
+    return wrap
+
+
+async def log_performance_async(func, name=None, logger=None, force=False):
+    """Decorator to log the time it takes to run an async function
+
+    Args:
+        func (function): The function to decorate
+        name (str, optional): The name of the function. Defaults to None.
+        logger (logging.Logger, optional): The logger to use. Defaults to None.
+        force (bool, optional): Whether to force logging even if env var is off
+
+    Returns:
+        function: The decorated function
+    """
+    # check if log level is set to debug
+    if _get_log_level() != logging.DEBUG and not force:
+        return func
+
+    if logger is None:
+        logger = get_logger()
+
+    if name is None:
+        name = func.__name__
+
+    async def wrap(*args, **kwargs):
+        time1 = time.perf_counter()
+        return_val = await func(*args, **kwargs)
         time2 = time.perf_counter()
 
         logger.info(

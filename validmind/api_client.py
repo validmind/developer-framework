@@ -186,11 +186,15 @@ async def _get(
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
-    async with session.get(url) as r:
-        if r.status != 200:
-            raise Exception(await r.text())
+    try:
+        async with session.get(url) as r:
+            if r.status != 200:
+                raise Exception(await r.text())
 
-        return await r.json()
+            return await r.json()
+    except Exception as e:
+        logger.error(f"Error sending GET request to ValidMind: {e}")
+        raise e
 
 
 async def _post(
@@ -222,11 +226,15 @@ async def _post(
     else:
         _data = data
 
-    async with session.post(url, data=_data) as r:
-        if r.status != 200:
-            raise Exception(await r.text())
+    try:
+        async with session.post(url, data=_data) as r:
+            if r.status != 200:
+                raise Exception(await r.text())
 
-        return await r.json()
+            return await r.json()
+    except Exception as e:
+        logger.error(f"Error sending POST request to ValidMind: {e}")
+        raise e
 
 
 async def get_metadata(content_id: str) -> Dict[str, Any]:
