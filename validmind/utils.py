@@ -16,6 +16,21 @@ DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
 
 
+def is_notebook() -> bool:
+    """
+    Checks if the code is running in a Jupyter notebook or IPython shell
+
+    https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+    """
+    try:
+        if getipython.get_ipython() is not None:
+            return True
+    except NameError:
+        return False  # Probably standard Python interpreter
+
+    return False
+
+
 # hacky way to make async code run "synchronously" in colab
 __loop: asyncio.AbstractEventLoop = None
 try:
@@ -25,7 +40,9 @@ try:
         __loop = asyncio.new_event_loop()
         nest_asyncio.apply(__loop)
 except ModuleNotFoundError:
-    pass
+    if is_notebook():
+        __loop = asyncio.new_event_loop()
+        nest_asyncio.apply(__loop)
 
 
 def nan_to_none(obj):
@@ -76,21 +93,6 @@ def is_matplotlib_typename(typename: str) -> bool:
 
 def is_plotly_typename(typename: str) -> bool:
     return typename.startswith("plotly.")
-
-
-def is_notebook() -> bool:
-    """
-    Checks if the code is running in a Jupyter notebook or IPython shell
-
-    https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
-    """
-    try:
-        if getipython.get_ipython() is not None:
-            return True
-    except NameError:
-        return False  # Probably standard Python interpreter
-
-    return False
 
 
 def precision_and_scale(x):
