@@ -149,16 +149,19 @@ def __ping() -> Dict[str, Any]:
 
     client_info = r.json()
     feature_flags = {}
+    template = {}
 
     # Check if we have received a legacy payload from the API. The legacy response
     # will have the project name in the root object, otherwse it will be in the "project" key.
     if "project" in client_info:
         project = client_info["project"]
         feature_flags = client_info.get("feature_flags", {})
+        template = client_info.get("documentation_template", {})
     else:
         project = client_info
 
     client_config.project = project
+    client_config.documentation_template = template
     client_config.feature_flags = feature_flags
 
     init_sentry(client_info.get("sentry_config", {}))
