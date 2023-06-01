@@ -1,8 +1,8 @@
 {
-    "python.formatting.provider": "none",
-    "notebook.output.textLineLimit": 1000,
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    }
+  "python.formatting.provider": "none",
+  "notebook.output.textLineLimit": 1000,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.analysis.typeCheckingMode": "off"
 }
-  
