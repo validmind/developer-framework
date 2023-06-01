@@ -38,7 +38,7 @@ def init_sentry(server_config):
             - dsn (str): The Sentry DSN
             ...: Other config options for Sentry
     """
-    if config.get("send_logs", False) is False:
+    if server_config.get("send_logs", False) is False:
         return
 
     config = {
