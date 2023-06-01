@@ -25,7 +25,7 @@ def _get_log_level():
     return logging.getLevelName(log_level_str)
 
 
-def init_sentry(config):
+def init_sentry(server_config):
     """Initialize Sentry SDK for sending logs back to ValidMind
 
     This will usually only be called by the api_client module to initialize the
@@ -47,8 +47,8 @@ def init_sentry(config):
         "release": f"validmind-python@{__version__}",
         "in_app_include": ["validmind"],
         "environment": "production",
-    }.update({k: v for k, v in config.items() if k != "send_logs"})
-
+    }
+    config.update({k: v for k, v in server_config.items() if k != "send_logs"})
     sentry_sdk.init(**config)
 
 
