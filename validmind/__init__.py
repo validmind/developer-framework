@@ -57,6 +57,7 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
+from .__version__ import __version__  # noqa: E402
 
 
 def log_dataset(dataset):
@@ -102,6 +103,7 @@ def log_figure(figure):
 
 
 __all__ = [  # noqa
+    "__version__",
     # Framework High Level API
     "datasets",
     "data_validation",

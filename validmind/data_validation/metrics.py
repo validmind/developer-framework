@@ -1266,7 +1266,7 @@ class RollingStatsPlot(Metric):
         fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
         ax1.plot(rolling_mean)
-        ax1.legend()
+
         ax1.set_title(
             f"Rolling Mean for {col}",
             fontsize=20,
@@ -1274,9 +1274,9 @@ class RollingStatsPlot(Metric):
         )
         ax1.set_ylabel("")
         ax1.tick_params(axis="both", labelsize=18)
+        ax1.legend()
 
         ax2.plot(rolling_std, label="Rolling Standard Deviation", color="orange")
-        ax2.legend()
         ax2.set_title(
             f"Rolling STD for {col}",
             fontsize=20,
@@ -1285,6 +1285,7 @@ class RollingStatsPlot(Metric):
         ax2.set_xlabel("")
         ax2.set_ylabel("")
         ax2.tick_params(axis="both", labelsize=18)
+        ax2.legend()
 
         return fig
 

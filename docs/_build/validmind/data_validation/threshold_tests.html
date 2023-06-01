@@ -163,6 +163,12 @@
                         <li>
                                 <a class="function" href="#TimeSeriesOutliers.run">run</a>
                         </li>
+                        <li>
+                                <a class="function" href="#TimeSeriesOutliers.z_score_with_na">z_score_with_na</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TimeSeriesOutliers.identify_outliers">identify_outliers</a>
+                        </li>
                 </ul>
 
             </li>
@@ -891,6 +897,41 @@ longer tail of values in the left.</p>
     <a class="headerlink" href="#TimeSeriesOutliers.run"></a>
     
             <div class="docstring"><p>Run the test and cache its results</p>
+</div>
+
+
+                            </div>
+                            <div id="TimeSeriesOutliers.z_score_with_na" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">z_score_with_na</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TimeSeriesOutliers.z_score_with_na"></a>
+    
+    
+
+                            </div>
+                            <div id="TimeSeriesOutliers.identify_outliers" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">identify_outliers</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">threshold</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TimeSeriesOutliers.identify_outliers"></a>
+    
+            <div class="docstring"><p>Identifies and returns outliers in a pandas DataFrame using the z-score method.</p>
+
+<p>Args:
+df (pandas.DataFrame): A pandas DataFrame containing the data to be analyzed.
+threshold (float): The absolute value of the z-score above which a value is considered an outlier.</p>
+
+<p>Returns:
+pandas.DataFrame: A DataFrame containing the variables, z-scores, threshold, and dates of the identified outliers.</p>
 </div>
 
 

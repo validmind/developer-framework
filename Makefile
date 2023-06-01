@@ -30,5 +30,6 @@ docs-serve:
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
 	poetry version $(tag)
+	echo "__version__ = \"$$(poetry version -s)\"" > validmind/__version__.py
 
 .PHONY: docs
