@@ -156,7 +156,7 @@ def __ping() -> Dict[str, Any]:
     client_config.feature_flags = client_info.get("feature_flags", {})
 
     logger.info(
-        f"Connected to ValidMind. Project: {client_config.project['name']}" \
+        f"Connected to ValidMind. Project: {client_config.project['name']}"
         f" ({client_config.project['cuid']})"
     )
 

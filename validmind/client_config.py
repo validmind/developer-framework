@@ -41,4 +41,6 @@ class ClientConfig:
         return self.feature_flags.get("log_figures", False)
 
 
-client_config = ClientConfig(project=None, feature_flags={}, documentation_template=None)
+client_config = ClientConfig(
+    project=None, feature_flags={}, documentation_template=None
+)
