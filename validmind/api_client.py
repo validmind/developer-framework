@@ -157,7 +157,7 @@ def __ping() -> Dict[str, Any]:
 
     logger.info(
         f"Connected to ValidMind. Project: {client_config.project['name']}" \
-        " ({client_config.project['cuid']})"
+        f" ({client_config.project['cuid']})"
     )
 
 
