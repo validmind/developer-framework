@@ -235,7 +235,7 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
         dict: Metadata object
     """
     # TODO: add a more accurate type hint/documentation
-    return await _get(f"get_metadata/{content_id}", can_fail=True)
+    return await _get(f"get_metadata/{content_id}")
 
 
 async def log_dataset(vm_dataset) -> Dict[str, Any]:
