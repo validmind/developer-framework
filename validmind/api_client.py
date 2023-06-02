@@ -178,15 +178,12 @@ async def _get(
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
-    try:
-        async with session.get(url) as r:
-            if r.status != 200:
-                raise Exception(await r.text())
+    async with session.get(url) as r:
+        if r.status != 200:
+            print(r.status)
+            raise Exception(await r.text())
 
-            return await r.json()
-    except Exception as e:
-        logger.error(f"Error sending GET request to ValidMind: {e}")
-        raise e
+        return await r.json()
 
 
 async def _post(
@@ -218,15 +215,11 @@ async def _post(
     else:
         _data = data
 
-    try:
-        async with session.post(url, data=_data) as r:
-            if r.status != 200:
-                raise Exception(await r.text())
+    async with session.post(url, data=_data) as r:
+        if r.status != 200:
+            raise Exception(await r.text())
 
-            return await r.json()
-    except Exception as e:
-        logger.error(f"Error sending POST request to ValidMind: {e}")
-        raise e
+        return await r.json()
 
 
 async def get_metadata(content_id: str) -> Dict[str, Any]:
@@ -242,7 +235,7 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
         dict: Metadata object
     """
     # TODO: add a more accurate type hint/documentation
-    return await _get(f"get_metadata/{content_id}")
+    return await _get(f"get_metadata/{content_id}", can_fail=True)
 
 
 async def log_dataset(vm_dataset) -> Dict[str, Any]:
