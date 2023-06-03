@@ -148,23 +148,16 @@ def __ping() -> Dict[str, Any]:
         raise ConnectionError(r.text)
 
     client_info = r.json()
-    feature_flags = {}
-
-    # Check if we have received a legacy payload from the API. The legacy response
-    # will have the project name in the root object, otherwse it will be in the "project" key.
-    if "project" in client_info:
-        project = client_info["project"]
-        feature_flags = client_info.get("feature_flags", {})
-    else:
-        project = client_info
-
-    client_config.project = project
-    client_config.feature_flags = feature_flags
 
     init_sentry(client_info.get("sentry_config", {}))
 
+    client_config.project = client_info["project"]
+    client_config.documentation_template = client_info.get("documentation_template", {})
+    client_config.feature_flags = client_info.get("feature_flags", {})
+
     logger.info(
-        f"Connected to ValidMind. Project: {project['name']} ({project['cuid']})"
+        f"Connected to ValidMind. Project: {client_config.project['name']}"
+        f" ({client_config.project['cuid']})"
     )
 
 
@@ -185,15 +178,12 @@ async def _get(
     session = await _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
-    try:
-        async with session.get(url) as r:
-            if r.status != 200:
-                raise Exception(await r.text())
+    async with session.get(url) as r:
+        if r.status != 200:
+            print(r.status)
+            raise Exception(await r.text())
 
-            return await r.json()
-    except Exception as e:
-        logger.error(f"Error sending GET request to ValidMind: {e}")
-        raise e
+        return await r.json()
 
 
 async def _post(
@@ -225,15 +215,11 @@ async def _post(
     else:
         _data = data
 
-    try:
-        async with session.post(url, data=_data) as r:
-            if r.status != 200:
-                raise Exception(await r.text())
+    async with session.post(url, data=_data) as r:
+        if r.status != 200:
+            raise Exception(await r.text())
 
-            return await r.json()
-    except Exception as e:
-        logger.error(f"Error sending POST request to ValidMind: {e}")
-        raise e
+        return await r.json()
 
 
 async def get_metadata(content_id: str) -> Dict[str, Any]:

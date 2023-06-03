@@ -58,7 +58,7 @@ class TestAPIClient(unittest.TestCase):
 
     @patch("requests.get")
     def test_init_successful(self, mock_requests_get):
-        mock_data = {"name": "test_project", "cuid": os.environ["VM_API_PROJECT"]}
+        mock_data = {"project": {"name": "test_project", "cuid": os.environ["VM_API_PROJECT"]}}
         mock_response = Mock(status_code=200, json=Mock(return_value=mock_data))
         mock_requests_get.return_value = mock_response
 

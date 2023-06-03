@@ -8,6 +8,7 @@ import xgboost as xgb
 from sklearn.linear_model import LinearRegression, LogisticRegression
 
 # from .model_validation import evaluate_model as mod_evaluate_model
+from .client_config import client_config
 from .test_plans import get_by_name as get_test_plan_by_name
 from .test_suites import get_by_name as get_test_suite_by_name
 from .vm_models import (
@@ -18,6 +19,7 @@ from .vm_models import (
     R_MODEL_TYPES,
     TestPlan,
     TestSuite,
+    preview_template as _preview_template,
 )
 
 pd.option_context("format.precision", 2)
@@ -252,3 +254,15 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     suite.run(send=send)
 
     return suite
+
+
+def preview_template():
+    """Preview the documentation template for the current project
+
+    This function will display the documentation template for the current project. If
+    the project has not been initialized, then an error will be raised.
+    """
+    if client_config.documentation_template is None:
+        raise ValueError("No documentation template found. Please run `vm.init()`")
+
+    _preview_template(client_config.documentation_template)
