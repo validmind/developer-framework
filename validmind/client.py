@@ -256,11 +256,30 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     return suite
 
 
+def run_template():
+    """Collect and run all the tests associated with a template
+
+    This function will analyze the current project's documentation template and collect
+    all the tests associated with it into a test suite. It will then run the test
+    suite, log the results to the ValidMind API and display them to the user.
+
+    Raises:
+        ValueError: If the project has not been initialized
+    """
+    if client_config.documentation_template is None:
+        raise ValueError("No documentation template found. Please run `vm.init()`")
+
+    template = client_config.documentation_template
+
+
 def preview_template():
     """Preview the documentation template for the current project
 
     This function will display the documentation template for the current project. If
     the project has not been initialized, then an error will be raised.
+
+    Raises:
+        ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
         raise ValueError("No documentation template found. Please run `vm.init()`")
