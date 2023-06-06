@@ -308,22 +308,27 @@ class TabularDescriptionTables(Metric):
 
     def get_summary_statistics_categorical(self, categorical_fields):
         summary_stats = pd.DataFrame()
-        for column in self.df[categorical_fields].columns:
-            summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
-            summary_stats.loc[column, "Num of Unique Values"] = self.df[
-                column
-            ].nunique()
-            summary_stats.loc[column, "Unique Values"] = str(self.df[column].unique())
-            summary_stats.loc[column, "Missing Values (%)"] = (
-                self.df[column].isnull().mean() * 100
-            )
-            summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
+        if categorical_fields:  # check if the list is not empty
+            for column in self.df[categorical_fields].columns:
+                summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
+                summary_stats.loc[column, "Num of Unique Values"] = self.df[
+                    column
+                ].nunique()
+                summary_stats.loc[column, "Unique Values"] = str(
+                    self.df[column].unique()
+                )
+                summary_stats.loc[column, "Missing Values (%)"] = (
+                    self.df[column].isnull().mean() * 100
+                )
+                summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
 
-        summary_stats = summary_stats.sort_values(
-            by="Missing Values (%)", ascending=False
-        )
-        summary_stats.reset_index(inplace=True)
-        summary_stats.rename(columns={"index": "Categorical Variable"}, inplace=True)
+            summary_stats = summary_stats.sort_values(
+                by="Missing Values (%)", ascending=False
+            )
+            summary_stats.reset_index(inplace=True)
+            summary_stats.rename(
+                columns={"index": "Categorical Variable"}, inplace=True
+            )
         return summary_stats
 
     def get_summary_statistics_datetime(self, datetime_fields):
