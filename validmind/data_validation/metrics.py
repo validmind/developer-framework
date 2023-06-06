@@ -265,11 +265,6 @@ class DescriptiveStatistics(Metric):
         )
 
 
-from dataclasses import dataclass
-import pandas as pd
-from typing import List
-
-
 @dataclass
 class TabularDescriptionTables(Metric):
     """
