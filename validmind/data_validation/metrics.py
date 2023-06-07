@@ -355,7 +355,7 @@ class TabularCategoricalBarPlots(Metric):
         )
 
 
-class DateTimeDifferencesHistogram(Metric):
+class TabularDateTimeHistograms(Metric):
     """
     Generates a visual analysis of datetime data by plotting histograms of
     differences between consecutive dates. The input dataset can have multiple
@@ -363,7 +363,7 @@ class DateTimeDifferencesHistogram(Metric):
     for each datetime variable.
     """
 
-    name = "datetime_differences_histogram"
+    name = "tabular_datetime_histograms"
     required_context = ["dataset"]
 
     def run(self):
