@@ -10,6 +10,10 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .client_config import client_config
 from .logging import get_logger
+from .template import (
+    preview_template as _preview_template,
+    run_template as _run_template,
+)
 from .test_plans import get_by_name as get_test_plan_by_name
 from .test_suites import get_by_name as get_test_suite_by_name
 from .vm_models import (
@@ -20,7 +24,6 @@ from .vm_models import (
     R_MODEL_TYPES,
     TestPlan,
     TestSuite,
-    preview_template as _preview_template,
 )
 
 pd.option_context("format.precision", 2)
@@ -259,22 +262,6 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     return suite
 
 
-def run_template():
-    """Collect and run all the tests associated with a template
-
-    This function will analyze the current project's documentation template and collect
-    all the tests associated with it into a test suite. It will then run the test
-    suite, log the results to the ValidMind API and display them to the user.
-
-    Raises:
-        ValueError: If the project has not been initialized
-    """
-    if client_config.documentation_template is None:
-        raise ValueError("No documentation template found. Please run `vm.init()`")
-
-    template = client_config.documentation_template
-
-
 def preview_template():
     """Preview the documentation template for the current project
 
@@ -288,3 +275,19 @@ def preview_template():
         raise ValueError("No documentation template found. Please run `vm.init()`")
 
     _preview_template(client_config.documentation_template)
+
+
+def run_template():
+    """Collect and run all the tests associated with a template
+
+    This function will analyze the current project's documentation template and collect
+    all the tests associated with it into a test suite. It will then run the test
+    suite, log the results to the ValidMind API and display them to the user.
+
+    Raises:
+        ValueError: If the project has not been initialized
+    """
+    if client_config.documentation_template is None:
+        raise ValueError("No documentation template found. Please run `vm.init()`")
+
+    _run_template(client_config.documentation_template)
