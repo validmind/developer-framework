@@ -2,6 +2,7 @@ from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
 
 from ..logging import get_logger
+from ..utils import is_notebook
 
 logger = get_logger(__name__)
 
@@ -80,6 +81,27 @@ def _create_section_widget(tree):
 
 
 def preview_template(template):
+    """Preview a template in Jupyter Notebook
+
+    Args:
+        template (dict): The template to preview
+    """
+    if not is_notebook():
+        logger.warning("preview_template() only works in Jupyter Notebook")
+        return
+
     display(
         _create_section_widget(_convert_sections_to_section_tree(template["sections"]))
     )
+
+
+def run_template(template):
+    """Run all tests in a template
+
+    This function will collect all tests used in a template into a TestPlan and then
+    run the TestPlan as usual.
+
+    Args:
+        template (dict): The template to collect tests from
+    """
+    pass
