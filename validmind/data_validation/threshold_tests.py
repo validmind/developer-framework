@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
+from ..logging import get_logger
 from ..vm_models import (
     Dataset,
     TestResult,
@@ -21,6 +22,8 @@ from ..vm_models import (
     ResultTable,
     ResultTableMetadata,
 )
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -70,7 +73,7 @@ class ClassImbalance(ThresholdTest):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
-            print("Skipping class_imbalance test because no target column is defined")
+            logger.info("Skipping class_imbalance test because no target column is defined")
             return
 
         target_column = self.dataset.target_column

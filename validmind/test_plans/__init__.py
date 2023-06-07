@@ -5,6 +5,7 @@ import inspect
 
 import pandas as pd
 
+from ..logging import get_logger
 from ..vm_models import Metric, TestPlan, ThresholdTest
 from .binary_classifier import (
     BinaryClassifierMetrics,
@@ -26,6 +27,8 @@ from .time_series import (
     TimeSeriesForecast,
     TimeSeriesSensitivity,
 )
+
+logger = get_logger(__name__)
 
 core_test_plans = {
     "binary_classifier_metrics": BinaryClassifierMetrics,
@@ -170,7 +173,7 @@ def register_test_plan(plan_id: str, plan: TestPlan):
     Registers a custom test plan
     """
     custom_test_plans[plan_id] = plan
-    print(f"Registered test plan: {plan_id}")
+    logger.info(f"Registered test plan: {plan_id}")
 
 
 def describe_test(name: str):

@@ -10,8 +10,11 @@ from .test_suites import (
     TimeSeriesDataset,
     TimeSeriesModelValidation,
 )
+from ..logging import get_logger
 from ..vm_models import TestSuite
 from .. import test_plans
+
+logger = get_logger(__name__)
 
 core_test_suites = {
     "binary_classifier_full_suite": BinaryClassifierFullSuite,
@@ -102,7 +105,7 @@ def register_test_suite(suite_id: str, suite: TestSuite):
     Registers a custom test suite
     """
     custom_test_suites[suite_id] = suite
-    print(f"Registered test suite: {suite_id}")
+    logger.info(f"Registered test suite: {suite_id}")
 
 
 def describe_test_suites_plans_tests():

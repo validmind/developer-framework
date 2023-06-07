@@ -15,6 +15,7 @@ import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
+from ...logging import get_logger
 from ...vm_models import (
     Figure,
     Metric,
@@ -25,6 +26,7 @@ from ...vm_models import (
 )
 from ...utils import format_number
 
+logger = get_logger(__name__)
 
 @dataclass
 class ConfusionMatrix(Metric):
@@ -139,7 +141,7 @@ class PermutationFeatureImportance(Metric):
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
         if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping PFI for {model_library} models")
+            logger.info(f"Skiping PFI for {model_library} models")
             return
 
         # Check if the model has a fit method. This works for statsmodels
@@ -481,7 +483,7 @@ class SHAPGlobalImportance(Metric):
     def run(self):
         model_library = Model.model_library(self.model.model)
         if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping SHAP for {model_library} models")
+            logger.info(f"Skiping SHAP for {model_library} models")
             return
 
         trained_model = self.model.model
@@ -631,7 +633,7 @@ class PopulationStabilityIndex(Metric):
     def run(self):
         model_library = Model.model_library(self.model.model)
         if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping PSI for {model_library} models")
+            logger.info(f"Skiping PSI for {model_library} models")
             return
 
         psi_results = self._get_psi(

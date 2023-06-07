@@ -23,6 +23,8 @@ from statsmodels.graphics.tsaplots import plot_acf
 from arch.unitroot import PhillipsPerron
 from arch.unitroot import ZivotAndrews
 from arch.unitroot import DFGLS
+
+from ...logging import get_logger
 from ...vm_models import (
     Figure,
     Metric,
@@ -32,6 +34,8 @@ from ...vm_models import (
     ResultTableMetadata,
 )
 from ...statsutils import adj_r2_score
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -492,7 +496,7 @@ class AutoARIMA(Metric):
             # Check for stationarity using the Augmented Dickey-Fuller test
             adf_test = adfuller(series)
             if adf_test[1] > 0.05:
-                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+                logger.warning(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
             arima_orders = []
             bic_values = []
@@ -509,7 +513,7 @@ class AutoARIMA(Metric):
                             bic_values.append(model_fit.bic)
                             aic_values.append(model_fit.aic)
                         except Exception as e:
-                            print(
+                            logger.error(
                                 f"Error fitting ARIMA({p}, {d}, {q}) model for {col}: {e}"
                             )
 
@@ -892,7 +896,7 @@ class RegressionModelForecastPlot(Metric):
 
             plt.legend()
             # TODO: define a proper key for each plot
-            print(f"Plotting forecast vs observed for model {fitted_model.model}")
+            logger.info(f"Plotting forecast vs observed for model {fitted_model.model}")
 
             plt.close("all")
 
@@ -1068,7 +1072,7 @@ class RegressionModelSensitivityPlot(Metric):
     }
 
     def run(self):
-        print(self.params)
+        logger.info(self.params)
 
         transformation = self.params["transformation"]
         shocks = self.params["shocks"]
@@ -1116,7 +1120,6 @@ class RegressionModelSensitivityPlot(Metric):
             figures.append(
                 Figure(for_object=self, key=f"{self.key}:{i}", figure=fig, metadata={})
             )
-            print(f"{self.key}:{i}")
         return self.cache_results(figures=figures)
 
     def transform_predictions(self, predictions, start_value):

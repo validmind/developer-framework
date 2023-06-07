@@ -5,12 +5,15 @@ from dataclasses import dataclass, fields
 
 from dython.nominal import associations
 
+from ..logging import get_logger
 from .dataset_utils import (
     describe_dataset_field,
     generate_correlation_plots,
     parse_dataset_variables,
     validate_pd_dataset_targets,
 )
+
+logger = get_logger(__name__)
 
 
 @dataclass()
@@ -344,7 +347,7 @@ class Dataset:
         Returns:
             Dataset: The Dataset object
         """
-        print("Inferring dataset types...")
+        logger.info("Inferring dataset types...")
         vm_dataset_variables = parse_dataset_variables(df, options)
 
         shape = {

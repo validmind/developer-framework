@@ -9,6 +9,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .client_config import client_config
+from .logging import get_logger
 from .test_plans import get_by_name as get_test_plan_by_name
 from .test_suites import get_by_name as get_test_suite_by_name
 from .vm_models import (
@@ -23,6 +24,8 @@ from .vm_models import (
 )
 
 pd.option_context("format.precision", 2)
+
+logger = get_logger(__name__)
 
 
 def init_dataset(
@@ -58,7 +61,7 @@ def init_dataset(
 
     # TODO: when we accept numpy datasets we can convert them to/from pandas
     if dataset_class == "DataFrame":
-        print("Pandas dataset detected. Initializing VM Dataset instance...")
+        logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
         vm_dataset = Dataset.init_from_pd_dataset(
             dataset, options, targets, target_column, class_labels
         )

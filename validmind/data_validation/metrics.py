@@ -21,6 +21,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import coint
 
 
+from ..logging import get_logger
 from ..utils import format_records
 from ..vm_models import (
     Figure,
@@ -32,6 +33,8 @@ from ..vm_models import (
     TestContextUtils,
 )
 from ..vm_models.test_plan_result import TestPlanDatasetResult
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -603,7 +606,7 @@ class AutoAR(Metric):
             # Check for stationarity using the Augmented Dickey-Fuller test
             adf_test = adfuller(series)
             if adf_test[1] > 0.05:
-                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+                logger.warning(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
             for ar_order in range(0, max_ar_order + 1):
                 try:
@@ -628,7 +631,7 @@ class AutoAR(Metric):
                         ignore_index=True,
                     )
                 except Exception as e:
-                    print(f"Error fitting AR({ar_order}) model for {col}: {e}")
+                    logger.error(f"Error fitting AR({ar_order}) model for {col}: {e}")
 
             # Find the best AR Order for this variable based on the minimum BIC
             variable_summary = summary_ar_analysis[
@@ -700,7 +703,7 @@ class AutoMA(Metric):
             # Check for stationarity using the Augmented Dickey-Fuller test
             adf_test = adfuller(series)
             if adf_test[1] > 0.05:
-                print(f"Warning: {col} is not stationary. Results may be inaccurate.")
+                logger.warning(f"Warning: {col} is not stationary. Results may be inaccurate.")
 
             for ma_order in range(0, max_ma_order + 1):
                 try:
@@ -725,7 +728,7 @@ class AutoMA(Metric):
                         ignore_index=True,
                     )
                 except Exception as e:
-                    print(f"Error fitting MA({ma_order}) model for {col}: {e}")
+                    logger.error(f"Error fitting MA({ma_order}) model for {col}: {e}")
 
             # Find the best MA Order for this variable based on the minimum BIC
             variable_summary = summary_ma_analysis[
@@ -846,7 +849,7 @@ class SeasonalDecompose(Metric):
                 inferred_freq = pd.infer_freq(series.index)
 
                 if inferred_freq is not None:
-                    print(f"Frequency of {col}: {inferred_freq}")
+                    logger.info(f"Frequency of {col}: {inferred_freq}")
 
                     # Only take finite values to seasonal_decompose
                     sd = seasonal_decompose(
@@ -946,7 +949,7 @@ class AutoSeasonality(Metric):
                 seasonal_periods.append(period)
                 residual_errors.append(residual_error)
             except Exception as e:
-                print(f"Error evaluating period {period} for series: {e}")
+                logger.error(f"Error evaluating period {period} for series: {e}")
 
         return seasonal_periods, residual_errors
 
