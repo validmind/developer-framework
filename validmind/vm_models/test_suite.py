@@ -6,7 +6,7 @@ of plans for data validation and model validation with a single function call.
 """
 
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Union
 
 import ipywidgets as widgets
 
@@ -25,7 +25,10 @@ class TestSuite(TestPlan):
     arbitrary grouping of test plans that will be run on a dataset and/or model.
     """
 
-    test_plans: ClassVar[List[str]] = []
+    # stores the test plan names or classes depending on how the suite is initialized
+    test_plans: ClassVar[List[Union[str, TestPlan]]] = None
+    # stores the test plan classes
+    _test_plans_classes: List[TestPlan] = None
     # Stores a reference to the child test plan instances
     # so we can access their results after running the test suite
     _test_plan_instances: List[object] = None
@@ -34,30 +37,37 @@ class TestSuite(TestPlan):
     pbar: widgets.IntProgress = None
     pbar_description: widgets.Label = None
     pbar_box: widgets.HBox = None
+    _total_tests: int = 0
 
-    def get_total_tests(self):
-        """
-        Goes through every test plans and sums the number of tests for each one.
-        """
-        # Avoid circular import
+    def __post_init__(self):
+        # Avoid circular import TODO: fix this
         from ..test_plans import get_by_name
 
-        total = 0
-        for test_plan_id in self.test_plans:
-            test_plan = get_by_name(test_plan_id)
-            total += len(test_plan.tests)
+        if self.test_context is None:
+            self.test_context = TestContext(
+                dataset=self.dataset,
+                model=self.model,
+                models=self.models,
+            )
 
-        return total
+        self._test_plans_classes = []
+        for test_plan_id_or_class in self.test_plans:
+            if isinstance(test_plan_id_or_class, str):
+                test_plan_class = get_by_name(test_plan_id_or_class)
+            else:
+                test_plan_class = test_plan_id_or_class
+
+            self._test_plans_classes.append(test_plan_class)
+            self._total_tests += len(test_plan_class.tests)
 
     def _init_pbar(self, send: bool = True):
         """
         Initializes the progress bar elements
         """
-        total_tests = self.get_total_tests()
         self.pbar = widgets.IntProgress(
             value=0,
             min=0,
-            max=total_tests * 2 if send else total_tests,  # tests and results
+            max=self._total_tests * 2 if send else self._total_tests,
             step=1,
             bar_style="",
             orientation="horizontal",
@@ -72,31 +82,21 @@ class TestSuite(TestPlan):
         """
         Runs the test suite.
         """
-        # Avoid circular import
-        from ..test_plans import get_by_name
-
-        self._test_plan_instances = []
-
-        if self.test_context is None:
-            self.test_context = TestContext(
-                dataset=self.dataset,
-                model=self.model,
-                models=self.models,
-            )
-
         self._init_pbar(send=send)
 
-        for test_plan_id in self.test_plans:
-            test_plan = get_by_name(test_plan_id)
-            test_plan_instance = test_plan(
+        self._test_plan_instances = []
+        for test_plan_class in self._test_plans_classes:
+            test_plan = test_plan_class(
                 config=self.config,
                 test_context=self.test_context,
                 pbar=self.pbar,
                 pbar_description=self.pbar_description,
                 pbar_box=self.pbar_box,
             )
-            test_plan_instance.run(render_summary=False, send=send)
-            self._test_plan_instances.append(test_plan_instance)
+            self._test_plan_instances.append(test_plan)
+
+        for test_plan in self._test_plan_instances:
+            test_plan.run(render_summary=False, send=send)
 
         self.summarize()
         self.pbar_description.value = "Test suite complete!"
@@ -114,6 +114,11 @@ class TestSuite(TestPlan):
         """
         accordions = []
         for result in self._test_plan_instances:
+            if not result.summary:
+                print(result)
+                print(result.summary)
+                print()
+                continue
             accordions.append(result.summary)
 
         return accordions
