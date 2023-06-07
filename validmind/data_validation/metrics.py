@@ -382,7 +382,7 @@ class DateTimeDifferencesHistogram(Metric):
 
             # Calculate the difference between consecutive dates and convert to days
             date_diffs = df[col].sort_values().diff().dt.days.dropna()
-            print(date_diffs.unique())
+
             # Filter out 0 values
             date_diffs = date_diffs[date_diffs != 0]
 
