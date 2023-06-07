@@ -265,6 +265,149 @@ class DescriptiveStatistics(Metric):
         )
 
 
+class TabularNumericalHistograms(Metric):
+    """
+    Generates a visual analysis of numerical data by plotting the histogram.
+    The input dataset can have multiple numerical variables if necessary.
+    In this case, we produce a separate plot for each numerical variable.
+    """
+
+    name = "tabular_numerical_histograms"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract numerical columns from the dataset
+        numerical_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+
+        if len(numerical_columns) == 0:
+            raise ValueError("No numerical columns found in the dataset")
+
+        figures = []
+        for col in numerical_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+            ax = sns.histplot(data=df, x=col, kde=True)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class TabularCategoricalBarPlots(Metric):
+    """
+    Generates a visual analysis of categorical data by plotting bar plots.
+    The input dataset can have multiple categorical variables if necessary.
+    In this case, we produce a separate plot for each categorical variable.
+    """
+
+    name = "tabular_categorical_bar_plots"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract categorical columns from the dataset
+        categorical_columns = df.select_dtypes(include=[np.object]).columns.tolist()
+
+        if len(categorical_columns) == 0:
+            raise ValueError("No categorical columns found in the dataset")
+
+        figures = []
+        for col in categorical_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+            ax = sns.countplot(data=df, x=col)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class TabularDateTimeHistograms(Metric):
+    """
+    Generates a visual analysis of datetime data by plotting histograms of
+    differences between consecutive dates. The input dataset can have multiple
+    datetime variables if necessary. In this case, we produce a separate plot
+    for each datetime variable.
+    """
+
+    name = "tabular_datetime_histograms"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract datetime columns from the dataset
+        datetime_columns = df.select_dtypes(include=["datetime64"]).columns.tolist()
+
+        if len(datetime_columns) == 0:
+            raise ValueError("No datetime columns found in the dataset")
+
+        figures = []
+        for col in datetime_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+
+            # Calculate the difference between consecutive dates and convert to days
+            date_diffs = df[col].sort_values().diff().dt.days.dropna()
+
+            # Filter out 0 values
+            date_diffs = date_diffs[date_diffs != 0]
+
+            ax = sns.histplot(date_diffs, kde=False, bins=30)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("Days Between Consecutive Dates", fontsize=18)
+            ax.set_ylabel("Frequency", fontsize=18)
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
 @dataclass
 class TabularDescriptionTables(Metric):
     """
