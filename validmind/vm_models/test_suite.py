@@ -114,11 +114,6 @@ class TestSuite(TestPlan):
         """
         accordions = []
         for result in self._test_plan_instances:
-            if not result.summary:
-                print(result)
-                print(result.summary)
-                print()
-                continue
             accordions.append(result.summary)
 
         return accordions
