@@ -2,6 +2,7 @@
 TestPlan class
 """
 import asyncio
+import importlib
 from dataclasses import dataclass
 from typing import ClassVar, List
 
@@ -29,7 +30,6 @@ class TestPlan:
     name: ClassVar[str]
     required_context: ClassVar[List[str]]
     tests: ClassVar[List[object]] = []
-    test_plans: ClassVar[List[object]] = []
     results: ClassVar[List[TestPlanResult]] = []
 
     # Instance Variables
@@ -75,6 +75,8 @@ class TestPlan:
 
         self._split_configs()
 
+        self._load_tests()
+
     def _split_configs(self):
         """Splits the config into a global config and test configs"""
         if self.config is None:
@@ -83,13 +85,32 @@ class TestPlan:
         self._global_config = {}
         self._test_configs = {}
 
-        test_names = [test.name for test in self.tests]
+        test_names = [test.split(".")[-1] for test in self.tests]
 
         for key, value in self.config.items():
             if key in test_names:
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
+
+    def _load_tests(self):
+        """Dynamically import the test classes based on the test names"""
+        for test in self.tests:
+            print(f"Loading test: {test}")
+            test_id_parts = test.split(".")
+            test_org = test_id_parts[0]
+
+            if test_org == "validmind":
+                test_module = '.'.join(test_id_parts[1:-1])
+                test_class = test_id_parts[-1]
+
+                # Dynamically import the test class
+                test_class = getattr(
+                    importlib.import_module(f"validmind.tests.{test_module}"),
+                    test_class,
+                )
+            else:
+                raise ValueError(f"Custom tests are not supported yet")
 
     def title(self):
         """
@@ -223,21 +244,6 @@ class TestPlan:
             run_async(self.log_results)
             run_async_check(self._check_progress)
 
-        # TODO: remove
-        for test_plan in self.test_plans:
-            test_plan_instance = test_plan(
-                config=self.config,
-                test_context=self.test_context,
-                # pbar=self.pbar,
-            )
-            test_plan_instance.run(send=send)
-
-            # Build up the subtest plan instances so we can log them
-            if self._test_plan_instances is None:
-                self._test_plan_instances = []
-
-            self._test_plan_instances.append(test_plan_instance)
-
         self.summarize(render_summary)
 
     async def _check_progress(self):
@@ -362,27 +368,13 @@ class TestPlan:
         if render_summary:
             display(self.summary)
 
-    def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
-        """
-        Recursively gets all sub test plan results since a test plan
-        can have sub test plans which can have sub test plans and so on.
-        """
-        results = []
-        sub_test_plans = self._test_plan_instances or []
-        for test_plan in sub_test_plans:
-            if test_plan.results is not None:
-                results.extend(test_plan.results)
-
-            results.extend(test_plan._get_all_subtest_plan_results())
-
-        return results
-
     def get_results(self, result_id: str = None) -> List[TestPlanResult]:
         """
         Returns one or more results of the test plan. Includes results from
         sub test plans.
         """
-        all_results = (self.results or []) + self._get_all_subtest_plan_results()
+        all_results = self.results or []
+
         if result_id is None:
             return all_results
 
