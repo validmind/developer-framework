@@ -2,7 +2,6 @@ from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
 
 from .logging import get_logger
-from .test_plans import list_tests
 from .utils import is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite
@@ -98,91 +97,69 @@ def preview_template(template):
     )
 
 
-def _get_validmind_tests(pretty=False):
-    """
-    Get a dictionary of ValidMind tests with the test name as key.
-
-    Args:
-        pretty: A flag indicating the output format of the list.
-
-    Returns:
-        A dictionary of ValidMind tests.
-    """
-    return {test.name: test for test in list_tests(pretty)}
-
-
-def _get_section_tests(section, validmind_tests):
+def _get_section_tests(section):
     """
     Get all the tests in a section and its subsections.
 
     Args:
         section: A dictionary representing a section.
-        validmind_tests: A dictionary of ValidMind tests.
 
     Returns:
         A list of tests in the section.
     """
-    tests = []
-    for content in section.get("contents", []):
-        test = validmind_tests.get(content["content_id"], None)
-        if not test:
-            continue
-        tests.append(test)
+    tests = [
+        content["content_id"]
+        for content in section.get("contents", [])
+        if content["content_type"] not in ["metadata_text", "dynamic"]
+    ]
+
     for sub_section in section["sections"]:
-        tests.extend(_get_section_tests(sub_section, validmind_tests))
+        tests.extend(_get_section_tests(sub_section))
+
     return tests
 
 
-def _create_test_plan(section, validmind_tests):
-    """
-    Create a test plan from a section.
+def _create_section_test_plan(section):
+    """Create a test plan for a section in a template
 
     Args:
-        section: A dictionary representing a section.
-        validmind_tests: A dictionary of ValidMind tests.
+        section: a section of a template (in tree form)
 
     Returns:
-        An instance of a TestPlan.
+        A dynamically-created TestPlan Class
     """
-    section_tests = [
-        test
-        for sub_section in section["sections"]
-        for test in _get_section_tests(sub_section, validmind_tests)
-    ]
-    if not section_tests:
-        return None
+    section_tests = []
+    for sub_section in section["sections"]:
+        section_tests.extend(_get_section_tests(sub_section))
 
-    return type(
-        f"{section['title'].title().replace(' ', '')}TestPlan",
-        (TestPlan,),
-        {
-            "name": section["id"],
-            "required_context": [],  # TODO: infer the required context
-            "tests": section_tests,
-            "__doc__": section["title"],
-        },
-    )
+    if section_tests:
+        return type(
+            f"{section['title'].title().replace(' ', '')}TestPlan",
+            (TestPlan,),
+            {
+                "name": section["id"],
+                "required_context": [],
+                "tests": section_tests,
+                "__doc__": section["title"],
+            },
+        )
 
 
-def _create_test_suite(template, validmind_tests, vm_dataset, vm_model, suite_config):
+def _create_template_test_suite(template):
     """
     Create and run a test suite from a template.
 
     Args:
-        template: A dictionary representing a template.
-        validmind_tests: A dictionary of ValidMind tests.
-        vm_dataset: The dataset to use for the test suite.
-        vm_model: The model to use for the test suite.
-        suite_config: The configuration for the test suite.
+        template: A valid flat template
 
     Returns:
-        The result of running the test suite.
+        A dynamically-create TestSuite Class
     """
     tree = _convert_sections_to_section_tree(template["sections"])
     test_plans = [
         plan
         for section in tree
-        if (plan := _create_test_plan(section, validmind_tests)) is not None
+        if (plan := _create_section_test_plan(section)) is not None
     ]
     test_suite = type(
         f"{template['template_name'].title().replace(' ', '')}TestSuite",
@@ -194,11 +171,8 @@ def _create_test_suite(template, validmind_tests, vm_dataset, vm_model, suite_co
             "__doc__": template["description"],
         },
     )
-    test_suite_instance = test_suite(
-        dataset=vm_dataset, model=vm_model, config=suite_config
-    )
 
-    return test_suite_instance.run()
+    return test_suite
 
 
 def run_template(template, *args, **kwargs):
@@ -208,10 +182,14 @@ def run_template(template, *args, **kwargs):
     run the TestPlan as usual.
 
     Args:
-        template: A dictionary representing a template.
+        template: A valid flat template
+        *args: Arguments to pass to the TestSuite
+        **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
         The result of running the test suite.
     """
-    validmind_tests = _get_validmind_tests(pretty=False)
-    return _create_test_suite(template, validmind_tests, *args, **kwargs)
+    test_suite = _create_template_test_suite(template)
+    test_suite_instance = test_suite(*args, **kwargs)
+
+    return test_suite_instance.run()
