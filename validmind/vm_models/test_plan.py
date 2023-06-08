@@ -101,7 +101,7 @@ class TestPlan:
             test_org = test_id_parts[0]
 
             if test_org == "validmind":
-                test_module = '.'.join(test_id_parts[1:-1])
+                test_module = ".".join(test_id_parts[1:-1])
                 test_class = test_id_parts[-1]
 
                 # Dynamically import the test class

@@ -12,7 +12,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn import metrics
 
-from ...vm_models import (
+from validmind.vm_models import (
     Figure,
     ResultSummary,
     ResultTable,
