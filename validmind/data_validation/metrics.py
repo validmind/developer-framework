@@ -320,11 +320,17 @@ class TabularCategoricalBarPlots(Metric):
     name = "tabular_categorical_bar_plots"
     required_context = ["dataset"]
 
+    def get_categorical_columns(self):
+        categorical_columns = self.df.select_dtypes(
+            include=["object", "category"]
+        ).columns.tolist()
+        return categorical_columns
+
     def run(self):
         df = self.dataset.df
 
         # Extract categorical columns from the dataset
-        categorical_columns = df.select_dtypes(include=[np.object]).columns.tolist()
+        categorical_columns = self.get_categorical_columns()
 
         if len(categorical_columns) == 0:
             raise ValueError("No categorical columns found in the dataset")
@@ -519,7 +525,9 @@ class TabularDescriptionTables(Metric):
         )
 
     def get_categorical_columns(self):
-        categorical_columns = self.df.select_dtypes(include="object").columns.tolist()
+        categorical_columns = self.df.select_dtypes(
+            include=["object", "category"]
+        ).columns.tolist()
         return categorical_columns
 
     def get_numerical_columns(self):
