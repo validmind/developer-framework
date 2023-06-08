@@ -12,8 +12,8 @@ from dataclasses import dataclass
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
-from ..logging import get_logger
-from ..vm_models import (
+from validmind.logging import get_logger
+from validmind.vm_models import (
     Dataset,
     TestResult,
     Figure,
