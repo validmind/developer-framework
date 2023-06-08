@@ -1,8 +1,10 @@
-from dataclasses import dataclass
+from validmind.vm_models import TestResult, ThresholdTest
+
 
 from statsmodels.tsa.stattools import adfuller
 
-from ...vm_models import TestResult, ThresholdTest
+
+from dataclasses import dataclass
 
 
 @dataclass
