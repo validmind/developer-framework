@@ -12,7 +12,10 @@ class RegressionModelDescription(TestPlan):
 
     name = "regression_model_description"
     required_context = ["model"]
-    tests = ["validmind.data_validation.DatasetSplit", "validmind.model_validation.ModelMetadata"]
+    tests = [
+        "validmind.data_validation.DatasetSplit",
+        "validmind.model_validation.ModelMetadata",
+    ]
 
 
 class RegressionModelsEvaluation(TestPlan):

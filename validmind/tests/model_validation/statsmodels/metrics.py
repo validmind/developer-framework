@@ -496,7 +496,9 @@ class AutoARIMA(Metric):
             # Check for stationarity using the Augmented Dickey-Fuller test
             adf_test = adfuller(series)
             if adf_test[1] > 0.05:
-                logger.warning(f"Warning: {col} is not stationary. Results may be inaccurate.")
+                logger.warning(
+                    f"Warning: {col} is not stationary. Results may be inaccurate."
+                )
 
             arima_orders = []
             bic_values = []

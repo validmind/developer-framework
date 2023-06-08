@@ -1,4 +1,10 @@
-from validmind.vm_models import ResultSummary, ResultTable, ResultTableMetadata, TestResult, ThresholdTest
+from validmind.vm_models import (
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
+)
 
 
 import numpy as np

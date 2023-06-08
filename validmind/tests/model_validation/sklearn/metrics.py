@@ -28,6 +28,7 @@ from ...utils import format_number
 
 logger = get_logger(__name__)
 
+
 @dataclass
 class ConfusionMatrix(Metric):
     """

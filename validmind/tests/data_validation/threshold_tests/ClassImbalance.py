@@ -1,5 +1,12 @@
 from validmind.tests.data_validation.threshold_tests import logger
-from validmind.vm_models import Dataset, ResultSummary, ResultTable, ResultTableMetadata, TestResult, ThresholdTest
+from validmind.vm_models import (
+    Dataset,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
+)
 
 
 from dataclasses import dataclass
@@ -52,7 +59,9 @@ class ClassImbalance(ThresholdTest):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
-            logger.info("Skipping class_imbalance test because no target column is defined")
+            logger.info(
+                "Skipping class_imbalance test because no target column is defined"
+            )
             return
 
         target_column = self.dataset.target_column

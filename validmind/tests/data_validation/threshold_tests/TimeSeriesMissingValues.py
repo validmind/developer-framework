@@ -1,4 +1,11 @@
-from validmind.vm_models import Figure, ResultSummary, ResultTable, ResultTableMetadata, TestResult, ThresholdTest
+from validmind.vm_models import (
+    Figure,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
+)
 
 
 import matplotlib.pyplot as plt
