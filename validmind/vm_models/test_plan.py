@@ -2,7 +2,6 @@
 TestPlan class
 """
 import asyncio
-import importlib
 from dataclasses import dataclass
 from typing import ClassVar, List
 
@@ -10,6 +9,7 @@ import ipywidgets as widgets
 from IPython.display import display
 
 from ..logging import get_logger, log_performance
+from ..tests import load_test
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
@@ -37,8 +37,9 @@ class TestPlan:
     _global_config: dict() = None
     _test_configs: dict() = None
     test_context: TestContext = None
-    # Stores a reference to the child test plan instances
-    _test_plan_instances: List[object] = None
+
+    # Reference to the test classes (dynamic import after initialization)
+    _tests: List[object] = None
 
     # Single dataset for dataset-only tests
     dataset: Dataset = None
@@ -72,9 +73,7 @@ class TestPlan:
             self.models = self.test_context.models
 
         self.validate_context()
-
         self._split_configs()
-
         self._load_tests()
 
     def _split_configs(self):
@@ -95,22 +94,7 @@ class TestPlan:
 
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
-        for test in self.tests:
-            print(f"Loading test: {test}")
-            test_id_parts = test.split(".")
-            test_org = test_id_parts[0]
-
-            if test_org == "validmind":
-                test_module = ".".join(test_id_parts[1:-1])
-                test_class = test_id_parts[-1]
-
-                # Dynamically import the test class
-                test_class = getattr(
-                    importlib.import_module(f"validmind.tests.{test_module}"),
-                    test_class,
-                )
-            else:
-                raise ValueError(f"Custom tests are not supported yet")
+        self._tests = [load_test(test) for test in self.tests]
 
     def title(self):
         """
@@ -173,7 +157,7 @@ class TestPlan:
         self.pbar = widgets.IntProgress(
             value=0,
             min=0,
-            max=len(self.tests) * 2 if send else len(self.results),  # tests and results
+            max=len(self.tests) * 2 if send else len(self.results),  # tests + results
             step=1,
             bar_style="",
             orientation="horizontal",
@@ -212,7 +196,7 @@ class TestPlan:
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)
 
-        for test in self.tests:
+        for test in self._tests:
             test_instance = test(
                 test_context=self.test_context,
                 params=self.get_config_params_for_test(test.name),

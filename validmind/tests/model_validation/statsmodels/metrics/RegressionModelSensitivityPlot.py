@@ -3,8 +3,10 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 
-from validmind.tests.model_validation.statsmodels.metrics import logger
+from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric, Model
+
+logger = get_logger(__name__)
 
 
 @dataclass
