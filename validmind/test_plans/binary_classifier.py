@@ -16,7 +16,7 @@ class BinaryClassifierMetrics(TestPlan):
     name = "binary_classifier_metrics"
     required_context = ["model"]
     tests = [
-        "validmind.model_validation.sklearn.ModelMetadata",
+        "validmind.model_validation.ModelMetadata",
         "validmind.data_validation.DatasetSplit",
         "validmind.model_validation.sklearn.ConfusionMatrix",
         "validmind.model_validation.sklearn.ClassifierInSamplePerformance",
