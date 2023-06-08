@@ -1,7 +1,6 @@
-from validmind.vm_models import Metric
-
-
 from statsmodels.stats.diagnostic import acorr_ljungbox
+
+from validmind.vm_models import Metric
 
 
 class BoxPierce(Metric):

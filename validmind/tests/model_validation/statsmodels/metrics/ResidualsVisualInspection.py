@@ -1,5 +1,4 @@
-from validmind.vm_models import Figure, Metric
-
+from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,8 +7,7 @@ from scipy import stats
 from statsmodels.graphics.tsaplots import plot_acf
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass

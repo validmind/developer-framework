@@ -1,7 +1,6 @@
-from validmind.vm_models import Metric
-
-
 from statsmodels.tsa.stattools import adfuller
+
+from validmind.vm_models import Metric
 
 
 class ADF(Metric):

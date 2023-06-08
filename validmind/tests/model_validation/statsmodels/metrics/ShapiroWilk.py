@@ -1,7 +1,6 @@
-from validmind.vm_models import Metric
-
-
 from scipy import stats
+
+from validmind.vm_models import Metric
 
 
 class ShapiroWilk(Metric):

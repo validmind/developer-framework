@@ -4,7 +4,7 @@ from platform import python_version
 
 import pandas as pd
 
-from ..vm_models import Metric, Model, ResultSummary, ResultTable
+from validmind.vm_models import Metric, Model, ResultSummary, ResultTable
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",

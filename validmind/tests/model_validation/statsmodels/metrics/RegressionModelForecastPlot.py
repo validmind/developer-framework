@@ -1,12 +1,10 @@
-from validmind.tests.model_validation.statsmodels.metrics import logger
-from validmind.vm_models import Figure, Metric, Model
-
+from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-from dataclasses import dataclass
+from validmind.tests.model_validation.statsmodels.metrics import logger
+from validmind.vm_models import Figure, Metric, Model
 
 
 @dataclass

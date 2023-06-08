@@ -1,12 +1,16 @@
-from validmind.statsutils import adj_r2_score
-from validmind.vm_models import Metric, Model, ResultSummary, ResultTable, ResultTableMetadata
-
+from dataclasses import dataclass
 
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 
-
-from dataclasses import dataclass
+from validmind.statsutils import adj_r2_score
+from validmind.vm_models import (
+    Metric,
+    Model,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+)
 
 
 @dataclass

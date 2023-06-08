@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric
-
+from dataclasses import dataclass
 
 from statsmodels.tsa.stattools import kpss
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Metric
 
 
 @dataclass

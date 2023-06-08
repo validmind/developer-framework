@@ -1,11 +1,11 @@
 """
-Data Validation module
+Data Validation Tests for ValidMind
 """
 import importlib
 import inspect
 from pathlib import Path
 
-# loop through all files in `./metrics` and `./threshold_tests` and import the test classes in them
+# loop through all files in all directories of this module and import the test classes in them
 for path in Path(__file__).parent.glob("**/*.py"):
     if path.name.startswith("__"):
         continue

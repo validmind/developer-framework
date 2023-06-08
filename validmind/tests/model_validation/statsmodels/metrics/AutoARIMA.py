@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric
-
-
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
 
 from validmind.logging import get_logger
+from validmind.vm_models import Metric
 
 logger = get_logger(__name__)
 

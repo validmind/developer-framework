@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric
-
+from dataclasses import dataclass
 
 from statsmodels.stats.diagnostic import kstest_normal
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Metric
 
 
 @dataclass

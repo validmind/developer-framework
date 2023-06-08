@@ -1,7 +1,6 @@
-from validmind.vm_models import Metric
-
-
 from statsmodels.stats.stattools import jarque_bera
+
+from validmind.vm_models import Metric
 
 
 class JarqueBera(Metric):

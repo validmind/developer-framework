@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric
-
+from dataclasses import dataclass
 
 from statsmodels.stats.stattools import durbin_watson
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Metric
 
 
 @dataclass

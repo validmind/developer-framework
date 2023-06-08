@@ -1,7 +1,6 @@
-from validmind.vm_models import Metric
-
-
 from statsmodels.sandbox.stats.runs import runstest_1samp
+
+from validmind.vm_models import Metric
 
 
 class RunsTest(Metric):

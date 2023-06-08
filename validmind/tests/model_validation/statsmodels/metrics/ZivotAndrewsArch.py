@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric
-
+from dataclasses import dataclass
 
 from arch.unitroot import ZivotAndrews
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Metric
 
 
 @dataclass
