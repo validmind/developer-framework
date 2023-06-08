@@ -1,6 +1,8 @@
 from dataclasses import dataclass
-from ...vm_models import ThresholdTest, TestResult
+
 from statsmodels.tsa.stattools import adfuller
+
+from ...vm_models import TestResult, ThresholdTest
 
 
 @dataclass

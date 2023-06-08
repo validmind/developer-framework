@@ -3,28 +3,24 @@ Metrics functions models trained with statsmodels or that provide
 a statsmodels-like API
 """
 from dataclasses import dataclass
-import pandas as pd
-import numpy as np
-from scipy import stats
+
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import seaborn as sns
-from sklearn.metrics import r2_score, mean_squared_error
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.stattools import kpss
-from statsmodels.tsa.seasonal import seasonal_decompose
-from statsmodels.stats.stattools import durbin_watson
-from statsmodels.stats.diagnostic import acorr_ljungbox
-from statsmodels.sandbox.stats.runs import runstest_1samp
-from statsmodels.stats.diagnostic import kstest_normal
-from statsmodels.stats.diagnostic import lilliefors
-from statsmodels.stats.stattools import jarque_bera
+from arch.unitroot import DFGLS, PhillipsPerron, ZivotAndrews
+from scipy import stats
+from sklearn.metrics import mean_squared_error, r2_score
 from statsmodels.graphics.tsaplots import plot_acf
-from arch.unitroot import PhillipsPerron
-from arch.unitroot import ZivotAndrews
-from arch.unitroot import DFGLS
+from statsmodels.sandbox.stats.runs import runstest_1samp
+from statsmodels.stats.diagnostic import acorr_ljungbox, kstest_normal, lilliefors
+from statsmodels.stats.stattools import durbin_watson, jarque_bera
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller, kpss
 
 from ...logging import get_logger
+from ...statsutils import adj_r2_score
 from ...vm_models import (
     Figure,
     Metric,
@@ -33,7 +29,6 @@ from ...vm_models import (
     ResultTable,
     ResultTableMetadata,
 )
-from ...statsutils import adj_r2_score
 
 logger = get_logger(__name__)
 

@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from typing import List
+
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -5,10 +8,6 @@ from validmind.vm_models import (
     TestResult,
     ThresholdTest,
 )
-
-
-from dataclasses import dataclass
-from typing import List
 
 
 @dataclass

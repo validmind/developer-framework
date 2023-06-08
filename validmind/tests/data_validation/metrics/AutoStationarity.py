@@ -1,9 +1,8 @@
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
-
-
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller
+
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 class AutoStationarity(Metric):

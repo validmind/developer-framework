@@ -1,9 +1,8 @@
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+
+from validmind.vm_models import Figure, Metric
 
 
 class TimeSeriesHistogram(Metric):

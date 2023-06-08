@@ -1,10 +1,9 @@
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+
+from validmind.vm_models import Figure, Metric
 
 
 class LaggedCorrelationHeatmap(Metric):

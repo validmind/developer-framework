@@ -1,9 +1,8 @@
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
 import pandas as pd
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+from validmind.vm_models import Figure, Metric
 
 
 class ACFandPACFPlot(Metric):

@@ -1,8 +1,7 @@
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
-
-
 import pandas as pd
 from statsmodels.tsa.stattools import coint
+
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 class EngleGrangerCoint(Metric):

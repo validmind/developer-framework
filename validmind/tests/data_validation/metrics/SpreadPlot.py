@@ -1,8 +1,7 @@
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from validmind.vm_models import Figure, Metric
 
 
 class SpreadPlot(Metric):

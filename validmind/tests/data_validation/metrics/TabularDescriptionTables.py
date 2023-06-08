@@ -1,10 +1,8 @@
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
-
+from dataclasses import dataclass
 
 import pandas as pd
 
-
-from dataclasses import dataclass
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass

@@ -1,12 +1,11 @@
+import warnings
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy import stats
 from statsmodels.tsa.seasonal import seasonal_decompose
-
-
-import warnings
 
 from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric

@@ -1,3 +1,9 @@
+from dataclasses import dataclass
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -6,14 +12,6 @@ from validmind.vm_models import (
     TestResult,
     ThresholdTest,
 )
-
-
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-
-
-from dataclasses import dataclass
 
 
 @dataclass

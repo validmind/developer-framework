@@ -7,15 +7,16 @@ from dataclasses import dataclass
 from functools import partial
 
 import matplotlib.pyplot as plt
-import plotly.figure_factory as ff
-import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
 import shap
 from sklearn import metrics
 from sklearn.inspection import permutation_importance
 
 from ...logging import get_logger
+from ...utils import format_number
 from ...vm_models import (
     Figure,
     Metric,
@@ -24,7 +25,6 @@ from ...vm_models import (
     ResultTable,
     ResultTableMetadata,
 )
-from ...utils import format_number
 
 logger = get_logger(__name__)
 

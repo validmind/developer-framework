@@ -4,13 +4,13 @@ Threshold based tests
 from dataclasses import dataclass
 from functools import partial
 from operator import add
-from sklearn import metrics
 from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn import metrics
 
 from ...vm_models import (
     Figure,

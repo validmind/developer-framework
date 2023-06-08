@@ -1,3 +1,11 @@
+from dataclasses import dataclass
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+from pandas_profiling.config import Settings
+from pandas_profiling.model.typeset import ProfilingTypeSet
+
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -6,16 +14,6 @@ from validmind.vm_models import (
     TestResult,
     ThresholdTest,
 )
-
-
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-from pandas_profiling.config import Settings
-from pandas_profiling.model.typeset import ProfilingTypeSet
-
-
-from dataclasses import dataclass
 
 
 @dataclass

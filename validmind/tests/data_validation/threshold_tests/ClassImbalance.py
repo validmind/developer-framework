@@ -1,4 +1,7 @@
-from validmind.tests.data_validation.threshold_tests import logger
+from dataclasses import dataclass
+from typing import List
+
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Dataset,
     ResultSummary,
@@ -8,9 +11,7 @@ from validmind.vm_models import (
     ThresholdTest,
 )
 
-
-from dataclasses import dataclass
-from typing import List
+logger = get_logger(__name__)
 
 
 @dataclass
