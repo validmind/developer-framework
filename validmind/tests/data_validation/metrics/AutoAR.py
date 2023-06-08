@@ -1,10 +1,11 @@
-from validmind.tests.data_validation.metrics import logger
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
-
-
 import pandas as pd
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.stattools import adfuller
+
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 class AutoAR(Metric):

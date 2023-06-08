@@ -1,7 +1,3 @@
-from validmind.tests.data_validation.metrics import logger
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,6 +7,11 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 
 
 import warnings
+
+from validmind.logging import get_logger
+from validmind.vm_models import Figure, Metric
+
+logger = get_logger(__name__)
 
 
 class SeasonalDecompose(Metric):

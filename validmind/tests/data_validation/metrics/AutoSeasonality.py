@@ -1,10 +1,11 @@
-from validmind.tests.data_validation.metrics import logger
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
-
-
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
+
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 class AutoSeasonality(Metric):
