@@ -620,9 +620,23 @@ class LoanDefaultRatio(Metric):
             figures=figures,
         )
 
+    def check_binary(self, loan_status_col):
+        unique_values = self.dataset.df[loan_status_col].unique()
+        binary_values = [0, 1]
+
+        if sorted(unique_values) != binary_values:
+            raise ValueError(
+                f"The column {loan_status_col} is not binary. It contains: {unique_values}"
+            )
+
+        print(f"The column {loan_status_col} is binary.")
+
     def run(self):
         loan_status_col = self.params["loan_status_col"]
         columns = self.params["columns"]
+
+        # Check loan status variable has only 1 and 0
+        self.check_binary(loan_status_col)
 
         return self.plot_loan_default_ratio(
             loan_status_col=loan_status_col, columns=columns
