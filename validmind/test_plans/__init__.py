@@ -74,16 +74,6 @@ def _get_test_plan_tests(test_plan):
     return tests
 
 
-def _get_test_type(test):
-    """
-    Returns the test type by inspecting the test class hierarchy
-    """
-    if issubclass(test, Metric):
-        return "Metric"
-    elif issubclass(test, ThresholdTest):
-        return "ThresholdTest"
-
-
 def list_plans(pretty: bool = True):
     """
     Returns a list of all available test plans
@@ -107,37 +97,6 @@ def list_plans(pretty: bool = True):
     return pd.DataFrame(table).style.hide(axis="index")
 
 
-def list_tests(test_type: str = "all", pretty: bool = True):
-    """
-    Returns a list of all available tests.
-    """
-    all_test_plans = _get_all_test_plans()
-    tests = set()
-    for test_plan in all_test_plans.values():
-        tests.update(_get_test_plan_tests(test_plan))
-
-    # Sort by test type and then by name
-    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
-
-    if not pretty:
-        return tests
-
-    table = []
-    for test in tests:
-        if inspect.isclass(test):
-            test_type = _get_test_type(test)
-            table.append(
-                {
-                    "Test Type": test_type,
-                    "ID": test.name,
-                    "Name": test.__name__,
-                    "Description": test.__doc__.strip(),
-                }
-            )
-
-    return pd.DataFrame(table).style.hide(axis="index")
-
-
 def get_by_name(name: str):
     """
     Returns the test plan by name
@@ -154,7 +113,7 @@ def describe_plan(plan_id: str):
     Returns a description of the test plan
     """
     plan = get_by_name(plan_id)
-    tests = [f"{test.__name__} ({_get_test_type(test)})" for test in plan.tests]
+    tests = [f"{test.__name__} ({test.type})" for test in plan.tests]
     tests = ", ".join(tests)
 
     table = {
@@ -174,32 +133,3 @@ def register_test_plan(plan_id: str, plan: TestPlan):
     """
     custom_test_plans[plan_id] = plan
     logger.info(f"Registered test plan: {plan_id}")
-
-
-def describe_test(name: str):
-    """
-    Returns the test by name
-    """
-    all_test_plans = _get_all_test_plans()
-    tests = set()
-    for test_plan in all_test_plans.values():
-        tests.update(_get_test_plan_tests(test_plan))
-
-    # Sort by test type and then by name
-    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
-    table = []
-    for test in tests:
-        if inspect.isclass(test):
-            test_type = _get_test_type(test)
-
-            if test.__name__ == name:
-                table.append(
-                    {
-                        "Test Type": test_type,
-                        "ID": test.name,
-                        "Name": test.__name__,
-                        "Description": test.__doc__.strip(),
-                    }
-                )
-
-    return pd.DataFrame(table).style.hide(axis="index")
