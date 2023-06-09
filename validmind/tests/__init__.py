@@ -59,24 +59,23 @@ def list_tests(pretty=True):
         list or pandas.DataFrame: A list of all tests or a formatted table.
     """
     global __tests
-    if __tests is not None:
-        return __tests
 
-    __tests = []
+    if __tests is None:
+        __tests = []
 
-    directories = [p.name for p in Path(__file__).parent.iterdir() if p.is_dir()]
+        directories = [p.name for p in Path(__file__).parent.iterdir() if p.is_dir()]
 
-    for d in directories:
-        for path in Path(__file__).parent.joinpath(d).glob("**/**/*.py"):
-            if path.name.startswith("__"):  # skip __init__.py and other special files
-                continue
+        for d in directories:
+            for path in Path(__file__).parent.joinpath(d).glob("**/**/*.py"):
+                if path.name.startswith("__"):
+                    continue  # skip __init__.py and other special files
 
-            test_id = (
-                f"validmind.{d}.{path.stem}"
-                if path.parent.parent.stem == d
-                else f"validmind.{d}.{path.parent.parent.stem}.{path.stem}"
-            )
-            __tests.append(test_id)
+                test_id = (
+                    f"validmind.{d}.{path.stem}"
+                    if path.parent.parent.stem == d
+                    else f"validmind.{d}.{path.parent.parent.stem}.{path.stem}"
+                )
+                __tests.append(test_id)
 
     if pretty:
         return _pretty_list_tests(__tests)
