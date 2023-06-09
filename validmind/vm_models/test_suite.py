@@ -9,13 +9,12 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Union
 
 import ipywidgets as widgets
-
 from IPython.display import display
 
+from ..test_plans import get_by_name
+from ..utils import is_notebook
 from .test_context import TestContext
 from .test_plan import TestPlan
-from ..api_client import get_api_host, get_api_project
-from ..utils import is_notebook
 
 
 @dataclass
@@ -40,9 +39,6 @@ class TestSuite(TestPlan):
     _total_tests: int = 0
 
     def __post_init__(self):
-        # Avoid circular import TODO: fix this
-        from ..test_plans import get_by_name
-
         if self.test_context is None:
             self.test_context = TestContext(
                 dataset=self.dataset,
@@ -122,6 +118,9 @@ class TestSuite(TestPlan):
         """
         Summarizes the results of the test suite.
         """
+        # avoid circular import
+        from ..api_client import get_api_host, get_api_project
+
         if not is_notebook():
             return
 
