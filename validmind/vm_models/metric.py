@@ -41,8 +41,10 @@ class Metric(TestContextUtils):
         """
         Set default params if not provided
         """
-        if self.params is None:
-            self.params = self.default_params
+        self.params = {
+            **self.default_params,
+            **self.params,  # override defaults with user-provided params
+        }
 
     @property
     def key(self):
