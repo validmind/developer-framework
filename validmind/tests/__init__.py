@@ -120,3 +120,8 @@ def describe_test(test_id: str):
             "ID": test_id,
         }
     ]).style.hide(axis="index")
+
+
+def register_test(test_class):
+    """Register a test class"""
+    raise NotImplementedError("Custom tests are not supported yet")

@@ -1,8 +1,6 @@
 """
 Test Plans entry point
 """
-import inspect
-
 import pandas as pd
 
 from ..logging import get_logger
