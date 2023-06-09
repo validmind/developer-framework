@@ -144,8 +144,7 @@ class TestPlan:
         """
         if self.config is None:
             return None
-        print(test_name)
-        print(self._test_configs.get(test_name, {}))
+
         return {
             **self._global_config,
             **self._test_configs.get(test_name, {}),
