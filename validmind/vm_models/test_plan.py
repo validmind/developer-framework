@@ -73,8 +73,8 @@ class TestPlan:
             self.models = self.test_context.models
 
         self.validate_context()
-        self._split_configs()
         self._load_tests()
+        self._split_configs()
 
     def _split_configs(self):
         """Splits the config into a global config and test configs"""
@@ -84,7 +84,7 @@ class TestPlan:
         self._global_config = {}
         self._test_configs = {}
 
-        test_names = [test.split(".")[-1] for test in self.tests]
+        test_names = [test.name for test in self._tests]
 
         for key, value in self.config.items():
             if key in test_names:
@@ -144,7 +144,8 @@ class TestPlan:
         """
         if self.config is None:
             return None
-
+        print(test_name)
+        print(self._test_configs.get(test_name, {}))
         return {
             **self._global_config,
             **self._test_configs.get(test_name, {}),
