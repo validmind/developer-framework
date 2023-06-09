@@ -44,10 +44,10 @@ class ThresholdTest(TestContextUtils):
         """
         Set default params if not provided
         """
-        if self.params is None:
-            self.params = self.default_params
-        else:
-            self.params = {**self.default_params, **self.params}
+        self.params = {
+            **self.default_params,
+            **(self.params if self.params is not None else {}),
+        }
 
     def description(self):
         """

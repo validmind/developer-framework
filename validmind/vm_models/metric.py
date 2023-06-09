@@ -43,7 +43,7 @@ class Metric(TestContextUtils):
         """
         self.params = {
             **self.default_params,
-            **self.params,  # override defaults with user-provided params
+            **(self.params if self.params is not None else {}),
         }
 
     @property
