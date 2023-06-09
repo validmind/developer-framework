@@ -37,18 +37,18 @@ def _pretty_list_tests(tests):
 
     table = [
         {
-            "Test Type": test.test_type,
-            "Name": test.__name__,
-            "Description": test.__doc__.strip(),
+            "Test Type": __test_classes[test_id].test_type,
+            "Name": __test_classes[test_id].__name__,
+            "Description": __test_classes[test_id].__doc__.strip(),
             "ID": test_id,
         }
-        for test_id, test in __test_classes.items()
+        for test_id in tests
     ]
 
     return format_dataframe(pd.DataFrame(table))
 
 
-def list_tests(pretty=True):
+def list_tests(filter=None, pretty=True):
     """List all tests in the tests directory.
 
     Args:
@@ -77,10 +77,19 @@ def list_tests(pretty=True):
                 )
                 __tests.append(test_id)
 
-    if pretty:
-        return _pretty_list_tests(__tests)
+    if filter is not None:
+        tests = [
+            test_id
+            for test_id in __tests
+            if filter.lower() in test_id.lower()
+        ]
+    else:
+        tests = __tests
 
-    return __tests
+    if pretty:
+        return _pretty_list_tests(tests)
+
+    return tests
 
 
 def load_test(test_id):
