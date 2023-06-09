@@ -141,7 +141,6 @@ def describe_test(test_name: str = None, test_id: str = None):
         )
     )
 
-
-def register_test(test_class):
-    """Register a test class"""
-    raise NotImplementedError("Custom tests are not supported yet")
+def register_test_provider():
+    """Register a test provider"""
+    raise NotImplementedError("Custom test providers are not supported yet")
