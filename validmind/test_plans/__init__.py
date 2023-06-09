@@ -4,7 +4,6 @@ Test Plans entry point
 import pandas as pd
 
 from ..logging import get_logger
-from ..vm_models import Metric, TestPlan, ThresholdTest
 from .binary_classifier import (
     BinaryClassifierMetrics,
     BinaryClassifierPerformance,
@@ -125,9 +124,11 @@ def describe_plan(plan_id: str):
     return pd.DataFrame(table).style.hide(axis="index")
 
 
-def register_test_plan(plan_id: str, plan: TestPlan):
+def register_test_plan(plan_id: str, plan):
     """
     Registers a custom test plan
     """
+    # TODO: for this and other registration functions, we should
+    # use Protocols instead of making the user inherit from a base class
     custom_test_plans[plan_id] = plan
     logger.info(f"Registered test plan: {plan_id}")
