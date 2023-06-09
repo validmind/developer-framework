@@ -102,7 +102,7 @@ def load_test(test_id):
         )
 
     else:
-        raise ValueError(f"Custom tests are not supported yet")
+        raise ValueError("Custom tests are not supported yet")
 
 
 def describe_test(test_id: str):
@@ -112,14 +112,16 @@ def describe_test(test_id: str):
     else:
         test = __test_classes[test_id]
 
-    return pd.DataFrame([
-        {
-            "Test Type": test.test_type,
-            "Name": test.__name__,
-            "Description": test.__doc__.strip(),
-            "ID": test_id,
-        }
-    ]).style.hide(axis="index")
+    return pd.DataFrame(
+        [
+            {
+                "Test Type": test.test_type,
+                "Name": test.__name__,
+                "Description": test.__doc__.strip(),
+                "ID": test_id,
+            }
+        ]
+    ).style.hide(axis="index")
 
 
 def register_test(test_class):
