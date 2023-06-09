@@ -18,7 +18,7 @@ def _get_legacy_test(content_id):
     # create a mapping from test name (defined in the test class) to test ID
     if __legacy_mapping is None:
         __legacy_mapping = {}
-        for test_id in list_tests():
+        for test_id in list_tests(pretty=False):
             test = load_test(test_id)
             __legacy_mapping[test.name] = test_id
 
@@ -46,7 +46,7 @@ def _pretty_list_tests(tests):
     return pd.DataFrame(table).style.hide(axis="index")
 
 
-def list_tests(pretty=False):
+def list_tests(pretty=True):
     """List all tests in the tests directory.
 
     Args:

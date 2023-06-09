@@ -4,6 +4,7 @@ Test Plans entry point
 import pandas as pd
 
 from ..logging import get_logger
+from ..tests import load_test
 from .binary_classifier import (
     BinaryClassifierMetrics,
     BinaryClassifierPerformance,
@@ -110,15 +111,18 @@ def describe_plan(plan_id: str):
     Returns a description of the test plan
     """
     plan = get_by_name(plan_id)
-    tests = [f"{test.__name__} ({test.type})" for test in plan.tests]
-    tests = ", ".join(tests)
+
+    tests = []
+    for test_id in plan.tests:
+        test = load_test(test_id)
+        tests.append(f"{test.__name__} ({test.test_type})")
 
     table = {
         "ID": plan.name,
         "Name": plan.__name__,
         "Description": plan.__doc__.strip(),
         "Required Context": plan.required_context,
-        "Tests": tests,
+        "Tests": "<br>".join(tests),
     }
 
     return pd.DataFrame(table).style.hide(axis="index")
