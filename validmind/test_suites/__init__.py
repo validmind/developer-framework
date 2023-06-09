@@ -11,8 +11,10 @@ from .test_suites import (
     TimeSeriesModelValidation,
 )
 from ..logging import get_logger
+from ..test_plans import get_by_id as get_test_plan
+from ..tests import load_test
+from ..utils import format_dataframe
 from ..vm_models import TestSuite
-from .. import test_plans
 
 logger = get_logger(__name__)
 
@@ -38,18 +40,12 @@ def _get_all_test_suites():
     return {**core_test_suites, **custom_test_suites}
 
 
-def _format_dataframe(df):
-    df = df.style.set_properties(**{"text-align": "left"}).hide(axis="index")
-    df = df.set_table_styles([dict(selector="th", props=[("text-align", "left")])])
-    return df
-
-
 def get_by_id(test_suite_id: str):
     """
     Returns the test suite by ID
     """
     try:
-        return _get_all_test_suites[test_suite_id]
+        return _get_all_test_suites()[test_suite_id]
     except KeyError:
         raise ValueError(f"Test suite with ID: '{test_suite_id}' not found")
 
@@ -75,36 +71,54 @@ def list_suites(pretty: bool = True):
             }
         )
 
-    return _format_dataframe(pd.DataFrame(table))
+    return format_dataframe(pd.DataFrame(table))
 
 
-def describe_test_suite(id: str, include_tests=False):
+def describe_suite(test_suite_id: str, verbose=False):
     """
     Descibes a Test Suite by ID
 
     Args:
-        id: Test Suite ID
-        include_tests: If True, include the list of tests in the Test Suite
+        test_suite_id: Test Suite ID
+        verbose: If True, describe all plans and tests in the Test Suite
 
     Returns:
         pandas.DataFrame: A formatted table with the Test Suite description
     """
-    test_suite = get_by_id(id)
+    test_suite = get_by_id(test_suite_id)
 
-    table = []
-    for name, test_suite in _get_all_test_suites().items():
-        if name == id:
-            table.append(
-                {
-                    "ID": name,
-                    "Name": test_suite.__name__,
-                    "Description": test_suite.__doc__.strip(),
-                    "Test Plans": ", ".join(test_suite.test_plans),
-                }
+    if not verbose:
+        return format_dataframe(
+            pd.DataFrame(
+                [
+                    {
+                        "ID": test_suite_id,
+                        "Name": test_suite.__name__,
+                        "Description": test_suite.__doc__.strip(),
+                        "Test Plans": ", ".join(test_suite.test_plans),
+                    }
+                ]
             )
-            break
+        )
 
-    return _format_dataframe(pd.DataFrame(table))
+    df = pd.DataFrame()
+
+    for test_plan_id in test_suite.test_plans:
+        test_plan = get_test_plan(test_plan_id)
+        for test_id in test_plan.tests:
+            test = load_test(test_id)
+            row = {
+                "Test Suite ID": test_suite_id,
+                "Test Suite Name": test_suite.__name__,
+                "Test Plan ID": test_plan_id,
+                "Test Plan Name": test_plan.__name__,
+                "Test ID": test_id,
+                "Test Name": test.__name__,
+                "Test Type": test.test_type,
+            }
+            df = pd.concat([df, pd.DataFrame([row])])
+
+    return format_dataframe(df.reset_index(drop=True))
 
 
 def register_test_suite(suite_id: str, suite: TestSuite):
@@ -113,37 +127,3 @@ def register_test_suite(suite_id: str, suite: TestSuite):
     """
     custom_test_suites[suite_id] = suite
     logger.info(f"Registered test suite: {suite_id}")
-
-
-def describe_test_suites_plans_tests():
-    table = []
-    test_suites = list_suites()
-
-    # Test suites
-    for _, test_suite in test_suites.data.iterrows():
-        # Test plans
-        for p in test_suite["Test Plans"].split(","):
-            plan = test_plans.describe_plan(p.strip()).data
-            # List of tests from test plan
-            for t in plan["Tests"]:
-                tests = t.split(",")
-                # Iterate tests
-                for test in tests:
-                    test = list(filter(None, test.split(" ")))
-                    test_dict = (
-                        test_plans.describe_test(test[0])
-                        .data.reset_index(drop=True)
-                        .to_dict("records")[0]
-                    )
-                    table.append(
-                        {
-                            "Test Suite": test_suite["ID"],
-                            "Test Plan": p,
-                            "Test Type": test_dict["Test Type"],
-                            "Test ID": test_dict["ID"],
-                            "Test Name": test_dict["Name"],
-                            "Test Description": test_dict["Description"],
-                        }
-                    )
-
-    return _format_dataframe(pd.DataFrame(table))

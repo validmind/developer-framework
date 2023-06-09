@@ -5,6 +5,7 @@ import pandas as pd
 
 from ..logging import get_logger
 from ..tests import load_test
+from ..utils import format_dataframe
 from .binary_classifier import (
     BinaryClassifierMetrics,
     BinaryClassifierPerformance,
@@ -57,21 +58,6 @@ def _get_all_test_plans():
     return {**core_test_plans, **custom_test_plans}
 
 
-def _get_test_plan_tests(test_plan):
-    """
-    Returns a list of all tests in a test plan. A test plan
-    can have many test plans as well.
-    """
-    tests = set()
-    for test in test_plan.tests:
-        tests.add(test)
-
-    for test_plan in test_plan.test_plans:
-        tests.update(_get_test_plan_tests(test_plan))
-
-    return tests
-
-
 def list_plans(pretty: bool = True):
     """
     Returns a list of all available test plans
@@ -92,7 +78,7 @@ def list_plans(pretty: bool = True):
             }
         )
 
-    return pd.DataFrame(table).style.hide(axis="index")
+    return format_dataframe(pd.DataFrame(table))
 
 
 def get_by_id(test_plan_id: str):
@@ -105,7 +91,7 @@ def get_by_id(test_plan_id: str):
         raise ValueError(f"Test plan with name: '{test_plan_id}' not found")
 
 
-def describe_plan(plan_id: str):
+def describe_plan(plan_id: str, style=True):
     """
     Returns a description of the test plan
     """
@@ -116,15 +102,19 @@ def describe_plan(plan_id: str):
         test = load_test(test_id)
         tests.append(f"{test.__name__} ({test.test_type})")
 
-    table = {
-        "ID": plan.name,
-        "Name": plan.__name__,
-        "Description": plan.__doc__.strip(),
-        "Required Context": plan.required_context,
-        "Tests": "<br>".join(tests),
-    }
+    df = pd.DataFrame(
+        [
+            {
+                "ID": plan.name,
+                "Name": plan.__name__,
+                "Description": plan.__doc__.strip(),
+                "Required Context": plan.required_context,
+                "Tests": "<br>".join(tests),
+            }
+        ]
+    )
 
-    return pd.DataFrame(table).style.hide(axis="index")
+    return format_dataframe(df) if style else df
 
 
 def register_test_plan(plan_id: str, plan):

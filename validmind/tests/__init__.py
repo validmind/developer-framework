@@ -5,6 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from ..utils import format_dataframe
+
 
 __legacy_mapping = None
 __tests = None
@@ -43,7 +45,7 @@ def _pretty_list_tests(tests):
         for test_id, test in __test_classes.items()
     ]
 
-    return pd.DataFrame(table).style.hide(axis="index")
+    return format_dataframe(pd.DataFrame(table))
 
 
 def list_tests(pretty=True):
@@ -118,16 +120,18 @@ def describe_test(test_name: str = None, test_id: str = None):
     else:
         test = __test_classes[test_id]
 
-    return pd.DataFrame(
-        [
-            {
-                "Test Type": test.test_type,
-                "Name": test.__name__,
-                "Description": test.__doc__.strip(),
-                "ID": test_id,
-            }
-        ]
-    ).style.hide(axis="index")
+    return format_dataframe(
+        pd.DataFrame(
+            [
+                {
+                    "ID": test_id,
+                    "Test Type": test.test_type,
+                    "Name": test.__name__,
+                    "Description": test.__doc__.strip(),
+                }
+            ]
+        )
+    )
 
 
 def register_test(test_class):
