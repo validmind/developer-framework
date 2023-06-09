@@ -4,7 +4,7 @@ Test Plans entry point
 import pandas as pd
 
 from ..logging import get_logger
-from ..tests import load_test
+from ..tests import list_tests as real_list_tests, load_test
 from ..utils import format_dataframe
 from .binary_classifier import (
     BinaryClassifierMetrics,
@@ -46,6 +46,9 @@ core_test_plans = {
 
 # These test plans can be added by the user
 custom_test_plans = {}
+
+# TODO: remove this... here for backwards compatibility
+list_tests = real_list_tests
 
 
 def _get_all_test_plans():

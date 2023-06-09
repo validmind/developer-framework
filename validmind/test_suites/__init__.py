@@ -76,7 +76,7 @@ def list_suites(pretty: bool = True):
 
 def describe_suite(test_suite_id: str, verbose=False):
     """
-    Descibes a Test Suite by ID
+    Describes a Test Suite by ID
 
     Args:
         test_suite_id: Test Suite ID
@@ -119,6 +119,10 @@ def describe_suite(test_suite_id: str, verbose=False):
             df = pd.concat([df, pd.DataFrame([row])])
 
     return format_dataframe(df.reset_index(drop=True))
+
+
+# TODO: remove this... here for backwards compatibility
+describe_test_suite = describe_suite
 
 
 def register_test_suite(suite_id: str, suite: TestSuite):
