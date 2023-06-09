@@ -27,7 +27,7 @@ class TestSuite(TestPlan):
     # stores the test plan names or classes depending on how the suite is initialized
     test_plans: ClassVar[List[Union[str, TestPlan]]] = None
     # stores the test plan classes
-    _test_plans_classes: List[TestPlan] = None
+    _test_plan_classes: List[TestPlan] = None
     # Stores a reference to the child test plan instances
     # so we can access their results after running the test suite
     _test_plan_instances: List[object] = None
@@ -46,14 +46,14 @@ class TestSuite(TestPlan):
                 models=self.models,
             )
 
-        self._test_plans_classes = []
+        self._test_plan_classes = []
         for test_plan_id_or_class in self.test_plans:
             if isinstance(test_plan_id_or_class, str):
                 test_plan_class = get_test_plan(test_plan_id_or_class)
             else:
                 test_plan_class = test_plan_id_or_class
 
-            self._test_plans_classes.append(test_plan_class)
+            self._test_plan_classes.append(test_plan_class)
             self._total_tests += len(test_plan_class.tests)
 
     def _init_pbar(self, send: bool = True):
@@ -81,7 +81,7 @@ class TestSuite(TestPlan):
         self._init_pbar(send=send)
 
         self._test_plan_instances = []
-        for test_plan_class in self._test_plans_classes:
+        for test_plan_class in self._test_plan_classes:
             test_plan = test_plan_class(
                 config=self.config,
                 test_context=self.test_context,
