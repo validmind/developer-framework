@@ -1,3 +1,13 @@
+"""CLI Tool for generating new test modules
+
+Usage:
+    python scripts/create_new_test.py --help
+    python scripts/create_new_test.py --test_type <test_type> --test_id <test_id>
+    python scripts/create_new_test.py  # (prompts for test_type and test_id)
+
+    e.g. python scripts/create_new_test.py --test_type metric --test_id validmind.data_validation.MyCoolMetric
+"""
+
 import os
 import click
 from pathlib import Path
