@@ -44,15 +44,14 @@ def _format_dataframe(df):
     return df
 
 
-def get_by_name(name: str):
+def get_by_id(test_suite_id: str):
     """
-    Returns the test suite by name
+    Returns the test suite by ID
     """
-    all_test_suites = _get_all_test_suites()
-    if name in all_test_suites:
-        return all_test_suites[name]
-
-    raise ValueError(f"Test suite with name: '{name}' not found")
+    try:
+        return _get_all_test_suites[test_suite_id]
+    except KeyError:
+        raise ValueError(f"Test suite with ID: '{test_suite_id}' not found")
 
 
 def list_suites(pretty: bool = True):
@@ -79,14 +78,21 @@ def list_suites(pretty: bool = True):
     return _format_dataframe(pd.DataFrame(table))
 
 
-def describe_test_suite(id: str):
+def describe_test_suite(id: str, include_tests=False):
     """
-    Returns a list of all available test suites
-    """
+    Descibes a Test Suite by ID
 
-    all_test_suites = _get_all_test_suites()
+    Args:
+        id: Test Suite ID
+        include_tests: If True, include the list of tests in the Test Suite
+
+    Returns:
+        pandas.DataFrame: A formatted table with the Test Suite description
+    """
+    test_suite = get_by_id(id)
+
     table = []
-    for name, test_suite in all_test_suites.items():
+    for name, test_suite in _get_all_test_suites().items():
         if name == id:
             table.append(
                 {
@@ -96,6 +102,7 @@ def describe_test_suite(id: str):
                     "Test Plans": ", ".join(test_suite.test_plans),
                 }
             )
+            break
 
     return _format_dataframe(pd.DataFrame(table))
 

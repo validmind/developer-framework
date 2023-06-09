@@ -105,8 +105,14 @@ def load_test(test_id):
         raise ValueError("Custom tests are not supported yet")
 
 
-def describe_test(test_id: str):
+def describe_test(test_name: str = None, test_id: str = None):
     """Returns the test by test ID"""
+    if test_name is not None:
+        # TODO: we should rethink this a bit
+        for test_id in list_tests(pretty=False):
+            if test_id.endswith(test_name):
+                break
+
     if __test_classes is None:
         test = load_test(test_id)
     else:

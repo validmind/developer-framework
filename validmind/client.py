@@ -14,8 +14,8 @@ from .template import (
     preview_template as _preview_template,
     run_template as _run_template,
 )
-from .test_plans import get_by_name as get_test_plan_by_name
-from .test_suites import get_by_name as get_test_suite_by_name
+from .test_plans import get_by_id as get_test_plan
+from .test_suites import get_by_id as get_test_suite
 from .vm_models import (
     Dataset,
     DatasetTargets,
@@ -205,7 +205,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         dict: A dictionary of test results
     """
     try:
-        Plan: TestPlan = get_test_plan_by_name(test_plan_name)
+        Plan: TestPlan = get_test_plan(test_plan_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
@@ -244,7 +244,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
         TestSuite: the TestSuite instance
     """
     try:
-        Suite: TestSuite = get_test_suite_by_name(test_suite_name)
+        Suite: TestSuite = get_test_suite(test_suite_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))

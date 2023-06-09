@@ -11,7 +11,7 @@ from typing import ClassVar, List, Union
 import ipywidgets as widgets
 from IPython.display import display
 
-from ..test_plans import get_by_name
+from ..test_plans import get_by_id as get_test_plan
 from ..utils import is_notebook
 from .test_context import TestContext
 from .test_plan import TestPlan
@@ -49,7 +49,7 @@ class TestSuite(TestPlan):
         self._test_plans_classes = []
         for test_plan_id_or_class in self.test_plans:
             if isinstance(test_plan_id_or_class, str):
-                test_plan_class = get_by_name(test_plan_id_or_class)
+                test_plan_class = get_test_plan(test_plan_id_or_class)
             else:
                 test_plan_class = test_plan_id_or_class
 

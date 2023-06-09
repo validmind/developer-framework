@@ -95,22 +95,21 @@ def list_plans(pretty: bool = True):
     return pd.DataFrame(table).style.hide(axis="index")
 
 
-def get_by_name(name: str):
+def get_by_id(test_plan_id: str):
     """
-    Returns the test plan by name
+    Returns the test plan by ID
     """
-    all_test_plans = _get_all_test_plans()
-    if name in all_test_plans:
-        return all_test_plans[name]
-
-    raise ValueError(f"Test plan with name: '{name}' not found")
+    try:
+        return _get_all_test_plans()[test_plan_id]
+    except KeyError:
+        raise ValueError(f"Test plan with name: '{test_plan_id}' not found")
 
 
 def describe_plan(plan_id: str):
     """
     Returns a description of the test plan
     """
-    plan = get_by_name(plan_id)
+    plan = get_by_id(plan_id)
 
     tests = []
     for test_id in plan.tests:
