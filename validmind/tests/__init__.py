@@ -78,11 +78,7 @@ def list_tests(filter=None, pretty=True):
                 __tests.append(test_id)
 
     if filter is not None:
-        tests = [
-            test_id
-            for test_id in __tests
-            if filter.lower() in test_id.lower()
-        ]
+        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]
     else:
         tests = __tests
 
@@ -140,6 +136,7 @@ def describe_test(test_name: str = None, test_id: str = None):
             ]
         )
     )
+
 
 def register_test_provider():
     """Register a test provider"""
