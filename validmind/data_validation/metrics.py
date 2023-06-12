@@ -265,6 +265,295 @@ class DescriptiveStatistics(Metric):
         )
 
 
+class TabularNumericalHistograms(Metric):
+    """
+    Generates a visual analysis of numerical data by plotting the histogram.
+    The input dataset can have multiple numerical variables if necessary.
+    In this case, we produce a separate plot for each numerical variable.
+    """
+
+    name = "tabular_numerical_histograms"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract numerical columns from the dataset
+        numerical_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+
+        if len(numerical_columns) == 0:
+            raise ValueError("No numerical columns found in the dataset")
+
+        figures = []
+        for col in numerical_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+            ax = sns.histplot(data=df, x=col, kde=True)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class TabularCategoricalBarPlots(Metric):
+    """
+    Generates a visual analysis of categorical data by plotting bar plots.
+    The input dataset can have multiple categorical variables if necessary.
+    In this case, we produce a separate plot for each categorical variable.
+    """
+
+    name = "tabular_categorical_bar_plots"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract categorical columns from the dataset
+        categorical_columns = df.select_dtypes(include=[np.object]).columns.tolist()
+
+        if len(categorical_columns) == 0:
+            raise ValueError("No categorical columns found in the dataset")
+
+        figures = []
+        for col in categorical_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+            ax = sns.countplot(data=df, x=col)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("")
+            ax.set_ylabel("")
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+class TabularDateTimeHistograms(Metric):
+    """
+    Generates a visual analysis of datetime data by plotting histograms of
+    differences between consecutive dates. The input dataset can have multiple
+    datetime variables if necessary. In this case, we produce a separate plot
+    for each datetime variable.
+    """
+
+    name = "tabular_datetime_histograms"
+    required_context = ["dataset"]
+
+    def run(self):
+        df = self.dataset.df
+
+        # Extract datetime columns from the dataset
+        datetime_columns = df.select_dtypes(include=["datetime64"]).columns.tolist()
+
+        if len(datetime_columns) == 0:
+            raise ValueError("No datetime columns found in the dataset")
+
+        figures = []
+        for col in datetime_columns:
+            plt.figure()
+            fig, _ = plt.subplots()
+
+            # Calculate the difference between consecutive dates and convert to days
+            date_diffs = df[col].sort_values().diff().dt.days.dropna()
+
+            # Filter out 0 values
+            date_diffs = date_diffs[date_diffs != 0]
+
+            ax = sns.histplot(date_diffs, kde=False, bins=30)
+            plt.title(f"{col}", weight="bold", fontsize=20)
+
+            plt.xticks(fontsize=18)
+            plt.yticks(fontsize=18)
+            ax.set_xlabel("Days Between Consecutive Dates", fontsize=18)
+            ax.set_ylabel("Frequency", fontsize=18)
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}",
+                    figure=fig,
+                )
+            )
+
+        plt.close("all")
+
+        return self.cache_results(
+            figures=figures,
+        )
+
+
+@dataclass
+class TabularDescriptionTables(Metric):
+    """
+    Collects a set of descriptive statistics for a tabular dataset, for
+    numerical, categorical and datetime variables.
+    """
+
+    name = "tabular_description_tables"
+    required_context = ["dataset"]
+
+    def description(self):
+        return """
+        This section provides descriptive statistics for numerical,
+        categorical and datetime variables found in the dataset.
+        """
+
+    def get_summary_statistics_numerical(self, numerical_fields):
+        summary_stats = self.df[numerical_fields].describe().T
+        summary_stats["Missing Values (%)"] = (
+            self.df[numerical_fields].isnull().mean() * 100
+        )
+        summary_stats["Data Type"] = self.df[numerical_fields].dtypes
+        summary_stats = summary_stats[
+            ["count", "mean", "min", "max", "Missing Values (%)", "Data Type"]
+        ]
+        summary_stats.columns = [
+            "Num of Obs",
+            "Mean",
+            "Min",
+            "Max",
+            "Missing Values (%)",
+            "Data Type",
+        ]
+        summary_stats["Num of Obs"] = summary_stats["Num of Obs"].astype(int)
+        summary_stats = summary_stats.sort_values(
+            by="Missing Values (%)", ascending=False
+        )
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Numerical Variable"}, inplace=True)
+        return summary_stats
+
+    def get_summary_statistics_categorical(self, categorical_fields):
+        summary_stats = pd.DataFrame()
+        if categorical_fields:  # check if the list is not empty
+            for column in self.df[categorical_fields].columns:
+                summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
+                summary_stats.loc[column, "Num of Unique Values"] = self.df[
+                    column
+                ].nunique()
+                summary_stats.loc[column, "Unique Values"] = str(
+                    self.df[column].unique()
+                )
+                summary_stats.loc[column, "Missing Values (%)"] = (
+                    self.df[column].isnull().mean() * 100
+                )
+                summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
+
+            summary_stats = summary_stats.sort_values(
+                by="Missing Values (%)", ascending=False
+            )
+            summary_stats.reset_index(inplace=True)
+            summary_stats.rename(
+                columns={"index": "Categorical Variable"}, inplace=True
+            )
+        return summary_stats
+
+    def get_summary_statistics_datetime(self, datetime_fields):
+        summary_stats = pd.DataFrame()
+        for column in self.df[datetime_fields].columns:
+            summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
+            summary_stats.loc[column, "Num of Unique Values"] = self.df[
+                column
+            ].nunique()
+            summary_stats.loc[column, "Earliest Date"] = self.df[column].min()
+            summary_stats.loc[column, "Latest Date"] = self.df[column].max()
+            summary_stats.loc[column, "Missing Values (%)"] = (
+                self.df[column].isnull().mean() * 100
+            )
+            summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
+
+        if not summary_stats.empty:
+            summary_stats = summary_stats.sort_values(
+                by="Missing Values (%)", ascending=False
+            )
+        summary_stats.reset_index(inplace=True)
+        summary_stats.rename(columns={"index": "Datetime Variable"}, inplace=True)
+        return summary_stats
+
+    def summary(self, metric_value):
+        summary_stats_numerical = metric_value["numerical"]
+        summary_stats_categorical = metric_value["categorical"]
+        summary_stats_datetime = metric_value["datetime"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=summary_stats_numerical,
+                    metadata=ResultTableMetadata(title="Numerical Variables"),
+                ),
+                ResultTable(
+                    data=summary_stats_categorical,
+                    metadata=ResultTableMetadata(title="Categorical Variables"),
+                ),
+                ResultTable(
+                    data=summary_stats_datetime,
+                    metadata=ResultTableMetadata(title="Datetime Variables"),
+                ),
+            ]
+        )
+
+    def get_categorical_columns(self):
+        categorical_columns = self.df.select_dtypes(include="object").columns.tolist()
+        return categorical_columns
+
+    def get_numerical_columns(self):
+        numerical_columns = self.df.select_dtypes(
+            include=["int", "float"]
+        ).columns.tolist()
+        return numerical_columns
+
+    def get_datetime_columns(self):
+        datetime_columns = self.df.select_dtypes(include=["datetime"]).columns.tolist()
+        return datetime_columns
+
+    def run(self):
+        numerical_fields = self.get_numerical_columns()
+        categorical_fields = self.get_categorical_columns()
+        datetime_fields = self.get_datetime_columns()
+
+        summary_stats_numerical = self.get_summary_statistics_numerical(
+            numerical_fields
+        )
+        summary_stats_categorical = self.get_summary_statistics_categorical(
+            categorical_fields
+        )
+        summary_stats_datetime = self.get_summary_statistics_datetime(datetime_fields)
+
+        return self.cache_results(
+            {
+                "numerical": summary_stats_numerical,
+                "categorical": summary_stats_categorical,
+                "datetime": summary_stats_datetime,
+            }
+        )
+
+
 class DatasetSplit(Metric):
     """
     Attempts to extract information about the dataset split from the
