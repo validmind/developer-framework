@@ -180,7 +180,6 @@ async def _get(
 
     async with session.get(url) as r:
         if r.status != 200:
-            print(r.status)
             raise Exception(await r.text())
 
         return await r.json()
