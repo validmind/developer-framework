@@ -15,7 +15,7 @@ class ClientConfig:
 
     project: object
     feature_flags: dict
-    template: object
+    documentation_template: object
     running_on_colab: bool = False
 
     def __post_init__(self):
@@ -41,4 +41,6 @@ class ClientConfig:
         return self.feature_flags.get("log_figures", False)
 
 
-client_config = ClientConfig(project=None, feature_flags={}, template=None)
+client_config = ClientConfig(
+    project=None, feature_flags={}, documentation_template=None
+)
