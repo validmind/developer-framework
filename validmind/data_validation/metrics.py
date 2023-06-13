@@ -279,7 +279,7 @@ class TabularNumericalHistograms(Metric):
         df = self.dataset.df
 
         # Extract numerical columns from the dataset
-        numerical_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+        numerical_columns = self.dataset.get_numeric_features_columns()
 
         if len(numerical_columns) == 0:
             raise ValueError("No numerical columns found in the dataset")
@@ -330,7 +330,7 @@ class TabularCategoricalBarPlots(Metric):
         df = self.dataset.df
 
         # Extract categorical columns from the dataset
-        categorical_columns = self.get_categorical_columns()
+        categorical_columns = self.dataset.get_categorical_features_columns()
 
         if len(categorical_columns) == 0:
             raise ValueError("No categorical columns found in the dataset")
@@ -540,8 +540,8 @@ class TabularDescriptionTables(Metric):
         return datetime_columns
 
     def run(self):
-        numerical_fields = self.get_numerical_columns()
-        categorical_fields = self.get_categorical_columns()
+        numerical_fields = self.dataset.get_numeric_features_columns()
+        categorical_fields = self.dataset.get_categorical_features_columns()
         datetime_fields = self.get_datetime_columns()
 
         summary_stats_numerical = self.get_summary_statistics_numerical(
