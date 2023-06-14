@@ -1,11 +1,11 @@
 """
 Test Plans entry point
 """
-import inspect
-
 import pandas as pd
 
-from ..vm_models import Metric, TestPlan, ThresholdTest
+from ..logging import get_logger
+from ..tests import list_tests as real_list_tests, load_test
+from ..utils import format_dataframe
 from .binary_classifier import (
     BinaryClassifierMetrics,
     BinaryClassifierPerformance,
@@ -27,6 +27,8 @@ from .time_series import (
     TimeSeriesSensitivity,
 )
 
+logger = get_logger(__name__)
+
 core_test_plans = {
     "binary_classifier_metrics": BinaryClassifierMetrics,
     "binary_classifier_validation": BinaryClassifierPerformance,
@@ -45,6 +47,9 @@ core_test_plans = {
 # These test plans can be added by the user
 custom_test_plans = {}
 
+# TODO: remove this... here for backwards compatibility
+list_tests = real_list_tests
+
 
 def _get_all_test_plans():
     """
@@ -54,31 +59,6 @@ def _get_all_test_plans():
     taking precedence, i.e. allowing overriding of core test plans
     """
     return {**core_test_plans, **custom_test_plans}
-
-
-def _get_test_plan_tests(test_plan):
-    """
-    Returns a list of all tests in a test plan. A test plan
-    can have many test plans as well.
-    """
-    tests = set()
-    for test in test_plan.tests:
-        tests.add(test)
-
-    for test_plan in test_plan.test_plans:
-        tests.update(_get_test_plan_tests(test_plan))
-
-    return tests
-
-
-def _get_test_type(test):
-    """
-    Returns the test type by inspecting the test class hierarchy
-    """
-    if issubclass(test, Metric):
-        return "Metric"
-    elif issubclass(test, ThresholdTest):
-        return "ThresholdTest"
 
 
 def list_plans(pretty: bool = True):
@@ -101,102 +81,50 @@ def list_plans(pretty: bool = True):
             }
         )
 
-    return pd.DataFrame(table).style.hide(axis="index")
+    return format_dataframe(pd.DataFrame(table))
 
 
-def list_tests(test_type: str = "all", pretty: bool = True):
+def get_by_id(test_plan_id: str):
     """
-    Returns a list of all available tests.
+    Returns the test plan by ID
     """
-    all_test_plans = _get_all_test_plans()
-    tests = set()
-    for test_plan in all_test_plans.values():
-        tests.update(_get_test_plan_tests(test_plan))
-
-    # Sort by test type and then by name
-    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
-
-    if not pretty:
-        return tests
-
-    table = []
-    for test in tests:
-        if inspect.isclass(test):
-            test_type = _get_test_type(test)
-            table.append(
-                {
-                    "Test Type": test_type,
-                    "ID": test.name,
-                    "Name": test.__name__,
-                    "Description": test.__doc__.strip(),
-                }
-            )
-
-    return pd.DataFrame(table).style.hide(axis="index")
+    try:
+        return _get_all_test_plans()[test_plan_id]
+    except KeyError:
+        raise ValueError(f"Test plan with name: '{test_plan_id}' not found")
 
 
-def get_by_name(name: str):
-    """
-    Returns the test plan by name
-    """
-    all_test_plans = _get_all_test_plans()
-    if name in all_test_plans:
-        return all_test_plans[name]
-
-    raise ValueError(f"Test plan with name: '{name}' not found")
-
-
-def describe_plan(plan_id: str):
+def describe_plan(plan_id: str, style=True):
     """
     Returns a description of the test plan
     """
-    plan = get_by_name(plan_id)
-    tests = [f"{test.__name__} ({_get_test_type(test)})" for test in plan.tests]
-    tests = ", ".join(tests)
+    plan = get_by_id(plan_id)
 
-    table = {
-        "ID": plan.name,
-        "Name": plan.__name__,
-        "Description": plan.__doc__.strip(),
-        "Required Context": plan.required_context,
-        "Tests": tests,
-    }
+    tests = []
+    for test_id in plan.tests:
+        test = load_test(test_id)
+        tests.append(f"{test.__name__} ({test.test_type})")
 
-    return pd.DataFrame(table).style.hide(axis="index")
+    df = pd.DataFrame(
+        [
+            {
+                "ID": plan.name,
+                "Name": plan.__name__,
+                "Description": plan.__doc__.strip(),
+                "Required Context": plan.required_context,
+                "Tests": "<br>".join(tests),
+            }
+        ]
+    )
+
+    return format_dataframe(df) if style else df
 
 
-def register_test_plan(plan_id: str, plan: TestPlan):
+def register_test_plan(plan_id: str, plan):
     """
     Registers a custom test plan
     """
+    # TODO: for this and other registration functions, we should
+    # use Protocols instead of making the user inherit from a base class
     custom_test_plans[plan_id] = plan
-    print(f"Registered test plan: {plan_id}")
-
-
-def describe_test(name: str):
-    """
-    Returns the test by name
-    """
-    all_test_plans = _get_all_test_plans()
-    tests = set()
-    for test_plan in all_test_plans.values():
-        tests.update(_get_test_plan_tests(test_plan))
-
-    # Sort by test type and then by name
-    tests = sorted(tests, key=lambda test: f"{_get_test_type(test)} {test.__name__}")
-    table = []
-    for test in tests:
-        if inspect.isclass(test):
-            test_type = _get_test_type(test)
-
-            if test.__name__ == name:
-                table.append(
-                    {
-                        "Test Type": test_type,
-                        "ID": test.name,
-                        "Name": test.__name__,
-                        "Description": test.__doc__.strip(),
-                    }
-                )
-
-    return pd.DataFrame(table).style.hide(axis="index")
+    logger.info(f"Registered test plan: {plan_id}")

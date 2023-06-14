@@ -6,6 +6,7 @@ from typing import Any
 
 import nest_asyncio
 import numpy as np
+import pandas as pd
 
 from IPython.core import getipython
 from numpy import ndarray
@@ -235,6 +236,12 @@ def format_number(number):
         return round(number, 4)
     else:
         return number
+
+
+def format_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    """Format a pandas DataFrame for display purposes"""
+    df = df.style.set_properties(**{"text-align": "left"}).hide(axis="index")
+    return df.set_table_styles([dict(selector="th", props=[("text-align", "left")])])
 
 
 def run_async(func, *args, name=None, **kwargs):
