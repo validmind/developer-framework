@@ -71,9 +71,9 @@ def list_tests(filter=None, pretty=True):
                     continue  # skip __init__.py and other special files
 
                 test_id = (
-                    f"validmind.{d}.{path.stem}"
+                    f"validmind.{d}.{path.parent.stem}.{path.stem}"
                     if path.parent.parent.stem == d
-                    else f"validmind.{d}.{path.parent.parent.stem}.{path.stem}"
+                    else f"validmind.{d}.{path.stem}"
                 )
                 __tests.append(test_id)
 
@@ -103,7 +103,7 @@ def load_test(test_id):
         test_class = parts[-1]
 
         return getattr(
-            importlib.import_module(f"validmind.tests.{test_module}"),
+            importlib.import_module(f"validmind.tests.{test_module}.{test_class}"),
             test_class,
         )
 
