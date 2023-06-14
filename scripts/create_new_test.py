@@ -29,7 +29,7 @@ def generate_test(test_type, test_id):
     organization, category_parts, test_name = parts[0], parts[1:-1], parts[-1]
 
     # Create the directory path based on test_id and test_type
-    dir_path = os.path.join(organization, "tests", *category_parts, f"{test_type}s")
+    dir_path = os.path.join(organization, "tests", *category_parts)
 
     # Make directories if they don"t exist
     os.makedirs(dir_path, exist_ok=True)
