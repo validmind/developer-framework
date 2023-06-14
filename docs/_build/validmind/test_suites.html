@@ -32,19 +32,19 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#get_by_name">get_by_name</a>
+                    <a class="function" href="#get_by_id">get_by_id</a>
             </li>
             <li>
                     <a class="function" href="#list_suites">list_suites</a>
+            </li>
+            <li>
+                    <a class="function" href="#describe_suite">describe_suite</a>
             </li>
             <li>
                     <a class="function" href="#describe_test_suite">describe_test_suite</a>
             </li>
             <li>
                     <a class="function" href="#register_test_suite">register_test_suite</a>
-            </li>
-            <li>
-                    <a class="function" href="#describe_test_suites_plans_tests">describe_test_suites_plans_tests</a>
             </li>
     </ul>
 
@@ -74,17 +74,17 @@
                 
                 
             </section>
-                <section id="get_by_name">
+                <section id="get_by_id">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_by_name</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_by_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#get_by_name"></a>
+    <a class="headerlink" href="#get_by_id"></a>
     
-            <div class="docstring"><p>Returns the test suite by name</p>
+            <div class="docstring"><p>Returns the test suite by ID</p>
 </div>
 
 
@@ -104,17 +104,58 @@
 
 
                 </section>
+                <section id="describe_suite">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">describe_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#describe_suite"></a>
+    
+            <div class="docstring"><p>Describes a Test Suite by ID</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_suite_id:</strong>  Test Suite ID</li>
+<li><strong>verbose:</strong>  If True, describe all plans and tests in the Test Suite</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>pandas.DataFrame: A formatted table with the Test Suite description</p>
+</blockquote>
+</div>
+
+
+                </section>
                 <section id="describe_test_suite">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">describe_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+        <span class="name">describe_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#describe_test_suite"></a>
     
-            <div class="docstring"><p>Returns a list of all available test suites</p>
+            <div class="docstring"><p>Describes a Test Suite by ID</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_suite_id:</strong>  Test Suite ID</li>
+<li><strong>verbose:</strong>  If True, describe all plans and tests in the Test Suite</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>pandas.DataFrame: A formatted table with the Test Suite description</p>
+</blockquote>
 </div>
 
 
@@ -132,19 +173,6 @@
             <div class="docstring"><p>Registers a custom test suite</p>
 </div>
 
-
-                </section>
-                <section id="describe_test_suites_plans_tests">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">describe_test_suites_plans_tests</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#describe_test_suites_plans_tests"></a>
-    
-    
 
                 </section>
     </main>

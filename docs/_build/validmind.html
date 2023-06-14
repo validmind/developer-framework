@@ -30,6 +30,9 @@
                     <a class="variable" href="#__version__">__version__</a>
             </li>
             <li>
+                    <a class="variable" href="#data_validation">data_validation</a>
+            </li>
+            <li>
                     <a class="function" href="#init">init</a>
             </li>
             <li>
@@ -42,7 +45,13 @@
                     <a class="function" href="#init_r_model">init_r_model</a>
             </li>
             <li>
+                    <a class="variable" href="#model_validation">model_validation</a>
+            </li>
+            <li>
                     <a class="function" href="#preview_template">preview_template</a>
+            </li>
+            <li>
+                    <a class="function" href="#run_template">run_template</a>
             </li>
             <li>
                     <a class="function" href="#run_test_plan">run_test_plan</a>
@@ -69,8 +78,6 @@
             <ul>
                     <li><a href="validmind/__version__.html">__version__</a></li>
                     <li><a href="validmind/datasets.html">datasets</a></li>
-                    <li><a href="validmind/data_validation.html">data_validation</a></li>
-                    <li><a href="validmind/model_validation.html">model_validation</a></li>
                     <li><a href="validmind/test_plans.html">test_plans</a></li>
                     <li><a href="validmind/test_suites.html">test_suites</a></li>
                     <li><a href="validmind/vm_models.html">vm_models</a></li>
@@ -135,11 +142,22 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.14.6&#39;</span>
+<span class="default_value">&#39;1.15.0&#39;</span>
 
         
     </div>
     <a class="headerlink" href="#__version__"></a>
+    
+    
+
+                </section>
+                <section id="data_validation">
+                    <div class="attr variable">
+            <span class="name">data_validation</span>
+
+        
+    </div>
+    <a class="headerlink" href="#data_validation"></a>
     
     
 
@@ -297,6 +315,17 @@ since xgb models saved in .json or .bin format can be loaded directly with eithe
 
 
                 </section>
+                <section id="model_validation">
+                    <div class="attr variable">
+            <span class="name">model_validation</span>
+
+        
+    </div>
+    <a class="headerlink" href="#model_validation"></a>
+    
+    
+
+                </section>
                 <section id="preview_template">
                     <div class="attr function">
             
@@ -311,6 +340,44 @@ since xgb models saved in .json or .bin format can be loaded directly with eithe
 
 <p>This function will display the documentation template for the current project. If
 the project has not been initialized, then an error will be raised.</p>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the project has not been initialized</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="run_template">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#run_template"></a>
+    
+            <div class="docstring"><p>Collect and run all the tests associated with a template</p>
+
+<p>This function will analyze the current project's documentation template and collect
+all the tests associated with it into a test suite. It will then run the test
+suite, log the results to the ValidMind API and display them to the user.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
+<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
+</ul>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the project has not been initialized</li>
+</ul>
 </div>
 
 
@@ -495,7 +562,7 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
+        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
 
         
     </div>
