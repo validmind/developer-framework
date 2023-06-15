@@ -8,10 +8,10 @@ from .model import Model, ModelAttributes, R_MODEL_TYPES
 from .metric import Metric
 from .metric_result import MetricResult
 from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
-from .template import preview_template
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
 from .test_plan_result import (
+    TestPlanDatasetResult,
     TestPlanMetricResult,
     TestPlanTestResult,
 )
@@ -34,11 +34,11 @@ __all__ = [
     "TestContext",
     "TestContextUtils",
     "TestPlan",
+    "TestPlanDatasetResult",
     "TestPlanMetricResult",
     "TestPlanTestResult",
     "TestResult",
     "TestResults",
     "TestSuite",
     "ThresholdTest",
-    "preview_template",
 ]

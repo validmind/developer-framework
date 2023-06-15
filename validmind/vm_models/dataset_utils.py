@@ -6,11 +6,14 @@ import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
+from ..logging import get_logger
 from .figure import Figure
 from .plot_utils import get_plot_for_feature_pair
 
 DEFAULT_HISTOGRAM_BINS = 10
 DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
+
+logger = get_logger(__name__)
 
 
 def get_x_and_y(df, target_column):
@@ -47,7 +50,7 @@ def parse_dataset_variables(df, options=None):
     ]
 
     if len(dummy_variables) > 0:
-        print(
+        logger.info(
             f"Excluding the following dummy variables from type inference: {dummy_variables}"
         )
 
@@ -158,7 +161,7 @@ def get_field_histograms(df, field, type_):
             }
         }
     elif type_ == "Null":
-        print(f"Ignoring histogram generation for null column {field}")
+        logger.info(f"Ignoring histogram generation for null column {field}")
     else:
         raise ValueError(
             f"Unsupported field type found when computing its histogram: {type_}"

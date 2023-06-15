@@ -18,10 +18,11 @@ from aiohttp import FormData
 from .client_config import client_config
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
+from .vm_models import Dataset, Figure, Metric, TestResult
 
 # TODO: can't import types from vm_models because of circular dependency
 
-logger = get_logger("validmind.api_client")
+logger = get_logger(__name__)
 
 _api_key = os.environ.get("VM_API_KEY")
 _api_secret = os.environ.get("VM_API_SECRET")
@@ -180,7 +181,6 @@ async def _get(
 
     async with session.get(url) as r:
         if r.status != 200:
-            print(r.status)
             raise Exception(await r.text())
 
         return await r.json()
@@ -238,7 +238,7 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
     return await _get(f"get_metadata/{content_id}")
 
 
-async def log_dataset(vm_dataset) -> Dict[str, Any]:
+async def log_dataset(vm_dataset: Dataset) -> Dict[str, Any]:
     """Logs metadata and statistics about a dataset to ValidMind API.
 
     Args:
@@ -257,7 +257,7 @@ async def log_dataset(vm_dataset) -> Dict[str, Any]:
         raise e
 
 
-async def log_figure(figure: Any) -> Dict[str, Any]:
+async def log_figure(figure: Figure) -> Dict[str, Any]:
     """Logs a figure
 
     Args:
@@ -280,7 +280,7 @@ async def log_figure(figure: Any) -> Dict[str, Any]:
         raise e
 
 
-async def log_figures(figures: List[Any]) -> Dict[str, Any]:
+async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
     """Logs a list of figures
 
     Args:
@@ -354,7 +354,7 @@ async def log_metadata(
         raise e
 
 
-async def log_metrics(metrics: List[Any]) -> Dict[str, Any]:
+async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
     """Logs metrics to ValidMind API.
 
     Args:
@@ -379,7 +379,7 @@ async def log_metrics(metrics: List[Any]) -> Dict[str, Any]:
 
 
 async def log_test_result(
-    result: Any, dataset_type: str = "training"
+    result: TestResult, dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -409,7 +409,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[Any], dataset_type: str = "training"
+    results: List[TestResult], dataset_type: str = "training"
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 

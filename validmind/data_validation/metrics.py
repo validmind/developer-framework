@@ -1,7 +1,3 @@
-"""
-Metrics functions for any Pandas-compatible datasets
-"""
-
 from dataclasses import dataclass
 from typing import ClassVar
 import warnings

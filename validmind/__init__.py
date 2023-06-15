@@ -54,6 +54,7 @@ from .client import (  # noqa: E402
     init_model,
     init_r_model,
     preview_template,
+    run_template,
     run_test_plan,
     run_test_suite,
 )
@@ -114,6 +115,7 @@ __all__ = [  # noqa
     "init_r_model",
     "model_validation",
     "preview_template",
+    "run_template",
     "run_test_plan",
     "run_test_suite",
     "test_plans",
