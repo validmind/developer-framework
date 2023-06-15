@@ -305,6 +305,18 @@
 
             </li>
             <li>
+                    <a class="class" href="#TestPlanDatasetResult">TestPlanDatasetResult</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TestPlanDatasetResult.__init__">TestPlanDatasetResult</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TestPlanDatasetResult.log">log</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#TestPlanMetricResult">TestPlanMetricResult</a>
                             <ul class="memberlist">
                         <li>
@@ -359,9 +371,6 @@
                                 <a class="function" href="#TestSuite.__init__">TestSuite</a>
                         </li>
                         <li>
-                                <a class="function" href="#TestSuite.get_total_tests">get_total_tests</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#TestSuite.run">run</a>
                         </li>
                         <li>
@@ -393,9 +402,6 @@
                         </li>
                 </ul>
 
-            </li>
-            <li>
-                    <a class="function" href="#preview_template">preview_template</a>
             </li>
     </ul>
 
@@ -1617,7 +1623,7 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
                             <div id="TestPlan.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1784,6 +1790,58 @@ sub test plans.</p>
 </div>
 
 
+                            </div>
+                </section>
+                <section id="TestPlanDatasetResult">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">TestPlanDatasetResult</span><wbr>(<span class="base">validmind.vm_models.test_plan_result.TestPlanResult</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#TestPlanDatasetResult"></a>
+    
+            <div class="docstring"><p>Result wrapper for datasets that run as part of a test plan</p>
+</div>
+
+
+                            <div id="TestPlanDatasetResult.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">TestPlanDatasetResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Metric&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestPlanDatasetResult.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="TestPlanDatasetResult.log" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">async def</span>
+        <span class="name">log</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestPlanDatasetResult.log"></a>
+    
+            <div class="docstring"><p>Log the result... Must be overridden by subclasses</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.test_plan_result.TestPlanResult</dt>
+                                <dd id="TestPlanDatasetResult.show" class="function">show</dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="TestPlanMetricResult">
@@ -1995,28 +2053,13 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
                             <div id="TestSuite.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_total_tests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#TestSuite.__init__"></a>
     
     
-
-                            </div>
-                            <div id="TestSuite.get_total_tests" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_total_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TestSuite.get_total_tests"></a>
-    
-            <div class="docstring"><p>Goes through every test plans and sums the number of tests for each one.</p>
-</div>
-
 
                             </div>
                             <div id="TestSuite.run" class="classattr">
@@ -2196,19 +2239,6 @@ short summary of the test results.</p>
             </div>
                                 </dl>
                             </div>
-                </section>
-                <section id="preview_template">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">preview_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">template</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#preview_template"></a>
-    
-    
-
                 </section>
     </main>
 <script>

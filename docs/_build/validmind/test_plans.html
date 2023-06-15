@@ -32,22 +32,19 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#list_plans">list_plans</a>
-            </li>
-            <li>
                     <a class="function" href="#list_tests">list_tests</a>
             </li>
             <li>
-                    <a class="function" href="#get_by_name">get_by_name</a>
+                    <a class="function" href="#list_plans">list_plans</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_by_id">get_by_id</a>
             </li>
             <li>
                     <a class="function" href="#describe_plan">describe_plan</a>
             </li>
             <li>
                     <a class="function" href="#register_test_plan">register_test_plan</a>
-            </li>
-            <li>
-                    <a class="function" href="#describe_test">describe_test</a>
             </li>
     </ul>
 
@@ -80,6 +77,34 @@
                 
                 
             </section>
+                <section id="list_tests">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#list_tests"></a>
+    
+            <div class="docstring"><p>List all tests in the tests directory.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>pretty (bool, optional):</strong>  If True, returns a pandas DataFrame with a
+formatted table. Defaults to False.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>list or pandas.DataFrame: A list of all tests or a formatted table.</p>
+</blockquote>
+</div>
+
+
+                </section>
                 <section id="list_plans">
                     <div class="attr function">
             
@@ -95,32 +120,17 @@
 
 
                 </section>
-                <section id="list_tests">
+                <section id="get_by_id">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span>, </span><span class="param"><span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_by_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#list_tests"></a>
+    <a class="headerlink" href="#get_by_id"></a>
     
-            <div class="docstring"><p>Returns a list of all available tests.</p>
-</div>
-
-
-                </section>
-                <section id="get_by_name">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_by_name</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#get_by_name"></a>
-    
-            <div class="docstring"><p>Returns the test plan by name</p>
+            <div class="docstring"><p>Returns the test plan by ID</p>
 </div>
 
 
@@ -129,7 +139,7 @@
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">describe_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+        <span class="name">describe_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">style</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -144,28 +154,13 @@
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">plan</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan</span><span class="o">.</span><span class="n">TestPlan</span></span><span class="return-annotation">):</span></span>
+        <span class="name">register_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">plan</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#register_test_plan"></a>
     
             <div class="docstring"><p>Registers a custom test plan</p>
-</div>
-
-
-                </section>
-                <section id="describe_test">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">describe_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#describe_test"></a>
-    
-            <div class="docstring"><p>Returns the test by name</p>
 </div>
 
 
