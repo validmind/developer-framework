@@ -112,6 +112,7 @@ def load_test(test_id):
         )
 
     if namespace in __test_providers:
+        print(f"Loading test {test_id.split('.', 1)[1]} from {namespace}")
         return __test_providers[namespace].load_test(test_id.split(".", 1)[1])
 
     raise ValueError(
