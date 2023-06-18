@@ -132,12 +132,10 @@ def _get_section_tests(section):
         for content in section.get("contents", [])
         if content["content_type"] not in ["metadata_text", "dynamic"]
     ]
-    print(tests)
 
     for sub_section in section["sections"]:
         tests.extend(_get_section_tests(sub_section))
 
-    print(tests)
     return tests
 
 
@@ -150,7 +148,7 @@ def _create_section_test_plan(section):
     Returns:
         A dynamically-created TestPlan Class
     """
-    section_tests = []
+    section_tests = _get_section_tests(section)
     for sub_section in section["sections"]:
         section_tests.extend(_get_section_tests(sub_section))
 
