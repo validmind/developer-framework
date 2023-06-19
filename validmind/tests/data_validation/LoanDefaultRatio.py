@@ -58,9 +58,7 @@ class LoanDefaultRatio(Metric):
         plt.tight_layout()
         plt.close("all")
 
-        return self.cache_results(
-            figures=figures,
-        )
+        return self.cache_results(figures=figures)
 
     def check_loan_status(self, loan_status_col):
         if loan_status_col is None:
