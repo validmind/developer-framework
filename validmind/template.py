@@ -80,10 +80,7 @@ def _create_section_widget(tree):
 
         if section.get("contents"):
             contents_widget = VBox(
-                [
-                    _create_content_widget(content)
-                    for content in section["contents"]
-                ]
+                [_create_content_widget(content) for content in section["contents"]]
             )
             if sub_widget:
                 sub_widget.children = (
