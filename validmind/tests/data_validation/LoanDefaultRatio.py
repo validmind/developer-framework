@@ -1,7 +1,6 @@
-from validmind.vm_models import Figure, Metric
-
-
 import matplotlib.pyplot as plt
+
+from validmind.vm_models import Figure, Metric
 
 
 class LoanDefaultRatio(Metric):
