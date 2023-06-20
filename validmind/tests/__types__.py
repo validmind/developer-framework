@@ -8,6 +8,17 @@ class ExternalTest(Protocol):
 
     test_type: str
 
+    def description(self) -> str:
+        """Return the test description (optional)
+
+        If this method is not implemented, the test description will be
+        automatically generated from the docstring of the test class.
+
+        Returns:
+            str: The test description
+        """
+        ...
+
     def run(self) -> Dict[str, Any]:
         """Run the test and return the results
 
