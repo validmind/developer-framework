@@ -78,7 +78,7 @@ class PearsonCorrelationMatrix(Metric):
     that can be removed from the dataset to reduce dimensionality.
     """
 
-    name = "pearson_correlation_matrix"
+    name = "pearson_correlation_matrix_6"
     required_context = ["dataset"]
 
     def run(self):

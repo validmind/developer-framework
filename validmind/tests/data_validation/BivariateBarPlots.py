@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 
+@dataclass
 class BivariateBarPlots(Metric):
     """
     Generates a visual analysis of categorical data by plotting bivariate bar plots.
