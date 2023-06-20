@@ -13,6 +13,7 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
+    Model,
 )
 
 
@@ -49,15 +50,17 @@ class OverfitDiagnosis(ThresholdTest):
         """
 
     def run(self):
+        model_library = Model.model_library(self.model.model)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping Overfit Diagnosis test for {model_library} models")
+            return
+
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
         cut_off_percentage = self.params["cut_off_percentage"]
 
         if "features_columns" not in self.params:
             raise ValueError("features_columns must be provided in params")
-
-        if self.model is None:
-            raise ValueError("model must of provided to run this test")
 
         if self.params["features_columns"] is None:
             features_list = self.model.train_ds.get_features_columns()

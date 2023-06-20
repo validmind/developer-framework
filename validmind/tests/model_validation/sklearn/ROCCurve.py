@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import numpy as np
 
 import plotly.graph_objects as go
 from sklearn import metrics
@@ -24,12 +25,20 @@ class ROCCurve(Metric):
         """
 
     def run(self):
-        y_true = self.model.test_ds.df[self.model.test_ds.target_column]
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
+        if self.model.device_type and self.model._is_pytorch_model:
+            if not self.model.device_type == "gpu":
+                y_true = np.array(self.model.test_ds.y.cpu())
+            else:
+                y_true = np.array(self.model.test_ds.y)
+        else:
+            y_true = np.array(self.model.test_ds.y)
+
+        y_pred = self.model.y_test_predict
+        y_pred = y_pred.astype(y_true.dtype)
         fpr, tpr, roc_thresholds = metrics.roc_curve(
-            y_true, self.model.y_test_predict, drop_intermediate=True
+            y_true, y_pred, drop_intermediate=True
         )
-        auc = metrics.roc_auc_score(y_true, class_pred)
+        auc = metrics.roc_auc_score(y_true, y_pred)
 
         trace0 = go.Scatter(
             x=fpr,

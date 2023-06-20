@@ -26,6 +26,9 @@ from .time_series import (
     TimeSeriesForecast,
     TimeSeriesSensitivity,
 )
+from .text_data import (
+    TextDataQuality,
+)
 
 logger = get_logger(__name__)
 
@@ -42,6 +45,7 @@ core_test_plans = {
     "time_series_sensitivity": TimeSeriesSensitivity,
     "regression_model_description": RegressionModelDescription,
     "regression_models_evaluation": RegressionModelsEvaluation,
+    "text_data_quality": TextDataQuality,
 }
 
 # These test plans can be added by the user
