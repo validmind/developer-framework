@@ -122,6 +122,7 @@ class Model:
         Checks if the model is a PyTorch model. Need to extend this
         method to check for all ways a PyTorch model can be created
         """
+        # if we can't import torch, then it's not a PyTorch model
         try:
             import torch.nn as nn
         except ImportError:
