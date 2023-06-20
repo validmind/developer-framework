@@ -45,14 +45,14 @@ class CommonWords(Metric):
         most = counter.most_common()
         x = []
         y = []
-        nltk.download('stopwords')
-        stop = set(stopwords.words('english'))
+        nltk.download("stopwords")
+        stop = set(stopwords.words("english"))
         for word, count in most[:40]:
-            if (word not in stop) :
+            if word not in stop:
                 x.append(word)
                 y.append(count)
         fig = plt.figure()
-        plt.bar(x, y, color='#17C37B')
+        plt.bar(x, y, color="#17C37B")
         plt.xticks(rotation=90)
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")

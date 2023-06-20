@@ -12,8 +12,8 @@ def load_data(full_dataset=False):
 
     data_file = os.path.join(dataset_path, "Covid_19.csv")
     df = pd.read_csv(data_file)
-    df['OriginalTweet'] = df['OriginalTweet'].astype(str)
-    df['Sentiment'] = df['Sentiment'].astype(str)
+    df["OriginalTweet"] = df["OriginalTweet"].astype(str)
+    df["Sentiment"] = df["Sentiment"].astype(str)
 
     # Drop these unnecessary columns when loading since they won't be
     # helpful for showing data quality issues

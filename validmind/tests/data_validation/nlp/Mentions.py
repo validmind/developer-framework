@@ -38,23 +38,39 @@ class Mentions(ThresholdTest):
         text_column = self.dataset.text_column
 
         def mentions(text):
-            line = re.findall(r'(?<=@)\w+', text)
+            line = re.findall(r"(?<=@)\w+", text)
             return " ".join(line)
 
-        b = self.dataset.df[text_column].apply(lambda x: mentions(x)).value_counts()[:][1:self.params["top_mentions"]].index.tolist()
-        a = self.dataset.df[text_column].apply(lambda x: mentions(x)).value_counts()[:][1:self.params["top_mentions"]].tolist()
-        row = pd.DataFrame({'scenario' : []})
+        b = (
+            self.dataset.df[text_column]
+            .apply(lambda x: mentions(x))
+            .value_counts()[:][1 : self.params["top_mentions"]]
+            .index.tolist()
+        )
+        a = (
+            self.dataset.df[text_column]
+            .apply(lambda x: mentions(x))
+            .value_counts()[:][1 : self.params["top_mentions"]]
+            .tolist()
+        )
+        row = pd.DataFrame({"scenario": []})
         row["scenario"] = b
         row["Percentage"] = a
-        fig = px.treemap(row, path=["scenario"], values="Percentage", title='Tree of Mentions')
+        fig = px.treemap(
+            row, path=["scenario"], values="Percentage", title="Tree of Mentions"
+        )
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
-        return self.cache_results([],
-                                  passed=True,
-                                  figures=[
-                                      Figure(for_object=self,
-                                             key=self.name,
-                                             figure=fig,
-                                             )])
+        return self.cache_results(
+            [],
+            passed=True,
+            figures=[
+                Figure(
+                    for_object=self,
+                    key=self.name,
+                    figure=fig,
+                )
+            ],
+        )

@@ -41,7 +41,7 @@ class StopWords(ThresholdTest):
     def summary(self, results: List[TestResult], all_passed: bool):
 
         # Create a DataFrame from the data
-        df = pd.DataFrame(results[0].values, columns=['Word', 'Percentage'])
+        df = pd.DataFrame(results[0].values, columns=["Word", "Percentage"])
 
         return ResultSummary(
             results=[
@@ -70,8 +70,8 @@ class StopWords(ThresholdTest):
 
         corpus = create_corpus(self.dataset.df, text_column=text_column)
 
-        nltk.download('stopwords')
-        stop = set(stopwords.words('english'))
+        nltk.download("stopwords")
+        stop = set(stopwords.words("english"))
         dic = defaultdict(int)
         for word in corpus:
             if word in stop:
@@ -86,10 +86,9 @@ class StopWords(ThresholdTest):
             word_percentages[word] = percentage
 
         passed = all(word_percentages.values()) < self.params["min_percent_threshold"]
-        top = sorted(word_percentages.items(),
-                     key=lambda x: x[1],
-                     reverse=True
-                     )[:self.params["num_words"]]
+        top = sorted(word_percentages.items(), key=lambda x: x[1], reverse=True)[
+            : self.params["num_words"]
+        ]
 
         test_results = [
             TestResult(

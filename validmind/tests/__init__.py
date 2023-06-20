@@ -2,15 +2,19 @@
 
 import importlib
 from pathlib import Path
+from typing import Dict
 
 import pandas as pd
 
 from ..utils import format_dataframe
+from .__types__ import ExternalTestProvider
 
 
 __legacy_mapping = None
 __tests = None
 __test_classes = None
+
+__test_providers: Dict[str, ExternalTestProvider] = {}
 
 
 # TODO: remove this when all templates are updated to new naming convention
@@ -96,9 +100,9 @@ def load_test(test_id):
     if len(parts) == 1:
         return load_test(_get_legacy_test(test_id))
 
-    test_org = parts[0]
+    namespace = parts[0]
 
-    if test_org == "validmind":
+    if namespace == "validmind":
         test_module = ".".join(parts[1:-1])
         test_class = parts[-1]
 
@@ -107,8 +111,12 @@ def load_test(test_id):
             test_class,
         )
 
-    else:
-        raise ValueError("Custom tests are not supported yet")
+    if namespace in __test_providers:
+        return __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+
+    raise ValueError(
+        f"Unable to load test {test_id}. No known namespace found {namespace}"
+    )
 
 
 def describe_test(test_name: str = None, test_id: str = None):
@@ -138,6 +146,11 @@ def describe_test(test_name: str = None, test_id: str = None):
     )
 
 
-def register_test_provider():
-    """Register a test provider"""
-    raise NotImplementedError("Custom test providers are not supported yet")
+def register_test_provider(namespace: str, test_provider: ExternalTestProvider) -> None:
+    """Register an external test provider
+
+    Args:
+        namespace (str): The namespace of the test provider
+        test_provider (ExternalTestProvider): The test provider
+    """
+    __test_providers[namespace] = test_provider

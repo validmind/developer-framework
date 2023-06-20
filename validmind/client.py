@@ -69,13 +69,15 @@ def init_dataset(
         vm_dataset = Dataset.init_from_pd_dataset(
             dataset, options, text_column, targets, target_column, class_labels
         )
-    elif (dataset_class == "TensorDataset"):
+    elif dataset_class == "TensorDataset":
         print("Initializing VM Dataset instance...")
         vm_dataset = Dataset.init_from_tensor_dataset(
             dataset, options, targets, target_column, class_labels
         )
     else:
-        raise ValueError("Only Pandas datasets and Tensor Datasets are supported at the moment.")
+        raise ValueError(
+            "Only Pandas datasets and Tensor Datasets are supported at the moment."
+        )
 
     vm_dataset.type = type
 

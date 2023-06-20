@@ -17,8 +17,9 @@ from validmind.vm_models import (
 @dataclass
 class Hashtags(ThresholdTest):
     """
-     The purpose of this test is to identify and analyze the most frequently used hashtags in a given text column of a dataset.
+    The purpose of this test is to identify and analyze the most frequently used hashtags in a given text column of a dataset.
     """
+
     category = "data_quality"
     name = "hashtags"
     required_context = ["dataset", "dataset.text_column"]
@@ -40,24 +41,33 @@ class Hashtags(ThresholdTest):
         text_column = self.dataset.text_column
 
         def find_hash(text):
-            line = re.findall(r'(?<=#)\w+', text)
+            line = re.findall(r"(?<=#)\w+", text)
             return " ".join(line)
 
-        temp = self.dataset.df[text_column].apply(lambda x: find_hash(x)).value_counts()[:][1:self.params["top_hashtags"]]
-        temp = temp.to_frame().reset_index().rename(columns={'index': 'Hashtag', text_column: 'count'})
+        temp = (
+            self.dataset.df[text_column]
+            .apply(lambda x: find_hash(x))
+            .value_counts()[:][1 : self.params["top_hashtags"]]
+        )
+        temp = (
+            temp.to_frame()
+            .reset_index()
+            .rename(columns={"index": "Hashtag", text_column: "count"})
+        )
 
         figures = []
         if not temp.empty:
             fig = plt.figure()
             sns.barplot(x="Hashtag", y="count", data=temp)
             plt.xticks(rotation=90)
-            figures.append(Figure(for_object=self,
-                                  key=self.name,
-                                  figure=fig,
-                                  ))
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=self.name,
+                    figure=fig,
+                )
+            )
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
-        return self.cache_results([],
-                                  passed=True,
-                                  figures=figures)
+        return self.cache_results([], passed=True, figures=figures)
