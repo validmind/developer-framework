@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from functools import partial
 from typing import List
+import numpy as np
 
 import pandas as pd
 from sklearn import metrics
@@ -65,7 +66,18 @@ class TrainingTestDegradation(ThresholdTest):
         )
 
     def run(self):
-        y_true = self.model.test_ds.y
+        if self.model.device_type and self.model._is_pytorch_model:
+            if not self.model.device_type == "gpu":
+                y_test_true = np.array(self.model.test_ds.y.cpu())
+                y_train_true = np.array(self.model.train_ds.y.cpu())
+
+            else:
+                y_test_true = np.array(self.model.test_ds.y)
+                y_train_true = np.array(self.model.train_ds.y)
+
+        else:
+            y_test_true = self.model.test_ds.y
+            y_train_true = self.model.train_ds.y
 
         train_class_pred = self.model.class_predictions(self.model.y_train_predict)
         test_class_pred = self.model.class_predictions(self.model.y_test_predict)
@@ -75,8 +87,8 @@ class TrainingTestDegradation(ThresholdTest):
         for metric in metrics_to_compare:
             metric_fn = self.default_metrics[metric]
 
-            train_score = metric_fn(self.model.train_ds.y, train_class_pred)
-            test_score = metric_fn(y_true, test_class_pred)
+            train_score = metric_fn(y_train_true, train_class_pred)
+            test_score = metric_fn(y_test_true, test_class_pred)
             degradation = (train_score - test_score) / train_score
 
             passed = degradation < self.params["max_threshold"]

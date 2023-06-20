@@ -2,7 +2,6 @@
 Dataset class wrapper
 """
 from dataclasses import dataclass, fields
-
 from dython.nominal import associations
 
 from ..logging import get_logger
@@ -11,6 +10,7 @@ from .dataset_utils import (
     generate_correlation_plots,
     parse_dataset_variables,
     validate_pd_dataset_targets,
+    parse_ts_dataset_variables
 )
 
 logger = get_logger(__name__)
@@ -44,7 +44,7 @@ class Dataset:
     type: str = None
     options: dict = None
     statistics: dict = None
-
+    text_column: str = None
     # Specify targets via DatasetTargets or via target_column and class_labels
     targets: dict = None
     target_column: str = ""
@@ -75,6 +75,11 @@ class Dataset:
         """
         Returns the dataset's features
         """
+        dataset_class = self.raw_dataset.__class__.__name__
+
+        if (dataset_class == "TensorDataset"):
+            return self.raw_dataset.tensors[0]
+
         return self.raw_dataset.drop(self.target_column, axis=1)
 
     @property
@@ -82,6 +87,11 @@ class Dataset:
         """
         Returns the dataset's target column
         """
+        dataset_class = self.raw_dataset.__class__.__name__
+
+        if (dataset_class == "TensorDataset") and (self.raw_dataset.tensors[1] is not None):
+            return self.raw_dataset.tensors[1]
+
         return self.raw_dataset[self.target_column]
 
     @property
@@ -332,7 +342,7 @@ class Dataset:
     # TODO: Accept type overrides from framework
     @classmethod
     def init_from_pd_dataset(
-        cls, df, options=None, targets=None, target_column=None, class_labels=None
+        cls, df, options=None, text_column=None, targets=None, target_column=None, class_labels=None
     ):
         """
         Initializes a Dataset object from a pandas DataFrame
@@ -363,6 +373,103 @@ class Dataset:
 
         return Dataset(
             raw_dataset=df,
+            fields=vm_dataset_variables,
+            sample=[
+                {
+                    "id": "head",
+                    "data": df_head,
+                },
+                {
+                    "id": "tail",
+                    "data": df_tail,
+                },
+            ],
+            shape=shape,
+            text_column=text_column,
+            targets=targets,
+            target_column=target_column,
+            class_labels=class_labels,
+            options=options,
+        )
+
+    # TODO: Accept variable descriptions from framework
+    # TODO: Accept type overrides from framework
+    @classmethod
+    def init_from_tensor_dataset(
+        cls, ts_dataset, options=None, targets=None, target_column=None, class_labels=None
+    ):
+        """
+        Initializes a Dataset instance from a tensor dataset.
+
+        Args:
+            cls (class): The class of the Dataset.
+            ts_dataset (TensorDataset): The tensor dataset to initialize from.
+            options (dict, optional): Additional options for dataset initialization. Defaults to None.
+            targets (np.array, pd.Series, optional): The target values for the dataset. Defaults to None.
+            target_column (str, optional): The name of the target column in the dataset. Defaults to None.
+            class_labels (list, optional): The list of class labels for classification tasks. Defaults to None.
+
+        Returns:
+            Dataset: The initialized Dataset instance.
+
+        Notes:
+            This method infers the dataset types, converts the input tensors into a dictionary of records,
+            and creates a Dataset instance with the provided information. It also validates the targets if provided.
+
+        """
+        print("Inferring dataset types...")
+        vm_dataset_variables = parse_ts_dataset_variables(ts_dataset, options)
+
+        shape = {
+            "rows": ts_dataset.tensors[0].shape[0],
+            "columns": ts_dataset.tensors[0].shape[1],
+        }
+
+        def convert_to_dict_records_head(dataset, num_rows):
+            # Get the input tensors from the dataset
+            inputs = dataset.tensors[0]
+
+            # Get the specified number of rows
+            subset_inputs = inputs[:num_rows]
+
+            # Convert the subset of inputs into a list of dictionaries
+            records = [
+                dict(zip(range(subset_inputs.shape[1]), row))
+                for row in subset_inputs
+            ]
+
+            return records
+
+        def convert_to_dict_records_tail(dataset, num_rows):
+            # Get input tensors from the dataset
+            inputs = dataset.tensors[0]
+
+            # Get the total number of rows in the dataset
+            total_rows = inputs.shape[0]
+
+            # Calculate the starting index for the tail subset
+            start_index = total_rows - num_rows
+
+            # Get the tail subset of rows
+            subset_inputs = inputs[start_index:]
+
+            # Convert the subset of inputs into a list of dictionaries
+            records = [
+                dict(zip(range(subset_inputs.shape[1]), row))
+                for row in subset_inputs
+            ]
+
+            return records
+
+        df_head = convert_to_dict_records_head(ts_dataset, 5)
+        df_tail = convert_to_dict_records_tail(ts_dataset, 5)
+
+        # TODO: validate with target_column and class_labels
+        if targets:
+            validate_pd_dataset_targets(ts_dataset, targets)
+
+        return Dataset(
+            raw_dataset=ts_dataset,
             fields=vm_dataset_variables,
             sample=[
                 {

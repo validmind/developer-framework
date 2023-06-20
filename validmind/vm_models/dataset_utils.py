@@ -2,6 +2,7 @@
 Utilities for manipulating VMDataset objects
 """
 
+from itertools import chain
 import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
@@ -73,6 +74,17 @@ def parse_dataset_variables(df, options=None):
         vm_dataset_variables[dummy] = {"id": dummy, "type": "Dummy"}
 
     return list(vm_dataset_variables.values())
+
+
+def parse_ts_dataset_variables(ts_dataset, options=None):
+    """
+    Currently this method gets name list down columns for tensors if name
+    of the columns provided by the sures
+    TODO: This method need to workout proper to infer datatype of each feature
+    """
+    columns = [ts.names for ts in ts_dataset.tensors]
+
+    return list(chain.from_iterable(columns))
 
 
 def validate_pd_dataset_targets(df, targets):
