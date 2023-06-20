@@ -3,7 +3,6 @@ Model class wrapper
 """
 from dataclasses import dataclass, fields
 from .dataset import Dataset
-import torch.nn as nn
 import inspect
 
 SUPPORTED_MODEL_TYPES = [
@@ -123,6 +122,11 @@ class Model:
         Checks if the model is a PyTorch model. Need to extend this
         method to check for all ways a PyTorch model can be created
         """
+        try:
+            import torch.nn as nn
+        except ImportError:
+            return False
+
         # return False
         # TBD. Fix setting PyTorch on Ubuntu
         return isinstance(model, nn.Module)
