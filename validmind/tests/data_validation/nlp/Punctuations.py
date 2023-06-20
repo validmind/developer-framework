@@ -36,13 +36,13 @@ class Punctuations(Metric):
 
         dic = defaultdict(int)
         special = string.punctuation
-        for i in (corpus):
+        for i in corpus:
             if i in special:
                 dic[i] += 1
 
         fig = plt.figure()
         x, y = zip(*dic.items())
-        plt.bar(x, y, color='#17C37B')
+        plt.bar(x, y, color="#17C37B")
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")

@@ -10,7 +10,7 @@ from .dataset_utils import (
     generate_correlation_plots,
     parse_dataset_variables,
     validate_pd_dataset_targets,
-    parse_ts_dataset_variables
+    parse_ts_dataset_variables,
 )
 
 logger = get_logger(__name__)
@@ -77,7 +77,7 @@ class Dataset:
         """
         dataset_class = self.raw_dataset.__class__.__name__
 
-        if (dataset_class == "TensorDataset"):
+        if dataset_class == "TensorDataset":
             return self.raw_dataset.tensors[0]
 
         return self.raw_dataset.drop(self.target_column, axis=1)
@@ -89,7 +89,9 @@ class Dataset:
         """
         dataset_class = self.raw_dataset.__class__.__name__
 
-        if (dataset_class == "TensorDataset") and (self.raw_dataset.tensors[1] is not None):
+        if (dataset_class == "TensorDataset") and (
+            self.raw_dataset.tensors[1] is not None
+        ):
             return self.raw_dataset.tensors[1]
 
         return self.raw_dataset[self.target_column]
@@ -342,7 +344,13 @@ class Dataset:
     # TODO: Accept type overrides from framework
     @classmethod
     def init_from_pd_dataset(
-        cls, df, options=None, text_column=None, targets=None, target_column=None, class_labels=None
+        cls,
+        df,
+        options=None,
+        text_column=None,
+        targets=None,
+        target_column=None,
+        class_labels=None,
     ):
         """
         Initializes a Dataset object from a pandas DataFrame
@@ -396,7 +404,12 @@ class Dataset:
     # TODO: Accept type overrides from framework
     @classmethod
     def init_from_tensor_dataset(
-        cls, ts_dataset, options=None, targets=None, target_column=None, class_labels=None
+        cls,
+        ts_dataset,
+        options=None,
+        targets=None,
+        target_column=None,
+        class_labels=None,
     ):
         """
         Initializes a Dataset instance from a tensor dataset.
@@ -434,8 +447,7 @@ class Dataset:
 
             # Convert the subset of inputs into a list of dictionaries
             records = [
-                dict(zip(range(subset_inputs.shape[1]), row))
-                for row in subset_inputs
+                dict(zip(range(subset_inputs.shape[1]), row)) for row in subset_inputs
             ]
 
             return records
@@ -455,8 +467,7 @@ class Dataset:
 
             # Convert the subset of inputs into a list of dictionaries
             records = [
-                dict(zip(range(subset_inputs.shape[1]), row))
-                for row in subset_inputs
+                dict(zip(range(subset_inputs.shape[1]), row)) for row in subset_inputs
             ]
 
             return records

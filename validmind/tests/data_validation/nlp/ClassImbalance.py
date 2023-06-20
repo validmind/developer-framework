@@ -62,16 +62,30 @@ class ClassImbalance(ThresholdTest):
         total_rows = sum(percentages)
 
         # Nomralize threshold based on number of classes
-        normalize_min_threshold = 100 // num_classes - self.params["min_percent_threshold"]
+        normalize_min_threshold = (
+            100 // num_classes - self.params["min_percent_threshold"]
+        )
         # Checking class imbalance
         imbalanced_classes = []
         for i, percentage in enumerate(percentages):
             class_label = classes[i]
             proportion = percentage / total_rows * 100
             if proportion < normalize_min_threshold:
-                imbalanced_classes.append({target_column: class_label, "percentage": f"{proportion:.2f}%", "Test": False})
+                imbalanced_classes.append(
+                    {
+                        target_column: class_label,
+                        "percentage": f"{proportion:.2f}%",
+                        "Test": False,
+                    }
+                )
             else:
-                imbalanced_classes.append({target_column: class_label, "percentage": f"{proportion:.2f}%", "Test": True})
+                imbalanced_classes.append(
+                    {
+                        target_column: class_label,
+                        "percentage": f"{proportion:.2f}%",
+                        "Test": True,
+                    }
+                )
 
         resultset = pd.DataFrame(imbalanced_classes)
         results = [
@@ -83,7 +97,9 @@ class ClassImbalance(ThresholdTest):
         ]
 
         fig, ax = plt.subplots()
-        sns.barplot(x=imbalance_percentages.index, y=imbalance_percentages.values, ax=ax)
+        sns.barplot(
+            x=imbalance_percentages.index, y=imbalance_percentages.values, ax=ax
+        )
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 

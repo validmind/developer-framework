@@ -138,8 +138,10 @@ class Model:
             return self.model.predict_proba(*args, **kwargs)[:, 1]
         if Model._is_pytorch_model(self.model):
             if not Model.has_method_with_arguments(self.model, "predict", 1):
-                raise ValueError("Model requires a implemention of predict method with 1 argument"
-                                 + " that is tensor features matrix")
+                raise ValueError(
+                    "Model requires a implemention of predict method with 1 argument"
+                    + " that is tensor features matrix"
+                )
             pred_y = self.model.predict(args[0].to(self.device_type))
             return pred_y
         return self.model.predict(*args, **kwargs)
@@ -192,8 +194,10 @@ class Model:
         Returns:
             bool: True if the model is supported, False otherwise
         """
-        is_supported = (f"{Model.model_library(model)}.{Model.model_class(model)}"
-                        in SUPPORTED_MODEL_TYPES) or (Model._is_pytorch_model(model))
+        is_supported = (
+            f"{Model.model_library(model)}.{Model.model_class(model)}"
+            in SUPPORTED_MODEL_TYPES
+        ) or (Model._is_pytorch_model(model))
 
         return is_supported
 
