@@ -8,7 +8,17 @@ import pandas as pd
 
 from ..utils import format_dataframe
 from .__types__ import ExternalTestProvider
+from .test_providers import GithubTestProvider, LocalTestProvider
 
+
+__all__ = [
+    "list_tests",
+    "load_test",
+    "describe_test",
+    "register_test_provider",
+    "GithubTestProvider",
+    "LocalTestProvider",
+]
 
 __legacy_mapping = None
 __tests = None
