@@ -23,7 +23,8 @@ class Duplicates(ThresholdTest):
     """
 
     category = "data_quality"
-    name = "duplicates"
+    # Changing the name test to avoid a name clash
+    name = "nlp_duplicates"
     required_context = ["dataset", "dataset.text_column"]
     default_params = {"min_threshold": 1}
 
