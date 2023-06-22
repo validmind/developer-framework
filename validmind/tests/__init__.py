@@ -35,7 +35,7 @@ def _get_legacy_test(content_id):
     if __legacy_mapping is None:
         __legacy_mapping = {}
         for test_id in list_tests(pretty=False):
-            test = load_test(test_id)
+            test = load_test(test_id, legacy=True)
             __legacy_mapping[test.name] = test_id
 
     return __legacy_mapping[content_id]
