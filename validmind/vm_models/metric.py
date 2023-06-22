@@ -41,15 +41,17 @@ class Metric(TestContextUtils):
         """
         Set default params if not provided
         """
-        if self.params is None:
-            self.params = self.default_params
+        self.params = {
+            **self.default_params,
+            **(self.params if self.params is not None else {}),
+        }
 
     @property
     def key(self):
         """
         Keep the key for compatibility reasons
         """
-        return self.name
+        return self._key if hasattr(self, "_key") else self.name
 
     def description(self):
         """

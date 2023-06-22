@@ -9,7 +9,6 @@ from typing import Optional
 
 import base64
 import matplotlib
-import plotly
 import plotly.graph_objs as go
 import ipywidgets as widgets
 
@@ -48,8 +47,8 @@ class Figure:
         # plots in regular Jupyter notebooks. This is not supported on Google Colab.
         if (
             not client_config.running_on_colab
-            and self.figure is not None
-            and isinstance(self.figure, plotly.graph_objs._figure.Figure)
+            and self.figure
+            and self.is_plotly_figure()
         ):
             self.figure = go.FigureWidget(self.figure)
 
@@ -63,9 +62,7 @@ class Figure:
         """
         Returns True if the figure is a plotly figure
         """
-        return isinstance(self.figure, plotly.graph_objs._figure.Figure) or isinstance(
-            self.figure, plotly.graph_objs._figurewidget.FigureWidget
-        )
+        return isinstance(self.figure, (go.Figure, go.FigureWidget))
 
     def _get_for_object_type(self):
         """

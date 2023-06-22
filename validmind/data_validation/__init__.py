@@ -1,3 +1,0 @@
-"""
-Data Validation module
-"""

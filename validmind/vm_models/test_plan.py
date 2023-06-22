@@ -9,6 +9,7 @@ import ipywidgets as widgets
 from IPython.display import display
 
 from ..logging import get_logger, log_performance
+from ..tests import load_test
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
@@ -29,7 +30,6 @@ class TestPlan:
     name: ClassVar[str]
     required_context: ClassVar[List[str]]
     tests: ClassVar[List[object]] = []
-    test_plans: ClassVar[List[object]] = []
     results: ClassVar[List[TestPlanResult]] = []
 
     # Instance Variables
@@ -37,8 +37,9 @@ class TestPlan:
     _global_config: dict() = None
     _test_configs: dict() = None
     test_context: TestContext = None
-    # Stores a reference to the child test plan instances
-    _test_plan_instances: List[object] = None
+
+    # Reference to the test classes (dynamic import after initialization)
+    _tests: List[object] = None
 
     # Single dataset for dataset-only tests
     dataset: Dataset = None
@@ -72,7 +73,7 @@ class TestPlan:
             self.models = self.test_context.models
 
         self.validate_context()
-
+        self._load_tests()
         self._split_configs()
 
     def _split_configs(self):
@@ -83,13 +84,17 @@ class TestPlan:
         self._global_config = {}
         self._test_configs = {}
 
-        test_names = [test.name for test in self.tests]
+        test_names = [test.name for test in self._tests]
 
         for key, value in self.config.items():
             if key in test_names:
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
+
+    def _load_tests(self):
+        """Dynamically import the test classes based on the test names"""
+        self._tests = [load_test(test) for test in self.tests]
 
     def title(self):
         """
@@ -152,7 +157,7 @@ class TestPlan:
         self.pbar = widgets.IntProgress(
             value=0,
             min=0,
-            max=len(self.tests) * 2 if send else len(self.results),  # tests and results
+            max=len(self.tests) * 2 if send else len(self.results),  # tests + results
             step=1,
             bar_style="",
             orientation="horizontal",
@@ -191,7 +196,7 @@ class TestPlan:
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)
 
-        for test in self.tests:
+        for test in self._tests:
             test_instance = test(
                 test_context=self.test_context,
                 params=self.get_config_params_for_test(test.name),
@@ -222,21 +227,6 @@ class TestPlan:
         if send:
             run_async(self.log_results)
             run_async_check(self._check_progress)
-
-        # TODO: remove
-        for test_plan in self.test_plans:
-            test_plan_instance = test_plan(
-                config=self.config,
-                test_context=self.test_context,
-                # pbar=self.pbar,
-            )
-            test_plan_instance.run(send=send)
-
-            # Build up the subtest plan instances so we can log them
-            if self._test_plan_instances is None:
-                self._test_plan_instances = []
-
-            self._test_plan_instances.append(test_plan_instance)
 
         self.summarize(render_summary)
 
@@ -362,27 +352,13 @@ class TestPlan:
         if render_summary:
             display(self.summary)
 
-    def _get_all_subtest_plan_results(self) -> List[TestPlanResult]:
-        """
-        Recursively gets all sub test plan results since a test plan
-        can have sub test plans which can have sub test plans and so on.
-        """
-        results = []
-        sub_test_plans = self._test_plan_instances or []
-        for test_plan in sub_test_plans:
-            if test_plan.results is not None:
-                results.extend(test_plan.results)
-
-            results.extend(test_plan._get_all_subtest_plan_results())
-
-        return results
-
     def get_results(self, result_id: str = None) -> List[TestPlanResult]:
         """
         Returns one or more results of the test plan. Includes results from
         sub test plans.
         """
-        all_results = (self.results or []) + self._get_all_subtest_plan_results()
+        all_results = self.results or []
+
         if result_id is None:
             return all_results
 

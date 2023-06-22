@@ -3,10 +3,7 @@ Model class wrapper
 """
 from dataclasses import dataclass, fields
 from .dataset import Dataset
-
-
-# import torch
-# import torch.nn as nn
+import inspect
 
 SUPPORTED_MODEL_TYPES = [
     "catboost.CatBoostClassifier",
@@ -75,10 +72,18 @@ class Model:
     y_test_predict: object = None
     y_validation_predict: object = None
 
+    # The device where model is trained
+    device_type: str = None
+
     def __post_init__(self):
         """
-        Initializes the predicted outputs of the training, test, and validation datasets.
+        Initialize
+        1. model device type
+        2. the predicted outputs of the training, test, and validation datasets.
         """
+        if Model._is_pytorch_model(self.model):
+            self.device_type = next(self.model.parameters()).device
+
         if self.model and self.train_ds:
             self.y_train_predict = self.predict(self.train_ds.x)
         if self.model and self.test_ds:
@@ -117,9 +122,15 @@ class Model:
         Checks if the model is a PyTorch model. Need to extend this
         method to check for all ways a PyTorch model can be created
         """
-        return False
+        # if we can't import torch, then it's not a PyTorch model
+        try:
+            import torch.nn as nn
+        except ImportError:
+            return False
+
+        # return False
         # TBD. Fix setting PyTorch on Ubuntu
-        # return isinstance(model, nn.Module)
+        return isinstance(model, nn.Module)
 
     def predict(self, *args, **kwargs):
         """
@@ -131,14 +142,31 @@ class Model:
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
         if Model._is_pytorch_model(self.model):
-            return []
-            # input_df = args[0]
-            # rest_args = args[1:]
-            # input_values = torch.tensor(input_df.values, dtype=torch.float32)
-            # predictions = self.model(input_values, *rest_args, **kwargs)
-            # return predictions.detach().numpy()
-
+            if not Model.has_method_with_arguments(self.model, "predict", 1):
+                raise ValueError(
+                    "Model requires a implemention of predict method with 1 argument"
+                    + " that is tensor features matrix"
+                )
+            pred_y = self.model.predict(args[0].to(self.device_type))
+            return pred_y
         return self.model.predict(*args, **kwargs)
+
+    @staticmethod
+    def has_method_with_arguments(cls, method_name, n_args):
+        if not hasattr(cls, method_name):
+            return False
+
+        method = getattr(cls, method_name)
+        if not inspect.ismethod(method) and not inspect.isfunction(method):
+            return False
+
+        signature = inspect.signature(method)
+        parameters = signature.parameters
+
+        if len(parameters) != n_args:
+            return False
+
+        return True
 
     @staticmethod
     def model_library(model):
@@ -171,10 +199,12 @@ class Model:
         Returns:
             bool: True if the model is supported, False otherwise
         """
-        return (
+        is_supported = (
             f"{Model.model_library(model)}.{Model.model_class(model)}"
             in SUPPORTED_MODEL_TYPES
-        )
+        ) or (Model._is_pytorch_model(model))
+
+        return is_supported
 
     @classmethod
     def init_vm_model(cls, model, train_ds, test_ds, validation_ds, attributes):

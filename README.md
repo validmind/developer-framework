@@ -8,6 +8,12 @@
 pip install validmind
 ```
 
+#### Install with PyTorch support
+
+```bash
+pip install validmind[pytorch]
+```
+
 #### Install with R support (requires R to be installed)
 
 ```bash
@@ -25,6 +31,27 @@ pip install validmind[r-support]
 ```bash
 poetry shell
 poetry install
+```
+
+### Installing PyTorch dependencies
+
+You can install the `pytorch` extra to install the necessary PyTorch dependencies by running:
+
+```bash
+poetry install --extras pytorch
+```
+
+### Creating a new Test
+
+All ValidMind Tests are in the `validmind/tests/` directory. Each test is its own separate file and should be named using Camel Case. For example, `MyNewTest.py`. Within this file should live a single Test class that matches the file name. For example, `class MyNewTest`. This class should inherit from `validmind.vm_models.Metric` or `validmind.vm_models.ThresholdTest` depending on the type of test you are creating. The tests are separated into subdirectories based on the different categories and types of tests. For example, `validmind/tests/model_validation/sklearn` contains all of the model validation tests for sklearn-compatible models. There are two subdirectories in this folder: `metrics/` and `threshold_tests/` that contain the different types of tests (any sub category can be used here and the `__init__.py` file will automatically pick up the tests). Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples of this as well as for information on how the directory relates to the test's ID which is used across the ValidMind platform.
+
+To create a new test, you can use the create_new_test.py script to generate a metric or threshold test. This script will create a new test file in the appropriate directory and will also create a new test class in that file. It is registered as a custom Poetry script in the `pyproject.toml` so it can be used as follows:
+
+```bash
+generate-test --help  # see the usage instructions
+generate-test  # interactively create a new test (will prompt for the test type and ID)
+generate-test --test_type metric --test_id validmind.model_validation.sklearn.MyNewMetric  # create a new metric test for sklearn models
+generate-test --test_type threshold_test --test_id validmind.data_validation.MyNewDataTest  # create a new threshold test for data validation
 ```
 
 ### Installing R dependencies

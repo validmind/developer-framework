@@ -1,27 +1,7 @@
 """
 Time Series Test Plans
 """
-from ..vm_models import TestPlan
-from ..data_validation.metrics import (
-    TimeSeriesLinePlot,
-    TimeSeriesHistogram,
-    ACFandPACFPlot,
-    SeasonalDecompose,
-    AutoSeasonality,
-    AutoStationarity,
-    RollingStatsPlot,
-    AutoAR,
-    AutoMA,
-    ScatterPlot,
-    LaggedCorrelationHeatmap,
-    EngleGrangerCoint,
-    SpreadPlot,
-)
-
-from ..model_validation.statsmodels.metrics import (
-    RegressionModelForecastPlotLevels,
-    RegressionModelSensitivityPlot,
-)
+from validmind.vm_models import TestPlan
 
 
 class TimeSeriesUnivariate(TestPlan):
@@ -32,15 +12,15 @@ class TimeSeriesUnivariate(TestPlan):
     name = "time_series_univariate"
     required_context = ["dataset"]
     tests = [
-        TimeSeriesLinePlot,
-        TimeSeriesHistogram,
-        ACFandPACFPlot,
-        SeasonalDecompose,
-        AutoSeasonality,
-        AutoStationarity,
-        RollingStatsPlot,
-        AutoAR,
-        AutoMA,
+        "validmind.data_validation.TimeSeriesLinePlot",
+        "validmind.data_validation.TimeSeriesHistogram",
+        "validmind.data_validation.ACFandPACFPlot",
+        "validmind.data_validation.SeasonalDecompose",
+        "validmind.data_validation.AutoSeasonality",
+        "validmind.data_validation.AutoStationarity",
+        "validmind.data_validation.RollingStatsPlot",
+        "validmind.data_validation.AutoAR",
+        "validmind.data_validation.AutoMA",
     ]
 
     def description(self):
@@ -65,10 +45,10 @@ class TimeSeriesMultivariate(TestPlan):
     name = "time_series_multivariate"
     required_context = ["dataset"]
     tests = [
-        ScatterPlot,
-        LaggedCorrelationHeatmap,
-        EngleGrangerCoint,
-        SpreadPlot,
+        "validmind.data_validation.ScatterPlot",
+        "validmind.data_validation.LaggedCorrelationHeatmap",
+        "validmind.data_validation.EngleGrangerCoint",
+        "validmind.data_validation.SpreadPlot",
     ]
 
     def description(self):
@@ -94,7 +74,7 @@ class TimeSeriesForecast(TestPlan):
 
     name = "time_series_forecast"
     required_context = ["models"]
-    tests = [RegressionModelForecastPlotLevels]
+    tests = ["validmind.model_validation.statsmodels.RegressionModelForecastPlotLevels"]
 
     def description(self):
         return """
@@ -109,7 +89,7 @@ class TimeSeriesSensitivity(TestPlan):
 
     name = "time_series_sensitivity"
     required_context = ["models"]
-    tests = [RegressionModelSensitivityPlot]
+    tests = ["validmind.model_validation.statsmodels.RegressionModelSensitivityPlot"]
 
     def description(self):
         return """

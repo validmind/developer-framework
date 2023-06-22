@@ -9,8 +9,13 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 
 # from .model_validation import evaluate_model as mod_evaluate_model
 from .client_config import client_config
-from .test_plans import get_by_name as get_test_plan_by_name
-from .test_suites import get_by_name as get_test_suite_by_name
+from .logging import get_logger
+from .template import (
+    preview_template as _preview_template,
+    run_template as _run_template,
+)
+from .test_plans import get_by_id as get_test_plan
+from .test_suites import get_by_id as get_test_suite
 from .vm_models import (
     Dataset,
     DatasetTargets,
@@ -19,10 +24,11 @@ from .vm_models import (
     R_MODEL_TYPES,
     TestPlan,
     TestSuite,
-    preview_template as _preview_template,
 )
 
 pd.option_context("format.precision", 2)
+
+logger = get_logger(__name__)
 
 
 def init_dataset(
@@ -30,6 +36,7 @@ def init_dataset(
     type: str = "training",
     options: dict = None,
     targets: DatasetTargets = None,
+    text_column: str = None,
     target_column: str = None,
     class_labels: dict = None,
 ) -> Dataset:
@@ -58,12 +65,19 @@ def init_dataset(
 
     # TODO: when we accept numpy datasets we can convert them to/from pandas
     if dataset_class == "DataFrame":
-        print("Pandas dataset detected. Initializing VM Dataset instance...")
+        logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
         vm_dataset = Dataset.init_from_pd_dataset(
+            dataset, options, text_column, targets, target_column, class_labels
+        )
+    elif dataset_class == "TensorDataset":
+        print("Initializing VM Dataset instance...")
+        vm_dataset = Dataset.init_from_tensor_dataset(
             dataset, options, targets, target_column, class_labels
         )
     else:
-        raise ValueError("Only Pandas datasets are supported at the moment.")
+        raise ValueError(
+            "Only Pandas datasets and Tensor Datasets are supported at the moment."
+        )
 
     vm_dataset.type = type
 
@@ -199,7 +213,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         dict: A dictionary of test results
     """
     try:
-        Plan: TestPlan = get_test_plan_by_name(test_plan_name)
+        Plan: TestPlan = get_test_plan(test_plan_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
@@ -238,7 +252,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
         TestSuite: the TestSuite instance
     """
     try:
-        Suite: TestSuite = get_test_suite_by_name(test_suite_name)
+        Suite: TestSuite = get_test_suite(test_suite_name)
     except ValueError as exc:
         raise ValueError(
             "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))
@@ -261,8 +275,31 @@ def preview_template():
 
     This function will display the documentation template for the current project. If
     the project has not been initialized, then an error will be raised.
+
+    Raises:
+        ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
         raise ValueError("No documentation template found. Please run `vm.init()`")
 
     _preview_template(client_config.documentation_template)
+
+
+def run_template(*args, **kwargs):
+    """Collect and run all the tests associated with a template
+
+    This function will analyze the current project's documentation template and collect
+    all the tests associated with it into a test suite. It will then run the test
+    suite, log the results to the ValidMind API and display them to the user.
+
+    Args:
+        *args: Arguments to pass to the TestSuite
+        **kwargs: Keyword arguments to pass to the TestSuite
+
+    Raises:
+        ValueError: If the project has not been initialized
+    """
+    if client_config.documentation_template is None:
+        raise ValueError("No documentation template found. Please run `vm.init()`")
+
+    _run_template(client_config.documentation_template, *args, **kwargs)

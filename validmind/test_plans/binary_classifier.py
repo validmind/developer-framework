@@ -5,28 +5,7 @@ Ideal setup is to have the API client to read a
 custom test plan from the project's configuration
 """
 
-from ..vm_models import TestPlan
-from ..data_validation.metrics import DatasetSplit
-from ..model_validation.model_metadata import ModelMetadata
-from ..model_validation.sklearn.metrics import (
-    ClassifierInSamplePerformance,
-    ClassifierOutOfSamplePerformance,
-    ConfusionMatrix,
-    PermutationFeatureImportance,
-    PrecisionRecallCurve,
-    ROCCurve,
-    PopulationStabilityIndex,
-    SHAPGlobalImportance,
-)
-from ..model_validation.sklearn.threshold_tests import (
-    MinimumAccuracy,
-    MinimumF1Score,
-    MinimumROCAUCScore,
-    TrainingTestDegradation,
-    OverfitDiagnosis,
-    WeakspotsDiagnosis,
-    RobustnessDiagnosis,
-)
+from validmind.vm_models import TestPlan
 
 
 class BinaryClassifierMetrics(TestPlan):
@@ -37,16 +16,16 @@ class BinaryClassifierMetrics(TestPlan):
     name = "binary_classifier_metrics"
     required_context = ["model"]
     tests = [
-        ModelMetadata,
-        DatasetSplit,
-        ConfusionMatrix,
-        ClassifierInSamplePerformance,
-        ClassifierOutOfSamplePerformance,
-        PermutationFeatureImportance,
-        PrecisionRecallCurve,
-        ROCCurve,
-        PopulationStabilityIndex,
-        SHAPGlobalImportance,
+        "validmind.model_validation.ModelMetadata",
+        "validmind.data_validation.DatasetSplit",
+        "validmind.model_validation.sklearn.ConfusionMatrix",
+        "validmind.model_validation.sklearn.ClassifierInSamplePerformance",
+        "validmind.model_validation.sklearn.ClassifierOutOfSamplePerformance",
+        "validmind.model_validation.sklearn.PermutationFeatureImportance",
+        "validmind.model_validation.sklearn.PrecisionRecallCurve",
+        "validmind.model_validation.sklearn.ROCCurve",
+        "validmind.model_validation.sklearn.PopulationStabilityIndex",
+        "validmind.model_validation.sklearn.SHAPGlobalImportance",
     ]
 
 
@@ -58,10 +37,10 @@ class BinaryClassifierPerformance(TestPlan):
     name = "binary_classifier_validation"
     required_context = ["model"]
     tests = [
-        MinimumAccuracy,
-        MinimumF1Score,
-        MinimumROCAUCScore,
-        TrainingTestDegradation,
+        "validmind.model_validation.sklearn.MinimumAccuracy",
+        "validmind.model_validation.sklearn.MinimumF1Score",
+        "validmind.model_validation.sklearn.MinimumROCAUCScore",
+        "validmind.model_validation.sklearn.TrainingTestDegradation",
     ]
 
 
@@ -73,7 +52,7 @@ class BinaryClassifierDiagnosis(TestPlan):
     name = "binary_classifier_model_diagnosis"
     required_context = ["model"]
     tests = [
-        OverfitDiagnosis,
-        WeakspotsDiagnosis,
-        RobustnessDiagnosis,
+        "validmind.model_validation.sklearn.OverfitDiagnosis",
+        "validmind.model_validation.sklearn.WeakspotsDiagnosis",
+        "validmind.model_validation.sklearn.RobustnessDiagnosis",
     ]
