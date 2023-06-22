@@ -51,7 +51,7 @@ class Metric(TestContextUtils):
         """
         Keep the key for compatibility reasons
         """
-        return self.name
+        return self._key if hasattr(self, "_key") else self.name
 
     def description(self):
         """
