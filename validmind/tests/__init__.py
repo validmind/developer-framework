@@ -102,31 +102,37 @@ def list_tests(filter=None, pretty=True):
     return tests
 
 
-def load_test(test_id):
+def load_test(test_id, legacy=False):
     parts = test_id.split(".")
 
     # for now this code will handle the legacy test IDs
     # (e.g. "ModelMetadata" instead of "validmind.model_validation.ModelMetadata")
     if len(parts) == 1:
-        return load_test(_get_legacy_test(test_id))
+        return load_test(_get_legacy_test(test_id), legacy=True)
 
     namespace = parts[0]
+
+    if namespace != "validmind" and namespace not in __test_providers:
+        raise ValueError(
+            f"Unable to load test {test_id}. No known namespace found {namespace}"
+        )
 
     if namespace == "validmind":
         test_module = ".".join(parts[1:-1])
         test_class = parts[-1]
 
-        return getattr(
+        test = getattr(
             importlib.import_module(f"validmind.tests.{test_module}.{test_class}"),
             test_class,
         )
 
-    if namespace in __test_providers:
-        return __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+    elif namespace in __test_providers:
+        test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
 
-    raise ValueError(
-        f"Unable to load test {test_id}. No known namespace found {namespace}"
-    )
+    if not legacy:
+        test._key = test_id
+
+    return test
 
 
 def describe_test(test_name: str = None, test_id: str = None):

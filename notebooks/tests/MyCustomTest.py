@@ -3,7 +3,7 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 class MyCustomTest(Metric):
     """
-    This is a custom test from an external test provider.
+    This is a custom test from my local file system.
     """
 
     type = "dataset"
