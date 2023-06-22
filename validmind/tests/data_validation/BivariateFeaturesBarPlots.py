@@ -15,23 +15,20 @@ class BivariateFeaturesBarPlots(Metric):
 
     name = "bivariate_features_bar_plots"
     required_context = ["dataset"]
-    default_params = {"features_pairs": None, "target_filter": None}
+    default_params = {"features_pairs": None}
 
     def run(self):
         features_pairs = self.params["features_pairs"]
-        target_filter = self.params["target_filter"]
 
-        figures = self.plot_bivariate_bar(features_pairs, target_filter)
+        figures = self.plot_bivariate_bar(features_pairs)
 
         return self.cache_results(figures=figures)
 
-    def plot_bivariate_bar(self, features_pairs, target_filter):
+    def plot_bivariate_bar(self, features_pairs):
         status_var = self.dataset.target_column
         figures = []
         for x, hue in features_pairs.items():
             df = self.dataset.df
-            if target_filter:
-                df = df[df[status_var].isin(target_filter)]
 
             means = df.groupby([x, hue])[status_var].mean().unstack().reset_index()
             hue_categories = means.columns[1:]
