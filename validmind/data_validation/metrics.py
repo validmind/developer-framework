@@ -557,35 +557,40 @@ class TabularDescriptionTables(Metric):
         )
 
 
-class LoanDefaultRatio(Metric):
+class DefaultRatioBarPlots(Metric):
     """
     Generates a visual analysis of loan default ratios by plotting bar plots.
     The input dataset can have multiple categorical variables if necessary.
     In this case, we produce a separate plot for each categorical variable.
     """
 
-    name = "loan_default_ratio"
+    name = "default_ratio_bar_plots"
     required_context = ["dataset"]
-    default_params = {"loan_status_col": None, "columns": None}
+    default_params = {"default_column": None, "columns": None}
 
-    def plot_loan_default_ratio(self, loan_status_col, columns=None, rsorted=True):
+    def plot_loan_default_ratio(self, default_column, columns=None, rsorted=True):
         df = self.dataset.df
 
-        # Use all features if columns is not specified, else use selected columns
-        features = df.columns if columns is None else columns
-
+        # Use all categorical features if columns is not specified, else use selected columns
+        if columns is None:
+            features = self.dataset.get_categorical_features_columns()
+        else:
+            features = columns
+        print(features)
         figures = []
         for feature in features:
             fig, axs = plt.subplots(1, 2)
 
             # Create sorted unique list of feature values for both plots
             feature_dimension = (
-                sorted(df[feature].unique()) if rsorted else df[feature].unique()
+                sorted(df[feature].unique().astype(str))
+                if rsorted
+                else df[feature].unique().astype(str)
             )
 
             # First subplot for univariate count
             count_values = [
-                df[df[feature] == fd][loan_status_col].count()
+                df[df[feature] == fd][default_column].count()
                 for fd in feature_dimension
             ]
             axs[0].bar(feature_dimension, count_values, color="#6699cc")
@@ -594,8 +599,7 @@ class LoanDefaultRatio(Metric):
 
             # Second subplot for univariate ratio
             ratio_values = [
-                df[df[feature] == fd][loan_status_col].mean()
-                for fd in feature_dimension
+                df[df[feature] == fd][default_column].mean() for fd in feature_dimension
             ]
             axs[1].bar(feature_dimension, ratio_values, color="orange")
             axs[1].set_title(f"{feature}", fontsize=18)
@@ -616,29 +620,29 @@ class LoanDefaultRatio(Metric):
             figures=figures,
         )
 
-    def check_loan_status(self, loan_status_col):
-        if loan_status_col is None:
-            raise ValueError("The loan_status_col parameter needs to be specified.")
+    def check_default_column(self, default_column):
+        if default_column is None:
+            raise ValueError("The default_column parameter needs to be specified.")
 
-        unique_values = self.dataset.df[loan_status_col].unique()
+        unique_values = self.dataset.df[default_column].unique()
         binary_values = [0, 1]
 
         if sorted(unique_values) != binary_values:
             raise ValueError(
-                f"The column {loan_status_col} is not binary. It contains: {unique_values}"
+                f"The column {default_column} is not binary. It contains: {unique_values}"
             )
 
-        print(f"The column {loan_status_col} is correct and contains only 1 and 0.")
+        print(f"The column {default_column} is correct and contains only 1 and 0.")
 
     def run(self):
-        loan_status = self.params["loan_status_col"]
+        default_column = self.params["default_column"]
         columns = self.params["columns"]
 
         # Check loan status variable has only 1 and 0
-        self.check_loan_status(loan_status)
+        self.check_default_column(default_column)
 
         return self.plot_loan_default_ratio(
-            loan_status_col=loan_status, columns=columns
+            default_column=default_column, columns=columns
         )
 
 
