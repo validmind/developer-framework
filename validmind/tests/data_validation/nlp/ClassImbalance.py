@@ -26,7 +26,8 @@ class ClassImbalance(ThresholdTest):
     """
 
     category = "data_quality"
-    name = "class_imbalance"
+    # Changing the name test to avoid a name clash
+    name = "nlp_class_imbalance"
     required_context = ["dataset"]
     default_params = {"min_percent_threshold": 10}
 

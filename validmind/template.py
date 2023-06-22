@@ -146,8 +146,6 @@ def _create_section_test_plan(section):
         A dynamically-created TestPlan Class
     """
     section_tests = _get_section_tests(section)
-    for sub_section in section["sections"]:
-        section_tests.extend(_get_section_tests(sub_section))
 
     if section_tests:
         return type(
