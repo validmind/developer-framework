@@ -14,17 +14,17 @@ class BivariateHistograms(Metric):
 
     name = "bivariate_histograms"
     required_context = ["dataset"]
-    default_params = {"variable_pairs": None, "status_filter": None}
+    default_params = {"features_pairs": None, "target_filter": None}
 
-    def plot_bivariate_histogram(self, variable_pairs, status_filter):
+    def plot_bivariate_histogram(self, features_pairs, target_filter):
         status_var = self.dataset.target_column
         figures = []
         palette = {0: (0.5, 0.5, 0.5, 0.8), 1: "tab:red"}
 
-        for x, y in variable_pairs.items():
+        for x, y in features_pairs.items():
             df = self.dataset.df
-            if status_filter:
-                df = df[df[status_var] == status_filter]
+            if target_filter is not None:
+                df = df[df[status_var] == target_filter]
 
             fig, axes = plt.subplots(2, 1)
 
@@ -37,7 +37,7 @@ class BivariateHistograms(Metric):
                         color=color,
                         edgecolor=None,
                         kde=True,
-                        label="Category 1" if status else "Category 2",
+                        label=status_var if status else "Non-" + status_var,
                     )
 
                 ax.set_title(f"Histogram of {var} by {status_var}")
@@ -56,9 +56,9 @@ class BivariateHistograms(Metric):
         return figures
 
     def run(self):
-        variable_pairs = self.params["variable_pairs"]
-        status_filter = self.params["status_filter"]
+        features_pairs = self.params["features_pairs"]
+        target_filter = self.params["target_filter"]
 
-        figures = self.plot_bivariate_histogram(variable_pairs, status_filter)
+        figures = self.plot_bivariate_histogram(features_pairs, target_filter)
 
         return self.cache_results(figures=figures)

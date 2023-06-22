@@ -14,15 +14,15 @@ class BivariateScatterPlots(Metric):
 
     name = "bivariate_scatter_plots"
     required_context = ["dataset"]
-    default_params = {"variable_pairs": None, "status_filter": None}
+    default_params = {"features_pairs": None, "target_filter": None}
 
-    def plot_bivariate_scatter(self, variable_pairs, status_filter):
+    def plot_bivariate_scatter(self, features_pairs, target_filter):
         status_var = self.dataset.target_column
         figures = []
-        for x, y in variable_pairs.items():
+        for x, y in features_pairs.items():
             df = self.dataset.df
-            if status_filter:
-                df = df[df[status_var] == status_filter]
+            if target_filter is not None:
+                df = df[df[status_var] == target_filter]
 
             plt.figure()
 
@@ -54,9 +54,9 @@ class BivariateScatterPlots(Metric):
         return figures
 
     def run(self):
-        variable_pairs = self.params["variable_pairs"]
-        status_filter = self.params["status_filter"]
+        features_pairs = self.params["features_pairs"]
+        target_filter = self.params["target_filter"]
 
-        figures = self.plot_bivariate_scatter(variable_pairs, status_filter)
+        figures = self.plot_bivariate_scatter(features_pairs, target_filter)
 
         return self.cache_results(figures=figures)
