@@ -129,8 +129,9 @@ def load_test(test_id, legacy=False):
     elif namespace in __test_providers:
         test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
 
-    if not legacy:
-        test._key = test_id
+    # TODO: restore non-legacy flag for test IDs once we have a migration plan for existing templates
+    # if not legacy:
+    #     test._key = test_id
 
     return test
 
