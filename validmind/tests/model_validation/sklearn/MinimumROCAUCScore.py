@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+import numpy as np
 
 import pandas as pd
 from sklearn import metrics
@@ -49,7 +50,14 @@ class MinimumROCAUCScore(ThresholdTest):
         )
 
     def run(self):
-        y_true = self.model.test_ds.y
+        if self.model.device_type and self.model._is_pytorch_model:
+            if not self.model.device_type == "gpu":
+                y_true = np.array(self.model.test_ds.y.cpu())
+            else:
+                y_true = np.array(self.model.test_ds.y)
+        else:
+            y_true = self.model.test_ds.y
+
         class_pred = self.model.class_predictions(self.model.y_test_predict)
         roc_auc = metrics.roc_auc_score(y_true, class_pred)
 

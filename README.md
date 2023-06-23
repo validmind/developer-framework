@@ -8,6 +8,12 @@
 pip install validmind
 ```
 
+#### Install with PyTorch support
+
+```bash
+pip install validmind[pytorch]
+```
+
 #### Install with R support (requires R to be installed)
 
 ```bash
@@ -25,6 +31,14 @@ pip install validmind[r-support]
 ```bash
 poetry shell
 poetry install
+```
+
+### Installing PyTorch dependencies
+
+You can install the `pytorch` extra to install the necessary PyTorch dependencies by running:
+
+```bash
+poetry install --extras pytorch
 ```
 
 ### Creating a new Test
