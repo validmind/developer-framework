@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import numpy as np
 
 import plotly.figure_factory as ff
 from sklearn import metrics
@@ -25,8 +26,15 @@ class ConfusionMatrix(Metric):
         """
 
     def run(self):
-        y_true = self.model.test_ds.y
-        y_labels = list(map(lambda x: x.item(), y_true.unique()))
+        if self.model.device_type and self.model._is_pytorch_model:
+            if not self.model.device_type == "gpu":
+                y_true = np.array(self.model.test_ds.y.cpu())
+            else:
+                y_true = np.array(self.model.test_ds.y)
+        else:
+            y_true = np.array(self.model.test_ds.y)
+
+        y_labels = np.unique(y_true)
         y_labels.sort()
 
         class_pred = self.model.class_predictions(self.model.y_test_predict)

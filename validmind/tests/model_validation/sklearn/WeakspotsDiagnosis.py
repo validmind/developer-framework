@@ -14,6 +14,7 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
+    Model,
 )
 
 
@@ -59,15 +60,17 @@ class WeakspotsDiagnosis(ThresholdTest):
         """
 
     def run(self):
+        model_library = Model.model_library(self.model.model)
+        if model_library == "statsmodels" or model_library == "pytorch":
+            print(f"Skiping Weakspots Diagnosis test for {model_library} models")
+            return
+
         thresholds = self.params["thresholds"]
 
         # Ensure there is a threshold for each metric
         for metric in self.default_metrics.keys():
             if metric not in thresholds:
                 raise ValueError(f"Threshold for metric {metric} is missing")
-
-        if self.model is None:
-            raise ValueError("model must of provided to run this test")
 
         if self.params["features_columns"] is None:
             features_list = self.model.train_ds.get_features_columns()

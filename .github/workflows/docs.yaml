@@ -38,6 +38,9 @@ jobs:
       - name: Install Dependencies
         run: poetry install
 
+      - name: Install PyTorch CPU
+        run: poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
+
       - name: Generate Docs
         run: make docs
 

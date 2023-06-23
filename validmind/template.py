@@ -74,11 +74,28 @@ def _create_sub_section_widget(sub_sections, section_number):
 def _create_section_widget(tree):
     widget = Accordion()
     for i, section in enumerate(tree):
-        widget.children = (
-            *widget.children,
-            _create_sub_section_widget(section["sections"], i + 1),
-        )
+        sub_widget = None
+        if section.get("sections"):
+            sub_widget = _create_sub_section_widget(section["sections"], i + 1)
+
+        if section.get("contents"):
+            contents_widget = VBox(
+                [_create_content_widget(content) for content in section["contents"]]
+            )
+            if sub_widget:
+                sub_widget.children = (
+                    *sub_widget.children,
+                    contents_widget,
+                )
+            else:
+                sub_widget = contents_widget
+
+        if not sub_widget:
+            sub_widget = HTML("<p>Empty Section</p>")
+
+        widget.children = (*widget.children, sub_widget)
         widget.set_title(i, f"{i + 1}. {section['title']}")
+
     return widget
 
 
@@ -128,9 +145,7 @@ def _create_section_test_plan(section):
     Returns:
         A dynamically-created TestPlan Class
     """
-    section_tests = []
-    for sub_section in section["sections"]:
-        section_tests.extend(_get_section_tests(sub_section))
+    section_tests = _get_section_tests(section)
 
     if section_tests:
         return type(
