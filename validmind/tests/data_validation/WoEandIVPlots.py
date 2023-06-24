@@ -84,7 +84,8 @@ class WoEandIVPlots(Metric):
                 x="Value", y="WoE", data=variable_df, ax=axs[0, 0], color="skyblue"
             )
             axs[0, 0].set_title(f"WoE for {variable}")
-            axs[0, 0].set_ylabel("Weight of Evidence (WoE)")
+            axs[0, 0].set_ylabel(None)
+            axs[0, 0].set_xlabel(None)
             axs[0, 0].set_xticklabels(
                 axs[0, 0].get_xticklabels(), rotation=label_rotation
             )
@@ -94,7 +95,8 @@ class WoEandIVPlots(Metric):
                 x="Value", y="IV", data=variable_df, ax=axs[0, 1], color="skyblue"
             )
             axs[0, 1].set_title(f"IV for {variable}")
-            axs[0, 1].set_ylabel("Information Value (IV)")
+            axs[0, 1].set_ylabel(None)
+            axs[0, 0].set_xlabel(None)
             axs[0, 1].set_xticklabels(
                 axs[0, 1].get_xticklabels(), rotation=label_rotation
             )
@@ -107,7 +109,8 @@ class WoEandIVPlots(Metric):
                 x="Value", y="value", hue="variable", data=distribution_df, ax=axs[1, 0]
             )
             axs[1, 0].set_title(f"Distribution of Good and Bad for {variable}")
-            axs[1, 0].set_ylabel("Distribution")
+            axs[1, 0].set_ylabel(None)
+            axs[0, 0].set_xlabel(None)
             axs[1, 0].set_xticklabels(
                 axs[1, 0].get_xticklabels(), rotation=label_rotation
             )
@@ -115,7 +118,8 @@ class WoEandIVPlots(Metric):
             # WoE trend plot
             sns.lineplot(x="Value", y="WoE", data=variable_df, marker="o", ax=axs[1, 1])
             axs[1, 1].set_title(f"WoE Trend for {variable}")
-            axs[1, 1].set_ylabel("Weight of Evidence (WoE)")
+            axs[1, 1].set_ylabel(None)
+            axs[0, 0].set_xlabel(None)
             axs[1, 1].set_xticklabels(
                 axs[1, 1].get_xticklabels(), rotation=label_rotation
             )
