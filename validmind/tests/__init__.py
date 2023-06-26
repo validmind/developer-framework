@@ -113,8 +113,8 @@ def load_test(test_id, legacy=False):
     namespace = parts[0]
 
     if namespace != "validmind" and namespace not in __test_providers:
-        raise ValueError(
-            f"Unable to load test {test_id}. No known namespace found {namespace}"
+        raise FileNotFoundError(
+            f"Unable to load test {test_id}. Namespace not found: {namespace}"
         )
 
     if namespace == "validmind":

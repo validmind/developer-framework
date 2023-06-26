@@ -50,5 +50,9 @@ class ExternalTestProvider(Protocol):
                 the test is registered)
 
         Returns:
-            ExternalTest: The test object"""
+            ExternalTest: The test object
+
+        Raises:
+            FileNotFoundError: If the test is not found
+        """
         ...
