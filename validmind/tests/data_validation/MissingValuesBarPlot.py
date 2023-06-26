@@ -20,9 +20,9 @@ class MissingValuesBarPlot(Metric):
         threshold = self.params["threshold"]
         xticks_fontsize = self.params["xticks_fontsize"]
 
-        figures = self.visualize_missing_values(threshold, xticks_fontsize)
+        figure = self.visualize_missing_values(threshold, xticks_fontsize)
 
-        return self.cache_results(figures=figures)
+        return self.cache_results(figures=figure)
 
     def visualize_missing_values(self, threshold, xticks_fontsize):
         # Calculate the percentage of missing values in each column
@@ -44,7 +44,7 @@ class MissingValuesBarPlot(Metric):
                 colors.append("lightcoral")
 
         # Create a bar plot of missing value percentages
-        plt.figure()
+        fig = plt.figure()
         ax = sns.barplot(
             x=missing_percentages_sorted.index,
             y=missing_percentages_sorted.values,
@@ -69,10 +69,7 @@ class MissingValuesBarPlot(Metric):
 
         plt.legend()
         plt.tight_layout()
-        plt.show()
-
-        figure = Figure(for_object=self, key=self.key, figure=plt.figure())
-
         plt.close("all")
 
+        figure = Figure(for_object=self, key=self.key, figure=fig)
         return [figure]

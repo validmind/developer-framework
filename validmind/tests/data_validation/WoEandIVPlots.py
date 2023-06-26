@@ -128,9 +128,7 @@ class WoEandIVPlots(Metric):
             plt.show()
 
             figures.append(
-                Figure(
-                    for_object=self, key=f"{self.key}:{variable}", figure=plt.figure()
-                )
+                Figure(for_object=self, key=f"{self.key}:{variable}", figure=fig)
             )
 
         plt.close("all")
