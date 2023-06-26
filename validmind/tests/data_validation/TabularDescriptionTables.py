@@ -116,7 +116,9 @@ class TabularDescriptionTables(Metric):
         )
 
     def get_categorical_columns(self):
-        categorical_columns = self.df.select_dtypes(include="object").columns.tolist()
+        categorical_columns = self.df.select_dtypes(
+            include=["object", "category"]
+        ).columns.tolist()
         return categorical_columns
 
     def get_numerical_columns(self):
