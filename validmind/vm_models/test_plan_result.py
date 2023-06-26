@@ -116,6 +116,26 @@ class TestPlanResult(ABC):
 
 
 @dataclass
+class TestPlanFailedResult(TestPlanResult):
+    """
+    Result wrapper for test plans that fail to load or run properly
+    """
+
+    name: str = "TestPlanFailedResult"
+    error: Exception = None
+    message: str = None
+
+    def __repr__(self) -> str:
+        return f'TestPlanFailedResult(result_id="{self.result_id}")'
+
+    def _to_widget(self):
+        return widgets.HTML(value=f"<h3>{self.error}</h3>")
+
+    async def log(self):
+        pass
+
+
+@dataclass
 class TestPlanDatasetResult(TestPlanResult):
     """
     Result wrapper for datasets that run as part of a test plan
