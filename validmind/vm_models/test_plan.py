@@ -14,7 +14,7 @@ from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
 from .test_context import TestContext
-from .test_plan_result import TestPlanResult
+from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
 logger = get_logger(__name__)
 
@@ -94,7 +94,22 @@ class TestPlan:
 
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
-        self._tests = [load_test(test) for test in self.tests]
+        self._tests = []
+        for test_id in self.tests:
+            try:
+                test_class = load_test(test_id)
+            except FileNotFoundError as e:
+                self.results.append(
+                    TestPlanFailedResult(
+                        error=e,
+                        message=f"Failed to load test '{test_id}'",
+                    )
+                )
+            except Exception as e:
+                logger.error(f"Failed to load test '{test_id}': {e}")
+                raise e
+
+            self._tests.append(test_class)
 
     def title(self):
         """
