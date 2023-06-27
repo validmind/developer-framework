@@ -7,7 +7,7 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class WoEandIVPlots(Metric):
+class WOEIVPlots(Metric):
     """
     Generates a visual analysis of the WoE and IV values distribution for categorical variables.
     The input dataset is required.
@@ -21,13 +21,10 @@ class WoEandIVPlots(Metric):
         df = self.dataset.df
         target_column = self.dataset.target_column
         features = self.params["features"]
+        label_rotation = self.params["label_rotation"]
 
         woe_iv_df = self.calculate_woe_iv(df, target_column, features)
-        figures = self.plot_woe_iv_distribution(
-            woe_iv_df, self.params["label_rotation"]
-        )
-
-        return self.cache_results(figures=figures)
+        return self.plot_woe_iv_distribution(woe_iv_df, label_rotation)
 
     @staticmethod
     def calculate_woe_iv(df, target_column, features=None):
@@ -73,8 +70,8 @@ class WoEandIVPlots(Metric):
 
     def plot_woe_iv_distribution(self, woe_iv_df, label_rotation):
         variables = woe_iv_df["Variable"].unique()
-        figures = []
 
+        figures = []
         for variable in variables:
             variable_df = woe_iv_df[woe_iv_df["Variable"] == variable]
             fig, axs = plt.subplots(2, 2)
@@ -86,9 +83,8 @@ class WoEandIVPlots(Metric):
             axs[0, 0].set_title(f"WoE for {variable}")
             axs[0, 0].set_ylabel(None)
             axs[0, 0].set_xlabel(None)
-            axs[0, 0].set_xticklabels(
-                axs[0, 0].get_xticklabels(), rotation=label_rotation
-            )
+            axs[0, 0].set_xticks(range(len(variable_df["Value"])))
+            axs[0, 0].set_xticklabels(variable_df["Value"], rotation=label_rotation)
 
             # IV bar plot
             sns.barplot(
@@ -97,9 +93,8 @@ class WoEandIVPlots(Metric):
             axs[0, 1].set_title(f"IV for {variable}")
             axs[0, 1].set_ylabel(None)
             axs[0, 0].set_xlabel(None)
-            axs[0, 1].set_xticklabels(
-                axs[0, 1].get_xticklabels(), rotation=label_rotation
-            )
+            axs[0, 1].set_xticks(range(len(variable_df["Value"])))
+            axs[0, 1].set_xticklabels(variable_df["Value"], rotation=label_rotation)
 
             # Distribution plot
             distribution_df = variable_df.melt(
@@ -111,26 +106,28 @@ class WoEandIVPlots(Metric):
             axs[1, 0].set_title(f"Distribution of Good and Bad for {variable}")
             axs[1, 0].set_ylabel(None)
             axs[0, 0].set_xlabel(None)
-            axs[1, 0].set_xticklabels(
-                axs[1, 0].get_xticklabels(), rotation=label_rotation
-            )
+            axs[1, 0].set_xticks(range(len(variable_df["Value"])))
+            axs[1, 0].set_xticklabels(variable_df["Value"], rotation=label_rotation)
 
             # WoE trend plot
             sns.lineplot(x="Value", y="WoE", data=variable_df, marker="o", ax=axs[1, 1])
             axs[1, 1].set_title(f"WoE Trend for {variable}")
             axs[1, 1].set_ylabel(None)
             axs[0, 0].set_xlabel(None)
-            axs[1, 1].set_xticklabels(
-                axs[1, 1].get_xticklabels(), rotation=label_rotation
+            axs[1, 1].set_xticks(range(len(variable_df["Value"])))
+            axs[1, 1].set_xticklabels(variable_df["Value"], rotation=label_rotation)
+
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{variable}",
+                    figure=fig,
+                )
             )
 
             plt.tight_layout()
-            plt.show()
+            plt.close("all")
 
-            figures.append(
-                Figure(for_object=self, key=f"{self.key}:{variable}", figure=fig)
-            )
-
-        plt.close("all")
-
-        return figures
+        return self.cache_results(
+            figures=figures,
+        )
