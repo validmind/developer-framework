@@ -22,7 +22,6 @@ class DefaultRatioBarPlots(Metric):
             features = self.dataset.get_categorical_features_columns()
         else:
             features = columns
-        print(features)
         figures = []
         for feature in features:
             fig, axs = plt.subplots(1, 2)
