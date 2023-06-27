@@ -14,23 +14,26 @@ class HeatmapFeatureCorrelations(Metric):
 
     name = "heatmap_feature_correlations"
     required_context = ["dataset"]
-    default_params = {"declutter": None, "fontsize": None}
+    default_params = {"declutter": None, "fontsize": None, "num_features": None}
 
     def run(self):
-        declutter = (
-            self.params["declutter"] if self.params["declutter"] is not None else False
-        )
-        fontsize = (
-            self.params["fontsize"] if self.params["fontsize"] is not None else 13
-        )
+        features = self.params["features"]
+        declutter = self.params.get("declutter", False)
+        fontsize = self.params.get("fontsize", 13)
 
-        figure = self.visualize_correlations(declutter, fontsize)
+        # Filter DataFrame based on num_features
+        if features is None:
+            df = self.dataset.df
+        else:
+            df = self.dataset.df[features]
+
+        figure = self.visualize_correlations(df, declutter, fontsize)
 
         return self.cache_results(figures=figure)
 
-    def visualize_correlations(self, declutter, fontsize):
+    def visualize_correlations(self, df, declutter, fontsize):
         # Compute Pearson correlations
-        correlations = self.dataset.df.corr(method="pearson")
+        correlations = df.corr(method="pearson")
 
         # Create a figure and axes
         fig, ax = plt.subplots()
@@ -47,12 +50,8 @@ class HeatmapFeatureCorrelations(Metric):
             )
             ax.set_xticklabels([])
             ax.set_yticklabels([])
-            ax.set_xlabel(
-                f"{self.dataset.df.shape[1]} Numerical Features", fontsize=fontsize
-            )
-            ax.set_ylabel(
-                f"{self.dataset.df.shape[1]} Numerical Features", fontsize=fontsize
-            )
+            ax.set_xlabel(f"{df.shape[1]} Numerical Features", fontsize=fontsize)
+            ax.set_ylabel(f"{df.shape[1]} Numerical Features", fontsize=fontsize)
         else:
             # For the correlation numbers, you can use the 'annot_kws' argument
             sns.heatmap(
