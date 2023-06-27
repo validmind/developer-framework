@@ -17,66 +17,59 @@ class FeatureTargetCorrelationPlot(Metric):
     default_params = {"features": None, "declutter": False, "fontsize": 13}
 
     def run(self):
-        features = (
-            self.params["features"]
-            if self.params["features"] is not None
-            else self.dataset.df.columns
-        )
+        features = self.params["features"]
+
+        if features is None:
+            features = self.dataset.df.columns.to_list()
+        else:
+            features = self.params["features"]
+
         declutter = self.params["declutter"]
         fontsize = self.params["fontsize"]
         target_column = self.dataset.target_column
 
+        # Filter DataFrame based on features and target_column
+        df = self.dataset.df[features + [target_column]]
+
         figure = self.visualize_feature_target_correlation(
-            features, target_column, declutter, fontsize
+            df, target_column, declutter, fontsize
         )
 
         return self.cache_results(figures=figure)
 
     def visualize_feature_target_correlation(
-        self, features, target_column, declutter, fontsize
+        self, df, target_column, declutter, fontsize
     ):
-        # Filter numerical features
-        numerical_features = self.dataset.df.select_dtypes(include=["float64", "int64"])
-
-        # Filter selected variables
-        selected_features = numerical_features[features]
-
-        # Perform check if all selected features are numerical
-        if not set(features).issubset(selected_features.columns):
-            raise ValueError("Selected features contain non-numerical columns.")
-
-        # Add the target variable to the selected features DataFrame
-        selected_features[target_column] = self.dataset.df[target_column]
-
         # Compute correlations with the target variable
-        correlations = selected_features.corr()[target_column].drop(target_column)
+        correlations = df.corr().iloc[:, 0].drop(target_column)
 
-        # Sort correlations in descending order
+        # Sort correlations in descending order based on the first column
         correlations = correlations.sort_values(ascending=False)
 
         # Create the bar plot with adjusted width and ordered bars
-        fig = plt.figure()
-        ax = sns.barplot(
+        fig, ax = plt.subplots()
+        sns.barplot(
             x=correlations.values,
             y=correlations.index,
             palette="coolwarm_r",
-            order=correlations.index,
+            ax=ax,
         )
-        plt.xticks(rotation=90, fontsize=fontsize)
+
+        plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
 
         plt.xlabel(None)
         plt.ylabel(None)
         plt.title(
-            f"Correlation of Numerical Features vs Target Variable ({target_column})",
+            f"Correlation of Features vs Target Variable ({target_column})",
             fontsize=fontsize,
         )
 
         plt.tight_layout()
 
         if declutter:
-            plt.ylabel(f"{len(correlations)} Numerical Features", fontsize=fontsize)
             ax.set_yticklabels([])
+            plt.ylabel(f"{len(correlations)} Features", fontsize=fontsize)
         else:
             for i, v in enumerate(correlations.values):
                 ax.text(v + 0.01, i, str(round(v, 2)), va="center", fontsize=fontsize)
