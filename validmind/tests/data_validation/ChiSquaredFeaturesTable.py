@@ -85,7 +85,9 @@ class ChiSquaredFeaturesTable(Metric):
             results=[
                 ResultTable(
                     data=chi_squared_results_table,
-                    metadata=ResultTableMetadata(title="Chi-Squared Test Results"),
+                    metadata=ResultTableMetadata(
+                        title="Chi-Squared Test Results for Categorical Features"
+                    ),
                 )
             ]
         )
