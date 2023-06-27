@@ -14,17 +14,17 @@ class ANOVAOneWayTable(Metric):
 
     name = "anova_one_way_table"
     required_context = ["dataset"]
-    default_params = {"features": None, "p_threshold": 0.05}
+    default_params = {"num_features": None, "p_threshold": 0.05}
 
     def run(self):
         target_column = self.dataset.target_column
-        features = self.params["features"]
+        num_features = self.params["num_features"]
         p_threshold = self.params["p_threshold"]
 
         df = self.dataset.df
 
         anova_results = self.anova_numerical_features(
-            df, features, target_column, p_threshold
+            df, num_features, target_column, p_threshold
         )
 
         return self.cache_results(
@@ -78,18 +78,9 @@ class ANOVAOneWayTable(Metric):
             results=[
                 ResultTable(
                     data=anova_results_table,
-                    metadata=ResultTableMetadata(title="ANOVA F-Test Results"),
-                )
-            ]
-        )
-
-    def summary(self, metric_value):
-        anova_results_table = metric_value["anova_results"]
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=anova_results_table,
-                    metadata=ResultTableMetadata(title="ANOVA F-Test Results"),
+                    metadata=ResultTableMetadata(
+                        title="ANOVA F-Test Results for Numerical Features"
+                    ),
                 )
             ]
         )
