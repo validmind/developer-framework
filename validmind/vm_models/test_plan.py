@@ -72,8 +72,8 @@ class TestPlan:
             self.model = self.test_context.model
             self.models = self.test_context.models
 
-        self.validate_context()
         self._load_tests()
+        self.validate_context()
         self._split_configs()
 
     def _split_configs(self):
@@ -91,6 +91,7 @@ class TestPlan:
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
+
 
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
@@ -137,15 +138,20 @@ class TestPlan:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        for element in self.required_context:
-            if not hasattr(self, element):
-                raise ValueError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
-                )
+        required_context = set(self.required_context)
 
-            if getattr(self, element) is None:
+        # bubble up the required context from the tests
+        for test in self._tests:
+            if not hasattr(test, "required_context"):
+                continue
+
+            required_context.update(test.required_context)
+
+        for element in required_context:
+            if not hasattr(self, element) or getattr(self, element) is None:
                 raise ValueError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+                    f"Test '{test.name}' requires '{element}'" \
+                    " to be present in the test context"
                 )
 
     def get_config_params_for_test(self, test_name):
@@ -206,8 +212,6 @@ class TestPlan:
         Returns:
             None
         """
-        self.results = []  # Empty the results cache on every run
-
         if self.test_context is None:
             self.test_context = TestContext(
                 dataset=self.dataset,
