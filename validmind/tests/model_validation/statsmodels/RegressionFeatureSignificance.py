@@ -11,12 +11,12 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class RegressionModelPValuePlot(Metric):
+class RegressionFeatureSignificance(Metric):
     """
     This metric creates a plot of p-values for each model in the list.
     """
 
-    name = "regression_pvalue_plot"
+    name = "regression_feature_significance"
     default_params = {"fontsize": 10, "p_threshold": 0.05}
 
     def description(self):
@@ -62,7 +62,7 @@ class RegressionModelPValuePlot(Metric):
             # Set labels and title
             ax.set_xlabel("P-value")
             ax.set_ylabel(None)
-            ax.set_title(f"Feature P-values for Model {i + 1}")
+            ax.set_title(f"Feature Significance for Model {i + 1}")
 
             # Adjust the layout to prevent overlapping of variable names
             plt.tight_layout()
