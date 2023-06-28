@@ -198,6 +198,40 @@ class TestPlan:
         if render_summary:
             display(self.pbar_box)
 
+    def _run_test(self, test):
+        try:
+            # run the test and log the performance if LOG_LEVEL is set to DEBUG
+            log_performance(
+                func=test.run,
+                name=test.name,
+                logger=logger,
+            )()  # this is a decorator so we need to call it
+        except Exception as e:
+            logger.error(f"Failed to run test '{test.name}': {e}")
+            test.result = TestPlanFailedResult(
+                error=e,
+                message=f"Failed to run test '{test.name}'",
+                result_id=test.name,
+            )
+
+        if test.result is None:
+            test.result = TestPlanFailedResult(
+                error=None,
+                message=f"Test '{test.name}' did not return a result",
+                result_id=test.name,
+            )
+            return
+        
+        if not isinstance(test.result, TestPlanResult):
+            test.result = TestPlanFailedResult(
+                error=None,
+                message=f"Test '{test.name}' returned an invalid result: {test.result}",
+                result_id=test.name,
+            )
+            return
+
+        self.results.append(test.result)   
+
     def run(  # noqa C901 'TestPlan.run' is too complex
         self, render_summary: bool = True, send: bool = True
     ):
@@ -231,24 +265,8 @@ class TestPlan:
 
             self.pbar_description.value = f"Running {test.test_type}: {test.name}"
 
-            # run the test and log the performance if LOG_LEVEL is set to DEBUG
-            log_performance(
-                func=test_instance.run,
-                name=test_instance.name,
-                logger=logger,
-            )()  # this is a decorator so we need to call it
+            self._run_test(test_instance)
 
-            if test_instance.result is None:
-                self.pbar_description.value = "Test returned None, skipping..."
-                self.pbar.value += 1
-                continue
-
-            if not isinstance(test_instance.result, TestPlanResult):
-                raise ValueError(
-                    f"'{test_instance.name}' must return an instance of TestPlanResult Base Class"
-                )
-
-            self.results.append(test_instance.result)
             self.pbar.value += 1
 
         if send:
