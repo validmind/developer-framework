@@ -69,7 +69,7 @@ class FeatureTargetCorrelationPlot(Metric):
 
         if declutter:
             ax.set_yticklabels([])
-            plt.ylabel(f"{len(correlations)} Features", fontsize=fontsize)
+            plt.ylabel(f"{len(correlations)} Numerical Features", fontsize=fontsize)
         else:
             for i, v in enumerate(correlations.values):
                 ax.text(v + 0.01, i, str(round(v, 2)), va="center", fontsize=fontsize)
