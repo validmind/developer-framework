@@ -121,6 +121,7 @@ def load_test(test_id, legacy=False):
     if len(parts) == 1:
         return load_test(_get_legacy_test(test_id), legacy=True)
 
+    error = None
     namespace = parts[0]
 
     if namespace != "validmind" and namespace not in __test_providers:
