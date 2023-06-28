@@ -129,7 +129,9 @@ class TestPlanFailedResult(TestPlanResult):
         return f'TestPlanFailedResult(result_id="{self.result_id}")'
 
     def _to_widget(self):
-        return widgets.HTML(value=f"<h3>{self.error}</h3>")
+        return widgets.HTML(
+            value=f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
+        )
 
     async def log(self):
         pass
