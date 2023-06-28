@@ -121,7 +121,7 @@ class TestPlanFailedResult(TestPlanResult):
     Result wrapper for test plans that fail to load or run properly
     """
 
-    name: str = "Failed Test"
+    name: str = "Failed"
     error: Exception = None
     message: str = None
 
