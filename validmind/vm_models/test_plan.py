@@ -9,11 +9,11 @@ import ipywidgets as widgets
 from IPython.display import display
 
 from ..logging import get_logger, log_performance
-from ..tests import load_test
+from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
-from .test_context import TestContext
+from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
 logger = get_logger(__name__)
@@ -95,21 +95,28 @@ class TestPlan:
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
         self._tests = []
-        for test_id in self.tests:
+        for test_id_or_class in self.tests:
+            if isinstance(
+                test_id_or_class,
+                TestContextUtils,  # TODO: use a dedicated base class for metric/test
+            ):
+                self._tests.append(test_id_or_class)
+                continue
+
             try:
-                test_class = load_test(test_id)
-            except FileNotFoundError as e:
+                test_class = load_test(test_id_or_class)
+                self._tests.append(test_class)
+            except LoadTestError as e:
                 self.results.append(
                     TestPlanFailedResult(
                         error=e,
-                        message=f"Failed to load test '{test_id}'",
+                        message=f"Failed to load test '{test_id_or_class}'",
                     )
                 )
             except Exception as e:
-                logger.error(f"Failed to load test '{test_id}': {e}")
+                logger.error(f"Failed to load test '{test_id_or_class}': {e}")
                 raise e
 
-            self._tests.append(test_class)
 
     def title(self):
         """
@@ -369,8 +376,7 @@ class TestPlan:
 
     def get_results(self, result_id: str = None) -> List[TestPlanResult]:
         """
-        Returns one or more results of the test plan. Includes results from
-        sub test plans.
+        Returns one or more results of the test plan.
         """
         all_results = self.results or []
 
