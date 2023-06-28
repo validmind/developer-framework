@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import matplotlib.pyplot as plt
 from sklearn.inspection import permutation_importance
@@ -17,6 +17,7 @@ class PermutationFeatureImportance(Metric):
 
     name = "pfi"
     required_context = ["model"]
+    default_params = {"fontsize": None}
 
     def description(self):
         return """
@@ -40,15 +41,13 @@ class PermutationFeatureImportance(Metric):
         x = self.model.train_ds.x
         y = self.model.train_ds.y
 
+        fontsize = self.params["fontsize"]
+
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
         if model_library == "statsmodels" or model_library == "pytorch":
             logger.info(f"Skiping PFI for {model_library} models")
             return
-
-        # Check if the model has a fit method. This works for statsmodels
-        # if not hasattr(model_instance, "fit"):
-        #     model_instance.fit = lambda **kwargs: None
 
         pfi_values = permutation_importance(
             model_instance,
@@ -56,7 +55,6 @@ class PermutationFeatureImportance(Metric):
             y,
             random_state=0,
             n_jobs=-2,
-            # scoring="neg_mean_squared_log_error",
         )
         pfi = {}
         for i, column in enumerate(x.columns):
@@ -69,7 +67,10 @@ class PermutationFeatureImportance(Metric):
         ax.barh(
             x.columns[sorted_idx], pfi_values.importances[sorted_idx].mean(axis=1).T
         )
-        ax.set_title("Permutation Importances (test set)")
+        ax.set_title("Permutation Importances (train set)")
+        plt.yticks(fontsize=fontsize)
+
+        plt.close("all")
 
         return self.cache_results(
             metric_value=pfi,

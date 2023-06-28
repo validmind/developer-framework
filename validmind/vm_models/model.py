@@ -11,6 +11,7 @@ SUPPORTED_MODEL_TYPES = [
     "sklearn.LogisticRegression",
     "sklearn.LinearRegression",
     "sklearn.RandomForestClassifier",
+    "sklearn.DecisionTreeClassifier",
     "statsmodels.GLMResultsWrapper",
     "statsmodels.BinaryResultsWrapper",  # Logistic Regression results
     "statsmodels.RegressionResultsWrapper",
