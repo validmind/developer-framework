@@ -351,16 +351,13 @@ class TestPlan:
         for result_id, accordion_item in accordion_contents.items():
             result = accordion_item["result"]
 
-            result_name = f'{result.name}: {result_id.title().replace("_", " ")}'
-
+            test_title = result_id.split(".")[-1].title().replace("_", " ")
             if isinstance(result, TestPlanFailedResult):
-                # html not supported so use unicode
-                result_name = f"❌ {result_name}"
+                title = f"❌ {result.name}: {test_title} ({result_id})"
+            else:
+                title = f"{result.name}: {test_title} ({result_id})"
 
-            accordion_widget.set_title(
-                index=accordion_item["id"],
-                title=f'{result_name} ({result_id})',
-            )
+            accordion_widget.set_title(index=accordion_item["id"], title=title)
 
         vbox_children.append(accordion_widget)
 
