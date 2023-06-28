@@ -209,23 +209,26 @@ class TestPlan:
         except Exception as e:
             logger.error(f"Failed to run test '{test.name}': {e}")
             test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
                 error=e,
-                message=f"Failed to run test '{test.name}'",
+                message=f"Failed to run '{test.name}'",
                 result_id=test.name,
             )
 
         if test.result is None:
             test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
                 error=None,
-                message=f"Test '{test.name}' did not return a result",
+                message=f"'{test.name}' did not return a result",
                 result_id=test.name,
             )
             return
         
         if not isinstance(test.result, TestPlanResult):
             test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
                 error=None,
-                message=f"Test '{test.name}' returned an invalid result: {test.result}",
+                message=f"'{test.name}' returned an invalid result: {test.result}",
                 result_id=test.name,
             )
             return
