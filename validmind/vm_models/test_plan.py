@@ -112,6 +112,7 @@ class TestPlan:
                     TestPlanFailedResult(
                         error=e,
                         message=f"Failed to load test '{test_id_or_class}'",
+                        result_id=test_id_or_class,
                     )
                 )
             except Exception as e:
@@ -232,10 +233,10 @@ class TestPlan:
 
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
             log_performance(
-                test_instance.run,
-                test_instance.name,
+                func=test_instance.run,
+                name=test_instance.name,
                 logger=logger,
-            )()
+            )()  # this is a decorator so we need to call it
 
             if test_instance.result is None:
                 self.pbar_description.value = "Test returned None, skipping..."
@@ -307,16 +308,14 @@ class TestPlan:
         Builds a summary of the results for each of the tests in the test plan
         """
         accordions = {}
-        id = 0
-        for result in self.results:
-            result_widget = result._to_widget()
-            if result_widget:
+
+        for result_id, result in enumerate(self.results):
+            if result_widget := result._to_widget():
                 accordions[result.result_id] = {
-                    "id": id,
+                    "id": result_id,
                     "widget": result_widget,
                     "result": result,
                 }
-                id += 1
 
         return accordions
 
@@ -344,14 +343,24 @@ class TestPlan:
         vbox_children.append(widgets.HTML(value=self._results_description()))
 
         accordion_contents = self._results_summary()
-        accordion_items = [v["widget"] for v in accordion_contents.values()]
-        accordion_widget = widgets.Accordion(children=accordion_items)
 
+        accordion_widget = widgets.Accordion(
+            children=[v["widget"] for v in accordion_contents.values()],
+        )
+        # add titles to all the accordion items
         for result_id, accordion_item in accordion_contents.items():
             result = accordion_item["result"]
-            result_name = f"{result.name}: " if result.name else ""
-            title = f'{result_name }{result_id.title().replace("_", " ")} ({result_id})'
-            accordion_widget.set_title(accordion_item["id"], title)
+
+            result_name = f'{result.name}: {result_id.title().replace("_", " ")}'
+
+            if isinstance(result, TestPlanFailedResult):
+                # html not supported so use unicode
+                result_name = f"❌ {result_name}"
+
+            accordion_widget.set_title(
+                index=accordion_item["id"],
+                title=f'{result_name} ({result_id})',
+            )
 
         vbox_children.append(accordion_widget)
 
