@@ -107,7 +107,7 @@ class Metric(TestContextUtils):
         result_summary = self.summary(metric_value)
 
         test_plan_result = TestPlanMetricResult(
-            result_id=self.name,
+            result_id=self._key if hasattr(self, "_key") else self.name,
             result_metadata=result_metadata,
         )
 
