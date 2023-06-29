@@ -22,12 +22,13 @@ class FeatureImportanceAndSignificance(Metric):
         "fontsize": 10,
         "p_threshold": 0.05,
         "significant_only": False,
+        "figure_height": 800,
+        "bar_width": 0.3,
     }
 
     def compute_p_values_and_feature_importances(
         self, regression_model, decision_tree_model
     ):
-        # Compute the p-values and feature importances
         p_values = regression_model.model.pvalues
         feature_importances = permutation_importance(
             decision_tree_model.model,
@@ -37,7 +38,6 @@ class FeatureImportanceAndSignificance(Metric):
             n_jobs=-2,
         ).importances_mean
 
-        # Normalize the p-values and feature importances
         p_values = p_values / max(p_values)
         feature_importances = feature_importances / max(feature_importances)
 
@@ -51,7 +51,6 @@ class FeatureImportanceAndSignificance(Metric):
         significant_only,
         p_threshold,
     ):
-        # Create a DataFrame with the normalized values
         df = pd.DataFrame(
             {
                 "Normalized p-value": p_values,
@@ -60,36 +59,30 @@ class FeatureImportanceAndSignificance(Metric):
             index=regression_model.train_ds.x.columns,
         )
 
-        # Only consider features that are statistically significant if "significant_only" is set to True
         if significant_only:
             df = df[df["Normalized p-value"] <= p_threshold]
 
-        # Sort the DataFrame by feature importance in descending order
         df = df.sort_values(by="Normalized Feature Importance", ascending=True)
 
         return df
 
-    def create_figure(self, df, fontsize):
-        # Initialize the figure
+    def create_figure(self, df, fontsize, figure_height, bar_width):
         fig = go.Figure()
 
-        # Set the title based on the "significant_only" flag
         title_text = (
             "Significant Features (p-value <= {0})".format(self.params["p_threshold"])
             if self.params["significant_only"]
             else "All Features"
         )
 
-        # Adjust the layout
         fig.update_layout(
             title=title_text,
             barmode="group",
-            height=800,
+            height=figure_height,
             yaxis=dict(tickfont=dict(size=fontsize)),
             xaxis=dict(title="Normalized Value", titlefont=dict(size=fontsize)),
         )
 
-        # Plot the normalized p-values
         fig.add_trace(
             go.Bar(
                 y=df.index,
@@ -97,10 +90,10 @@ class FeatureImportanceAndSignificance(Metric):
                 name="Normalized p-value",
                 orientation="h",
                 marker=dict(color="skyblue"),
+                width=bar_width,
             )
         )
 
-        # Plot the normalized feature importances
         fig.add_trace(
             go.Bar(
                 y=df.index,
@@ -108,6 +101,7 @@ class FeatureImportanceAndSignificance(Metric):
                 name="Normalized Feature Importance",
                 orientation="h",
                 marker=dict(color="orange"),
+                width=bar_width,
             )
         )
 
@@ -117,6 +111,8 @@ class FeatureImportanceAndSignificance(Metric):
         fontsize = self.params["fontsize"]
         significant_only = self.params["significant_only"]
         p_threshold = self.params["p_threshold"]
+        figure_height = self.params["figure_height"]
+        bar_width = self.params["bar_width"]
 
         all_models = []
 
@@ -130,20 +126,16 @@ class FeatureImportanceAndSignificance(Metric):
                     " is not supported by the ValidMind framework yet"
                 )
 
-        # Check if two models are provided
         if len(self.models) != 2:
             raise ValueError("Two models must be provided")
 
-        # The first model is expected to be a regression model, and the second a decision tree model
         regression_model = self.models[0]
         decision_tree_model = self.models[1]
 
-        # Compute normalized p-values and feature importances
         p_values, feature_importances = self.compute_p_values_and_feature_importances(
             regression_model, decision_tree_model
         )
 
-        # Create a DataFrame with the computed values
         df = self.create_dataframe(
             p_values,
             feature_importances,
@@ -152,8 +144,7 @@ class FeatureImportanceAndSignificance(Metric):
             p_threshold,
         )
 
-        # Create a figure
-        fig = self.create_figure(df, fontsize)
+        fig = self.create_figure(df, fontsize, figure_height, bar_width)
 
         return self.cache_results(
             figures=[
