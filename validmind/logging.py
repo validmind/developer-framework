@@ -55,7 +55,7 @@ def init_sentry(server_config):
 def get_logger(name="validmind", log_level=None):
     """Get a logger for the given name"""
     formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+        fmt="%(asctime)s - %(levelname)s(%(name)s): %(message)s"
     )
 
     handler = logging.StreamHandler()
