@@ -95,7 +95,7 @@ def log_performance(func, name=None, logger=None, force=False):
         return_val = func(*args, **kwargs)
         time2 = time.perf_counter()
 
-        logger.info("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
+        logger.debug("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
 
         return return_val
 

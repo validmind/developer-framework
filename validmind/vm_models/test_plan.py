@@ -92,7 +92,6 @@ class TestPlan:
             else:
                 self._global_config[key] = value
 
-
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
         self._tests = []
@@ -118,7 +117,6 @@ class TestPlan:
             except Exception as e:
                 logger.error(f"Failed to load test '{test_id_or_class}': {e}")
                 raise e
-
 
     def title(self):
         """
@@ -148,10 +146,20 @@ class TestPlan:
 
             required_context.update(test.required_context)
 
+        def recursive_attr_check(obj, attr_chain):
+            attrs = attr_chain.split(".")
+            if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
+                return False
+            return len(attrs) == 1 or recursive_attr_check(
+                getattr(obj, attrs[0]),
+                ".".join(attrs[1:]),
+            )
+
         for element in required_context:
-            if not hasattr(self, element) or getattr(self, element) is None:
+            logger.debug(f"Checking if required context '{element}' is present")
+            if not recursive_attr_check(self, element):
                 raise ValueError(
-                    f"Test '{test.name}' requires '{element}'" \
+                    f"Test '{test.name}' requires '{element}'"
                     " to be present in the test context"
                 )
 
@@ -223,7 +231,7 @@ class TestPlan:
                 result_id=test.name,
             )
             return
-        
+
         if not isinstance(test.result, TestPlanResult):
             test.result = TestPlanFailedResult(
                 name=f"Failed {test.test_type}",
@@ -233,7 +241,7 @@ class TestPlan:
             )
             return
 
-        self.results.append(test.result)   
+        self.results.append(test.result)
 
     def run(  # noqa C901 'TestPlan.run' is too complex
         self, render_summary: bool = True, send: bool = True
