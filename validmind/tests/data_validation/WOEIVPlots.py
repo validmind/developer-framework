@@ -1,9 +1,10 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import pandas as pd
 from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import plotly.express as px
 
 
 @dataclass
@@ -15,16 +16,17 @@ class WOEIVPlots(Metric):
 
     name = "woe_and_iv_plots"
     required_context = ["dataset"]
-    default_params = {"label_rotation": 0, "features": None}
+    default_params = {"fig_height": 600, "fig_width": 500, "features": None}
 
     def run(self):
         df = self.dataset.df
         target_column = self.dataset.target_column
         features = self.params["features"]
-        label_rotation = self.params["label_rotation"]
+        fig_height = self.params["fig_height"]
+        fig_width = self.params["fig_width"]
 
         woe_iv_df = self.calculate_woe_iv(df, target_column, features)
-        return self.plot_woe_iv_distribution(woe_iv_df, label_rotation)
+        return self.plot_woe_iv_distribution(woe_iv_df, fig_height, fig_width)
 
     @staticmethod
     def calculate_woe_iv(df, target_column, features=None):
@@ -59,7 +61,9 @@ class WOEIVPlots(Metric):
             # Calculate WoE and IV
             dset["Distr_Good"] = dset["Good"] / dset["Good"].sum()
             dset["Distr_Bad"] = dset["Bad"] / dset["Bad"].sum()
-            dset["WoE"] = np.log(dset["Distr_Good"] / dset["Distr_Bad"])
+            dset["WoE"] = np.log(
+                (dset["Distr_Good"] + 0.0001) / (dset["Distr_Bad"] + 0.0001)
+            )  # Avoid divide by zero
             dset["IV"] = (dset["Distr_Good"] - dset["Distr_Bad"]) * dset["WoE"]
 
             master.append(dset)
@@ -68,54 +72,60 @@ class WOEIVPlots(Metric):
 
         return master_dset.sort_values(by=["Variable", "WoE"])
 
-    def plot_woe_iv_distribution(self, woe_iv_df, label_rotation):
+    def plot_woe_iv_distribution(self, woe_iv_df, fig_height, fig_width):
         variables = woe_iv_df["Variable"].unique()
 
         figures = []
         for variable in variables:
             variable_df = woe_iv_df[woe_iv_df["Variable"] == variable]
-            fig, axs = plt.subplots(2, 2)
 
-            # WoE bar plot
-            sns.barplot(
-                x="Value", y="WoE", data=variable_df, ax=axs[0, 0], color="skyblue"
-            )
-            axs[0, 0].set_title(f"WoE for {variable}")
-            axs[0, 0].set_ylabel(None)
-            axs[0, 0].set_xlabel(None)
-            axs[0, 0].set_xticks(range(len(variable_df["Value"])))
-            axs[0, 0].set_xticklabels(variable_df["Value"], rotation=label_rotation)
+            fig = make_subplots(rows=1, cols=2)  # Adjusted for 1 row and 2 columns
 
             # IV bar plot
-            sns.barplot(
-                x="Value", y="IV", data=variable_df, ax=axs[0, 1], color="skyblue"
+            fig.add_trace(
+                go.Bar(
+                    x=variable_df["Value"],
+                    y=variable_df["IV"],
+                    marker_color=px.colors.qualitative.Plotly[
+                        : len(variable_df["Value"])
+                    ],
+                    hovertemplate="<b>%{x}</b><br>" + "IV: %{y}<extra></extra>",
+                ),
+                row=1,
+                col=1,  # Adjusted for column 1
             )
-            axs[0, 1].set_title(f"IV for {variable}")
-            axs[0, 1].set_ylabel(None)
-            axs[0, 0].set_xlabel(None)
-            axs[0, 1].set_xticks(range(len(variable_df["Value"])))
-            axs[0, 1].set_xticklabels(variable_df["Value"], rotation=label_rotation)
-
-            # Distribution plot
-            distribution_df = variable_df.melt(
-                id_vars="Value", value_vars=["Distr_Good", "Distr_Bad"]
+            fig.update_xaxes(
+                ticktext=variable_df["Value"].tolist(),
+                tickvals=np.arange(len(variable_df["Value"])),
+                row=1,
+                col=1,  # Adjusted for column 1
             )
-            sns.barplot(
-                x="Value", y="value", hue="variable", data=distribution_df, ax=axs[1, 0]
-            )
-            axs[1, 0].set_title(f"Distribution of Good and Bad for {variable}")
-            axs[1, 0].set_ylabel(None)
-            axs[0, 0].set_xlabel(None)
-            axs[1, 0].set_xticks(range(len(variable_df["Value"])))
-            axs[1, 0].set_xticklabels(variable_df["Value"], rotation=label_rotation)
 
             # WoE trend plot
-            sns.lineplot(x="Value", y="WoE", data=variable_df, marker="o", ax=axs[1, 1])
-            axs[1, 1].set_title(f"WoE Trend for {variable}")
-            axs[1, 1].set_ylabel(None)
-            axs[0, 0].set_xlabel(None)
-            axs[1, 1].set_xticks(range(len(variable_df["Value"])))
-            axs[1, 1].set_xticklabels(variable_df["Value"], rotation=label_rotation)
+            fig.add_trace(
+                go.Scatter(
+                    x=variable_df["Value"],
+                    y=variable_df["WoE"],
+                    mode="lines+markers",
+                    marker=dict(symbol="circle", size=6),
+                    hovertemplate="<b>%{x}</b><br>" + "WoE: %{y}<extra></extra>",
+                ),
+                row=1,
+                col=2,  # Adjusted for column 2
+            )
+            fig.update_xaxes(
+                ticktext=variable_df["Value"].tolist(),
+                tickvals=np.arange(len(variable_df["Value"])),
+                row=1,
+                col=2,  # Adjusted for column 2
+            )
+
+            fig.update_layout(
+                title=f"IV and WoE for {variable}",
+                height=fig_height,
+                width=fig_width,
+                showlegend=False,
+            )
 
             figures.append(
                 Figure(
@@ -125,9 +135,4 @@ class WOEIVPlots(Metric):
                 )
             )
 
-            plt.tight_layout()
-            plt.close("all")
-
-        return self.cache_results(
-            figures=figures,
-        )
+        return self.cache_results(figures=figures)
