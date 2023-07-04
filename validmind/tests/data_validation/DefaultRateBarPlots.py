@@ -1,20 +1,22 @@
-import matplotlib.pyplot as plt
-
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 from validmind.vm_models import Figure, Metric
 
 
-class DefaultRatioBarPlots(Metric):
+class DefaultRateBarPlots(Metric):
     """
     Generates a visual analysis of loan default ratios by plotting bar plots.
     The input dataset can have multiple categorical variables if necessary.
-    In this case, we produce a separate plot for each categorical variable.
+    In this case, we produce a separate row of plots for each categorical variable.
     """
 
-    name = "default_ratio_bar_plots"
+    name = "default_rate_bar_plots"
     required_context = ["dataset"]
     default_params = {"default_column": None, "columns": None}
 
-    def plot_loan_default_ratio(self, default_column, columns=None, rsorted=True):
+    def plot_loan_default_ratio(self, default_column, columns=None):
         df = self.dataset.df
 
         # Use all categorical features if columns is not specified, else use selected columns
@@ -22,33 +24,48 @@ class DefaultRatioBarPlots(Metric):
             features = self.dataset.get_categorical_features_columns()
         else:
             features = columns
+
         figures = []
         for feature in features:
-            fig, axs = plt.subplots(1, 2)
-
-            # Create sorted unique list of feature values for both plots
-            feature_dimension = (
-                sorted(df[feature].unique().astype(str))
-                if rsorted
-                else df[feature].unique().astype(str)
+            fig = make_subplots(
+                rows=1, cols=2, subplot_titles=("Counts", "Default Rate")
             )
 
-            # First subplot for univariate count
-            count_values = [
-                df[df[feature] == fd][default_column].count()
-                for fd in feature_dimension
-            ]
-            axs[0].bar(feature_dimension, count_values, color="#6699cc")
-            axs[0].set_title(f"{feature}", fontsize=18)
-            axs[0].set_ylabel("Count", fontsize=18)
+            # Calculate counts and default rate for each category
+            counts = df[feature].value_counts()
+            default_rate = df.groupby(feature)[default_column].mean()
 
-            # Second subplot for univariate ratio
-            ratio_values = [
-                df[df[feature] == fd][default_column].mean() for fd in feature_dimension
-            ]
-            axs[1].bar(feature_dimension, ratio_values, color="orange")
-            axs[1].set_title(f"{feature}", fontsize=18)
-            axs[1].set_ylabel("Loan Defaults Ratio", fontsize=18)
+            # Left plot: Counts
+            fig.add_trace(
+                go.Bar(
+                    x=counts.index,
+                    y=counts.values,
+                    name="Counts",
+                    marker_color="#6699cc",
+                ),
+                row=1,
+                col=1,
+            )
+
+            # Right plot: Default rate
+            fig.add_trace(
+                go.Bar(
+                    x=default_rate.index,
+                    y=default_rate.values,
+                    name="Default Rate",
+                    marker_color="orange",
+                ),
+                row=1,
+                col=2,
+            )
+
+            fig.update_layout(
+                title_text=f"{feature}",  # title of plot
+                autosize=False,
+                width=500,
+                height=400,
+                margin=dict(l=50, r=50, b=100, t=100, pad=4),
+            )
 
             figures.append(
                 Figure(
@@ -57,9 +74,6 @@ class DefaultRatioBarPlots(Metric):
                     figure=fig,
                 )
             )
-
-        plt.tight_layout()
-        plt.close("all")
 
         return self.cache_results(
             figures=figures,
