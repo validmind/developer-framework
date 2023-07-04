@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-
+import pandas as pd
+import plotly.graph_objs as go
 from validmind.vm_models import Figure, Metric
 
 
@@ -19,22 +18,49 @@ class TabularCategoricalBarPlots(Metric):
         df = self.dataset.df
 
         # Extract categorical columns from the dataset
-        categorical_columns = df.select_dtypes(include=[np.object]).columns.tolist()
+        categorical_columns = df.select_dtypes(
+            include=[np.object, pd.Categorical]
+        ).columns.tolist()
 
         if len(categorical_columns) == 0:
             raise ValueError("No categorical columns found in the dataset")
 
+        # Define a color sequence for the categories
+        color_sequence = [
+            "#636EFA",
+            "#EF553B",
+            "#00CC96",
+            "#AB63FA",
+            "#FFA15A",
+            "#19D3F3",
+            "#FF6692",
+            "#B6E880",
+            "#FF97FF",
+            "#FECB52",
+        ]
+
         figures = []
         for col in categorical_columns:
-            plt.figure()
-            fig, _ = plt.subplots()
-            ax = sns.countplot(data=df, x=col)
-            plt.title(f"{col}", weight="bold", fontsize=20)
+            counts = df[col].value_counts()
 
-            plt.xticks(fontsize=18)
-            plt.yticks(fontsize=18)
-            ax.set_xlabel("")
-            ax.set_ylabel("")
+            fig = go.Figure()
+            fig.add_trace(
+                go.Bar(
+                    x=counts.index,
+                    y=counts.values,
+                    name=col,
+                    marker_color=color_sequence[: len(counts)],
+                )
+            )  # add colored bar plot trace
+            fig.update_layout(
+                title_text=f"{col}",  # title of plot
+                xaxis_title_text="",  # xaxis label
+                yaxis_title_text="",  # yaxis label
+                autosize=False,
+                width=500,
+                height=500,
+                margin=dict(l=50, r=50, b=100, t=100, pad=4),
+            )
             figures.append(
                 Figure(
                     for_object=self,
@@ -42,8 +68,6 @@ class TabularCategoricalBarPlots(Metric):
                     figure=fig,
                 )
             )
-
-        plt.close("all")
 
         return self.cache_results(
             figures=figures,
