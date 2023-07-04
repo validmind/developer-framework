@@ -39,7 +39,7 @@ class ROCCurve(Metric):
             y_true, y_pred, drop_intermediate=True
         )
         auc = metrics.roc_auc_score(y_true, y_pred)
-
+        print(auc)
         trace0 = go.Scatter(
             x=fpr,
             y=tpr,
