@@ -77,7 +77,7 @@ class WOEIVTable(Metric):
                 lst.append(
                     {
                         "Feature": feature,
-                        "Catergory": val,
+                        "Category": val,
                         "All": df[df[feature] == val].count()[feature],
                         "Good": df[
                             (df[feature] == val) & (df[target_column] == 0)
