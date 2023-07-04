@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-
+import plotly.graph_objs as go
 from validmind.vm_models import Figure, Metric
 
 
@@ -26,15 +24,21 @@ class TabularNumericalHistograms(Metric):
 
         figures = []
         for col in numerical_columns:
-            plt.figure()
-            fig, _ = plt.subplots()
-            ax = sns.histplot(data=df, x=col, kde=True)
-            plt.title(f"{col}", weight="bold", fontsize=20)
-
-            plt.xticks(fontsize=18)
-            plt.yticks(fontsize=18)
-            ax.set_xlabel("")
-            ax.set_ylabel("")
+            fig = go.Figure()
+            fig.add_trace(
+                go.Histogram(x=df[col], nbinsx=50, name=col)
+            )  # add histogram trace
+            fig.update_layout(
+                title_text=f"{col}",  # title of plot
+                xaxis_title_text="",  # xaxis label
+                yaxis_title_text="",  # yaxis label
+                bargap=0.2,  # gap between bars of adjacent location coordinates
+                bargroupgap=0.1,  # gap between bars of the same location coordinates
+                autosize=False,
+                width=500,
+                height=500,
+                margin=dict(l=50, r=50, b=100, t=100, pad=4),
+            )
             figures.append(
                 Figure(
                     for_object=self,
@@ -42,8 +46,6 @@ class TabularNumericalHistograms(Metric):
                     figure=fig,
                 )
             )
-
-        plt.close("all")
 
         return self.cache_results(
             figures=figures,
