@@ -1,10 +1,10 @@
-import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 
+@dataclass
 class IQROutliersPlots(Metric):
     """
     Generates a visual analysis of the outliers for numeric variables.

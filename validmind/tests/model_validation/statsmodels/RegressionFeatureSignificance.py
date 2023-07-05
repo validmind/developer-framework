@@ -1,11 +1,9 @@
 from dataclasses import dataclass
-
 import matplotlib.pyplot as plt
-import pandas as pd
 import seaborn as sns
 
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
