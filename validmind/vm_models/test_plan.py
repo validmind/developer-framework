@@ -29,8 +29,8 @@ class TestPlan:
     # Class Variables
     name: ClassVar[str]
     required_context: ClassVar[List[str]]
-    tests: ClassVar[List[object]] = []
-    results: ClassVar[List[TestPlanResult]] = []
+    tests: ClassVar[List[object]]
+    results: ClassVar[List[TestPlanResult]]
 
     # Instance Variables
     config: dict() = None
@@ -94,6 +94,7 @@ class TestPlan:
 
     def _load_tests(self):
         """Dynamically import the test classes based on the test names"""
+        self.results = []
         self._tests = []
         for test_id_or_class in self.tests:
             if isinstance(
@@ -388,7 +389,13 @@ class TestPlan:
             else:
                 title = f"{result.name}: {test_title} ({result_id})"
 
-            accordion_widget.set_title(index=accordion_item["id"], title=title)
+            try:
+                accordion_widget.set_title(index=accordion_item["id"], title=title)
+            except Exception as e:
+                print(len(accordion_widget.children))
+                print(len(accordion_contents))
+                print(accordion_item["id"], title)
+                raise e
 
         vbox_children.append(accordion_widget)
 
