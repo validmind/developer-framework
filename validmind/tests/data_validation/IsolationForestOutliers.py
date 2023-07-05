@@ -28,10 +28,11 @@ class IsolationForestOutliers(Metric):
     """
 
     name = "isolation_forest"
-    default_params = {"random_state": 0,
-                      "contamination" : 0.1,
-                      "features_columns": None,
-                      }
+    default_params = {
+        "random_state": 0,
+        "contamination": 0.1,
+        "features_columns": None,
+    }
     required_context = ["dataset"]
 
     def description(self):
@@ -69,7 +70,10 @@ class IsolationForestOutliers(Metric):
         dataset = self.dataset.df
 
         # Training with isolation forest algorithm
-        clf = IsolationForest(random_state=self.params["random_state"], contamination=self.params["contamination"])
+        clf = IsolationForest(
+            random_state=self.params["random_state"],
+            contamination=self.params["contamination"],
+        )
         clf.fit(dataset)
         y_pred = clf.predict(dataset)
 
@@ -77,16 +81,22 @@ class IsolationForestOutliers(Metric):
         combination_pairs = list(itertools.combinations(features_list, 2))
         for feature1, feature2 in combination_pairs:
             fig = plt.figure()
-            ax = sns.scatterplot(data=dataset, x=feature1, y=feature2, hue=y_pred, palette="bright")
+            ax = sns.scatterplot(
+                data=dataset, x=feature1, y=feature2, hue=y_pred, palette="bright"
+            )
             handles, labels = ax.get_legend_handles_labels()
-            labels = list(map(lambda x: x.replace('-1', 'Outliers'), labels))
-            labels = list(map(lambda x: x.replace('1', 'Inliers'), labels))
+            labels = list(map(lambda x: x.replace("-1", "Outliers"), labels))
+            labels = list(map(lambda x: x.replace("1", "Inliers"), labels))
             ax.legend(handles, labels)
             # Do this if you want to prevent the figure from being displayed
             plt.close("all")
 
             test_figures.append(
-                Figure(for_object=self, key=f"{self.name}:{feature1}_{feature2}", figure=fig)
+                Figure(
+                    for_object=self,
+                    key=f"{self.name}:{feature1}_{feature2}",
+                    figure=fig,
+                )
             )
 
         return self.cache_results(figures=test_figures)

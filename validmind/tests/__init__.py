@@ -113,7 +113,7 @@ def list_tests(filter=None, pretty=True):
     return tests
 
 
-def load_test(test_id, legacy=False):
+def load_test(test_id, legacy=False):  # noqa: C901
     parts = test_id.split(".")
 
     # for now this code will handle the legacy test IDs
