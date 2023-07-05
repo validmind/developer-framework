@@ -338,13 +338,15 @@ class TestPlan:
         """
         accordions = {}
 
-        for result_id, result in enumerate(self.results):
+        index = 0
+        for result in self.results:
             if result_widget := result._to_widget():
                 accordions[result.result_id] = {
-                    "id": result_id,
+                    "id": index,
                     "widget": result_widget,
                     "result": result,
                 }
+                index += 1
 
         return accordions
 
