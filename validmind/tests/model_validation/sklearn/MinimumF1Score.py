@@ -58,7 +58,9 @@ class MinimumF1Score(ThresholdTest):
         else:
             y_true = self.model.test_ds.y
 
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
+        class_pred = self.model.model.predict(self.model.test_ds.x)
+        y_true = y_true.astype(class_pred.dtype)
+
         f1_score = metrics.f1_score(y_true, class_pred)
 
         passed = f1_score > self.params["min_threshold"]

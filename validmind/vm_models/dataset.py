@@ -94,7 +94,7 @@ class Dataset:
         ):
             return self.raw_dataset.tensors[1]
 
-        return self.raw_dataset[self.target_column]
+        return self.raw_dataset[self.target_column].values
 
     @property
     def index(self):

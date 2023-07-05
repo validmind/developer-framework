@@ -33,4 +33,4 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
         return y_true
 
     def y_pred(self):
-        return self.model.y_test_predict
+        return self.model.model.predict(self.model.test_ds.x)
