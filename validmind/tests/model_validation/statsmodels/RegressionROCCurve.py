@@ -16,11 +16,7 @@ class RegressionROCCurve(Metric):
 
     def description(self):
         return """
-        A receiver operating characteristic (ROC), or simply ROC curve, is a graphical plot that illustrates 
-        the diagnostic ability of a binary classifier system as its discrimination threshold is varied. 
-        The curve is created by plotting the true positive rate (TPR) against the false positive rate (FPR) 
-        at various threshold settings. The area under the ROC curve (AUC) is a measure of how well a parameter 
-        can distinguish between two diagnostic groups.
+        A receiver operating characteristic (ROC), or simply ROC curve, is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. The curve is created by plotting the true positive rate (TPR) against the false positive rate (FPR) at various threshold settings. The area under the ROC curve (AUC) is a measure of how well a parameter can distinguish between two diagnostic groups.
         """
 
     @staticmethod

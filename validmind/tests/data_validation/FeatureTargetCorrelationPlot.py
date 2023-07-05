@@ -49,9 +49,6 @@ class FeatureTargetCorrelationPlot(Metric):
             for val in color_map
         ]
 
-        # Round the correlation values and convert to a list
-        rounded_correlations = correlations.values.round(2).tolist()
-
         # Create a horizontal bar plot with gradual color mapping
         fig = go.Figure(
             data=go.Bar(

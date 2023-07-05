@@ -15,6 +15,34 @@ class WOEIVTable(Metric):
     required_context = ["dataset"]
     default_params = {"features": None, "order_by": None}
 
+    def _get_feature_categories(self, df, feature, target_column):
+        lst = []
+
+        for val in df[feature].unique():
+            lst.append(
+                {
+                    "Feature": feature,
+                    "Category": val,
+                    "All": df[df[feature] == val].count()[feature],
+                    "Good": df[(df[feature] == val) & (df[target_column] == 0)].count()[
+                        feature
+                    ],
+                    "Bad": df[(df[feature] == val) & (df[target_column] == 1)].count()[
+                        feature
+                    ],
+                }
+            )
+
+        return pd.DataFrame(lst)
+
+    def _calculate_woe_iv_for_feature(self, dset):
+        dset["Distr_Good"] = dset["Good"] / dset["Good"].sum()
+        dset["Distr_Bad"] = dset["Bad"] / dset["Bad"].sum()
+        dset["WoE"] = np.log(dset["Distr_Good"] / dset["Distr_Bad"])
+        dset["IV"] = (dset["Distr_Good"] - dset["Distr_Bad"]) * dset["WoE"]
+
+        return dset
+
     def run(self):
         target_column = self.dataset.target_column
         features = self.params["features"]
@@ -31,28 +59,12 @@ class WOEIVTable(Metric):
         )
 
     def calculate_woe_iv(self, df, target_column, features=None, order_by=None):
-        """
-        Calculate the Weight of Evidence (WoE) and Information Value (IV) of categorical features.
-
-        Parameters:
-        df (pandas.DataFrame): DataFrame to be processed. It should contain the target column.
-        target_column (str): Name of the target column in the DataFrame.
-        features (list, optional): List of feature names for which WoE and IV is to be calculated.
-                                If None, all features in df will be used.
-        order_by (list, optional): List of column names to order the resulting DataFrame by.
-                                If None, ["Variable", "WoE"] will be used as the default.
-
-        Returns:
-        pandas.DataFrame: A DataFrame with the WoE and IV for each category of the feature(s).
-        """
-
         if features is None:
             features = self.params.get("features")
 
         if order_by is None:
             order_by = self.params.get("order_by")
 
-        # Check if features parameter is provided and valid
         if features is not None:
             if not isinstance(features, list):
                 raise ValueError("The 'features' parameter must be a list.")
@@ -62,45 +74,18 @@ class WOEIVTable(Metric):
                     f"The following features are not found in the DataFrame: {invalid_features}"
                 )
 
-        # If no specific features specified, use all columns in the DataFrame
         if features is None:
             features = df.drop(target_column, axis=1).columns.tolist()
 
-        # Create a dataframe to store WoE and IV values
         master = []
 
         for feature in features:
-            lst = []
-
-            # For each unique category in the feature
-            for val in df[feature].unique():
-                lst.append(
-                    {
-                        "Feature": feature,
-                        "Category": val,
-                        "All": df[df[feature] == val].count()[feature],
-                        "Good": df[
-                            (df[feature] == val) & (df[target_column] == 0)
-                        ].count()[feature],
-                        "Bad": df[
-                            (df[feature] == val) & (df[target_column] == 1)
-                        ].count()[feature],
-                    }
-                )
-
-            dset = pd.DataFrame(lst)
-
-            # Calculate WoE and IV
-            dset["Distr_Good"] = dset["Good"] / dset["Good"].sum()
-            dset["Distr_Bad"] = dset["Bad"] / dset["Bad"].sum()
-            dset["WoE"] = np.log(dset["Distr_Good"] / dset["Distr_Bad"])
-            dset["IV"] = (dset["Distr_Good"] - dset["Distr_Bad"]) * dset["WoE"]
-
+            dset = self._get_feature_categories(df, feature, target_column)
+            dset = self._calculate_woe_iv_for_feature(dset)
             master.append(dset)
 
         master_dset = pd.concat(master, ignore_index=True)
 
-        # Check if order_by parameter is provided and valid
         if order_by is None:
             order_by = ["Feature", "WoE"]
         else:
