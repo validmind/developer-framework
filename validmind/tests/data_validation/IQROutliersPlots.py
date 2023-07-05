@@ -1,12 +1,10 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.graph_objects as go
 from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 
-@dataclass
 class IQROutliersPlots(Metric):
     """
     Generates a visual analysis of the outliers for numeric variables.
@@ -15,12 +13,13 @@ class IQROutliersPlots(Metric):
 
     name = "iqr_outliers_plots"
     required_context = ["dataset"]
-    default_params = {"threshold": 1.5, "num_features": None}
+    default_params = {"threshold": 1.5, "num_features": None, "fig_width": 800}
 
     def run(self):
         df = self.dataset.df
         num_features = self.params["num_features"]
         threshold = self.params["threshold"]
+        fig_width = self.params["fig_width"]
 
         # If num_features is None, use all numeric columns.
         # Otherwise, only use the columns provided in num_features.
@@ -29,7 +28,7 @@ class IQROutliersPlots(Metric):
         else:
             df = df[num_features]
 
-        return self.detect_and_visualize_outliers(df, threshold)
+        return self.detect_and_visualize_outliers(df, threshold, fig_width)
 
     @staticmethod
     def compute_outliers(series, threshold=1.5):
@@ -40,39 +39,54 @@ class IQROutliersPlots(Metric):
         upper_bound = Q3 + threshold * IQR
         return series[(series < lower_bound) | (series > upper_bound)]
 
-    def detect_and_visualize_outliers(self, df, threshold):
+    def detect_and_visualize_outliers(self, df, threshold, fig_width):
         num_cols = df.columns.tolist()
 
         figures = []
 
         for col in num_cols:
-            fig, ax = plt.subplots(1, 2)
-
             # Compute outliers
             outliers = self.compute_outliers(df[col], threshold)
 
-            # Plot the boxplot without outliers
-            sns.boxplot(x=df[col], color="skyblue", orient="h", fliersize=0, ax=ax[0])
+            # Create box trace
+            box_trace = go.Box(
+                y=df[col].dropna(),
+                name="",
+                boxpoints=False,  # do not show original data points
+                marker_color="skyblue",
+                line_color="skyblue",
+            )
 
-            # Overplot the outliers
-            ax[0].scatter(outliers, [0.0] * len(outliers), color="r", alpha=0.5)
+            # Create scatter trace of outliers
+            outliers_trace = go.Scatter(
+                x=[""] * len(outliers),
+                y=outliers,
+                mode="markers",
+                name="Outliers",
+                marker=dict(
+                    color="red",
+                    size=6,
+                    opacity=0.5,
+                ),
+            )
 
-            # Add title and legend
-            ax[0].set_title(f"Boxplot for {col}")
-            ax[0].set_xlabel("")  # Remove x label
-            ax[0].set_yticks([])  # Remove y ticks
-            red_dot = plt.Line2D([], [], color="r", marker="o", linestyle="None")
-            ax[0].legend([red_dot], ["Outliers"])
+            # Create figure and add traces
+            fig = go.Figure(data=[box_trace, outliers_trace])
 
-            # Plot the histogram
-            sns.histplot(df[col].dropna(), kde=True, ax=ax[1])
-            ax[1].set_title(f"Histogram for {col}")
-            ax[1].set_xlabel("")
-            ax[1].set_ylabel("")
+            # Set layout properties
+            fig.update_layout(
+                showlegend=False,
+                title_text=col,
+                width=fig_width,
+                height=400,
+                plot_bgcolor="white",
+            )
 
-            plt.tight_layout()
-            figures.append(Figure(for_object=self, key=f"{self.key}:{col}", figure=fig))
+            fig.update_xaxes(showticklabels=False, showgrid=True, gridcolor="LightGray")
+            fig.update_yaxes(title_text="Value", showgrid=True, gridcolor="LightGray")
 
-            plt.close("all")
+            # Create a Figure object and append to figures list
+            figure = Figure(for_object=self, key=f"{self.key}:{col}", figure=fig)
+            figures.append(figure)
 
         return self.cache_results(figures=figures)
