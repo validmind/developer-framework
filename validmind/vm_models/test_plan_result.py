@@ -333,7 +333,7 @@ class TestPlanTestResult(TestPlanResult):
         return widgets.VBox(vbox_children)
 
     async def log(self):
-        tasks = [api_client.log_test_result(self.test_results)]
+        tasks = [api_client.log_test_results(self.test_results)]
 
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
