@@ -55,7 +55,7 @@ def init_sentry(server_config):
 def get_logger(name="validmind", log_level=None):
     """Get a logger for the given name"""
     formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+        fmt="%(asctime)s - %(levelname)s(%(name)s): %(message)s"
     )
 
     handler = logging.StreamHandler()
@@ -95,7 +95,7 @@ def log_performance(func, name=None, logger=None, force=False):
         return_val = func(*args, **kwargs)
         time2 = time.perf_counter()
 
-        logger.info("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
+        logger.debug("%s function took %0.3f ms" % (name, (time2 - time1) * 1000.0))
 
         return return_val
 

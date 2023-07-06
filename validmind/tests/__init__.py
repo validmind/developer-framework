@@ -6,9 +6,19 @@ from typing import Dict
 
 import pandas as pd
 
+from ..logging import get_logger
 from ..utils import format_dataframe
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
+
+
+logger = get_logger(__name__)
+
+
+class LoadTestError(Exception):
+    """Exception raised when an error occurs while loading a test"""
+
+    pass
 
 
 __all__ = [
@@ -17,6 +27,7 @@ __all__ = [
     "describe_test",
     "register_test_provider",
     "GithubTestProvider",
+    "LoadTestError",
     "LocalTestProvider",
 ]
 
@@ -102,7 +113,7 @@ def list_tests(filter=None, pretty=True):
     return tests
 
 
-def load_test(test_id, legacy=False):
+def load_test(test_id, legacy=False):  # noqa: C901
     parts = test_id.split(".")
 
     # for now this code will handle the legacy test IDs
@@ -110,24 +121,41 @@ def load_test(test_id, legacy=False):
     if len(parts) == 1:
         return load_test(_get_legacy_test(test_id), legacy=True)
 
+    error = None
     namespace = parts[0]
 
     if namespace != "validmind" and namespace not in __test_providers:
-        raise ValueError(
-            f"Unable to load test {test_id}. No known namespace found {namespace}"
+        error = (
+            f"Unable to load test {test_id}. "
+            f"No Test Provider found for the namespace: {namespace}."
         )
 
     if namespace == "validmind":
         test_module = ".".join(parts[1:-1])
         test_class = parts[-1]
 
-        test = getattr(
-            importlib.import_module(f"validmind.tests.{test_module}.{test_class}"),
-            test_class,
-        )
+        try:
+            module = importlib.import_module(
+                f"validmind.tests.{test_module}.{test_class}"
+            )
+            test = getattr(module, test_class)
+        except ModuleNotFoundError:
+            error = f"Unable to load test {test_id}. Module not found: {test_module}"
+        except AttributeError:
+            error = f"Unable to load test {test_id}. Class not in module: {test_class}"
 
     elif namespace in __test_providers:
-        test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+        try:
+            test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+        except Exception as e:
+            error = (
+                f"Unable to load test {test_id} from test  provider: "
+                f"{__test_providers[namespace]}\n Got Exception: {e}"
+            )
+
+    if error:
+        logger.error(error)
+        raise LoadTestError(error)
 
     # TODO: restore non-legacy flag for test IDs once we have a migration plan for existing templates
     # if not legacy:
