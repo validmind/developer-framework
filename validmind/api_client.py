@@ -18,7 +18,7 @@ from aiohttp import FormData
 from .client_config import client_config
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
-from .vm_models import Dataset, Figure, Metric, TestResult
+from .vm_models import Dataset, Figure, Metric, TestResults
 
 # TODO: can't import types from vm_models because of circular dependency
 
@@ -378,8 +378,8 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
         raise e
 
 
-async def log_test_result(
-    result: TestResult, dataset_type: str = "training"
+async def log_test_results(
+    result: TestResults, dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -409,7 +409,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[TestResult], dataset_type: str = "training"
+    results: List[TestResults], dataset_type: str = "training"
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
@@ -430,7 +430,7 @@ def log_test_results(
     try:
         responses = []  # TODO: use asyncio.gather
         for result in results:
-            responses.append(run_async(log_test_result, result, dataset_type))
+            responses.append(run_async(log_test_results, result, dataset_type))
     except Exception as e:
         logger.error("Error logging test results to ValidMind API")
         raise e
