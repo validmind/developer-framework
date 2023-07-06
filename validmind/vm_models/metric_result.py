@@ -50,6 +50,7 @@ class MetricResult:
             )
 
         return {
+            "uuid": self.uuid,
             "type": self.type,
             "scope": self.scope,
             "key": self.key,

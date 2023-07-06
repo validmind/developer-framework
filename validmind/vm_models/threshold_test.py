@@ -8,6 +8,7 @@ TODO: Test definitions should be supported in the API too
 
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
+from uuid import uuid4
 
 from .figure import Figure
 from .result_summary import ResultSummary, ResultTable
@@ -44,6 +45,9 @@ class ThresholdTest(TestContextUtils):
         """
         Set default params if not provided
         """
+        # set a unique key to identify this metric
+        self.uuid = str(uuid4())
+
         self.params = {
             **self.default_params,
             **(self.params if self.params is not None else {}),
@@ -130,6 +134,10 @@ class ThresholdTest(TestContextUtils):
 
         # Allow test results to attach figures to the test plan result
         if figures:
+            # add uuid to figure metadata
+            for figure in figures:
+                figure.metadata["_uuid"] = self.uuid
+
             self.result.figures = figures
 
         return self.result

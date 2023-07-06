@@ -58,6 +58,7 @@ class TestResults:
         Serializes the TestResults to a dictionary so it can be sent to the API
         """
         test_results = {
+            "uuid": self.uuid,
             "category": self.category,
             "test_name": self.test_name,
             "params": self.params,
