@@ -126,6 +126,7 @@ class ThresholdTest(TestContextUtils):
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
+                ref_id=self.ref_id,
                 params=self.params,
                 passed=passed,
                 results=test_results_list,

@@ -123,6 +123,7 @@ class Metric(TestContextUtils):
             type=self.type,
             scope=self.scope,
             key=self.key,
+            ref_id=self.ref_id,
             value=metric_result_value,
             value_formatter=self.value_formatter,
             summary=result_summary,
