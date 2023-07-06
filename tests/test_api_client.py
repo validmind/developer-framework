@@ -235,14 +235,14 @@ class TestAPIClient(unittest.TestCase):
         mock_response = MockResponse(200, json={"cuid": "abc1234"})
         mock_post.return_value = mock_response
 
-        self.run_async(api_client.log_test_result, result)
+        self.run_async(api_client.log_test_results, result)
 
         url = f"{os.environ['VM_API_HOST']}/log_test_results"
         url += f"?dataset_type=training&run_cuid={os.environ['VM_RUN_CUID']}"
 
         mock_post.assert_called_with(url, data=json.dumps({"key": "value"}))
 
-    @patch("validmind.api_client.log_test_result")
+    @patch("validmind.api_client.log_test_results")
     def test_log_test_results(self, mock_log_test_result: MagicMock):
         results = [Mock(), Mock()]
         api_client.log_test_results(results)
