@@ -35,6 +35,7 @@ class ThresholdTest(TestContextUtils):
     test_type: ClassVar[str] = "ThresholdTest"
     category: ClassVar[str] = ""
     name: ClassVar[str] = ""
+    ref_id: ClassVar[str] = ""  # unique identifier for metric
     default_params: ClassVar[dict] = {}
 
     # Instance Variables
@@ -46,7 +47,7 @@ class ThresholdTest(TestContextUtils):
         Set default params if not provided
         """
         # set a unique key to identify this metric
-        self.uuid = str(uuid4())
+        self.ref_id = str(uuid4())
 
         self.params = {
             **self.default_params,
@@ -136,7 +137,7 @@ class ThresholdTest(TestContextUtils):
         if figures:
             # add uuid to figure metadata
             for figure in figures:
-                figure.metadata["_uuid"] = self.uuid
+                figure.metadata["_ref_id"] = self.uuid
 
             self.result.figures = figures
 

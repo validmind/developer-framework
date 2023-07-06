@@ -31,6 +31,7 @@ class Metric(TestContextUtils):
     type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
     name: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
+    ref_id: ClassVar[str] = ""  # unique identifier for metric
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
     default_params: ClassVar[dict] = {}
 
@@ -43,7 +44,7 @@ class Metric(TestContextUtils):
         Set default params if not provided
         """
         # set a unique key to identify this metric
-        self.uuid = str(uuid4())
+        self.ref_id = str(uuid4())
 
         self.params = {
             **self.default_params,
@@ -131,7 +132,7 @@ class Metric(TestContextUtils):
         if figures:
             # add uuid to figure metadata
             for figure in figures:
-                figure.metadata["_uuid"] = self.uuid
+                figure.metadata["_ref_id"] = self.ref_id
 
             test_plan_result.figures = figures
 

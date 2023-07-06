@@ -48,6 +48,7 @@ class TestResults:
 
     category: str
     test_name: str
+    ref_id: str
     params: dict
     passed: bool
     results: List[TestResult]
@@ -58,9 +59,9 @@ class TestResults:
         Serializes the TestResults to a dictionary so it can be sent to the API
         """
         test_results = {
-            "uuid": self.uuid,
             "category": self.category,
             "test_name": self.test_name,
+            "ref_id": self.ref_id,
             "params": self.params,
             "passed": self.passed,
             "results": [result.serialize() for result in self.results],
