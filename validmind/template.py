@@ -125,7 +125,10 @@ def _get_section_tests(section):
         A list of tests in the section.
     """
     tests = [
-        content["content_id"]
+        {
+            "ref_id": f"{section['id']}:{content['content_id']}",
+            "test_id": content["content_id"],
+        }
         for content in section.get("contents", [])
         if content["content_type"] in ["metric", "test"]
     ]
@@ -146,6 +149,7 @@ def _create_section_test_plan(section):
         A dynamically-created TestPlan Class
     """
     section_tests = _get_section_tests(section)
+    print(section_tests)
 
     if section_tests:
         return type(

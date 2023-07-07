@@ -47,7 +47,8 @@ class ThresholdTest(TestContextUtils):
         Set default params if not provided
         """
         # set a unique key to identify this metric
-        self.ref_id = str(uuid4())
+        if not self.ref_id:
+            self.ref_id = str(uuid4())
 
         self.params = {
             **self.default_params,
