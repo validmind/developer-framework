@@ -149,7 +149,6 @@ def _create_section_test_plan(section):
         A dynamically-created TestPlan Class
     """
     section_tests = _get_section_tests(section)
-    print(section_tests)
 
     if section_tests:
         return type(
