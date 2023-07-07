@@ -39,7 +39,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
         log_figure=unittest.mock.DEFAULT,
         log_metadata=unittest.mock.DEFAULT,
         log_metrics=unittest.mock.DEFAULT,
-        log_test_results=unittest.mock.DEFAULT,
+        log_test_result=unittest.mock.DEFAULT,
     )
     def test_run_full_suite(self, mock_ipython, **mocks):
         mock_ipython.return_value = True

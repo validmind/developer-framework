@@ -378,7 +378,7 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
         raise e
 
 
-async def log_test_results(
+async def log_test_result(
     result: TestResults, dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
@@ -430,7 +430,7 @@ def log_test_results(
     try:
         responses = []  # TODO: use asyncio.gather
         for result in results:
-            responses.append(run_async(log_test_results, result, dataset_type))
+            responses.append(run_async(log_test_result, result, dataset_type))
     except Exception as e:
         logger.error("Error logging test results to ValidMind API")
         raise e
