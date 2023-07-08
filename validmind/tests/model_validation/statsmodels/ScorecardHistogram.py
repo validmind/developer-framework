@@ -12,7 +12,7 @@ class ScorecardHistogram(Metric):
     Score Histogram
     """
 
-    name = "score_histogram"
+    name = "scorecard_histogram"
     required_context = ["model"]
     default_parameters = {
         "title": "Histogram of Scores",

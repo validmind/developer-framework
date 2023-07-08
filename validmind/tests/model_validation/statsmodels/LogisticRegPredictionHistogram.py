@@ -6,12 +6,12 @@ from validmind.vm_models import Figure, Metric, Model
 
 
 @dataclass
-class LogRegPredictionHistogram(Metric):
+class LogisticRegPredictionHistogram(Metric):
     """
     Probability of Default (PD) Histogram
     """
 
-    name = "log_reg_pred_histogram"
+    name = "logistic_reg_prediction_histogram"
     required_context = ["model"]
     default_parameters = {"title": "Histogram of Predictive Probabilities"}
 
