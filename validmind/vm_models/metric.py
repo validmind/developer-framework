@@ -4,6 +4,7 @@ data for display and reporting purposes
 """
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union
+from uuid import uuid4
 
 import pandas as pd
 
@@ -42,6 +43,9 @@ class Metric(TestContextUtils):
         """
         Set default params if not provided
         """
+        if not self.ref_id:
+            self.ref_id = str(uuid4())
+
         self.params = {
             **self.default_params,
             **(self.params if self.params is not None else {}),
@@ -128,9 +132,8 @@ class Metric(TestContextUtils):
         # Allow metrics to attach figures to the test plan result
         if figures:
             # add ref_id to figure metadata to strongly link the figure to the metric
-            if self.ref_id:
-                for figure in figures:
-                    figure.metadata["_ref_id"] = self.ref_id
+            for figure in figures:
+                figure.metadata["_ref_id"] = self.ref_id
 
             test_plan_result.figures = figures
 
