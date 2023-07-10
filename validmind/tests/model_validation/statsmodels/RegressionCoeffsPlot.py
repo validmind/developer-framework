@@ -21,10 +21,10 @@ class RegressionCoeffsPlot(Metric):
     required_context = ["models"]
 
     @staticmethod
-    def plot_coefficients_with_ci(results, model_name):
+    def plot_coefficients_with_ci(model_fit, model_name):
         # Extract estimated coefficients and standard errors
-        coef = results.params
-        std_err = results.bse
+        coef = model_fit.params
+        std_err = model_fit.bse
 
         # Calculate confidence intervals
         confidence_level = 0.95  # 95% confidence interval
@@ -37,7 +37,7 @@ class RegressionCoeffsPlot(Metric):
 
         fig.add_trace(
             go.Bar(
-                x=results.model.exog_names,
+                x=model_fit.model.exog_names,
                 y=coef,
                 name="Estimated Coefficients",
                 error_y=dict(
@@ -57,7 +57,7 @@ class RegressionCoeffsPlot(Metric):
         )
 
         return fig, {
-            "values": list(results.params),
+            "values": list(model_fit.params),
             "lower_ci": list(lower_ci),
             "upper_ci": list(upper_ci),
         }
