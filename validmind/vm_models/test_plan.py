@@ -129,6 +129,7 @@ class TestPlan:
                 self._tests.append(test_id_or_class)
                 continue
 
+            test_class_options = None
             if isinstance(test_id_or_class, dict):
                 # if its a dictionary, we pull the test_id out and then treat the rest
                 # of the dictionary as the attributes to set on the test class
