@@ -33,4 +33,4 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
         return y_true
 
     def y_pred(self):
-        return self.model.y_train_predict
+        return self.model.model.predict(self.model.train_ds.x)
