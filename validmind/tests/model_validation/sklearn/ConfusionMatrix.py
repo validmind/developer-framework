@@ -37,8 +37,8 @@ class ConfusionMatrix(Metric):
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        class_pred = self.model.class_predictions(self.model.y_test_predict)
-
+        class_pred = self.model.model.predict(self.model.test_ds.x)
+        y_true = y_true.astype(class_pred.dtype)
         cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
         tn, fp, fn, tp = cm.ravel()
 

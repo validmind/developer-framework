@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import partial
+from numpy import unique
 
 from sklearn import metrics
 
@@ -70,8 +71,7 @@ class ClassifierPerformance(Metric):
 
     def run(self):
         y_true = self.y_true()
-        class_pred = self.model.class_predictions(self.y_pred())
-
+        class_pred = self.y_pred()
         results = {}
 
         metrics = self.params.get("metrics", self.default_params["metrics"])
@@ -79,6 +79,10 @@ class ClassifierPerformance(Metric):
             if metric_name not in self.default_metrics:
                 raise ValueError(f"Metric {metric_name} not supported.")
             metric_func = self.default_metrics[metric_name]
-            results[metric_name] = metric_func(y_true, class_pred)
+            y_true = y_true.astype(class_pred.dtype)
+            if metric_name == "precision" or metric_name == "recall" or metric_name == "f1":
+                results[metric_name] = metric_func(y_true, class_pred, pos_label=unique(y_true)[0])
+            else:
+                results[metric_name] = metric_func(y_true, class_pred)
 
         return self.cache_results(results)

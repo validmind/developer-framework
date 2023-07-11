@@ -127,7 +127,7 @@ def _get_section_tests(section):
     tests = [
         content["content_id"]
         for content in section.get("contents", [])
-        if content["content_type"] not in ["metadata_text", "dynamic"]
+        if content["content_type"] in ["metric", "test"]
     ]
 
     for sub_section in section["sections"]:

@@ -206,10 +206,9 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Dataset Type"].append(dataset_type)
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
-        y_prediction = self.model.predict(df)
-        y_prediction = self.model.class_predictions(y_prediction)
+        y_prediction = self.model.model.predict(df)
         for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true.values, y_prediction) * 100)
+            results[metric].append(metric_fn(y_true, y_prediction) * 100)
 
     def _add_noise_std_dev(
         self, values: List[float], x_std_dev: float
