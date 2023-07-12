@@ -34,7 +34,7 @@ class ROCCurve(Metric):
             y_true = np.array(self.model.test_ds.y)
 
         y_pred = self.model.y_test_predict
-        y_pred = y_pred.astype(y_true.dtype)
+        y_true = y_true.astype(y_pred.dtype)
         fpr, tpr, roc_thresholds = metrics.roc_curve(
             y_true, y_pred, drop_intermediate=True
         )

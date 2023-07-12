@@ -79,8 +79,10 @@ class TrainingTestDegradation(ThresholdTest):
             y_test_true = self.model.test_ds.y
             y_train_true = self.model.train_ds.y
 
-        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
-        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
+        train_class_pred = self.model.model.predict(self.model.train_ds.x)
+        y_train_true = y_train_true.astype(train_class_pred.dtype)
+        test_class_pred = self.model.model.predict(self.model.test_ds.x)
+        y_test_true = y_test_true.astype(test_class_pred.dtype)
 
         metrics_to_compare = self.params["metrics"]
         test_results = []
