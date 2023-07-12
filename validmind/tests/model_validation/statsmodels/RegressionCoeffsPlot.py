@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import plotly.graph_objects as go
-import statsmodels.api as sm
 from scipy import stats
 from validmind.vm_models import Figure, Metric, Model
 
