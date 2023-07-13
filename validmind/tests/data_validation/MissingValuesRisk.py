@@ -17,10 +17,7 @@ class MissingValuesRisk(Metric):
 
     def description(self):
         return """
-        This section provides an analysis of the risk associated with missing values
-        in the dataset, providing two risk measures: 
-        1) Percentage of missing values in the dataset 
-        2) Percentage of variables with missing values.
+        This section provides an analysis of the risk associated with missing values in the dataset, providing two risk measures: 1) Percentage of missing values in the dataset 2) Percentage of variables with missing values.
         """
 
     def run(self):
