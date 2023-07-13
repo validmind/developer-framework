@@ -11,14 +11,14 @@ logger = get_logger(__name__)
 standard_content_html = """
 <div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
     <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
-        <span>Content Block: '{content_id}' <i>({content_type})</i></span>
+        <span>Content Block: {content_type}(<i>'{content_id}'</i>)</span>
     </div>
 </div>
 """
 test_content_html = """
 <div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
     <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
-        <span>Content Block (Test-Driven): '{content_id}' <i>({content_type})</i></span>
+        <span>Content Block (Test-Driven): {content_type}(<i>'{content_id}'</i>)</span>
     </div>
 </div>
 """
