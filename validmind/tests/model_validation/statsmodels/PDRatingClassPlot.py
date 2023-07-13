@@ -6,45 +6,22 @@ from validmind.vm_models import Figure, Metric, Model
 
 
 @dataclass
-class ScorecardDefaultRatePlot(Metric):
+class PDRatingClassPlot(Metric):
     """
-    Scorecard Bucket Analysis
+    Probability of Default (PD) Rating Class Plot
     """
 
-    name = "scorecard_default_rate_plot"
+    name = "pd_rating_class_plot"
     required_context = ["model"]
     default_parameters = {
-        "title": "Default Rates by Rating Class",
-        "target_score": 600,
-        "target_odds": 50,
-        "pdo": 20,
+        "title": "PD by Rating Class",
         "rating_classes": ["A", "B", "C", "D"],
     }
 
     @staticmethod
-    def compute_scores(model, X, target_score, target_odds, pdo):
-        X_copy = X.copy()
-        beta = model.model.params.values
-        alpha = model.model.params[0]
-        factor = pdo / np.log(2)
-        offset = target_score - (factor * np.log(target_odds))
-
-        for _, row in X_copy.iterrows():
-            score_i = 0
-            for i in range(1, len(beta)):
-                WoE_i = row[i]
-                score_i += (beta[i] * WoE_i) * factor
-
-            score_i += alpha * factor
-            score_i += offset
-            X_copy.loc[row.name, "score"] = score_i
-
-        return X_copy
-
-    @staticmethod
-    def plot_bucket_analysis(df, score_col, target_col, title, rating_classes):
+    def plot_bucket_analysis(df, prob_col, target_col, title, rating_classes):
         df["bucket"] = pd.cut(
-            df[score_col], bins=len(rating_classes), labels=rating_classes, right=False
+            df[prob_col], bins=len(rating_classes), labels=rating_classes, right=False
         )
         default_rate = df.groupby("bucket")[target_col].mean()
 
@@ -66,7 +43,7 @@ class ScorecardDefaultRatePlot(Metric):
         fig.update_layout(
             title_text=title,
             xaxis_title="Rating Class",
-            yaxis_title="Default Rate",
+            yaxis_title="Probability of Default",
             barmode="group",
         )
 
@@ -81,9 +58,6 @@ class ScorecardDefaultRatePlot(Metric):
 
         target_column = self.model.train_ds.target_column
         title = self.params["title"]
-        target_score = self.params["target_score"]
-        target_odds = self.params["target_odds"]
-        pdo = self.params["pdo"]
         rating_classes = self.params["rating_classes"]
 
         X_train = self.model.train_ds.x.copy()
@@ -91,28 +65,33 @@ class ScorecardDefaultRatePlot(Metric):
         X_test = self.model.test_ds.x.copy()
         y_test = self.model.test_ds.y.copy()
 
-        X_train_scores = self.compute_scores(
-            self.model, X_train, target_score, target_odds, pdo
-        )
-        X_test_scores = self.compute_scores(
-            self.model, X_test, target_score, target_odds, pdo
-        )
+        # Compute probabilities
+        X_train["probability"] = self.model.model.predict(X_train)
+        X_test["probability"] = self.model.model.predict(X_test)
 
-        df_train = pd.concat([X_train_scores, y_train], axis=1)
-        df_test = pd.concat([X_test_scores, y_test], axis=1)
+        df_train = pd.concat([X_train, y_train], axis=1)
+        df_test = pd.concat([X_test, y_test], axis=1)
 
         fig_train = self.plot_bucket_analysis(
-            df_train, "score", target_column, title + " - Train Data", rating_classes
+            df_train,
+            "probability",
+            target_column,
+            title + " - Train Data",
+            rating_classes,
         )
         fig_test = self.plot_bucket_analysis(
-            df_test, "score", target_column, title + " - Test Data", rating_classes
+            df_test,
+            "probability",
+            target_column,
+            title + " - Test Data",
+            rating_classes,
         )
 
         return self.cache_results(
             metric_value={
                 "bucket_analysis": {
-                    "train_scores": list(X_train_scores["score"]),
-                    "test_scores": list(X_test_scores["score"]),
+                    "train_probs": list(X_train["probability"]),
+                    "test_probs": list(X_test["probability"]),
                 },
             },
             figures=[
