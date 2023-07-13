@@ -14,11 +14,11 @@ class ScorecardBucketHistogram(Metric):
     name = "scorecard_bucket_histogram"
     required_context = ["model"]
     default_parameters = {
-        "title": "Probability of Default by Score Bucket",
+        "title": "Distribution of Scores by Rating Classes",
         "target_score": 600,
         "target_odds": 50,
         "pdo": 20,
-        "score_buckets": ["A", "B", "C", "D"],
+        "rating_classes": ["A", "B", "C", "D"],
     }
 
     @staticmethod
@@ -43,16 +43,16 @@ class ScorecardBucketHistogram(Metric):
         return X_copy
 
     @staticmethod
-    def plot_score_bucket_histogram(df, score_col, title, score_buckets):
+    def plot_score_bucket_histogram(df, score_col, title, rating_classes):
         df["bucket"] = pd.cut(
-            df[score_col], bins=len(score_buckets), labels=score_buckets, right=False
+            df[score_col], bins=len(rating_classes), labels=rating_classes, right=False
         )
 
         fig = go.Figure()
 
         color_scale = [[0.0, "rgba(178, 24, 43, 1)"], [1.0, "rgba(33, 102, 172, 1)"]]
 
-        for bucket in score_buckets:
+        for bucket in rating_classes:
             df_bucket = df[df["bucket"] == bucket]
             bucket_values = df_bucket[score_col]
             fig.add_trace(
@@ -84,7 +84,7 @@ class ScorecardBucketHistogram(Metric):
         target_score = self.params["target_score"]
         target_odds = self.params["target_odds"]
         pdo = self.params["pdo"]
-        score_buckets = self.params["score_buckets"]
+        rating_classes = self.params["rating_classes"]
 
         X_train = self.model.train_ds.x.copy()
         X_test = self.model.test_ds.x.copy()
@@ -103,13 +103,13 @@ class ScorecardBucketHistogram(Metric):
             df_train_scores,
             "score",
             title + " - Train Data",
-            score_buckets,
+            rating_classes,
         )
         fig_test = self.plot_score_bucket_histogram(
             df_test_scores,
             "score",
             title + " - Test Data",
-            score_buckets,
+            rating_classes,
         )
 
         return self.cache_results(

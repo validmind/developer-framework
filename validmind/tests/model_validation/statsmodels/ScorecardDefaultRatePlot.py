@@ -14,11 +14,11 @@ class ScorecardDefaultRatePlot(Metric):
     name = "scorecard_default_rate_plot"
     required_context = ["model"]
     default_parameters = {
-        "title": "Bucket Analysis",
+        "title": "Default Rates by Rating Class",
         "target_score": 600,
         "target_odds": 50,
         "pdo": 20,
-        "score_buckets": ["A", "B", "C", "D"],
+        "rating_classes": ["A", "B", "C", "D"],
     }
 
     @staticmethod
@@ -42,30 +42,30 @@ class ScorecardDefaultRatePlot(Metric):
         return X_copy
 
     @staticmethod
-    def plot_bucket_analysis(df, score_col, target_col, title, score_buckets):
+    def plot_bucket_analysis(df, score_col, target_col, title, rating_classes):
         df["bucket"] = pd.cut(
-            df[score_col], bins=len(score_buckets), labels=score_buckets, right=False
+            df[score_col], bins=len(rating_classes), labels=rating_classes, right=False
         )
         default_rate = df.groupby("bucket")[target_col].mean()
 
-        # Sort the data based on the order of score_buckets
+        # Sort the data based on the order of rating_classes
         sorted_data = sorted(
-            zip(score_buckets, default_rate),
-            key=lambda x: score_buckets.index(x[0]),
+            zip(rating_classes, default_rate),
+            key=lambda x: rating_classes.index(x[0]),
         )
-        score_buckets_sorted, default_rate_sorted = zip(*sorted_data)
+        rating_classes_sorted, default_rate_sorted = zip(*sorted_data)
 
         fig = go.Figure()
 
         # Iterate through the sorted data and create a bar for each score bucket
         for i, (bucket, rate) in enumerate(
-            zip(score_buckets_sorted, default_rate_sorted)
+            zip(rating_classes_sorted, default_rate_sorted)
         ):
             fig.add_trace(go.Bar(x=[bucket], y=[rate], name=bucket))
 
         fig.update_layout(
             title_text=title,
-            xaxis_title="Score Buckets",
+            xaxis_title="Rating Class",
             yaxis_title="Default Rate",
             barmode="group",
         )
@@ -84,7 +84,7 @@ class ScorecardDefaultRatePlot(Metric):
         target_score = self.params["target_score"]
         target_odds = self.params["target_odds"]
         pdo = self.params["pdo"]
-        score_buckets = self.params["score_buckets"]
+        rating_classes = self.params["rating_classes"]
 
         X_train = self.model.train_ds.x.copy()
         y_train = self.model.train_ds.y.copy()
@@ -102,10 +102,10 @@ class ScorecardDefaultRatePlot(Metric):
         df_test = pd.concat([X_test_scores, y_test], axis=1)
 
         fig_train = self.plot_bucket_analysis(
-            df_train, "score", target_column, title + " - Train Data", score_buckets
+            df_train, "score", target_column, title + " - Train Data", rating_classes
         )
         fig_test = self.plot_bucket_analysis(
-            df_test, "score", target_column, title + " - Test Data", score_buckets
+            df_test, "score", target_column, title + " - Test Data", rating_classes
         )
 
         return self.cache_results(
