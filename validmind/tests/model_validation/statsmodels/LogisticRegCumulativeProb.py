@@ -7,12 +7,12 @@ from validmind.vm_models import Figure, Metric, Model
 
 
 @dataclass
-class LogRegCumProb(Metric):
+class LogisticRegCumulativeProb(Metric):
     """
     Cumulative Probability Metric for Logistic Regression Models
     """
 
-    name = "log_reg_cum_prob"
+    name = "logistic_reg_cumulative_prob"
     required_context = ["model"]
     default_parameters = {"title": "Cumulative Probabilities"}
 
