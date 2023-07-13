@@ -36,6 +36,7 @@ class ThresholdTest(TestContextUtils):
     category: ClassVar[str] = ""
     name: ClassVar[str] = ""
     ref_id: ClassVar[str] = ""  # unique identifier for metric
+    tag: ClassVar[str] = ""  # for now this is the template section id
     default_params: ClassVar[dict] = {}
 
     # Instance Variables
