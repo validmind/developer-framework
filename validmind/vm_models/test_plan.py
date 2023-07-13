@@ -3,7 +3,7 @@ TestPlan class
 """
 import asyncio
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Union
 
 import ipywidgets as widgets
 from IPython.display import display
@@ -30,7 +30,7 @@ class TestPlan:
     # Class Variables
     name: ClassVar[str]
     required_context: ClassVar[List[str]]
-    tests: ClassVar[List[object]]
+    tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
     results: ClassVar[List[TestPlanResult]]
 
     # Instance Variables
@@ -73,7 +73,7 @@ class TestPlan:
             self.model = self.test_context.model
             self.models = self.test_context.models
 
-        self._load_tests()
+        self._init_tests()
         self.validate_context()
         self._split_configs()
 
@@ -93,32 +93,56 @@ class TestPlan:
             else:
                 self._global_config[key] = value
 
-    def _load_tests(self):
+    def _load_test(self, test_id: str, test_class_options: dict = None):
+        """Loads a test class from a test id and appends it to the list of tests"""
+        try:
+            test_class = load_test(test_id)
+
+            if test_class_options:  # TODO: maybe be more explicit here?
+                for key, val in test_class_options.items():
+                    setattr(test_class, key, val)
+
+            self._tests.append(test_class)
+
+        except LoadTestError as e:
+            self.results.append(
+                TestPlanFailedResult(
+                    error=e,
+                    message=f"Failed to load test '{test_id}'",
+                    result_id=test_id,
+                )
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to load test '{test_id}': {e}")
+            raise e
+
+    def _init_tests(self):
         """Dynamically import the test classes based on the test names"""
         self.results = []
         self._tests = []
+
         for test_id_or_class in self.tests:
             if isinstance(
                 test_id_or_class,
                 TestContextUtils,  # TODO: use a dedicated base class for metric/test
-            ):
+            ):  # if its a test class, we just add it to the list
                 self._tests.append(test_id_or_class)
                 continue
 
-            try:
-                test_class = load_test(test_id_or_class)
-                self._tests.append(test_class)
-            except LoadTestError as e:
-                self.results.append(
-                    TestPlanFailedResult(
-                        error=e,
-                        message=f"Failed to load test '{test_id_or_class}'",
-                        result_id=test_id_or_class,
-                    )
-                )
-            except Exception as e:
-                logger.error(f"Failed to load test '{test_id_or_class}': {e}")
-                raise e
+            test_class_options = None
+            if isinstance(test_id_or_class, dict):
+                # if its a dictionary, we pull the test_id out and then treat the rest
+                # of the dictionary as the attributes to set on the test class
+                # this is used to set a ref_id from the template
+                test_class_options = {
+                    key: val
+                    for key, val in test_id_or_class.items()
+                    if key != "test_id"
+                }
+                test_id_or_class = test_id_or_class["test_id"]
+
+            self._load_test(test_id_or_class, test_class_options)
 
     def title(self):
         """

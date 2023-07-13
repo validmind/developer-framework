@@ -24,6 +24,7 @@ class MetricResult:
     type: str
     scope: str
     key: dict
+    ref_id: str
     value: Union[dict, list, pd.DataFrame]
     summary: Optional[ResultSummary] = None
     value_formatter: Optional[str] = None
@@ -54,6 +55,7 @@ class MetricResult:
             "type": self.type,
             "scope": self.scope,
             "key": self.key,
+            "ref_id": self.ref_id,
             "value": value,
             "summary": self.summary.serialize() if self.summary else None,
         }
