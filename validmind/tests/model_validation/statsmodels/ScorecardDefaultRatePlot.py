@@ -11,7 +11,7 @@ class ScorecardDefaultRatePlot(Metric):
     Scorecard Bucket Analysis
     """
 
-    name = "scorecard_bucket_analysis"
+    name = "scorecard_default_rate_plot"
     required_context = ["model"]
     default_parameters = {
         "title": "Bucket Analysis",
@@ -57,22 +57,17 @@ class ScorecardDefaultRatePlot(Metric):
 
         fig = go.Figure()
 
-        color_scale = [[0.0, "rgba(178, 24, 43, 1)"], [1.0, "rgba(33, 102, 172, 1)"]]
-
-        fig.add_trace(
-            go.Bar(
-                x=list(score_buckets_sorted),
-                y=list(default_rate_sorted),
-                marker=dict(color=list(default_rate_sorted), coloraxis="coloraxis"),
-            )
-        )
+        # Iterate through the sorted data and create a bar for each score bucket
+        for i, (bucket, rate) in enumerate(
+            zip(score_buckets_sorted, default_rate_sorted)
+        ):
+            fig.add_trace(go.Bar(x=[bucket], y=[rate], name=bucket))
 
         fig.update_layout(
             title_text=title,
             xaxis_title="Score Buckets",
             yaxis_title="Default Rate",
             barmode="group",
-            coloraxis=dict(colorscale=color_scale, colorbar=dict(title="Default Rate")),
         )
 
         return fig
