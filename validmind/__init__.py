@@ -54,6 +54,7 @@ from .client import (  # noqa: E402
     init_model,
     init_r_model,
     preview_template,
+    run_documentation_tests,
     run_template,
     run_test_plan,
     run_test_suite,
