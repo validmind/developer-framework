@@ -128,7 +128,11 @@ class PopulationStabilityIndex(Metric):
 
     def run(self):
         model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch" or model_library == "catboost":
+        if (
+            model_library == "statsmodels"
+            or model_library == "pytorch"
+            or model_library == "catboost"
+        ):
             logger.info(f"Skiping PSI for {model_library} models")
             return
 
