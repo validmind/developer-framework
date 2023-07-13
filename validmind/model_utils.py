@@ -317,33 +317,3 @@ def get_statsmodels_regression_metrics(model, x_train, y_train, x_val, y_val):
     )
 
     return vm_metrics
-
-
-# def get_training_metrics(model, x_train, y_train, x_val=None, y_val=None):
-#     """
-#     Attempts to extract model training metrics from a model object instance
-#     """
-#     model_class = model.__class__.__name__
-
-#     if not Model.is_supported_model(model):
-#         raise ValueError(
-#             "Model type {} is not supported at the moment.".format(model_class)
-#         )
-
-#     # Only supports xgboot classifiers at the moment
-#     if model_class == "XGBClassifier":
-#         metrics = get_xgb_classification_metrics(model, x_train, y_train, x_val, y_val)
-#     elif model_class == "XGBRegressor":
-#         metrics = get_xgb_regression_metrics(model, x_train, y_train, x_val, y_val)
-#     elif model_class == "LinearRegression":
-#         metrics = get_sklearn_regression_metrics(model, x_train, y_train, x_val, y_val)
-#     elif model_class == "LogisticRegression":
-#         metrics = []
-#     elif model_class == "GLMResultsWrapper":
-#         print("Refitting model...")
-#         refitted = model.model.fit()
-#         metrics = get_statsmodels_regression_metrics(
-#             refitted, x_train, y_train, x_val, y_val
-#         )
-
-#     return metrics

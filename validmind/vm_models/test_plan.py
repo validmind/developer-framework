@@ -8,6 +8,7 @@ from typing import ClassVar, List
 import ipywidgets as widgets
 from IPython.display import display
 
+from ..errors import MissingRequiredTestContextError
 from ..logging import get_logger, log_performance
 from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
@@ -159,7 +160,7 @@ class TestPlan:
         for element in required_context:
             logger.debug(f"Checking if required context '{element}' is present")
             if not recursive_attr_check(self, element):
-                raise ValueError(
+                raise MissingRequiredTestContextError(
                     f"Test '{test.name}' requires '{element}'"
                     " to be present in the test context"
                 )
@@ -392,9 +393,6 @@ class TestPlan:
             try:
                 accordion_widget.set_title(index=accordion_item["id"], title=title)
             except Exception as e:
-                print(len(accordion_widget.children))
-                print(len(accordion_contents))
-                print(accordion_item["id"], title)
                 raise e
 
         vbox_children.append(accordion_widget)

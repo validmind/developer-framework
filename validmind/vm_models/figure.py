@@ -13,6 +13,7 @@ import plotly.graph_objs as go
 import ipywidgets as widgets
 
 from ..client_config import client_config
+from ..errors import InvalidFigureForObjectError, UnsupportedFigureError
 from ..utils import get_full_typename
 
 
@@ -77,7 +78,7 @@ class Figure:
         elif issubclass(self.for_object.__class__, ThresholdTest):
             return "threshold_test"
         else:
-            raise ValueError(
+            raise InvalidFigureForObjectError(
                 "Figure for_object must be a Metric or ThresholdTest object"
             )
 
@@ -111,7 +112,7 @@ class Figure:
             else:
                 return self.figure
         else:
-            raise ValueError(
+            raise UnsupportedFigureError(
                 f"Figure type {type(self.figure)} not supported for plotting"
             )
 
@@ -150,4 +151,6 @@ class Figure:
                 ),
             }
 
-        raise ValueError(f"Unrecognized figure type: {get_full_typename(self.figure)}")
+        raise UnsupportedFigureError(
+            f"Unrecognized figure type: {get_full_typename(self.figure)}"
+        )
