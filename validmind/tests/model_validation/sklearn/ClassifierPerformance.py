@@ -80,8 +80,14 @@ class ClassifierPerformance(Metric):
                 raise ValueError(f"Metric {metric_name} not supported.")
             metric_func = self.default_metrics[metric_name]
             y_true = y_true.astype(class_pred.dtype)
-            if metric_name == "precision" or metric_name == "recall" or metric_name == "f1":
-                results[metric_name] = metric_func(y_true, class_pred, pos_label=unique(y_true)[0])
+            if (
+                metric_name == "precision"
+                or metric_name == "recall"
+                or metric_name == "f1"
+            ):
+                results[metric_name] = metric_func(
+                    y_true, class_pred, pos_label=unique(y_true)[0]
+                )
             else:
                 results[metric_name] = metric_func(y_true, class_pred)
 

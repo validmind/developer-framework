@@ -8,6 +8,7 @@ import pandas as pd
 
 from .dataset import Dataset
 from .model import Model
+from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 
 
 @dataclass
@@ -68,14 +69,14 @@ class TestContextUtils:
         we passed in a Dataset or a DataFrame
         """
         if self.dataset is None:
-            raise ValueError("dataset must be set")
+            raise TestContextInvalidDatasetError("dataset must be set")
 
         if isinstance(self.dataset, Dataset):
             return self.dataset.raw_dataset
         elif isinstance(self.dataset, pd.DataFrame):
             return self.dataset
 
-        raise ValueError(
+        raise TestContextInvalidDatasetError(
             "dataset must be a Pandas DataFrame or a validmind Dataset object"
         )
 
@@ -86,11 +87,11 @@ class TestContextUtils:
         """
         for element in self.required_context:
             if not hasattr(self, element):
-                raise ValueError(
+                raise MissingRequiredTestContextError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )
 
             if getattr(self, element) is None:
-                raise ValueError(
+                raise MissingRequiredTestContextError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"
                 )

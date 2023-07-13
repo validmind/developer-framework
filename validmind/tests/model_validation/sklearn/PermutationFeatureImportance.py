@@ -40,7 +40,11 @@ class PermutationFeatureImportance(Metric):
 
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
-        if model_library == "statsmodels" or model_library == "pytorch" or model_library == "catboost":
+        if (
+            model_library == "statsmodels"
+            or model_library == "pytorch"
+            or model_library == "catboost"
+        ):
             logger.info(f"Skipping PFI for {model_library} models")
             return
 

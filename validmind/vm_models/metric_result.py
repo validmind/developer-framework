@@ -9,6 +9,7 @@ from typing import Optional, Union
 import pandas as pd
 
 from .result_summary import ResultSummary
+from ..errors import InvalidValueFormatterError
 from ..utils import format_records, format_key_values
 
 
@@ -36,7 +37,7 @@ class MetricResult:
         elif self.value_formatter == "key_values":
             value = format_key_values(self.value)
         elif self.value_formatter is not None:
-            raise ValueError(
+            raise InvalidValueFormatterError(
                 f"Invalid value_formatter: {self.value_formatter}. "
                 "Must be one of 'records' or 'key_values'"
             )
@@ -45,7 +46,7 @@ class MetricResult:
             value = self.value
 
         if isinstance(value, pd.DataFrame):
-            raise ValueError(
+            raise InvalidValueFormatterError(
                 "A DataFrame value was provided but no value_formatter was specified."
             )
 
