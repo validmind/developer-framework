@@ -115,6 +115,7 @@ __all__ = [  # noqa
     "init_r_model",
     "model_validation",
     "preview_template",
+    "run_documentation_tests",
     "run_template",
     "run_test_plan",
     "run_test_suite",
