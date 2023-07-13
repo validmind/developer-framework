@@ -8,10 +8,17 @@ from .vm_models.test_suite import TestSuite
 
 logger = get_logger(__name__)
 
-content_html = """
+standard_content_html = """
 <div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
     <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
         <span>Content Block: '{content_id}' <i>({content_type})</i></span>
+    </div>
+</div>
+"""
+test_content_html = """
+<div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
+    <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
+        <span>Content Block (Test-Driven): '{content_id}' <i>({content_type})</i></span>
     </div>
 </div>
 """
@@ -40,10 +47,26 @@ def _convert_sections_to_section_tree(
 
 
 def _create_content_widget(content):
+    content_type_map = {
+        "test": "Threshold Test",
+        "metric": "Metric",
+        "metadata_text": "Metadata Text",
+        "dynamic": "Dynamic Content",
+    }
+    content_type = content_type_map[content["content_type"]]
+
+    if content["content_type"] in ["metadata_text", "dynamic"]:
+        return HTML(
+            standard_content_html.format(
+                content_id=content["content_id"],
+                content_type=content_type,
+            )
+        )
+
     return HTML(
-        content_html.format(
+        test_content_html.format(
             content_id=content["content_id"],
-            content_type=content["content_type"],
+            content_type=content_type,
         )
     )
 

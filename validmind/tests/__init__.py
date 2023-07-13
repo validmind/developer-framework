@@ -66,6 +66,7 @@ def _pretty_list_tests(tests):
             "Name": __test_classes[test_id].__name__,
             "Description": __test_classes[test_id].__doc__.strip(),
             "ID": test_id,
+            "Required Context": "\n".join(__test_classes[test_id].required_context),
         }
         for test_id in tests
     ]
@@ -185,6 +186,7 @@ def describe_test(test_name: str = None, test_id: str = None):
                     "Test Type": test.test_type,
                     "Name": test.__name__,
                     "Description": test.__doc__.strip(),
+                    "Required Context": "\n".join(test.required_context),
                 }
             ]
         )
