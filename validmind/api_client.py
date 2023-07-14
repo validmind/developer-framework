@@ -16,6 +16,11 @@ import requests
 from aiohttp import FormData
 
 from .client_config import client_config
+from .errors import (
+    raise_api_error,
+    MissingAPICredentialsError,
+    MissingProjectIdError,
+)
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 from .vm_models import Dataset, Figure, Metric, TestResults
@@ -91,17 +96,13 @@ def init(
     _project = project or os.environ.get("VM_API_PROJECT")
 
     if _project is None:
-        raise ValueError(
-            "Project ID must be provided either as an environment variable or as an argument to init."
-        )
+        raise MissingProjectIdError()
 
     _api_key = api_key or os.environ.get("VM_API_KEY")
     _api_secret = api_secret or os.environ.get("VM_API_SECRET")
 
     if _api_key is None or _api_secret is None:
-        raise ValueError(
-            "API key and secret must be provided either as environment variables or as arguments to init."
-        )
+        raise MissingAPICredentialsError()
 
     _api_host = api_host or os.environ.get(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
@@ -145,8 +146,7 @@ def __ping() -> Dict[str, Any]:
         },
     )
     if r.status_code != 200:
-        logger.error(f"Failed to connect to ValidMind API: {r.text}")
-        raise ConnectionError(r.text)
+        raise_api_error(r.text)
 
     client_info = r.json()
 
@@ -181,7 +181,7 @@ async def _get(
 
     async with session.get(url) as r:
         if r.status != 200:
-            raise Exception(await r.text())
+            raise_api_error(await r.text())
 
         return await r.json()
 
@@ -217,7 +217,7 @@ async def _post(
 
     async with session.post(url, data=_data) as r:
         if r.status != 200:
-            raise Exception(await r.text())
+            raise_api_error(await r.text())
 
         return await r.json()
 
@@ -463,7 +463,7 @@ def start_run() -> str:
 
     if r.status_code != 200:
         logger.error("Could not start data logging run with ValidMind API")
-        raise Exception(r.text)
+        raise_api_error(r.text)
 
     test_run = r.json()
     _run_cuid = test_run["cuid"]

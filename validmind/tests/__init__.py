@@ -6,6 +6,7 @@ from typing import Dict
 
 import pandas as pd
 
+from ..errors import LoadTestError
 from ..logging import get_logger
 from ..utils import format_dataframe
 from .__types__ import ExternalTestProvider
@@ -13,12 +14,6 @@ from .test_providers import GithubTestProvider, LocalTestProvider
 
 
 logger = get_logger(__name__)
-
-
-class LoadTestError(Exception):
-    """Exception raised when an error occurs while loading a test"""
-
-    pass
 
 
 __all__ = [
