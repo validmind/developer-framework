@@ -212,7 +212,7 @@ def clean_docstring(docstring: str) -> str:
     Clean up docstrings by removing leading and trailing whitespace and
     replacing newlines with spaces.
     """
-    description = docstring.strip()
+    description = (docstring or "").strip()
     paragraphs = description.split("\n\n")  # Split into paragraphs
     paragraphs = [
         " ".join([line.strip() for line in paragraph.split("\n")])
