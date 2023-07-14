@@ -36,6 +36,9 @@ def _convert_sections_to_section_tree(
             child_sections = _convert_sections_to_section_tree(sections, section["id"])
             section_tree.append({**section, "sections": child_sections})
 
+    if start_section_id and not section_tree:
+        raise ValueError(f"Section {start_section_id} not found in template")
+
     return sorted(section_tree, key=lambda x: x.get("order", 0))
 
 
