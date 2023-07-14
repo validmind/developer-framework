@@ -5,6 +5,7 @@ import pandas as pd
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(current_path, "datasets")
 models_path = os.path.join(current_path, "models")
+fred_files_path = os.path.join(current_path, "datasets", "fred")
 
 
 target_column = "MORTGAGE30US"
@@ -12,6 +13,40 @@ feature_columns = ["FEDFUNDS", "GS10", "UNRATE"]
 frequency = "MS"
 split_option = "train_test"
 transform_func = "diff"
+
+
+def load_all_data():
+    # List all files in the directory
+    files = os.listdir(fred_files_path)
+
+    # Filter for CSV files
+    csv_files = [f for f in files if f.endswith(".csv")]
+
+    # Initialize an empty DataFrame
+    df = pd.DataFrame()
+
+    # Loop through the CSV files and merge them into the DataFrame
+    for csv_file in csv_files:
+        # Read the CSV file
+        data = pd.read_csv(os.path.join(fred_files_path, csv_file))
+
+        # Make sure 'DATE' is in datetime format
+        data["DATE"] = pd.to_datetime(data["DATE"])
+
+        # If the DataFrame is empty, copy the data
+        if df.empty:
+            df = data
+        else:
+            # Otherwise, merge the data (this assumes 'DATE' is the common column)
+            df = pd.merge(df, data, on="DATE", how="outer")
+
+    # Set 'DATE' as the index
+    df.set_index("DATE", inplace=True)
+
+    # Sort the DataFrame by the index
+    df.sort_index(inplace=True)
+
+    return df
 
 
 def load_data():
