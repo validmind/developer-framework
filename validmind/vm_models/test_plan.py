@@ -123,7 +123,7 @@ class TestPlan:
         self._tests = []
 
         for test_id_or_class in self.tests:
-            if isinstance(
+            if issubclass(
                 test_id_or_class,
                 TestContextUtils,  # TODO: use a dedicated base class for metric/test
             ):  # if its a test class, we just add it to the list
