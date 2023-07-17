@@ -35,7 +35,7 @@ class PrecisionRecallCurve(Metric):
             y_true = self.model.test_ds.y
 
         y_pred = self.model.y_test_predict
-        y_pred = y_pred.astype(y_true.dtype)
+        y_true = y_true.astype(y_pred.dtype)
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
             y_true, y_pred
         )

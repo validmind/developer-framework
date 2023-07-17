@@ -1,9 +1,12 @@
 """
 Model class wrapper
 """
-from dataclasses import dataclass, fields
-from .dataset import Dataset
 import inspect
+
+from dataclasses import dataclass, fields
+
+from .dataset import Dataset
+from ..errors import MissingPytorchModelPredictError
 
 SUPPORTED_MODEL_TYPES = [
     "catboost.CatBoostClassifier",
@@ -11,6 +14,7 @@ SUPPORTED_MODEL_TYPES = [
     "sklearn.LogisticRegression",
     "sklearn.LinearRegression",
     "sklearn.RandomForestClassifier",
+    "sklearn.DecisionTreeClassifier",
     "statsmodels.GLMResultsWrapper",
     "statsmodels.BinaryResultsWrapper",  # Logistic Regression results
     "statsmodels.RegressionResultsWrapper",
@@ -143,7 +147,7 @@ class Model:
             return self.model.predict_proba(*args, **kwargs)[:, 1]
         if Model._is_pytorch_model(self.model):
             if not Model.has_method_with_arguments(self.model, "predict", 1):
-                raise ValueError(
+                raise MissingPytorchModelPredictError(
                     "Model requires a implemention of predict method with 1 argument"
                     + " that is tensor features matrix"
                 )

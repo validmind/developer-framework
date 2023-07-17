@@ -68,7 +68,11 @@ class SHAPGlobalImportance(Metric):
 
     def run(self):
         model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
+        if (
+            model_library == "statsmodels"
+            or model_library == "pytorch"
+            or model_library == "catboost"
+        ):
             logger.info(f"Skiping SHAP for {model_library} models")
             return
 

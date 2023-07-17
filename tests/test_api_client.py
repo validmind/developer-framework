@@ -17,6 +17,7 @@ os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind as vm
 import validmind.api_client as api_client
+from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
 from validmind.vm_models.figure import Figure
 from validmind.utils import NumpyEncoder
 
@@ -58,7 +59,9 @@ class TestAPIClient(unittest.TestCase):
 
     @patch("requests.get")
     def test_init_successful(self, mock_requests_get):
-        mock_data = {"project": {"name": "test_project", "cuid": os.environ["VM_API_PROJECT"]}}
+        mock_data = {
+            "project": {"name": "test_project", "cuid": os.environ["VM_API_PROJECT"]}
+        }
         mock_response = Mock(status_code=200, json=Mock(return_value=mock_data))
         mock_requests_get.return_value = mock_response
 
@@ -95,7 +98,7 @@ class TestAPIClient(unittest.TestCase):
         mock_requests_get.return_value = Mock()
 
         project = os.environ.pop("VM_API_PROJECT")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MissingProjectIdError):
             api_client.init(project=None)
 
         os.environ["VM_API_PROJECT"] = project
@@ -109,7 +112,7 @@ class TestAPIClient(unittest.TestCase):
         api_key = os.environ.pop("VM_API_KEY")
         api_secret = os.environ.pop("VM_API_SECRET")
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MissingAPICredentialsError):
             api_client.init(project="project_id", api_key=None, api_secret=None)
 
         os.environ["VM_API_KEY"] = api_key

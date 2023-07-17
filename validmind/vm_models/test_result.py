@@ -48,6 +48,7 @@ class TestResults:
 
     category: str
     test_name: str
+    ref_id: str
     params: dict
     passed: bool
     results: List[TestResult]
@@ -60,6 +61,7 @@ class TestResults:
         test_results = {
             "category": self.category,
             "test_name": self.test_name,
+            "ref_id": self.ref_id,
             "params": self.params,
             "passed": self.passed,
             "results": [result.serialize() for result in self.results],

@@ -9,6 +9,7 @@ from typing import Optional, Union
 import pandas as pd
 
 from .result_summary import ResultSummary
+from ..errors import InvalidValueFormatterError
 from ..utils import format_records, format_key_values
 
 
@@ -23,6 +24,7 @@ class MetricResult:
     type: str
     scope: str
     key: dict
+    ref_id: str
     value: Union[dict, list, pd.DataFrame]
     summary: Optional[ResultSummary] = None
     value_formatter: Optional[str] = None
@@ -36,7 +38,7 @@ class MetricResult:
         elif self.value_formatter == "key_values":
             value = format_key_values(self.value)
         elif self.value_formatter is not None:
-            raise ValueError(
+            raise InvalidValueFormatterError(
                 f"Invalid value_formatter: {self.value_formatter}. "
                 "Must be one of 'records' or 'key_values'"
             )
@@ -45,7 +47,7 @@ class MetricResult:
             value = self.value
 
         if isinstance(value, pd.DataFrame):
-            raise ValueError(
+            raise InvalidValueFormatterError(
                 "A DataFrame value was provided but no value_formatter was specified."
             )
 
@@ -53,6 +55,7 @@ class MetricResult:
             "type": self.type,
             "scope": self.scope,
             "key": self.key,
+            "ref_id": self.ref_id,
             "value": value,
             "summary": self.summary.serialize() if self.summary else None,
         }

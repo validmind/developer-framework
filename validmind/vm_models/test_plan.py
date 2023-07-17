@@ -3,18 +3,19 @@ TestPlan class
 """
 import asyncio
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Union
 
 import ipywidgets as widgets
 from IPython.display import display
 
+from ..errors import MissingRequiredTestContextError
 from ..logging import get_logger, log_performance
-from ..tests import load_test
+from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import Dataset
 from .model import Model
-from .test_context import TestContext
-from .test_plan_result import TestPlanResult
+from .test_context import TestContext, TestContextUtils
+from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
 logger = get_logger(__name__)
 
@@ -29,8 +30,8 @@ class TestPlan:
     # Class Variables
     name: ClassVar[str]
     required_context: ClassVar[List[str]]
-    tests: ClassVar[List[object]] = []
-    results: ClassVar[List[TestPlanResult]] = []
+    tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
+    results: ClassVar[List[TestPlanResult]]
 
     # Instance Variables
     config: dict() = None
@@ -72,8 +73,8 @@ class TestPlan:
             self.model = self.test_context.model
             self.models = self.test_context.models
 
+        self._init_tests()
         self.validate_context()
-        self._load_tests()
         self._split_configs()
 
     def _split_configs(self):
@@ -92,9 +93,56 @@ class TestPlan:
             else:
                 self._global_config[key] = value
 
-    def _load_tests(self):
+    def _load_test(self, test_id: str, test_class_options: dict = None):
+        """Loads a test class from a test id and appends it to the list of tests"""
+        try:
+            test_class = load_test(test_id)
+
+            if test_class_options:  # TODO: maybe be more explicit here?
+                for key, val in test_class_options.items():
+                    setattr(test_class, key, val)
+
+            self._tests.append(test_class)
+
+        except LoadTestError as e:
+            self.results.append(
+                TestPlanFailedResult(
+                    error=e,
+                    message=f"Failed to load test '{test_id}'",
+                    result_id=test_id,
+                )
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to load test '{test_id}': {e}")
+            raise e
+
+    def _init_tests(self):
         """Dynamically import the test classes based on the test names"""
-        self._tests = [load_test(test) for test in self.tests]
+        self.results = []
+        self._tests = []
+
+        for test_id_or_class in self.tests:
+            if isinstance(
+                test_id_or_class,
+                TestContextUtils,  # TODO: use a dedicated base class for metric/test
+            ):  # if its a test class, we just add it to the list
+                self._tests.append(test_id_or_class)
+                continue
+
+            test_class_options = None
+            if isinstance(test_id_or_class, dict):
+                # if its a dictionary, we pull the test_id out and then treat the rest
+                # of the dictionary as the attributes to set on the test class
+                # this is used to set a ref_id from the template
+                test_class_options = {
+                    key: val
+                    for key, val in test_id_or_class.items()
+                    if key != "test_id"
+                }
+                test_id_or_class = test_id_or_class["test_id"]
+
+            self._load_test(test_id_or_class, test_class_options)
 
     def title(self):
         """
@@ -115,15 +163,30 @@ class TestPlan:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        for element in self.required_context:
-            if not hasattr(self, element):
-                raise ValueError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
-                )
+        required_context = set(self.required_context)
 
-            if getattr(self, element) is None:
-                raise ValueError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+        # bubble up the required context from the tests
+        for test in self._tests:
+            if not hasattr(test, "required_context"):
+                continue
+
+            required_context.update(test.required_context)
+
+        def recursive_attr_check(obj, attr_chain):
+            attrs = attr_chain.split(".")
+            if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
+                return False
+            return len(attrs) == 1 or recursive_attr_check(
+                getattr(obj, attrs[0]),
+                ".".join(attrs[1:]),
+            )
+
+        for element in required_context:
+            logger.debug(f"Checking if required context '{element}' is present")
+            if not recursive_attr_check(self, element):
+                raise MissingRequiredTestContextError(
+                    f"Test '{test.name}' requires '{element}'"
+                    " to be present in the test context"
                 )
 
     def get_config_params_for_test(self, test_name):
@@ -169,6 +232,43 @@ class TestPlan:
         if render_summary:
             display(self.pbar_box)
 
+    def _run_test(self, test):
+        try:
+            # run the test and log the performance if LOG_LEVEL is set to DEBUG
+            log_performance(
+                func=test.run,
+                name=test.name,
+                logger=logger,
+            )()  # this is a decorator so we need to call it
+        except Exception as e:
+            logger.error(f"Failed to run test '{test.name}': {e}")
+            test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
+                error=e,
+                message=f"Failed to run '{test.name}'",
+                result_id=test.name,
+            )
+
+        if test.result is None:
+            test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
+                error=None,
+                message=f"'{test.name}' did not return a result",
+                result_id=test.name,
+            )
+            return
+
+        if not isinstance(test.result, TestPlanResult):
+            test.result = TestPlanFailedResult(
+                name=f"Failed {test.test_type}",
+                error=None,
+                message=f"'{test.name}' returned an invalid result: {test.result}",
+                result_id=test.name,
+            )
+            return
+
+        self.results.append(test.result)
+
     def run(  # noqa C901 'TestPlan.run' is too complex
         self, render_summary: bool = True, send: bool = True
     ):
@@ -184,8 +284,6 @@ class TestPlan:
         Returns:
             None
         """
-        self.results = []  # Empty the results cache on every run
-
         if self.test_context is None:
             self.test_context = TestContext(
                 dataset=self.dataset,
@@ -204,24 +302,8 @@ class TestPlan:
 
             self.pbar_description.value = f"Running {test.test_type}: {test.name}"
 
-            # run the test and log the performance if LOG_LEVEL is set to DEBUG
-            log_performance(
-                test_instance.run,
-                test_instance.name,
-                logger=logger,
-            )()
+            self._run_test(test_instance)
 
-            if test_instance.result is None:
-                self.pbar_description.value = "Test returned None, skipping..."
-                self.pbar.value += 1
-                continue
-
-            if not isinstance(test_instance.result, TestPlanResult):
-                raise ValueError(
-                    f"'{test_instance.name}' must return an instance of TestPlanResult Base Class"
-                )
-
-            self.results.append(test_instance.result)
             self.pbar.value += 1
 
         if send:
@@ -281,16 +363,16 @@ class TestPlan:
         Builds a summary of the results for each of the tests in the test plan
         """
         accordions = {}
-        id = 0
+
+        index = 0
         for result in self.results:
-            result_widget = result._to_widget()
-            if result_widget:
+            if result_widget := result._to_widget():
                 accordions[result.result_id] = {
-                    "id": id,
+                    "id": index,
                     "widget": result_widget,
                     "result": result,
                 }
-                id += 1
+                index += 1
 
         return accordions
 
@@ -318,14 +400,24 @@ class TestPlan:
         vbox_children.append(widgets.HTML(value=self._results_description()))
 
         accordion_contents = self._results_summary()
-        accordion_items = [v["widget"] for v in accordion_contents.values()]
-        accordion_widget = widgets.Accordion(children=accordion_items)
 
+        accordion_widget = widgets.Accordion(
+            children=[v["widget"] for v in accordion_contents.values()],
+        )
+        # add titles to all the accordion items
         for result_id, accordion_item in accordion_contents.items():
             result = accordion_item["result"]
-            result_name = f"{result.name}: " if result.name else ""
-            title = f'{result_name }{result_id.title().replace("_", " ")} ({result_id})'
-            accordion_widget.set_title(accordion_item["id"], title)
+
+            test_title = result_id.split(".")[-1].title().replace("_", " ")
+            if isinstance(result, TestPlanFailedResult):
+                title = f"❌ {result.name}: {test_title} ({result_id})"
+            else:
+                title = f"{result.name}: {test_title} ({result_id})"
+
+            try:
+                accordion_widget.set_title(index=accordion_item["id"], title=title)
+            except Exception as e:
+                raise e
 
         vbox_children.append(accordion_widget)
 
@@ -354,8 +446,7 @@ class TestPlan:
 
     def get_results(self, result_id: str = None) -> List[TestPlanResult]:
         """
-        Returns one or more results of the test plan. Includes results from
-        sub test plans.
+        Returns one or more results of the test plan.
         """
         all_results = self.results or []
 

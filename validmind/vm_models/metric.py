@@ -4,6 +4,7 @@ data for display and reporting purposes
 """
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union
+from uuid import uuid4
 
 import pandas as pd
 
@@ -11,6 +12,7 @@ from .figure import Figure
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanMetricResult
+from ..errors import MissingCacheResultsArgumentsError
 from ..utils import clean_docstring
 
 
@@ -30,6 +32,7 @@ class Metric(TestContextUtils):
     type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
     name: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
+    ref_id: ClassVar[str] = ""  # unique identifier for metric
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
     default_params: ClassVar[dict] = {}
 
@@ -41,6 +44,9 @@ class Metric(TestContextUtils):
         """
         Set default params if not provided
         """
+        if not self.ref_id:
+            self.ref_id = str(uuid4())
+
         self.params = {
             **self.default_params,
             **(self.params if self.params is not None else {}),
@@ -92,7 +98,7 @@ class Metric(TestContextUtils):
             TestPlanResult: The test plan result object
         """
         if metric_value is None and figures is None:
-            raise ValueError(
+            raise MissingCacheResultsArgumentsError(
                 "Metric must provide a metric value or figures to cache_results"
             )
 
@@ -107,7 +113,7 @@ class Metric(TestContextUtils):
         result_summary = self.summary(metric_value)
 
         test_plan_result = TestPlanMetricResult(
-            result_id=self.name,
+            result_id=self._key if hasattr(self, "_key") else self.name,
             result_metadata=result_metadata,
         )
 
@@ -118,6 +124,7 @@ class Metric(TestContextUtils):
             type=self.type,
             scope=self.scope,
             key=self.key,
+            ref_id=self.ref_id,
             value=metric_result_value,
             value_formatter=self.value_formatter,
             summary=result_summary,
@@ -125,6 +132,10 @@ class Metric(TestContextUtils):
 
         # Allow metrics to attach figures to the test plan result
         if figures:
+            # add ref_id to figure metadata to strongly link the figure to the metric
+            for figure in figures:
+                figure.metadata["_ref_id"] = self.ref_id
+
             test_plan_result.figures = figures
 
         self.result = test_plan_result

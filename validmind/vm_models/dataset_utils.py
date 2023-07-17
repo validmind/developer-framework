@@ -7,6 +7,11 @@ import numpy as np
 from pandas_profiling.config import Settings
 from pandas_profiling.model.typeset import ProfilingTypeSet
 
+from ..errors import (
+    MismatchingClassLabelsError,
+    MissingClassLabelError,
+    UnsupportedColumnTypeError,
+)
 from ..logging import get_logger
 from .figure import Figure
 from .plot_utils import get_plot_for_feature_pair
@@ -63,7 +68,7 @@ def parse_dataset_variables(df, options=None):
             if df[column].isnull().all():
                 vm_dataset_variables[column] = {"id": column, "type": "Null"}
             else:
-                raise ValueError(
+                raise UnsupportedColumnTypeError(
                     f"Unsupported type for column {column}. Please review all values in this dataset column."
                 )
         else:
@@ -93,13 +98,13 @@ def validate_pd_dataset_targets(df, targets):
 
     unique_targets = df[targets.target_column].unique()
     if len(unique_targets) != len(targets.class_labels):
-        raise ValueError(
+        raise MismatchingClassLabelsError(
             f"The number of unique values ({unique_targets}) in the target column does not match the number of unique class labels."
         )
 
     for target in unique_targets:
         if str(target) not in targets.class_labels:
-            raise ValueError(
+            raise MissingClassLabelError(
                 f'The target column contains a value ("{target}") that is not in the list of class labels.'
             )
 

@@ -125,9 +125,13 @@ def _get_section_tests(section):
         A list of tests in the section.
     """
     tests = [
+        # {
+        #     "ref_id": f"{section['id']}:{content['content_id']}",
+        #     "test_id": content["content_id"],
+        # }  # we will need this mechanism for tagging with section id
         content["content_id"]
         for content in section.get("contents", [])
-        if content["content_type"] not in ["metadata_text", "dynamic"]
+        if content["content_type"] in ["metric", "test"]
     ]
 
     for sub_section in section["sections"]:
