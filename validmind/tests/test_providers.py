@@ -3,6 +3,54 @@ import requests
 import os
 
 
+class GithubTestProviderDownloadError(Exception):
+    """
+    When the remote file can't be downloaded from the repo.
+    """
+
+    pass
+
+
+class GithubTestProviderWriteFileError(Exception):
+    """
+    When the remote file can't be downloaded from the repo.
+    """
+
+    pass
+
+
+class GithubTestProviderLoadModuleError(Exception):
+    """
+    When the remote file was downloaded but the module can't be loaded.
+    """
+
+    pass
+
+
+class GithubTestProviderLoadTestError(Exception):
+    """
+    When the module was loaded but the test class can't be located.
+    """
+
+    pass
+
+
+class LocalTestProviderLoadModuleError(Exception):
+    """
+    When the local file module can't be loaded.
+    """
+
+    pass
+
+
+class LocalTestProviderLoadTestError(Exception):
+    """
+    When local file module was loaded but the test class can't be located.
+    """
+
+    pass
+
+
 class GithubTestProvider:
     """
     A class used to download python files from a Github repository and
@@ -49,14 +97,18 @@ class GithubTestProvider:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise Exception(f"Failed to download the file at {url}. Error: {str(e)}")
+            raise GithubTestProviderDownloadError(
+                f"Failed to download the file at {url}. Error: {str(e)}"
+            )
 
         file_path = f"/tmp/{os.path.basename(test_path)}"
         try:
             with open(file_path, "w") as file:
                 file.write(response.text)
         except IOError as e:
-            raise Exception(f"Failed to write the file to {file_path}. Error: {str(e)}")
+            raise GithubTestProviderWriteFileError(
+                f"Failed to write the file to {file_path}. Error: {str(e)}"
+            )
 
         return file_path
 
@@ -82,7 +134,7 @@ class GithubTestProvider:
         try:
             spec.loader.exec_module(module)
         except Exception as e:
-            raise Exception(
+            raise GithubTestProviderLoadModuleError(
                 f"Failed to load the module from {file_path}. Error: {str(e)}"
             )
 
@@ -90,7 +142,7 @@ class GithubTestProvider:
             # find the test class that matches the last part of the test_id
             return getattr(module, test_id.split(".")[-1])
         except AttributeError as e:
-            raise Exception(
+            raise GithubTestProviderLoadTestError(
                 f"Failed to find the test class in the module. Error: {str(e)}"
             )
 
@@ -131,7 +183,7 @@ class LocalTestProvider:
         try:
             spec.loader.exec_module(module)
         except Exception as e:
-            raise Exception(
+            raise LocalTestProviderLoadModuleError(
                 f"Failed to load the module from {file_path}. Error: {str(e)}"
             )
 
@@ -139,6 +191,6 @@ class LocalTestProvider:
             # find the test class that matches the last part of the test_id
             return getattr(module, test_id.split(".")[-1])
         except AttributeError as e:
-            raise Exception(
+            raise LocalTestProviderLoadTestError(
                 f"Failed to find the test class in the module. Error: {str(e)}"
             )

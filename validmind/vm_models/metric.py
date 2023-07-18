@@ -12,6 +12,7 @@ from .figure import Figure
 from .metric_result import MetricResult
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanMetricResult
+from ..errors import MissingCacheResultsArgumentsError
 from ..utils import clean_docstring
 
 
@@ -98,7 +99,7 @@ class Metric(TestContextUtils):
             TestPlanResult: The test plan result object
         """
         if metric_value is None and figures is None:
-            raise ValueError(
+            raise MissingCacheResultsArgumentsError(
                 "Metric must provide a metric value or figures to cache_results"
             )
 

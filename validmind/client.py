@@ -7,8 +7,19 @@ import numpy as np
 import xgboost as xgb
 from sklearn.linear_model import LinearRegression, LogisticRegression
 
-# from .model_validation import evaluate_model as mod_evaluate_model
 from .client_config import client_config
+from .errors import (
+    GetTestPlanError,
+    GetTestSuiteError,
+    InitializeTestPlanError,
+    InitializeTestSuiteError,
+    InvalidXGBoostTrainedModelError,
+    MissingDocumentationTemplate,
+    MissingRExtrasError,
+    UnsupportedDatasetError,
+    UnsupportedRModelError,
+    UnsupportedModelError,
+)
 from .logging import get_logger
 from .template import (
     preview_template as _preview_template,
@@ -75,7 +86,7 @@ def init_dataset(
             dataset, options, targets, target_column, class_labels
         )
     else:
-        raise ValueError(
+        raise UnsupportedDatasetError(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
 
@@ -106,7 +117,7 @@ def init_model(
     """
 
     if not Model.is_supported_model(model):
-        raise ValueError(
+        raise UnsupportedModelError(
             f"Model type {Model.model_library(model)}.{Model.model_class(model)} is not supported at the moment."
         )
 
@@ -143,12 +154,10 @@ def init_r_model(model_path: str, model_type: str) -> Model:
     try:
         import rpy2.robjects as robjects
     except ImportError:
-        raise ImportError(
-            "ValidMind r-support needs to be installed: `pip install validmind[r-support]`"
-        )
+        raise MissingRExtrasError()
 
     if model_type not in R_MODEL_TYPES:
-        raise ValueError(
+        raise UnsupportedRModelError(
             "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
         )
 
@@ -176,7 +185,7 @@ def init_r_model(model_path: str, model_type: str) -> Model:
     elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
         # validate that path is a .json or .bin file not .rds
         if not model_path.endswith(".json") and not model_path.endswith(".bin"):
-            raise ValueError(
+            raise InvalidXGBoostTrainedModelError(
                 "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
                 + "Please use `xgb.save(model, 'model.json')` to save the model."
             )
@@ -215,14 +224,14 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     try:
         Plan: TestPlan = get_test_plan(test_plan_name)
     except ValueError as exc:
-        raise ValueError(
+        raise GetTestPlanError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
         )
 
     try:
         plan = Plan(**kwargs)
     except ValueError as exc:
-        raise ValueError(
+        raise InitializeTestPlanError(
             "Error initializing test plan {}. {}".format(test_plan_name, str(exc))
         )
 
@@ -254,14 +263,14 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     try:
         Suite: TestSuite = get_test_suite(test_suite_name)
     except ValueError as exc:
-        raise ValueError(
+        raise GetTestSuiteError(
             "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))
         )
 
     try:
         suite = Suite(**kwargs)
     except ValueError as exc:
-        raise ValueError(
+        raise InitializeTestSuiteError(
             "Error initializing test suite {}. {}".format(test_suite_name, str(exc))
         )
 
@@ -280,7 +289,9 @@ def preview_template():
         ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
-        raise ValueError("No documentation template found. Please run `vm.init()`")
+        raise MissingDocumentationTemplate(
+            "No documentation template found. Please run `vm.init()`"
+        )
 
     _preview_template(client_config.documentation_template)
 
@@ -301,7 +312,9 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
         ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
-        raise ValueError("No documentation template found. Please run `vm.init()`")
+        raise MissingDocumentationTemplate(
+            "No documentation template found. Please run `vm.init()`"
+        )
 
     _run_template(
         template=client_config.documentation_template,

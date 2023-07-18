@@ -3,14 +3,14 @@ from plotly.subplots import make_subplots
 from validmind.vm_models import Figure, Metric
 
 
-class DefaultRateBarPlots(Metric):
+class TargetRateBarPlots(Metric):
     """
-    Generates a visual analysis of loan default ratios by plotting bar plots.
+    Generates a visual analysis of target ratios by plotting bar plots.
     The input dataset can have multiple categorical variables if necessary.
     In this case, we produce a separate row of plots for each categorical variable.
     """
 
-    name = "default_rate_bar_plots"
+    name = "target_rate_bar_plots"
     required_context = ["dataset"]
     default_params = {"default_column": None, "columns": None}
 
@@ -26,7 +26,7 @@ class DefaultRateBarPlots(Metric):
         figures = []
         for feature in features:
             fig = make_subplots(
-                rows=1, cols=2, subplot_titles=("Counts", "Default Rate")
+                rows=1, cols=2, subplot_titles=("Counts", "Target Rate")
             )
 
             # Calculate counts and default rate for each category
@@ -50,7 +50,7 @@ class DefaultRateBarPlots(Metric):
                 go.Bar(
                     x=default_rate.index,
                     y=default_rate.values,
-                    name="Default Rate",
+                    name="Target Rate",
                     marker_color="orange",
                 ),
                 row=1,

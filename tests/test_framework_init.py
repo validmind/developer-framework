@@ -7,6 +7,7 @@ import unittest
 from unittest import mock
 
 import validmind as vm
+from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
 
 INVALID_CREDENTIALS_JSON_RESPONSE = {
     "code": "invalid_credentials",
@@ -67,7 +68,7 @@ class TestFrameworkInit(unittest.TestCase):
         """
         Test that init() raises a TypeError when no arguments are passed.
         """
-        with self.assertRaises(ValueError) as err:
+        with self.assertRaises(MissingProjectIdError) as err:
             vm.init()
 
         self.assertIn("Project ID must be provided", str(err.exception))
@@ -76,7 +77,7 @@ class TestFrameworkInit(unittest.TestCase):
         """
         Test that init() raises a ValueError when only a project is passed.
         """
-        with self.assertRaises(ValueError) as err:
+        with self.assertRaises(MissingAPICredentialsError) as err:
             vm.init(project="test")
 
         self.assertIn("API key", str(err.exception))
