@@ -341,7 +341,7 @@ def run_template(*args, **kwargs):
         ValueError: If the project has not been initialized
     """
     logger.warning(
-        "`vm.run_template` is deprecated. " \
+        "`vm.run_template` is deprecated. "
         "Please use `vm.run_documentation_tests` instead"
     )
     run_documentation_tests(section=None, *args, **kwargs)
