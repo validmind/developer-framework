@@ -35,6 +35,7 @@ class Metric(TestContextUtils):
     ref_id: ClassVar[str] = ""  # unique identifier for metric
     tag: ClassVar[str] = ""  # for now this is the template section id
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
+    required_context: ClassVar[List[str]] = []
     default_params: ClassVar[dict] = {}
 
     # Instance Variables
