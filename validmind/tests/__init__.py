@@ -52,10 +52,16 @@ def _get_test_config(test_class):
     required_context = test_class.required_context
     default_params = test_class.default_params
 
-    print(required_context)
-    print(default_params)
+    config_str = ""
 
-    return "Config: "
+    if required_context:
+        context_str = "\n".join(required_context)
+        config_str += f"Required Context: \n{context_str}\n"
+
+    if default_params:
+        config_str += f"Default Params: {default_params}\n"
+
+    return config_str
 
 
 def _pretty_list_tests(tests):
