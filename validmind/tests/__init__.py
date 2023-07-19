@@ -47,6 +47,17 @@ def _get_legacy_test(content_id):
     return __legacy_mapping[content_id]
 
 
+def _get_test_config(test_class):
+    """Returns a string representation of the test config"""
+    required_context = test_class.required_context
+    default_params = test_class.default_params
+
+    print(required_context)
+    print(default_params)
+
+    return "Config: "
+
+
 def _pretty_list_tests(tests):
     global __test_classes
 
@@ -61,7 +72,7 @@ def _pretty_list_tests(tests):
             "Name": __test_classes[test_id].__name__,
             "Description": __test_classes[test_id].__doc__.strip(),
             "ID": test_id,
-            "Required Context": "\n".join(__test_classes[test_id].required_context),
+            "Config": _get_test_config(__test_classes[test_id]),
         }
         for test_id in tests
     ]
@@ -181,7 +192,7 @@ def describe_test(test_name: str = None, test_id: str = None):
                     "Test Type": test.test_type,
                     "Name": test.__name__,
                     "Description": test.__doc__.strip(),
-                    "Required Context": "\n".join(test.required_context),
+                    "Config": _get_test_config(test),
                 }
             ]
         )
