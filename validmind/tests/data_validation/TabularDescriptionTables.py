@@ -26,7 +26,7 @@ class TabularDescriptionTables(Metric):
         summary_stats["Missing Values (%)"] = (
             self.df[numerical_fields].isnull().mean() * 100
         )
-        summary_stats["Data Type"] = self.df[numerical_fields].dtypes
+        summary_stats["Data Type"] = self.df[numerical_fields].dtypes.astype(str)
         summary_stats = summary_stats[
             ["count", "mean", "min", "max", "Missing Values (%)", "Data Type"]
         ]
@@ -146,8 +146,8 @@ class TabularDescriptionTables(Metric):
 
         return self.cache_results(
             {
-                "numerical": summary_stats_numerical,
-                "categorical": summary_stats_categorical,
-                "datetime": summary_stats_datetime,
+                "numerical": summary_stats_numerical.to_dict(orient="records"),
+                "categorical": summary_stats_categorical.to_dict(orient="records"),
+                "datetime": summary_stats_datetime.to_dict(orient="records"),
             }
         )
