@@ -98,7 +98,7 @@ class TestPlan:
         try:
             test_class = load_test(test_id)
 
-            if test_class_options:  # TODO: maybe be more explicit here?
+            if test_class_options:
                 for key, val in test_class_options.items():
                     setattr(test_class, key, val)
 
