@@ -1,11 +1,9 @@
-"""
-This software is proprietary and confidential. Unauthorized copying,
-modification, distribution or use of this software is strictly prohibited.
-Please refer to the LICENSE file in the root directory of this repository
-for more information.
-
-(c) 2023 ValidMind Inc. All rights reserved.
-"""
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# (c) 2023 ValidMind Inc. All rights reserved.
 
 """CLI Tool for checking if all tests in a file exist in the tests folder
 
