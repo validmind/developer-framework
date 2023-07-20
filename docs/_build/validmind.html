@@ -51,6 +51,9 @@
                     <a class="function" href="#preview_template">preview_template</a>
             </li>
             <li>
+                    <a class="function" href="#run_documentation_tests">run_documentation_tests</a>
+            </li>
+            <li>
                     <a class="function" href="#run_template">run_template</a>
             </li>
             <li>
@@ -142,7 +145,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.15.8&#39;</span>
+<span class="default_value">&#39;1.16.1&#39;</span>
 
         
     </div>
@@ -350,6 +353,39 @@ the project has not been initialized, then an error will be raised.</p>
 
 
                 </section>
+                <section id="run_documentation_tests">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#run_documentation_tests"></a>
+    
+            <div class="docstring"><p>Collect and run all the tests associated with a template</p>
+
+<p>This function will analyze the current project's documentation template and collect
+all the tests associated with it into a test suite. It will then run the test
+suite, log the results to the ValidMind API and display them to the user.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>section (str, optional):</strong>  The section to preview. Defaults to None.</li>
+<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
+<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
+</ul>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the project has not been initialized</li>
+</ul>
+</div>
+
+
+                </section>
                 <section id="run_template">
                     <div class="attr function">
             
@@ -360,7 +396,9 @@ the project has not been initialized, then an error will be raised.</p>
     </div>
     <a class="headerlink" href="#run_template"></a>
     
-            <div class="docstring"><p>Collect and run all the tests associated with a template</p>
+            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_documentation_tests</code> instead.</p>
+
+<p>Collect and run all the tests associated with a template</p>
 
 <p>This function will analyze the current project's documentation template and collect
 all the tests associated with it into a test suite. It will then run the test
