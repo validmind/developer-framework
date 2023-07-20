@@ -13,7 +13,7 @@ copyright = """# This software is proprietary and confidential. Unauthorized cop
 # Please refer to the LICENSE file in the root directory of this repository
 # for more information.
 #
-# (c) 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 """
 
 # Scan the Python package directory
@@ -27,11 +27,35 @@ for root, dirs, files in os.walk(directory):
     for file in files:
         # Check if the file has a valid extension
         if file.endswith(tuple(extensions)):
+            # Check if the file is __init__.py and if it's empty
+            if file == "__init__.py":
+                with open(os.path.join(root, file), "r") as f:
+                    contents = f.read()
+                if not contents.strip():
+                    continue
+
             # Read the contents of the file
             with open(os.path.join(root, file), "r") as f:
                 contents = f.read()
-            # Add the copyright block to the contents
-            contents = f"{copyright}\n{contents}"
+
+            # Replace the existing copyright text with the new one
+            if "This software is proprietary and confidential." in contents:
+                start_index = contents.index(
+                    "# This software is proprietary and confidential."
+                )
+                end_index = contents.index("All rights reserved.") + len(
+                    "All rights reserved."
+                )
+                contents = (
+                    contents[:start_index]
+                    + copyright.strip()
+                    + "\n"
+                    + contents[end_index:]
+                )
+            else:
+                # Add the copyright block to a file that doesn't have it
+                contents = f"{copyright}\n{contents}"
+
             # Write the modified contents back to the file
             with open(os.path.join(root, file), "w") as f:
                 f.write(contents)

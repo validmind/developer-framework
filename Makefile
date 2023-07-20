@@ -15,6 +15,9 @@ lint:
 # Quick target to run all checks
 check: format lint test
 
+copyright:
+	poetry run python scripts/copyright_files.py
+
 build:
 	poetry build
 
