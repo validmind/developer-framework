@@ -15,9 +15,6 @@ lint:
 # Quick target to run all checks
 check: format lint test
 
-copyright:
-	poetry run python scripts/copyright_files.py
-
 build:
 	poetry build
 
@@ -34,5 +31,11 @@ version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
 	poetry version $(tag)
 	echo "__version__ = \"$$(poetry version -s)\"" > validmind/__version__.py
+
+copyright:
+	poetry run python scripts/copyright_files.py
+
+verify-copyright:
+	poetry run python scripts/verify_copyright.py
 
 .PHONY: docs

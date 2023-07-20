@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 """
 This script adds a standard ValidMind copyright
 block to all Python files in the package directory.
@@ -8,13 +15,9 @@ How to use:
 
 import os
 
-copyright = """# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
-# Copyright © 2023 ValidMind Inc. All rights reserved.
-"""
+copyright_path = os.path.join(os.getcwd(), "scripts", "copyright.txt")
+with open(copyright_path) as f:
+    copyright = f.read()
 
 # Scan the Python package directory
 directory = os.path.join(os.getcwd(), "validmind")
@@ -47,10 +50,7 @@ for root, dirs, files in os.walk(directory):
                     "All rights reserved."
                 )
                 contents = (
-                    contents[:start_index]
-                    + copyright.strip()
-                    + "\n"
-                    + contents[end_index:]
+                    contents[:start_index] + copyright.strip() + contents[end_index:]
                 )
             else:
                 # Add the copyright block to a file that doesn't have it
