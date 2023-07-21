@@ -33,7 +33,7 @@ errors = []
 for root, dirs, files in os.walk(directory):
     for file in files:
         # Check if the file has a valid extension
-        if file.endswith(tuple(extensions)):
+        if file.endswith(tuple(extensions)) and file != "__version__.py":
             # Read the contents of the file
             with open(os.path.join(root, file), "r") as f:
                 contents = f.read()
