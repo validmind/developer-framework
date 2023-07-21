@@ -46,4 +46,5 @@ for root, dirs, files in os.walk(directory):
 
 if errors:
     print("\n".join(errors))
+    print("\nPlease fix the errors above by running `make copyright`")
     exit(1)
