@@ -33,6 +33,9 @@ jobs:
       - name: Install PyTorch CPU
         run: poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu
 
+      - name: Verify Copyright Header
+        run: make verify-copyright
+
       - name: Code Quality
         run: make lint
 

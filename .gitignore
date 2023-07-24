@@ -182,3 +182,6 @@ catboost_info
 
 # Ignore pytorch models
 *.pt
+
+# Lending Club datasets
+lending_club_loan_data_*

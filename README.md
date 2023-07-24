@@ -99,6 +99,15 @@ make docs
 
 The resulting docs will be written to `docs/pdoc/_build`.
 
+## Adding a Copyright Header
+
+When adding new files to the project, you can add the ValidMind copyright header to any files that
+are missing it by running:
+
+```bash
+make copyright
+```
+
 ## Known Issues
 
 ### ValidMind wheel errors
