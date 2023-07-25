@@ -46,7 +46,7 @@ class GINITable(Metric):
 
         return self.cache_results(
             {
-                "metrics_summary": summary_metrics,
+                "metrics_summary": summary_metrics.to_dict(orient="records"),
             }
         )
 

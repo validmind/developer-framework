@@ -77,14 +77,14 @@ class RegressionROCCurve(Metric):
         fig = self.plot_roc_curve(fpr, tpr, thresholds, roc_auc)
 
         return self.cache_results(
-            metric_value={
-                "roc_curve": {
-                    "fpr": list(fpr),
-                    "tpr": list(tpr),
-                    "thresholds": list(thresholds),
-                    "auc": roc_auc,
-                },
-            },
+            # metric_value={
+            #   "roc_curve": {
+            #        "fpr": list(fpr),
+            #        "tpr": list(tpr),
+            #        "thresholds": list(thresholds),
+            #        "auc": roc_auc,
+            #    },
+            # },
             figures=[
                 Figure(
                     for_object=self,

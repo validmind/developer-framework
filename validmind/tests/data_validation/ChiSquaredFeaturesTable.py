@@ -39,7 +39,7 @@ class ChiSquaredFeaturesTable(Metric):
 
         return self.cache_results(
             {
-                "chi_squared_results": chi_squared_results,
+                "chi_squared_results": chi_squared_results.to_dict(orient="records"),
             }
         )
 

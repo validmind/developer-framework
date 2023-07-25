@@ -61,7 +61,7 @@ class WOEIVTable(Metric):
 
         return self.cache_results(
             {
-                "woe_iv": summary_woe_iv,
+                "woe_iv": summary_woe_iv.to_dict(orient="records"),
             }
         )
 
