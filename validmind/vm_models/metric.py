@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 """
 Class for storing ValidMind metric objects and associated
 data for display and reporting purposes
@@ -33,6 +40,7 @@ class Metric(TestContextUtils):
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
     name: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
     ref_id: ClassVar[str] = ""  # unique identifier for metric
+    tag: ClassVar[str] = ""  # for now this is the template section id
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
     default_params: ClassVar[dict] = {}
 

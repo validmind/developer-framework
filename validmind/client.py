@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 """
 Client interface for all data and model validation functions
 """
@@ -296,8 +303,38 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_template(*args, **kwargs):
+def run_documentation_tests(section: str = None, *args, **kwargs):
     """Collect and run all the tests associated with a template
+
+    This function will analyze the current project's documentation template and collect
+    all the tests associated with it into a test suite. It will then run the test
+    suite, log the results to the ValidMind API and display them to the user.
+
+    Args:
+        section (str, optional): The section to preview. Defaults to None.
+        *args: Arguments to pass to the TestSuite
+        **kwargs: Keyword arguments to pass to the TestSuite
+
+    Raises:
+        ValueError: If the project has not been initialized
+    """
+    if client_config.documentation_template is None:
+        raise MissingDocumentationTemplate(
+            "No documentation template found. Please run `vm.init()`"
+        )
+
+    _run_template(
+        template=client_config.documentation_template,
+        section=section,
+        *args,
+        **kwargs,
+    )
+
+
+def run_template(*args, **kwargs):
+    """DEPRECATED! Use `vm.run_documentation_tests` instead.
+
+    Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
     all the tests associated with it into a test suite. It will then run the test
@@ -310,9 +347,8 @@ def run_template(*args, **kwargs):
     Raises:
         ValueError: If the project has not been initialized
     """
-    if client_config.documentation_template is None:
-        raise MissingDocumentationTemplate(
-            "No documentation template found. Please run `vm.init()`"
-        )
-
-    _run_template(client_config.documentation_template, *args, **kwargs)
+    logger.warning(
+        "`vm.run_template` is deprecated. "
+        "Please use `vm.run_documentation_tests` instead"
+    )
+    run_documentation_tests(section=None, *args, **kwargs)

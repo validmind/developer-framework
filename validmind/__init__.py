@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 """
 ValidMind’s Python Developer Framework is a library of developer tools and methods designed to automate
 the documentation and validation of your models.
@@ -54,6 +61,7 @@ from .client import (  # noqa: E402
     init_model,
     init_r_model,
     preview_template,
+    run_documentation_tests,
     run_template,
     run_test_plan,
     run_test_suite,
@@ -115,6 +123,7 @@ __all__ = [  # noqa
     "init_r_model",
     "model_validation",
     "preview_template",
+    "run_documentation_tests",
     "run_template",
     "run_test_plan",
     "run_test_suite",

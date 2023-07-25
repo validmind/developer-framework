@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
 
@@ -17,14 +24,27 @@ content_html = """
 """
 
 
-def _convert_sections_to_section_tree(sections, parent_id="_root_"):
+def _convert_sections_to_section_tree(
+    sections, parent_id="_root_", start_section_id=None
+):
     section_tree = []
 
     for section in sections:
         section_parent_id = section.get("parent_section", "_root_")
-        if section_parent_id == parent_id:
+
+        if start_section_id:
+            if section["id"] == start_section_id:
+                child_sections = _convert_sections_to_section_tree(
+                    sections, section["id"]
+                )
+                section_tree.append({**section, "sections": child_sections})
+
+        elif section_parent_id == parent_id:
             child_sections = _convert_sections_to_section_tree(sections, section["id"])
             section_tree.append({**section, "sections": child_sections})
+
+    if start_section_id and not section_tree:
+        raise ValueError(f"Section {start_section_id} not found in template")
 
     return sorted(section_tree, key=lambda x: x.get("order", 0))
 
@@ -94,7 +114,7 @@ def _create_section_widget(tree):
             sub_widget = HTML("<p>Empty Section</p>")
 
         widget.children = (*widget.children, sub_widget)
-        widget.set_title(i, f"{i + 1}. {section['title']}")
+        widget.set_title(i, f"{i + 1}. {section['title']} ('{section['id']}')")
 
     return widget
 
@@ -125,11 +145,10 @@ def _get_section_tests(section):
         A list of tests in the section.
     """
     tests = [
-        # {
-        #     "ref_id": f"{section['id']}:{content['content_id']}",
-        #     "test_id": content["content_id"],
-        # }  # we will need this mechanism for tagging with section id
-        content["content_id"]
+        {
+            "tag": f"{section['id']}",
+            "test_id": content["content_id"],
+        }
         for content in section.get("contents", [])
         if content["content_type"] in ["metric", "test"]
     ]
@@ -164,17 +183,21 @@ def _create_section_test_plan(section):
         )
 
 
-def _create_template_test_suite(template):
+def _create_template_test_suite(template, section=None):
     """
     Create and run a test suite from a template.
 
     Args:
         template: A valid flat template
+        section: The section of the template to run (if not provided, run all sections)
 
     Returns:
         A dynamically-create TestSuite Class
     """
-    tree = _convert_sections_to_section_tree(template["sections"])
+    tree = _convert_sections_to_section_tree(
+        sections=template["sections"],
+        start_section_id=section,
+    )
     test_plans = [
         plan
         for section in tree
@@ -194,7 +217,7 @@ def _create_template_test_suite(template):
     return test_suite
 
 
-def run_template(template, *args, **kwargs):
+def run_template(template, section, *args, **kwargs):
     """Run all tests in a template
 
     This function will collect all tests used in a template into a TestPlan and then
@@ -202,13 +225,14 @@ def run_template(template, *args, **kwargs):
 
     Args:
         template: A valid flat template
+        section: The section of the template to run (if not provided, run all sections)
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
         The result of running the test suite.
     """
-    test_suite = _create_template_test_suite(template)
+    test_suite = _create_template_test_suite(template, section)
     test_suite_instance = test_suite(*args, **kwargs)
 
     return test_suite_instance.run()

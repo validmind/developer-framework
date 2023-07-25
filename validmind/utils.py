@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 import asyncio
 import json
 import math
@@ -212,7 +219,7 @@ def clean_docstring(docstring: str) -> str:
     Clean up docstrings by removing leading and trailing whitespace and
     replacing newlines with spaces.
     """
-    description = docstring.strip()
+    description = (docstring or "").strip()
     paragraphs = description.split("\n\n")  # Split into paragraphs
     paragraphs = [
         " ".join([line.strip() for line in paragraph.split("\n")])
