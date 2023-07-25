@@ -29,7 +29,7 @@ extensions = [".py"]
 for root, dirs, files in os.walk(directory):
     for file in files:
         # Check if the file has a valid extension
-        if file.endswith(tuple(extensions)):
+        if file.endswith(tuple(extensions)) and file != "__version__.py":
             # Check if the file is __init__.py and if it's empty
             if file == "__init__.py":
                 with open(os.path.join(root, file), "r") as f:
