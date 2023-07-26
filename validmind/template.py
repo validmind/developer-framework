@@ -76,7 +76,7 @@ def _create_content_widget(content):
         children=[
             HTML(
                 test_content_block_html.format(
-                    title=test_deets["Title"],
+                    title=test_deets["Name"],
                     description=test_deets["Description"],
                     required_context=", ".join(test_deets["Required Context"]),
                     params_table="\n".join(

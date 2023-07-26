@@ -41,7 +41,7 @@ __test_classes = None
 __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
-def _name_to_title(name):
+def _test_title(name):
     # TODO: test name vs title vs id is kinda confusing
     title = f"{name[0].upper()}"
 
@@ -90,7 +90,7 @@ def _pretty_list_tests(tests):
     table = [
         {
             "Test Type": __test_classes[test_id].test_type,
-            "Name": _name_to_title(__test_classes[test_id].__name__),
+            "Name": _test_title(__test_classes[test_id].__name__),
             "Description": clean_docstring(
                 __test_classes[test_id].description(__test_classes[test_id])
             ) if hasattr(__test_classes[test_id], "description") else "",
@@ -223,7 +223,7 @@ def describe_test(test_name: str = None, test_id: str = None, raw: bool = False)
 
     test_details = {
         "ID": test_id,
-        "Title": _name_to_title(test.__name__),
+        "Name": _test_title(test.__name__),
         "Description": clean_docstring(test.description(test)) \
             if hasattr(test, "description") else "",
         "Test Type": test.test_type,
