@@ -98,22 +98,7 @@ def _pretty_list_tests(tests):
         for test_id in tests
     ]
 
-    required_context = set()
-
-    for test_id in tests:
-        required_context.update(__test_classes[test_id].required_context)
-
-    config_table = [
-        {
-            "Required Context": context,
-        }
-        for context in sorted(required_context)
-    ]
-
-    return format_dataframe(pd.DataFrame(table)), format_dataframe(
-        pd.DataFrame(config_table)
-    )
-    # return pd.DataFrame(table), pd.DataFrame(table)
+    return format_dataframe(pd.DataFrame(table))
 
 
 def list_tests(filter=None, pretty=True):
