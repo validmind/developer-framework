@@ -16,7 +16,7 @@ from .html_templates.content_blocks import (
 )
 from .logging import get_logger
 from .tests import describe_test, LoadTestError
-from .utils import format_dataframe, is_notebook
+from .utils import is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite
 
@@ -69,7 +69,7 @@ def _create_content_widget(content):
 
     try:
         test_deets = describe_test(test_id=content["content_id"], raw=True)
-    except LoadTestError as e:
+    except LoadTestError:
         return HTML(failed_content_block_html.format(test_id=content["content_id"]))
 
     return Accordion(
