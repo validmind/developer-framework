@@ -12,13 +12,13 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class IQROutliersPlots(Metric):
+class IQROutliersBarPlot(Metric):
     """
-    Generates a visual analysis of the outliers for numeric variables.
+    Generates a visual analysis of the outliers for numeric variables based on percentiles.
     The input dataset is required.
     """
 
-    name = "iqr_outliers_plots"
+    name = "iqr_outliers_bar_plot"
     required_context = ["dataset"]
     default_params = {"threshold": 1.5, "num_features": None, "fig_width": 800}
 
@@ -48,49 +48,48 @@ class IQROutliersPlots(Metric):
 
     def detect_and_visualize_outliers(self, df, threshold, fig_width):
         num_cols = df.columns.tolist()
-
         figures = []
 
         for col in num_cols:
             # Compute outliers
             outliers = self.compute_outliers(df[col], threshold)
 
-            # Create box trace
-            box_trace = go.Box(
-                y=df[col].dropna(),
-                name="",
-                boxpoints=False,  # do not show original data points
-                marker_color="skyblue",
-                line_color="skyblue",
-            )
+            Q1_count = outliers[
+                (outliers >= 0) & (outliers < outliers.quantile(0.25))
+            ].count()
+            Q2_count = outliers[
+                (outliers >= outliers.quantile(0.25)) & (outliers < outliers.median())
+            ].count()
+            Q3_count = outliers[
+                (outliers >= outliers.median()) & (outliers < outliers.quantile(0.75))
+            ].count()
+            Q4_count = outliers[
+                (outliers >= outliers.quantile(0.75)) & (outliers <= outliers.max())
+            ].count()
 
-            # Create scatter trace of outliers
-            outliers_trace = go.Scatter(
-                x=[""] * len(outliers),
-                y=outliers,
-                mode="markers",
-                name="Outliers",
-                marker=dict(
-                    color="red",
-                    size=6,
-                    opacity=0.5,
-                ),
-            )
+            # Prepare data for bar plot
+            bar_data = [Q1_count, Q2_count, Q3_count, Q4_count]
+            percentile_labels = [
+                "0-25",
+                "25-50",
+                "50-75",
+                "75-100",
+            ]
 
-            # Create figure and add traces
-            fig = go.Figure(data=[box_trace, outliers_trace])
+            # Create a bar plot
+            fig = go.Figure(
+                data=[go.Bar(x=percentile_labels, y=bar_data, marker_color="skyblue")]
+            )
 
             # Set layout properties
             fig.update_layout(
-                showlegend=False,
                 title_text=col,
                 width=fig_width,
                 height=400,
                 plot_bgcolor="white",
+                xaxis_title="Percentile",
+                yaxis_title="Outlier Count",
             )
-
-            fig.update_xaxes(showticklabels=False, showgrid=True, gridcolor="LightGray")
-            fig.update_yaxes(title_text="Value", showgrid=True, gridcolor="LightGray")
 
             # Create a Figure object and append to figures list
             figure = Figure(for_object=self, key=f"{self.key}:{col}", figure=fig)
