@@ -42,7 +42,6 @@ __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
 def _test_title(name):
-    # TODO: test name vs title vs id is kinda confusing
     title = f"{name[0].upper()}"
 
     for i in range(1, len(name)):
