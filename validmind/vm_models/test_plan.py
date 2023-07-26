@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# Copyright © 2023 ValidMind Inc. All rights reserved.
+
 """
 TestPlan class
 """
@@ -123,7 +130,8 @@ class TestPlan:
         self._tests = []
 
         for test_id_or_class in self.tests:
-            if isinstance(
+            # Check if test_id_or_class is a class and if it is a subclass of TestContextUtils
+            if isinstance(test_id_or_class, type) and issubclass(
                 test_id_or_class,
                 TestContextUtils,  # TODO: use a dedicated base class for metric/test
             ):  # if its a test class, we just add it to the list

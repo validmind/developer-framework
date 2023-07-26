@@ -1,3 +1,10 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
+# (c) 2023 ValidMind Inc. All rights reserved.
+
 """CLI Tool for checking if all tests in a file exist in the tests folder
 
 Usage:
@@ -14,16 +21,18 @@ from validmind.tests import list_tests
 
 
 @click.command()
-@click.option("--input_file", prompt="File to check", help="File to check against tests directory")
+@click.option(
+    "--input_file", prompt="File to check", help="File to check against tests directory"
+)
 def check_tests(input_file):
     """Check if all tests in a file exist in the tests folder"""
 
     # load the input file and extract all classes
-    input_module = importlib.import_module(input_file.replace("/", ".").replace(".py", ""))
+    input_module = importlib.import_module(
+        input_file.replace("/", ".").replace(".py", "")
+    )
     all_classes = [
-        getattr(input_module, name)
-        for name in dir(input_module)
-        if name[0].isupper()
+        getattr(input_module, name) for name in dir(input_module) if name[0].isupper()
     ]
     test_classes = [
         cls
