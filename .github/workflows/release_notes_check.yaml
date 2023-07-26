@@ -1,0 +1,26 @@
+name: Release notes check
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled, edited]
+
+jobs:
+  ci_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install PyGithub pyyaml
+
+      - name: Run CI Check
+        run: python .github/scripts/release_notes_check.py ${{ github.event.pull_request.html_url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
