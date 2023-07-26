@@ -7,6 +7,7 @@
 
 from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
+from pprint import pformat
 
 from .html_templates.content_blocks import (
     failed_content_block_html,
@@ -80,7 +81,7 @@ def _create_content_widget(content):
                     required_context=", ".join(test_deets["Required Context"]),
                     params_table="\n".join(
                         [
-                            f"<tr><td>{param}</td><td>{value}</td></tr>"
+                            f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
                             for param, value in test_deets["Params"].items()
                         ]
                     ),
