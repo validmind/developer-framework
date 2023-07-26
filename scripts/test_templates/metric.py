@@ -21,7 +21,7 @@ class __TEST_NAME__(Metric):
     """
 
     name = "__TEST_ID__"
-    required_context = []
+    required_context = [] # model, dataset, etc. (model.train_ds, model.test_ds) ds = dataset with x and y
     default_params = {}
 
     def run(self) -> TestPlanMetricResult:
@@ -30,11 +30,20 @@ class __TEST_NAME__(Metric):
         Returns:
             TestPlanMetricResult: The results of the test.
         """
+        figure = None # you can use plotly to create a figure here
+
         return self.cache_results(
             metric_value={
                 "hello": "world",
             },
-            figures=None,  # return a figure by importing from validmind.vm_models
+            figures=[
+                Figure(
+                    for_object=self,
+                    key="__test_id__",
+                    figure=figure,
+                    metadata={},  # add metadata to the figure
+                )
+            ],  # return a figure by importing from validmind.vm_models
         )
 
     def summary(self, cached_results: TestPlanMetricResult) -> ResultSummary:

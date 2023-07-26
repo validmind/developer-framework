@@ -2,13 +2,14 @@
 
 import importlib
 from pathlib import Path
+from pprint import pformat
 from typing import Dict
 
 import pandas as pd
 
 from ..errors import LoadTestError
 from ..logging import get_logger
-from ..utils import format_dataframe
+from ..utils import clean_docstring, format_dataframe
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
@@ -33,6 +34,19 @@ __test_classes = None
 __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
+def _name_to_title(name):
+    title = f"{name[0].upper()}"
+
+    for i in range(1, len(name)):
+        if name[i].isupper() and (
+            name[i - 1].islower() or (i + 1 < len(name) and name[i + 1].islower())
+        ):
+            title += " "
+        title += name[i]
+
+    return title
+
+
 # TODO: remove this when all templates are updated to new naming convention
 def _get_legacy_test(content_id):
     global __legacy_mapping
@@ -47,21 +61,14 @@ def _get_legacy_test(content_id):
     return __legacy_mapping[content_id]
 
 
-def _get_test_config(test_class):
+def __get_test_params(test_class):
     """Returns a string representation of the test config"""
-    required_context = test_class.required_context
-    default_params = test_class.default_params
+    params_str = ""
 
-    config_str = ""
+    for param in test_class.default_params:
+        params_str += f"{param}={pformat(test_class.default_params[param])},\n"
 
-    if required_context:
-        context_str = "\n".join(required_context)
-        config_str += f"Required Context: \n{context_str}\n"
-
-    if default_params:
-        config_str += f"Default Params: {default_params}\n"
-
-    return config_str
+    return params_str
 
 
 def _pretty_list_tests(tests):
@@ -75,15 +82,31 @@ def _pretty_list_tests(tests):
     table = [
         {
             "Test Type": __test_classes[test_id].test_type,
-            "Name": __test_classes[test_id].__name__,
-            "Description": __test_classes[test_id].__doc__.strip(),
+            "Title": _name_to_title(__test_classes[test_id].__name__),
+            "Description": clean_docstring(
+                __test_classes[test_id].description(__test_classes[test_id])
+            ),
             "ID": test_id,
-            "Config": _get_test_config(__test_classes[test_id]),
         }
         for test_id in tests
     ]
 
-    return format_dataframe(pd.DataFrame(table))
+    required_context = set()
+
+    for test_id in tests:
+        required_context.update(__test_classes[test_id].required_context)
+
+    config_table = [
+        {
+            "Required Context": context,
+        }
+        for context in sorted(required_context)
+    ]
+
+    return format_dataframe(pd.DataFrame(table)), format_dataframe(
+        pd.DataFrame(config_table)
+    )
+    # return pd.DataFrame(table), pd.DataFrame(table)
 
 
 def list_tests(filter=None, pretty=True):
@@ -177,7 +200,7 @@ def load_test(test_id, legacy=False):  # noqa: C901
     return test
 
 
-def describe_test(test_name: str = None, test_id: str = None):
+def describe_test(test_name: str = None, test_id: str = None, raw: bool = False):
     """Returns the test by test ID"""
     if test_name is not None:
         # TODO: we should rethink this a bit
@@ -190,17 +213,24 @@ def describe_test(test_name: str = None, test_id: str = None):
     else:
         test = __test_classes[test_id]
 
+    test_details = {
+        "ID": test_id,
+        "Title": _name_to_title(test.__name__),
+        "Description": clean_docstring(test.description(test)),
+        "Test Type": test.test_type,
+        "Required Context": test.required_context,
+        "Params": test.default_params,
+    }
+
+    if raw:
+        return test_details
+
     return format_dataframe(
         pd.DataFrame(
-            [
-                {
-                    "ID": test_id,
-                    "Test Type": test.test_type,
-                    "Name": test.__name__,
-                    "Description": test.__doc__.strip(),
-                    "Config": _get_test_config(test),
-                }
-            ]
+            {
+                "": [f"{key}:" for key in test_details.keys()],
+                " ": test_details.values(),
+            }
         )
     )
 

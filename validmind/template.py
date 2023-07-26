@@ -1,27 +1,26 @@
 from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
 
+from .html_templates.content_blocks import (
+    failed_content_block_html,
+    non_test_content_block_html,
+    test_content_block_html,
+)
 from .logging import get_logger
-from .utils import is_notebook
+from .tests import describe_test, LoadTestError
+from .utils import format_dataframe, is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite
 
 logger = get_logger(__name__)
 
-standard_content_html = """
-<div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
-    <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
-        <span>Content Block: {content_type}(<i>'{content_id}'</i>)</span>
-    </div>
-</div>
-"""
-test_content_html = """
-<div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
-    <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
-        <span>Content Block (Test-Driven): {content_type}(<i>'{content_id}'</i>)</span>
-    </div>
-</div>
-"""
+CONTENT_TYPE_MAP = {
+    "test": "Threshold Test",
+    "metric": "Metric",
+    "metadata_text": "Metadata Text",
+    "dynamic": "Dynamic Content",
+    "text": "Text",
+}
 
 
 def _convert_sections_to_section_tree(
@@ -50,27 +49,39 @@ def _convert_sections_to_section_tree(
 
 
 def _create_content_widget(content):
-    content_type_map = {
-        "test": "Threshold Test",
-        "metric": "Metric",
-        "metadata_text": "Metadata Text",
-        "dynamic": "Dynamic Content",
-    }
-    content_type = content_type_map[content["content_type"]]
+    content_type = CONTENT_TYPE_MAP[content["content_type"]]
 
-    if content["content_type"] in ["metadata_text", "dynamic"]:
+    if content["content_type"] not in ["metric", "test"]:
         return HTML(
-            standard_content_html.format(
+            non_test_content_block_html.format(
                 content_id=content["content_id"],
                 content_type=content_type,
             )
         )
 
-    return HTML(
-        test_content_html.format(
-            content_id=content["content_id"],
-            content_type=content_type,
-        )
+    try:
+        test_deets = describe_test(test_id=content["content_id"], raw=True)
+    except LoadTestError as e:
+        return HTML(failed_content_block_html.format(test_id=content["content_id"]))
+
+    return Accordion(
+        children=[
+            HTML(
+                test_content_block_html.format(
+                    title=test_deets["Title"],
+                    description=test_deets["Description"],
+                    required_context=", ".join(test_deets["Required Context"]),
+                    params_table="\n".join(
+                        [
+                            f"<tr><td>{param}</td><td>{value}</td></tr>"
+                            for param, value in test_deets["Params"].items()
+                        ]
+                    ),
+                    table_display="table" if test_deets["Params"] else "none",
+                )
+            )
+        ],
+        titles=[f"{content_type} Block: '{content['content_id']}'"],
     )
 
 
