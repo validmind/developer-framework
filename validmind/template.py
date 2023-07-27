@@ -211,7 +211,6 @@ def _create_section_test_plan(section):
             (TestPlan,),
             {
                 "name": section["id"],
-                "required_context": [],
                 "tests": section_tests,
                 "__doc__": section["title"],
             },
@@ -243,7 +242,6 @@ def _create_template_test_suite(template, section=None):
         (TestSuite,),
         {
             "name": template["template_id"],
-            "required_context": [],
             "test_plans": test_plans,
             "__doc__": template["description"],
         },

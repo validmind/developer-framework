@@ -39,6 +39,8 @@ class TestSuite(TestPlan):
     # so we can access their results after running the test suite
     _test_plan_instances: List[object] = None
 
+    _run_finished: bool = False
+
     # ipywidgets progress bar
     pbar: widgets.IntProgress = None
     pbar_description: widgets.Label = None
@@ -63,6 +65,8 @@ class TestSuite(TestPlan):
             self._test_plan_classes.append(test_plan_class)
             self._total_tests += len(test_plan_class.tests)
 
+        self._load_test_plans()
+
     def _init_pbar(self, send: bool = True):
         """
         Initializes the progress bar elements
@@ -81,12 +85,7 @@ class TestSuite(TestPlan):
 
         display(self.pbar_box)
 
-    def run(self, send=True):
-        """
-        Runs the test suite.
-        """
-        self._init_pbar(send=send)
-
+    def _load_test_plans(self):
         self._test_plan_instances = []
         for test_plan_class in self._test_plan_classes:
             test_plan = test_plan_class(
@@ -98,11 +97,35 @@ class TestSuite(TestPlan):
             )
             self._test_plan_instances.append(test_plan)
 
+    @property
+    def required_context(self):
+        """
+        Returns the required context for the test suite.
+        """
+        if self._required_context is None:
+            required_context = set()
+            for test_plan in self._test_plan_instances:
+                required_context.update(test_plan.get_required_context())
+
+            self._required_context = list(required_context)
+
+        return self._required_context
+
+    def run(self, send=True):
+        """
+        Runs the test suite.
+        """
+        self._init_pbar(send=send)
+        if self._run_finished:
+            self._load_test_plans()
+
         for test_plan in self._test_plan_instances:
             test_plan.run(render_summary=False, send=send)
 
         self.summarize()
         self.pbar_description.value = "Test suite complete!"
+
+        self._run_finished = True
 
     def _results_title(self) -> str:
         """

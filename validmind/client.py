@@ -269,7 +269,12 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     return plan
 
 
-def get_test_suite(test_suite_name: str = None, section: str = None, *args, **kwargs):
+def get_test_suite(
+    test_suite_name: str = None,
+    section: str = None,
+    *args,
+    **kwargs,
+) -> TestSuite:
     """Gets a TestSuite object for the current project or a specific test suite
 
     This function provides an interface to retrieve the TestSuite instance for the

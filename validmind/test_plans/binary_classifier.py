@@ -21,7 +21,6 @@ class BinaryClassifierMetrics(TestPlan):
     """
 
     name = "binary_classifier_metrics"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.ModelMetadata",
         "validmind.data_validation.DatasetSplit",
@@ -42,7 +41,6 @@ class BinaryClassifierPerformance(TestPlan):
     """
 
     name = "binary_classifier_validation"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.sklearn.MinimumAccuracy",
         "validmind.model_validation.sklearn.MinimumF1Score",
@@ -57,7 +55,6 @@ class BinaryClassifierDiagnosis(TestPlan):
     """
 
     name = "binary_classifier_model_diagnosis"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.sklearn.OverfitDiagnosis",
         "validmind.model_validation.sklearn.WeakspotsDiagnosis",

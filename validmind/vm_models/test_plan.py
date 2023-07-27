@@ -36,7 +36,6 @@ class TestPlan:
 
     # Class Variables
     name: ClassVar[str]
-    required_context: ClassVar[List[str]]
     tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
     results: ClassVar[List[TestPlanResult]]
 
@@ -45,6 +44,7 @@ class TestPlan:
     _global_config: dict() = None
     _test_configs: dict() = None
     test_context: TestContext = None
+    _required_context: List[str] = None #dynamically built from tests' required_context
 
     # Reference to the test classes (dynamic import after initialization)
     _tests: List[object] = None
@@ -152,6 +152,22 @@ class TestPlan:
 
             self._load_test(test_id_or_class, test_class_options)
 
+    def get_required_context(self):
+        """
+        Returns the required context for the test plan. Defaults to the
+        required context of the tests
+        """
+        if self._required_context is None:
+            required_context = set()
+            # bubble up the required context from the tests
+            for test in self._tests:
+                if not hasattr(test, "required_context"):
+                    continue
+                required_context.update(test.required_context)
+            self._required_context = list(required_context)
+
+        return self._required_context
+
     def title(self):
         """
         Returns the title of the test plan. Defaults to the title
@@ -171,15 +187,6 @@ class TestPlan:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        required_context = set(self.required_context)
-
-        # bubble up the required context from the tests
-        for test in self._tests:
-            if not hasattr(test, "required_context"):
-                continue
-
-            required_context.update(test.required_context)
-
         def recursive_attr_check(obj, attr_chain):
             attrs = attr_chain.split(".")
             if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
@@ -189,12 +196,12 @@ class TestPlan:
                 ".".join(attrs[1:]),
             )
 
-        for element in required_context:
+        for element in self.get_required_context():
             logger.debug(f"Checking if required context '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"Test '{test.name}' requires '{element}'"
-                    " to be present in the test context"
+                    f"{element}' is required_context and must be passed " \
+                    "as a keyword argument to the test plan"
                 )
 
     def get_config_params_for_test(self, test_name):
