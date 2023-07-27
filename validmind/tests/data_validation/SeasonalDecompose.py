@@ -74,7 +74,6 @@ class SeasonalDecompose(Metric):
         merged_df = dfs[0]
         for df in dfs[1:]:
             merged_df = merged_df.merge(df, on="Date")
-
         # Convert the merged DataFrame into a list of dictionaries
         return merged_df.to_dict("records")
 

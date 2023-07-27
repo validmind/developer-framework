@@ -31,7 +31,7 @@ class DescriptiveStatistics(Metric):
 
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
-        summary_stats = self.df[numerical_fields].describe(percentiles=percentiles).T
+        summary_stats = self.dataset.df[numerical_fields].describe(percentiles=percentiles).T
         summary_stats = summary_stats[
             ["count", "mean", "std", "min", "25%", "50%", "75%", "90%", "95%", "max"]
         ]
@@ -43,17 +43,17 @@ class DescriptiveStatistics(Metric):
 
     def get_summary_statistics_categorical(self, categorical_fields):
         summary_stats = pd.DataFrame()
-        for column in self.df[categorical_fields].columns:
-            top_value = self.df[column].value_counts().idxmax()
-            top_freq = self.df[column].value_counts().max()
-            summary_stats.loc[column, "Count"] = self.df[column].count()
-            summary_stats.loc[column, "Number of Unique Values"] = self.df[
+        for column in self.dataset.df[categorical_fields].columns:
+            top_value = self.dataset.df[column].value_counts().idxmax()
+            top_freq = self.dataset.df[column].value_counts().max()
+            summary_stats.loc[column, "Count"] = self.dataset.df[column].count()
+            summary_stats.loc[column, "Number of Unique Values"] = self.dataset.df[
                 column
             ].nunique()
             summary_stats.loc[column, "Top Value"] = top_value
             summary_stats.loc[column, "Top Value Frequency"] = top_freq
             summary_stats.loc[column, "Top Value Frequency %"] = (
-                top_freq / self.df[column].count()
+                top_freq / self.dataset.df[column].count()
             ) * 100
 
         summary_stats.reset_index(inplace=True)
@@ -67,19 +67,23 @@ class DescriptiveStatistics(Metric):
         """
         summary_stats_numerical = metric_value["numerical"]
         summary_stats_categorical = metric_value["categorical"]
-
-        return ResultSummary(
-            results=[
+        results = []
+        if len(summary_stats_numerical) != 0 :
+            results.append(
                 ResultTable(
                     data=summary_stats_numerical,
                     metadata=ResultTableMetadata(title="Numerical Variables"),
-                ),
+                )
+            )
+        if len(summary_stats_categorical) != 0 :
+            results.append(
                 ResultTable(
                     data=summary_stats_categorical,
                     metadata=ResultTableMetadata(title="Categorical Variables"),
-                ),
-            ]
-        )
+                )
+            )
+
+        return ResultSummary(results=results)
 
     def run(self):
         numerical_fields = self.dataset.get_numeric_features_columns()

@@ -42,9 +42,8 @@ class PermutationFeatureImportance(Metric):
     }
 
     def run(self):
-        x = self.model.train_ds.x
-        y = self.model.train_ds.y
-
+        x = self.model.train_ds.x_df()
+        y = self.model.train_ds.y_df()
         model_instance = self.model.model
         model_library = Model.model_library(model_instance)
         if (

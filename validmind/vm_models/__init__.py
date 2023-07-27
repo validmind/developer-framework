@@ -9,7 +9,7 @@
 Models entrypoint
 """
 
-from .dataset import Dataset, DatasetTargets
+from .dataset import VMDataset
 from .figure import Figure
 from .model import Model, ModelAttributes, R_MODEL_TYPES
 from .metric import Metric
@@ -27,8 +27,7 @@ from .test_suite import TestSuite
 from .threshold_test import ThresholdTest
 
 __all__ = [
-    "Dataset",
-    "DatasetTargets",
+    "VMDataset",
     "Figure",
     "Metric",
     "MetricResult",

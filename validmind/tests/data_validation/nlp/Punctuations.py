@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from validmind.vm_models import (
     Figure,
     Metric,
-    Dataset,
+    VMDataset,
 )
 
 
@@ -28,7 +28,7 @@ class Punctuations(Metric):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("Punctuations requires a validmind Dataset object")
 
         def create_corpus(df, text_column):

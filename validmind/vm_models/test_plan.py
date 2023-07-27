@@ -19,7 +19,7 @@ from ..errors import MissingRequiredTestContextError
 from ..logging import get_logger, log_performance
 from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
-from .dataset import Dataset
+from .dataset import VMDataset
 from .model import Model
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanFailedResult, TestPlanResult
@@ -50,7 +50,7 @@ class TestPlan:
     _tests: List[object] = None
 
     # Single dataset for dataset-only tests
-    dataset: Dataset = None
+    dataset: VMDataset = None
 
     # Model and corresponding datasets for model related tests
     model: Model = None

@@ -63,21 +63,21 @@ class HighCardinality(ThresholdTest):
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(self.df)
+        dataset_types = typeset.infer_type(self.dataset.df)
 
         results = []
-        rows = self.df.shape[0]
+        rows = self.dataset.df.shape[0]
 
         num_threshold = self.params["num_threshold"]
         if self.params["threshold_type"] == "percent":
             num_threshold = int(self.params["percent_threshold"] * rows)
 
-        for col in self.df.columns:
+        for col in self.dataset.df.columns:
             # Only calculate high cardinality for categorical columns
             if str(dataset_types[col]) != "Categorical":
                 continue
 
-            n_distinct = self.df[col].nunique()
+            n_distinct = self.dataset.df[col].nunique()
             p_distinct = n_distinct / rows
 
             passed = n_distinct < num_threshold

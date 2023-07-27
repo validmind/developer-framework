@@ -28,7 +28,6 @@ class TabularDatasetDescription(TestPlan):
         "validmind.data_validation.DatasetDescription",
         "validmind.data_validation.DescriptiveStatistics",
         "validmind.data_validation.PearsonCorrelationMatrix",
-        "validmind.data_validation.DatasetCorrelations",
     ]
 
 

@@ -57,7 +57,7 @@ class HighPearsonCorrelation(ThresholdTest):
         )
 
     def run(self):
-        corr = self.df.corr(numeric_only=True)
+        corr = self.dataset.df.corr(numeric_only=True)
 
         # Create a table of correlation coefficients and column pairs
         corr_table = corr.unstack().sort_values(

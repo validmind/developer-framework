@@ -34,14 +34,19 @@ from .template import (
 )
 from .test_plans import get_by_id as get_test_plan
 from .test_suites import get_by_id as get_test_suite
+
 from .vm_models import (
-    Dataset,
-    DatasetTargets,
     Model,
     ModelAttributes,
     R_MODEL_TYPES,
     TestPlan,
     TestSuite,
+)
+from .vm_models.dataset import (
+    VMDataset,
+    NumpyDataset,
+    DataFrameDataset,
+    TorchDataset,
 )
 
 pd.option_context("format.precision", 2)
@@ -50,14 +55,15 @@ logger = get_logger(__name__)
 
 
 def init_dataset(
-    dataset: pd.DataFrame,
-    type: str = "training",
+    dataset,
+    index=None,
+    index_name: str = None,
+    column_names: list = None,
     options: dict = None,
-    targets: DatasetTargets = None,
     text_column: str = None,
     target_column: str = None,
     class_labels: dict = None,
-) -> Dataset:
+) -> VMDataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
@@ -66,8 +72,6 @@ def init_dataset(
 
     Args:
         dataset (pd.DataFrame): We only support Pandas DataFrames at the moment
-        type (str): The dataset split type is necessary for mapping and relating multiple
-            datasets together. Can be one of training, validation, test or generic
         options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
@@ -80,33 +84,50 @@ def init_dataset(
         vm.vm.Dataset: A VM Dataset instance
     """
     dataset_class = dataset.__class__.__name__
-
-    # TODO: when we accept numpy datasets we can convert them to/from pandas
+    # Instantiate supported dataset types here
     if dataset_class == "DataFrame":
         logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
-        vm_dataset = Dataset.init_from_pd_dataset(
-            dataset, options, text_column, targets, target_column, class_labels
+        vm_dataset = DataFrameDataset(
+            raw_dataset=dataset,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels
+        )
+    elif dataset_class == "ndarray":
+        logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
+        vm_dataset = NumpyDataset(
+            raw_dataset=dataset,
+            index=index,
+            index_name=index_name,
+            column_names=column_names,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels
         )
     elif dataset_class == "TensorDataset":
-        print("Initializing VM Dataset instance...")
-        vm_dataset = Dataset.init_from_tensor_dataset(
-            dataset, options, targets, target_column, class_labels
+        logger.info("Torch TensorDataset ndarray detected. Initializing VM Dataset instance...")
+        vm_dataset = TorchDataset(
+            raw_dataset=dataset,
+            index=index,
+            index_name=index_name,
+            column_names=column_names,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels
         )
     else:
         raise UnsupportedDatasetError(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
 
-    vm_dataset.type = type
-
     return vm_dataset
 
 
 def init_model(
     model: object,
-    train_ds: Dataset = None,
-    test_ds: Dataset = None,
-    validation_ds: Dataset = None,
+    train_ds: VMDataset = None,
+    test_ds: VMDataset = None,
+    validation_ds: VMDataset = None,
 ) -> Model:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -319,9 +340,7 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
         ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
-        raise MissingDocumentationTemplate(
-            "No documentation template found. Please run `vm.init()`"
-        )
+        raise MissingDocumentationTemplate("No documentation template found. Please run `vm.init()`")
 
     _run_template(
         template=client_config.documentation_template,
@@ -333,6 +352,13 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
 
 def run_template(*args, **kwargs):
     """DEPRECATED! Use `vm.run_documentation_tests` instead.
+
+    _run_template(
+        template=client_config.documentation_template,
+        section=section,
+        *args,
+        **kwargs,
+    )
 
     Collect and run all the tests associated with a template
 

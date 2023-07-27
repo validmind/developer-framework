@@ -10,7 +10,7 @@ from typing import List
 
 from validmind.logging import get_logger
 from validmind.vm_models import (
-    Dataset,
+    VMDataset,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -63,7 +63,7 @@ class ClassImbalance(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
@@ -73,7 +73,7 @@ class ClassImbalance(ThresholdTest):
             return
 
         target_column = self.dataset.target_column
-        imbalance_percentages = self.df[target_column].value_counts(normalize=True)
+        imbalance_percentages = self.dataset.df[target_column].value_counts(normalize=True)
 
         # Does the minority class represent more than our threshold?
         passed = imbalance_percentages.min() > self.params["min_percent_threshold"]

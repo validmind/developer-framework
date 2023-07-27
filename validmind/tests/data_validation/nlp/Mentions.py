@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 from validmind.vm_models import (
-    Dataset,
+    VMDataset,
     Figure,
     ThresholdTest,
 )
@@ -39,7 +39,7 @@ class Mentions(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("Mentions requires a validmind Dataset object")
 
         text_column = self.dataset.text_column

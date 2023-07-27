@@ -55,17 +55,17 @@ class TooManyZeroValues(ThresholdTest):
         )
 
     def run(self):
-        rows = self.df.shape[0]
+        rows = self.dataset.df.shape[0]
         typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(self.df)
+        dataset_types = typeset.infer_type(self.dataset.df)
         results = []
 
-        for col in self.df.columns:
+        for col in self.dataset.df.columns:
             # Only calculate zeros for numerical columns
             if str(dataset_types[col]) != "Numeric":
                 continue
 
-            value_counts = self.df[col].value_counts()
+            value_counts = self.dataset.df[col].value_counts()
 
             if 0 not in value_counts.index:
                 continue

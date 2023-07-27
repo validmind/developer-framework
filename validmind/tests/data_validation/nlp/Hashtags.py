@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from validmind.vm_models import (
-    Dataset,
+    VMDataset,
     Figure,
     ThresholdTest,
 )
@@ -42,7 +42,7 @@ class Hashtags(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("Hashtags requires a validmind Dataset object")
 
         text_column = self.dataset.text_column
