@@ -11,6 +11,7 @@ from validmind.logging import get_logger
 
 
 from validmind.vm_models import Metric
+
 DEFAULT_HISTOGRAM_BINS = 10
 DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
 logger = get_logger(__name__)
@@ -110,10 +111,14 @@ class DatasetDescription(Metric):
             }
         elif field_type == "Numeric":
             field["statistics"] = (
-                df[field["id"]].describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.95]).to_dict()
+                df[field["id"]]
+                .describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.95])
+                .to_dict()
             )
         elif field_type == "Categorical" or field_type == "Dummy":
-            field["statistics"] = df[field["id"]].astype("category").describe().to_dict()
+            field["statistics"] = (
+                df[field["id"]].astype("category").describe().to_dict()
+            )
 
         # Initialize statistics object for non-numeric or categorical fields
         if "statistics" not in field:

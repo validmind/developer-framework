@@ -36,6 +36,7 @@ class NumpyDataset(VMDataset):
     """
     VM dataset implementation for NumPy arrays.
     """
+
     _raw_dataset: np.ndarray = None
     _index: np.ndarray = None
     _index_name: str = None
@@ -51,15 +52,15 @@ class NumpyDataset(VMDataset):
     _df: pd.DataFrame = None
 
     def __init__(
-            self,
-            raw_dataset,
-            index=None,
-            index_name=None,
-            column_names=None,
-            target_column: str = None,
-            text_column=None,
-            target_class_labels: dict = None,
-            options: dict = None
+        self,
+        raw_dataset,
+        index=None,
+        index_name=None,
+        column_names=None,
+        target_column: str = None,
+        text_column=None,
+        target_class_labels: dict = None,
+        options: dict = None,
     ):
         """
         Initializes a NumpyDataset instance.
@@ -82,8 +83,13 @@ class NumpyDataset(VMDataset):
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self._index = index
         self._index_name = index_name
-        if (column_names is not None) and (not isinstance(column_names, list) or not all(isinstance(element, str) for element in column_names)):
-            raise ValueError("feature_column_names does not contain an array of strings")
+        if (column_names is not None) and (
+            not isinstance(column_names, list)
+            or not all(isinstance(element, str) for element in column_names)
+        ):
+            raise ValueError(
+                "feature_column_names does not contain an array of strings"
+            )
         self._column_names = column_names
 
         self._target_column = target_column
@@ -165,9 +171,14 @@ class NumpyDataset(VMDataset):
         Returns:
             np.ndarray: The input features.
         """
-        return self.raw_dataset[:, [self.column_names.index(name)
-                                    for name in self.column_names
-                                    if name != self.target_column]]
+        return self.raw_dataset[
+            :,
+            [
+                self.column_names.index(name)
+                for name in self.column_names
+                if name != self.target_column
+            ],
+        ]
 
     @property
     def y(self) -> np.ndarray:
@@ -177,9 +188,14 @@ class NumpyDataset(VMDataset):
         Returns:
             np.ndarray: The target variables.
         """
-        return self.raw_dataset[:, [self.column_names.index(name)
-                                    for name in self.column_names
-                                    if name == self.target_column]]
+        return self.raw_dataset[
+            :,
+            [
+                self.column_names.index(name)
+                for name in self.column_names
+                if name == self.target_column
+            ],
+        ]
 
     @property
     def type(self) -> str:
@@ -277,11 +293,7 @@ class NumpyDataset(VMDataset):
         """
         numerical_columns = self.df.select_dtypes(include=[np.number]).columns.tolist()
 
-        return [
-            column
-            for column in numerical_columns
-            if column != self.target_column
-        ]
+        return [column for column in numerical_columns if column != self.target_column]
 
     def get_categorical_features_columns(self):
         """
@@ -297,9 +309,7 @@ class NumpyDataset(VMDataset):
         ).columns.tolist()
 
         return [
-            column
-            for column in categorical_columns
-            if column != self.target_column
+            column for column in categorical_columns if column != self.target_column
         ]
 
 
@@ -308,13 +318,14 @@ class DataFrameDataset(NumpyDataset):
     """
     VM dataset implementation for pandas DataFrame.
     """
+
     def __init__(
-            self,
-            raw_dataset: pd.DataFrame,
-            target_column: str = None,
-            text_column: str = None,
-            target_class_labels: dict = None,
-            options: dict = None,
+        self,
+        raw_dataset: pd.DataFrame,
+        target_column: str = None,
+        text_column: str = None,
+        target_class_labels: dict = None,
+        options: dict = None,
     ):
         """
         Initializes a DataFrameDataset instance.
@@ -337,7 +348,7 @@ class DataFrameDataset(NumpyDataset):
             target_column=target_column,
             text_column=text_column,
             target_class_labels=target_class_labels,
-            options=options
+            options=options,
         )
 
 
@@ -346,16 +357,17 @@ class TorchDataset(NumpyDataset):
     """
     VM dataset implementation for PyTorch Datasets.
     """
+
     def __init__(
-            self,
-            raw_dataset,
-            index_name=None,
-            index=None,
-            column_names=None,
-            target_column: str = None,
-            text_column: str = None,
-            target_class_labels: dict = None,
-            options: dict = None
+        self,
+        raw_dataset,
+        index_name=None,
+        index=None,
+        column_names=None,
+        target_column: str = None,
+        text_column: str = None,
+        target_class_labels: dict = None,
+        options: dict = None,
     ):
         """
         Initializes a TorchDataset instance.
@@ -371,10 +383,14 @@ class TorchDataset(NumpyDataset):
         """
         # Merge tensors along the column axis
         if raw_dataset.tensors[1].ndim == 1:
-            tensor2 = np.expand_dims(raw_dataset.tensors[1], axis=1)  # Convert tensor to a column vector
+            tensor2 = np.expand_dims(
+                raw_dataset.tensors[1], axis=1
+            )  # Convert tensor to a column vector
             merged_tensors = np.concatenate((raw_dataset.tensors[0], tensor2), axis=1)
         else:
-            merged_tensors = np.concatenate((raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1)
+            merged_tensors = np.concatenate(
+                (raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1
+            )
 
         super().__init__(
             raw_dataset=merged_tensors,

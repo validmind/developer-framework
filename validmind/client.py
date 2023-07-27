@@ -92,7 +92,7 @@ def init_dataset(
             raw_dataset=dataset,
             target_column=target_column,
             text_column=text_column,
-            target_class_labels=class_labels
+            target_class_labels=class_labels,
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
@@ -103,10 +103,12 @@ def init_dataset(
             column_names=column_names,
             target_column=target_column,
             text_column=text_column,
-            target_class_labels=class_labels
+            target_class_labels=class_labels,
         )
     elif dataset_class == "TensorDataset":
-        logger.info("Torch TensorDataset ndarray detected. Initializing VM Dataset instance...")
+        logger.info(
+            "Torch TensorDataset ndarray detected. Initializing VM Dataset instance..."
+        )
         vm_dataset = TorchDataset(
             raw_dataset=dataset,
             index=index,
@@ -114,7 +116,7 @@ def init_dataset(
             column_names=column_names,
             target_column=target_column,
             text_column=text_column,
-            target_class_labels=class_labels
+            target_class_labels=class_labels,
         )
     else:
         raise UnsupportedDatasetError(
@@ -375,7 +377,9 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
         ValueError: If the project has not been initialized
     """
     if client_config.documentation_template is None:
-        raise MissingDocumentationTemplate("No documentation template found. Please run `vm.init()`")
+        raise MissingDocumentationTemplate(
+            "No documentation template found. Please run `vm.init()`"
+        )
 
     _run_template(
         template=client_config.documentation_template,

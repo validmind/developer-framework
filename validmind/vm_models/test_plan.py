@@ -137,7 +137,7 @@ class TestPlan:
                 self._tests.append(test_id_or_class)
                 continue
 
-            test_class_options = None
+            test_class_props = None
             if isinstance(test_id_or_class, dict):
                 # if its a dictionary, we pull the test_id out and then treat the rest
                 # of the dictionary as the attributes to set on the test class
@@ -209,6 +209,7 @@ class TestPlan:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
+
         def recursive_attr_check(obj, attr_chain):
             attrs = attr_chain.split(".")
             if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
@@ -222,7 +223,7 @@ class TestPlan:
             logger.debug(f"Checking if required context '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_context and must be passed " \
+                    f"{element}' is required_context and must be passed "
                     "as a keyword argument to the test plan"
                 )
 
