@@ -13,7 +13,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
-import torch
 from .dataset_utils import parse_dataset_variables
 
 
@@ -349,7 +348,7 @@ class TorchDataset(NumpyDataset):
     """
     def __init__(
             self,
-            raw_dataset: torch.utils.data.Dataset,
+            raw_dataset,
             index_name=None,
             index=None,
             column_names=None,

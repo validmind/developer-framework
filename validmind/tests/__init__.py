@@ -170,7 +170,6 @@ def load_test(test_id, legacy=False):  # noqa: C901
             )
             test = getattr(module, test_class)
         except ModuleNotFoundError as e:
-            raise e
             error = f"Unable to load test {test_id}. Module not found: {test_module}"
         except AttributeError:
             error = f"Unable to load test {test_id}. Class not in module: {test_class}"
