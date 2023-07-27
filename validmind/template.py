@@ -252,11 +252,29 @@ def _create_template_test_suite(template, section=None):
     return test_suite
 
 
+def get_template_test_suite(template, section=None, *args, **kwargs):
+    """Get a TestSuite instance containing all tests in a template
+
+    This function will collect all tests used in a template into a dynamically-created
+    TestSuite object
+
+    Args:
+        template: A valid flat template
+        section: The section of the template to run (if not provided, run all sections)
+        *args: Arguments to pass to the TestSuite
+        **kwargs: Keyword arguments to pass to the TestSuite
+
+    Returns:
+        The TestSuite instance
+    """
+    return _create_template_test_suite(template, section)(*args, **kwargs)
+
+
 def run_template(template, section, *args, **kwargs):
     """Run all tests in a template
 
-    This function will collect all tests used in a template into a TestPlan and then
-    run the TestPlan as usual.
+    This function will collect all tests used in a template into a TestSuite and then
+    run the TestSuite as usual.
 
     Args:
         template: A valid flat template
@@ -267,7 +285,4 @@ def run_template(template, section, *args, **kwargs):
     Returns:
         The result of running the test suite.
     """
-    test_suite = _create_template_test_suite(template, section)
-    test_suite_instance = test_suite(*args, **kwargs)
-
-    return test_suite_instance.run()
+    return get_template_test_suite(template, section, *args, **kwargs).run()
