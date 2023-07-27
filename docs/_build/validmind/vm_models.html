@@ -32,79 +32,10 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#Dataset">Dataset</a>
+                    <a class="class" href="#VMDataset">VMDataset</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#Dataset.__init__">Dataset</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.df">df</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.x">x</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.y">y</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.index">index</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.isnull">isnull</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.copy">copy</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.drop_columns">drop_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_feature_by_id">get_feature_by_id</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_feature_type">get_feature_type</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_features_columns">get_features_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_numeric_features_columns">get_numeric_features_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_categorical_features_columns">get_categorical_features_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.serialize">serialize</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.describe">describe</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_correlations">get_correlations</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.get_correlation_plots">get_correlation_plots</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#Dataset.transformed_dataset">transformed_dataset</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.create_from_dict">create_from_dict</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.init_from_pd_dataset">init_from_pd_dataset</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Dataset.init_from_tensor_dataset">init_from_tensor_dataset</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
-                    <a class="class" href="#DatasetTargets">DatasetTargets</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#DatasetTargets.__init__">DatasetTargets</a>
+                                <a class="variable" href="#VMDataset.raw_dataset">raw_dataset</a>
                         </li>
                 </ul>
 
@@ -177,6 +108,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#Model.class_predictions">class_predictions</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Model.predict_proba">predict_proba</a>
                         </li>
                         <li>
                                 <a class="function" href="#Model.predict">predict</a>
@@ -433,475 +367,32 @@
                 
                 
             </section>
-                <section id="Dataset">
+                <section id="VMDataset">
                     <div class="attr class">
-                    <div class="decorator">@dataclass()</div>
+                    <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Dataset</span>:
+    <span class="name">VMDataset</span><wbr>(<span class="base">abc.ABC</span>):
 
         
     </div>
-    <a class="headerlink" href="#Dataset"></a>
+    <a class="headerlink" href="#VMDataset"></a>
     
-            <div class="docstring"><p>Model class wrapper</p>
+            <div class="docstring"><p>Abstract base class for VM datasets.</p>
 </div>
 
 
-                            <div id="Dataset.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">Dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">raw_dataset</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">fields</span><span class="p">:</span> <span class="nb">list</span>,</span><span class="param">	<span class="n">sample</span><span class="p">:</span> <span class="nb">list</span>,</span><span class="param">	<span class="n">shape</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">correlation_matrix</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">correlations</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">statistics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">targets</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_feature_lookup</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_transformed_df</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="Dataset.df" class="classattr">
+                            <div id="VMDataset.raw_dataset" class="classattr">
                                 <div class="attr variable">
-            <span class="name">df</span>
+            <span class="name">raw_dataset</span>
 
         
     </div>
-    <a class="headerlink" href="#Dataset.df"></a>
+    <a class="headerlink" href="#VMDataset.raw_dataset"></a>
     
-            <div class="docstring"><p>Returns the raw Pandas DataFrame</p>
+            <div class="docstring"><p>Returns the raw dataset.</p>
 </div>
 
-
-                            </div>
-                            <div id="Dataset.x" class="classattr">
-                                <div class="attr variable">
-            <span class="name">x</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.x"></a>
-    
-            <div class="docstring"><p>Returns the dataset's features</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.y" class="classattr">
-                                <div class="attr variable">
-            <span class="name">y</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.y"></a>
-    
-            <div class="docstring"><p>Returns the dataset's target column</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.index" class="classattr">
-                                <div class="attr variable">
-            <span class="name">index</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.index"></a>
-    
-            <div class="docstring"><p>Returns the dataset's index.</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.isnull" class="classattr">
-                                <div class="attr variable">
-            <span class="name">isnull</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.isnull"></a>
-    
-            <div class="docstring"><p>Returns True if there are any null values in the dataset or the index, False otherwise.</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.copy" class="classattr">
-                                <div class="attr variable">
-            <span class="name">copy</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.copy"></a>
-    
-            <div class="docstring"><p>Returns a copy of the raw_dataset.</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.drop_columns" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">drop_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">columns_to_drop</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.drop_columns"></a>
-    
-            <div class="docstring"><p>Drop specified columns of the raw_dataset.</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_feature_by_id" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_feature_by_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">feature_id</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_feature_by_id"></a>
-    
-            <div class="docstring"><p>Returns the feature with the given id. We also build a lazy
-lookup cache in case the same feature is requested multiple times.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>feature_id (str):</strong>  The id of the feature to return</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the feature with the given id does not exist</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: The feature with the given id</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_feature_type" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_feature_type</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">feature_id</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_feature_type"></a>
-    
-            <div class="docstring"><p>Returns the type of the feature with the given id</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>feature_id (str):</strong>  The id of the feature to return</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>str: The type of the feature with the given id</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_features_columns" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_features_columns"></a>
-    
-            <div class="docstring"><p>Returns list of features columns</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: The list of features columns</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_numeric_features_columns" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_numeric_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_numeric_features_columns"></a>
-    
-            <div class="docstring"><p>Returns list of numeric features columns</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: The list of numberic features columns</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_categorical_features_columns" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_categorical_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_categorical_features_columns"></a>
-    
-            <div class="docstring"><p>Returns list of categorical features columns</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: The list of categorical features columns</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.serialize" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.serialize"></a>
-    
-            <div class="docstring"><p>Serializes the model to a dictionary so it can be sent to the API</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.describe" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">describe</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.describe"></a>
-    
-            <div class="docstring"><p>Extracts descriptive statistics for each field in the dataset</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_correlations" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_correlations</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_correlations"></a>
-    
-            <div class="docstring"><p>Extracts correlations for each field in the dataset</p>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.get_correlation_plots" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_correlation_plots</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">n_top</span><span class="o">=</span><span class="mi">15</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.get_correlation_plots"></a>
-    
-            <div class="docstring"><p>Extracts correlation plots for the n_top correlations in the dataset</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>n_top (int, optional):</strong>  The number of top correlations to extract. Defaults to 15.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: A list of correlation plots</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.transformed_dataset" class="classattr">
-                                <div class="attr variable">
-            <span class="name">transformed_dataset</span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.transformed_dataset"></a>
-    
-            <div class="docstring"><p>Returns a transformed dataset that uses the features from vm_dataset.
-Some of the features in vm_dataset are of type Dummy so we need to
-reverse the one hot encoding and drop the individual dummy columns</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>force_refresh (bool, optional):</strong>  Whether to force a refresh of the transformed dataset. Defaults to False.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The transformed dataset</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.create_from_dict" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@classmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">create_from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">dict_</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.create_from_dict"></a>
-    
-            <div class="docstring"><p>Creates a Dataset object from a dictionary</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>dict_ (dict):</strong>  The dictionary to create the Dataset object from</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>Dataset: The Dataset object</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.init_from_pd_dataset" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@classmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">init_from_pd_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">df</span>,</span><span class="param">	<span class="n">options</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">targets</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.init_from_pd_dataset"></a>
-    
-            <div class="docstring"><p>Initializes a Dataset object from a pandas DataFrame</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>df (pd.DataFrame):</strong>  The pandas DataFrame to initialize the Dataset object from</li>
-<li><strong>options (dict, optional):</strong>  The options to use when initializing the Dataset object. Defaults to None.</li>
-<li><strong>targets (list, optional):</strong>  The targets to use when initializing the Dataset object. Defaults to None.</li>
-<li><strong>target_column (str, optional):</strong>  The target column to use when initializing the Dataset object. Defaults to None.</li>
-<li><strong>class_labels (list, optional):</strong>  The class labels to use when initializing the Dataset object. Defaults to None.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>Dataset: The Dataset object</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Dataset.init_from_tensor_dataset" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@classmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">init_from_tensor_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">ts_dataset</span>,</span><span class="param">	<span class="n">options</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">targets</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Dataset.init_from_tensor_dataset"></a>
-    
-            <div class="docstring"><p>Initializes a Dataset instance from a tensor dataset.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>cls (class):</strong>  The class of the Dataset.</li>
-<li><strong>ts_dataset (TensorDataset):</strong>  The tensor dataset to initialize from.</li>
-<li><strong>options (dict, optional):</strong>  Additional options for dataset initialization. Defaults to None.</li>
-<li><strong>targets (np.array, pd.Series, optional):</strong>  The target values for the dataset. Defaults to None.</li>
-<li><strong>target_column (str, optional):</strong>  The name of the target column in the dataset. Defaults to None.</li>
-<li><strong>class_labels (list, optional):</strong>  The list of class labels for classification tasks. Defaults to None.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>Dataset: The initialized Dataset instance.</p>
-</blockquote>
-
-<h6 id="notes">Notes:</h6>
-
-<blockquote>
-  <p>This method infers the dataset types, converts the input tensors into a dictionary of records,
-  and creates a Dataset instance with the provided information. It also validates the targets if provided.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                </section>
-                <section id="DatasetTargets">
-                    <div class="attr class">
-                    <div class="decorator">@dataclass()</div>
-
-    <span class="def">class</span>
-    <span class="name">DatasetTargets</span>:
-
-        
-    </div>
-    <a class="headerlink" href="#DatasetTargets"></a>
-    
-            <div class="docstring"><p>Dataset targets definition</p>
-</div>
-
-
-                            <div id="DatasetTargets.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">DatasetTargets</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#DatasetTargets.__init__"></a>
-    
-    
 
                             </div>
                 </section>
@@ -1204,7 +695,7 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                             <div id="Model.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="n"><a href="#ModelAttributes">validmind.vm_models.ModelAttributes</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">subtask</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;main&#39;</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_train_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_test_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_validation_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="n"><a href="#ModelAttributes">validmind.vm_models.ModelAttributes</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">subtask</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;main&#39;</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_train_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_test_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_validation_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1255,6 +746,23 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 
 
                             </div>
+                            <div id="Model.predict_proba" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">predict_proba</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Model.predict_proba"></a>
+    
+            <div class="docstring"><p>predict_proba (for classification) or predict (for regression) method</p>
+
+<p>NOTE: This only works for sklearn or xgboost models at the moment</p>
+</div>
+
+
+                            </div>
                             <div id="Model.predict" class="classattr">
                                 <div class="attr function">
             
@@ -1265,10 +773,7 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
     </div>
     <a class="headerlink" href="#Model.predict"></a>
     
-            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's
-predict_proba (for classification) or predict (for regression) method</p>
-
-<p>NOTE: This only works for sklearn or xgboost models at the moment</p>
+            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
 </div>
 
 
@@ -1581,7 +1086,7 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
                             <div id="TestContext.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1683,7 +1188,7 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
                             <div id="TestPlan.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1869,7 +1374,7 @@ VS Code, Jupyter or other notebook environment.</p>
                             <div id="TestPlanDatasetResult.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlanDatasetResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Metric&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlanDatasetResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Metric&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -2112,7 +1617,7 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
                             <div id="TestSuite.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#Dataset">validmind.vm_models.Dataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_total_tests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
+        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_total_tests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
 
         
     </div>
