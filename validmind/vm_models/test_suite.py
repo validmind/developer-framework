@@ -39,8 +39,6 @@ class TestSuite(TestPlan):
     # so we can access their results after running the test suite
     _test_plan_instances: List[object] = None
 
-    _run_finished: bool = False
-
     # ipywidgets progress bar
     pbar: widgets.IntProgress = None
     pbar_description: widgets.Label = None
@@ -141,8 +139,6 @@ class TestSuite(TestPlan):
 
         self.summarize()
         self.pbar_description.value = "Test suite complete!"
-
-        self._run_finished = True
 
     def _results_title(self) -> str:
         """
