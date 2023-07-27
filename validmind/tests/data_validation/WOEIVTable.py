@@ -1,108 +1,67 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import numpy as np
 import pandas as pd
 from dataclasses import dataclass
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+import scorecardpy as sc
 
 
 @dataclass
 class WOEIVTable(Metric):
     """
-    Calculate the Weight of Evidence (WoE) and Information Value (IV) of categorical features.
+    Calculate the Weight of Evidence (WoE) and Information Value (IV) of features.
     The input dataset and target column are required.
     """
 
     name = "woe_iv_table"
     required_context = ["dataset"]
-    default_params = {"features": None, "order_by": None}
-
-    def _get_feature_categories(self, df, feature, target_column):
-        lst = []
-
-        for val in df[feature].unique():
-            lst.append(
-                {
-                    "Feature": feature,
-                    "Category": val,
-                    "All": df[df[feature] == val].count()[feature],
-                    "Good": df[(df[feature] == val) & (df[target_column] == 0)].count()[
-                        feature
-                    ],
-                    "Bad": df[(df[feature] == val) & (df[target_column] == 1)].count()[
-                        feature
-                    ],
-                }
-            )
-
-        return pd.DataFrame(lst)
-
-    def _calculate_woe_iv_for_feature(self, dset):
-        dset["Distr_Good"] = dset["Good"] / dset["Good"].sum()
-        dset["Distr_Bad"] = dset["Bad"] / dset["Bad"].sum()
-        dset["WoE"] = np.log(dset["Distr_Good"] / dset["Distr_Bad"])
-        dset["IV"] = (dset["Distr_Good"] - dset["Distr_Bad"]) * dset["WoE"]
-
-        return dset
+    default_params = {}
 
     def run(self):
         target_column = self.dataset.target_column
-        features = self.params["features"]
-        order_by = self.params["order_by"]
-
         df = self.dataset.df
-
-        summary_woe_iv = self.calculate_woe_iv(df, target_column, features, order_by)
-
+        summary_woe_iv = self.binning_data(df, target_column)
         return self.cache_results(
             {
                 "woe_iv": summary_woe_iv.to_dict(orient="records"),
             }
         )
 
-    def calculate_woe_iv(self, df, target_column, features=None, order_by=None):
-        if features is None:
-            features = self.params.get("features")
+    def binning_data(self, df, y):
+        """
+        This function performs automatic binning using WoE.
+        df: A pandas dataframe
+        y: The target variable in quotes, e.g. 'target'
+        """
 
-        if order_by is None:
-            order_by = self.params.get("order_by")
+        # Identify non-numeric columns
+        non_numeric_cols = df.select_dtypes(exclude=["int64", "float64"]).columns
 
-        if features is not None:
-            if not isinstance(features, list):
-                raise ValueError("The 'features' parameter must be a list.")
-            invalid_features = set(features) - set(df.columns)
-            if invalid_features:
-                raise ValueError(
-                    f"The following features are not found in the DataFrame: {invalid_features}"
-                )
+        # Convert non-numeric columns to string type
+        df[non_numeric_cols] = df[non_numeric_cols].astype(str)
 
-        if features is None:
-            features = df.drop(target_column, axis=1).columns.tolist()
-
-        master = []
-
-        for feature in features:
-            dset = self._get_feature_categories(df, feature, target_column)
-            dset = self._calculate_woe_iv_for_feature(dset)
-            master.append(dset)
-
-        master_dset = pd.concat(master, ignore_index=True)
-
-        if order_by is None:
-            order_by = ["Feature", "WoE"]
+        # Perform binning
+        try:
+            bins = sc.woebin(df, y)
+        except Exception as e:
+            print("Error during binning: ")
+            print(e)
         else:
-            invalid_columns = set(order_by) - set(dset.columns)
-            if invalid_columns:
-                raise ValueError(
-                    f"The following columns are not found in the table: {invalid_columns}"
-                )
+            # Concatenate the individual dataframes into a single dataframe
+            bins_df = pd.concat(bins.values(), keys=bins.keys())
 
-        return master_dset.sort_values(by=order_by, ascending=False)
+            # Reset index and convert multi-index into columns
+            bins_df.reset_index(inplace=True)
+
+            # Drop the 'variable' column as it is identical to 'level_0'
+            bins_df.drop(columns=["variable"], inplace=True)
+
+            # Rename 'level_0' to 'variable' and 'level_1' to 'bin_number'
+            bins_df.rename(
+                columns={"level_0": "variable", "level_1": "bin_number"}, inplace=True
+            )
+
+            return bins_df
 
     def summary(self, metric_value):
         summary_woe_iv_table = metric_value["woe_iv"]
