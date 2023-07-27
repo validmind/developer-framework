@@ -4,6 +4,7 @@ authors = [
   "Juan Martinez <juan@validmind.ai>",
   "Anil Sorathiya <anil@validmind.ai>",
   "Luis Pallares <luis@validmind.ai>",
+  "John Halz <john@validmind.ai>",
 ]
 description = "ValidMind Developer Framework"
 license = "Commercial License"
@@ -15,7 +16,7 @@ license = "Commercial License"
 # ]
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.16.4"
+version = "1.16.5"
 
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
