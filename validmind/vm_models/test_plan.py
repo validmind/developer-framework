@@ -44,7 +44,6 @@ class TestPlan:
     _global_config: dict() = None
     _test_configs: dict() = None
     test_context: TestContext = None
-    _required_context: List[str] = None #dynamically built from tests' required_context
 
     # Reference to the test classes (dynamic import after initialization)
     _tests: List[object] = None
@@ -81,7 +80,6 @@ class TestPlan:
             self.models = self.test_context.models
 
         self._init_tests()
-        self.validate_context()
         self._split_configs()
 
     def _split_configs(self):
@@ -100,13 +98,13 @@ class TestPlan:
             else:
                 self._global_config[key] = value
 
-    def _load_test(self, test_id: str, test_class_options: dict = None):
+    def _load_test(self, test_id: str, test_class_props: dict = None):
         """Loads a test class from a test id and appends it to the list of tests"""
         try:
             test_class = load_test(test_id)
 
-            if test_class_options:
-                for key, val in test_class_options.items():
+            if test_class_props:
+                for key, val in test_class_props.items():
                     setattr(test_class, key, val)
 
             self._tests.append(test_class)
@@ -135,6 +133,7 @@ class TestPlan:
                 test_id_or_class,
                 TestContextUtils,  # TODO: use a dedicated base class for metric/test
             ):  # if its a test class, we just add it to the list
+                test_id_or_class.id = test_id_or_class.name
                 self._tests.append(test_id_or_class)
                 continue
 
@@ -143,30 +142,53 @@ class TestPlan:
                 # if its a dictionary, we pull the test_id out and then treat the rest
                 # of the dictionary as the attributes to set on the test class
                 # this is used to set a ref_id from the template
-                test_class_options = {
+                test_class_props = {
                     key: val
                     for key, val in test_id_or_class.items()
                     if key != "test_id"
                 }
+                test_class_props["id"] = test_id_or_class["test_id"]
                 test_id_or_class = test_id_or_class["test_id"]
 
-            self._load_test(test_id_or_class, test_class_options)
+            self._load_test(test_id_or_class, test_class_props)
 
-    def get_required_context(self):
+    def get_required_context(self) -> List[str]:
         """
         Returns the required context for the test plan. Defaults to the
         required context of the tests
-        """
-        if self._required_context is None:
-            required_context = set()
-            # bubble up the required context from the tests
-            for test in self._tests:
-                if not hasattr(test, "required_context"):
-                    continue
-                required_context.update(test.required_context)
-            self._required_context = list(required_context)
 
-        return self._required_context
+        Returns:
+            List[str]: A list of required context elements
+        """
+        required_context = set()
+
+        # bubble up the required context from the tests
+        for test in self._tests:
+            if not hasattr(test, "required_context"):
+                continue
+            required_context.update(test.required_context)
+
+        return list(required_context)
+
+    def get_default_config(self) -> dict:
+        """Returns the default configuration for the test plan
+
+        Each test in a test plan can accept parameters and those parameters can have
+        default values. Both the parameters and their defaults are set in the test
+        class and a config object can be passed to the test plan's run method to
+        override the defaults. This function returns a dictionary containing the
+        parameters and their default values for every test to allow users to view
+        and set values
+
+        Returns:
+            dict: A dictionary of test names and their default parameters
+        """
+        default_config = {}
+
+        for test in self._tests:
+            default_config[test.id] = test.default_params
+
+        return default_config
 
     def title(self):
         """
@@ -305,6 +327,8 @@ class TestPlan:
                 model=self.model,
                 models=self.models,
             )
+
+        self.validate_context()
 
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)
