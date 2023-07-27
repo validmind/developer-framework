@@ -8,175 +8,260 @@
 """
 Dataset class wrapper
 """
-from dataclasses import dataclass, fields
-from dython.nominal import associations
 
-from ..logging import get_logger
-from .dataset_utils import (
-    describe_dataset_field,
-    generate_correlation_plots,
-    parse_dataset_variables,
-    validate_pd_dataset_targets,
-    parse_ts_dataset_variables,
-)
-
-logger = get_logger(__name__)
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+import numpy as np
+import pandas as pd
+import torch
+from .dataset_utils import parse_dataset_variables
 
 
-@dataclass()
-class DatasetTargets:
+@dataclass
+class VMDataset(ABC):
     """
-    Dataset targets definition
+    Abstract base class for VM datasets.
     """
 
-    target_column: str
-    description: str = None
-    class_labels: dict = None
+    @property
+    @abstractmethod
+    def raw_dataset(self):
+        """
+        Returns the raw dataset.
+        """
+        pass
 
 
-@dataclass()
-class Dataset:
+@dataclass
+class NumpyDataset(VMDataset):
     """
-    Model class wrapper
+    VM dataset implementation for NumPy arrays.
     """
-
-    raw_dataset: object
+    _raw_dataset: np.ndarray = None
+    _index: np.ndarray = None
+    _index_name: str = None
+    _column_names: list = None
+    _target_column: str = None
+    _text_column: str = None
+    _type: str = "generic"
+    _target_class_labels: dict = None
     # This is list of metadata objects for each field in the dataset. It does
     # not contain the actual data for each field, just metadata about it
-    fields: list
-    sample: list
-    shape: dict
-    correlation_matrix: object = None
-    correlations: dict = None
-    type: str = None
-    options: dict = None
-    statistics: dict = None
-    text_column: str = None
-    # Specify targets via DatasetTargets or via target_column and class_labels
-    targets: dict = None
-    target_column: str = ""
-    class_labels: dict = None
+    fields: list = None
+    _options: dict = None
+    _df: pd.DataFrame = None
 
-    _feature_lookup: dict = None
-    _transformed_df: object = None
-
-    def __post_init__(self):
+    def __init__(
+            self,
+            raw_dataset,
+            index=None,
+            index_name=None,
+            column_names=None,
+            target_column: str = None,
+            text_column=None,
+            target_class_labels: dict = None,
+            options: dict = None
+    ):
         """
-        Set target_column and class_labels from DatasetTargets
-        """
-        self._feature_lookup = {}
+        Initializes a NumpyDataset instance.
 
-        if self.targets:
-            self.target_column = self.targets.target_column
-            self.class_labels = self.targets.class_labels
+        Args:
+            raw_dataset (np.ndarray): The raw dataset as a NumPy array.
+            index (np.ndarray): The raw dataset index as a NumPy array.
+            index_name (str): The raw dataset index name as a NumPy array.
+            column_names (List[str], optional): The column names of the dataset. Defaults to None.
+            target_column (str, optional): The target column name of the dataset. Defaults to None.
+            text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
+            target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
+            options (Dict, optional): Additional options for the dataset. Defaults to None.
+        """
+
+        if not isinstance(raw_dataset, np.ndarray):
+            raise ValueError("Expected Numpy array for attribute raw_dataset")
+        self._raw_dataset = raw_dataset
+        if index is not None and not isinstance(index, np.ndarray):
+            raise ValueError("Expected Numpy array for attribute raw_dataset")
+        self._index = index
+        self._index_name = index_name
+        if (column_names is not None) and (not isinstance(column_names, list) or not all(isinstance(element, str) for element in column_names)):
+            raise ValueError("feature_column_names does not contain an array of strings")
+        self._column_names = column_names
+
+        self._target_column = target_column
+        self._text_column = text_column
+        self._target_class_labels = target_class_labels
+        self.options = options
+        df = pd.DataFrame(self._raw_dataset, columns=self._column_names).infer_objects()
+        if index is not None:
+            df.set_index(pd.Index(index), inplace=True)
+            df.index.name = index_name
+        self._df = df
+        self.fields = parse_dataset_variables(self._df, self.options)
+
+    @property
+    def raw_dataset(self) -> np.ndarray:
+        """
+        Returns the raw dataset.
+
+        Returns:
+            np.ndarray: The raw dataset.
+        """
+        return self._raw_dataset
+
+    @property
+    def index(self) -> np.ndarray:
+        """
+        Returns index of the dataset.
+
+        Returns:
+            np.ndarray: The dataset index.
+        """
+        return self._index
+
+    @property
+    def index_name(self) -> str:
+        """
+        Returns index name of the dataset.
+
+        Returns:
+            str: The dataset index name.
+        """
+        return self._df.index.name
+
+    @property
+    def column_names(self) -> list:
+        """
+        Returns the column names of the dataset.
+
+        Returns:
+            List[str]: The column names.
+        """
+        return self._column_names
+
+    @property
+    def target_column(self) -> str:
+        """
+        Returns the target column of the dataset.
+
+        Returns:
+            str: The target column name.
+        """
+        return self._target_column
+
+    @property
+    def text_column(self) -> str:
+        """
+        Returns the text column of the dataset.
+
+        Returns:
+            str: The text column name.
+        """
+        return self._text_column
+
+    @property
+    def x(self) -> np.ndarray:
+        """
+        Returns the input features (X) of the dataset.
+
+        Returns:
+            np.ndarray: The input features.
+        """
+        return self.raw_dataset[:, [self.column_names.index(name)
+                                    for name in self.column_names
+                                    if name != self.target_column]]
+
+    @property
+    def y(self) -> np.ndarray:
+        """
+        Returns the target variables (y) of the dataset.
+
+        Returns:
+            np.ndarray: The target variables.
+        """
+        return self.raw_dataset[:, [self.column_names.index(name)
+                                    for name in self.column_names
+                                    if name == self.target_column]]
+
+    @property
+    def type(self) -> str:
+        """
+        Returns the type of the dataset.
+
+        Returns:
+            str: The dataset type.
+        """
+        return self._type
 
     @property
     def df(self):
         """
-        Returns the raw Pandas DataFrame
-        """
-        return self.raw_dataset
+        Returns the dataset as a pandas DataFrame.
 
-    @property
-    def x(self):
+        Returns:
+            pd.DataFrame: The dataset as a DataFrame.
         """
-        Returns the dataset's features
-        """
-        dataset_class = self.raw_dataset.__class__.__name__
-
-        if dataset_class == "TensorDataset":
-            return self.raw_dataset.tensors[0]
-
-        return self.raw_dataset.drop(self.target_column, axis=1)
-
-    @property
-    def y(self):
-        """
-        Returns the dataset's target column
-        """
-        dataset_class = self.raw_dataset.__class__.__name__
-
-        if (dataset_class == "TensorDataset") and (
-            self.raw_dataset.tensors[1] is not None
-        ):
-            return self.raw_dataset.tensors[1]
-
-        return self.raw_dataset[self.target_column]
-
-    @property
-    def index(self):
-        """
-        Returns the dataset's index.
-        """
-        return self.raw_dataset.index
-
-    @property
-    def isnull(self):
-        """
-        Returns True if there are any null values in the dataset or the index, False otherwise.
-        """
-        return (
-            self.raw_dataset.isnull().values.any()
-            or self.raw_dataset.index.isnull().any()
-        )
+        return self._df
 
     @property
     def copy(self):
         """
-        Returns a copy of the raw_dataset.
+        Returns a copy of the raw_dataset dataframe.
         """
-        return self.raw_dataset.copy()
+        return self._df.copy()
 
-    def drop_columns(self, columns_to_drop):
+    def x_df(self):
         """
-        Drop specified columns of the raw_dataset.
-        """
-        modified_dataset = self.raw_dataset.copy()
-        modified_dataset = modified_dataset.drop(columns=columns_to_drop)
-        return modified_dataset
-
-    def get_feature_by_id(self, feature_id):
-        """
-        Returns the feature with the given id. We also build a lazy
-        lookup cache in case the same feature is requested multiple times.
-
-        Args:
-            feature_id (str): The id of the feature to return
-
-        Raises:
-            ValueError: If the feature with the given id does not exist
+        Returns the input features (X) of the dataset.
 
         Returns:
-            dict: The feature with the given id
+            pd.DataFrame: The input features.
         """
-        if feature_id not in self._feature_lookup:
-            for feature in self.fields:
-                if feature["id"] == feature_id:
-                    self._feature_lookup[feature_id] = feature
-                    return feature
-            raise ValueError(f"Feature with id {feature_id} does not exist")
+        return self._df[self.get_features_columns()]
 
-        return self._feature_lookup[feature_id]
+    def y_df(self):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        return self._df[self.target_column]
+
+    def serialize(self):
+        """
+        Serializes the dataset to a dictionary.
+
+        Returns:
+            Dict: The serialized dataset.
+        """
+        # Dataset with no targets can be logged
+        dataset_dict = {}
+        dataset_dict["targets"] = {
+            "target_column": self.target_column,
+            "class_labels": self._target_class_labels,
+        }
+
+        return dataset_dict
 
     def get_feature_type(self, feature_id):
         """
-        Returns the type of the feature with the given id
+        Returns the type of the specified feature.
 
         Args:
-            feature_id (str): The id of the feature to return
+            feature_id (str): The ID of the feature.
 
         Returns:
-            str: The type of the feature with the given id
+            str: The type of the feature.
         """
         feature = self.get_feature_by_id(feature_id)
         return feature["type"]
 
     def get_features_columns(self):
         """
-        Returns list of features columns
+        Returns the column names of the feature variables.
 
         Returns:
-            list: The list of features columns
+            List[str]: The column names of the feature variables.
         """
         return [
             field_dic["id"]
@@ -186,322 +271,119 @@ class Dataset:
 
     def get_numeric_features_columns(self):
         """
-        Returns list of numeric features columns
+        Returns the column names of the numeric feature variables.
 
         Returns:
-            list: The list of numberic features columns
+            List[str]: The column names of the numeric feature variables.
         """
+        numerical_columns = self.df.select_dtypes(include=[np.number]).columns.tolist()
+
         return [
-            field_dic["id"]
-            for field_dic in self.fields
-            if (
-                field_dic["type"] == "Numeric" and field_dic["id"] != self.target_column
-            )
+            column
+            for column in numerical_columns
+            if column != self.target_column
         ]
 
     def get_categorical_features_columns(self):
         """
-        Returns list of categorical features columns
+        Returns the column names of the categorical feature variables.
 
         Returns:
-            list: The list of categorical features columns
+            List[str]: The column names of the categorical feature variables.
         """
+
+        # Extract categorical columns from the dataset
+        categorical_columns = self.df.select_dtypes(
+            include=[np.object, pd.Categorical]
+        ).columns.tolist()
+
         return [
-            field_dic["id"]
-            for field_dic in self.fields
-            if (
-                field_dic["type"] == "Categorical"
-                and field_dic["id"] != self.target_column
-            )
+            column
+            for column in categorical_columns
+            if column != self.target_column
         ]
 
-    def serialize(self):
-        """
-        Serializes the model to a dictionary so it can be sent to the API
-        """
-        dataset_dict = {
-            "shape": self.shape,
-            "type": self.type,
-        }
 
-        # Dataset with no targets can be logged
-        if self.targets:
-            dataset_dict["targets"] = self.targets.__dict__
-        else:
-            dataset_dict["targets"] = {
-                "target_column": self.target_column,
-                "class_labels": self.class_labels,
-            }
-
-        return dataset_dict
-
-    def describe(self):
-        """
-        Extracts descriptive statistics for each field in the dataset
-        """
-        transformed_df = self.transformed_dataset
-
-        for ds_field in self.fields:
-            describe_dataset_field(transformed_df, ds_field)
-
-    def get_correlations(self):
-        """
-        Extracts correlations for each field in the dataset
-        """
-        # Ignore fields that have very high cardinality
-        fields_for_correlation = []
-        for ds_field in self.fields:
-            if "statistics" in ds_field and "distinct" in ds_field["statistics"]:
-                if ds_field["statistics"]["distinct"] < 0.1:
-                    fields_for_correlation.append(ds_field["id"])
-
-        self.correlation_matrix = associations(
-            self.transformed_dataset[fields_for_correlation],
-            compute_only=True,
-            plot=False,
-        )["corr"]
-
-        # Transform to the current format expected by the UI
-        self.correlations = [
-            [
-                {
-                    "field": key,
-                    "value": value,
-                }
-                for key, value in correlation_row.items()
-            ]
-            for correlation_row in self.correlation_matrix.to_dict(orient="records")
-        ]
-
-    def get_correlation_plots(self, n_top=15):
-        """
-        Extracts correlation plots for the n_top correlations in the dataset
-
-        Args:
-            n_top (int, optional): The number of top correlations to extract. Defaults to 15.
-
-        Returns:
-            list: A list of correlation plots
-        """
-        correlation_plots = generate_correlation_plots(self, n_top)
-        return correlation_plots
-
-    @property
-    def transformed_dataset(self, force_refresh=False):
-        """
-        Returns a transformed dataset that uses the features from vm_dataset.
-        Some of the features in vm_dataset are of type Dummy so we need to
-        reverse the one hot encoding and drop the individual dummy columns
-
-        Args:
-            force_refresh (bool, optional): Whether to force a refresh of the transformed dataset. Defaults to False.
-
-        Returns:
-            pd.DataFrame: The transformed dataset
-        """
-        if self._transformed_df is not None and force_refresh is False:
-            return self._transformed_df
-
-        # Get the list of features that are of type Dummy
-        dataset_options = self.options
-        dummy_variables = (
-            dataset_options.get("dummy_variables", []) if dataset_options else []
-        )
-        # Exclude columns that have prefixes that are in the dummy feature list
-        dummy_column_names = [
-            column_name
-            for column_name in self.raw_dataset.columns
-            if any(
-                column_name.startswith(dummy_variable)
-                for dummy_variable in dummy_variables
-            )
-        ]
-        transformed_df = self.raw_dataset.drop(dummy_column_names, axis=1)
-
-        # Add reversed dummy features to the transformed dataset
-        for dummy_variable in dummy_variables:
-            columns_with_dummy_prefix = [
-                col
-                for col in self.raw_dataset.columns
-                if col.startswith(dummy_variable)
-            ]
-            transformed_df[dummy_variable] = (
-                self.raw_dataset[columns_with_dummy_prefix]
-                .idxmax(axis=1)
-                .replace(f"{dummy_variable}[-_:]", "", regex=True)
-            )
-
-        return transformed_df
-
-    @classmethod
-    def create_from_dict(cls, dict_):
-        """
-        Creates a Dataset object from a dictionary
-
-        Args:
-            dict_ (dict): The dictionary to create the Dataset object from
-
-        Returns:
-            Dataset: The Dataset object
-        """
-        class_fields = {f.name for f in fields(cls)}
-        return Dataset(**{k: v for k, v in dict_.items() if k in class_fields})
-
-    # TODO: Accept variable descriptions from framework
-    # TODO: Accept type overrides from framework
-    @classmethod
-    def init_from_pd_dataset(
-        cls,
-        df,
-        options=None,
-        text_column=None,
-        targets=None,
-        target_column=None,
-        class_labels=None,
+@dataclass
+class DataFrameDataset(NumpyDataset):
+    """
+    VM dataset implementation for pandas DataFrame.
+    """
+    def __init__(
+            self,
+            raw_dataset: pd.DataFrame,
+            target_column: str = None,
+            text_column: str = None,
+            target_class_labels: dict = None,
+            options: dict = None,
     ):
         """
-        Initializes a Dataset object from a pandas DataFrame
+        Initializes a DataFrameDataset instance.
 
         Args:
-            df (pd.DataFrame): The pandas DataFrame to initialize the Dataset object from
-            options (dict, optional): The options to use when initializing the Dataset object. Defaults to None.
-            targets (list, optional): The targets to use when initializing the Dataset object. Defaults to None.
-            target_column (str, optional): The target column to use when initializing the Dataset object. Defaults to None.
-            class_labels (list, optional): The class labels to use when initializing the Dataset object. Defaults to None.
-
-        Returns:
-            Dataset: The Dataset object
+            raw_dataset (pd.DataFrame): The raw dataset as a pandas DataFrame.
+            target_column (str, optional): The target column of the dataset. Defaults to None.
+            text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
+            target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        logger.info("Inferring dataset types...")
-        vm_dataset_variables = parse_dataset_variables(df, options)
+        index = None
+        if isinstance(raw_dataset.index, pd.Index):
+            index = raw_dataset.index.values
 
-        shape = {
-            "rows": df.shape[0],
-            "columns": df.shape[1],
-        }
-        df_head = df.head().to_dict(orient="records")
-        df_tail = df.tail().to_dict(orient="records")
-
-        # TODO: validate with target_column and class_labels
-        if targets:
-            validate_pd_dataset_targets(df, targets)
-
-        return Dataset(
-            raw_dataset=df,
-            fields=vm_dataset_variables,
-            sample=[
-                {
-                    "id": "head",
-                    "data": df_head,
-                },
-                {
-                    "id": "tail",
-                    "data": df_tail,
-                },
-            ],
-            shape=shape,
+        super().__init__(
+            raw_dataset=raw_dataset.values,
+            index_name=raw_dataset.index.name,
+            index=index,
+            column_names=raw_dataset.columns.to_list(),
+            target_column=target_column,
             text_column=text_column,
-            targets=targets,
-            target_column=target_column,
-            class_labels=class_labels,
-            options=options,
+            target_class_labels=target_class_labels,
+            options=options
         )
 
-    # TODO: Accept variable descriptions from framework
-    # TODO: Accept type overrides from framework
-    @classmethod
-    def init_from_tensor_dataset(
-        cls,
-        ts_dataset,
-        options=None,
-        targets=None,
-        target_column=None,
-        class_labels=None,
+
+@dataclass
+class TorchDataset(NumpyDataset):
+    """
+    VM dataset implementation for PyTorch Datasets.
+    """
+    def __init__(
+            self,
+            raw_dataset: torch.utils.data.Dataset,
+            index_name=None,
+            index=None,
+            column_names=None,
+            target_column: str = None,
+            text_column: str = None,
+            target_class_labels: dict = None,
+            options: dict = None
     ):
         """
-        Initializes a Dataset instance from a tensor dataset.
+        Initializes a TorchDataset instance.
 
         Args:
-            cls (class): The class of the Dataset.
-            ts_dataset (TensorDataset): The tensor dataset to initialize from.
-            options (dict, optional): Additional options for dataset initialization. Defaults to None.
-            targets (np.array, pd.Series, optional): The target values for the dataset. Defaults to None.
-            target_column (str, optional): The name of the target column in the dataset. Defaults to None.
-            class_labels (list, optional): The list of class labels for classification tasks. Defaults to None.
-
-        Returns:
-            Dataset: The initialized Dataset instance.
-
-        Notes:
-            This method infers the dataset types, converts the input tensors into a dictionary of records,
-            and creates a Dataset instance with the provided information. It also validates the targets if provided.
-
+            raw_dataset (torch.utils.data.Dataset): The raw dataset as a PyTorch Dataset.
+            index_name (str): The raw dataset index name.
+            index (np.ndarray): The raw dataset index as a NumPy array.
+            column_names (List[str]): The column names of the dataset.
+            target_column (str, optional): The target column of the dataset. Defaults to None.
+            text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
+            target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        print("Inferring dataset types...")
-        vm_dataset_variables = parse_ts_dataset_variables(ts_dataset, options)
+        # Merge tensors along the column axis
+        if raw_dataset.tensors[1].ndim == 1:
+            tensor2 = np.expand_dims(raw_dataset.tensors[1], axis=1)  # Convert tensor to a column vector
+            merged_tensors = np.concatenate((raw_dataset.tensors[0], tensor2), axis=1)
+        else:
+            merged_tensors = np.concatenate((raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1)
 
-        shape = {
-            "rows": ts_dataset.tensors[0].shape[0],
-            "columns": ts_dataset.tensors[0].shape[1],
-        }
-
-        def convert_to_dict_records_head(dataset, num_rows):
-            # Get the input tensors from the dataset
-            inputs = dataset.tensors[0]
-
-            # Get the specified number of rows
-            subset_inputs = inputs[:num_rows]
-
-            # Convert the subset of inputs into a list of dictionaries
-            records = [
-                dict(zip(range(subset_inputs.shape[1]), row)) for row in subset_inputs
-            ]
-
-            return records
-
-        def convert_to_dict_records_tail(dataset, num_rows):
-            # Get input tensors from the dataset
-            inputs = dataset.tensors[0]
-
-            # Get the total number of rows in the dataset
-            total_rows = inputs.shape[0]
-
-            # Calculate the starting index for the tail subset
-            start_index = total_rows - num_rows
-
-            # Get the tail subset of rows
-            subset_inputs = inputs[start_index:]
-
-            # Convert the subset of inputs into a list of dictionaries
-            records = [
-                dict(zip(range(subset_inputs.shape[1]), row)) for row in subset_inputs
-            ]
-
-            return records
-
-        df_head = convert_to_dict_records_head(ts_dataset, 5)
-        df_tail = convert_to_dict_records_tail(ts_dataset, 5)
-
-        # TODO: validate with target_column and class_labels
-        if targets:
-            validate_pd_dataset_targets(ts_dataset, targets)
-
-        return Dataset(
-            raw_dataset=ts_dataset,
-            fields=vm_dataset_variables,
-            sample=[
-                {
-                    "id": "head",
-                    "data": df_head,
-                },
-                {
-                    "id": "tail",
-                    "data": df_tail,
-                },
-            ],
-            shape=shape,
-            targets=targets,
+        super().__init__(
+            raw_dataset=merged_tensors,
+            index_name=index_name,
+            index=index,
+            column_names=column_names,
             target_column=target_column,
-            class_labels=class_labels,
+            text_column=text_column,
+            target_class_labels=target_class_labels,
             options=options,
         )

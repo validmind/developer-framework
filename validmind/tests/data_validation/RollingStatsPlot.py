@@ -28,8 +28,8 @@ class RollingStatsPlot(Metric):
         :param ax1: Axis object for the rolling mean plot
         :param ax2: Axis object for the rolling standard deviation plot
         """
-        rolling_mean = self.df[col].rolling(window=window_size).mean()
-        rolling_std = self.df[col].rolling(window=window_size).std()
+        rolling_mean = self.dataset.df[col].rolling(window=window_size).mean()
+        rolling_std = self.dataset.df[col].rolling(window=window_size).std()
 
         # Create a new figure and axis objects
         fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)

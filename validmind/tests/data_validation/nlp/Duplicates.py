@@ -62,9 +62,9 @@ class Duplicates(ThresholdTest):
         )
 
     def run(self):
-        rows = self.df.shape[0]
+        rows = self.dataset.df.shape[0]
         n_duplicates = len(
-            self.df[self.df.duplicated(subset=[self.dataset.text_column], keep=False)]
+            self.dataset.df[self.dataset.df.duplicated(subset=[self.dataset.text_column], keep=False)]
         )
         p_duplicates = n_duplicates / rows
         passed = p_duplicates < self.params["min_threshold"]

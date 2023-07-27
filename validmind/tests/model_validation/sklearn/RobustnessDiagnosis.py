@@ -101,14 +101,12 @@ class RobustnessDiagnosis(ThresholdTest):
             )
 
         # Remove target column if it exist in the list
-        features_list = [
-            col for col in features_list if col != self.model.train_ds.target_column
-        ]
+        features_list = self.model.train_ds.get_features_columns()
 
-        train_df = self.model.train_ds.x.copy()
+        train_df = self.model.train_ds.x_df().copy()
         train_y_true = self.model.train_ds.y
 
-        test_df = self.model.test_ds.x.copy()
+        test_df = self.model.test_ds.x_df().copy()
         test_y_true = self.model.test_ds.y
 
         test_results = []

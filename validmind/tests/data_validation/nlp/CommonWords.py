@@ -18,7 +18,7 @@ from nltk.corpus import stopwords
 from ....vm_models import (
     Figure,
     Metric,
-    Dataset,
+    VMDataset,
 )
 
 
@@ -35,7 +35,7 @@ class CommonWords(Metric):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("CommonWords requires a validmind Dataset object")
 
         def create_corpus(df, text_column):
