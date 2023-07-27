@@ -1,3 +1,8 @@
+# This software is proprietary and confidential. Unauthorized copying,
+# modification, distribution or use of this software is strictly prohibited.
+# Please refer to the LICENSE file in the root directory of this repository
+# for more information.
+#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import pandas as pd
@@ -7,13 +12,13 @@ import scorecardpy as sc
 
 
 @dataclass
-class WOEIVTable(Metric):
+class WOEBinTable(Metric):
     """
-    Calculate the Weight of Evidence (WoE) and Information Value (IV) of features.
-    The input dataset and target column are required.
+    Implements WoE-based automatic binning for features in a dataset and calculates their Information Value (IV).
+    Utilizes the 'scorecardpy' library for the binning process.
     """
 
-    name = "woe_iv_table"
+    name = "woe_bin_table"
     required_context = ["dataset"]
     default_params = {}
 
