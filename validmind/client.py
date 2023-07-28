@@ -107,7 +107,7 @@ def init_dataset(
         )
     elif dataset_class == "TensorDataset":
         logger.info(
-            "Torch TensorDataset ndarray detected. Initializing VM Dataset instance..."
+            "Torch TensorDataset detected. Initializing VM Dataset instance..."
         )
         vm_dataset = TorchDataset(
             raw_dataset=dataset,
