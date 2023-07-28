@@ -64,6 +64,7 @@ def init_dataset(
     text_column: str = None,
     target_column: str = None,
     class_labels: dict = None,
+    type: str = None,
 ) -> VMDataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
@@ -84,6 +85,12 @@ def init_dataset(
     Returns:
         vm.vm.Dataset: A VM Dataset instance
     """
+    # Show deprecation notice if type is passed
+    if type is not None:
+        logger.info(
+            "The 'type' argument to init_dataset() argument is deprecated and no longer required."
+        )
+
     dataset_class = dataset.__class__.__name__
     # Instantiate supported dataset types here
     if dataset_class == "DataFrame":
@@ -106,9 +113,7 @@ def init_dataset(
             target_class_labels=class_labels,
         )
     elif dataset_class == "TensorDataset":
-        logger.info(
-            "Torch TensorDataset detected. Initializing VM Dataset instance..."
-        )
+        logger.info("Torch TensorDataset detected. Initializing VM Dataset instance...")
         vm_dataset = TorchDataset(
             raw_dataset=dataset,
             index=index,
