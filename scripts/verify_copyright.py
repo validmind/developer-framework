@@ -38,6 +38,10 @@ for root, dirs, files in os.walk(directory):
             with open(os.path.join(root, file), "r") as f:
                 contents = f.read()
 
+            # Check if the file is __init__.py and if it's empty
+            if file == "__init__.py" and not contents.strip():
+                continue
+
             # Check if the file contains the copyright header
             if not contents.startswith(copyright):
                 errors.append(
