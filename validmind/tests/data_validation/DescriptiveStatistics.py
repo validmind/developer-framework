@@ -31,7 +31,9 @@ class DescriptiveStatistics(Metric):
 
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
-        summary_stats = self.dataset.df[numerical_fields].describe(percentiles=percentiles).T
+        summary_stats = (
+            self.dataset.df[numerical_fields].describe(percentiles=percentiles).T
+        )
         summary_stats = summary_stats[
             ["count", "mean", "std", "min", "25%", "50%", "75%", "90%", "95%", "max"]
         ]
@@ -68,14 +70,14 @@ class DescriptiveStatistics(Metric):
         summary_stats_numerical = metric_value["numerical"]
         summary_stats_categorical = metric_value["categorical"]
         results = []
-        if len(summary_stats_numerical) != 0 :
+        if len(summary_stats_numerical) != 0:
             results.append(
                 ResultTable(
                     data=summary_stats_numerical,
                     metadata=ResultTableMetadata(title="Numerical Variables"),
                 )
             )
-        if len(summary_stats_categorical) != 0 :
+        if len(summary_stats_categorical) != 0:
             results.append(
                 ResultTable(
                     data=summary_stats_categorical,

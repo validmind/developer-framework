@@ -22,7 +22,6 @@ class TabularDatasetDescription(TestPlan):
     """
 
     name = "tabular_dataset_description"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.DatasetMetadata",
         "validmind.data_validation.DatasetDescription",
@@ -37,7 +36,6 @@ class TabularDataQuality(TestPlan):
     """
 
     name = "tabular_data_quality"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.ClassImbalance",
         "validmind.data_validation.Duplicates",
@@ -56,7 +54,6 @@ class TimeSeriesDataQuality(TestPlan):
     """
 
     name = "time_series_data_quality"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.TimeSeriesOutliers",
         "validmind.data_validation.TimeSeriesMissingValues",

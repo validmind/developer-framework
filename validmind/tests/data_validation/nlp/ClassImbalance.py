@@ -60,7 +60,9 @@ class ClassImbalance(ThresholdTest):
             return
 
         target_column = self.dataset.target_column
-        imbalance_percentages = self.dataset.df[target_column].value_counts(normalize=True)
+        imbalance_percentages = self.dataset.df[target_column].value_counts(
+            normalize=True
+        )
 
         classes = list(imbalance_percentages.index)
         num_classes = len(classes)
