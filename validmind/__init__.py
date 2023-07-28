@@ -57,6 +57,7 @@ from .api_client import (  # noqa: E402
     log_figure as _log_figure_async,
 )
 from .client import (  # noqa: E402
+    get_test_suite,
     init_dataset,
     init_model,
     init_r_model,
@@ -116,6 +117,7 @@ __all__ = [  # noqa
     "__version__",
     # Framework High Level API
     "datasets",
+    "get_test_suite",
     "init",
     "init_dataset",
     "init_model",

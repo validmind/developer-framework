@@ -21,7 +21,6 @@ class TextDataQuality(TestPlan):
     """
 
     name = "text_data_quality"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.nlp.ClassImbalance",
         "validmind.data_validation.nlp.Duplicates",

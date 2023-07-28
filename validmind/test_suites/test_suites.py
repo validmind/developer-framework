@@ -18,7 +18,6 @@ class TabularDataset(TestSuite):
     """
 
     name = "tabular_dataset"
-    required_context = ["dataset"]
 
     test_plans = [
         "tabular_dataset_description",
@@ -32,7 +31,6 @@ class BinaryClassifierModelValidation(TestSuite):
     """
 
     name = "binary_classifier_model_validation"
-    required_context = ["model"]
 
     test_plans = [
         "binary_classifier_metrics",
@@ -47,7 +45,6 @@ class BinaryClassifierFullSuite(TestSuite):
     """
 
     name = "binary_classifier_full_suite"
-    required_context = ["dataset", "model"]
 
     test_plans = [
         "tabular_dataset_description",
@@ -64,7 +61,6 @@ class TimeSeriesDataset(TestSuite):
     """
 
     name = "time_series_dataset"
-    required_context = ["dataset"]
 
     test_plans = [
         "time_series_data_quality",
@@ -79,7 +75,6 @@ class TimeSeriesModelValidation(TestSuite):
     """
 
     name = "time_series_model_validation"
-    required_context = ["model", "models"]
 
     test_plans = [
         "regression_model_description",

@@ -4,6 +4,7 @@ authors = [
   "Juan Martinez <juan@validmind.ai>",
   "Anil Sorathiya <anil@validmind.ai>",
   "Luis Pallares <luis@validmind.ai>",
+  "John Halz <john@validmind.ai>",
 ]
 description = "ValidMind Developer Framework"
 license = "Commercial License"

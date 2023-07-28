@@ -7,21 +7,28 @@
 
 from ipywidgets import Accordion, HTML, VBox
 from IPython.display import display
+from pprint import pformat
 
+from .html_templates.content_blocks import (
+    failed_content_block_html,
+    non_test_content_block_html,
+    test_content_block_html,
+)
 from .logging import get_logger
+from .tests import describe_test, LoadTestError
 from .utils import is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite
 
 logger = get_logger(__name__)
 
-content_html = """
-<div class="lm-Widget p-Widget jupyter-widget-Collapse jupyter-widget-Accordion-child">
-    <div class="lm-Widget p-Widget jupyter-widget-Collapse-header">
-        <span>Content Block: '{content_id}' <i>({content_type})</i></span>
-    </div>
-</div>
-"""
+CONTENT_TYPE_MAP = {
+    "test": "Threshold Test",
+    "metric": "Metric",
+    "metadata_text": "Metadata Text",
+    "dynamic": "Dynamic Content",
+    "text": "Text",
+}
 
 
 def _convert_sections_to_section_tree(
@@ -50,11 +57,39 @@ def _convert_sections_to_section_tree(
 
 
 def _create_content_widget(content):
-    return HTML(
-        content_html.format(
-            content_id=content["content_id"],
-            content_type=content["content_type"],
+    content_type = CONTENT_TYPE_MAP[content["content_type"]]
+
+    if content["content_type"] not in ["metric", "test"]:
+        return HTML(
+            non_test_content_block_html.format(
+                content_id=content["content_id"],
+                content_type=content_type,
+            )
         )
+
+    try:
+        test_deets = describe_test(test_id=content["content_id"], raw=True)
+    except LoadTestError:
+        return HTML(failed_content_block_html.format(test_id=content["content_id"]))
+
+    return Accordion(
+        children=[
+            HTML(
+                test_content_block_html.format(
+                    title=test_deets["Name"],
+                    description=test_deets["Description"],
+                    required_context=", ".join(test_deets["Required Context"]),
+                    params_table="\n".join(
+                        [
+                            f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
+                            for param, value in test_deets["Params"].items()
+                        ]
+                    ),
+                    table_display="table" if test_deets["Params"] else "none",
+                )
+            )
+        ],
+        titles=[f"{content_type} Block: '{content['content_id']}'"],
     )
 
 
@@ -176,7 +211,6 @@ def _create_section_test_plan(section):
             (TestPlan,),
             {
                 "name": section["id"],
-                "required_context": [],
                 "tests": section_tests,
                 "__doc__": section["title"],
             },
@@ -208,7 +242,6 @@ def _create_template_test_suite(template, section=None):
         (TestSuite,),
         {
             "name": template["template_id"],
-            "required_context": [],
             "test_plans": test_plans,
             "__doc__": template["description"],
         },
@@ -217,11 +250,29 @@ def _create_template_test_suite(template, section=None):
     return test_suite
 
 
+def get_template_test_suite(template, section=None, *args, **kwargs):
+    """Get a TestSuite instance containing all tests in a template
+
+    This function will collect all tests used in a template into a dynamically-created
+    TestSuite object
+
+    Args:
+        template: A valid flat template
+        section: The section of the template to run (if not provided, run all sections)
+        *args: Arguments to pass to the TestSuite
+        **kwargs: Keyword arguments to pass to the TestSuite
+
+    Returns:
+        The TestSuite instance
+    """
+    return _create_template_test_suite(template, section)(*args, **kwargs)
+
+
 def run_template(template, section, *args, **kwargs):
     """Run all tests in a template
 
-    This function will collect all tests used in a template into a TestPlan and then
-    run the TestPlan as usual.
+    This function will collect all tests used in a template into a TestSuite and then
+    run the TestSuite as usual.
 
     Args:
         template: A valid flat template
@@ -232,7 +283,4 @@ def run_template(template, section, *args, **kwargs):
     Returns:
         The result of running the test suite.
     """
-    test_suite = _create_template_test_suite(template, section)
-    test_suite_instance = test_suite(*args, **kwargs)
-
-    return test_suite_instance.run()
+    return get_template_test_suite(template, section, *args, **kwargs).run()

@@ -218,6 +218,12 @@
                                 <a class="function" href="#TestPlan.__init__">TestPlan</a>
                         </li>
                         <li>
+                                <a class="function" href="#TestPlan.get_required_context">get_required_context</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TestPlan.get_default_config">get_default_config</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#TestPlan.title">title</a>
                         </li>
                         <li>
@@ -309,6 +315,12 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#TestSuite.__init__">TestSuite</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TestSuite.get_required_context">get_required_context</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TestSuite.get_default_config">get_default_config</a>
                         </li>
                         <li>
                                 <a class="function" href="#TestSuite.run">run</a>
@@ -1186,6 +1198,56 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
     
 
                             </div>
+                            <div id="TestPlan.get_required_context" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestPlan.get_required_context"></a>
+    
+            <div class="docstring"><p>Returns the required context for the test plan. Defaults to the
+required context of the tests</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>List[str]: A list of required context elements</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="TestPlan.get_default_config" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_default_config</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestPlan.get_default_config"></a>
+    
+            <div class="docstring"><p>Returns the default configuration for the test plan</p>
+
+<p>Each test in a test plan can accept parameters and those parameters can have
+default values. Both the parameters and their defaults are set in the test
+class and a config object can be passed to the test plan's run method to
+override the defaults. This function returns a dictionary containing the
+parameters and their default values for every test to allow users to view
+and set values</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: A dictionary of test names and their default parameters</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="TestPlan.title" class="classattr">
                                 <div class="attr function">
             
@@ -1609,11 +1671,54 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
     
 
                             </div>
+                            <div id="TestSuite.get_required_context" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestSuite.get_required_context"></a>
+    
+            <div class="docstring"><p>Returns the required context for the test suite.</p>
+</div>
+
+
+                            </div>
+                            <div id="TestSuite.get_default_config" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_default_config</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">dict</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestSuite.get_default_config"></a>
+    
+            <div class="docstring"><p>Returns the default configuration for the test suite</p>
+
+<p>Each test in a test suite can accept parameters and those parameters can have
+default values. Both the parameters and their defaults are set in the test
+class and a config object can be passed to the test suite's run method to
+override the defaults. This function returns a dictionary containing the
+parameters and their default values for every test to allow users to view
+and set values</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict: A dictionary of test names and their default parameters</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="TestSuite.run" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
