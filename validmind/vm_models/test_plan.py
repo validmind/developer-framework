@@ -36,7 +36,6 @@ class TestPlan:
 
     # Class Variables
     name: ClassVar[str]
-    required_context: ClassVar[List[str]]
     tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
     results: ClassVar[List[TestPlanResult]]
 
@@ -81,7 +80,6 @@ class TestPlan:
             self.models = self.test_context.models
 
         self._init_tests()
-        self.validate_context()
         self._split_configs()
 
     def _split_configs(self):
@@ -100,13 +98,13 @@ class TestPlan:
             else:
                 self._global_config[key] = value
 
-    def _load_test(self, test_id: str, test_class_options: dict = None):
+    def _load_test(self, test_id: str, test_class_props: dict = None):
         """Loads a test class from a test id and appends it to the list of tests"""
         try:
             test_class = load_test(test_id)
 
-            if test_class_options:
-                for key, val in test_class_options.items():
+            if test_class_props:
+                for key, val in test_class_props.items():
                     setattr(test_class, key, val)
 
             self._tests.append(test_class)
@@ -135,22 +133,62 @@ class TestPlan:
                 test_id_or_class,
                 TestContextUtils,  # TODO: use a dedicated base class for metric/test
             ):  # if its a test class, we just add it to the list
+                test_id_or_class.id = test_id_or_class.name
                 self._tests.append(test_id_or_class)
                 continue
 
-            test_class_options = None
+            test_class_props = None
             if isinstance(test_id_or_class, dict):
                 # if its a dictionary, we pull the test_id out and then treat the rest
                 # of the dictionary as the attributes to set on the test class
                 # this is used to set a ref_id from the template
-                test_class_options = {
+                test_class_props = {
                     key: val
                     for key, val in test_id_or_class.items()
                     if key != "test_id"
                 }
+                test_class_props["id"] = test_id_or_class["test_id"]
                 test_id_or_class = test_id_or_class["test_id"]
 
-            self._load_test(test_id_or_class, test_class_options)
+            self._load_test(test_id_or_class, test_class_props)
+
+    def get_required_context(self) -> List[str]:
+        """
+        Returns the required context for the test plan. Defaults to the
+        required context of the tests
+
+        Returns:
+            List[str]: A list of required context elements
+        """
+        required_context = set()
+
+        # bubble up the required context from the tests
+        for test in self._tests:
+            if not hasattr(test, "required_context"):
+                continue
+            required_context.update(test.required_context)
+
+        return list(required_context)
+
+    def get_default_config(self) -> dict:
+        """Returns the default configuration for the test plan
+
+        Each test in a test plan can accept parameters and those parameters can have
+        default values. Both the parameters and their defaults are set in the test
+        class and a config object can be passed to the test plan's run method to
+        override the defaults. This function returns a dictionary containing the
+        parameters and their default values for every test to allow users to view
+        and set values
+
+        Returns:
+            dict: A dictionary of test names and their default parameters
+        """
+        default_config = {}
+
+        for test in self._tests:
+            default_config[test.id] = test.default_params
+
+        return default_config
 
     def title(self):
         """
@@ -171,14 +209,6 @@ class TestPlan:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        required_context = set(self.required_context)
-
-        # bubble up the required context from the tests
-        for test in self._tests:
-            if not hasattr(test, "required_context"):
-                continue
-
-            required_context.update(test.required_context)
 
         def recursive_attr_check(obj, attr_chain):
             attrs = attr_chain.split(".")
@@ -189,12 +219,12 @@ class TestPlan:
                 ".".join(attrs[1:]),
             )
 
-        for element in required_context:
+        for element in self.get_required_context():
             logger.debug(f"Checking if required context '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"Test '{test.name}' requires '{element}'"
-                    " to be present in the test context"
+                    f"{element}' is required_context and must be passed "
+                    "as a keyword argument to the test plan"
                 )
 
     def get_config_params_for_test(self, test_name):
@@ -298,6 +328,8 @@ class TestPlan:
                 model=self.model,
                 models=self.models,
             )
+
+        self.validate_context()
 
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)

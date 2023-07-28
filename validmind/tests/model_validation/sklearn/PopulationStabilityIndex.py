@@ -144,7 +144,8 @@ class PopulationStabilityIndex(Metric):
             return
 
         psi_results = self._get_psi(
-            self.model.predict_proba(self.model.train_ds.x).copy(), self.model.predict_proba(self.model.test_ds.x).copy()
+            self.model.predict_proba(self.model.train_ds.x).copy(),
+            self.model.predict_proba(self.model.test_ds.x).copy(),
         )
 
         trace1 = go.Bar(

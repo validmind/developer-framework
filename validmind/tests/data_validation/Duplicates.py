@@ -78,7 +78,9 @@ class Duplicates(ThresholdTest):
                 primary_keys.append(field["id"])
 
         for col in primary_keys:
-            col_n_duplicates = len(self.dataset.df[self.dataset.df[col].duplicated(keep=False)])
+            col_n_duplicates = len(
+                self.dataset.df[self.dataset.df[col].duplicated(keep=False)]
+            )
             col_p_duplicates = col_n_duplicates / rows
             col_passed = col_n_duplicates < self.params["min_threshold"]
             results.append(

@@ -73,7 +73,9 @@ class ClassImbalance(ThresholdTest):
             return
 
         target_column = self.dataset.target_column
-        imbalance_percentages = self.dataset.df[target_column].value_counts(normalize=True)
+        imbalance_percentages = self.dataset.df[target_column].value_counts(
+            normalize=True
+        )
 
         # Does the minority class represent more than our threshold?
         passed = imbalance_percentages.min() > self.params["min_percent_threshold"]

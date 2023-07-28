@@ -17,7 +17,6 @@ class TimeSeriesUnivariate(TestPlan):
     """
 
     name = "time_series_univariate"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.TimeSeriesLinePlot",
         "validmind.data_validation.TimeSeriesHistogram",
@@ -50,7 +49,6 @@ class TimeSeriesMultivariate(TestPlan):
     """
 
     name = "time_series_multivariate"
-    required_context = ["dataset"]
     tests = [
         "validmind.data_validation.ScatterPlot",
         "validmind.data_validation.LaggedCorrelationHeatmap",
@@ -80,7 +78,6 @@ class TimeSeriesForecast(TestPlan):
     """
 
     name = "time_series_forecast"
-    required_context = ["models"]
     tests = ["validmind.model_validation.statsmodels.RegressionModelForecastPlotLevels"]
 
     def description(self):
@@ -95,7 +92,6 @@ class TimeSeriesSensitivity(TestPlan):
     """
 
     name = "time_series_sensitivity"
-    required_context = ["models"]
     tests = ["validmind.model_validation.statsmodels.RegressionModelSensitivityPlot"]
 
     def description(self):
