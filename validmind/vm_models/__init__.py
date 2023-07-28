@@ -26,6 +26,9 @@ from .test_result import TestResult, TestResults
 from .test_suite import TestSuite
 from .threshold_test import ThresholdTest
 
+# Import plot_utils so we can initialize the default matplotlib params
+from .plot_utils import *  # noqa
+
 __all__ = [
     "VMDataset",
     "Figure",

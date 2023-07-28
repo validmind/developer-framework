@@ -270,15 +270,18 @@ class RobustnessDiagnosis(ThresholdTest):
             ax=ax,
         )
         ax.tick_params(axis="x")
-        ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
-        ax.legend(fontsize=22)
+        ax.set_ylabel("Accuracy", weight="bold", fontsize=18)
+        ax.legend(fontsize=18)
         ax.set_xlabel(
-            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=22
+            "Perturbation Size (X * Standard Deviation)",
+            weight="bold",
+            fontsize=18
         )
         ax.set_title(
             f"Perturbed Features: {', '.join(features_columns)}",
             weight="bold",
-            fontsize=24,
+            fontsize=20,
+            wrap=True,
         )
 
         # Do this if you want to prevent the figure from being displayed
