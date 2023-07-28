@@ -21,7 +21,7 @@ class __TEST_NAME__(Metric):
     """
 
     name = "__TEST_ID__"
-    required_context = [] # model, dataset, etc. (model.train_ds, model.test_ds) ds = dataset with x and y
+    required_context = [] # model, dataset, etc. (model.train_ds, model.test_ds)
     default_params = {}
 
     def run(self) -> TestPlanMetricResult:
