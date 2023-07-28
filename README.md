@@ -108,6 +108,10 @@ are missing it by running:
 make copyright
 ```
 
+## Git Hooks
+
+### Pre-Commit Hook
+
 ## Known Issues
 
 ### ValidMind wheel errors
