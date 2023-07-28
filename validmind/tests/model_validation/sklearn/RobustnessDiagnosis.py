@@ -273,9 +273,7 @@ class RobustnessDiagnosis(ThresholdTest):
         ax.set_ylabel("Accuracy", weight="bold", fontsize=18)
         ax.legend(fontsize=18)
         ax.set_xlabel(
-            "Perturbation Size (X * Standard Deviation)",
-            weight="bold",
-            fontsize=18
+            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
         )
         ax.set_title(
             f"Perturbed Features: {', '.join(features_columns)}",
