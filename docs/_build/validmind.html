@@ -33,6 +33,9 @@
                     <a class="variable" href="#data_validation">data_validation</a>
             </li>
             <li>
+                    <a class="function" href="#get_test_suite">get_test_suite</a>
+            </li>
+            <li>
                     <a class="function" href="#init">init</a>
             </li>
             <li>
@@ -145,7 +148,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.16.4&#39;</span>
+<span class="default_value">&#39;1.16.5&#39;</span>
 
         
     </div>
@@ -163,6 +166,39 @@ and to upload to the ValidMind Platform.</p>
     <a class="headerlink" href="#data_validation"></a>
     
     
+
+                </section>
+                <section id="get_test_suite">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">TestSuite</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#get_test_suite"></a>
+    
+            <div class="docstring"><p>Gets a TestSuite object for the current project or a specific test suite</p>
+
+<p>This function provides an interface to retrieve the TestSuite instance for the
+current project or a specific TestSuite instance identified by test_suite_name.
+The project Test Suite will contain Test Plans for every section in the project's
+documentation template and these Test Plans will contain all the tests associated
+with that section.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_suite_name (str, optional):</strong>  The test suite name. If not passed, then the
+project's test suite will be returned. Defaults to None.</li>
+<li><strong>section (str, optional):</strong>  The section of the documentation template from which
+to retrieve the test suite. This only applies if test_suite_name is None.
+Defaults to None.</li>
+<li><strong>args:</strong>  Additional arguments to pass to the TestSuite</li>
+<li><strong>kwargs:</strong>  Additional keyword arguments to pass to the TestSuite</li>
+</ul>
+</div>
+
 
                 </section>
                 <section id="init">
