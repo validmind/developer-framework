@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 13.1.1"/>
-    <title>validmind API documentation</title>
+    <title>validmind.tests.model_validation.sklearn.MinimumAccuracy API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,7 +17,12 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>
+        <div>            <a class="pdoc-button module-list-button" href="../sklearn.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                &nbsp;validmind.tests.model_validation.sklearn</a>
+
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
@@ -27,59 +32,23 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="variable" href="#__version__">__version__</a>
-            </li>
-            <li>
-                    <a class="function" href="#init">init</a>
-            </li>
-            <li>
-                    <a class="function" href="#init_dataset">init_dataset</a>
-            </li>
-            <li>
-                    <a class="function" href="#init_model">init_model</a>
-            </li>
-            <li>
-                    <a class="function" href="#init_r_model">init_r_model</a>
-            </li>
-            <li>
-                    <a class="function" href="#preview_template">preview_template</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_documentation_tests">run_documentation_tests</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_template">run_template</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_test_plan">run_test_plan</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_test_suite">run_test_suite</a>
-            </li>
-            <li>
-                    <a class="function" href="#log_dataset">log_dataset</a>
-            </li>
-            <li>
-                    <a class="function" href="#log_figure">log_figure</a>
-            </li>
-            <li>
-                    <a class="function" href="#log_metrics">log_metrics</a>
-            </li>
-            <li>
-                    <a class="function" href="#log_test_results">log_test_results</a>
+                    <a class="class" href="#MinimumAccuracy">MinimumAccuracy</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#MinimumAccuracy.__init__">MinimumAccuracy</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MinimumAccuracy.summary">summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#MinimumAccuracy.run">run</a>
+                        </li>
+                </ul>
+
             </li>
     </ul>
 
 
-            <h3>Submodules</h3>
-            <ul>
-                    <li><a href="validmind/__version__.html">__version__</a></li>
-                    <li><a href="validmind/datasets.html">datasets</a></li>
-                    <li><a href="validmind/tests.html">tests</a></li>
-                    <li><a href="validmind/test_plans.html">test_plans</a></li>
-                    <li><a href="validmind/test_suites.html">test_suites</a></li>
-                    <li><a href="validmind/vm_models.html">vm_models</a></li>
-            </ul>
 
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
@@ -92,525 +61,86 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-            ValidMind Developer Framework
-    </h1>
+<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../model_validation.html">model_validation</a><wbr>.<a href="./../sklearn.html">sklearn</a><wbr>.MinimumAccuracy    </h1>
 
-                        <div class="docstring"><p>ValidMind’s Python Developer Framework is a library of developer tools and methods designed to automate
-the documentation and validation of your models.</p>
-
-<p>The Developer Framework is designed to be model agnostic. If your model is built in Python, ValidMind's
-Python library will provide all the standard functionality without requiring your developers to rewrite any functions.</p>
-
-<p>The Developer Framework provides a rich suite of documentation tools and test plans, from documenting
-descriptions of your dataset to testing your models for weak spots and overfit areas. The Developer Framework
-helps you automate the generation of model documentation by feeding the ValidMind platform with documentation
-artifacts and test results to the ValidMind platform.</p>
-
-<p>To install the client library:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>validmind
-</code></pre>
-</div>
-
-<p>To initialize the client library, paste the code snippet with the client integration details directly into your
-development source code, replacing this example with your own:</p>
-
-<div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">import</span> <span class="nn">validmind</span> <span class="k">as</span> <span class="nn">vm</span>
-
-<span class="n">vm</span><span class="o">.</span><span class="n">init</span><span class="p">(</span>
-  <span class="n">api_host</span> <span class="o">=</span> <span class="s2">&quot;https://api.dev.vm.validmind.ai/api/v1/tracking/tracking&quot;</span><span class="p">,</span>
-  <span class="n">api_key</span> <span class="o">=</span> <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span><span class="p">,</span>
-  <span class="n">api_secret</span> <span class="o">=</span> <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span><span class="p">,</span>
-  <span class="n">project</span> <span class="o">=</span> <span class="s2">&quot;&lt;project-identifier&gt;&quot;</span>
-<span class="p">)</span>
-</code></pre>
-</div>
-
-<p>After you have pasted the code snippet into your development source code and executed the code, the Python client
-library will register with ValidMind. You can now use the Developer Framework to document and test your models,
-and to upload to the ValidMind Platform.</p>
-</div>
-
+                
                 
                 
                 
             </section>
-                <section id="__version__">
-                    <div class="attr variable">
-            <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.16.4&#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#__version__"></a>
-    
-    
-
-                </section>
-                <section id="init">
-                    <div class="attr function">
+                <section id="MinimumAccuracy">
+                    <div class="attr class">
             
-        <span class="def">def</span>
-        <span class="name">init</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">project</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_secret</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_host</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+    <span class="def">class</span>
+    <span class="name">MinimumAccuracy</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
 
         
     </div>
-    <a class="headerlink" href="#init"></a>
+    <a class="headerlink" href="#MinimumAccuracy"></a>
     
-            <div class="docstring"><p>Initializes the API client instances and calls the /ping endpoint to ensure
-the provided credentials are valid and we can connect to the ValidMind API.</p>
-
-<p>If the API key and secret are not provided, the client will attempt to
-retrieve them from the environment variables <code>VM_API_KEY</code> and <code>VM_API_SECRET</code>.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>project (str):</strong>  The project CUID</li>
-<li><strong>api_key (str, optional):</strong>  The API key. Defaults to None.</li>
-<li><strong>api_secret (str, optional):</strong>  The API secret. Defaults to None.</li>
-<li><strong>api_host (str, optional):</strong>  The API host. Defaults to None.</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the API key and secret are not provided</li>
-</ul>
+            <div class="docstring"><p>Test that the model's prediction accuracy on a dataset meets or
+exceeds a predefined threshold.</p>
 </div>
 
 
-                </section>
-                <section id="init_dataset">
-                    <div class="attr function">
+                            <div id="MinimumAccuracy.__init__" class="classattr">
+                                <div class="attr function">
             
-        <span class="def">def</span>
-        <span class="name">init_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span>,</span><span class="param">	<span class="n">index</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">column_names</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span>:</span></span>
+        <span class="name">MinimumAccuracy</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
-    <a class="headerlink" href="#init_dataset"></a>
+    <a class="headerlink" href="#MinimumAccuracy.__init__"></a>
     
-            <div class="docstring"><p>Initializes a VM Dataset, which can then be passed to other functions
-that can perform additional analysis and tests on the data. This function
-also ensures we are reading a valid dataset type. We only support Pandas
-DataFrames at the moment.</p>
+    
 
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>dataset (pd.DataFrame):</strong>  We only support Pandas DataFrames at the moment</li>
-<li><strong>options (dict):</strong>  A dictionary of options for the dataset</li>
-<li><strong>targets (vm.vm.DatasetTargets):</strong>  A list of target variables</li>
-<li><strong>target_column (str):</strong>  The name of the target column in the dataset</li>
-<li><strong>class_labels (dict):</strong>  A list of class labels for classification problems</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the dataset type is not supported</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>vm.vm.Dataset: A VM Dataset instance</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="init_model">
-                    <div class="attr function">
+                            </div>
+                            <div id="MinimumAccuracy.summary" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span>:</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#init_model"></a>
+    <a class="headerlink" href="#MinimumAccuracy.summary"></a>
     
-            <div class="docstring"><p>Initializes a VM Model, which can then be passed to other functions
-that can perform additional analysis and tests on the data. This function
-also ensures we are reading a supported model type.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>model:</strong>  A trained sklearn model</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the model type is not supported</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>vm.vm.Model: A VM Model instance</p>
-</blockquote>
+            <div class="docstring"><p>The accuracy score test returns results like these:
+[{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]</p>
 </div>
 
 
-                </section>
-                <section id="init_r_model">
-                    <div class="attr function">
+                            </div>
+                            <div id="MinimumAccuracy.run" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_r_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span>:</span></span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#init_r_model"></a>
+    <a class="headerlink" href="#MinimumAccuracy.run"></a>
     
-            <div class="docstring"><p>Initializes a VM Model for an R model</p>
-
-<p>R models must be saved to disk and the filetype depends on the model type...
-Currently we support the following model types:</p>
-
-<ul>
-<li>LogisticRegression <code>glm</code> model in R: saved as an RDS file with <code>saveRDS</code></li>
-<li>LinearRegression <code>lm</code> model in R: saved as an RDS file with <code>saveRDS</code></li>
-<li>XGBClassifier: saved as a .json or .bin file with <code>xgb.save</code></li>
-<li>XGBRegressor: saved as a .json or .bin file with <code>xgb.save</code></li>
-</ul>
-
-<p>LogisticRegression and LinearRegression models are converted to sklearn models by extracting
-the coefficients and intercept from the R model. XGB models are loaded using the xgboost
-since xgb models saved in .json or .bin format can be loaded directly with either Python or R</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>model_path (str):</strong>  The path to the R model saved as an RDS or XGB file</li>
-<li><strong>model_type (str):</strong>  The type of the model (one of R_MODEL_TYPES)</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>vm.vm.Model: A VM Model instance</p>
-</blockquote>
+            <div class="docstring"><p>Run the test and cache its results</p>
 </div>
 
 
-                </section>
-                <section id="preview_template">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">preview_template</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#preview_template"></a>
-    
-            <div class="docstring"><p>Preview the documentation template for the current project</p>
-
-<p>This function will display the documentation template for the current project. If
-the project has not been initialized, then an error will be raised.</p>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the project has not been initialized</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="run_documentation_tests">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_documentation_tests"></a>
-    
-            <div class="docstring"><p>Collect and run all the tests associated with a template</p>
-
-<p>This function will analyze the current project's documentation template and collect
-all the tests associated with it into a test suite. It will then run the test
-suite, log the results to the ValidMind API and display them to the user.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>section (str, optional):</strong>  The section to preview. Defaults to None.</li>
-<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the project has not been initialized</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="run_template">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_template"></a>
-    
-            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_documentation_tests</code> instead.</p>
-
-<p>_run_template(
-    template=client_config.documentation_template,
-    section=section,
-    <em>args,
-    *</em>kwargs,
-)</p>
-
-<p>Collect and run all the tests associated with a template</p>
-
-<p>This function will analyze the current project's documentation template and collect
-all the tests associated with it into a test suite. It will then run the test
-suite, log the results to the ValidMind API and display them to the user.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the project has not been initialized</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="run_test_plan">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_test_plan"></a>
-    
-            <div class="docstring"><p>High Level function for running a test plan</p>
-
-<p>This function provides a high level interface for running a test plan. It removes the need
-to manually initialize a TestPlan instance and run it. This function will automatically
-find the correct test plan class based on the test_plan_name, initialize the test plan, and
-run it.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>test_plan_name (str):</strong>  The test plan name (e.g. 'binary_classifier')</li>
-<li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</li>
-<li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test plan. These will provide
-the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific test plan for more details.</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the test plan name is not found or if there is an error initializing the test plan</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: A dictionary of test results</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="run_test_suite">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_test_suite"></a>
-    
-            <div class="docstring"><p>High Level function for running a test suite</p>
-
-<p>This function provides a high level interface for running a test suite. A test suite is
-a collection of test plans. This function will automatically find the correct test suite
-class based on the test_suite_name, initialize each of the test plans, and run them.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>test_suite_name (str):</strong>  The test suite name (e.g. 'binary_classifier_full_suite')</li>
-<li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</li>
-<li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test suite. These will provide
-the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific test plan, metric or threshold test for more details.</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the test suite name is not found or if there is an error initializing the test suite</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>TestSuite: the TestSuite instance</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="log_dataset">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">log_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#log_dataset"></a>
-    
-            <div class="docstring"><p>Logs metadata and statistics about a dataset to ValidMind API.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>vm_dataset (validmind.VMDataset):</strong>  A VM dataset object</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>validmind.VMDataset: The VMDataset object</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="log_figure">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">log_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">figure</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#log_figure"></a>
-    
-            <div class="docstring"><p>Logs a figure</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>figure (Figure):</strong>  The Figure object wrapper</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>Exception:</strong>  If the API call fails</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: The response from the API</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="log_metrics">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">log_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metrics</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#log_metrics"></a>
-    
-            <div class="docstring"><p>Logs metrics to ValidMind API.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>metrics (list):</strong>  A list of Metric objects</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>Exception:</strong>  If the API call fails</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: The response from the API</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="log_test_results">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#log_test_results"></a>
-    
-            <div class="docstring"><p>Logs test results information</p>
-
-<p>This method will be called automatically be any function
-running tests but can also be called directly if the user wants to run tests on their own.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>results (list):</strong>  A list of TestResults objects</li>
-<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training",
-"test", or "validation". Defaults to "training".</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>Exception:</strong>  If the API call fails</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: list of responses from the API</p>
-</blockquote>
-</div>
-
-
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                <dd id="MinimumAccuracy.description" class="function">description</dd>
+                <dd id="MinimumAccuracy.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                <dd id="MinimumAccuracy.df" class="variable">df</dd>
+                <dd id="MinimumAccuracy.validate_context" class="function">validate_context</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
     </main>
 <script>
@@ -665,7 +195,7 @@ running tests but can also be called directly if the user wants to run tests on 
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "search.js";
+                script.src = "../../../../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -707,7 +237,7 @@ running tests but can also be called directly if the user wants to run tests on 
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../../../../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }

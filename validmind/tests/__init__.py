@@ -24,6 +24,8 @@ logger = get_logger(__name__)
 
 
 __all__ = [
+    "data_validation",
+    "model_validation",
     "list_tests",
     "load_test",
     "describe_test",
