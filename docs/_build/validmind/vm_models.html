@@ -381,7 +381,8 @@
             </section>
                 <section id="VMDataset">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">VMDataset</span><wbr>(<span class="base">abc.ABC</span>):
 
@@ -409,7 +410,8 @@
                 </section>
                 <section id="Figure">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">Figure</span>:
 
@@ -424,7 +426,7 @@
                             <div id="Figure.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Figure</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">figure</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">for_object</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extras</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;plot&#39;</span></span>)</span>
+        <span class="name">Figure</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">figure</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">for_object</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extras</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;plot&#39;</span></span>)</span>
 
         
     </div>
@@ -496,7 +498,8 @@
                 </section>
                 <section id="Metric">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">Metric</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
 
@@ -589,7 +592,7 @@ short summary of the metric results.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">cache_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">cache_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -626,7 +629,8 @@ short summary of the metric results.</p>
                 </section>
                 <section id="MetricResult">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">MetricResult</span>:
 
@@ -643,7 +647,7 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                             <div id="MetricResult.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MetricResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">scope</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">ref_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="#ResultSummary">validmind.vm_models.ResultSummary</a></span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">value_formatter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">MetricResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">scope</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">key</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">ref_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#ResultSummary">validmind.vm_models.ResultSummary</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">value_formatter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -670,7 +674,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="Model">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">Model</span>:
 
@@ -906,7 +911,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="ModelAttributes">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass()</div>
+
     <span class="def">class</span>
     <span class="name">ModelAttributes</span>:
 
@@ -945,7 +951,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="ResultSummary">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass()</div>
+
     <span class="def">class</span>
     <span class="name">ResultSummary</span>:
 
@@ -1002,7 +1009,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="ResultTable">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">ResultTable</span>:
 
@@ -1044,7 +1052,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="ResultTableMetadata">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">ResultTableMetadata</span>:
 
@@ -1071,7 +1080,8 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="TestContext">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestContext</span>:
 
@@ -1173,7 +1183,8 @@ in the instance so that the test plan can be run</p>
                 </section>
                 <section id="TestPlan">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestPlan</span>:
 
@@ -1409,7 +1420,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestPlanDatasetResult">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestPlanDatasetResult</span><wbr>(<span class="base">validmind.vm_models.test_plan_result.TestPlanResult</span>):
 
@@ -1460,7 +1472,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestPlanMetricResult">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestPlanMetricResult</span><wbr>(<span class="base">validmind.vm_models.test_plan_result.TestPlanResult</span>):
 
@@ -1475,7 +1488,7 @@ VS Code, Jupyter or other notebook environment.</p>
                             <div id="TestPlanMetricResult.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlanMetricResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Metric&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">metric</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="#MetricResult">validmind.vm_models.MetricResult</a></span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlanMetricResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Metric&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">metric</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#MetricResult">validmind.vm_models.MetricResult</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1511,7 +1524,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestPlanTestResult">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestPlanTestResult</span><wbr>(<span class="base">validmind.vm_models.test_plan_result.TestPlanResult</span>):
 
@@ -1526,7 +1540,7 @@ VS Code, Jupyter or other notebook environment.</p>
                             <div id="TestPlanTestResult.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlanTestResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Threshold Test&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_results</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlanTestResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Threshold Test&#39;</span>,</span><span class="param">	<span class="n">result_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result_metadata</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_results</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1562,7 +1576,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestResult">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestResult</span>:
 
@@ -1577,7 +1592,7 @@ VS Code, Jupyter or other notebook environment.</p>
                             <div id="TestResult.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">values</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">test_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">column</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestResult</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">values</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">test_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1604,7 +1619,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestResults">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestResults</span>:
 
@@ -1619,7 +1635,7 @@ VS Code, Jupyter or other notebook environment.</p>
                             <div id="TestResults.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestResults</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">category</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">ref_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="#ResultSummary">validmind.vm_models.ResultSummary</a></span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span></span>)</span>
+        <span class="name">TestResults</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">category</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">ref_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#ResultSummary">validmind.vm_models.ResultSummary</a></span><span class="p">]</span></span>)</span>
 
         
     </div>
@@ -1646,7 +1662,8 @@ VS Code, Jupyter or other notebook environment.</p>
                 </section>
                 <section id="TestSuite">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestSuite</span><wbr>(<span class="base"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span>):
 
@@ -1774,7 +1791,8 @@ and set values</p>
                 </section>
                 <section id="ThresholdTest">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">ThresholdTest</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
 
@@ -1822,7 +1840,7 @@ to returning the class' docstring</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">]]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -1856,7 +1874,7 @@ short summary of the test results.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">cache_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">test_results_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">cache_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">test_results_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestResult">validmind.vm_models.TestResult</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">figures</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n"><a href="#Figure">validmind.vm_models.Figure</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
