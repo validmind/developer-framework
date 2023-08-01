@@ -1,5 +1,11 @@
 # ValidMind Python Client
 
+ValidMind helps model developers and model validators streamline communication and automate the model documentation process. 
+
+We welcome contributions to the ValidMind Python Client. If you are interested in contributing tests to the Developer Framework, please refer to the contributing guide below, and check out our community Slack channels to connect with the ValidMind team and other Model Risk Management (MLM) Practitioners.
+
+# Getting started
+
 ## Installation
 
 ### Install from PyPI
