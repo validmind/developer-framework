@@ -9,57 +9,35 @@
 Class for storing ValidMind metric objects and associated
 data for display and reporting purposes
 """
+from abc import abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union
-from uuid import uuid4
 
 import pandas as pd
 
 from .figure import Figure
 from .metric_result import MetricResult
-from .test_context import TestContext, TestContextUtils
+from .test import Test
 from .test_plan_result import TestPlanMetricResult
 from ..errors import MissingCacheResultsArgumentsError
 from ..utils import clean_docstring
 
 
 @dataclass
-class Metric(TestContextUtils):
+class Metric(Test):
     """
     Metric objects track the schema supported by the ValidMind API
-
-    TODO: Metric should validate required context too
     """
-
-    # Test Context
-    test_context: TestContext
 
     # Class Variables
     test_type: ClassVar[str] = "Metric"
-    type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
+
+    type: ClassVar[str] = "" # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
-    name: ClassVar[str] = ""  # unique identifer for metric: "accuracy"
-    ref_id: ClassVar[str] = ""  # unique identifier for metric
-    tag: ClassVar[str] = ""  # for now this is the template section id
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
-    required_context: ClassVar[List[str]] = []
-    default_params: ClassVar[dict] = {}
 
     # Instance Variables
-    params: dict = None
-    result: TestPlanMetricResult = None
-
-    def __post_init__(self):
-        """
-        Set default params if not provided
-        """
-        if not self.ref_id:
-            self.ref_id = str(uuid4())
-
-        self.params = {
-            **self.default_params,
-            **(self.params if self.params is not None else {}),
-        }
+    result: TestPlanMetricResult = None # populated by cache_results() method
 
     @property
     def key(self):
@@ -68,13 +46,7 @@ class Metric(TestContextUtils):
         """
         return self._key if hasattr(self, "_key") else self.name
 
-    def description(self):
-        """
-        Return the metric description. Should be overridden by subclasses. Defaults
-        to returning the class' docstring
-        """
-        return self.__doc__.strip()
-
+    @abstractmethod
     def summary(self, metric_value: Optional[Union[dict, list, pd.DataFrame]] = None):
         """
         Return the metric summary. Should be overridden by subclasses. Defaults to None.
@@ -84,12 +56,6 @@ class Metric(TestContextUtils):
         We return None here because the metric summary is optional.
         """
         return None
-
-    def run(self, *args, **kwargs):
-        """
-        Run the metric calculation and cache its results
-        """
-        raise NotImplementedError
 
     def cache_results(
         self,
