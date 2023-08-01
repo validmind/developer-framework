@@ -96,7 +96,7 @@ class ThresholdTest(Test):
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
-                ref_id=self.ref_id,
+                ref_id=self._ref_id,
                 params=self.params,
                 passed=passed,
                 results=test_results_list,
@@ -106,10 +106,6 @@ class ThresholdTest(Test):
 
         # Allow test results to attach figures to the test plan result
         if figures:
-            # add ref_id to figure metadata to strongly link the figure to the test
-            for figure in figures:
-                figure.metadata["_ref_id"] = self._ref_id
-
             self.result.figures = figures
 
         return self.result

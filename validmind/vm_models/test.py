@@ -20,13 +20,13 @@ class TestMetadata(TypedDict):
 class Test(TestContextUtils):
 
     # Class Variables
-    name: ClassVar[str] # should be overridden by leaf classes
+    name: ClassVar[str] = "" # should be overridden by leaf classes
     test_type: ClassVar[str] # should be overridden by parent classes
     metadata: ClassVar[TestMetadata] # should be overridden by leaf classes
     tags: ClassVar[List[str]] # should be overridden by leaf classes
 
-    required_inputs: ClassVar[List[str]] # should be overridden by leaf classes
-    default_params: ClassVar[dict] # should be overridden by leaf classes
+    required_inputs: ClassVar[List[str]] = None # should be overridden by leaf classes
+    default_params: ClassVar[dict] = None # should be overridden by leaf classes
 
     # Instance Variables
     _ref_id: ClassVar[str] # unique identifier (populated at init)

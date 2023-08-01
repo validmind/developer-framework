@@ -99,7 +99,7 @@ class Metric(Test):
             type=self.type,
             scope=self.scope,
             key=self.key,
-            ref_id=self.ref_id,
+            ref_id=self._ref_id,
             value=metric_result_value,
             value_formatter=self.value_formatter,
             summary=result_summary,
@@ -107,10 +107,6 @@ class Metric(Test):
 
         # Allow metrics to attach figures to the test plan result
         if figures:
-            # add ref_id to figure metadata to strongly link the figure to the metric
-            for figure in figures:
-                figure.metadata["_ref_id"] = self.ref_id
-
             test_plan_result.figures = figures
 
         self.result = test_plan_result
