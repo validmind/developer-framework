@@ -46,6 +46,7 @@ class TestContext:
         return self.context_data.get(key)
 
 
+@dataclass
 class TestContextUtils:
     """
     Utility methods for classes that receive a TestContext

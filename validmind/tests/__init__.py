@@ -217,7 +217,7 @@ def describe_test(test_name: str = None, test_id: str = None, raw: bool = False)
         else "",
         "Test Type": test.test_type,
         "Required Inputs": test.required_inputs,
-        "Params": test.default_params,
+        "Params": test.default_params or {},
     }
 
     if raw:

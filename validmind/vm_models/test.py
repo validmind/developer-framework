@@ -39,13 +39,12 @@ class Test(TestContextUtils):
         """
         Set default params if not provided
         """
-        if not self.ref_id:
-            self.ref_id = str(uuid4())
+        self._ref_id = str(uuid4())
 
         # TODO: add validation for required inputs
 
         self.params = {
-            **self.default_params,
+            **(self.default_params or {}),
             **(self.params if self.params is not None else {}),
         }
 
