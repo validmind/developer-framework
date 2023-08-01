@@ -152,7 +152,7 @@ class TestPlan:
 
             self._load_test(test_id_or_class, test_class_props)
 
-    def get_required_context(self) -> List[str]:
+    def get_required_inputs(self) -> List[str]:
         """
         Returns the required inputs for the test plan. Defaults to the
         required inputs of the tests
@@ -219,8 +219,8 @@ class TestPlan:
                 ".".join(attrs[1:]),
             )
 
-        for element in self.get_required_context():
-            logger.debug(f"Checking if required inputs '{element}' is present")
+        for element in self.get_required_inputs():
+            logger.debug(f"Checking if required input '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
                     f"{element}' is required_inputs and must be passed "
