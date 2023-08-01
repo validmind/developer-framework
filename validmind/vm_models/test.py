@@ -4,6 +4,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar, TypedDict, List
 from uuid import uuid4
+
 from .test_context import TestContextUtils
 
 
@@ -11,6 +12,7 @@ class TestMetadata(TypedDict):
     """
     TestMetadata is a custom dict type that allows us to add metadata to tests
     """
+
     task_type: str
     task_target: str
     analysis_target: str
@@ -20,20 +22,20 @@ class TestMetadata(TypedDict):
 class Test(TestContextUtils):
 
     # Class Variables
-    name: ClassVar[str] = "" # should be overridden by leaf classes
-    test_type: ClassVar[str] # should be overridden by parent classes
-    metadata: ClassVar[TestMetadata] # should be overridden by leaf classes
-    tags: ClassVar[List[str]] # should be overridden by leaf classes
+    name: ClassVar[str] = ""  # should be overridden by leaf classes
+    test_type: ClassVar[str]  # should be overridden by parent classes
+    metadata: ClassVar[TestMetadata]  # should be overridden by leaf classes
+    tags: ClassVar[List[str]]  # should be overridden by leaf classes
 
-    required_inputs: ClassVar[List[str]] = None # should be overridden by leaf classes
-    default_params: ClassVar[dict] = None # should be overridden by leaf classes
+    required_inputs: ClassVar[List[str]] = None  # should be overridden by leaf classes
+    default_params: ClassVar[dict] = None  # should be overridden by leaf classes
 
     # Instance Variables
-    _ref_id: ClassVar[str] # unique identifier (populated at init)
-    _section_id: ClassVar[str] # which section of template this test belongs to
+    _ref_id: ClassVar[str]  # unique identifier (populated at init)
+    _section_id: ClassVar[str]  # which section of template this test belongs to
 
-    params: dict # populated by test plan from user-passed config
-    result: object # type should be overridden by parent classes
+    params: dict  # populated by test plan from user-passed config
+    result: object  # type should be overridden by parent classes
 
     def __post_init__(self):
         """

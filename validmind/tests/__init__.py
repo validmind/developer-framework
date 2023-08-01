@@ -105,10 +105,13 @@ def _pretty_list_tests(tests):
     return format_dataframe(pd.DataFrame(table))
 
 
-def list_tests(filter=None, pretty=True):
+def list_tests(filter=None, task=None, pretty=True):
     """List all tests in the tests directory.
 
     Args:
+        filter (str, optional): Find tests where any part of the ID matches the filter
+          string. Defaults to None.
+        task (str, optional): Find tests that match the task type. Defaults to None.
         pretty (bool, optional): If True, returns a pandas DataFrame with a
             formatted table. Defaults to False.
 

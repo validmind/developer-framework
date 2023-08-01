@@ -32,10 +32,10 @@ class ThresholdTest(Test):
 
     # Class Variables
     test_type: ClassVar[str] = "ThresholdTest"
-    category: ClassVar[str] # should be overridden by test classes
+    category: ClassVar[str]  # should be overridden by test classes
 
     # Instance Variables
-    result: TestResults = None # populated by cache_results() method
+    result: TestResults = None  # populated by cache_results() method
 
     def summary(self, results: Optional[List[TestResult]], all_passed: bool):
         """

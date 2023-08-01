@@ -32,12 +32,12 @@ class Metric(Test):
     # Class Variables
     test_type: ClassVar[str] = "Metric"
 
-    type: ClassVar[str] = "" # type of metric: "training", "evaluation", etc.
+    type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
 
     # Instance Variables
-    result: TestPlanMetricResult = None # populated by cache_results() method
+    result: TestPlanMetricResult = None  # populated by cache_results() method
 
     @property
     def key(self):

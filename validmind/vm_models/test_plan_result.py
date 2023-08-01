@@ -98,8 +98,8 @@ class TestPlanResult(ABC):
         for table in summary.results:
             # Explore advanced styling
             summary_table = (
-                pd.DataFrame(table.data).style
-                .format(precision=4)
+                pd.DataFrame(table.data)
+                .style.format(precision=4)
                 .hide(axis="index")
                 .set_table_styles(
                     [
@@ -129,7 +129,7 @@ class TestPlanResult(ABC):
                             ],
                         },
                     ]
-                ) # add borders
+                )  # add borders
                 .to_html(escape=False)
             )  # table.data is an orient=records dump
 

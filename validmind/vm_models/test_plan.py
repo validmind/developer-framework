@@ -21,7 +21,8 @@ from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import VMDataset
 from .model import Model
-from .test_context import TestContext, TestContextUtils
+from .test import Test
+from .test_context import TestContext
 from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
 logger = get_logger(__name__)
@@ -36,7 +37,7 @@ class TestPlan:
 
     # Class Variables
     name: ClassVar[str]
-    tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
+    tests: ClassVar[Union[List[str], List[dict], List[Test]]]
     results: ClassVar[List[TestPlanResult]]
 
     # Instance Variables
@@ -130,8 +131,7 @@ class TestPlan:
         for test_id_or_class in self.tests:
             # Check if test_id_or_class is a class and if it is a subclass of TestContextUtils
             if isinstance(test_id_or_class, type) and issubclass(
-                test_id_or_class,
-                TestContextUtils,  # TODO: use a dedicated base class for metric/test
+                test_id_or_class, Test
             ):  # if its a test class, we just add it to the list
                 test_id_or_class.id = test_id_or_class.name
                 self._tests.append(test_id_or_class)
