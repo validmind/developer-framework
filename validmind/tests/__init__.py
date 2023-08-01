@@ -216,7 +216,7 @@ def describe_test(test_name: str = None, test_id: str = None, raw: bool = False)
         if hasattr(test, "description")
         else "",
         "Test Type": test.test_type,
-        "Required Context": test.required_inputs,
+        "Required Inputs": test.required_inputs,
         "Params": test.default_params,
     }
 

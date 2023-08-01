@@ -42,7 +42,7 @@ class Test(TestContextUtils):
         if not self.ref_id:
             self.ref_id = str(uuid4())
 
-        # TODO: add validation for required context
+        # TODO: add validation for required inputs
 
         self.params = {
             **self.default_params,

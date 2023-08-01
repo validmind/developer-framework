@@ -9,8 +9,6 @@
 (Threshold)Test class wrapper. Our API exposes the concept of of a
 Test (as test_results) but we'll refer to it as a ThresholdTest to
 avoid confusion with the "tests" in the general data science/modeling sense.
-
-TODO: Test definitions should be supported in the API too
 """
 
 from dataclasses import dataclass

@@ -100,7 +100,7 @@ class TestSuite(TestPlan):
 
     def get_required_context(self) -> List[str]:
         """
-        Returns the required context for the test suite.
+        Returns the required inputs for the test suite.
         """
         required_inputs = set()
         for test_plan in self._test_plan_instances:
