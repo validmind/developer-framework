@@ -20,7 +20,7 @@ class TimeSeriesHistogram(Metric):
     """
 
     name = "time_series_histogram"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         # Check if index is datetime

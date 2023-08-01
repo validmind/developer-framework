@@ -22,7 +22,7 @@ class WOEIVPlots(Metric):
     """
 
     name = "woe_and_iv_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"fig_height": 600, "fig_width": 500, "features": None}
 
     def run(self):

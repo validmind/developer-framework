@@ -25,7 +25,7 @@ from ....vm_models import (
 @dataclass
 class CommonWords(Metric):
     name = "common_words"
-    required_context = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset", "dataset.text_column"]
 
     def description(self):
         return """The purpose of the common words test is to analyze a dataset and identify the most common

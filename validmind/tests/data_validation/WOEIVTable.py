@@ -19,7 +19,7 @@ class WOEIVTable(Metric):
     """
 
     name = "woe_iv_table"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features": None, "order_by": None}
 
     def _get_feature_categories(self, df, feature, target_column):

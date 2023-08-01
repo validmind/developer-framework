@@ -24,7 +24,7 @@ from validmind.vm_models import (
 @dataclass
 class Punctuations(Metric):
     name = "punctuations"
-    required_context = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset", "dataset.text_column"]
 
     def run(self):
         # Can only run this test if we have a Dataset object

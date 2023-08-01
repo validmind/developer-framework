@@ -23,7 +23,7 @@ class SHAPGlobalImportance(Metric):
     SHAP Global Importance
     """
 
-    required_context = ["model"]
+    required_inputs = ["model"]
     name = "shap"
 
     def description(self):

@@ -32,7 +32,7 @@ class Duplicates(ThresholdTest):
     category = "data_quality"
     # Changing the name test to avoid a name clash
     name = "nlp_duplicates"
-    required_context = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"min_threshold": 1}
 
     def summary(self, results: List[TestResult], all_passed: bool):

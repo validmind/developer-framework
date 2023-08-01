@@ -27,7 +27,7 @@ class Duplicates(ThresholdTest):
 
     category = "data_quality"
     name = "duplicates"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
 
     def summary(self, results: List[TestResult], all_passed: bool):

@@ -25,7 +25,7 @@ from validmind.vm_models import (
 class Mentions(ThresholdTest):
     name = "mentions"
     category = "data_quality"
-    required_context = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_mentions": 25}
 
     def description(self):

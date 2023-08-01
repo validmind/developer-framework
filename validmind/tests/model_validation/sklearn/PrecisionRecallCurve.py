@@ -21,7 +21,7 @@ class PrecisionRecallCurve(Metric):
     """
 
     name = "pr_curve"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """

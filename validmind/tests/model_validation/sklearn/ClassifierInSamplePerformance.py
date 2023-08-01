@@ -19,7 +19,7 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
     """
 
     name = "classifier_in_sample_performance"
-    required_context = ["model", "model.train_ds"]
+    required_inputs = ["model", "model.train_ds"]
 
     def description(self):
         return """

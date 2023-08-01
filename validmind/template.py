@@ -78,7 +78,7 @@ def _create_content_widget(content):
                 test_content_block_html.format(
                     title=test_deets["Name"],
                     description=test_deets["Description"],
-                    required_context=", ".join(test_deets["Required Context"]),
+                    required_inputs=", ".join(test_deets["Required Context"]),
                     params_table="\n".join(
                         [
                             f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"

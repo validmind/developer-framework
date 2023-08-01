@@ -31,7 +31,7 @@ class TrainingTestDegradation(ThresholdTest):
 
     category = "model_performance"
     name = "training_test_degradation"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     default_params = {
         "metrics": ["accuracy", "precision", "recall", "f1"],

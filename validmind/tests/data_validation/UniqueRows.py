@@ -25,7 +25,7 @@ class UniqueRows(ThresholdTest):
 
     category = "data_quality"
     name = "unique"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 1}
 
     def summary(self, results: List[TestResult], all_passed: bool):

@@ -160,15 +160,15 @@ class TestPlan:
         Returns:
             List[str]: A list of required context elements
         """
-        required_context = set()
+        required_inputs = set()
 
         # bubble up the required context from the tests
         for test in self._tests:
-            if not hasattr(test, "required_context"):
+            if not hasattr(test, "required_inputs"):
                 continue
-            required_context.update(test.required_context)
+            required_inputs.update(test.required_inputs)
 
-        return list(required_context)
+        return list(required_inputs)
 
     def get_default_config(self) -> dict:
         """Returns the default configuration for the test plan
@@ -223,7 +223,7 @@ class TestPlan:
             logger.debug(f"Checking if required context '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_context and must be passed "
+                    f"{element}' is required_inputs and must be passed "
                     "as a keyword argument to the test plan"
                 )
 

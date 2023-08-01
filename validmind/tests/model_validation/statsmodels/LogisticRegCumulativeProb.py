@@ -20,7 +20,7 @@ class LogisticRegCumulativeProb(Metric):
     """
 
     name = "logistic_reg_cumulative_prob"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {"title": "Cumulative Probabilities"}
 
     def description(self):

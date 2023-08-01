@@ -27,7 +27,7 @@ class IsolationForestOutliers(Metric):
     Attributes:
         name (str): The name of the Isolation Forest.
         default_params (dict): The default parameters for the Isolation Forest.
-        required_context (list): The required context for running the Isolation Forest.
+        required_inputs (list): The required context for running the Isolation Forest.
 
     Methods:
         description(): Returns the description of the Isolation Forest.
@@ -40,7 +40,7 @@ class IsolationForestOutliers(Metric):
         "contamination": 0.1,
         "features_columns": None,
     }
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def description(self):
         return """

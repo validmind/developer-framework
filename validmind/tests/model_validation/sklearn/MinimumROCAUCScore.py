@@ -30,7 +30,7 @@ class MinimumROCAUCScore(ThresholdTest):
 
     category = "model_performance"
     name = "roc_auc_score"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}
 
     def summary(self, results: List[TestResult], all_passed: bool):

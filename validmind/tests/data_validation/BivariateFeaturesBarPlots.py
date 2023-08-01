@@ -21,7 +21,7 @@ class BivariateFeaturesBarPlots(Metric):
     """
 
     name = "bivariate_features_bar_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features_pairs": None}
 
     def run(self):

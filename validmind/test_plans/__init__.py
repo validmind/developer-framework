@@ -122,7 +122,7 @@ def describe_plan(plan_id: str, style=True):
                 "ID": plan.name,
                 "Name": plan.__name__,
                 "Description": plan.__doc__.strip(),
-                "Required Context": plan.required_context,
+                "Required Context": plan.required_inputs,
                 "Tests": "<br>".join(tests),
             }
         ]

@@ -19,7 +19,7 @@ class FeatureTargetCorrelationPlot(Metric):
     """
 
     name = "feature_target_correlation_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features": None, "fig_height": 600}
 
     def run(self):

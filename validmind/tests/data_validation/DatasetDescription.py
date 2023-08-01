@@ -24,7 +24,7 @@ class DatasetDescription(Metric):
     """
 
     name = "dataset_description"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         self.describe()

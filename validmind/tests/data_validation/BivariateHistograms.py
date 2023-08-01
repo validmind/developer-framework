@@ -20,7 +20,7 @@ class BivariateHistograms(Metric):
     """
 
     name = "bivariate_histograms"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features_pairs": None, "target_filter": None}
 
     def plot_bivariate_histogram(self, features_pairs, target_filter):

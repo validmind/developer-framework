@@ -224,7 +224,7 @@ class ModelMetadata(Metric):
     """
 
     name = "model_metadata"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     column_labels = {
         "architecture": "Modeling Technique",

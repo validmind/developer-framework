@@ -19,7 +19,7 @@ class MissingValuesBarPlot(Metric):
     """
 
     name = "missing_values_bar_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"threshold": 80, "fig_height": 600}
 
     def run(self):

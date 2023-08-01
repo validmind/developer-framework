@@ -32,7 +32,7 @@ class OverfitDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "overfit_regions"
-    required_context = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
     default_metrics = {

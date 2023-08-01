@@ -18,7 +18,7 @@ class PDRatingClassPlot(Metric):
     """
 
     name = "pd_rating_class_plot"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "title": "PD by Rating Class",
         "rating_classes": ["A", "B", "C", "D"],

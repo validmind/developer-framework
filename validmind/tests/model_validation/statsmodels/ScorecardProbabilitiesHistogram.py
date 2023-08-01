@@ -19,7 +19,7 @@ class ScorecardProbabilitiesHistogram(Metric):
     """
 
     name = "scorecard_probabilities_histogram"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "title": "Probability of Default by Score Bucket",
         "target_score": 600,

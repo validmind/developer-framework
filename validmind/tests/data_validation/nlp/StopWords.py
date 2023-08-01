@@ -33,7 +33,7 @@ class StopWords(ThresholdTest):
 
     category = "data_quality"
     name = "stop_words"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
 
     def description(self):

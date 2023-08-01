@@ -19,7 +19,7 @@ class IQROutliersPlots(Metric):
     """
 
     name = "iqr_outliers_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"threshold": 1.5, "num_features": None, "fig_width": 800}
 
     def run(self):

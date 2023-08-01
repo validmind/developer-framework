@@ -25,7 +25,7 @@ class GINITable(Metric):
     """
 
     name = "gini_table"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def run(self):
         if not Model.is_supported_model(self.model.model):

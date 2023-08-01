@@ -19,7 +19,7 @@ class ChiSquaredFeaturesTable(Metric):
     """
 
     name = "chi_squared_features_table"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"cat_features": None, "p_threshold": 0.05}
 
     def run(self):

@@ -21,7 +21,7 @@ class DescriptiveStatistics(Metric):
     """
 
     name = "descriptive_statistics"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def description(self):
         return """

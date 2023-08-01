@@ -17,7 +17,7 @@ class SpreadPlot(Metric):
     """
 
     name = "spread_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     @staticmethod
     def plot_spread(series1, series2, ax=None):

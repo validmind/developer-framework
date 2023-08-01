@@ -21,7 +21,7 @@ class ConfusionMatrix(Metric):
     """
 
     name = "confusion_matrix"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """

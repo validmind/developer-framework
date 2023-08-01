@@ -19,7 +19,7 @@ class LogRegressionConfusionMatrix(Metric):
     """
 
     name = "log_regression_confusion_matrix"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "cut_off_threshold": 0.5,  # Add a cut_off_threshold parameter
     }

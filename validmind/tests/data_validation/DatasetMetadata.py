@@ -25,7 +25,7 @@ class DatasetMetadata(TestContextUtils):
 
     # Class Variables
     test_type: ClassVar[str] = "DatasetMetadata"
-    required_context: ClassVar[list] = []
+    required_inputs: ClassVar[list] = []
     default_params: ClassVar[dict] = {}
 
     # Instance Variables

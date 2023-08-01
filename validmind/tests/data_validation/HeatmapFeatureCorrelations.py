@@ -20,7 +20,7 @@ class HeatmapFeatureCorrelations(Metric):
     """
 
     name = "heatmap_feature_correlations"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"declutter": None, "fontsize": None, "num_features": None}
 
     def run(self):

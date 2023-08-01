@@ -22,7 +22,7 @@ class AutoMA(Metric):
 
     type = "dataset"
     name = "auto_ma"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"max_ma_order": 3}
 
     def run(self):

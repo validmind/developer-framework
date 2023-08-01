@@ -20,7 +20,7 @@ class BivariateScatterPlots(Metric):
     """
 
     name = "bivariate_scatter_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features_pairs": None, "target_filter": None}
 
     def plot_bivariate_scatter(self, features_pairs, target_filter):

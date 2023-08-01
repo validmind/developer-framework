@@ -22,7 +22,7 @@ class AutoSeasonality(Metric):
     """
 
     name = "auto_seasonality"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_period": 1, "max_period": 4}
 
     def evaluate_seasonal_periods(self, series, min_period, max_period):

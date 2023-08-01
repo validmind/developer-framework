@@ -102,11 +102,11 @@ class TestSuite(TestPlan):
         """
         Returns the required context for the test suite.
         """
-        required_context = set()
+        required_inputs = set()
         for test_plan in self._test_plan_instances:
-            required_context.update(test_plan.get_required_context())
+            required_inputs.update(test_plan.get_required_context())
 
-        return list(required_context)
+        return list(required_inputs)
 
     def get_default_config(self) -> dict:
         """Returns the default configuration for the test suite

@@ -19,7 +19,7 @@ class ANOVAOneWayTable(Metric):
     """
 
     name = "anova_one_way_table"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"num_features": None, "p_threshold": 0.05}
 
     def run(self):

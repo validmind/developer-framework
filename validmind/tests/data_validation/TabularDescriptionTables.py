@@ -20,7 +20,7 @@ class TabularDescriptionTables(Metric):
     """
 
     name = "tabular_description_tables"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def description(self):
         return """

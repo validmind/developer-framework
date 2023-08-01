@@ -15,7 +15,7 @@ class DatasetSplit(Metric):
     """
 
     name = "dataset_split"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     dataset_labels = {
         "train_ds": "Training",

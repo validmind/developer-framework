@@ -19,7 +19,7 @@ class TabularCategoricalBarPlots(Metric):
     """
 
     name = "tabular_categorical_bar_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         df = self.dataset.df
