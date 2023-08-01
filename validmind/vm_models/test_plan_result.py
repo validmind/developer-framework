@@ -104,21 +104,19 @@ class TestPlanResult(ABC):
                 .set_table_styles(
                     [
                         {
-                            "selector": "table",
+                            "selector": "",
                             "props": [
                                 ("width", "100%"),
-                                ("border", "none"),
-                                ("border-collapse", "collapse"),
                             ],
                         },
                         {
-                            "selector": "tr:nth-child(even)",
+                            "selector": "tbody tr:nth-child(even)",
                             "props": [
                                 ("background-color", "#FFFFFF"),
                             ],
                         },
                         {
-                            "selector": "tr:nth-child(odd), th",
+                            "selector": "tbody tr:nth-child(odd)",
                             "props": [
                                 ("background-color", "#F5F5F5"),
                             ],
