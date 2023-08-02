@@ -46,7 +46,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
 
         import validmind as vm
         from validmind.vm_models.dataset import VMDataset
-        from validmind.vm_models.model import Model
+        from validmind.vm_models.model import VMModel
         from validmind.vm_models.test_suite import TestSuite
 
         self.vm_dataset = vm.init_dataset(
@@ -73,7 +73,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
             train_ds=vm_train_ds,
             test_ds=self.vm_test_ds,
         )
-        self.assertIsInstance(self.vm_model, Model)
+        self.assertIsInstance(self.vm_model, VMModel)
 
         async def run_test_suite():
             return vm.run_test_suite(
