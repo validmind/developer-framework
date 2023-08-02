@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -21,7 +16,6 @@ class BinaryClassifierMetrics(TestPlan):
     """
 
     name = "binary_classifier_metrics"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.ModelMetadata",
         "validmind.data_validation.DatasetSplit",
@@ -42,7 +36,6 @@ class BinaryClassifierPerformance(TestPlan):
     """
 
     name = "binary_classifier_validation"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.sklearn.MinimumAccuracy",
         "validmind.model_validation.sklearn.MinimumF1Score",
@@ -57,7 +50,6 @@ class BinaryClassifierDiagnosis(TestPlan):
     """
 
     name = "binary_classifier_model_diagnosis"
-    required_context = ["model"]
     tests = [
         "validmind.model_validation.sklearn.OverfitDiagnosis",
         "validmind.model_validation.sklearn.WeakspotsDiagnosis",

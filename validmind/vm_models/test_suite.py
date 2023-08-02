@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -46,13 +41,6 @@ class TestSuite(TestPlan):
     _total_tests: int = 0
 
     def __post_init__(self):
-        if self.test_context is None:
-            self.test_context = TestContext(
-                dataset=self.dataset,
-                model=self.model,
-                models=self.models,
-            )
-
         self._test_plan_classes = []
         for test_plan_id_or_class in self.test_plans:
             if isinstance(test_plan_id_or_class, str):
@@ -62,6 +50,8 @@ class TestSuite(TestPlan):
 
             self._test_plan_classes.append(test_plan_class)
             self._total_tests += len(test_plan_class.tests)
+
+        self._reload()
 
     def _init_pbar(self, send: bool = True):
         """
@@ -81,11 +71,16 @@ class TestSuite(TestPlan):
 
         display(self.pbar_box)
 
-    def run(self, send=True):
-        """
-        Runs the test suite.
-        """
-        self._init_pbar(send=send)
+    def _reload(self, **kwargs):
+        if kwargs:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+
+        self.test_context = TestContext(
+            dataset=self.dataset,
+            model=self.model,
+            models=self.models,
+        )
 
         self._test_plan_instances = []
         for test_plan_class in self._test_plan_classes:
@@ -97,6 +92,42 @@ class TestSuite(TestPlan):
                 pbar_box=self.pbar_box,
             )
             self._test_plan_instances.append(test_plan)
+
+    def get_required_context(self) -> List[str]:
+        """
+        Returns the required context for the test suite.
+        """
+        required_context = set()
+        for test_plan in self._test_plan_instances:
+            required_context.update(test_plan.get_required_context())
+
+        return list(required_context)
+
+    def get_default_config(self) -> dict:
+        """Returns the default configuration for the test suite
+
+        Each test in a test suite can accept parameters and those parameters can have
+        default values. Both the parameters and their defaults are set in the test
+        class and a config object can be passed to the test suite's run method to
+        override the defaults. This function returns a dictionary containing the
+        parameters and their default values for every test to allow users to view
+        and set values
+
+        Returns:
+            dict: A dictionary of test names and their default parameters
+        """
+        default_config = {}
+        for test_plan in self._test_plan_instances:
+            default_config = {**default_config, **test_plan.get_default_config()}
+
+        return default_config
+
+    def run(self, send=True, **kwargs):
+        """
+        Runs the test suite.
+        """
+        self._init_pbar(send=send)
+        self._reload(**kwargs)
 
         for test_plan in self._test_plan_instances:
             test_plan.run(render_summary=False, send=send)

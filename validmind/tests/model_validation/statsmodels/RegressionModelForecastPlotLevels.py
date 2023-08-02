@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -95,11 +90,11 @@ class RegressionModelForecastPlotLevels(Metric):
 
             if transformation == "integrate":
                 train_ds_y_transformed = self.integrate_diff(
-                    train_ds.y.values, start_value=train_ds.y[0]
+                    train_ds.y_df().values, start_value=train_ds.y[0]
                 )
 
                 test_ds_y_transformed = self.integrate_diff(
-                    test_ds.y.values, start_value=test_ds.y[0]
+                    test_ds.y_df().values, start_value=test_ds.y[0]
                 )
 
                 # Use the first value of the transformed train dataset as the start_value for predicted datasets

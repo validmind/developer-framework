@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -48,8 +43,8 @@ class RegressionModelSensitivityPlot(Metric):
 
         figures = []
         for i, model in enumerate(all_models):
-            features_df = model.test_ds.x
-            target_df = model.test_ds.y  # series
+            features_df = model.test_ds.x_df()
+            target_df = model.test_ds.y_df()  # series
 
             shocked_datasets = self.apply_shock(features_df, shocks)
 
@@ -59,7 +54,7 @@ class RegressionModelSensitivityPlot(Metric):
                 transformed_predictions = []
                 start_value = model.train_ds.y[0]
                 transformed_target = self.integrate_diff(
-                    model.test_ds.y.values, start_value
+                    model.test_ds.y_df().values, start_value
                 )
 
                 predictions = self.predict_shocked_datasets(shocked_datasets, model)

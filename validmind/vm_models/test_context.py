@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -13,7 +8,7 @@ from typing import ClassVar, List
 
 import pandas as pd
 
-from .dataset import Dataset
+from .dataset import VMDataset
 from .model import Model
 from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 
@@ -26,7 +21,7 @@ class TestContext:
     across different tests/metrics such as shared dataset metrics, etc.
     """
 
-    dataset: Dataset = None
+    dataset: VMDataset = None
     model: Model = None
     models: List[Model] = None
 
@@ -78,7 +73,7 @@ class TestContextUtils:
         if self.dataset is None:
             raise TestContextInvalidDatasetError("dataset must be set")
 
-        if isinstance(self.dataset, Dataset):
+        if isinstance(self.dataset, VMDataset):
             return self.dataset.raw_dataset
         elif isinstance(self.dataset, pd.DataFrame):
             return self.dataset
