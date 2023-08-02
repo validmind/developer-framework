@@ -22,7 +22,7 @@ SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
     "xgboost": "XGBoostModel",
     "sklearn": "SKlearnModel",
-    "pytorch": "PyTorchModel",
+    "torch": "PyTorchModel",
     "statsmodels": "StatsModelsModel",
 }
 
@@ -245,7 +245,7 @@ class SKlearnModel(VMModel):
         return type(self.model).__name__
 
     def is_pytorch_model(self):
-        return self.model_library() == "pytorch"
+        return self.model_library() == "torch"
 
 
 @dataclass
@@ -421,10 +421,10 @@ class PyTorchModel(VMModel):
         """
         Returns the model library name
         """
-        return "pytorch"
+        return "torch"
 
     def is_pytorch_model(self):
-        return self.model_library() == "pytorch"
+        return self.model_library() == "torch"
 
     def model_class(self):
         """
@@ -478,7 +478,7 @@ def model_module(model):
         return module
     # pyTorch liabrary
     if is_pytorch_model(model=model):
-        return "pytorch"
+        return "torch"
 
 
 def get_model_class(model):
