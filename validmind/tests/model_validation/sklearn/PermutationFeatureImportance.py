@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from sklearn.inspection import permutation_importance
 
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -44,8 +44,7 @@ class PermutationFeatureImportance(Metric):
     def run(self):
         x = self.model.train_ds.x_df()
         y = self.model.train_ds.y_df()
-        model_instance = self.model.model
-        model_library = Model.model_library(model_instance)
+        model_library = self.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
@@ -55,7 +54,7 @@ class PermutationFeatureImportance(Metric):
             return
 
         pfi_values = permutation_importance(
-            model_instance,
+            self.model.model,
             x,
             y,
             random_state=0,

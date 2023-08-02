@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from dataclasses import dataclass
 import plotly.graph_objects as go
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -79,12 +79,6 @@ class ScorecardProbabilitiesHistogram(Metric):
         return fig
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                is not supported by ValidMind framework yet"
-            )
-
         title = self.params["title"]
         target_score = self.params["target_score"]
         target_odds = self.params["target_odds"]

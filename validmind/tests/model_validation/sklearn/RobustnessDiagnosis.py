@@ -22,7 +22,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
-    Model,
 )
 
 
@@ -64,10 +63,10 @@ class RobustnessDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping Robustness Diagnosis test for {model_library} models")
-            return
+        # model_library = Model.model_library(self.model.model)
+        # if model_library == "statsmodels" or model_library == "pytorch":
+        #     print(f"Skiping Robustness Diagnosis test for {model_library} models")
+        #     return
 
         # Validate X std deviation parameter
         if "scaling_factor_std_dev_list" not in self.params:

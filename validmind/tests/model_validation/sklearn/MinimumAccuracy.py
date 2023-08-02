@@ -59,15 +59,19 @@ class MinimumAccuracy(ThresholdTest):
         )
 
     def run(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = self.model.test_ds.y
+        if self.model.is_pytorch_model:
+            import torch
+        if (
+            self.model.device_type
+            and self.model.is_pytorch_model
+            and not self.model.device_type == "gpu"
+        ):
 
-        class_pred = self.model.model.predict(self.model.test_ds.x)
+            y_true = np.array(torch.tensor(self.model.test_ds.y).cpu())
+        else:
+            y_true = np.array(self.model.test_ds.y)
+
+        class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
 
         accuracy_score = metrics.accuracy_score(y_true, class_pred)

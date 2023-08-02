@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -39,11 +39,6 @@ class RegressionModelForecastPlot(Metric):
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
         for model in self.models:
-            if not Model.is_supported_model(model.model):
-                raise ValueError(
-                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
-                                 is not supported by ValidMind framework yet"
-                )
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, start_date, end_date)

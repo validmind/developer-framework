@@ -10,7 +10,7 @@ from sklearn.inspection import permutation_importance
 import pandas as pd
 import plotly.graph_objects as go
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -125,13 +125,6 @@ class FeatureImportanceAndSignificance(Metric):
 
         if self.models is not None:
             all_models.extend(self.models)
-
-        for m in all_models:
-            if not Model.is_supported_model(m.model):
-                raise ValueError(
-                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)}"
-                    " is not supported by the ValidMind framework yet"
-                )
 
         if len(self.models) != 2:
             raise ValueError("Two models must be provided")

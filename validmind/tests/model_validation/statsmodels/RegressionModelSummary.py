@@ -13,7 +13,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 from validmind.statsutils import adj_r2_score
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -29,12 +28,6 @@ class RegressionModelSummary(Metric):
     name = "regression_model_summary"
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         X_columns = self.model.train_ds.get_features_columns()
 
         y_true = self.model.train_ds.y

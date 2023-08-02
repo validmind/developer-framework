@@ -11,7 +11,12 @@ Models entrypoint
 
 from .dataset import VMDataset
 from .figure import Figure
-from .model import Model, ModelAttributes, R_MODEL_TYPES
+from .model import (
+    VMModel,
+    ModelAttributes,
+    R_MODEL_TYPES
+)
+
 from .metric import Metric
 from .metric_result import MetricResult
 from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
@@ -34,7 +39,7 @@ __all__ = [
     "Figure",
     "Metric",
     "MetricResult",
-    "Model",
+    "VMModel",
     "ModelAttributes",
     "R_MODEL_TYPES",
     "ResultSummary",

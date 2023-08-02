@@ -20,7 +20,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
-    Model,
 )
 
 
@@ -57,10 +56,10 @@ class OverfitDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping Overfit Diagnosis test for {model_library} models")
-            return
+        # model_library = Model.model_library(self.model.model)
+        # if model_library == "statsmodels" or model_library == "pytorch":
+        #     print(f"Skiping Overfit Diagnosis test for {model_library} models")
+        #     return
 
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
@@ -93,12 +92,12 @@ class OverfitDiagnosis(ThresholdTest):
 
         # Add prediction column in the training dataset
         train_df = self.model.train_ds.df.copy()
-        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
+        train_class_pred = self.model.y_train_predict
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
         test_df = self.model.test_ds.df.copy()
-        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
+        test_class_pred = self.model.y_test_predict
         test_df[prediction_column] = test_class_pred
 
         test_results = []

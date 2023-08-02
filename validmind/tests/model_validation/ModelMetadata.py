@@ -11,7 +11,7 @@ from platform import python_version
 
 import pandas as pd
 
-from validmind.vm_models import Metric, Model, ResultSummary, ResultTable
+from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 SUPPORTED_STATSMODELS_FAMILIES = {
     "statsmodels.genmod.families.family.Poisson": "poisson",
@@ -58,7 +58,7 @@ def _get_xgboost_objective(model):
     from the model's objective. Only binary classification is supported
     at the moment
     """
-    if model.objective == "binary:logistic":
+    if model.model.objective == "binary:logistic":
         return "binary"
 
     return "n/a"
@@ -96,9 +96,8 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
     """
     Attempts to extract all model info from a model object instance
     """
-    model_class = Model.model_class(model)
-    model_library = Model.model_library(model)
-
+    model_class = model.model_class()
+    model_library = model.model_library()
     if model_class == "XGBClassifier":
         architecture = "Extreme Gradient Boosting"
         task = "classification"
@@ -169,24 +168,24 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
     }
 
 
-# def _get_statsmodels_model_params(model):
-#     """
-#     Extracts the fit() method's parametesr from a
-#     statsmodels model object instance
+def _get_statsmodels_model_params(model):
+    """
+    Extracts the fit() method's parametesr from a
+    statsmodels model object instance
 
-#     TODO: generalize to any statsmodels model
-#     """
-#     model_instance = model.model
-#     family_class = model_instance.family.__class__.__name__
-#     link_class = model_instance.family.link.__class__.__name__
+    TODO: generalize to any statsmodels model
+    """
+    model_instance = model.model
+    family_class = model_instance.family.__class__.__name__
+    link_class = model_instance.family.link.__class__.__name__
 
-#     return {
-#         "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
-#         "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
-#         "formula": model_instance.formula,
-#         "method": model.method,
-#         "cov_type": model.cov_type,
-#     }
+    return {
+        "family": SUPPORTED_STATSMODELS_FAMILIES.get(family_class, family_class),
+        "link": SUPPORTED_STATSMODELS_LINK_FUNCTIONS.get(link_class, link_class),
+        "formula": model_instance.formula,
+        "method": model.method,
+        "cov_type": model.cov_type,
+    }
 
 
 def _get_params_from_model_instance(model):
@@ -194,16 +193,15 @@ def _get_params_from_model_instance(model):
     Attempts to extract model hyperparameters from a model object instance
     """
 
-    model_library = Model.model_library(model)
-
+    model_library = model.model_library()
     # Only supports xgboot classifiers at the moment
     if model_library == "xgboost":
-        params = model.get_xgb_params()
+        params = model.model.get_xgb_params()
     elif model_library == "statsmodels":
         # params = _get_statsmodels_model_params(model)
         params = {}
     elif model_library == "sklearn":
-        params = model.get_params()
+        params = model.model.get_params()
     elif model_library == "pytorch":
         params = {}
     elif model_library == "catboost":
@@ -258,9 +256,8 @@ class ModelMetadata(Metric):
         """
         Extracts model metadata from a model object instance
         """
-        trained_model = self.model.model
-        model_info = _get_info_from_model_instance(trained_model)
+        model_info = _get_info_from_model_instance(self.model)
         model_info["language"] = f"Python {python_version()}"
-        model_info["params"] = _get_params_from_model_instance(trained_model)
+        model_info["params"] = _get_params_from_model_instance(self.model)
 
         return self.cache_results(model_info)

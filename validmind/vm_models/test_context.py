@@ -14,7 +14,7 @@ from typing import ClassVar, List
 import pandas as pd
 
 from .dataset import VMDataset
-from .model import Model
+from .model import VMModel
 from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 
 
@@ -27,8 +27,8 @@ class TestContext:
     """
 
     dataset: VMDataset = None
-    model: Model = None
-    models: List[Model] = None
+    model: VMModel = None
+    models: List[VMModel] = None
 
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None

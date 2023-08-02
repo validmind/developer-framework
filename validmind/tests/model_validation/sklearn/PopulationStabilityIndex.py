@@ -15,7 +15,6 @@ from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -134,7 +133,7 @@ class PopulationStabilityIndex(Metric):
         return psi_df.to_dict(orient="records")
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
+        model_library = self.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"

@@ -10,7 +10,6 @@ import pandas as pd
 from dataclasses import dataclass
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -28,12 +27,6 @@ class GINITable(Metric):
     required_context = ["model"]
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         model = self.model
 
         X_train = self.model.train_ds.x

@@ -20,7 +20,7 @@ from ..logging import get_logger, log_performance
 from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import VMDataset
-from .model import Model
+from .model import VMModel
 from .test_context import TestContext, TestContextUtils
 from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
@@ -52,10 +52,10 @@ class TestPlan:
     dataset: VMDataset = None
 
     # Model and corresponding datasets for model related tests
-    model: Model = None
+    model: VMModel = None
 
     # Multiple models for model comparison tests
-    models: List[Model] = None
+    models: List[VMModel] = None
 
     # ipywidgets progress bar
     pbar: widgets.IntProgress = None

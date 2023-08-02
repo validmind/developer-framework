@@ -29,15 +29,19 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
         """
 
     def y_true(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.train_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.train_ds.y)
+        if self.model.is_pytorch_model:
+            import torch
+        if (
+            self.model.device_type
+            and self.model.is_pytorch_model
+            and not self.model.device_type == "gpu"
+        ):
+
+            y_true = np.array(torch.tensor(self.model.train_ds.y).cpu())
         else:
             y_true = np.array(self.model.train_ds.y)
 
         return y_true
 
     def y_pred(self):
-        return self.model.model.predict(self.model.train_ds.x)
+        return self.model.y_train_predict
