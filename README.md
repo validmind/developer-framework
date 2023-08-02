@@ -1,12 +1,18 @@
-# ValidMind Python Client
+# ValidMind
+
+![](images/ValidMind-logo-color.svg)
 
 ValidMind helps model developers and model validators streamline communication and automate the model documentation process. 
 
-We welcome contributions to the ValidMind Python Client. If you are interested in contributing tests to the Developer Framework, please refer to the contributing guide below, and check out our community Slack channels to connect with the ValidMind team and other Model Risk Management (MLM) Practitioners.
+## Contributing to the ValidMind Developer Framework
 
-# Getting started
+We believe in the power of collaboration and welcome contributions to the ValidMind Python Client. If you've noticed a bug, have a feature request, or want to contribute a test, please submit an issue or create a pull request and refer to the [contributing guide](README.md#how-to-contribute) below.
 
-## Installation
+- Interested in connecting with fellow Model Risk Management (MRM) practioners? Join our [Community Slack](site/guide/join-community.qmd)
+
+- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/guide/developer-framework.html).
+
+## Getting started
 
 ### Install from PyPI
 
@@ -26,7 +32,7 @@ pip install validmind[pytorch]
 pip install validmind[r-support]
 ```
 
-## Contributing to ValidMind Developer Framework
+## How to contribute
 
 ### Install dependencies
 
@@ -49,9 +55,13 @@ poetry install --extras pytorch
 
 ### Creating a new Test
 
-All ValidMind Tests are in the `validmind/tests/` directory. Each test is its own separate file and should be named using Camel Case. For example, `MyNewTest.py`. Within this file should live a single Test class that matches the file name. For example, `class MyNewTest`. This class should inherit from `validmind.vm_models.Metric` or `validmind.vm_models.ThresholdTest` depending on the type of test you are creating. The tests are separated into subdirectories based on the different categories and types of tests. For example, `validmind/tests/model_validation/sklearn` contains all of the model validation tests for sklearn-compatible models. There are two subdirectories in this folder: `metrics/` and `threshold_tests/` that contain the different types of tests (any sub category can be used here and the `__init__.py` file will automatically pick up the tests). Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples of this as well as for information on how the directory relates to the test's ID which is used across the ValidMind platform.
+All ValidMind Tests are in the `validmind/tests/` directory. Each file should be named using Camel Case and should have a single Test class that matches the file name. For example, `MyNewTest.py` should have the Test `class MyNewTest`. This class should inherit from `validmind.vm_models.Metric` or `validmind.vm_models.ThresholdTest` depending on the type of test you are creating. 
 
-To create a new test, you can use the create_new_test.py script to generate a metric or threshold test. This script will create a new test file in the appropriate directory and will also create a new test class in that file. It is registered as a custom Poetry script in the `pyproject.toml` so it can be used as follows:
+The tests are separated into subdirectories based on the category and type of test. For example, `validmind/tests/model_validation/sklearn` contains all of the model validation tests for sklearn-compatible models. There are two subdirectories in this folder: `metrics/` and `threshold_tests/` that contain the different types of tests. Any sub category can be used here and the `__init__.py` file will automatically pick up the tests.
+
+Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples and to learn about how the directory relates to the test's ID which is used across the ValidMind platform.
+
+To create a new test, you can use the create_new_test.py script to generate a metric or threshold test. This script will create a new test file in the appropriate directory and will also create a new test class in that file. It is registered as a custom Poetry script in the `pyproject.toml` and it can be used as follows:
 
 ```bash
 generate-test --help  # see the usage instructions
@@ -83,15 +93,6 @@ make version tag=patch
 ```
 
 The value of `tag` corresponds to one of the options provided by Poetry: <https://python-poetry.org/docs/cli/#version>
-
-## Integrating the ValidMind Developer Framework to your development environment
-
-If you want to integate the `validmind` package to your development environment, you must build the package
-wheel first, since we have not pushed the package to a public PyPI repository yet. Steps:
-
-- Run `make build` to build a new Python package for the developer framework
-- This will create a new wheel file in the `dist` folder
-- Run `pip install <path-to-wheel>` to install the newly built package in your environment
 
 ## Generating Docs
 
