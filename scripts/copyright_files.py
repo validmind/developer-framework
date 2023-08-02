@@ -39,8 +39,8 @@ def copyright_python_file(root, file):
         contents = f.read()
 
     # Replace the existing copyright text with the new one
-    if "This software is proprietary and confidential." in contents:
-        start_index = contents.index("# This software is proprietary and confidential.")
+    if "Copyright © 2023 ValidMind Inc." in contents:
+        start_index = contents.index("# Copyright © 2023 ValidMind Inc.")
         end_index = contents.index("All rights reserved.") + len("All rights reserved.")
         contents = contents[:start_index] + copyright.strip() + contents[end_index:]
     else:
