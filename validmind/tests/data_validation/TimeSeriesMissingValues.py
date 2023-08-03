@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -55,7 +50,7 @@ class TimeSeriesMissingValues(ThresholdTest):
 
     def run(self):
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
@@ -64,8 +59,8 @@ class TimeSeriesMissingValues(ThresholdTest):
             raise ValueError("min_threshold must be provided in params")
         min_threshold = self.params["min_threshold"]
 
-        rows = self.df.shape[0]
-        missing = self.df.isna().sum()
+        rows = self.dataset.df.shape[0]
+        missing = self.dataset.df.isna().sum()
         test_results = [
             TestResult(
                 column=col,
@@ -75,8 +70,8 @@ class TimeSeriesMissingValues(ThresholdTest):
             for col in missing.index
         ]
 
-        fig_barplot = self._barplot(self.df, rotation=45)
-        fig_heatmap = self._heatmap(self.df)
+        fig_barplot = self._barplot(self.dataset.df, rotation=45)
+        fig_heatmap = self._heatmap(self.dataset.df)
         test_figures = []
         if fig_barplot is not None:
             test_figures.append(

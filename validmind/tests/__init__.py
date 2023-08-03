@@ -1,21 +1,17 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """All Tests for ValidMind"""
 
 import importlib
 from pathlib import Path
+from pprint import pformat
 from typing import Dict
 
 import pandas as pd
 
 from ..errors import LoadTestError
 from ..logging import get_logger
-from ..utils import format_dataframe
+from ..utils import clean_docstring, format_dataframe
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
@@ -24,6 +20,8 @@ logger = get_logger(__name__)
 
 
 __all__ = [
+    "data_validation",
+    "model_validation",
     "list_tests",
     "load_test",
     "describe_test",
@@ -40,6 +38,19 @@ __test_classes = None
 __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
+def _test_title(name):
+    title = f"{name[0].upper()}"
+
+    for i in range(1, len(name)):
+        if name[i].isupper() and (
+            name[i - 1].islower() or (i + 1 < len(name) and name[i + 1].islower())
+        ):
+            title += " "
+        title += name[i]
+
+    return title
+
+
 # TODO: remove this when all templates are updated to new naming convention
 def _get_legacy_test(content_id):
     global __legacy_mapping
@@ -54,6 +65,16 @@ def _get_legacy_test(content_id):
     return __legacy_mapping[content_id]
 
 
+def __get_test_params(test_class):
+    """Returns a string representation of the test config"""
+    params_str = ""
+
+    for param in test_class.default_params:
+        params_str += f"{param}={pformat(test_class.default_params[param])},\n"
+
+    return params_str
+
+
 def _pretty_list_tests(tests):
     global __test_classes
 
@@ -65,8 +86,12 @@ def _pretty_list_tests(tests):
     table = [
         {
             "Test Type": __test_classes[test_id].test_type,
-            "Name": __test_classes[test_id].__name__,
-            "Description": __test_classes[test_id].__doc__.strip(),
+            "Name": _test_title(__test_classes[test_id].__name__),
+            "Description": clean_docstring(
+                __test_classes[test_id].description(__test_classes[test_id])
+            )
+            if hasattr(__test_classes[test_id], "description")
+            else "",
             "ID": test_id,
         }
         for test_id in tests
@@ -166,7 +191,7 @@ def load_test(test_id, legacy=False):  # noqa: C901
     return test
 
 
-def describe_test(test_name: str = None, test_id: str = None):
+def describe_test(test_name: str = None, test_id: str = None, raw: bool = False):
     """Returns the test by test ID"""
     if test_name is not None:
         # TODO: we should rethink this a bit
@@ -179,16 +204,26 @@ def describe_test(test_name: str = None, test_id: str = None):
     else:
         test = __test_classes[test_id]
 
+    test_details = {
+        "ID": test_id,
+        "Name": _test_title(test.__name__),
+        "Description": clean_docstring(test.description(test))
+        if hasattr(test, "description")
+        else "",
+        "Test Type": test.test_type,
+        "Required Context": test.required_context,
+        "Params": test.default_params,
+    }
+
+    if raw:
+        return test_details
+
     return format_dataframe(
         pd.DataFrame(
-            [
-                {
-                    "ID": test_id,
-                    "Test Type": test.test_type,
-                    "Name": test.__name__,
-                    "Description": test.__doc__.strip(),
-                }
-            ]
+            {
+                "": [f"{key}:" for key in test_details.keys()],
+                " ": test_details.values(),
+            }
         )
     )
 

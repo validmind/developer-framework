@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -15,7 +10,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 from validmind.vm_models import (
-    Dataset,
+    VMDataset,
     Figure,
     ThresholdTest,
 )
@@ -39,7 +34,7 @@ class Mentions(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("Mentions requires a validmind Dataset object")
 
         text_column = self.dataset.text_column

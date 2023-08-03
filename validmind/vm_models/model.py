@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -12,7 +7,7 @@ import inspect
 
 from dataclasses import dataclass, fields
 
-from .dataset import Dataset
+from .dataset import VMDataset
 from ..errors import MissingPytorchModelPredictError
 
 SUPPORTED_MODEL_TYPES = [
@@ -74,9 +69,9 @@ class Model:
     params: dict = None
     model_id: str = "main"
     model: object = None  # Trained model instance
-    train_ds: Dataset = None
-    test_ds: Dataset = None
-    validation_ds: Dataset = None
+    train_ds: VMDataset = None
+    test_ds: VMDataset = None
+    validation_ds: VMDataset = None
 
     # These variables can be generated dynamically if not passed
     y_train_predict: object = None
@@ -143,15 +138,20 @@ class Model:
         # TBD. Fix setting PyTorch on Ubuntu
         return isinstance(model, nn.Module)
 
-    def predict(self, *args, **kwargs):
+    def predict_proba(self, *args, **kwargs):
         """
-        Predict method for the model. This is a wrapper around the model's
         predict_proba (for classification) or predict (for regression) method
 
         NOTE: This only works for sklearn or xgboost models at the moment
         """
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
+        return None
+
+    def predict(self, *args, **kwargs):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        """
         if Model._is_pytorch_model(self.model):
             if not Model.has_method_with_arguments(self.model, "predict", 1):
                 raise MissingPytorchModelPredictError(

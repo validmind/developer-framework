@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -144,7 +139,8 @@ class PopulationStabilityIndex(Metric):
             return
 
         psi_results = self._get_psi(
-            self.model.y_train_predict.copy(), self.model.y_test_predict.copy()
+            self.model.predict_proba(self.model.train_ds.x).copy(),
+            self.model.predict_proba(self.model.test_ds.x).copy(),
         )
 
         trace1 = go.Bar(

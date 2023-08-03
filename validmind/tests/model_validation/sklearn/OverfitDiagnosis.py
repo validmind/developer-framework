@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -281,12 +276,13 @@ class OverfitDiagnosis(ThresholdTest):
         ax.tick_params(axis="x", labelsize=20)
         ax.tick_params(axis="y", labelsize=20)
 
-        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=22)
-        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
+        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=18)
+        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=18)
         ax.set_title(
             f"Overfit regions in feature column: {feature_column}",
             weight="bold",
-            fontsize=24,
+            fontsize=20,
+            wrap=True,
         )
 
         # Get the legend handles and labels from the barplot

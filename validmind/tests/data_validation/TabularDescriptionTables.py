@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -29,11 +24,13 @@ class TabularDescriptionTables(Metric):
         """
 
     def get_summary_statistics_numerical(self, numerical_fields):
-        summary_stats = self.df[numerical_fields].describe().T
+        summary_stats = self.dataset.df[numerical_fields].describe().T
         summary_stats["Missing Values (%)"] = (
-            self.df[numerical_fields].isnull().mean() * 100
+            self.dataset.df[numerical_fields].isnull().mean() * 100
         )
-        summary_stats["Data Type"] = self.df[numerical_fields].dtypes.astype(str)
+        summary_stats["Data Type"] = self.dataset.df[numerical_fields].dtypes.astype(
+            str
+        )
         summary_stats = summary_stats[
             ["count", "mean", "min", "max", "Missing Values (%)", "Data Type"]
         ]
@@ -56,18 +53,22 @@ class TabularDescriptionTables(Metric):
     def get_summary_statistics_categorical(self, categorical_fields):
         summary_stats = pd.DataFrame()
         if categorical_fields:  # check if the list is not empty
-            for column in self.df[categorical_fields].columns:
-                summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
-                summary_stats.loc[column, "Num of Unique Values"] = self.df[
+            for column in self.dataset.df[categorical_fields].columns:
+                summary_stats.loc[column, "Num of Obs"] = int(
+                    self.dataset.df[column].count()
+                )
+                summary_stats.loc[column, "Num of Unique Values"] = self.dataset.df[
                     column
                 ].nunique()
                 summary_stats.loc[column, "Unique Values"] = str(
-                    self.df[column].unique()
+                    self.dataset.df[column].unique()
                 )
                 summary_stats.loc[column, "Missing Values (%)"] = (
-                    self.df[column].isnull().mean() * 100
+                    self.dataset.df[column].isnull().mean() * 100
                 )
-                summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
+                summary_stats.loc[column, "Data Type"] = str(
+                    self.dataset.df[column].dtype
+                )
 
             summary_stats = summary_stats.sort_values(
                 by="Missing Values (%)", ascending=False
@@ -80,17 +81,19 @@ class TabularDescriptionTables(Metric):
 
     def get_summary_statistics_datetime(self, datetime_fields):
         summary_stats = pd.DataFrame()
-        for column in self.df[datetime_fields].columns:
-            summary_stats.loc[column, "Num of Obs"] = int(self.df[column].count())
-            summary_stats.loc[column, "Num of Unique Values"] = self.df[
+        for column in self.dataset.df[datetime_fields].columns:
+            summary_stats.loc[column, "Num of Obs"] = int(
+                self.dataset.df[column].count()
+            )
+            summary_stats.loc[column, "Num of Unique Values"] = self.dataset.df[
                 column
             ].nunique()
-            summary_stats.loc[column, "Earliest Date"] = self.df[column].min()
-            summary_stats.loc[column, "Latest Date"] = self.df[column].max()
+            summary_stats.loc[column, "Earliest Date"] = self.dataset.df[column].min()
+            summary_stats.loc[column, "Latest Date"] = self.dataset.df[column].max()
             summary_stats.loc[column, "Missing Values (%)"] = (
-                self.df[column].isnull().mean() * 100
+                self.dataset.df[column].isnull().mean() * 100
             )
-            summary_stats.loc[column, "Data Type"] = str(self.df[column].dtype)
+            summary_stats.loc[column, "Data Type"] = str(self.dataset.df[column].dtype)
 
         if not summary_stats.empty:
             summary_stats = summary_stats.sort_values(
@@ -123,19 +126,21 @@ class TabularDescriptionTables(Metric):
         )
 
     def get_categorical_columns(self):
-        categorical_columns = self.df.select_dtypes(
+        categorical_columns = self.dataset.df.select_dtypes(
             include=["object", "category"]
         ).columns.tolist()
         return categorical_columns
 
     def get_numerical_columns(self):
-        numerical_columns = self.df.select_dtypes(
+        numerical_columns = self.dataset.df.select_dtypes(
             include=["int", "float", "uint8"]
         ).columns.tolist()
         return numerical_columns
 
     def get_datetime_columns(self):
-        datetime_columns = self.df.select_dtypes(include=["datetime"]).columns.tolist()
+        datetime_columns = self.dataset.df.select_dtypes(
+            include=["datetime"]
+        ).columns.tolist()
         return datetime_columns
 
     def run(self):

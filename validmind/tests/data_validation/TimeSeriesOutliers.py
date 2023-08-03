@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -81,7 +76,7 @@ class TimeSeriesOutliers(ThresholdTest):
 
     def run(self):
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
@@ -90,7 +85,7 @@ class TimeSeriesOutliers(ThresholdTest):
             raise ValueError("zscore_threshold must be provided in params")
         zscore_threshold = self.params["zscore_threshold"]
 
-        temp_df = self.df.copy()
+        temp_df = self.dataset.df.copy()
         # temp_df = temp_df.dropna()
         typeset = ProfilingTypeSet(Settings())
         dataset_types = typeset.infer_type(temp_df)

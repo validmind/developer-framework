@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -41,7 +36,7 @@ class PrecisionRecallCurve(Metric):
         else:
             y_true = self.model.test_ds.y
 
-        y_pred = self.model.y_test_predict
+        y_pred = self.model.predict_proba(self.model.test_ds.x)
         y_true = y_true.astype(y_pred.dtype)
         precision, recall, pr_thresholds = metrics.precision_recall_curve(
             y_true, y_pred

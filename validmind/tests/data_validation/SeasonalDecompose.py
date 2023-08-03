@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import warnings
@@ -74,7 +69,6 @@ class SeasonalDecompose(Metric):
         merged_df = dfs[0]
         for df in dfs[1:]:
             merged_df = merged_df.merge(df, on="Date")
-
         # Convert the merged DataFrame into a list of dictionaries
         return merged_df.to_dict("records")
 

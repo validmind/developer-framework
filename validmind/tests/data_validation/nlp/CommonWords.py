@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -18,7 +13,7 @@ from nltk.corpus import stopwords
 from ....vm_models import (
     Figure,
     Metric,
-    Dataset,
+    VMDataset,
 )
 
 
@@ -35,7 +30,7 @@ class CommonWords(Metric):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("CommonWords requires a validmind Dataset object")
 
         def create_corpus(df, text_column):

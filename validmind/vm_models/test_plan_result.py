@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -24,7 +19,7 @@ import ipywidgets as widgets
 import pandas as pd
 
 from .. import api_client
-from .dataset import Dataset
+from .dataset import VMDataset
 from .figure import Figure
 from .metric_result import MetricResult
 from .result_summary import ResultSummary
@@ -152,7 +147,7 @@ class TestPlanDatasetResult(TestPlanResult):
 
     name: str = "Metric"
     result_id: str = None
-    dataset: Dataset = None
+    dataset: VMDataset = None
 
     def __repr__(self) -> str:
         return f'TestPlanDatasetResult(result_id="{self.result_id}")'

@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -29,19 +24,25 @@ from .errors import (
 )
 from .logging import get_logger
 from .template import (
+    get_template_test_suite,
     preview_template as _preview_template,
     run_template as _run_template,
 )
-from .test_plans import get_by_id as get_test_plan
-from .test_suites import get_by_id as get_test_suite
+from .test_plans import get_by_id as get_test_plan_by_id
+from .test_suites import get_by_id as get_test_suite_by_id
+
 from .vm_models import (
-    Dataset,
-    DatasetTargets,
     Model,
     ModelAttributes,
     R_MODEL_TYPES,
     TestPlan,
     TestSuite,
+)
+from .vm_models.dataset import (
+    VMDataset,
+    NumpyDataset,
+    DataFrameDataset,
+    TorchDataset,
 )
 
 pd.option_context("format.precision", 2)
@@ -50,14 +51,16 @@ logger = get_logger(__name__)
 
 
 def init_dataset(
-    dataset: pd.DataFrame,
-    type: str = "training",
+    dataset,
+    index=None,
+    index_name: str = None,
+    column_names: list = None,
     options: dict = None,
-    targets: DatasetTargets = None,
     text_column: str = None,
     target_column: str = None,
     class_labels: dict = None,
-) -> Dataset:
+    type: str = None,
+) -> VMDataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
@@ -66,8 +69,6 @@ def init_dataset(
 
     Args:
         dataset (pd.DataFrame): We only support Pandas DataFrames at the moment
-        type (str): The dataset split type is necessary for mapping and relating multiple
-            datasets together. Can be one of training, validation, test or generic
         options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
@@ -79,34 +80,57 @@ def init_dataset(
     Returns:
         vm.vm.Dataset: A VM Dataset instance
     """
-    dataset_class = dataset.__class__.__name__
+    # Show deprecation notice if type is passed
+    if type is not None:
+        logger.info(
+            "The 'type' argument to init_dataset() argument is deprecated and no longer required."
+        )
 
-    # TODO: when we accept numpy datasets we can convert them to/from pandas
+    dataset_class = dataset.__class__.__name__
+    # Instantiate supported dataset types here
     if dataset_class == "DataFrame":
         logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
-        vm_dataset = Dataset.init_from_pd_dataset(
-            dataset, options, text_column, targets, target_column, class_labels
+        vm_dataset = DataFrameDataset(
+            raw_dataset=dataset,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels,
+        )
+    elif dataset_class == "ndarray":
+        logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
+        vm_dataset = NumpyDataset(
+            raw_dataset=dataset,
+            index=index,
+            index_name=index_name,
+            column_names=column_names,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels,
         )
     elif dataset_class == "TensorDataset":
-        print("Initializing VM Dataset instance...")
-        vm_dataset = Dataset.init_from_tensor_dataset(
-            dataset, options, targets, target_column, class_labels
+        logger.info("Torch TensorDataset detected. Initializing VM Dataset instance...")
+        vm_dataset = TorchDataset(
+            raw_dataset=dataset,
+            index=index,
+            index_name=index_name,
+            column_names=column_names,
+            target_column=target_column,
+            text_column=text_column,
+            target_class_labels=class_labels,
         )
     else:
         raise UnsupportedDatasetError(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
 
-    vm_dataset.type = type
-
     return vm_dataset
 
 
 def init_model(
     model: object,
-    train_ds: Dataset = None,
-    test_ds: Dataset = None,
-    validation_ds: Dataset = None,
+    train_ds: VMDataset = None,
+    test_ds: VMDataset = None,
+    validation_ds: VMDataset = None,
 ) -> Model:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -229,7 +253,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         dict: A dictionary of test results
     """
     try:
-        Plan: TestPlan = get_test_plan(test_plan_name)
+        Plan: TestPlan = get_test_plan_by_id(test_plan_name)
     except ValueError as exc:
         raise GetTestPlanError(
             "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
@@ -245,6 +269,40 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     plan.run(send=send)
 
     return plan
+
+
+def get_test_suite(
+    test_suite_name: str = None,
+    section: str = None,
+    *args,
+    **kwargs,
+) -> TestSuite:
+    """Gets a TestSuite object for the current project or a specific test suite
+
+    This function provides an interface to retrieve the TestSuite instance for the
+    current project or a specific TestSuite instance identified by test_suite_name.
+    The project Test Suite will contain Test Plans for every section in the project's
+    documentation template and these Test Plans will contain all the tests associated
+    with that section.
+
+    Args:
+        test_suite_name (str, optional): The test suite name. If not passed, then the
+            project's test suite will be returned. Defaults to None.
+        section (str, optional): The section of the documentation template from which
+            to retrieve the test suite. This only applies if test_suite_name is None.
+            Defaults to None.
+        args: Additional arguments to pass to the TestSuite
+        kwargs: Additional keyword arguments to pass to the TestSuite
+    """
+    if test_suite_name is None:
+        return get_template_test_suite(
+            client_config.documentation_template,
+            section=section,
+            *args,
+            **kwargs,
+        )
+
+    return get_test_suite_by_id(test_suite_name)(*args, **kwargs)
 
 
 def run_test_suite(test_suite_name, send=True, **kwargs):
@@ -268,7 +326,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
         TestSuite: the TestSuite instance
     """
     try:
-        Suite: TestSuite = get_test_suite(test_suite_name)
+        Suite: TestSuite = get_test_suite_by_id(test_suite_name)
     except ValueError as exc:
         raise GetTestSuiteError(
             "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))
@@ -333,6 +391,13 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
 
 def run_template(*args, **kwargs):
     """DEPRECATED! Use `vm.run_documentation_tests` instead.
+
+    _run_template(
+        template=client_config.documentation_template,
+        section=section,
+        *args,
+        **kwargs,
+    )
 
     Collect and run all the tests associated with a template
 

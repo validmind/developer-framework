@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -25,6 +20,7 @@ class DatasetMetadata(TestContextUtils):
 
     # Class Variables
     test_type: ClassVar[str] = "DatasetMetadata"
+    required_context: ClassVar[list] = []
     default_params: ClassVar[dict] = {}
 
     # Instance Variables

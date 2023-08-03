@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -44,6 +39,7 @@ class ThresholdTest(TestContextUtils):
     name: ClassVar[str] = ""
     ref_id: ClassVar[str] = ""  # unique identifier for metric
     tag: ClassVar[str] = ""  # for now this is the template section id
+    required_context: ClassVar[List[str]] = []
     default_params: ClassVar[dict] = {}
 
     # Instance Variables
