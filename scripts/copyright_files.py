@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -44,8 +39,8 @@ def copyright_python_file(root, file):
         contents = f.read()
 
     # Replace the existing copyright text with the new one
-    if "This software is proprietary and confidential." in contents:
-        start_index = contents.index("# This software is proprietary and confidential.")
+    if "Copyright © 2023 ValidMind Inc." in contents:
+        start_index = contents.index("# Copyright © 2023 ValidMind Inc.")
         end_index = contents.index("All rights reserved.") + len("All rights reserved.")
         contents = contents[:start_index] + copyright.strip() + contents[end_index:]
     else:
