@@ -5,7 +5,6 @@
 #
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import pandas as pd
 from dataclasses import dataclass
 import plotly.graph_objects as go
 import plotly.express as px
@@ -24,9 +23,9 @@ class DefaultRatesbyRiskBandPlot(Metric):
 
     def description(self):
         return """
-        This metric calculates the default rates for each risk band in the data, 
-        and creates a bar plot to visualize these rates. 
-        The bar plot offers a straightforward view of default rates across different risk bands, 
+        This metric calculates the default rates for each risk band in the data,
+        and creates a bar plot to visualize these rates.
+        The bar plot offers a straightforward view of default rates across different risk bands,
         which can help with evaluating and comparing the performance of credit risk models.
         """
 
