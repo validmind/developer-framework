@@ -17,47 +17,37 @@ class WOEBinPlots(Metric):
 
     name = "woe_bin_plots"
     required_context = ["dataset"]
-    default_params = {"fig_height": 600, "fig_width": 500}
+    default_params = {"breaks_adj": None, "fig_height": 600, "fig_width": 500}
 
     def run(self):
         df = self.dataset.df
         target_column = self.dataset.target_column
         fig_height = self.params["fig_height"]
         fig_width = self.params["fig_width"]
+        breaks_adj = self.params["breaks_adj"]
 
-        woe_iv_df = self.binning_data(df, target_column)
+        woe_iv_df = self.binning_data(df, target_column, breaks_adj)
         return self.plot_woe_iv_distribution(woe_iv_df, fig_height, fig_width)
 
-    def binning_data(self, df, y):
+    def binning_data(self, df, y, breaks_adj=None):
         """
         This function performs automatic binning using WoE.
         df: A pandas dataframe
         y: The target variable in quotes, e.g. 'target'
         """
 
-        # Identify non-numeric columns
         non_numeric_cols = df.select_dtypes(exclude=["int64", "float64"]).columns
-
-        # Convert non-numeric columns to string type
         df[non_numeric_cols] = df[non_numeric_cols].astype(str)
 
-        # Perform binning
         try:
-            bins = sc.woebin(df, y)
+            bins = sc.woebin(df, y, breaks_list=breaks_adj)
         except Exception as e:
             print("Error during binning: ")
             print(e)
         else:
-            # Concatenate the individual dataframes into a single dataframe
             bins_df = pd.concat(bins.values(), keys=bins.keys())
-
-            # Reset index and convert multi-index into columns
             bins_df.reset_index(inplace=True)
-
-            # Drop the 'variable' column as it is identical to 'level_0'
             bins_df.drop(columns=["variable"], inplace=True)
-
-            # Rename 'level_0' to 'variable' and 'level_1' to 'bin_number'
             bins_df.rename(
                 columns={"level_0": "variable", "level_1": "bin_number"}, inplace=True
             )
@@ -71,9 +61,8 @@ class WOEBinPlots(Metric):
         for variable in variables:
             variable_df = woe_iv_df[woe_iv_df["variable"] == variable]
 
-            fig = make_subplots(rows=1, cols=2)  # Adjusted for 1 row and 2 columns
+            fig = make_subplots(rows=1, cols=2)
 
-            # IV bar plot
             fig.add_trace(
                 go.Bar(
                     x=variable_df["bin"],
@@ -84,16 +73,15 @@ class WOEBinPlots(Metric):
                     hovertemplate="<b>%{x}</b><br>" + "IV: %{y}<extra></extra>",
                 ),
                 row=1,
-                col=1,  # Adjusted for column 1
+                col=1,
             )
             fig.update_xaxes(
                 ticktext=variable_df["bin"].tolist(),
                 tickvals=np.arange(len(variable_df["bin"])),
                 row=1,
-                col=1,  # Adjusted for column 1
+                col=1,
             )
 
-            # WoE trend plot
             fig.add_trace(
                 go.Scatter(
                     x=variable_df["bin"],
@@ -103,13 +91,13 @@ class WOEBinPlots(Metric):
                     hovertemplate="<b>%{x}</b><br>" + "WoE: %{y}<extra></extra>",
                 ),
                 row=1,
-                col=2,  # Adjusted for column 2
+                col=2,
             )
             fig.update_xaxes(
                 ticktext=variable_df["bin"].tolist(),
                 tickvals=np.arange(len(variable_df["bin"])),
                 row=1,
-                col=2,  # Adjusted for column 2
+                col=2,
             )
 
             fig.update_layout(
