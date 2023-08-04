@@ -1,4 +1,4 @@
-# ValidMind
+# ValidMind Developer Framework
 
 ![](images/ValidMind-logo-color.svg)
 
