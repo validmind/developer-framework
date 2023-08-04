@@ -6,8 +6,6 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-import numpy as np
-
 import plotly.graph_objects as go
 from sklearn import metrics
 
@@ -33,18 +31,7 @@ class PrecisionRecallCurve(Metric):
         """
 
     def run(self):
-        if self.model.is_pytorch_model:
-            import torch
-        if (
-            self.model.device_type
-            and self.model.is_pytorch_model
-            and not self.model.device_type == "gpu"
-        ):
-
-            y_true = np.array(torch.tensor(self.model.test_ds.y).cpu())
-        else:
-            y_true = np.array(self.model.test_ds.y)
-
+        y_true = self.model.y_test_true
         y_pred = self.model.predict_proba(self.model.test_ds.x)
         y_true = y_true.astype(y_pred.dtype)
         precision, recall, pr_thresholds = metrics.precision_recall_curve(

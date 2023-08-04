@@ -104,6 +104,20 @@ class VMModel(ABC):
         return
 
     @property
+    def y_train_true(self):
+        """
+        This variable can be generated dynamically
+        """
+        return self.train_ds.y
+
+    @property
+    def y_test_true(self):
+        """
+        This variable can be generated dynamically
+        """
+        return self.test_ds.y
+
+    @property
     def y_train_predict(self):
         """
         This variable can be generated dynamically

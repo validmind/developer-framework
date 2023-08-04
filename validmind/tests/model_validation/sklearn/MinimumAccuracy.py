@@ -7,8 +7,6 @@
 
 from dataclasses import dataclass
 from typing import List
-import numpy as np
-
 import pandas as pd
 from sklearn import metrics
 
@@ -59,18 +57,7 @@ class MinimumAccuracy(ThresholdTest):
         )
 
     def run(self):
-        if self.model.is_pytorch_model:
-            import torch
-        if (
-            self.model.device_type
-            and self.model.is_pytorch_model
-            and not self.model.device_type == "gpu"
-        ):
-
-            y_true = np.array(torch.tensor(self.model.test_ds.y).cpu())
-        else:
-            y_true = np.array(self.model.test_ds.y)
-
+        y_true = self.model.y_test_true
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
 

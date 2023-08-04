@@ -8,8 +8,6 @@
 from dataclasses import dataclass
 from functools import partial
 from typing import List
-import numpy as np
-
 import pandas as pd
 from sklearn import metrics
 
@@ -73,21 +71,8 @@ class TrainingTestDegradation(ThresholdTest):
         )
 
     def run(self):
-        if self.model.is_pytorch_model:
-            import torch
-        if (
-            self.model.device_type
-            and self.model.is_pytorch_model
-            and not self.model.device_type == "gpu"
-        ):
-
-            y_test_true = np.array(torch.tensor(self.model.test_ds.y).cpu())
-            y_train_true = np.array(torch.tensor(self.model.train_ds.y).cpu())
-
-        else:
-            y_test_true = np.array(self.model.test_ds.y)
-            y_train_true = np.array(self.model.train_ds.y)
-
+        y_test_true = self.model.y_test_true
+        y_train_true = self.model.y_train_true
         train_class_pred = self.model.y_train_predict
         y_train_true = y_train_true.astype(train_class_pred.dtype)
         test_class_pred = self.model.y_test_predict
