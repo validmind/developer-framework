@@ -142,7 +142,8 @@ def list_tests(filter=None, task=None, pretty=True):
         tests = [
             test_id
             for test_id in tests
-            if __test_classes[test_id].metadata["task_type"] == task
+            if hasattr(__test_classes[test_id], "metadata")
+            and task in __test_classes[test_id].metadata["task_type"]
         ]
 
     if filter is not None:
