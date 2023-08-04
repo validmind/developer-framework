@@ -4,7 +4,6 @@
 
 import importlib
 from pathlib import Path
-from pprint import pformat
 from typing import Dict
 
 import pandas as pd
@@ -59,29 +58,33 @@ def _get_legacy_test(content_id):
     if __legacy_mapping is None:
         __legacy_mapping = {}
         for test_id in list_tests(pretty=False):
-            test = load_test(test_id, legacy=True)
+            try:
+                test = load_test(test_id, legacy=True)
+            except LoadTestError:
+                continue
+
             __legacy_mapping[test.name] = test_id
 
-    return __legacy_mapping[content_id]
+    try:
+        return __legacy_mapping[content_id]
+    except KeyError:
+        raise LoadTestError(
+            f"Unable to load test {content_id}. "
+            f"Test not found or there was an error loading the test."
+        )
 
 
-def __get_test_params(test_class):
-    """Returns a string representation of the test config"""
-    params_str = ""
-
-    for param in test_class.default_params:
-        params_str += f"{param}={pformat(test_class.default_params[param])},\n"
-
-    return params_str
-
-
-def _pretty_list_tests(tests):
+def _load_tests(test_ids):
     global __test_classes
 
     if __test_classes is None:
         __test_classes = {}
-        for test_id in tests:
+        for test_id in test_ids:
             __test_classes[test_id] = load_test(test_id)
+
+
+def _pretty_list_tests(tests):
+    _load_tests(tests)
 
     table = [
         {
@@ -132,10 +135,18 @@ def list_tests(filter=None, task=None, pretty=True):
                 )
                 __tests.append(test_id)
 
+    tests = __tests
+
+    if task is not None:
+        _load_tests(tests)
+        tests = [
+            test_id
+            for test_id in tests
+            if __test_classes[test_id].metadata["task_type"] == task
+        ]
+
     if filter is not None:
-        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]
-    else:
-        tests = __tests
+        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]        
 
     if pretty:
         return _pretty_list_tests(tests)
@@ -169,8 +180,8 @@ def load_test(test_id, legacy=False):  # noqa: C901
                 f"validmind.tests.{test_module}.{test_class}"
             )
             test = getattr(module, test_class)
-        except ModuleNotFoundError:
-            error = f"Unable to load test {test_id}. Module not found: {test_module}"
+        except ModuleNotFoundError as e:
+            error = f"Unable to load test {test_id}. {e}"
         except AttributeError:
             error = f"Unable to load test {test_id}. Class not in module: {test_class}"
 
