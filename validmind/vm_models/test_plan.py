@@ -159,7 +159,7 @@ class TestPlan:
 
         # bubble up the required inputs from the tests
         for test in self._tests:
-            if not hasattr(test, "required_inputs"):
+            if not hasattr(test, "required_inputs") or test.required_inputs is None:
                 continue
             required_inputs.update(test.required_inputs)
 
