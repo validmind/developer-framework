@@ -2,8 +2,6 @@
 
 from dataclasses import dataclass
 
-import numpy as np
-
 from .ClassifierPerformance import ClassifierPerformance
 
 
@@ -24,15 +22,7 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
         """
 
     def y_true(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.train_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.train_ds.y)
-        else:
-            y_true = np.array(self.model.train_ds.y)
-
-        return y_true
+        return self.model.y_train_true
 
     def y_pred(self):
-        return self.model.model.predict(self.model.train_ds.x)
+        return self.model.y_train_predict
