@@ -6,7 +6,7 @@ ValidMind helps model developers and model validators streamline communication a
 
 ## Contributing to the ValidMind Developer Framework
 
-We believe in the power of collaboration and welcome contributions to the ValidMind Python Client. If you've noticed a bug, have a feature request, or want to contribute a test, please submit an issue or create a pull request and refer to the [contributing guide](README.md#how-to-contribute) below.
+We believe in the power of collaboration and welcome contributions to the ValidMind Developer Framework. If you've noticed a bug, have a feature request, or want to contribute a test, please submit an issue or create a pull request and refer to the [contributing guide](README.md#how-to-contribute) below.
 
 - Interested in connecting with fellow Model Risk Management (MRM) practioners? Join our [Community Slack](site/guide/join-community.qmd)
 
