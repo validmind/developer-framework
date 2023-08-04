@@ -1,3 +1,4 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 """Base Class for Metric, ThresholdTest and any other test type"""
 
 from abc import abstractmethod

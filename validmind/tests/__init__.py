@@ -146,7 +146,7 @@ def list_tests(filter=None, task=None, pretty=True):
         ]
 
     if filter is not None:
-        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]        
+        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]
 
     if pretty:
         return _pretty_list_tests(tests)
