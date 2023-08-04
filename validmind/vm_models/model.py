@@ -320,7 +320,7 @@ class CatBoostModel(SKlearnModel):
         attributes: ModelAttributes = None
     ):
         """
-        Initilize SKLearnModel
+        Initialize CatBoostModel
         """
         super().__init__(
             model=model,
@@ -406,9 +406,7 @@ class PyTorchModel(VMModel):
 
     def predict_proba(self, *args, **kwargs):
         """
-        predict_proba (for classification) or predict (for regression) method
-
-        NOTE: This only works for sklearn or xgboost models at the moment
+        Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
             raise MissingPytorchModelPredictError(
