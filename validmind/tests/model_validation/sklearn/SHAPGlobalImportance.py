@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import warnings
@@ -12,7 +7,7 @@ import matplotlib.pyplot as plt
 import shap
 
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -74,7 +69,7 @@ class SHAPGlobalImportance(Metric):
         )
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
+        model_library = self.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
@@ -84,7 +79,7 @@ class SHAPGlobalImportance(Metric):
             return
 
         trained_model = self.model.model
-        model_class = Model.model_class(trained_model)
+        model_class = self.model.model_class()
 
         # the shap library generates a bunch of annoying warnings that we don't care about
         warnings.filterwarnings("ignore", category=UserWarning)

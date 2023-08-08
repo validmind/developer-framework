@@ -1,16 +1,9 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
 import numpy as np
-
 import plotly.graph_objects as go
 from sklearn import metrics
-
 from validmind.vm_models import Figure, Metric
 
 
@@ -32,19 +25,18 @@ class ROCCurve(Metric):
         """
 
     def run(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = np.array(self.model.test_ds.y)
+        y_true = self.model.y_test_true
+        y_pred = self.model.predict_proba(self.model.test_ds.x)
 
-        y_pred = self.model.y_test_predict
-        y_true = y_true.astype(y_pred.dtype)
+        y_true = y_true.astype(y_pred.dtype).flatten()
+        assert np.all((y_pred >= 0) & (y_pred <= 1)), "Invalid probabilities in y_pred."
+
         fpr, tpr, roc_thresholds = metrics.roc_curve(
-            y_true, y_pred, drop_intermediate=True
+            y_true, y_pred, drop_intermediate=False
         )
+        # Remove Inf values from roc_thresholds
+        valid_thresholds_mask = np.isfinite(roc_thresholds)
+        roc_thresholds = roc_thresholds[valid_thresholds_mask]
         auc = metrics.roc_auc_score(y_true, y_pred)
 
         trace0 = go.Scatter(
@@ -69,7 +61,6 @@ class ROCCurve(Metric):
         )
 
         fig = go.Figure(data=[trace0, trace1], layout=layout)
-
         return self.cache_results(
             metric_value={
                 "auc": auc,

@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -57,6 +52,7 @@ from .api_client import (  # noqa: E402
     log_figure as _log_figure_async,
 )
 from .client import (  # noqa: E402
+    get_test_suite,
     init_dataset,
     init_model,
     init_r_model,
@@ -116,17 +112,17 @@ __all__ = [  # noqa
     "__version__",
     # Framework High Level API
     "datasets",
-    "data_validation",
+    "get_test_suite",
     "init",
     "init_dataset",
     "init_model",
     "init_r_model",
-    "model_validation",
     "preview_template",
     "run_documentation_tests",
     "run_template",
     "run_test_plan",
     "run_test_suite",
+    "tests",
     "test_plans",
     "test_suites",
     "vm_models",

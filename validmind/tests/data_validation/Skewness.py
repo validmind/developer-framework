@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -58,9 +53,9 @@ class Skewness(ThresholdTest):
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(self.df)
+        dataset_types = typeset.infer_type(self.dataset.df)
 
-        skewness = self.df.skew(numeric_only=True)
+        skewness = self.dataset.df.skew(numeric_only=True)
         passed = all(abs(skewness) < self.params["max_threshold"])
         results = []
 

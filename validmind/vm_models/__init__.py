@@ -1,17 +1,17 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
 Models entrypoint
 """
 
-from .dataset import Dataset, DatasetTargets
+from .dataset import VMDataset
 from .figure import Figure
-from .model import Model, ModelAttributes, R_MODEL_TYPES
+from .model import (
+    VMModel,
+    ModelAttributes,
+    R_MODEL_TYPES
+)
+
 from .metric import Metric
 from .metric_result import MetricResult
 from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
@@ -26,13 +26,15 @@ from .test_result import TestResult, TestResults
 from .test_suite import TestSuite
 from .threshold_test import ThresholdTest
 
+# Import plot_utils so we can initialize the default matplotlib params
+from .plot_utils import *  # noqa
+
 __all__ = [
-    "Dataset",
-    "DatasetTargets",
+    "VMDataset",
     "Figure",
     "Metric",
     "MetricResult",
-    "Model",
+    "VMModel",
     "ModelAttributes",
     "R_MODEL_TYPES",
     "ResultSummary",

@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -22,7 +17,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
-    Model,
 )
 
 
@@ -64,10 +58,10 @@ class RobustnessDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping Robustness Diagnosis test for {model_library} models")
-            return
+        # model_library = Model.model_library(self.model.model)
+        # if model_library == "statsmodels" or model_library == "pytorch":
+        #     print(f"Skiping Robustness Diagnosis test for {model_library} models")
+        #     return
 
         # Validate X std deviation parameter
         if "scaling_factor_std_dev_list" not in self.params:
@@ -101,14 +95,12 @@ class RobustnessDiagnosis(ThresholdTest):
             )
 
         # Remove target column if it exist in the list
-        features_list = [
-            col for col in features_list if col != self.model.train_ds.target_column
-        ]
+        features_list = self.model.train_ds.get_features_columns()
 
-        train_df = self.model.train_ds.x.copy()
+        train_df = self.model.train_ds.x_df().copy()
         train_y_true = self.model.train_ds.y
 
-        test_df = self.model.test_ds.x.copy()
+        test_df = self.model.test_ds.x_df().copy()
         test_y_true = self.model.test_ds.y
 
         test_results = []
@@ -272,15 +264,16 @@ class RobustnessDiagnosis(ThresholdTest):
             ax=ax,
         )
         ax.tick_params(axis="x")
-        ax.set_ylabel("Accuracy", weight="bold", fontsize=22)
-        ax.legend(fontsize=22)
+        ax.set_ylabel("Accuracy", weight="bold", fontsize=18)
+        ax.legend(fontsize=18)
         ax.set_xlabel(
-            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=22
+            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
         )
         ax.set_title(
             f"Perturbed Features: {', '.join(features_columns)}",
             weight="bold",
-            fontsize=24,
+            fontsize=20,
+            wrap=True,
         )
 
         # Do this if you want to prevent the figure from being displayed

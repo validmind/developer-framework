@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -20,7 +15,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
-    Model,
 )
 
 
@@ -57,10 +51,10 @@ class OverfitDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        model_library = Model.model_library(self.model.model)
-        if model_library == "statsmodels" or model_library == "pytorch":
-            print(f"Skiping Overfit Diagnosis test for {model_library} models")
-            return
+        # model_library = Model.model_library(self.model.model)
+        # if model_library == "statsmodels" or model_library == "pytorch":
+        #     print(f"Skiping Overfit Diagnosis test for {model_library} models")
+        #     return
 
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
@@ -93,12 +87,12 @@ class OverfitDiagnosis(ThresholdTest):
 
         # Add prediction column in the training dataset
         train_df = self.model.train_ds.df.copy()
-        train_class_pred = self.model.class_predictions(self.model.y_train_predict)
+        train_class_pred = self.model.y_train_predict
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
         test_df = self.model.test_ds.df.copy()
-        test_class_pred = self.model.class_predictions(self.model.y_test_predict)
+        test_class_pred = self.model.y_test_predict
         test_df[prediction_column] = test_class_pred
 
         test_results = []
@@ -281,12 +275,13 @@ class OverfitDiagnosis(ThresholdTest):
         ax.tick_params(axis="x", labelsize=20)
         ax.tick_params(axis="y", labelsize=20)
 
-        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=22)
-        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=22)
+        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=18)
+        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=18)
         ax.set_title(
             f"Overfit regions in feature column: {feature_column}",
             weight="bold",
-            fontsize=24,
+            fontsize=20,
+            wrap=True,
         )
 
         # Get the legend handles and labels from the barplot

@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -63,11 +58,11 @@ class TimeSeriesFrequency(ThresholdTest):
 
     def run(self):
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
-        freq_df = self._identify_frequencies(self.df)
+        freq_df = self._identify_frequencies(self.dataset.df)
         n_frequencies = len(freq_df["Frequency"].unique())
         test_results = [
             TestResult(
@@ -75,7 +70,7 @@ class TimeSeriesFrequency(ThresholdTest):
                 values=freq_df.to_dict(orient="list"),
             )
         ]
-        fig_frequency = self._frequency_plot(self.df)
+        fig_frequency = self._frequency_plot(self.dataset.df)
         test_figures = []
         test_figures.append(
             Figure(

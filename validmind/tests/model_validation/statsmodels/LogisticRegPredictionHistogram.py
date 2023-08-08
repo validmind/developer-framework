@@ -1,15 +1,10 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import pandas as pd
 from dataclasses import dataclass
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -70,12 +65,6 @@ class LogisticRegPredictionHistogram(Metric):
         return fig
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         target_column = self.model.train_ds.target_column
         title = self.params["title"]
 

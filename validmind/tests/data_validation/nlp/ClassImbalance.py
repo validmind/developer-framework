@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -15,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from validmind.vm_models import (
-    Dataset,
+    VMDataset,
     TestResult,
     Figure,
     ThresholdTest,
@@ -52,7 +47,7 @@ class ClassImbalance(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, Dataset):
+        if not isinstance(self.dataset, VMDataset):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
@@ -60,7 +55,9 @@ class ClassImbalance(ThresholdTest):
             return
 
         target_column = self.dataset.target_column
-        imbalance_percentages = self.df[target_column].value_counts(normalize=True)
+        imbalance_percentages = self.dataset.df[target_column].value_counts(
+            normalize=True
+        )
 
         classes = list(imbalance_percentages.index)
         num_classes = len(classes)

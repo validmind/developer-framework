@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -33,18 +28,11 @@ class ConfusionMatrix(Metric):
         """
 
     def run(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = np.array(self.model.test_ds.y)
-
+        y_true = self.model.y_test_true
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        class_pred = self.model.model.predict(self.model.test_ds.x)
+        class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
         cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
         tn, fp, fn, tp = cm.ravel()

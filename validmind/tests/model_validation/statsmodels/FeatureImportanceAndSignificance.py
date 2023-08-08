@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -10,7 +5,7 @@ from sklearn.inspection import permutation_importance
 import pandas as pd
 import plotly.graph_objects as go
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -125,13 +120,6 @@ class FeatureImportanceAndSignificance(Metric):
 
         if self.models is not None:
             all_models.extend(self.models)
-
-        for m in all_models:
-            if not Model.is_supported_model(m.model):
-                raise ValueError(
-                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)}"
-                    " is not supported by the ValidMind framework yet"
-                )
 
         if len(self.models) != 2:
             raise ValueError("Two models must be provided")

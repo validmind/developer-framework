@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -13,7 +8,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 from validmind.statsutils import adj_r2_score
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -29,12 +23,6 @@ class RegressionModelSummary(Metric):
     name = "regression_model_summary"
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         X_columns = self.model.train_ds.get_features_columns()
 
         y_true = self.model.train_ds.y

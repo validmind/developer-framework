@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -11,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from validmind.logging import get_logger
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
 
@@ -39,17 +34,12 @@ class RegressionModelSensitivityPlot(Metric):
 
         all_models = []
         for model in self.models:
-            if not Model.is_supported_model(model.model):
-                raise ValueError(
-                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
-                                 is not supported by ValidMind framework yet"
-                )
             all_models.append(model)
 
         figures = []
         for i, model in enumerate(all_models):
-            features_df = model.test_ds.x
-            target_df = model.test_ds.y  # series
+            features_df = model.test_ds.x_df()
+            target_df = model.test_ds.y_df()  # series
 
             shocked_datasets = self.apply_shock(features_df, shocks)
 
@@ -59,7 +49,7 @@ class RegressionModelSensitivityPlot(Metric):
                 transformed_predictions = []
                 start_value = model.train_ds.y[0]
                 transformed_target = self.integrate_diff(
-                    model.test_ds.y.values, start_value
+                    model.test_ds.y_df().values, start_value
                 )
 
                 predictions = self.predict_shocked_datasets(shocked_datasets, model)

@@ -45,8 +45,8 @@ class TestFullTestSuiteNB(unittest.TestCase):
         mock_ipython.return_value = True
 
         import validmind as vm
-        from validmind.vm_models.dataset import Dataset
-        from validmind.vm_models.model import Model
+        from validmind.vm_models.dataset import VMDataset
+        from validmind.vm_models.model import VMModel
         from validmind.vm_models.test_suite import TestSuite
 
         self.vm_dataset = vm.init_dataset(
@@ -54,28 +54,26 @@ class TestFullTestSuiteNB(unittest.TestCase):
             target_column=demo_dataset.target_column,
             class_labels=demo_dataset.class_labels,
         )
-        self.assertIsInstance(self.vm_dataset, Dataset)
+        self.assertIsInstance(self.vm_dataset, VMDataset)
 
         vm_train_ds = vm.init_dataset(
             dataset=self.train_df,
-            type="generic",
             target_column=demo_dataset.target_column,
         )
-        self.assertIsInstance(vm_train_ds, Dataset)
+        self.assertIsInstance(vm_train_ds, VMDataset)
 
         self.vm_test_ds = vm.init_dataset(
             dataset=self.test_df,
-            type="generic",
             target_column=demo_dataset.target_column,
         )
-        self.assertIsInstance(self.vm_test_ds, Dataset)
+        self.assertIsInstance(self.vm_test_ds, VMDataset)
 
         self.vm_model = vm.init_model(
             self.model,
             train_ds=vm_train_ds,
             test_ds=self.vm_test_ds,
         )
-        self.assertIsInstance(self.vm_model, Model)
+        self.assertIsInstance(self.vm_model, VMModel)
 
         async def run_test_suite():
             return vm.run_test_suite(

@@ -1,13 +1,6 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-
-import numpy as np
 
 from .ClassifierPerformance import ClassifierPerformance
 
@@ -29,15 +22,7 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
         """
 
     def y_true(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = np.array(self.model.test_ds.y)
-
-        return y_true
+        return self.model.y_test_true
 
     def y_pred(self):
-        return self.model.model.predict(self.model.test_ds.x)
+        return self.model.y_test_predict

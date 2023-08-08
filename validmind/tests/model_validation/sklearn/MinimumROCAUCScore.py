@@ -1,13 +1,7 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
 from typing import List
-import numpy as np
 
 import pandas as pd
 from sklearn import metrics
@@ -57,15 +51,8 @@ class MinimumROCAUCScore(ThresholdTest):
         )
 
     def run(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = self.model.test_ds.y
-
-        class_pred = self.model.model.predict(self.model.test_ds.x)
+        y_true = self.model.y_test_true
+        class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
         roc_auc = metrics.roc_auc_score(y_true, class_pred)
 

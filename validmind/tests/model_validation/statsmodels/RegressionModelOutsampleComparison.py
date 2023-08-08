@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -12,7 +7,6 @@ import pandas as pd
 
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -49,11 +43,6 @@ class RegressionModelOutsampleComparison(Metric):
             all_models.extend(self.models)
 
         for model in all_models:
-            if not Model.is_supported_model(model.model):
-                raise ValueError(
-                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
-                                is not supported by ValidMind framework yet"
-                )
             if model.test_ds is None:
                 raise ValueError(
                     "Test dataset is missing in the ValidMind Model object"

@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """ValidMind API client
@@ -30,7 +25,7 @@ from .errors import (
 )
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
-from .vm_models import Dataset, Figure, Metric, TestResults
+from .vm_models import VMDataset, Figure, Metric, TestResults
 
 # TODO: can't import types from vm_models because of circular dependency
 
@@ -245,7 +240,7 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
     return await _get(f"get_metadata/{content_id}")
 
 
-async def log_dataset(vm_dataset: Dataset) -> Dict[str, Any]:
+async def log_dataset(vm_dataset: VMDataset) -> Dict[str, Any]:
     """Logs metadata and statistics about a dataset to ValidMind API.
 
     Args:

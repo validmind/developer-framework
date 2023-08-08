@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
@@ -56,9 +51,9 @@ class Duplicates(ThresholdTest):
         )
 
     def run(self):
-        rows = self.df.shape[0]
+        rows = self.dataset.df.shape[0]
 
-        n_duplicates = len(self.df[self.df.duplicated(keep=False)])
+        n_duplicates = len(self.dataset.df[self.dataset.df.duplicated(keep=False)])
         p_duplicates = n_duplicates / rows
         passed = n_duplicates < self.params["min_threshold"]
 
@@ -78,7 +73,9 @@ class Duplicates(ThresholdTest):
                 primary_keys.append(field["id"])
 
         for col in primary_keys:
-            col_n_duplicates = len(self.df[self.df[col].duplicated(keep=False)])
+            col_n_duplicates = len(
+                self.dataset.df[self.dataset.df[col].duplicated(keep=False)]
+            )
             col_p_duplicates = col_n_duplicates / rows
             col_passed = col_n_duplicates < self.params["min_threshold"]
             results.append(

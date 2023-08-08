@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
@@ -18,7 +13,6 @@ class RegressionModelDescription(TestPlan):
     """
 
     name = "regression_model_description"
-    required_context = ["model"]
     tests = [
         "validmind.data_validation.DatasetSplit",
         "validmind.model_validation.ModelMetadata",
@@ -31,7 +25,6 @@ class RegressionModelsEvaluation(TestPlan):
     """
 
     name = "regression_models_evaluation"
-    required_context = ["models", "model"]
     tests = [
         "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
         "validmind.model_validation.statsmodels.RegressionModelsPerformance",

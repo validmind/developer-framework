@@ -1,8 +1,3 @@
-# This software is proprietary and confidential. Unauthorized copying,
-# modification, distribution or use of this software is strictly prohibited.
-# Please refer to the LICENSE file in the root directory of this repository
-# for more information.
-#
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import numpy as np
@@ -10,7 +5,6 @@ import pandas as pd
 from dataclasses import dataclass
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -28,12 +22,6 @@ class GINITable(Metric):
     required_context = ["model"]
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         model = self.model
 
         X_train = self.model.train_ds.x
