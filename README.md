@@ -40,7 +40,7 @@ pip install validmind[r-support]
 
 - Ensure you have `poetry` installed: <https://python-poetry.org/>
 
-- After cloning this repo run:
+- After cloning this repo, run:
 
     ```bash
     poetry shell
@@ -56,13 +56,13 @@ poetry install --extras pytorch
 ```
 ### Installing R dependencies
 
-If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. If you are on a Mac, you can install R using Homebrew:
+If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. On a Mac, you can install R using Homebrew:
 
 ```bash
 brew install r
 ```
 
-Once you have R installed, you can install the `r-support` extra to install the necessary dependencies for R by running:
+Once you have R installed, install the `r-support` extra to install the necessary dependencies for R by running:
 
 ```bash
 poetry install --extras r-support
@@ -78,9 +78,9 @@ make version tag=patch
 
 The value of `tag` corresponds to one of the options provided by Poetry: <https://python-poetry.org/docs/cli/#version>
 
-## Generating Docs
+## Generating API Reference Docs
 
-API documentation can be generated as HTML format with `pdoc` with the following
+The [API reference documentation](https://docs.validmind.ai/validmind/validmind.html) you see in our docs site is generated in HTML format with `pdoc` with the following
 command:
 
 ```bash
@@ -88,7 +88,7 @@ command:
 make docs
 ```
 
-The resulting docs will be written to `docs/pdoc/_build`.
+The resulting docs are written to `docs/pdoc/_build`.
 
 ## Adding a Copyright Header
 
