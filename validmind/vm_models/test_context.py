@@ -88,7 +88,6 @@ class TestContextUtils:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        print("we are using the new test context validation")
         for element in self.required_inputs:
             if not hasattr(self, element):
                 raise MissingRequiredTestContextError(
