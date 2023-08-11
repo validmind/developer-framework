@@ -6,11 +6,7 @@ Models entrypoint
 
 from .dataset import VMDataset
 from .figure import Figure
-from .model import (
-    VMModel,
-    ModelAttributes,
-    R_MODEL_TYPES
-)
+from .model import VMModel, ModelAttributes, R_MODEL_TYPES
 
 from .metric import Metric
 from .metric_result import MetricResult
