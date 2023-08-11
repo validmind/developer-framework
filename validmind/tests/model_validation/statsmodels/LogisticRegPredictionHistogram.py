@@ -28,7 +28,7 @@ class LogisticRegPredictionHistogram(Metric):
         """
         Predict probabilities and add PD as a new column in X
         """
-        probabilities = model.predict(X)
+        probabilities = model.model.predict(X)
         pd = probabilities
         X["probabilities"] = pd
         return X
