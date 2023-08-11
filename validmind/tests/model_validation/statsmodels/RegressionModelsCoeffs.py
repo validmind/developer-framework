@@ -6,7 +6,6 @@ import pandas as pd
 
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -61,13 +60,6 @@ class RegressionModelsCoeffs(Metric):
 
         if self.models is not None:
             all_models.extend(self.models)
-
-        for m in all_models:
-            if not Model.is_supported_model(m.model):
-                raise ValueError(
-                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
-                              is not supported by ValidMind framework yet"
-                )
 
         summaries = [m.model.summary() for m in all_models]
         coef_stats_df = self.extract_coefficients_summary(summaries)

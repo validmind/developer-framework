@@ -78,6 +78,7 @@ class NumpyDataset(VMDataset):
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self._index = index
         self._index_name = index_name
+
         if (column_names is not None) and (
             not isinstance(column_names, list)
             or not all(isinstance(element, str) for element in column_names)
@@ -386,6 +387,12 @@ class TorchDataset(NumpyDataset):
             merged_tensors = np.concatenate(
                 (raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1
             )
+        if column_names is None:
+            n_cols = merged_tensors.shape[1]
+            column_names = list(np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str))
+        if target_column is None:
+            n_cols = merged_tensors.shape[1] - 1
+            target_column = str(n_cols)
 
         super().__init__(
             raw_dataset=merged_tensors,

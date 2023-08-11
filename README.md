@@ -1,6 +1,20 @@
-# ValidMind Python Client
+# ValidMind Developer Framework
 
-## Installation
+![](images/ValidMind-logo-color.svg)
+
+ValidMind's Developer Framework is a library of developer tools and methods designed to run validation tests and automate the documentation of your models. The Developer Framework provides a rich suite of documentation tools and test plans, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
+
+The Developer Framework includes the Python client library, which is designed to be model agnostic. If your model is built in Python, ValidMind's Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
+
+## Contributing to the ValidMind Developer Framework
+
+We believe in the power of collaboration and welcome contributions to the ValidMind Developer Framework. If you've noticed a bug, have a feature request, or want to contribute a test, please create a pull request or submit an issue and refer to the [contributing guide](README.md#how-to-contribute) below.
+
+- Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](site/guide/join-community.qmd)!
+
+- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/guide/developer-framework.html).
+
+## Getting started
 
 ### Install from PyPI
 
@@ -20,18 +34,18 @@ pip install validmind[pytorch]
 pip install validmind[r-support]
 ```
 
-## Contributing to ValidMind Developer Framework
+## How to contribute
 
 ### Install dependencies
 
 - Ensure you have `poetry` installed: <https://python-poetry.org/>
 
-- After cloning this repo run:
+- After cloning this repo, run:
 
-```bash
-poetry shell
-poetry install
-```
+    ```bash
+    poetry shell
+    poetry install
+    ```
 
 ### Installing PyTorch dependencies
 
@@ -40,29 +54,15 @@ You can install the `pytorch` extra to install the necessary PyTorch dependencie
 ```bash
 poetry install --extras pytorch
 ```
-
-### Creating a new Test
-
-All ValidMind Tests are in the `validmind/tests/` directory. Each test is its own separate file and should be named using Camel Case. For example, `MyNewTest.py`. Within this file should live a single Test class that matches the file name. For example, `class MyNewTest`. This class should inherit from `validmind.vm_models.Metric` or `validmind.vm_models.ThresholdTest` depending on the type of test you are creating. The tests are separated into subdirectories based on the different categories and types of tests. For example, `validmind/tests/model_validation/sklearn` contains all of the model validation tests for sklearn-compatible models. There are two subdirectories in this folder: `metrics/` and `threshold_tests/` that contain the different types of tests (any sub category can be used here and the `__init__.py` file will automatically pick up the tests). Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples of this as well as for information on how the directory relates to the test's ID which is used across the ValidMind platform.
-
-To create a new test, you can use the create_new_test.py script to generate a metric or threshold test. This script will create a new test file in the appropriate directory and will also create a new test class in that file. It is registered as a custom Poetry script in the `pyproject.toml` so it can be used as follows:
-
-```bash
-generate-test --help  # see the usage instructions
-generate-test  # interactively create a new test (will prompt for the test type and ID)
-generate-test --test_type metric --test_id validmind.model_validation.sklearn.MyNewMetric  # create a new metric test for sklearn models
-generate-test --test_type threshold_test --test_id validmind.data_validation.MyNewDataTest  # create a new threshold test for data validation
-```
-
 ### Installing R dependencies
 
-If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. If you are on a Mac, you can install R using Homebrew:
+If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. On a Mac, you can install R using Homebrew:
 
 ```bash
 brew install r
 ```
 
-Once you have R installed, you can install the `r-support` extra to install the necessary dependencies for R by running:
+Once you have R installed, install the `r-support` extra to install the necessary dependencies for R by running:
 
 ```bash
 poetry install --extras r-support
@@ -78,18 +78,9 @@ make version tag=patch
 
 The value of `tag` corresponds to one of the options provided by Poetry: <https://python-poetry.org/docs/cli/#version>
 
-## Integrating the ValidMind Developer Framework to your development environment
+## Generating API Reference Docs
 
-If you want to integate the `validmind` package to your development environment, you must build the package
-wheel first, since we have not pushed the package to a public PyPI repository yet. Steps:
-
-- Run `make build` to build a new Python package for the developer framework
-- This will create a new wheel file in the `dist` folder
-- Run `pip install <path-to-wheel>` to install the newly built package in your environment
-
-## Generating Docs
-
-API documentation can be generated as HTML format with `pdoc` with the following
+The [API reference documentation](https://docs.validmind.ai/validmind/validmind.html) you see in our docs site is generated in HTML format with `pdoc` with the following
 command:
 
 ```bash
@@ -97,7 +88,7 @@ command:
 make docs
 ```
 
-The resulting docs will be written to `docs/pdoc/_build`.
+The resulting docs are written to `docs/pdoc/_build`.
 
 ## Adding a Copyright Header
 

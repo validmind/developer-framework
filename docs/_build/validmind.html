@@ -263,7 +263,7 @@ DataFrames at the moment.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span>:</span></span>
+        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
         
     </div>
@@ -271,12 +271,12 @@ DataFrames at the moment.</p>
     
             <div class="docstring"><p>Initializes a VM Model, which can then be passed to other functions
 that can perform additional analysis and tests on the data. This function
-also ensures we are reading a supported model type.</p>
+also ensures we are creating a model supported libraries.</p>
 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>model:</strong>  A trained sklearn model</li>
+<li><strong>model:</strong>  A trained model</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -288,7 +288,7 @@ also ensures we are reading a supported model type.</p>
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>vm.vm.Model: A VM Model instance</p>
+  <p>vm.VMModel: A VM Model instance</p>
 </blockquote>
 </div>
 
@@ -298,7 +298,7 @@ also ensures we are reading a supported model type.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_r_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span>:</span></span>
+        <span class="name">init_r_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
         
     </div>

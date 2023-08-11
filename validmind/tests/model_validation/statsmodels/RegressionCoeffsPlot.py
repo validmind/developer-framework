@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 import plotly.graph_objects as go
 from scipy import stats
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -76,12 +76,6 @@ class RegressionCoeffsPlot(Metric):
             all_models.extend(self.models)
 
         for i, m in enumerate(all_models):
-            if not Model.is_supported_model(m.model):
-                raise ValueError(
-                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
-                              is not supported by ValidMind framework yet"
-                )
-
             model_name = f"Model {i+1}"
             model_fit = m.model
 

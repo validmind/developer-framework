@@ -6,7 +6,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 from validmind.vm_models import (
     Metric,
-    Model,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -35,13 +34,6 @@ class RegressionModelsPerformance(Metric):
 
         if self.models is not None:
             all_models.extend(self.models)
-
-        for m in all_models:
-            if not Model.is_supported_model(m.model):
-                raise ValueError(
-                    f"{Model.model_library(m.model)}.{Model.model_class(m.model)} \
-                              is not supported by ValidMind framework yet"
-                )
 
         in_sample_results = self._in_sample_performance_ols(all_models)
         out_of_sample_results = self._out_sample_performance_ols(all_models)
