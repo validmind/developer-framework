@@ -22,7 +22,7 @@ class SeasonalDecompose(Metric):
 
     category = "univariate_analysis"
     name = "seasonal_decompose"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"seasonal_model": "additive"}
 
     def store_seasonal_decompose(self, column, sd_one_column):

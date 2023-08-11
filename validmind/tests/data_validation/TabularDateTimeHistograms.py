@@ -15,7 +15,7 @@ class TabularDateTimeHistograms(Metric):
     """
 
     name = "tabular_datetime_histograms"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         df = self.dataset.df

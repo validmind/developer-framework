@@ -24,7 +24,7 @@ class Hashtags(ThresholdTest):
 
     category = "data_quality"
     name = "hashtags"
-    required_context = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_hashtags": 25}
 
     def description(self):

@@ -19,7 +19,7 @@ class GINITable(Metric):
     """
 
     name = "gini_table"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def run(self):
         model = self.model

@@ -30,7 +30,7 @@ class PermutationFeatureImportance(Metric):
     """
 
     name = "pfi"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_params = {
         "fontsize": None,
         "figure_height": 1000,

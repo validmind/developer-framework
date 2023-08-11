@@ -389,7 +389,9 @@ class TorchDataset(NumpyDataset):
             )
         if column_names is None:
             n_cols = merged_tensors.shape[1]
-            column_names = list(np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str))
+            column_names = list(
+                np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str)
+            )
         if target_column is None:
             n_cols = merged_tensors.shape[1] - 1
             target_column = str(n_cols)

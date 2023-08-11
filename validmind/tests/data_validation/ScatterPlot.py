@@ -13,7 +13,7 @@ class ScatterPlot(Metric):
     """
 
     name = "scatter_plot"
-    required_context = ["dataset", "dataset.target_column"]
+    required_inputs = ["dataset", "dataset.target_column"]
 
     def run(self):
         columns = list(self.dataset.df.columns)

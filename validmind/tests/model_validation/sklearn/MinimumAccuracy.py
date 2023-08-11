@@ -23,7 +23,7 @@ class MinimumAccuracy(ThresholdTest):
 
     category = "model_performance"
     name = "accuracy_score"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_params = {"min_threshold": 0.7}
 
     def summary(self, results: List[TestResult], all_passed: bool):

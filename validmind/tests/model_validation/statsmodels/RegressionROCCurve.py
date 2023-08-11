@@ -14,7 +14,7 @@ class RegressionROCCurve(Metric):
     """
 
     name = "regression_roc_curve"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """

@@ -27,7 +27,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     category = "model_diagnosis"
     name = "weak_spots"
-    required_context = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {
         "features_columns": None,

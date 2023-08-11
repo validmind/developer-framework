@@ -30,7 +30,7 @@ class ClassImbalance(ThresholdTest):
     category = "data_quality"
     # Changing the name test to avoid a name clash
     name = "nlp_class_imbalance"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 10}
 
     def summary(self, results: List[TestResult], all_passed: bool):
