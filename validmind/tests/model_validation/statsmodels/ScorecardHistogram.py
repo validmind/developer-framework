@@ -87,10 +87,17 @@ class ScorecardHistogram(Metric):
         target_odds = self.params["target_odds"]
         pdo = self.params["pdo"]
 
-        X_train = self.model.train_ds.x.copy()
-        y_train = self.model.train_ds.y.copy()
-        X_test = self.model.test_ds.x.copy()
-        y_test = self.model.test_ds.y.copy()
+        # Create a copy of training and testing dataframes
+        df_train = self.model.train_ds._df.copy()
+        df_test = self.model.test_ds._df.copy()
+
+        # Drop target_column to create feature dataframes
+        X_train = df_train.drop(columns=[target_column])
+        X_test = df_test.drop(columns=[target_column])
+
+        # Subset only target_column to create target dataframes
+        y_train = df_train[[target_column]]
+        y_test = df_test[[target_column]]
 
         X_train_scores = self.compute_scores(
             self.model, X_train, target_score, target_odds, pdo
