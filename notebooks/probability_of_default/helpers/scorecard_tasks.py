@@ -145,3 +145,23 @@ def transform_woe_df(woe_df):
         bins[variable] = group
 
     return bins
+
+
+def apply_credit_scores(model, X, target_score, target_odds, pdo):
+    X_copy = X.copy()
+    beta = model.params.values
+    alpha = model.params[0]
+    factor = pdo / np.log(2)
+    offset = target_score - (factor * np.log(target_odds))
+
+    for _, row in X_copy.iterrows():
+        score_i = 0
+        for i in range(1, len(beta)):
+            WoE_i = row[i]
+            score_i += (beta[i] * WoE_i) * factor
+
+        score_i += alpha * factor
+        score_i += offset
+        X_copy.loc[row.name, "score"] = score_i
+
+    return X_copy

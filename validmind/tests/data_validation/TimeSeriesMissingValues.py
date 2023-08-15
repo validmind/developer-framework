@@ -2,9 +2,9 @@
 
 from dataclasses import dataclass
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
+import plotly.express as px
+import plotly.figure_factory as ff
 
 from validmind.vm_models import (
     Figure,
@@ -49,18 +49,20 @@ class TimeSeriesMissingValues(ThresholdTest):
         )
 
     def run(self):
+        df = self.dataset._df
+
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
-        # Validate threshold paremeter
+        # Validate threshold parameter
         if "min_threshold" not in self.params:
             raise ValueError("min_threshold must be provided in params")
         min_threshold = self.params["min_threshold"]
 
-        rows = self.dataset.df.shape[0]
-        missing = self.dataset.df.isna().sum()
+        rows = df.shape[0]
+        missing = df.isna().sum()
         test_results = [
             TestResult(
                 column=col,
@@ -70,8 +72,8 @@ class TimeSeriesMissingValues(ThresholdTest):
             for col in missing.index
         ]
 
-        fig_barplot = self._barplot(self.dataset.df, rotation=45)
-        fig_heatmap = self._heatmap(self.dataset.df)
+        fig_barplot = self._barplot(df)
+        fig_heatmap = self._heatmap(df)
         test_figures = []
         if fig_barplot is not None:
             test_figures.append(
@@ -99,35 +101,20 @@ class TimeSeriesMissingValues(ThresholdTest):
             # figures=test_figures,
         )
 
-    def _barplot(self, df: pd.DataFrame, rotation: int = 45) -> plt.Figure:
+    def _barplot(self, df):
         """
-        Generate a bar plot of missing values in a pandas DataFrame.
-        Args:
-        df (pandas.DataFrame): The input DataFrame to plot the missing values of.
-        rotation (int): The rotation angle for x-axis labels. Default is 45.
-        font_size (int): The font size for x-axis and y-axis labels. Default is 18.
-        Returns:
-        matplotlib.figure.Figure: A matplotlib figure object containing the bar plot.
+        Generate a bar plot of missing values using Plotly.
         """
-        # Create a bar plot using seaborn library
         missing_values = df.isnull().sum()
         if sum(missing_values.values) != 0:
-            fig, ax = plt.subplots()
-            sns.barplot(
-                data=missing_values,
+            fig = px.bar(
+                missing_values,
                 x=missing_values.index,
                 y=missing_values.values,
-                ax=ax,
-                palette="Reds",
-            )
-            ax.set_xticklabels(
-                labels=missing_values.index, rotation=rotation, fontsize=18
-            )
-            plt.yticks(rotation=45, fontsize=18)
-            ax.set_title(
-                "Total Number of Missing Values per Variable",
-                weight="bold",
-                fontsize=20,
+                labels={"x": "", "y": "Missing Values"},
+                title="Total Number of Missing Values per Variable",
+                color=missing_values.values,
+                color_continuous_scale="Reds",
             )
         else:
             fig = None
@@ -136,39 +123,21 @@ class TimeSeriesMissingValues(ThresholdTest):
 
     def _heatmap(self, df):
         """
-        Plots a heatmap to visualize missing values in a dataframe with actual years on the x-axis.
-        Args:
-        df (pandas.DataFrame): The input dataframe to visualize.
-        Returns:
-        matplotlib.figure.Figure: A matplotlib figure object representing the heatmap plot.
-        Raises:
-        None
+        Plots a heatmap to visualize missing values using Plotly.
         """
         # Create a boolean mask for missing values
         missing_mask = df.isnull()
-        # Set seaborn plot style
-        sns.set(style="darkgrid")
-        fig, ax = plt.subplots()
+        z = missing_mask.T.astype(int).values  # Convert boolean to int for heatmap
 
-        # Plot the heatmap
-        sns.heatmap(missing_mask.T, cmap="Reds", cbar=False, xticklabels=False, ax=ax)
+        x = missing_mask.index.tolist()
+        y = missing_mask.columns.tolist()
 
-        # Add actual years on the x-axis
-        years = df.index.year.unique()
-        xticks = [
-            df.index.get_loc(df.index[df.index.year == year][0]) for year in years
-        ]
-
-        plt.xticks(xticks, years, rotation=45, fontsize=18)
-        plt.yticks(rotation=45, fontsize=18)
-        plt.gca().xaxis.set_major_locator(plt.MultipleLocator(5))
-        ax.set_xlabel("")
-        ax.set_title(
-            "Missing Values Heatmap",
-            weight="bold",
-            fontsize=20,
-        )
-        # Do this if you want to prevent the figure from being displayed
-        plt.close("all")
+        if not x:
+            fig = ff.create_annotated_heatmap(
+                z=z, x=x, y=y, colorscale="Reds", showscale=False
+            )
+            fig.update_layout(title="Missing Values Heatmap")
+        else:
+            fig = None
 
         return fig
