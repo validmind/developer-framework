@@ -4,6 +4,7 @@
 Model class wrapper module
 """
 import inspect
+import numpy as np
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -19,6 +20,7 @@ SUPPORTED_LIBRARIES = {
     "sklearn": "SKlearnModel",
     "torch": "PyTorchModel",
     "statsmodels": "StatsModelsModel",
+    "custom": "SKlearnModel",
 }
 
 R_MODEL_TYPES = [
@@ -215,16 +217,21 @@ class SKlearnModel(VMModel):
         )
 
         if self.model and self.train_ds:
-            self._y_train_predict = self.predict(self.train_ds.x)
+            self._y_train_predict = np.array(self.predict(self.train_ds.x))
         if self.model and self.test_ds:
-            self._y_test_predict = self.predict(self.test_ds.x)
+            self._y_test_predict = np.array(self.predict(self.test_ds.x))
         if self.model and self.validation_ds:
-            self._y_validation_predict = self.predict(self.validation_ds.x)
+            self._y_validation_predict = np.array(self.predict(self.validation_ds.x))
 
     def predict_proba(self, *args, **kwargs):
         """
         predict_proba (for classification) or predict (for regression) method
         """
+        if not has_method_with_arguments(self.model, "predict_proba", 1):
+            raise MissingPytorchModelPredictError(
+                "Model requires a implemention of predict_proba method with 1 argument"
+                + " that is features matrix"
+            )
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
         return None
@@ -391,11 +398,11 @@ class PyTorchModel(VMModel):
             attributes=attributes
         )
         if self.model and self.train_ds:
-            self._y_train_predict = self.predict(self.train_ds.x)
+            self._y_train_predict = np.array(self.predict(self.train_ds.x))
         if self.model and self.test_ds:
-            self._y_test_predict = self.predict(self.test_ds.x)
+            self._y_test_predict = np.array(self.predict(self.test_ds.x))
         if self.model and self.validation_ds:
-            self._y_validation_predict = self.predict(self.validation_ds.x)
+            self._y_validation_predict = np.array(self.predict(self.validation_ds.x))
 
         self._device_type = next(self.model.parameters()).device
 
@@ -480,12 +487,13 @@ def is_pytorch_model(model):
 
 
 def model_module(model):
-    module = model.__class__.__module__.split(".")[0]
-    if module != "__main__":
-        return module
     # pyTorch liabrary
     if is_pytorch_model(model=model):
         return "torch"
+    module = model.__class__.__module__.split(".")[0]
+    if module == "__main__":
+        return "custom"
+    return module
 
 
 def get_model_class(model):

@@ -16,7 +16,11 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
     """
     architecture = model.model_name()
     framework = model.model_library()
-    framework_version = sys.modules[model.model_library()].__version__
+
+    if model.model_library() == "__main__":
+        framework_version = "0.0"
+    else:
+        framework_version = sys.modules[model.model_library()].__version__
 
     return {
         "architecture": architecture,

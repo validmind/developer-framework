@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from typing import List
 
 import pandas as pd
-from sklearn import metrics
+from sklearn import metrics, preprocessing
+
 
 from validmind.vm_models import (
     ResultSummary,
@@ -50,11 +51,19 @@ class MinimumROCAUCScore(ThresholdTest):
             ]
         )
 
+    def multiclass_roc_auc_score(self, y_test, y_pred, average="macro"):
+        lb = preprocessing.LabelBinarizer()
+        lb.fit(y_test)
+        y_test = lb.transform(y_test)
+        y_pred = lb.transform(y_pred)
+        return metrics.roc_auc_score(y_test, y_pred, average=average)
+
     def run(self):
         y_true = self.model.y_test_true
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
-        roc_auc = metrics.roc_auc_score(y_true, class_pred)
+        # roc_auc = metrics.roc_auc_score(y_true, class_pred)
+        roc_auc = self.multiclass_roc_auc_score(y_true, class_pred)
 
         passed = roc_auc > self.params["min_threshold"]
         results = [
