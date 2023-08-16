@@ -16,7 +16,7 @@ license = "Commercial License"
 # ]
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.17.0"
+version = "1.17.1"
 
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
