@@ -24,7 +24,6 @@ SUPPORTED_LIBRARIES = {
     "sklearn": SKlearnModel,
     "statsmodels": StatsModelsModel,
     "torch": PyTorchModel,
-
     "custom": SKlearnModel,
 }
 
@@ -185,10 +184,6 @@ class VMModel(ABC):
         """
         pass
 
-    @abstractmethod
-    def is_pytorch_model(self):
-        pass
-
 
 def has_method_with_arguments(cls, method_name, n_args):
     if not hasattr(cls, method_name):
@@ -227,9 +222,11 @@ def model_module(model):
     # pyTorch liabrary
     if is_pytorch_model(model=model):
         return "torch"
+
     module = model.__class__.__module__.split(".")[0]
     if module == "__main__":
         return "custom"
+
     return module
 
 

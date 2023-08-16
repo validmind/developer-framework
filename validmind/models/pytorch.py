@@ -80,9 +80,6 @@ class PyTorchModel(VMModel):
         """
         return "torch"
 
-    def is_pytorch_model(self):
-        return True
-
     def model_class(self):
         """
         Returns the model class name

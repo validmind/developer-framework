@@ -83,6 +83,3 @@ class SKlearnModel(VMModel):
         Returns model name
         """
         return type(self.model).__name__
-
-    def is_pytorch_model(self):
-        return self.model_library() == "torch"
