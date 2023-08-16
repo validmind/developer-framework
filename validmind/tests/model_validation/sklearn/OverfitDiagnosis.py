@@ -51,11 +51,6 @@ class OverfitDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        # model_library = Model.model_library(self.model.model)
-        # if model_library == "statsmodels" or model_library == "pytorch":
-        #     print(f"Skiping Overfit Diagnosis test for {model_library} models")
-        #     return
-
         if "cut_off_percentage" not in self.params:
             raise ValueError("cut_off_percentage must be provided in params")
         cut_off_percentage = self.params["cut_off_percentage"]
@@ -67,6 +62,9 @@ class OverfitDiagnosis(ThresholdTest):
             features_list = self.model.train_ds.get_features_columns()
         else:
             features_list = self.params["features_columns"]
+
+        if self.model.train_ds.text_column in features_list:
+            raise ValueError("Skiping Overfit Diagnosis test for the dataset with text column")
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(

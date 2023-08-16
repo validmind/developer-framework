@@ -29,43 +29,28 @@ class ConfusionMatrix(Metric):
 
     def run(self):
         y_true = self.model.y_test_true
-        y_labels = np.unique(y_true)
-        y_labels.sort()
+        labels = np.unique(y_true)
+        labels.sort()
+        labels = np.array(labels).T.tolist()
 
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
-        cm = metrics.confusion_matrix(y_true, class_pred, labels=y_labels)
-        tn, fp, fn, tp = cm.ravel()
-
-        # Custom text to display on the heatmap cells
-        text = [
-            [
-                f"<b>True Negatives (TN)</b><br />{tn}",
-                f"<b>False Positives (FP)</b><br />{fp}",
-            ],
-            [
-                f"<b>False Negatives (FN)</b><br />{fn}",
-                f"<b>True Positives (TP)</b><br />{tp}",
-            ],
-        ]
+        cm = metrics.confusion_matrix(y_true, class_pred, labels=labels)
 
         fig = ff.create_annotated_heatmap(
-            [[tn, fp], [fn, tp]],
-            x=[0, 1],
-            y=[0, 1],
+            z=cm,
             colorscale="Blues",
-            annotation_text=text,
+            x=labels,
+            y=labels,
         )
-        # Reverse the xaxis so that 1 is on the left
-        fig["layout"]["xaxis"]["autorange"] = "reversed"
 
         fig["data"][0][
             "hovertemplate"
         ] = "True Label:%{y}<br>Predicted Label:%{x}<br>Count:%{z}<extra></extra>"
 
         fig.update_layout(
-            xaxis=dict(title="Predicted label", constrain="domain"),
-            yaxis=dict(title="True label", scaleanchor="x", scaleratio=1),
+            xaxis=dict(title="Predicted label"),
+            yaxis=dict(title="True label"),
             autosize=False,
             width=600,
             height=600,
@@ -73,10 +58,7 @@ class ConfusionMatrix(Metric):
 
         return self.cache_results(
             metric_value={
-                "tn": tn,
-                "fp": fp,
-                "fn": fn,
-                "tp": tp,
+                "confusion_matrix": cm,
             },
             figures=[
                 Figure(

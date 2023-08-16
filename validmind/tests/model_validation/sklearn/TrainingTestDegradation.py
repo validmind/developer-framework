@@ -32,9 +32,9 @@ class TrainingTestDegradation(ThresholdTest):
     }
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": partial(metrics.precision_score, zero_division=0),
-        "recall": partial(metrics.recall_score, zero_division=0),
-        "f1": partial(metrics.f1_score, zero_division=0),
+        "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
+        "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
+        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
     }
 
     def summary(self, results: List[TestResult], all_passed: bool):
