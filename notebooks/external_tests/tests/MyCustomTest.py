@@ -9,7 +9,7 @@ class MyCustomTest(Metric):
 
     # The metric name should match the content ID on the template
     name = "my_local_provider.tests.MyCustomTest"
-    required_context = []
+    required_inputs = []
     default_params = {}
 
     def run(self):

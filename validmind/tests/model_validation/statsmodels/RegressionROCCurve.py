@@ -4,7 +4,7 @@ import numpy as np
 from dataclasses import dataclass
 import plotly.graph_objects as go
 from sklearn.metrics import roc_curve, auc
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -14,7 +14,7 @@ class RegressionROCCurve(Metric):
     """
 
     name = "regression_roc_curve"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """
@@ -57,12 +57,6 @@ class RegressionROCCurve(Metric):
         return fig
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         y_true = np.array(self.model.test_ds.y)
         y_scores = self.model.predict(self.model.test_ds.x)
 

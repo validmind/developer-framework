@@ -4,7 +4,7 @@ import pandas as pd
 from dataclasses import dataclass
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -14,7 +14,7 @@ class LogisticRegPredictionHistogram(Metric):
     """
 
     name = "logistic_reg_prediction_histogram"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {"title": "Histogram of Predictive Probabilities"}
 
     def description(self):
@@ -65,12 +65,6 @@ class LogisticRegPredictionHistogram(Metric):
         return fig
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                              is not supported by ValidMind framework yet"
-            )
-
         target_column = self.model.train_ds.target_column
         title = self.params["title"]
 

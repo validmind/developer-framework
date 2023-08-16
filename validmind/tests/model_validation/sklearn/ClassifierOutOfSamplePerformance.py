@@ -2,8 +2,6 @@
 
 from dataclasses import dataclass
 
-import numpy as np
-
 from .ClassifierPerformance import ClassifierPerformance
 
 
@@ -14,7 +12,7 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     """
 
     name = "classifier_out_of_sample_performance"
-    required_context = ["model", "model.test_ds"]
+    required_inputs = ["model", "model.test_ds"]
 
     def description(self):
         return """
@@ -24,15 +22,7 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
         """
 
     def y_true(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = np.array(self.model.test_ds.y)
-
-        return y_true
+        return self.model.y_test_true
 
     def y_pred(self):
-        return self.model.model.predict(self.model.test_ds.x)
+        return self.model.y_test_predict

@@ -3,7 +3,7 @@
 import pandas as pd
 from dataclasses import dataclass
 import plotly.graph_objects as go
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -13,7 +13,7 @@ class PDRatingClassPlot(Metric):
     """
 
     name = "pd_rating_class_plot"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "title": "PD by Rating Class",
         "rating_classes": ["A", "B", "C", "D"],
@@ -51,12 +51,6 @@ class PDRatingClassPlot(Metric):
         return fig
 
     def run(self):
-        if not Model.is_supported_model(self.model.model):
-            raise ValueError(
-                f"{Model.model_library(self.model.model)}.{Model.model_class(self.model.model)} \
-                is not supported by ValidMind framework yet"
-            )
-
         target_column = self.model.train_ds.target_column
         title = self.params["title"]
         rating_classes = self.params["rating_classes"]

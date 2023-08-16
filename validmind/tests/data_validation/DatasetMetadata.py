@@ -3,11 +3,11 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from validmind.vm_models import TestContext, TestContextUtils, TestPlanDatasetResult
+from validmind.vm_models import Test, TestPlanDatasetResult
 
 
 @dataclass
-class DatasetMetadata(TestContextUtils):
+class DatasetMetadata(Test):
     """
     Custom class to collect a set of descriptive statistics for a dataset.
     This class will log dataset metadata via `log_dataset` instead of a metric.
@@ -15,13 +15,8 @@ class DatasetMetadata(TestContextUtils):
     to different metrics and test results
     """
 
-    # Test Context
-    test_context: TestContext
-
     # Class Variables
     test_type: ClassVar[str] = "DatasetMetadata"
-    required_context: ClassVar[list] = []
-    default_params: ClassVar[dict] = {}
 
     # Instance Variables
     name = "dataset_metadata"

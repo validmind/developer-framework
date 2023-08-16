@@ -16,6 +16,7 @@ class ClassifierPerformance(Metric):
     Test that outputs the performance of the model on the training or test data.
     """
 
+    name = "classifier_performance"
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,

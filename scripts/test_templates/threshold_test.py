@@ -25,7 +25,7 @@ class __TEST_NAME__(ThresholdTest):
 
     category = "__TEST_CATEGORY__"  # model_performance, data_quality, etc.
     name = "__TEST_ID__"
-    required_context = [] # model, dataset, etc. (model.train_ds, model.test_ds)
+    required_inputs = [] # model, dataset, etc. (model.train_ds, model.test_ds)
     default_params = {}
 
     def run(self) -> TestPlanTestResult:

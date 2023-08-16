@@ -12,7 +12,7 @@ class RollingStatsPlot(Metric):
     """
 
     name = "rolling_stats_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"window_size": 12}
 
     def plot_rolling_statistics(self, col, window_size=12):

@@ -9,7 +9,7 @@ from typing import ClassVar, List
 import pandas as pd
 
 from .dataset import VMDataset
-from .model import Model
+from .model import VMModel
 from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 
 
@@ -22,8 +22,8 @@ class TestContext:
     """
 
     dataset: VMDataset = None
-    model: Model = None
-    models: List[Model] = None
+    model: VMModel = None
+    models: List[VMModel] = None
 
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
@@ -41,6 +41,7 @@ class TestContext:
         return self.context_data.get(key)
 
 
+@dataclass
 class TestContextUtils:
     """
     Utility methods for classes that receive a TestContext
@@ -50,7 +51,7 @@ class TestContextUtils:
 
     # Test Context
     test_context: TestContext
-    required_context: ClassVar[List[str]]
+    required_inputs: ClassVar[List[str]]
 
     @property
     def dataset(self):
@@ -87,7 +88,7 @@ class TestContextUtils:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        for element in self.required_context:
+        for element in self.required_inputs:
             if not hasattr(self, element):
                 raise MissingRequiredTestContextError(
                     f"Test plan '{self.name}' requires '{element}' to be present in the test context"

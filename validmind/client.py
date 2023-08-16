@@ -32,12 +32,16 @@ from .test_plans import get_by_id as get_test_plan_by_id
 from .test_suites import get_by_id as get_test_suite_by_id
 
 from .vm_models import (
-    Model,
-    ModelAttributes,
-    R_MODEL_TYPES,
     TestPlan,
     TestSuite,
 )
+
+from .vm_models.model import (
+    VMModel,
+    R_MODEL_TYPES,
+    get_model_class,
+)
+
 from .vm_models.dataset import (
     VMDataset,
     NumpyDataset,
@@ -131,33 +135,36 @@ def init_model(
     train_ds: VMDataset = None,
     test_ds: VMDataset = None,
     validation_ds: VMDataset = None,
-) -> Model:
+) -> VMModel:
     """
     Initializes a VM Model, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
-    also ensures we are reading a supported model type.
+    also ensures we are creating a model supported libraries.
 
     Args:
-        model: A trained sklearn model
+        model: A trained model
 
     Raises:
         ValueError: If the model type is not supported
 
     Returns:
-        vm.vm.Model: A VM Model instance
+        vm.VMModel: A VM Model instance
     """
+    class_obj = get_model_class(model=model)
+    if not class_obj:
+        raise UnsupportedModelError("Model type is not supported at the moment.")
 
-    if not Model.is_supported_model(model):
-        raise UnsupportedModelError(
-            f"Model type {Model.model_library(model)}.{Model.model_class(model)} is not supported at the moment."
-        )
-
-    return Model.init_vm_model(
-        model, train_ds, test_ds, validation_ds, attributes=ModelAttributes()
+    vm_model = class_obj(
+        model=model,  # Trained model instance
+        train_ds=train_ds,
+        test_ds=test_ds,
+        validation_ds=validation_ds,
+        attributes=None,
     )
+    return vm_model
 
 
-def init_r_model(model_path: str, model_type: str) -> Model:
+def init_r_model(model_path: str, model_type: str) -> VMModel:
     """
     Initializes a VM Model for an R model
 

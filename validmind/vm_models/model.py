@@ -1,28 +1,25 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-Model class wrapper
+Model class wrapper module
 """
 import inspect
 
-from dataclasses import dataclass, fields
-
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from .dataset import VMDataset
 from ..errors import MissingPytorchModelPredictError
 
-SUPPORTED_MODEL_TYPES = [
-    "catboost.CatBoostClassifier",
-    "pytorch.PyTorchModel",
-    "sklearn.LogisticRegression",
-    "sklearn.LinearRegression",
-    "sklearn.RandomForestClassifier",
-    "sklearn.DecisionTreeClassifier",
-    "statsmodels.GLMResultsWrapper",
-    "statsmodels.BinaryResultsWrapper",  # Logistic Regression results
-    "statsmodels.RegressionResultsWrapper",
-    "xgboost.XGBClassifier",
-    "xgboost.XGBRegressor",
-]
+import importlib
+
+
+SUPPORTED_LIBRARIES = {
+    "catboost": "CatBoostModel",
+    "xgboost": "XGBoostModel",
+    "sklearn": "SKlearnModel",
+    "torch": "PyTorchModel",
+    "statsmodels": "StatsModelsModel",
+}
 
 R_MODEL_TYPES = [
     "LogisticRegression",
@@ -44,16 +41,12 @@ class ModelAttributes:
 
 
 @dataclass
-class Model:
+class VMModel(ABC):
     """
-    A class that wraps a trained model instance and its associated data.
+    An abstract base class that wraps a trained model instance and its associated data.
 
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
-        task (str, optional): The task that the model is intended to solve. Defaults to None.
-        subtask (str, optional): The subtask that the model is intended to solve. Defaults to None.
-        params (dict, optional): The parameters of the model. Defaults to None.
-        model_id (str): The identifier of the model. Defaults to "main".
         model (object, optional): The trained model instance. Defaults to None.
         train_ds (Dataset, optional): The training dataset. Defaults to None.
         test_ds (Dataset, optional): The test dataset. Defaults to None.
@@ -61,88 +54,178 @@ class Model:
         y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
         y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
         y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
     """
 
-    attributes: ModelAttributes = None
-    task: str = None
-    subtask: str = None
-    params: dict = None
-    model_id: str = "main"
-    model: object = None  # Trained model instance
-    train_ds: VMDataset = None
-    test_ds: VMDataset = None
-    validation_ds: VMDataset = None
+    def __init__(
+        self,
+        model: object = None,
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
+        self._model = model
+        self._train_ds = train_ds
+        self._test_ds = test_ds
+        self._validation_ds = validation_ds
+        self._attributes = attributes
 
-    # These variables can be generated dynamically if not passed
-    y_train_predict: object = None
-    y_test_predict: object = None
-    y_validation_predict: object = None
+        # These variables can be generated dynamically if not passed
+        self._y_train_predict = None
+        self._y_test_predict = None
+        self._y_validation_predict = None
 
-    # The device where model is trained
-    device_type: str = None
+        # The device where model is trained
+        self._device_type = None
 
-    def __post_init__(self):
+    @property
+    def attributes(self):
+        return self._attributes
+
+    @property
+    def model(self):
+        return self._model
+
+    @property
+    def train_ds(self):
+        return self._train_ds
+
+    @property
+    def test_ds(self):
+        return self._test_ds
+
+    @property
+    def validation_ds(self):
+        return
+
+    @property
+    def y_train_true(self):
         """
-        Initialize
-        1. model device type
-        2. the predicted outputs of the training, test, and validation datasets.
+        This variable can be generated dynamically
         """
-        if Model._is_pytorch_model(self.model):
-            self.device_type = next(self.model.parameters()).device
+        return self.train_ds.y
 
-        if self.model and self.train_ds:
-            self.y_train_predict = self.predict(self.train_ds.x)
-        if self.model and self.test_ds:
-            self.y_test_predict = self.predict(self.test_ds.x)
-        if self.model and self.validation_ds:
-            self.y_validation_predict = self.predict(self.validation_ds.x)
+    @property
+    def y_test_true(self):
+        """
+        This variable can be generated dynamically
+        """
+        return self.test_ds.y
+
+    @property
+    def y_train_predict(self):
+        """
+        This variable can be generated dynamically
+        """
+        return self._y_train_predict
+
+    @property
+    def y_test_predict(self):
+        """
+        This variable can be generated dynamically
+        """
+        return self._y_test_predict
+
+    @property
+    def device_type(self):
+        """
+        The device where model is trained
+        """
+        return self._device_type
 
     def serialize(self):
         """
         Serializes the model to a dictionary so it can be sent to the API
         """
         return {
-            "model_id": self.model_id,
             "attributes": self.attributes.__dict__,
-            "task": self.task,
-            "subtask": self.subtask,
-            "params": self.params,
         }
 
-    def class_predictions(self, y_predict):
+    @abstractmethod
+    def predict_proba(self, *args, **kwargs):
         """
-        Converts a set of probability predictions to class predictions
-
-        Args:
-            y_predict (np.array, pd.DataFrame): Predictions to convert
-
-        Returns:
-            (np.array, pd.DataFrame): Class predictions
+        Predict probability for the model.
+        This is a wrapper around the model's if available
         """
-        # TODO: parametrize at some point
-        return (y_predict > 0.5).astype(int)
+        pass
 
-    @staticmethod
-    def _is_pytorch_model(model):
+    @abstractmethod
+    def predict(self, *args, **kwargs):
         """
-        Checks if the model is a PyTorch model. Need to extend this
-        method to check for all ways a PyTorch model can be created
+        Predict method for the model. This is a wrapper around the model's
         """
-        # if we can't import torch, then it's not a PyTorch model
-        try:
-            import torch.nn as nn
-        except ImportError:
-            return False
+        pass
 
-        # return False
-        # TBD. Fix setting PyTorch on Ubuntu
-        return isinstance(model, nn.Module)
+    @abstractmethod
+    def model_library(self, *args, **kwargs):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        """
+        pass
+
+    @abstractmethod
+    def model_class(self, *args, **kwargs):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        """
+        pass
+
+    @abstractmethod
+    def model_name(self, *args, **kwargs):
+        """
+        Model name
+        """
+        pass
+
+    @abstractmethod
+    def is_pytorch_model(self):
+        pass
+
+
+@dataclass
+class SKlearnModel(VMModel):
+    """
+    An SKlearn model class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+
+    def __init__(
+        self,
+        model: object = None,  # Trained model instance
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
+        super().__init__(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes,
+        )
+
+        if self.model and self.train_ds:
+            self._y_train_predict = self.predict(self.train_ds.x)
+        if self.model and self.test_ds:
+            self._y_test_predict = self.predict(self.test_ds.x)
+        if self.model and self.validation_ds:
+            self._y_validation_predict = self.predict(self.validation_ds.x)
 
     def predict_proba(self, *args, **kwargs):
         """
         predict_proba (for classification) or predict (for regression) method
-
-        NOTE: This only works for sklearn or xgboost models at the moment
         """
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]
@@ -152,77 +235,56 @@ class Model:
         """
         Predict method for the model. This is a wrapper around the model's
         """
-        if Model._is_pytorch_model(self.model):
-            if not Model.has_method_with_arguments(self.model, "predict", 1):
-                raise MissingPytorchModelPredictError(
-                    "Model requires a implemention of predict method with 1 argument"
-                    + " that is tensor features matrix"
-                )
-            pred_y = self.model.predict(args[0].to(self.device_type))
-            return pred_y
         return self.model.predict(*args, **kwargs)
 
-    @staticmethod
-    def has_method_with_arguments(cls, method_name, n_args):
-        if not hasattr(cls, method_name):
-            return False
-
-        method = getattr(cls, method_name)
-        if not inspect.ismethod(method) and not inspect.isfunction(method):
-            return False
-
-        signature = inspect.signature(method)
-        parameters = signature.parameters
-
-        if len(parameters) != n_args:
-            return False
-
-        return True
-
-    @staticmethod
-    def model_library(model):
+    def model_library(self):
         """
         Returns the model library name
         """
-        if Model._is_pytorch_model(model):
-            return "pytorch"
+        return self.model.__class__.__module__.split(".")[0]
 
-        return model.__class__.__module__.split(".")[0]
-
-    @staticmethod
-    def model_class(model):
+    def model_class(self):
         """
         Returns the model class name
         """
-        if Model._is_pytorch_model(model):
-            return "PyTorchModel"
+        return self.model.__class__.__name__
 
-        return model.__class__.__name__
-
-    @staticmethod
-    def is_supported_model(model):
+    def model_name(self):
         """
-        Checks if the model is supported by the API
-
-        Args:
-            model (object): The trained model instance to check
-
-        Returns:
-            bool: True if the model is supported, False otherwise
+        Returns model name
         """
-        is_supported = (
-            f"{Model.model_library(model)}.{Model.model_class(model)}"
-            in SUPPORTED_MODEL_TYPES
-        ) or (Model._is_pytorch_model(model))
+        return type(self.model).__name__
 
-        return is_supported
+    def is_pytorch_model(self):
+        return self.model_library() == "torch"
 
-    @classmethod
-    def init_vm_model(cls, model, train_ds, test_ds, validation_ds, attributes):
-        """
-        Initializes a model instance from the provided data.
-        """
-        return cls(
+
+@dataclass
+class XGBoostModel(SKlearnModel):
+    """
+    An XGBoost model class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+
+    def __init__(
+        self,
+        model: object = None,
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
+        super().__init__(
             model=model,
             train_ds=train_ds,
             test_ds=test_ds,
@@ -230,16 +292,212 @@ class Model:
             attributes=attributes,
         )
 
-    @classmethod
-    def create_from_dict(cls, dict_):
-        """
-        Creates a Model instance from a dictionary
 
-        Args:
-            dict_ (dict): The dictionary to create the Model instance from
+@dataclass
+class CatBoostModel(SKlearnModel):
+    """
+    An CatBoost model class that wraps a trained model instance and its associated data.
 
-        Returns:
-            Model: The Model instance created from the dictionary
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+
+    def __init__(
+        self,
+        model: object = None,  # Trained model instance
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
         """
-        class_fields = {f.name for f in fields(cls)}
-        return Model(**{k: v for k, v in dict_.items() if k in class_fields})
+        Initialize CatBoostModel
+        """
+        super().__init__(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes,
+        )
+
+
+@dataclass
+class StatsModelsModel(SKlearnModel):
+    """
+    An Statsmodels model class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+
+    def __init__(
+        self,
+        model: object = None,  # Trained model instance
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
+        super().__init__(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes,
+        )
+
+
+@dataclass
+class PyTorchModel(VMModel):
+    """
+    An PyTorch model class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The training dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+
+    def __init__(
+        self,
+        model: object = None,  # Trained model instance
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None,
+    ):
+        super().__init__(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes,
+        )
+        if self.model and self.train_ds:
+            self._y_train_predict = self.predict(self.train_ds.x)
+        if self.model and self.test_ds:
+            self._y_test_predict = self.predict(self.test_ds.x)
+        if self.model and self.validation_ds:
+            self._y_validation_predict = self.predict(self.validation_ds.x)
+
+        self._device_type = next(self.model.parameters()).device
+
+    def predict_proba(self, *args, **kwargs):
+        """
+        Invoke predict_proba from underline model
+        """
+        if not has_method_with_arguments(self.model, "predict_proba", 1):
+            raise MissingPytorchModelPredictError(
+                "Model requires a implemention of predict_proba method with 1 argument"
+                + " that is tensor features matrix"
+            )
+
+        if callable(getattr(self.model, "predict_proba", None)):
+            return self.model.predict_proba(*args, **kwargs)[:, 1]
+
+    def predict(self, *args, **kwargs):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        """
+        if not has_method_with_arguments(self.model, "predict", 1):
+            raise MissingPytorchModelPredictError(
+                "Model requires a implemention of predict method with 1 argument"
+                + " that is tensor features matrix"
+            )
+        import torch
+
+        return self.model.predict(torch.tensor(args[0]).to(self.device_type))
+
+    def model_library(self):
+        """
+        Returns the model library name
+        """
+        return "torch"
+
+    def is_pytorch_model(self):
+        return self.model_library() == "torch"
+
+    def model_class(self):
+        """
+        Returns the model class name
+        """
+        return "PyTorchModel"
+
+    def model_name(self):
+        """
+        Returns model architecture
+        """
+        return "PyTorch Neural Networks"
+
+
+def has_method_with_arguments(cls, method_name, n_args):
+    if not hasattr(cls, method_name):
+        return False
+
+    method = getattr(cls, method_name)
+    if not inspect.ismethod(method) and not inspect.isfunction(method):
+        return False
+
+    signature = inspect.signature(method)
+    parameters = signature.parameters
+
+    if len(parameters) != n_args:
+        return False
+
+    return True
+
+
+def is_pytorch_model(model):
+    """
+    Checks if the model is a PyTorch model. Need to extend this
+    method to check for all ways a PyTorch model can be created
+    """
+    # if we can't import torch, then it's not a PyTorch model
+    try:
+        import torch.nn as nn
+    except ImportError:
+        return False
+
+    # return False
+    # TBD. Fix setting PyTorch on Ubuntu
+    return isinstance(model, nn.Module)
+
+
+def model_module(model):
+    module = model.__class__.__module__.split(".")[0]
+    if module != "__main__":
+        return module
+    # pyTorch liabrary
+    if is_pytorch_model(model=model):
+        return "torch"
+
+
+def get_model_class(model):
+    class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
+    if class_name:
+        module = importlib.import_module(__name__)
+        return getattr(module, class_name)
+    return None

@@ -14,7 +14,7 @@ class ROCCurve(Metric):
     """
 
     name = "roc_curve"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """
@@ -25,13 +25,7 @@ class ROCCurve(Metric):
         """
 
     def run(self):
-        if self.model.device_type and self.model._is_pytorch_model:
-            if not self.model.device_type == "gpu":
-                y_true = np.array(self.model.test_ds.y.cpu())
-            else:
-                y_true = np.array(self.model.test_ds.y)
-        else:
-            y_true = self.model.test_ds.y
+        y_true = self.model.y_test_true
         y_pred = self.model.predict_proba(self.model.test_ds.x)
 
         y_true = y_true.astype(y_pred.dtype).flatten()

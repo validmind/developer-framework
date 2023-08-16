@@ -71,13 +71,7 @@
                                 <a class="variable" href="#Metric.key">key</a>
                         </li>
                         <li>
-                                <a class="function" href="#Metric.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Metric.summary">summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Metric.run">run</a>
                         </li>
                         <li>
                                 <a class="function" href="#Metric.cache_results">cache_results</a>
@@ -98,40 +92,43 @@
 
             </li>
             <li>
-                    <a class="class" href="#Model">Model</a>
+                    <a class="class" href="#VMModel">VMModel</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#Model.__init__">Model</a>
+                                <a class="variable" href="#VMModel.y_train_true">y_train_true</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.serialize">serialize</a>
+                                <a class="variable" href="#VMModel.y_test_true">y_test_true</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.class_predictions">class_predictions</a>
+                                <a class="variable" href="#VMModel.y_train_predict">y_train_predict</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.predict_proba">predict_proba</a>
+                                <a class="variable" href="#VMModel.y_test_predict">y_test_predict</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.predict">predict</a>
+                                <a class="variable" href="#VMModel.device_type">device_type</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.has_method_with_arguments">has_method_with_arguments</a>
+                                <a class="function" href="#VMModel.serialize">serialize</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.model_library">model_library</a>
+                                <a class="function" href="#VMModel.predict_proba">predict_proba</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.model_class">model_class</a>
+                                <a class="function" href="#VMModel.predict">predict</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.is_supported_model">is_supported_model</a>
+                                <a class="function" href="#VMModel.model_library">model_library</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.init_vm_model">init_vm_model</a>
+                                <a class="function" href="#VMModel.model_class">model_class</a>
                         </li>
                         <li>
-                                <a class="function" href="#Model.create_from_dict">create_from_dict</a>
+                                <a class="function" href="#VMModel.model_name">model_name</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMModel.is_pytorch_model">is_pytorch_model</a>
                         </li>
                 </ul>
 
@@ -185,6 +182,27 @@
 
             </li>
             <li>
+                    <a class="class" href="#Test">Test</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Test.__init__">Test</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.description">description</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.summary">summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.run">run</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.cache_results">cache_results</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#TestContext">TestContext</a>
                             <ul class="memberlist">
                         <li>
@@ -203,6 +221,9 @@
                     <a class="class" href="#TestContextUtils">TestContextUtils</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#TestContextUtils.__init__">TestContextUtils</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#TestContextUtils.df">df</a>
                         </li>
                         <li>
@@ -218,7 +239,7 @@
                                 <a class="function" href="#TestPlan.__init__">TestPlan</a>
                         </li>
                         <li>
-                                <a class="function" href="#TestPlan.get_required_context">get_required_context</a>
+                                <a class="function" href="#TestPlan.get_required_inputs">get_required_inputs</a>
                         </li>
                         <li>
                                 <a class="function" href="#TestPlan.get_default_config">get_default_config</a>
@@ -317,7 +338,7 @@
                                 <a class="function" href="#TestSuite.__init__">TestSuite</a>
                         </li>
                         <li>
-                                <a class="function" href="#TestSuite.get_required_context">get_required_context</a>
+                                <a class="function" href="#TestSuite.get_required_inputs">get_required_inputs</a>
                         </li>
                         <li>
                                 <a class="function" href="#TestSuite.get_default_config">get_default_config</a>
@@ -341,13 +362,7 @@
                                 <a class="function" href="#ThresholdTest.__init__">ThresholdTest</a>
                         </li>
                         <li>
-                                <a class="function" href="#ThresholdTest.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ThresholdTest.summary">summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ThresholdTest.run">run</a>
                         </li>
                         <li>
                                 <a class="function" href="#ThresholdTest.cache_results">cache_results</a>
@@ -501,22 +516,20 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Metric</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+    <span class="name">Metric</span><wbr>(<span class="base"><a href="#Test">validmind.vm_models.Test</a></span>):
 
         
     </div>
     <a class="headerlink" href="#Metric"></a>
     
             <div class="docstring"><p>Metric objects track the schema supported by the ValidMind API</p>
-
-<p>TODO: Metric should validate required context too</p>
 </div>
 
 
                             <div id="Metric.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestPlanMetricResult">validmind.vm_models.TestPlanMetricResult</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestPlanMetricResult">validmind.vm_models.TestPlanMetricResult</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -538,25 +551,10 @@
 
 
                             </div>
-                            <div id="Metric.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Metric.description"></a>
-    
-            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
-
-                            </div>
                             <div id="Metric.summary" class="classattr">
                                 <div class="attr function">
-            
+                    <div class="decorator">@abstractmethod</div>
+
         <span class="def">def</span>
         <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
@@ -569,21 +567,6 @@ The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the metric results.</p>
 
 <p>We return None here because the metric summary is optional.</p>
-</div>
-
-
-                            </div>
-                            <div id="Metric.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Metric.run"></a>
-    
-            <div class="docstring"><p>Run the metric calculation and cache its results</p>
 </div>
 
 
@@ -619,7 +602,12 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                    <div><dt><a href="#Test">Test</a></dt>
+                                <dd id="Metric.description" class="function"><a href="#Test.description">description</a></dd>
+                <dd id="Metric.run" class="function"><a href="#Test.run">run</a></dd>
+
+            </div>
+            <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
                                 <dd id="Metric.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
                 <dd id="Metric.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
 
@@ -672,27 +660,23 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 
                             </div>
                 </section>
-                <section id="Model">
+                <section id="VMModel">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Model</span>:
+    <span class="name">VMModel</span><wbr>(<span class="base">abc.ABC</span>):
 
         
     </div>
-    <a class="headerlink" href="#Model"></a>
+    <a class="headerlink" href="#VMModel"></a>
     
-            <div class="docstring"><p>A class that wraps a trained model instance and its associated data.</p>
+            <div class="docstring"><p>An abstract base class that wraps a trained model instance and its associated data.</p>
 
 <h6 id="attributes">Attributes:</h6>
 
 <ul>
 <li><strong>attributes (ModelAttributes, optional):</strong>  The attributes of the model. Defaults to None.</li>
-<li><strong>task (str, optional):</strong>  The task that the model is intended to solve. Defaults to None.</li>
-<li><strong>subtask (str, optional):</strong>  The subtask that the model is intended to solve. Defaults to None.</li>
-<li><strong>params (dict, optional):</strong>  The parameters of the model. Defaults to None.</li>
-<li><strong>model_id (str):</strong>  The identifier of the model. Defaults to "main".</li>
 <li><strong>model (object, optional):</strong>  The trained model instance. Defaults to None.</li>
 <li><strong>train_ds (Dataset, optional):</strong>  The training dataset. Defaults to None.</li>
 <li><strong>test_ds (Dataset, optional):</strong>  The test dataset. Defaults to None.</li>
@@ -700,23 +684,77 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 <li><strong>y_train_predict (object, optional):</strong>  The predicted outputs for the training dataset. Defaults to None.</li>
 <li><strong>y_test_predict (object, optional):</strong>  The predicted outputs for the test dataset. Defaults to None.</li>
 <li><strong>y_validation_predict (object, optional):</strong>  The predicted outputs for the validation dataset. Defaults to None.</li>
+<li>device_type(str, optional) The device where model is trained</li>
 </ul>
 </div>
 
 
-                            <div id="Model.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">Model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="n"><a href="#ModelAttributes">validmind.vm_models.ModelAttributes</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">task</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">subtask</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;main&#39;</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_train_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_test_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">y_validation_predict</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">device_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+                            <div id="VMModel.y_train_true" class="classattr">
+                                <div class="attr variable">
+            <span class="name">y_train_true</span>
 
         
     </div>
-    <a class="headerlink" href="#Model.__init__"></a>
+    <a class="headerlink" href="#VMModel.y_train_true"></a>
     
-    
+            <div class="docstring"><p>This variable can be generated dynamically</p>
+</div>
+
 
                             </div>
-                            <div id="Model.serialize" class="classattr">
+                            <div id="VMModel.y_test_true" class="classattr">
+                                <div class="attr variable">
+            <span class="name">y_test_true</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.y_test_true"></a>
+    
+            <div class="docstring"><p>This variable can be generated dynamically</p>
+</div>
+
+
+                            </div>
+                            <div id="VMModel.y_train_predict" class="classattr">
+                                <div class="attr variable">
+            <span class="name">y_train_predict</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.y_train_predict"></a>
+    
+            <div class="docstring"><p>This variable can be generated dynamically</p>
+</div>
+
+
+                            </div>
+                            <div id="VMModel.y_test_predict" class="classattr">
+                                <div class="attr variable">
+            <span class="name">y_test_predict</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.y_test_predict"></a>
+    
+            <div class="docstring"><p>This variable can be generated dynamically</p>
+</div>
+
+
+                            </div>
+                            <div id="VMModel.device_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">device_type</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.device_type"></a>
+    
+            <div class="docstring"><p>The device where model is trained</p>
+</div>
+
+
+                            </div>
+                            <div id="VMModel.serialize" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
@@ -724,188 +762,106 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 
         
     </div>
-    <a class="headerlink" href="#Model.serialize"></a>
+    <a class="headerlink" href="#VMModel.serialize"></a>
     
             <div class="docstring"><p>Serializes the model to a dictionary so it can be sent to the API</p>
 </div>
 
 
                             </div>
-                            <div id="Model.class_predictions" class="classattr">
+                            <div id="VMModel.predict_proba" class="classattr">
                                 <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">class_predictions</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">y_predict</span></span><span class="return-annotation">):</span></span>
+                    <div class="decorator">@abstractmethod</div>
 
-        
-    </div>
-    <a class="headerlink" href="#Model.class_predictions"></a>
-    
-            <div class="docstring"><p>Converts a set of probability predictions to class predictions</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>y_predict (np.array, pd.DataFrame):</strong>  Predictions to convert</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>(np.array, pd.DataFrame): Class predictions</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="Model.predict_proba" class="classattr">
-                                <div class="attr function">
-            
         <span class="def">def</span>
         <span class="name">predict_proba</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.predict_proba"></a>
+    <a class="headerlink" href="#VMModel.predict_proba"></a>
     
-            <div class="docstring"><p>predict_proba (for classification) or predict (for regression) method</p>
-
-<p>NOTE: This only works for sklearn or xgboost models at the moment</p>
+            <div class="docstring"><p>Predict probability for the model.
+This is a wrapper around the model's if available</p>
 </div>
 
 
                             </div>
-                            <div id="Model.predict" class="classattr">
+                            <div id="VMModel.predict" class="classattr">
                                 <div class="attr function">
-            
+                    <div class="decorator">@abstractmethod</div>
+
         <span class="def">def</span>
         <span class="name">predict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.predict"></a>
+    <a class="headerlink" href="#VMModel.predict"></a>
     
             <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
 </div>
 
 
                             </div>
-                            <div id="Model.has_method_with_arguments" class="classattr">
+                            <div id="VMModel.model_library" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@staticmethod</div>
+                    <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">has_method_with_arguments</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">method_name</span>, </span><span class="param"><span class="n">n_args</span></span><span class="return-annotation">):</span></span>
+        <span class="name">model_library</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.has_method_with_arguments"></a>
+    <a class="headerlink" href="#VMModel.model_library"></a>
     
-    
-
-                            </div>
-                            <div id="Model.model_library" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@staticmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_library</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Model.model_library"></a>
-    
-            <div class="docstring"><p>Returns the model library name</p>
+            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
 </div>
 
 
                             </div>
-                            <div id="Model.model_class" class="classattr">
+                            <div id="VMModel.model_class" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@staticmethod</div>
+                    <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">model_class</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+        <span class="name">model_class</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.model_class"></a>
+    <a class="headerlink" href="#VMModel.model_class"></a>
     
-            <div class="docstring"><p>Returns the model class name</p>
+            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
 </div>
 
 
                             </div>
-                            <div id="Model.is_supported_model" class="classattr">
+                            <div id="VMModel.model_name" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@staticmethod</div>
+                    <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">is_supported_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+        <span class="name">model_name</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.is_supported_model"></a>
+    <a class="headerlink" href="#VMModel.model_name"></a>
     
-            <div class="docstring"><p>Checks if the model is supported by the API</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>model (object):</strong>  The trained model instance to check</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>bool: True if the model is supported, False otherwise</p>
-</blockquote>
+            <div class="docstring"><p>Model name</p>
 </div>
 
 
                             </div>
-                            <div id="Model.init_vm_model" class="classattr">
+                            <div id="VMModel.is_pytorch_model" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@classmethod</div>
+                    <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">init_vm_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">train_ds</span>, </span><span class="param"><span class="n">test_ds</span>, </span><span class="param"><span class="n">validation_ds</span>, </span><span class="param"><span class="n">attributes</span></span><span class="return-annotation">):</span></span>
+        <span class="name">is_pytorch_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#Model.init_vm_model"></a>
+    <a class="headerlink" href="#VMModel.is_pytorch_model"></a>
     
-            <div class="docstring"><p>Initializes a model instance from the provided data.</p>
-</div>
-
-
-                            </div>
-                            <div id="Model.create_from_dict" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@classmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">create_from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">dict_</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Model.create_from_dict"></a>
     
-            <div class="docstring"><p>Creates a Model instance from a dictionary</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>dict_ (dict):</strong>  The dictionary to create the Model instance from</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>Model: The Model instance created from the dictionary</p>
-</blockquote>
-</div>
-
 
                             </div>
                 </section>
@@ -1078,6 +1034,106 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 
                             </div>
                 </section>
+                <section id="Test">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">Test</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+
+        
+    </div>
+    <a class="headerlink" href="#Test"></a>
+    
+    
+
+                            <div id="Test.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">Test</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">object</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="Test.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.description"></a>
+    
+            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.summary" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.summary"></a>
+    
+            <div class="docstring"><p>Return the summary. Should be overridden by subclasses.</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.run" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.run"></a>
+    
+            <div class="docstring"><p>Run the calculation and cache its results</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.cache_results" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">cache_results</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.cache_results"></a>
+    
+            <div class="docstring"><p>Cache the results of the calculation</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                <dd id="Test.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
+                <dd id="Test.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="TestContext">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -1098,7 +1154,7 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
                             <div id="TestContext.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1136,7 +1192,8 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
                 </section>
                 <section id="TestContextUtils">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestContextUtils</span>:
 
@@ -1150,6 +1207,18 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
 </div>
 
 
+                            <div id="TestContextUtils.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">TestContextUtils</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestContextUtils.__init__"></a>
+    
+    
+
+                            </div>
                             <div id="TestContextUtils.df" class="classattr">
                                 <div class="attr variable">
             <span class="name">df</span>
@@ -1200,7 +1269,7 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
                             <div id="TestPlan.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestPlan</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1209,23 +1278,23 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
     
 
                             </div>
-                            <div id="TestPlan.get_required_context" class="classattr">
+                            <div id="TestPlan.get_required_inputs" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">get_required_inputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TestPlan.get_required_context"></a>
+    <a class="headerlink" href="#TestPlan.get_required_inputs"></a>
     
-            <div class="docstring"><p>Returns the required context for the test plan. Defaults to the
-required context of the tests</p>
+            <div class="docstring"><p>Returns the required inputs for the test plan. Defaults to the
+required inputs of the tests</p>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>List[str]: A list of required context elements</p>
+  <p>List[str]: A list of required inputs elements</p>
 </blockquote>
 </div>
 
@@ -1679,7 +1748,7 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
                             <div id="TestSuite.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#Model">validmind.vm_models.Model</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Model">validmind.vm_models.Model</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_total_tests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
+        <span class="name">TestSuite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_global_config</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_configs</span><span class="p">:</span> <span class="p">{}</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_tests</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_int</span><span class="o">.</span><span class="n">IntProgress</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_description</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_string</span><span class="o">.</span><span class="n">Label</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">pbar_box</span><span class="p">:</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">widgets</span><span class="o">.</span><span class="n">widget_box</span><span class="o">.</span><span class="n">HBox</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#TestPlan">validmind.vm_models.TestPlan</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_test_plan_instances</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_total_tests</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></span>)</span>
 
         
     </div>
@@ -1688,17 +1757,17 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
     
 
                             </div>
-                            <div id="TestSuite.get_required_context" class="classattr">
+                            <div id="TestSuite.get_required_inputs" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">get_required_inputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TestSuite.get_required_context"></a>
+    <a class="headerlink" href="#TestSuite.get_required_inputs"></a>
     
-            <div class="docstring"><p>Returns the required context for the test suite.</p>
+            <div class="docstring"><p>Returns the required inputs for the test suite.</p>
 </div>
 
 
@@ -1794,7 +1863,7 @@ and set values</p>
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ThresholdTest</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+    <span class="name">ThresholdTest</span><wbr>(<span class="base"><a href="#Test">validmind.vm_models.Test</a></span>):
 
         
     </div>
@@ -1803,37 +1872,19 @@ and set values</p>
             <div class="docstring"><p>A threshold test is a combination of a metric/plot we track and a
 corresponding set of parameters and thresholds values that allow
 us to determine whether the metric/plot passes or fails.</p>
-
-<p>TODO: ThresholdTest should validate required context too</p>
 </div>
 
 
                             <div id="ThresholdTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ThresholdTest.__init__"></a>
     
     
-
-                            </div>
-                            <div id="ThresholdTest.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ThresholdTest.description"></a>
-    
-            <div class="docstring"><p>Return the test description. Should be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="ThresholdTest.summary" class="classattr">
@@ -1846,26 +1897,11 @@ to returning the class' docstring</p>
     </div>
     <a class="headerlink" href="#ThresholdTest.summary"></a>
     
-            <div class="docstring"><p>Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+            <div class="docstring"><p>Return the threshold test summary. May be overridden by subclasses. Defaults to showing
 a table with test_name(optional), column and passed.</p>
 
 <p>The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.</p>
-</div>
-
-
-                            </div>
-                            <div id="ThresholdTest.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ThresholdTest.run"></a>
-    
-            <div class="docstring"><p>Run the test and cache its results</p>
 </div>
 
 
@@ -1901,7 +1937,12 @@ short summary of the test results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                    <div><dt><a href="#Test">Test</a></dt>
+                                <dd id="ThresholdTest.description" class="function"><a href="#Test.description">description</a></dd>
+                <dd id="ThresholdTest.run" class="function"><a href="#Test.run">run</a></dd>
+
+            </div>
+            <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
                                 <dd id="ThresholdTest.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
                 <dd id="ThresholdTest.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
 

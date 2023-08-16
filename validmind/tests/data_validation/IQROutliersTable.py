@@ -14,7 +14,7 @@ class IQROutliersTable(Metric):
     """
 
     name = "iqr_outliers_table"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"features": None, "threshold": 1.5}
 
     def run(self):

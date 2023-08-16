@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from validmind.vm_models import Figure, Metric, Model
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -33,11 +33,6 @@ class RegressionModelForecastPlotLevels(Metric):
 
         all_models = []
         for model in self.models:
-            if not Model.is_supported_model(model.model):
-                raise ValueError(
-                    f"{Model.model_library(model.model)}.{Model.model_class(model.model)} \
-                                 is not supported by ValidMind framework yet"
-                )
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, transformation)
