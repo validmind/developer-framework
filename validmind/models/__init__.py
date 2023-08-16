@@ -4,3 +4,11 @@ from sklearn import SKlearnModel
 from statsmodels import StatsModelsModel
 from xgboost import XGBoostModel
 
+__all__ = [
+    "CatBoostModel",
+    "PyTorchModel",
+    "SKlearnModel",
+    "StatsModelsModel",
+    "XGBoostModel",
+]
+
