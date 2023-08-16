@@ -24,7 +24,7 @@ class HighCardinality(ThresholdTest):
 
     category = "data_quality"
     name = "cardinality"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {
         "num_threshold": 100,
         "percent_threshold": 0.1,

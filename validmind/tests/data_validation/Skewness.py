@@ -26,7 +26,7 @@ class Skewness(ThresholdTest):
 
     category = "data_quality"
     name = "skewness"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"max_threshold": 1}
 
     def summary(self, results: List[TestResult], all_passed: bool):

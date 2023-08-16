@@ -19,7 +19,7 @@ class RegressionCoeffsPlot(Metric):
     """
 
     name = "regression_coeffs_plot"
-    required_context = ["models"]
+    required_inputs = ["models"]
 
     @staticmethod
     def plot_coefficients_with_ci(model_fit, model_name):

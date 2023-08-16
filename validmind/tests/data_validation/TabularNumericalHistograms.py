@@ -13,7 +13,7 @@ class TabularNumericalHistograms(Metric):
     """
 
     name = "tabular_numerical_histograms"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         df = self.dataset.df

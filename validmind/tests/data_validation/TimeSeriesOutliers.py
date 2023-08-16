@@ -26,7 +26,7 @@ class TimeSeriesOutliers(ThresholdTest):
 
     category = "data_quality"
     name = "time_series_outliers"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"zscore_threshold": 3}
 
     def summary(self, results, all_passed: bool):

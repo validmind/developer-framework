@@ -25,7 +25,7 @@ class ClassImbalance(ThresholdTest):
 
     category = "data_quality"
     name = "class_imbalance"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.2}
 
     def summary(self, results: List[TestResult], all_passed: bool):

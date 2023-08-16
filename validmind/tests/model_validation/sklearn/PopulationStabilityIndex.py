@@ -25,7 +25,7 @@ class PopulationStabilityIndex(Metric):
     """
 
     name = "psi"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     def description(self):
         return """

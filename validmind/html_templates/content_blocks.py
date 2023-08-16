@@ -14,7 +14,7 @@ test_content_block_html = """
   {description}
 </div>
 <h5 class="vm_required_context">
-  Required Context: <span style="font-size: 13px"><i>{required_context}</i></span>
+  Required Inputs: <span style="font-size: 13px"><i>{required_inputs}</i></span>
 </h5>
 <table class="vm_params_table" style="display: {table_display};">
     <tr>

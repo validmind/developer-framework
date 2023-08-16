@@ -13,7 +13,7 @@ class ACFandPACFPlot(Metric):
     """
 
     name = "acf_pacf_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         # Check if index is datetime
