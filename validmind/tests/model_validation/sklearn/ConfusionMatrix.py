@@ -39,7 +39,7 @@ class ConfusionMatrix(Metric):
 
         fig = ff.create_annotated_heatmap(
             z=cm,
-            colorscale="Viridis",
+            colorscale="Blues",
             x=labels,
             y=labels,
         )

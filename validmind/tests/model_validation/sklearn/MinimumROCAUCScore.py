@@ -62,7 +62,6 @@ class MinimumROCAUCScore(ThresholdTest):
         y_true = self.model.y_test_true
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
-        # roc_auc = metrics.roc_auc_score(y_true, class_pred)
         roc_auc = self.multiclass_roc_auc_score(y_true, class_pred)
 
         passed = roc_auc > self.params["min_threshold"]
