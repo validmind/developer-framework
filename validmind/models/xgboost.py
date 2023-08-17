@@ -1,12 +1,9 @@
-from dataclasses import dataclass
-
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes
 
 from .sklearn import SKlearnModel
 
 
-@dataclass
 class XGBoostModel(SKlearnModel):
     """
     An XGBoost model class that wraps a trained model instance and its associated data.

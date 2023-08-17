@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import numpy as np
 
 from validmind.errors import MissingPytorchModelPredictError
@@ -7,7 +5,6 @@ from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel, has_method_with_arguments
 
 
-@dataclass
 class SKlearnModel(VMModel):
     """
     An SKlearn model class that wraps a trained model instance and its associated data.
