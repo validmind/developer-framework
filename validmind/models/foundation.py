@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import pandas as pd
 import numpy as np
 
 from validmind.vm_models.dataset import VMDataset
@@ -7,32 +8,31 @@ from validmind.vm_models.model import ModelAttributes, VMModel
 
 
 @dataclass
-class ModelEndpoint:
-    url: str
-    auth_token: str
-    auth_token_type: str  # one of 'Bearer', 'Basic', 'Header'
-    auth_token_header: str  # if auth_token_type is 'Header', then this is the header name
+class Prompt:
+    prompt_template: str
+    prompt_variables: list
 
 
 class FoundationModel(VMModel):
     """FoundationModel class wraps a Foundation LLM endpoint
 
-    This class wraps an API endpoint for a foundation model (for now) and converts
-    it to work with ValidMind's model interface.
+    This class wraps a predict function that is user-defined and adapts it to works
+    with ValidMind's model interface for the purpose of model eval and documentation
 
     Attributes:
-        endpoint (object): The trained model instance. Defaults to None.
-        prompt (str): The prompt for the model. Defaults to None.
-        train_ds (Dataset, optional): The training dataset. Defaults to None.
-        test_ds (Dataset, optional): The test dataset. Defaults to None.
-        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        predict_fn (callable): The predict function that should take a prompt as input
+          and return the result from the model
+        prompt (Prompt): The prompt object that defines the prompt template and the
+          variables (if any)
+        train_ds: (VMDataset, optional): The training dataset. Defaults to None.
+        test_ds: (VMDataset, optional): The test dataset. Defaults to None.
+        validation_ds: (VMDataset, optional): The validation dataset. Defaults to None.
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
     """
-
     def __init__(
         self,
-        endpoint: ModelEndpoint,  # api endpoint
-        prompt: str,  # prompt used for model (for now just a string) # TODO: support complex prompts
+        predict_fn: callable,
+        prompt: Prompt,  # prompt used for model (for now just a string)
         train_ds: VMDataset = None,
         test_ds: VMDataset = None,
         validation_ds: VMDataset = None,
@@ -45,24 +45,32 @@ class FoundationModel(VMModel):
             attributes=attributes,
         )
 
-        if self.model and self.train_ds:
-            self._y_train_predict = np.array(self.predict(self.train_ds.x))
-        if self.model and self.test_ds:
-            self._y_test_predict = np.array(self.predict(self.test_ds.x))
-        if self.model and self.validation_ds:
-            self._y_validation_predict = np.array(self.predict(self.validation_ds.x))
+        self.predict_fn = predict_fn
+        self.prompt = prompt
 
-    def predict_proba(self, *args, **kwargs):
-        """
-        predict_proba (for classification) or predict (for regression) method
-        """
-        pass  # TODO: implement
+        if self.train_ds:
+            self._y_train_predict = np.array(self.predict(self.train_ds.x_df()))
+        if self.test_ds:
+            self._y_test_predict = np.array(self.predict(self.test_ds.x_df()))
+        if self.validation_ds:
+            self._y_validation_predict = np.array(self.predict(self.validation_ds.x_df()))
 
-    def predict(self, *args, **kwargs):
+    def _build_prompt(self, x: pd.DataFrame):
+        """
+        Builds the prompt for the model
+        """
+        return self.prompt.prompt_template.format(
+            **{key: x[key] for key in self.prompt.prompt_variables}
+        )
+
+    def predict(self, X: pd.DataFrame):
         """
         Predict method for the model. This is a wrapper around the model's
         """
-        pass
+        return np.array([
+            self.predict_fn(self._build_prompt(x[1]))
+            for x in X.iterrows()
+        ])
 
     def model_library(self):
         """
