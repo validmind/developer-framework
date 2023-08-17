@@ -3,28 +3,21 @@
 """
 Model class wrapper module
 """
+import importlib
 import inspect
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
 from .dataset import VMDataset
 
-from validmind.models import (
-    CatBoostModel,
-    PyTorchModel,
-    SKlearnModel,
-    StatsModelsModel,
-    XGBoostModel,
-)
-
 
 SUPPORTED_LIBRARIES = {
-    "catboost": CatBoostModel,
-    "xgboost": XGBoostModel,
-    "sklearn": SKlearnModel,
-    "statsmodels": StatsModelsModel,
-    "torch": PyTorchModel,
-    "custom": SKlearnModel,
+    "catboost": "CatBoostModel",
+    "xgboost": "XGBoostModel",
+    "sklearn": "SKlearnModel",
+    "statsmodels": "StatsModelsModel",
+    "torch": "PyTorchModel",
+    "custom": "SKlearnModel",
 }
 
 R_MODEL_TYPES = [
@@ -35,7 +28,7 @@ R_MODEL_TYPES = [
 ]
 
 
-@dataclass()
+@dataclass
 class ModelAttributes:
     """
     Model attributes definition
@@ -46,10 +39,9 @@ class ModelAttributes:
     framework_version: str = None
 
 
-@dataclass
-class VMModel(ABC):
+class VMModel():
     """
-    An abstract base class that wraps a trained model instance and its associated data.
+    An base class that wraps a trained model instance and its associated data.
 
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
@@ -219,11 +211,11 @@ def is_pytorch_model(model):
 
 
 def model_module(model):
-    # pyTorch liabrary
     if is_pytorch_model(model=model):
         return "torch"
 
     module = model.__class__.__module__.split(".")[0]
+
     if module == "__main__":
         return "custom"
 
@@ -231,4 +223,14 @@ def model_module(model):
 
 
 def get_model_class(model):
-    return SUPPORTED_LIBRARIES.get(model_module(model), None)
+    model_class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
+
+    if model_class_name is None:
+        raise Exception("Model library not supported")
+
+    model_class = getattr(
+        importlib.import_module("validmind.models"),
+        model_class_name,
+    )
+
+    return model_class 
