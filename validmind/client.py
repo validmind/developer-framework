@@ -35,7 +35,6 @@ from .vm_models import (
     TestPlan,
     TestSuite,
 )
-
 from .vm_models.model import (
     VMModel,
     R_MODEL_TYPES,

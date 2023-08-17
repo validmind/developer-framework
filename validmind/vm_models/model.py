@@ -5,6 +5,7 @@ Model class wrapper module
 """
 import inspect
 import numpy as np
+import pandas as pd
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -20,6 +21,7 @@ SUPPORTED_LIBRARIES = {
     "sklearn": "SKlearnModel",
     "torch": "PyTorchModel",
     "statsmodels": "StatsModelsModel",
+    "transformers": "HFModel",
     "custom": "SKlearnModel",
 }
 
@@ -453,6 +455,87 @@ class PyTorchModel(VMModel):
         return "PyTorch Neural Networks"
 
 
+@dataclass
+class HFModel(VMModel):
+    """
+    An Hugging Face model class that wraps a trained model instance and its associated data.
+
+    Attributes:
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        model (object, optional): The trained model instance. Defaults to None.
+        train_ds (Dataset, optional): The train dataset. Defaults to None.
+        test_ds (Dataset, optional): The test dataset. Defaults to None.
+        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
+        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
+        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
+        device_type(str, optional) The device where model is trained
+    """
+    def __init__(
+        self,
+        model: object = None,  # Trained model instance
+        train_ds: VMDataset = None,
+        test_ds: VMDataset = None,
+        validation_ds: VMDataset = None,
+        attributes: ModelAttributes = None
+    ):
+        super().__init__(
+            model=model,
+            train_ds=train_ds,
+            test_ds=test_ds,
+            validation_ds=validation_ds,
+            attributes=attributes
+        )
+        if self.model and self.train_ds:
+            self._y_train_predict = self.predict(self.test_ds.x)
+        if self.model and self.test_ds:
+            self._y_test_predict = self.predict(self.test_ds.x)
+        if self.model and self.validation_ds:
+            self._y_validation_predict = self.predict(self.validation_ds.x)
+
+    def predict_proba(self, *args, **kwargs):
+        """
+        Invoke predict_proba from underline model
+        """
+        if not has_method_with_arguments(self.model, "predict_proba", 1):
+            raise MissingPytorchModelPredictError(
+                "Model requires a implemention of predict_proba method with 1 argument"
+                + " that is tensor features matrix"
+            )
+
+        if callable(getattr(self.model, "predict_proba", None)):
+            return self.model.predict_proba(*args, **kwargs)[:, 1]
+
+    def predict(self, data):
+        """
+        Predict method for the model. This is a wrapper around the model's
+        """
+        data = [str(datapoint) for datapoint in data]
+        results = self.model(data)
+        results_df = pd.DataFrame(results)
+        return results_df.label.values
+
+    def model_library(self):
+        """
+        Returns the model library name
+        """
+        return self.model.__class__.__module__.split(".")[0]
+
+    def model_class(self):
+        """
+        Returns the model class name
+        """
+        return self.model.__class__.__name__
+
+    def model_name(self):
+        """
+        Returns model name
+        """
+        return type(self.model).__name__
+
+    def is_pytorch_model(self):
+        return self.model_library() == "torch"
+
+
 def has_method_with_arguments(cls, method_name, n_args):
     if not hasattr(cls, method_name):
         return False
@@ -486,7 +569,7 @@ def is_pytorch_model(model):
     return isinstance(model, nn.Module)
 
 
-def model_module(model):
+def get_model_module(model):
     # pyTorch liabrary
     if is_pytorch_model(model=model):
         return "torch"
@@ -497,7 +580,7 @@ def model_module(model):
 
 
 def get_model_class(model):
-    class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
+    class_name = SUPPORTED_LIBRARIES.get(get_model_module(model), None)
     if class_name:
         module = importlib.import_module(__name__)
         return getattr(module, class_name)
