@@ -218,7 +218,7 @@ class TestPlan:
             logger.debug(f"Checking if required input '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_inputs and must be passed "
+                    f"{element}' is a required input and must be passed "
                     "as a keyword argument to the test plan"
                 )
 
