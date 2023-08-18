@@ -15,7 +15,7 @@ class MissingValuesRisk(Metric):
     """
 
     name = "missing_values_risk"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def description(self):
         return """

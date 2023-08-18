@@ -15,7 +15,7 @@ class ScorecardHistogram(Metric):
     """
 
     name = "scorecard_histogram"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "title": "Histogram of Scores",
         "target_score": 600,

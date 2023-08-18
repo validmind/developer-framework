@@ -71,13 +71,7 @@
                                 <a class="variable" href="#Metric.key">key</a>
                         </li>
                         <li>
-                                <a class="function" href="#Metric.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Metric.summary">summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#Metric.run">run</a>
                         </li>
                         <li>
                                 <a class="function" href="#Metric.cache_results">cache_results</a>
@@ -188,6 +182,27 @@
 
             </li>
             <li>
+                    <a class="class" href="#Test">Test</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Test.__init__">Test</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.description">description</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.summary">summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.run">run</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Test.cache_results">cache_results</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#TestContext">TestContext</a>
                             <ul class="memberlist">
                         <li>
@@ -206,6 +221,9 @@
                     <a class="class" href="#TestContextUtils">TestContextUtils</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#TestContextUtils.__init__">TestContextUtils</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#TestContextUtils.df">df</a>
                         </li>
                         <li>
@@ -221,7 +239,7 @@
                                 <a class="function" href="#TestPlan.__init__">TestPlan</a>
                         </li>
                         <li>
-                                <a class="function" href="#TestPlan.get_required_context">get_required_context</a>
+                                <a class="function" href="#TestPlan.get_required_inputs">get_required_inputs</a>
                         </li>
                         <li>
                                 <a class="function" href="#TestPlan.get_default_config">get_default_config</a>
@@ -320,7 +338,7 @@
                                 <a class="function" href="#TestSuite.__init__">TestSuite</a>
                         </li>
                         <li>
-                                <a class="function" href="#TestSuite.get_required_context">get_required_context</a>
+                                <a class="function" href="#TestSuite.get_required_inputs">get_required_inputs</a>
                         </li>
                         <li>
                                 <a class="function" href="#TestSuite.get_default_config">get_default_config</a>
@@ -344,13 +362,7 @@
                                 <a class="function" href="#ThresholdTest.__init__">ThresholdTest</a>
                         </li>
                         <li>
-                                <a class="function" href="#ThresholdTest.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ThresholdTest.summary">summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ThresholdTest.run">run</a>
                         </li>
                         <li>
                                 <a class="function" href="#ThresholdTest.cache_results">cache_results</a>
@@ -504,22 +516,20 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Metric</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+    <span class="name">Metric</span><wbr>(<span class="base"><a href="#Test">validmind.vm_models.Test</a></span>):
 
         
     </div>
     <a class="headerlink" href="#Metric"></a>
     
             <div class="docstring"><p>Metric objects track the schema supported by the ValidMind API</p>
-
-<p>TODO: Metric should validate required context too</p>
 </div>
 
 
                             <div id="Metric.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestPlanMetricResult">validmind.vm_models.TestPlanMetricResult</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestPlanMetricResult">validmind.vm_models.TestPlanMetricResult</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -541,25 +551,10 @@
 
 
                             </div>
-                            <div id="Metric.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Metric.description"></a>
-    
-            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
-
-                            </div>
                             <div id="Metric.summary" class="classattr">
                                 <div class="attr function">
-            
+                    <div class="decorator">@abstractmethod</div>
+
         <span class="def">def</span>
         <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
@@ -572,21 +567,6 @@ The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the metric results.</p>
 
 <p>We return None here because the metric summary is optional.</p>
-</div>
-
-
-                            </div>
-                            <div id="Metric.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Metric.run"></a>
-    
-            <div class="docstring"><p>Run the metric calculation and cache its results</p>
 </div>
 
 
@@ -622,7 +602,12 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                    <div><dt><a href="#Test">Test</a></dt>
+                                <dd id="Metric.description" class="function"><a href="#Test.description">description</a></dd>
+                <dd id="Metric.run" class="function"><a href="#Test.run">run</a></dd>
+
+            </div>
+            <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
                                 <dd id="Metric.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
                 <dd id="Metric.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
 
@@ -1049,6 +1034,106 @@ This is a wrapper around the model's if available</p>
 
                             </div>
                 </section>
+                <section id="Test">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">Test</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+
+        
+    </div>
+    <a class="headerlink" href="#Test"></a>
+    
+    
+
+                            <div id="Test.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">Test</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">object</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="Test.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.description"></a>
+    
+            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.summary" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.summary"></a>
+    
+            <div class="docstring"><p>Return the summary. Should be overridden by subclasses.</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.run" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.run"></a>
+    
+            <div class="docstring"><p>Run the calculation and cache its results</p>
+</div>
+
+
+                            </div>
+                            <div id="Test.cache_results" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">cache_results</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#Test.cache_results"></a>
+    
+            <div class="docstring"><p>Cache the results of the calculation</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                <dd id="Test.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
+                <dd id="Test.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
                 <section id="TestContext">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -1107,7 +1192,8 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
                 </section>
                 <section id="TestContextUtils">
                     <div class="attr class">
-            
+                    <div class="decorator">@dataclass</div>
+
     <span class="def">class</span>
     <span class="name">TestContextUtils</span>:
 
@@ -1121,6 +1207,18 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
 </div>
 
 
+                            <div id="TestContextUtils.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">TestContextUtils</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestContextUtils.__init__"></a>
+    
+    
+
+                            </div>
                             <div id="TestContextUtils.df" class="classattr">
                                 <div class="attr variable">
             <span class="name">df</span>
@@ -1180,23 +1278,23 @@ arbitrary grouping of tests that will be run on a dataset or model.</p>
     
 
                             </div>
-                            <div id="TestPlan.get_required_context" class="classattr">
+                            <div id="TestPlan.get_required_inputs" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">get_required_inputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TestPlan.get_required_context"></a>
+    <a class="headerlink" href="#TestPlan.get_required_inputs"></a>
     
-            <div class="docstring"><p>Returns the required context for the test plan. Defaults to the
-required context of the tests</p>
+            <div class="docstring"><p>Returns the required inputs for the test plan. Defaults to the
+required inputs of the tests</p>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>List[str]: A list of required context elements</p>
+  <p>List[str]: A list of required inputs elements</p>
 </blockquote>
 </div>
 
@@ -1659,17 +1757,17 @@ arbitrary grouping of test plans that will be run on a dataset and/or model.</p>
     
 
                             </div>
-                            <div id="TestSuite.get_required_context" class="classattr">
+                            <div id="TestSuite.get_required_inputs" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_required_context</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+        <span class="name">get_required_inputs</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TestSuite.get_required_context"></a>
+    <a class="headerlink" href="#TestSuite.get_required_inputs"></a>
     
-            <div class="docstring"><p>Returns the required context for the test suite.</p>
+            <div class="docstring"><p>Returns the required inputs for the test suite.</p>
 </div>
 
 
@@ -1765,7 +1863,7 @@ and set values</p>
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ThresholdTest</span><wbr>(<span class="base"><a href="#TestContextUtils">validmind.vm_models.TestContextUtils</a></span>):
+    <span class="name">ThresholdTest</span><wbr>(<span class="base"><a href="#Test">validmind.vm_models.Test</a></span>):
 
         
     </div>
@@ -1774,37 +1872,19 @@ and set values</p>
             <div class="docstring"><p>A threshold test is a combination of a metric/plot we track and a
 corresponding set of parameters and thresholds values that allow
 us to determine whether the metric/plot passes or fails.</p>
-
-<p>TODO: ThresholdTest should validate required context too</p>
 </div>
 
 
                             <div id="ThresholdTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#TestResults">validmind.vm_models.TestResults</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ThresholdTest.__init__"></a>
     
     
-
-                            </div>
-                            <div id="ThresholdTest.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ThresholdTest.description"></a>
-    
-            <div class="docstring"><p>Return the test description. Should be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="ThresholdTest.summary" class="classattr">
@@ -1817,26 +1897,11 @@ to returning the class' docstring</p>
     </div>
     <a class="headerlink" href="#ThresholdTest.summary"></a>
     
-            <div class="docstring"><p>Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+            <div class="docstring"><p>Return the threshold test summary. May be overridden by subclasses. Defaults to showing
 a table with test_name(optional), column and passed.</p>
 
 <p>The test summary allows renderers (e.g. Word and ValidMind UI) to display a
 short summary of the test results.</p>
-</div>
-
-
-                            </div>
-                            <div id="ThresholdTest.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ThresholdTest.run"></a>
-    
-            <div class="docstring"><p>Run the test and cache its results</p>
 </div>
 
 
@@ -1872,7 +1937,12 @@ short summary of the test results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
+                                    <div><dt><a href="#Test">Test</a></dt>
+                                <dd id="ThresholdTest.description" class="function"><a href="#Test.description">description</a></dd>
+                <dd id="ThresholdTest.run" class="function"><a href="#Test.run">run</a></dd>
+
+            </div>
+            <div><dt><a href="#TestContextUtils">TestContextUtils</a></dt>
                                 <dd id="ThresholdTest.df" class="variable"><a href="#TestContextUtils.df">df</a></dd>
                 <dd id="ThresholdTest.validate_context" class="function"><a href="#TestContextUtils.validate_context">validate_context</a></dd>
 

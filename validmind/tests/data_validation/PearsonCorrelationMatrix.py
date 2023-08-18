@@ -16,7 +16,7 @@ class PearsonCorrelationMatrix(Metric):
     """
 
     name = "pearson_correlation_matrix"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
 
     def run(self):
         columns = self.params.get("columns", list(self.dataset.df.columns))

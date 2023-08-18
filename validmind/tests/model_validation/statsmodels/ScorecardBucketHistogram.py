@@ -14,7 +14,7 @@ class ScorecardBucketHistogram(Metric):
     """
 
     name = "scorecard_bucket_histogram"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {
         "title": "Distribution of Scores by Rating Classes",
         "target_score": 600,

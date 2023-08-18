@@ -6,15 +6,12 @@ Models entrypoint
 
 from .dataset import VMDataset
 from .figure import Figure
-from .model import (
-    VMModel,
-    ModelAttributes,
-    R_MODEL_TYPES
-)
+from .model import VMModel, ModelAttributes, R_MODEL_TYPES
 
 from .metric import Metric
 from .metric_result import MetricResult
 from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
+from .test import Test
 from .test_context import TestContext, TestContextUtils
 from .test_plan import TestPlan
 from .test_plan_result import (
@@ -40,6 +37,7 @@ __all__ = [
     "ResultSummary",
     "ResultTable",
     "ResultTableMetadata",
+    "Test",
     "TestContext",
     "TestContextUtils",
     "TestPlan",

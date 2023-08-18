@@ -87,7 +87,7 @@ This class implements the Isolation Forest algorithm for anomaly detection.</p>
 <ul>
 <li><strong>name (str):</strong>  The name of the Isolation Forest.</li>
 <li><strong>default_params (dict):</strong>  The default parameters for the Isolation Forest.</li>
-<li><strong>required_context (list):</strong>  The required context for running the Isolation Forest.</li>
+<li><strong>required_inputs (list):</strong>  The required inputs for running the Isolation Forest.</li>
 </ul>
 
 <h6 id="methods">Methods:</h6>
@@ -102,7 +102,7 @@ This class implements the Isolation Forest algorithm for anomaly detection.</p>
                             <div id="IsolationForestOutliers.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">IsolationForestOutliers</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">IsolationForestOutliers</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -121,7 +121,7 @@ This class implements the Isolation Forest algorithm for anomaly detection.</p>
     </div>
     <a class="headerlink" href="#IsolationForestOutliers.description"></a>
     
-            <div class="docstring"><p>Return the metric description. Should be overridden by subclasses. Defaults
+            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
 to returning the class' docstring</p>
 </div>
 
@@ -137,7 +137,7 @@ to returning the class' docstring</p>
     </div>
     <a class="headerlink" href="#IsolationForestOutliers.run"></a>
     
-            <div class="docstring"><p>Run the metric calculation and cache its results</p>
+            <div class="docstring"><p>Run the calculation and cache its results</p>
 </div>
 
 
