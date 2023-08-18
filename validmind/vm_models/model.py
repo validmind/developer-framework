@@ -475,7 +475,6 @@ class HFModel(VMModel):
         validation_ds (Dataset, optional): The validation dataset. Defaults to None.
         y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
         y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
-        device_type(str, optional) The device where model is trained
     """
     def __init__(
         self,
