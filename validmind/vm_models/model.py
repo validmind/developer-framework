@@ -39,7 +39,7 @@ class ModelAttributes:
     framework_version: str = None
 
 
-class VMModel():
+class VMModel:
     """
     An base class that wraps a trained model instance and its associated data.
 
@@ -233,4 +233,4 @@ def get_model_class(model):
         model_class_name,
     )
 
-    return model_class 
+    return model_class

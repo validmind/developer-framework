@@ -153,9 +153,9 @@ class DatasetDescription(Metric):
             }
         elif type_ == "Text":
             # Combine all the text in the specified field
-            text_data = ' '.join(df[field].astype(str))
+            text_data = " ".join(df[field].astype(str))
             # Split the text into words (tokens) using a regular expression
-            words = re.findall(r'\w+', text_data)
+            words = re.findall(r"\w+", text_data)
             # Use Counter to count the frequency of each word
             word_counts = Counter(words)
 
