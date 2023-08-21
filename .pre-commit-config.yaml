@@ -19,6 +19,13 @@ repos:
         pass_filenames: false
         stages:
           - "push"
+    -   id: lint
+        name: Running make lint
+        entry: make lint
+        language: system
+        pass_filenames: false
+        stages:
+          - "push"
     -   id: copyright
         name: Running make copyright
         entry: make copyright
