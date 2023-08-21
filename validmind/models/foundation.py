@@ -50,39 +50,9 @@ class FoundationModel(VMModel):
         self.prompt = prompt
 
         if self.train_ds:
-            # self._y_train_predict = np.array(self.predict(self.train_ds.x_df()))
-            # for now hardcode:
-            self._y_train_predict = np.array(
-                [
-                    "neutral",
-                    "neutral",
-                    "negative",
-                    "positive",
-                    "neutral",
-                    "positive",
-                    "positive",
-                    "positive",
-                    "positive",
-                    "positive",
-                ]
-            )
+            self._y_train_predict = np.array(self.predict(self.train_ds.x_df()))
         if self.test_ds:
-            # self._y_test_predict = np.array(self.predict(self.test_ds.x_df()))
-            # for now hardcode:
-            self._y_test_predict = np.array(
-                [
-                    "neutral",
-                    "neutral",
-                    "negative",
-                    "positive",
-                    "neutral",
-                    "positive",
-                    "positive",
-                    "positive",
-                    "positive",
-                    "positive",
-                ]
-            )
+            self._y_test_predict = np.array(self.predict(self.test_ds.x_df()))
         if self.validation_ds:
             self._y_validation_predict = np.array(
                 self.predict(self.validation_ds.x_df())
