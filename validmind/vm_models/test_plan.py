@@ -274,7 +274,9 @@ class TestPlan:
                 logger=logger,
             )()  # this is a decorator so we need to call it
         except Exception as e:
-            logger.error(f"Failed to run test '{test.name}': {e}")
+            logger.error(
+                f"Failed to run test '{test.name}': ({e.__class__.__name__}) {e}"
+            )
             test.result = TestPlanFailedResult(
                 name=f"Failed {test.test_type}",
                 error=e,
