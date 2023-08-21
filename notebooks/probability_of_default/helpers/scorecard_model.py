@@ -172,8 +172,10 @@ def convert_emp_length_column(df):
         .replace("n/a", np.nan)
         .str.replace("< 1 year", str(0))
         .apply(lambda x: re.sub("\D", "", str(x)))
-        .astype("object")
+        .replace("", np.nan)  # Replace empty strings (if any) with NaN
+        .astype(float)
     )
+    return df
 
 
 def convert_inq_last_6mths_column(df):
