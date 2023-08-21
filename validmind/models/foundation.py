@@ -3,8 +3,11 @@ from dataclasses import dataclass
 import pandas as pd
 import numpy as np
 
+from validmind.logging import get_logger
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
+
+logger = get_logger(__name__)
 
 
 @dataclass
