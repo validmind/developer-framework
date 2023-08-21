@@ -10,13 +10,15 @@ repos:
     -   id: check-yaml
     -   id: check-added-large-files
 
-# -   repo: local
-#     hooks:
-#     -   id: format
-#         name: Running make format
-#         entry: make format
-#         language: script
-#         pass_filenames: false
+-   repo: local
+    hooks:
+    -   id: format
+        name: Running make format
+        entry: make format
+        language: system
+        pass_filenames: false
+        stages:
+          - "push"
 #     -   id: copyright
 #         name: Running make copyright
 #         entry: make copyright
