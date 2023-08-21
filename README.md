@@ -42,10 +42,11 @@ pip install validmind[r-support]
 
 - After cloning this repo, run:
 
-    ```bash
-    poetry shell
-    poetry install
-    ```
+```bash
+make install
+```
+
+This will install the dependencies and git hooks for the project.
 
 ### Installing PyTorch dependencies
 

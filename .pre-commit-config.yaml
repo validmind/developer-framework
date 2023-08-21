@@ -1,0 +1,29 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    -   id: trailing-whitespace
+        args: ['--markdown-linebreak-ext=md']
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+
+# -   repo: local
+#     hooks:
+#     -   id: format
+#         name: Running make format
+#         entry: make format
+#         language: script
+#         pass_filenames: false
+#     -   id: copyright
+#         name: Running make copyright
+#         entry: make copyright
+#         language: script
+#         pass_filenames: false
+#     -   id: docs
+#         name: Running make docs
+#         entry: make docs
+#         language: script
+#         pass_filenames: false

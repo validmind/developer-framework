@@ -12,8 +12,12 @@ format:
 lint:
 	poetry run flake8 validmind
 
+install:
+	poetry install
+	poetry run pre-commit install
+
 # Quick target to run all checks
-check: format lint test
+check: copyright format lint test
 
 build:
 	poetry build
