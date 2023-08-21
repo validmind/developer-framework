@@ -1,9 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
+
 import numpy as np
 import plotly.graph_objects as go
-from sklearn import metrics
+from sklearn.metrics import roc_curve
+
 from validmind.vm_models import Figure, Metric
 
 
@@ -31,7 +33,7 @@ class ROCCurve(Metric):
         y_true = y_true.astype(y_pred.dtype).flatten()
         assert np.all((y_pred >= 0) & (y_pred <= 1)), "Invalid probabilities in y_pred."
 
-        fpr, tpr, roc_thresholds = metrics.roc_curve(
+        fpr, tpr, roc_thresholds = roc_curve(
             y_true, y_pred, drop_intermediate=False
         )
         # Remove Inf values from roc_thresholds
