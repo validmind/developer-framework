@@ -4,70 +4,37 @@
 (Threshold)Test class wrapper. Our API exposes the concept of of a
 Test (as test_results) but we'll refer to it as a ThresholdTest to
 avoid confusion with the "tests" in the general data science/modeling sense.
-
-TODO: Test definitions should be supported in the API too
 """
 
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
-from uuid import uuid4
 
 from .figure import Figure
 from .result_summary import ResultSummary, ResultTable
-from .test_context import TestContext, TestContextUtils
+from .test import Test
 from .test_plan_result import TestPlanTestResult
 from .test_result import TestResult, TestResults
 from ..utils import clean_docstring
 
 
 @dataclass
-class ThresholdTest(TestContextUtils):
+class ThresholdTest(Test):
     """
     A threshold test is a combination of a metric/plot we track and a
     corresponding set of parameters and thresholds values that allow
     us to determine whether the metric/plot passes or fails.
-
-    TODO: ThresholdTest should validate required context too
     """
-
-    # Test Context
-    test_context: TestContext
 
     # Class Variables
     test_type: ClassVar[str] = "ThresholdTest"
-    category: ClassVar[str] = ""
-    name: ClassVar[str] = ""
-    ref_id: ClassVar[str] = ""  # unique identifier for metric
-    tag: ClassVar[str] = ""  # for now this is the template section id
-    required_context: ClassVar[List[str]] = []
-    default_params: ClassVar[dict] = {}
+    category: ClassVar[str]  # should be overridden by test classes
 
     # Instance Variables
-    params: dict = None
-    result: TestResults = None
-
-    def __post_init__(self):
-        """
-        Set default params if not provided
-        """
-        if not self.ref_id:
-            self.ref_id = str(uuid4())
-
-        self.params = {
-            **self.default_params,
-            **(self.params if self.params is not None else {}),
-        }
-
-    def description(self):
-        """
-        Return the test description. Should be overridden by subclasses. Defaults
-        to returning the class' docstring
-        """
-        return self.__doc__.strip()
+    result: TestResults = None  # populated by cache_results() method
 
     def summary(self, results: Optional[List[TestResult]], all_passed: bool):
         """
-        Return the threshold test summary. Should be overridden by subclasses. Defaults to showing
+        Return the threshold test summary. May be overridden by subclasses. Defaults to showing
         a table with test_name(optional), column and passed.
 
         The test summary allows renderers (e.g. Word and ValidMind UI) to display a
@@ -90,12 +57,6 @@ class ThresholdTest(TestContextUtils):
             results_table.append(result_object)
 
         return ResultSummary(results=[ResultTable(data=results_table)])
-
-    def run(self, *args, **kwargs):
-        """
-        Run the test and cache its results
-        """
-        raise NotImplementedError
 
     def cache_results(
         self,
@@ -130,7 +91,7 @@ class ThresholdTest(TestContextUtils):
             test_results=TestResults(
                 category=self.category,
                 test_name=self.name,
-                ref_id=self.ref_id,
+                ref_id=self._ref_id,
                 params=self.params,
                 passed=passed,
                 results=test_results_list,
@@ -140,10 +101,6 @@ class ThresholdTest(TestContextUtils):
 
         # Allow test results to attach figures to the test plan result
         if figures:
-            # add ref_id to figure metadata to strongly link the figure to the test
-            for figure in figures:
-                figure.metadata["_ref_id"] = self.ref_id
-
             self.result.figures = figures
 
         return self.result

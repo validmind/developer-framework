@@ -13,7 +13,7 @@ class EngleGrangerCoint(Metric):
 
     type = "dataset"
     name = "engle_granger_coint"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"threshold": 0.05}
 
     def run(self):

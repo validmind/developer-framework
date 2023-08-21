@@ -13,7 +13,7 @@ class TargetRateBarPlots(Metric):
     """
 
     name = "target_rate_bar_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"default_column": None, "columns": None}
 
     def plot_loan_default_ratio(self, default_column, columns=None):

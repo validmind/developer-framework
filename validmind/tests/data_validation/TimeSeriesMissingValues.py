@@ -24,7 +24,7 @@ class TimeSeriesMissingValues(ThresholdTest):
 
     category = "data_quality"
     name = "time_series_missing_values"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
 
     def summary(self, results, all_passed):

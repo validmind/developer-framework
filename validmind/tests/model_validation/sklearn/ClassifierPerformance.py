@@ -4,10 +4,18 @@ from dataclasses import dataclass
 from functools import partial
 from numpy import unique
 
-from sklearn import metrics
+from sklearn import metrics, preprocessing
 
 from validmind.utils import format_number
 from validmind.vm_models import Metric, ResultSummary, ResultTable
+
+
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(y_test)
+    y_test = lb.transform(y_test)
+    y_pred = lb.transform(y_pred)
+    return metrics.roc_auc_score(y_test, y_pred, average=average)
 
 
 @dataclass
@@ -16,13 +24,14 @@ class ClassifierPerformance(Metric):
     Test that outputs the performance of the model on the training or test data.
     """
 
+    name = "classifier_performance"
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
     default_metrics = {
         "accuracy": metrics.accuracy_score,
-        "precision": partial(metrics.precision_score, zero_division=0),
-        "recall": partial(metrics.recall_score, zero_division=0),
-        "f1": partial(metrics.f1_score, zero_division=0),
-        "roc_auc": metrics.roc_auc_score,
+        "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
+        "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
+        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
+        "roc_auc": partial(multiclass_roc_auc_score),
     }
 
     # This will need to be moved to the backend

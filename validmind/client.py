@@ -152,9 +152,7 @@ def init_model(
     """
     class_obj = get_model_class(model=model)
     if not class_obj:
-        raise UnsupportedModelError(
-            "Model type is not supported at the moment."
-        )
+        raise UnsupportedModelError("Model type is not supported at the moment.")
 
     vm_model = class_obj(
         model=model,  # Trained model instance

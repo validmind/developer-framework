@@ -3,20 +3,17 @@
 """
 TestPlanResult
 """
+import asyncio
 import json
 import os
-
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-
 from typing import List, Optional
 
-import asyncio
 import markdown
-
-from IPython.display import display
 import ipywidgets as widgets
 import pandas as pd
+from IPython.display import display
 
 from .. import api_client
 from .dataset import VMDataset
@@ -99,7 +96,36 @@ class TestPlanResult(ABC):
                 pd.DataFrame(table.data)
                 .style.format(precision=4)
                 .hide(axis="index")
-                .to_html()
+                .set_table_styles(
+                    [
+                        {
+                            "selector": "",
+                            "props": [
+                                ("width", "100%"),
+                            ],
+                        },
+                        {
+                            "selector": "tbody tr:nth-child(even)",
+                            "props": [
+                                ("background-color", "#FFFFFF"),
+                            ],
+                        },
+                        {
+                            "selector": "tbody tr:nth-child(odd)",
+                            "props": [
+                                ("background-color", "#F5F5F5"),
+                            ],
+                        },
+                        {
+                            "selector": "td, th",
+                            "props": [
+                                ("padding-left", "5px"),
+                                ("padding-right", "5px"),
+                            ],
+                        },
+                    ]
+                )  # add borders
+                .to_html(escape=False)
             )  # table.data is an orient=records dump
 
             if table.metadata and table.metadata.title:
@@ -300,7 +326,7 @@ class TestPlanTestResult(TestPlanResult):
         vbox_children = []
         description_html = []
 
-        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder)
+        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
 
         description_html.append(
             f"""

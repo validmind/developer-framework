@@ -12,7 +12,7 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     """
 
     name = "classifier_out_of_sample_performance"
-    required_context = ["model", "model.test_ds"]
+    required_inputs = ["model", "model.test_ds"]
 
     def description(self):
         return """

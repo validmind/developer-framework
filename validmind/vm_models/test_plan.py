@@ -16,7 +16,8 @@ from ..tests import load_test, LoadTestError
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import VMDataset
 from .model import VMModel
-from .test_context import TestContext, TestContextUtils
+from .test import Test
+from .test_context import TestContext
 from .test_plan_result import TestPlanFailedResult, TestPlanResult
 
 logger = get_logger(__name__)
@@ -31,7 +32,7 @@ class TestPlan:
 
     # Class Variables
     name: ClassVar[str]
-    tests: ClassVar[Union[List[str], List[dict], List[TestContextUtils]]]
+    tests: ClassVar[Union[List[str], List[dict], List[Test]]]
     results: ClassVar[List[TestPlanResult]]
 
     # Instance Variables
@@ -125,8 +126,7 @@ class TestPlan:
         for test_id_or_class in self.tests:
             # Check if test_id_or_class is a class and if it is a subclass of TestContextUtils
             if isinstance(test_id_or_class, type) and issubclass(
-                test_id_or_class,
-                TestContextUtils,  # TODO: use a dedicated base class for metric/test
+                test_id_or_class, Test
             ):  # if its a test class, we just add it to the list
                 test_id_or_class.id = test_id_or_class.name
                 self._tests.append(test_id_or_class)
@@ -147,23 +147,23 @@ class TestPlan:
 
             self._load_test(test_id_or_class, test_class_props)
 
-    def get_required_context(self) -> List[str]:
+    def get_required_inputs(self) -> List[str]:
         """
-        Returns the required context for the test plan. Defaults to the
-        required context of the tests
+        Returns the required inputs for the test plan. Defaults to the
+        required inputs of the tests
 
         Returns:
-            List[str]: A list of required context elements
+            List[str]: A list of required inputs elements
         """
-        required_context = set()
+        required_inputs = set()
 
-        # bubble up the required context from the tests
+        # bubble up the required inputs from the tests
         for test in self._tests:
-            if not hasattr(test, "required_context"):
+            if not hasattr(test, "required_inputs") or test.required_inputs is None:
                 continue
-            required_context.update(test.required_context)
+            required_inputs.update(test.required_inputs)
 
-        return list(required_context)
+        return list(required_inputs)
 
     def get_default_config(self) -> dict:
         """Returns the default configuration for the test plan
@@ -214,11 +214,11 @@ class TestPlan:
                 ".".join(attrs[1:]),
             )
 
-        for element in self.get_required_context():
-            logger.debug(f"Checking if required context '{element}' is present")
+        for element in self.get_required_inputs():
+            logger.debug(f"Checking if required input '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_context and must be passed "
+                    f"{element}' is required_inputs and must be passed "
                     "as a keyword argument to the test plan"
                 )
 

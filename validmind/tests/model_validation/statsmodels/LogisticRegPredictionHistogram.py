@@ -15,7 +15,7 @@ class LogisticRegPredictionHistogram(Metric):
     """
 
     name = "logistic_reg_prediction_histogram"
-    required_context = ["model"]
+    required_inputs = ["model"]
     default_parameters = {"title": "Histogram of Predictive Probabilities"}
 
     def description(self):

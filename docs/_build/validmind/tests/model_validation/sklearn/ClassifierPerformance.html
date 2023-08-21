@@ -32,6 +32,9 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="function" href="#multiclass_roc_auc_score">multiclass_roc_auc_score</a>
+            </li>
+            <li>
                     <a class="class" href="#ClassifierPerformance">ClassifierPerformance</a>
                             <ul class="memberlist">
                         <li>
@@ -74,6 +77,19 @@
                 
                 
             </section>
+                <section id="multiclass_roc_auc_score">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">multiclass_roc_auc_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">y_test</span>, </span><span class="param"><span class="n">y_pred</span>, </span><span class="param"><span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#multiclass_roc_auc_score"></a>
+    
+    
+
+                </section>
                 <section id="ClassifierPerformance">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -92,7 +108,7 @@
                             <div id="ClassifierPerformance.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ClassifierPerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ClassifierPerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -156,7 +172,7 @@ short summary of the metric results.</p>
     </div>
     <a class="headerlink" href="#ClassifierPerformance.run"></a>
     
-            <div class="docstring"><p>Run the metric calculation and cache its results</p>
+            <div class="docstring"><p>Run the calculation and cache its results</p>
 </div>
 
 
@@ -166,8 +182,11 @@ short summary of the metric results.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="ClassifierPerformance.key" class="variable">key</dd>
-                <dd id="ClassifierPerformance.description" class="function">description</dd>
                 <dd id="ClassifierPerformance.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.Test</dt>
+                                <dd id="ClassifierPerformance.description" class="function">description</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

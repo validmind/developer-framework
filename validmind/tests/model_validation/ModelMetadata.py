@@ -8,6 +8,7 @@ import pandas as pd
 
 from validmind.vm_models import Metric, ResultSummary, ResultTable
 
+
 def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' is too complex
     model,
 ):
@@ -16,7 +17,11 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
     """
     architecture = model.model_name()
     framework = model.model_library()
-    framework_version = sys.modules[model.model_library()].__version__
+
+    if model.model_library() == "__main__":
+        framework_version = "0.0"
+    else:
+        framework_version = sys.modules[model.model_library()].__version__
 
     return {
         "architecture": architecture,
@@ -33,7 +38,7 @@ class ModelMetadata(Metric):
     """
 
     name = "model_metadata"
-    required_context = ["model"]
+    required_inputs = ["model"]
 
     column_labels = {
         "architecture": "Modeling Technique",
