@@ -1,3 +1,4 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes
 

@@ -1,3 +1,4 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 from .catboost import CatBoostModel
 from .foundation import FoundationModel, Prompt
 from .pytorch import PyTorchModel
