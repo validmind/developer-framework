@@ -71,7 +71,6 @@ twine = "^4.0.2"
 pytorch = ["torch"]
 r-support = ["rpy2"]
 llm = ["openai"]
-langchain = ["langchain"]
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
