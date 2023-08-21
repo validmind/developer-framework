@@ -57,8 +57,11 @@ class RegressionROCCurve(Metric):
         return fig
 
     def run(self):
-        y_true = np.array(self.model.test_ds.y)
-        y_scores = self.model.predict(self.model.test_ds.x)
+        # Extract the actual model
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        y_true = np.array(model.test_ds.y)
+        y_scores = model.predict(model.test_ds.x)
 
         fpr, tpr, thresholds = roc_curve(y_true, y_scores)
         roc_auc = auc(fpr, tpr)

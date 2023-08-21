@@ -1,11 +1,13 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
+import plotly.figure_factory as ff
 
 from validmind.vm_models import Figure, Metric
+
+# Define the 'coolwarm' color scale manually
+COOLWARM = [[0, "rgb(95,5,255)"], [0.5, "rgb(255,255,255)"], [1, "rgb(255,5,0)"]]
 
 
 class LaggedCorrelationHeatmap(Metric):
@@ -43,31 +45,38 @@ class LaggedCorrelationHeatmap(Metric):
             index=independent_vars,
         )
 
-        fig, ax = plt.subplots()
-        sns.heatmap(
-            correlation_df,
-            annot=True,
-            cmap="coolwarm",
-            vmin=-1,
-            vmax=1,
-            annot_kws={"size": 16},
+        # Create heatmap using Plotly
+        fig = ff.create_annotated_heatmap(
+            z=correlation_df.values,
+            x=list(correlation_df.columns),
+            y=list(correlation_df.index),
+            colorscale=COOLWARM,
+            annotation_text=correlation_df.round(2).values,
+            showscale=True,
         )
-        cbar = ax.collections[0].colorbar
-        cbar.ax.tick_params(labelsize=16)  # Here you can set the font size
-        fig.suptitle(
-            f"Correlations between {target_col} and Lags of Features",
-            fontsize=20,
-            weight="bold",
-            y=0.95,
+
+        fig.update_layout(
+            title={
+                "text": f"Correlations between {target_col} and Lags of Features",
+                "y": 0.95,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "top",
+            },
+            font=dict(size=14),
+            xaxis_title="Lags",
         )
-        plt.xticks(fontsize=18)
-        plt.yticks(fontsize=18)
-        plt.xlabel("Lags", fontsize=18)
 
         return fig
 
     def run(self):
-        target_col = [self.dataset.target_column]
+        if isinstance(self.dataset.target_column, list):
+            target_col = self.dataset.target_column[
+                0
+            ]  # take the first item from the list
+        else:
+            target_col = self.dataset.target_column
+
         independent_vars = list(self.dataset.get_features_columns())
         num_lags = self.params.get("num_lags", 10)
 
@@ -94,7 +103,6 @@ class LaggedCorrelationHeatmap(Metric):
                 figure=fig,
             )
         )
-        plt.close("all")
 
         return self.cache_results(
             figures=figures,

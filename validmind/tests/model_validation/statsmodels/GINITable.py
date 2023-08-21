@@ -22,13 +22,13 @@ class GINITable(Metric):
     required_context = ["model"]
 
     def run(self):
-        model = self.model
+        model = self.model[0] if isinstance(self.model, list) else self.model
 
-        X_train = self.model.train_ds.x
-        y_train = self.model.train_ds.y
+        X_train = model.train_ds.x
+        y_train = model.train_ds.y
 
-        X_test = self.model.test_ds.x
-        y_test = self.model.test_ds.y
+        X_test = model.test_ds.x
+        y_test = model.test_ds.y
 
         summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)
 

@@ -140,7 +140,7 @@ class TimeSeriesFrequency(ThresholdTest):
             title="Histogram of Time Differences (Days)",
             xaxis_title="Days",
             yaxis_title="Frequency",
-            font=dict(size=18),
+            font=dict(size=16),
         )
 
         return fig

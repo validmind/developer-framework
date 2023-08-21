@@ -36,15 +36,13 @@ class TimeSeriesLinePlot(Metric):
 
             fig.update_layout(
                 title={
-                    "text": f"Time Series for {col}",
+                    "text": f"{col}",
                     "y": 0.95,
                     "x": 0.5,
                     "xanchor": "center",
                     "yanchor": "top",
                 },
-                font=dict(size=18),
-                xaxis_title=df.index.name,
-                yaxis_title=col,
+                font=dict(size=16),
             )
 
             figures.append(

@@ -31,11 +31,14 @@ class LogRegressionConfusionMatrix(Metric):
     def run(self):
         cut_off_threshold = self.default_parameters["cut_off_threshold"]
 
-        y_true = np.array(self.model.test_ds.y)
+        # Extract the actual model
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        y_true = np.array(model.test_ds.y)
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        y_pred_prob = self.model.model.predict(self.model.test_ds.x)
+        y_pred_prob = model.model.predict(model.test_ds.x)
         y_pred = np.where(y_pred_prob > cut_off_threshold, 1, 0)
         y_true = y_true.astype(y_pred.dtype)
 
