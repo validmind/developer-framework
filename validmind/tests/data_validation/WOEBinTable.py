@@ -1,3 +1,4 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 import pandas as pd
 from dataclasses import dataclass
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
