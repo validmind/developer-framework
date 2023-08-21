@@ -49,11 +49,18 @@ class FoundationModel(VMModel):
         self.predict_fn = predict_fn
         self.prompt = prompt
 
+        # TODO user should be able to pass in responses from model instead of running
+        # predict across all the datasets
         if self.train_ds:
+            logger.info("Running predict() for `train_ds`... This may take a while")
             self._y_train_predict = np.array(self.predict(self.train_ds.x_df()))
         if self.test_ds:
+            logger.info("Running predict() for `test_ds`... This may take a while")
             self._y_test_predict = np.array(self.predict(self.test_ds.x_df()))
         if self.validation_ds:
+            logger.info(
+                "Running predict() for `validation_ds`... This may take a while"
+            )
             self._y_validation_predict = np.array(
                 self.predict(self.validation_ds.x_df())
             )
