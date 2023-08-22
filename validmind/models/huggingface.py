@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+import pandas as pd
+
 from validmind.errors import MissingModelPredictFnError
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import (
