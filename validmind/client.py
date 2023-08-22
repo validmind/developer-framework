@@ -152,7 +152,12 @@ def init_model(
     """
     class_obj = get_model_class(model=model)
     if not class_obj:
-        raise UnsupportedModelError("Model type is not supported at the moment.")
+        # raise UnsupportedModelError(
+        #     f"Model type {model['coefficients']} is not supported at the moment."
+        # )
+        raise UnsupportedModelError(
+            f"Model type {model.keys()} is not supported at the moment."
+        )
 
     vm_model = class_obj(
         model=model,  # Trained model instance
@@ -164,7 +169,14 @@ def init_model(
     return vm_model
 
 
-def init_r_model(model_path: str, model_type: str) -> VMModel:
+def init_r_model(
+    # model_path: str,
+    # model_type: str,
+    model: object,
+    train_ds: VMDataset = None,
+    test_ds: VMDataset = None,
+    validation_ds: VMDataset = None,
+) -> VMModel:
     """
     Initializes a VM Model for an R model
 
@@ -189,53 +201,71 @@ def init_r_model(model_path: str, model_type: str) -> VMModel:
     """
     # first we need to load the model using rpy2
     # since rpy2 is an extra we need to conditionally import it
-    try:
-        import rpy2.robjects as robjects
-    except ImportError:
-        raise MissingRExtrasError()
+    # try:
+    #     import rpy2.robjects as robjects
+    # except ImportError:
+    #     raise MissingRExtrasError()
 
-    if model_type not in R_MODEL_TYPES:
-        raise UnsupportedRModelError(
-            "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
-        )
+    # if model_type not in R_MODEL_TYPES:
+    #     raise UnsupportedRModelError(
+    #         "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
+    #     )
 
-    # convert the R model to an sklearn or xgboost estimator
-    if model_type == "LogisticRegression":  # load the model
-        r_model = robjects.r["readRDS"](model_path)
-        intercept, *coefficients = robjects.r["coef"](r_model)
+    # # convert the R model to an sklearn or xgboost estimator
+    # if model_type == "LogisticRegression":  # load the model
+    #     r_model = robjects.r["readRDS"](model_path)
+    #     intercept, *coefficients = robjects.r["coef"](r_model)
 
-        model = LogisticRegression()
-        model.intercept_ = intercept
-        model.coef_ = np.array(coefficients).reshape(1, -1)
-        model.classes_ = np.array([0, 1])
-        model.feature_names_in_ = np.array(
-            robjects.r["colnames"](robjects.r["model.matrix"](r_model))[1:]
-        )
+    #     model = LogisticRegression()
+    #     model.intercept_ = intercept
+    #     model.coef_ = np.array(coefficients).reshape(1, -1)
+    #     model.classes_ = np.array([0, 1])
+    #     model.feature_names_in_ = np.array(
+    #         robjects.r["colnames"](robjects.r["model.matrix"](r_model))[1:]
+    #     )
 
-    elif model_type == "LinearRegression":
-        r_model = robjects.r["readRDS"](model_path)
-        intercept, *coefficients = robjects.r["coef"](r_model)
+    # elif model_type == "LinearRegression":
+    #     r_model = robjects.r["readRDS"](model_path)
+    #     intercept, *coefficients = robjects.r["coef"](r_model)
 
-        model = LinearRegression()
-        model.intercept_ = intercept
-        model.coef_ = np.array(coefficients).reshape(1, -1)
+    #     model = LinearRegression()
+    #     model.intercept_ = intercept
+    #     model.coef_ = np.array(coefficients).reshape(1, -1)
 
-    elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
-        # validate that path is a .json or .bin file not .rds
-        if not model_path.endswith(".json") and not model_path.endswith(".bin"):
-            raise InvalidXGBoostTrainedModelError(
-                "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
-                + "Please use `xgb.save(model, 'model.json')` to save the model."
-            )
+    # elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
+    #     # validate that path is a .json or .bin file not .rds
+    #     if not model_path.endswith(".json") and not model_path.endswith(".bin"):
+    #         raise InvalidXGBoostTrainedModelError(
+    #             "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
+    #             + "Please use `xgb.save(model, 'model.json')` to save the model."
+    #         )
 
-        booster = xgb.Booster(model_file=model_path)
+    #     booster = xgb.Booster(model_file=model_path)
 
-        model = (
-            xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
-        )
-        model._Booster = booster
+    #     model = (
+    #         xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
+    #     )
+    #     model._Booster = booster
+    import statsmodels.api as sm
 
-    return init_model(model)
+    X = train_ds.x
+    # X = sm.add_constant(X)  # Adds a constant term to the predictor
+    y = train_ds.y
+
+    # Mapping of families from R to statsmodels
+    # binomial, logit -> Binomial
+    # gaussian, identity -> Gaussian
+    # Gamma -> Gamma
+    # poisson -> Poisson
+
+    model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
+
+    return init_model(
+        model,
+        train_ds=train_ds,
+        test_ds=test_ds,
+        validation_ds=validation_ds,
+    )
 
 
 def run_test_plan(test_plan_name, send=True, **kwargs):

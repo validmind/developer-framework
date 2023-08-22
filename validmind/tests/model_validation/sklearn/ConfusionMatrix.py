@@ -35,6 +35,8 @@ class ConfusionMatrix(Metric):
 
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
+        print("class_pred", class_pred)
+        print("y_true", class_pred)
         cm = metrics.confusion_matrix(y_true, class_pred, labels=labels)
 
         fig = ff.create_annotated_heatmap(

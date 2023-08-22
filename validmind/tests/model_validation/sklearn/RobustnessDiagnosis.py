@@ -94,7 +94,9 @@ class RobustnessDiagnosis(ThresholdTest):
         features_list = self.model.train_ds.get_features_columns()
 
         if self.model.train_ds.text_column in features_list:
-            raise ValueError("Skiping Robustness Diagnosis test for the dataset with text column")
+            raise ValueError(
+                "Skiping Robustness Diagnosis test for the dataset with text column"
+            )
 
         train_df = self.model.train_ds.x_df().copy()
         train_y_true = self.model.train_ds.y
