@@ -17,6 +17,7 @@ SUPPORTED_LIBRARIES = {
     "sklearn": "SKlearnModel",
     "statsmodels": "StatsModelsModel",
     "torch": "PyTorchModel",
+    "transformers": "HFModel",
     "custom": "SKlearnModel",
 }
 
