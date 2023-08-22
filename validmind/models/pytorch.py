@@ -1,7 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 import numpy as np
 
-from validmind.errors import MissingPytorchModelPredictError
+from validmind.errors import MissingModelPredictFnError
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import (
     ModelAttributes,
@@ -55,7 +55,7 @@ class PyTorchModel(VMModel):
         Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict_proba method with 1 argument"
                 + " that is tensor features matrix"
             )
@@ -68,7 +68,7 @@ class PyTorchModel(VMModel):
         Predict method for the model. This is a wrapper around the model's
         """
         if not has_method_with_arguments(self.model, "predict", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict method with 1 argument"
                 + " that is tensor features matrix"
             )
