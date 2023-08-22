@@ -1,6 +1,6 @@
 # ValidMind Developer Framework
 
-![](images/ValidMind-logo-color.svg)
+![ValidMind logo](images/ValidMind-logo-color.svg "ValidMind logo")
 
 ValidMind's Developer Framework is a library of developer tools and methods designed to run validation tests and automate the documentation of your models. The Developer Framework provides a rich suite of documentation tools and test plans, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
 
@@ -62,11 +62,12 @@ poetry run python -m ipykernel install --user --name dev-framework --display-nam
 
 ### Installing LLM validation dependencies
 
-You can install the `transformers` and `torch` dependencies using the `llm` extra. This will install the Hugging Face transformers and PyTorch libraries by running:
+You can install the `transformers`, `torch` and `openai` dependencies using the `llm` extra. This will install the Hugging Face transformers and PyTorch libraries as well as the OpenAI SDK for running the LLM validation examples:
 
 ```bash
 poetry install --extras llm
 ```
+
 ### Installing R dependencies
 
 If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. On a Mac, you can install R using Homebrew:
