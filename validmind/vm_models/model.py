@@ -10,7 +10,7 @@ import pandas as pd
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from .dataset import VMDataset
-from ..errors import MissingPytorchModelPredictError
+from ..errors import MissingModelPredictFnError
 
 import importlib
 
@@ -232,7 +232,7 @@ class SKlearnModel(VMModel):
         predict_proba (for classification) or predict (for regression) method
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict_proba method with 1 argument"
                 + " that is features matrix"
             )
@@ -419,7 +419,7 @@ class PyTorchModel(VMModel):
         Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict_proba method with 1 argument"
                 + " that is tensor features matrix"
             )
@@ -432,7 +432,7 @@ class PyTorchModel(VMModel):
         Predict method for the model. This is a wrapper around the model's
         """
         if not has_method_with_arguments(self.model, "predict", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict method with 1 argument"
                 + " that is tensor features matrix"
             )
@@ -476,20 +476,21 @@ class HFModel(VMModel):
         y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
         y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
     """
+
     def __init__(
         self,
         model: object = None,  # Trained model instance
         train_ds: VMDataset = None,
         test_ds: VMDataset = None,
         validation_ds: VMDataset = None,
-        attributes: ModelAttributes = None
+        attributes: ModelAttributes = None,
     ):
         super().__init__(
             model=model,
             train_ds=train_ds,
             test_ds=test_ds,
             validation_ds=validation_ds,
-            attributes=attributes
+            attributes=attributes,
         )
         if self.model and self.train_ds:
             self._y_train_predict = self.predict(self.test_ds.x)
@@ -503,7 +504,7 @@ class HFModel(VMModel):
         Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingPytorchModelPredictError(
+            raise MissingModelPredictFnError(
                 "Model requires a implemention of predict_proba method with 1 argument"
                 + " that is tensor features matrix"
             )
@@ -513,7 +514,7 @@ class HFModel(VMModel):
 
     def predict(self, data):
         """
-        Predict method for the model. This is a wrapper around the model's
+        Predict method for the model. This is a wrapper around the HF model's pipeline function
         """
         data = [str(datapoint) for datapoint in data]
         results = self.model(data)

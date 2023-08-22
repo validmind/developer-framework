@@ -54,7 +54,7 @@ class MissingCacheResultsArgumentsError(BaseError):
     pass
 
 
-class MissingPytorchModelPredictError(BaseError):
+class MissingModelPredictFnError(BaseError):
     """
     When the pytorch model is missing a predict function or its predict
     method does not have the expected arguments.
