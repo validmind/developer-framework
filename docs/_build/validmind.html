@@ -136,32 +136,32 @@ library will register with ValidMind. You can now use the Developer Framework to
 and to upload to the ValidMind Platform.</p>
 </div>
 
-                
-                
-                
+
+
+
             </section>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
 <span class="default_value">&#39;1.17.3&#39;</span>
 
-        
+
     </div>
     <a class="headerlink" href="#__version__"></a>
-    
-    
+
+
 
                 </section>
                 <section id="get_test_suite">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">get_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">TestSuite</span>:</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#get_test_suite"></a>
-    
+
             <div class="docstring"><p>Gets a TestSuite object for the current project or a specific test suite</p>
 
 <p>This function provides an interface to retrieve the TestSuite instance for the
@@ -187,14 +187,14 @@ Defaults to None.</li>
                 </section>
                 <section id="init">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">init</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_secret</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">api_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#init"></a>
-    
+
             <div class="docstring"><p>Initializes the API client instances and calls the /ping endpoint to ensure
 the provided credentials are valid and we can connect to the ValidMind API.</p>
 
@@ -221,14 +221,14 @@ retrieve them from the environment variables <code>VM_API_KEY</code> and <code>V
                 </section>
                 <section id="init_dataset">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">init_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span>,</span><span class="param">	<span class="n">index</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">column_names</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span>:</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#init_dataset"></a>
-    
+
             <div class="docstring"><p>Initializes a VM Dataset, which can then be passed to other functions
 that can perform additional analysis and tests on the data. This function
 also ensures we are reading a valid dataset type. We only support Pandas
@@ -261,14 +261,14 @@ DataFrames at the moment.</p>
                 </section>
                 <section id="init_model">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#init_model"></a>
-    
+
             <div class="docstring"><p>Initializes a VM Model, which can then be passed to other functions
 that can perform additional analysis and tests on the data. This function
 also ensures we are creating a model supported libraries.</p>
@@ -296,14 +296,14 @@ also ensures we are creating a model supported libraries.</p>
                 </section>
                 <section id="init_r_model">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">init_r_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">model_type</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#init_r_model"></a>
-    
+
             <div class="docstring"><p>Initializes a VM Model for an R model</p>
 
 <p>R models must be saved to disk and the filetype depends on the model type...
@@ -338,14 +338,14 @@ since xgb models saved in .json or .bin format can be loaded directly with eithe
                 </section>
                 <section id="preview_template">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">preview_template</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#preview_template"></a>
-    
+
             <div class="docstring"><p>Preview the documentation template for the current project</p>
 
 <p>This function will display the documentation template for the current project. If
@@ -362,14 +362,14 @@ the project has not been initialized, then an error will be raised.</p>
                 </section>
                 <section id="run_documentation_tests">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#run_documentation_tests"></a>
-    
+
             <div class="docstring"><p>Collect and run all the tests associated with a template</p>
 
 <p>This function will analyze the current project's documentation template and collect
@@ -402,14 +402,14 @@ suite, log the results to the ValidMind API and display them to the user.</p>
                 </section>
                 <section id="run_template">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">run_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#run_template"></a>
-    
+
             <div class="docstring"><p>DEPRECATED! Use <code>vm.run_documentation_tests</code> instead.</p>
 
 <p>_run_template(
@@ -443,14 +443,14 @@ suite, log the results to the ValidMind API and display them to the user.</p>
                 </section>
                 <section id="run_test_plan">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">run_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#run_test_plan"></a>
-    
+
             <div class="docstring"><p>High Level function for running a test plan</p>
 
 <p>This function provides a high level interface for running a test plan. It removes the need
@@ -485,14 +485,14 @@ See the documentation for the specific test plan for more details.</li>
                 </section>
                 <section id="run_test_suite">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#run_test_suite"></a>
-    
+
             <div class="docstring"><p>High Level function for running a test suite</p>
 
 <p>This function provides a high level interface for running a test suite. A test suite is
@@ -526,14 +526,14 @@ See the documentation for the specific test plan, metric or threshold test for m
                 </section>
                 <section id="log_dataset">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">log_dataset</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#log_dataset"></a>
-    
+
             <div class="docstring"><p>Logs metadata and statistics about a dataset to ValidMind API.</p>
 
 <h6 id="arguments">Arguments:</h6>
@@ -553,14 +553,14 @@ See the documentation for the specific test plan, metric or threshold test for m
                 </section>
                 <section id="log_figure">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">log_figure</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">figure</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#log_figure"></a>
-    
+
             <div class="docstring"><p>Logs a figure</p>
 
 <h6 id="arguments">Arguments:</h6>
@@ -586,14 +586,14 @@ See the documentation for the specific test plan, metric or threshold test for m
                 </section>
                 <section id="log_metrics">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">log_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metrics</span></span><span class="return-annotation">):</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#log_metrics"></a>
-    
+
             <div class="docstring"><p>Logs metrics to ValidMind API.</p>
 
 <h6 id="arguments">Arguments:</h6>
@@ -619,14 +619,14 @@ See the documentation for the specific test plan, metric or threshold test for m
                 </section>
                 <section id="log_test_results">
                     <div class="attr function">
-            
+
         <span class="def">def</span>
         <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
 
-        
+
     </div>
     <a class="headerlink" href="#log_test_results"></a>
-    
+
             <div class="docstring"><p>Logs test results information</p>
 
 <p>This method will be called automatically be any function
