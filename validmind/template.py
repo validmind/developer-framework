@@ -198,9 +198,7 @@ def _create_section_test_plan(section):
     Returns:
         A dynamically-created TestPlan Class
     """
-    section_tests = _get_section_tests(section)
-
-    if section_tests:
+    if section_tests := _get_section_tests(section):
         return type(
             f"{section['title'].title().replace(' ', '')}TestPlan",
             (TestPlan,),
@@ -263,7 +261,7 @@ def get_template_test_suite(template, section=None, *args, **kwargs):
     return _create_template_test_suite(template, section)(*args, **kwargs)
 
 
-def run_template(template, section, *args, **kwargs):
+def run_template(template, section, send=True, *args, **kwargs):
     """Run all tests in a template
 
     This function will collect all tests used in a template into a TestSuite and then
@@ -272,10 +270,14 @@ def run_template(template, section, *args, **kwargs):
     Args:
         template: A valid flat template
         section: The section of the template to run (if not provided, run all sections)
+        send: Whether to send the results to the ValidMind API
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
-        The result of running the test suite.
+        The completed TestSuite instance
     """
-    return get_template_test_suite(template, section, *args, **kwargs).run()
+    test_suite = get_template_test_suite(template, section, *args, **kwargs)
+    test_suite.run(send=send)
+
+    return test_suite
