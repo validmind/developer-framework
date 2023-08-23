@@ -218,7 +218,7 @@ class TestPlan:
             logger.debug(f"Checking if required input '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_inputs and must be passed "
+                    f"{element}' is a required input and must be passed "
                     "as a keyword argument to the test plan"
                 )
 
@@ -274,7 +274,9 @@ class TestPlan:
                 logger=logger,
             )()  # this is a decorator so we need to call it
         except Exception as e:
-            logger.error(f"Failed to run test '{test.name}': {e}")
+            logger.error(
+                f"Failed to run test '{test.name}': ({e.__class__.__name__}) {e}"
+            )
             test.result = TestPlanFailedResult(
                 name=f"Failed {test.test_type}",
                 error=e,

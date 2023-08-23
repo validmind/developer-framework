@@ -74,7 +74,9 @@ class WeakspotsDiagnosis(ThresholdTest):
             features_list = self.params["features_columns"]
 
         if self.model.train_ds.text_column in features_list:
-            raise ValueError("Skiping Weakspots Diagnosis test for the dataset with text column")
+            raise ValueError(
+                "Skiping Weakspots Diagnosis test for the dataset with text column"
+            )
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(

@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 def parse_dataset_variables(df, options=None):
     """
-    Infers the data types for each column using pandas_profiling's
+    Infers the data types for each column using ydata_profiling's
     typeset from visions library.
 
     If dummy variables were specified with dataset_options, we will

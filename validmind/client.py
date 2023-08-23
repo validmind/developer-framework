@@ -35,7 +35,6 @@ from .vm_models import (
     TestPlan,
     TestSuite,
 )
-
 from .vm_models.model import (
     VMModel,
     R_MODEL_TYPES,
@@ -302,6 +301,11 @@ def get_test_suite(
         kwargs: Additional keyword arguments to pass to the TestSuite
     """
     if test_suite_name is None:
+        if client_config.documentation_template is None:
+            raise MissingDocumentationTemplate(
+                "No documentation template found. Please run `vm.init()`"
+            )
+
         return get_template_test_suite(
             client_config.documentation_template,
             section=section,
@@ -368,7 +372,7 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, *args, **kwargs):
+def run_documentation_tests(section: str = None, send=True, *args, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -377,8 +381,12 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
 
     Args:
         section (str, optional): The section to preview. Defaults to None.
+        send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
+
+    Returns:
+        TestSuite: The completed TestSuite instance
 
     Raises:
         ValueError: If the project has not been initialized
@@ -388,9 +396,10 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
             "No documentation template found. Please run `vm.init()`"
         )
 
-    _run_template(
+    return _run_template(
         template=client_config.documentation_template,
         section=section,
+        send=send,
         *args,
         **kwargs,
     )
