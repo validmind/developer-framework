@@ -5,8 +5,8 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from pandas_profiling.config import Settings
-from pandas_profiling.model.typeset import ProfilingTypeSet
+from ydata_profiling.config import Settings
+from ydata_profiling.model.typeset import ProfilingTypeSet
 
 from validmind.vm_models import (
     Figure,
