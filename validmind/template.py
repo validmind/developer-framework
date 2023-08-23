@@ -1,8 +1,9 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-from ipywidgets import Accordion, HTML, VBox
-from IPython.display import display
 from pprint import pformat
+
+from IPython.display import display
+from ipywidgets import HTML, Accordion, VBox
 
 from .html_templates.content_blocks import (
     failed_content_block_html,
@@ -10,7 +11,7 @@ from .html_templates.content_blocks import (
     test_content_block_html,
 )
 from .logging import get_logger
-from .tests import describe_test, LoadTestError
+from .tests import LoadTestError, describe_test
 from .utils import is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite

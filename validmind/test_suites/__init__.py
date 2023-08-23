@@ -5,6 +5,11 @@ Entrypoint for test suites.
 """
 import pandas as pd
 
+from ..logging import get_logger
+from ..test_plans import get_by_id as get_test_plan
+from ..tests import load_test
+from ..utils import format_dataframe
+from ..vm_models import TestSuite
 from .test_suites import (
     BinaryClassifierFullSuite,
     BinaryClassifierModelValidation,
@@ -12,11 +17,6 @@ from .test_suites import (
     TimeSeriesDataset,
     TimeSeriesModelValidation,
 )
-from ..logging import get_logger
-from ..test_plans import get_by_id as get_test_plan
-from ..tests import load_test
-from ..utils import format_dataframe
-from ..vm_models import TestSuite
 
 logger = get_logger(__name__)
 

@@ -1,8 +1,8 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 from dataclasses import dataclass
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from validmind.logging import get_logger
 from validmind.vm_models.dataset import VMDataset

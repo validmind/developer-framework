@@ -4,8 +4,8 @@
 Client interface for all data and model validation functions
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import xgboost as xgb
 from sklearn.linear_model import LinearRegression, LogisticRegression
 
@@ -19,34 +19,18 @@ from .errors import (
     MissingDocumentationTemplate,
     MissingRExtrasError,
     UnsupportedDatasetError,
-    UnsupportedRModelError,
     UnsupportedModelError,
+    UnsupportedRModelError,
 )
 from .logging import get_logger
-from .template import (
-    get_template_test_suite,
-    preview_template as _preview_template,
-    run_template as _run_template,
-)
+from .template import get_template_test_suite
+from .template import preview_template as _preview_template
+from .template import run_template as _run_template
 from .test_plans import get_by_id as get_test_plan_by_id
 from .test_suites import get_by_id as get_test_suite_by_id
-
-from .vm_models import (
-    TestPlan,
-    TestSuite,
-)
-from .vm_models.model import (
-    VMModel,
-    R_MODEL_TYPES,
-    get_model_class,
-)
-
-from .vm_models.dataset import (
-    VMDataset,
-    NumpyDataset,
-    DataFrameDataset,
-    TorchDataset,
-)
+from .vm_models import TestPlan, TestSuite
+from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
+from .vm_models.model import R_MODEL_TYPES, VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
 

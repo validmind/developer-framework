@@ -8,9 +8,9 @@ from typing import ClassVar, List
 
 import pandas as pd
 
+from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 from .dataset import VMDataset
 from .model import VMModel
-from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
 
 
 @dataclass

@@ -5,11 +5,10 @@ Model class wrapper module
 """
 import importlib
 import inspect
-
 from abc import abstractmethod
 from dataclasses import dataclass
-from .dataset import VMDataset
 
+from .dataset import VMDataset
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",

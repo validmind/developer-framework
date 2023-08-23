@@ -6,15 +6,12 @@ Metrics functions for any Pandas-compatible datasets
 
 from collections import Counter
 from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import nltk
 from nltk.corpus import stopwords
 
-from ....vm_models import (
-    Figure,
-    Metric,
-    VMDataset,
-)
+from ....vm_models import Figure, Metric, VMDataset
 
 
 @dataclass

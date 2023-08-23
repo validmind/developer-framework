@@ -7,11 +7,8 @@ Utilities for manipulating VMDataset objects
 from ydata_profiling.config import Settings
 from ydata_profiling.model.typeset import ProfilingTypeSet
 
-from ..errors import (
-    UnsupportedColumnTypeError,
-)
+from ..errors import UnsupportedColumnTypeError
 from ..logging import get_logger
-
 
 logger = get_logger(__name__)
 

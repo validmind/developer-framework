@@ -12,7 +12,7 @@ from IPython.display import display
 
 from ..errors import MissingRequiredTestContextError
 from ..logging import get_logger, log_performance
-from ..tests import load_test, LoadTestError
+from ..tests import LoadTestError, load_test
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import VMDataset
 from .model import VMModel

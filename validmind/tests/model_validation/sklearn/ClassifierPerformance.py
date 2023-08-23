@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass
 from functools import partial
-from numpy import unique
 
+from numpy import unique
 from sklearn import metrics, preprocessing
 
 from validmind.utils import format_number

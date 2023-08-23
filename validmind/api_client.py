@@ -18,14 +18,10 @@ import requests
 from aiohttp import FormData
 
 from .client_config import client_config
-from .errors import (
-    raise_api_error,
-    MissingAPICredentialsError,
-    MissingProjectIdError,
-)
+from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
-from .vm_models import VMDataset, Figure, Metric, TestResults
+from .vm_models import Figure, Metric, TestResults, VMDataset
 
 # TODO: can't import types from vm_models because of circular dependency
 

@@ -4,12 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from validmind.vm_models import (
-    Metric,
-    ResultSummary,
-    ResultTable,
-    ResultTableMetadata,
-)
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass

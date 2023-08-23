@@ -1,15 +1,12 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from validmind.vm_models import (
-    Metric,
-    ResultSummary,
-    ResultTable,
-    ResultTableMetadata,
-)
 from sklearn.metrics import roc_auc_score, roc_curve
+
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass

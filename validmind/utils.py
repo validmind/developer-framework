@@ -3,17 +3,14 @@
 import asyncio
 import json
 import math
-
 from typing import Any
 
 import nest_asyncio
 import numpy as np
 import pandas as pd
-
 from IPython.core import getipython
 from numpy import ndarray
 from tabulate import tabulate
-
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
