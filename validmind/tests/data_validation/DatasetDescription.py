@@ -1,14 +1,17 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+import re
+from collections import Counter
 from dataclasses import dataclass
+
 import numpy as np
+
 from validmind.logging import get_logger
-
-
 from validmind.vm_models import Metric
 
 DEFAULT_HISTOGRAM_BINS = 10
 DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
+
 logger = get_logger(__name__)
 
 
@@ -146,6 +149,20 @@ class DatasetDescription(Metric):
                 "default": {
                     "bin_size": len(value_counts),
                     "histogram": value_counts.to_dict(),
+                }
+            }
+        elif type_ == "Text":
+            # Combine all the text in the specified field
+            text_data = " ".join(df[field].astype(str))
+            # Split the text into words (tokens) using a regular expression
+            words = re.findall(r"\w+", text_data)
+            # Use Counter to count the frequency of each word
+            word_counts = Counter(words)
+
+            return {
+                "default": {
+                    "bin_size": len(word_counts),
+                    "histogram": dict(word_counts),
                 }
             }
         elif type_ == "Null":

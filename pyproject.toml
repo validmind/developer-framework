@@ -8,15 +8,10 @@ authors = [
 ]
 description = "ValidMind Developer Framework"
 license = "Commercial License"
-# include = [
-#   "validmind/**/*.c",
-#   "validmind/**/*.pyx",
-#   "validmind/**/*.pyd",
-#   "validmind/**/*.so",
-# ]
 name = "validmind"
 readme = "README.pypi.md"
 version = "1.17.2"
+
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 arch = "^5.4.0"
@@ -30,7 +25,7 @@ markdown = "^3.4.3"
 myst-parser = "^1.0.0"
 nltk = "^3.8.1"
 numpy = "1.22.3"
-openai = "^0.27.8"
+openai = { version = "^0.27.8", optional = true }
 pandas = "1.5.3"
 pandas-profiling = "^3.6.6"
 pdoc = "^13.1.1"
@@ -69,7 +64,7 @@ twine = "^4.0.2"
 
 [tool.poetry.extras]
 all = ["torch", "rpy2", "transformers"]
-llm = ["torch", "transformers"]
+llm = ["torch", "transformers", "openai"]
 pytorch = ["torch"]
 r-support = ["rpy2"]
 transformers = ["transformers"]
