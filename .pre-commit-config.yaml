@@ -6,9 +6,14 @@ repos:
     hooks:
     -   id: trailing-whitespace
         args: ['--markdown-linebreak-ext=md']
+        # exclude docs/ tests/ and .github/ directories
+        exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
     -   id: end-of-file-fixer
+        exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
     -   id: check-yaml
+        exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
     -   id: check-added-large-files
+        exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
 
 -   repo: local
     hooks:
