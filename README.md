@@ -22,6 +22,12 @@ We believe in the power of collaboration and welcome contributions to the ValidM
 pip install validmind
 ```
 
+#### Install with Hugging Face `transformers` support
+
+```bash
+pip install validmind[transformers]
+```
+
 #### Install with PyTorch support
 
 ```bash
@@ -47,12 +53,19 @@ pip install validmind[r-support]
     poetry install
     ```
 
-### Installing PyTorch dependencies
-
-You can install the `pytorch` extra to install the necessary PyTorch dependencies by running:
+- To run Jupyter notebooks using the source code from the repo, you can use `poetry` to register
+a new kernel with Jupyter:
 
 ```bash
-poetry install --extras pytorch
+poetry run python -m ipykernel install --user --name dev-framework --display-name "Developer Framework"
+```
+
+### Installing LLM validation dependencies
+
+You can install the `transformers` and `torch` dependencies using the `llm` extra. This will install the Hugging Face transformers and PyTorch libraries by running:
+
+```bash
+poetry install --extras llm
 ```
 ### Installing R dependencies
 
