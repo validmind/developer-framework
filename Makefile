@@ -8,6 +8,7 @@ __check_defined = \
 
 format:
 	poetry run black validmind
+	poetry run isort validmind
 
 lint:
 	poetry run flake8 validmind
