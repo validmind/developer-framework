@@ -23,6 +23,9 @@ from .errors import (
     UnsupportedModelError,
 )
 from .logging import get_logger
+
+from .models.r_model import RModel
+
 from .template import (
     get_template_test_suite,
     preview_template as _preview_template,
@@ -37,6 +40,7 @@ from .vm_models import (
 )
 from .vm_models.model import (
     VMModel,
+    R_MODEL_METHODS,
     R_MODEL_TYPES,
     get_model_class,
 )
@@ -151,11 +155,8 @@ def init_model(
     """
     class_obj = get_model_class(model=model)
     if not class_obj:
-        # raise UnsupportedModelError(
-        #     f"Model type {model['coefficients']} is not supported at the moment."
-        # )
         raise UnsupportedModelError(
-            f"Model type {model.keys()} is not supported at the moment."
+            f"Model type {class_obj} is not supported at the moment."
         )
 
     vm_model = class_obj(
@@ -169,9 +170,9 @@ def init_model(
 
 
 def init_r_model(
-    # model_path: str,
+    model_path: str,
     # model_type: str,
-    model: object,
+    # model: object,
     train_ds: VMDataset = None,
     test_ds: VMDataset = None,
     validation_ds: VMDataset = None,
@@ -198,12 +199,30 @@ def init_r_model(
     Returns:
         vm.vm.Model: A VM Model instance
     """
+
+    # if model.get("method") not in R_MODEL_METHODS:
+    #     raise UnsupportedRModelError(
+    #         "R model method must be one of {}. Got {}".format(
+    #             R_MODEL_METHODS, model.get("method")
+    #         )
+    #     )
+
     # first we need to load the model using rpy2
     # since rpy2 is an extra we need to conditionally import it
-    # try:
-    #     import rpy2.robjects as robjects
-    # except ImportError:
-    #     raise MissingRExtrasError()
+    try:
+        import rpy2.robjects as robjects
+    except ImportError:
+        raise MissingRExtrasError()
+
+    r = robjects.r
+    loaded_objects = r.load(model_path)
+    model_name = loaded_objects[0]
+    model = r[model_name]
+
+    # from rpy2.robjects import pandas2ri
+
+    # Activate the pandas conversion for rpy2
+    # pandas2ri.activate()
 
     # if model_type not in R_MODEL_TYPES:
     #     raise UnsupportedRModelError(
@@ -245,26 +264,28 @@ def init_r_model(
     #         xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
     #     )
     #     model._Booster = booster
-    import statsmodels.api as sm
+    # import statsmodels.api as sm
 
-    X = train_ds.x
+    # X = train_ds.x
     # X = sm.add_constant(X)  # Adds a constant term to the predictor
-    y = train_ds.y
+    # y = train_ds.y
 
-    # Mapping of families from R to statsmodels
-    # binomial, logit -> Binomial
-    # gaussian, identity -> Gaussian
-    # Gamma -> Gamma
-    # poisson -> Poisson
+    # R models are serialized as an object with the following keys:
+    # ['coefficients', 'residuals', 'fitted.values', 'effects', 'R', 'rank', 'qr', 'family',
+    #   'linear.predictors', 'deviance', 'aic', 'null.deviance', 'iter', 'weights', 'prior.weights',
+    #   'df.residual', 'df.null', 'y', 'converged', 'boundary', 'model', 'call', 'formula', 'terms',
+    #   'data', 'offset', 'control', 'method', 'contrasts', 'xlevels'])
+    # model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
 
-    model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
-
-    return init_model(
-        model,
+    vm_model = RModel(
+        r=r,
+        model=model,
         train_ds=train_ds,
         test_ds=test_ds,
         validation_ds=validation_ds,
     )
+
+    return vm_model
 
 
 def run_test_plan(test_plan_name, send=True, **kwargs):

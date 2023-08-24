@@ -1,4 +1,11 @@
 ```{r}
+# install.packages("magrittr") # package installations are only needed the first time you use it
+# install.packages("dplyr")    # alternative installation of the %>%
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+```
+
+```{r}
 library(reticulate)
 use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
 reticulate::py_config()
@@ -64,6 +71,14 @@ table(test_data$Exited, pred_classes)
 ```{r}
 model
 ```
+```{r}
+random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
+file_path <- paste0("/tmp/", random_name, ".RData")
+```
+
+```{r}
+save(model, file = file_path)
+```
 
 ```{r}
 vm_dataset = vm$init_dataset(
@@ -72,10 +87,10 @@ vm_dataset = vm$init_dataset(
     class_labels=list("0" = "Did not exit", "1" = "Exited")
 )
 ```
+
 ```{r}
 # data_validation_results = vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
 ```
-
 
 ```{r}
 vm_train_ds = vm$init_dataset(
@@ -89,15 +104,16 @@ vm_test_ds = vm$init_dataset(
 )
 
 vm_model = vm$init_r_model(
-    model,
+    model_path=file_path,
     train_ds=vm_train_ds,
     test_ds=vm_test_ds,
 )
 ```
+
 ```{r}
 model$coefficients
 ```
 
 ```{r}
-model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+# model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
 ```

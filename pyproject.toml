@@ -25,7 +25,7 @@ markdown = "^3.4.3"
 myst-parser = "^1.0.0"
 nltk = "^3.8.1"
 numpy = "1.22.3"
-openai = { version = "^0.27.8", optional = true }
+openai = {version = "^0.27.8", optional = true}
 pandas = "1.5.3"
 pandas-profiling = "^3.6.6"
 pdoc = "^13.1.1"

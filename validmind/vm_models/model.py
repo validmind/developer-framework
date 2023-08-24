@@ -28,6 +28,10 @@ R_MODEL_TYPES = [
     "XGBRegressor",
 ]
 
+R_MODEL_METHODS = [
+    "glm.fit",
+]
+
 
 @dataclass
 class ModelAttributes:
@@ -186,11 +190,14 @@ def has_method_with_arguments(cls, method_name, n_args):
     if not inspect.ismethod(method) and not inspect.isfunction(method):
         return False
 
-    signature = inspect.signature(method)
-    parameters = signature.parameters
+    # Need to refine this logic since predict_proba can have
+    # any number of arguments
+    #
+    # signature = inspect.signature(method)
+    # parameters = signature.parameters
 
-    if len(parameters) != n_args:
-        return False
+    # if len(parameters) != n_args:
+    #     return False
 
     return True
 
