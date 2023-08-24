@@ -53,9 +53,7 @@ class RModel(VMModel):
         predicted_probs = self.r.predict(
             self.model, newdata=new_data_r, type="response"
         )
-        # TODO: do this only for classification models
-        predicted_classes = np.where(predicted_probs > 0.5, 1, 0)
-        return predicted_classes
+        return predicted_probs
 
     def __load_model_predictions(self):
         from rpy2.robjects import pandas2ri
@@ -68,32 +66,28 @@ class RModel(VMModel):
         # values according to the model type.
         if self.model and self.train_ds:
             train_data_r = pandas2ri.py2rpy(self.train_ds.df)
-            self._y_train_predict = self.r_predict(train_data_r)
+            self._y_train_predict = self.predict(train_data_r)
         if self.model and self.test_ds:
             test_data_r = pandas2ri.py2rpy(self.test_ds.df)
-            self._y_test_predict = self.r_predict(test_data_r)
+            self._y_test_predict = self.predict(test_data_r)
         if self.model and self.validation_ds:
             validation_data_r = pandas2ri.py2rpy(self.validation_ds.df)
-            self._y_validation_predict = self.r_predict(validation_data_r)
+            self._y_validation_predict = self.predict(validation_data_r)
 
-    def predict_proba(self, *args, **kwargs):
+    def predict_proba(self, new_data_r):
         """
-        predict_proba (for classification) or predict (for regression) method
+        Calls the R global predict method with type="response" to get the predicted probabilities
         """
-        if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingModelPredictFnError(
-                "Model requires a implemention of predict_proba method with 1 argument"
-                + " that is features matrix"
-            )
-        if callable(getattr(self.model, "predict_proba", None)):
-            return self.model.predict_proba(*args, **kwargs)[:, 1]
-        return None
+        return self.r_predict(new_data_r)
 
-    def predict(self, *args, **kwargs):
+    def predict(self, new_data_r):
         """
-        Predict method for the model. This is a wrapper around the model's
+        Converts the predicted probabilities to classes
         """
-        return self.model.predict(*args, **kwargs)
+        predicted_probs = self.r_predict(new_data_r)
+        # TODO: do this only for classification models
+        predicted_classes = np.where(predicted_probs > 0.5, 1, 0)
+        return predicted_classes
 
     def model_library(self):
         """

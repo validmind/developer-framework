@@ -115,5 +115,5 @@ model$coefficients
 ```
 
 ```{r}
-# model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
 ```
