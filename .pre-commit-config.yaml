@@ -27,30 +27,30 @@ repos:
     hooks:
     -   id: format
         name: Running make format
-        entry: make format
-        language: system
+        entry: ./scripts/format_and_add.sh
+        language: script
         pass_filenames: false
         stages:
-          - "push"
+          - "commit"
     -   id: lint
         name: Running make lint
         entry: make lint
         language: system
         pass_filenames: false
         stages:
-          - "push"
+          - "commit"
     -   id: copyright
         name: Running make copyright
         entry: make copyright
         language: system
         pass_filenames: false
         stages:
-          - "push"
-    -   id: git-add
-        name: Add formatted files
-        entry: git add -u
-        language: system
-        always_run: true
-        pass_filenames: false
-        stages:
-            - "push"
+          - "commit"
+    # -   id: git-add
+    #     name: Add formatted files
+    #     entry: git add -u
+    #     language: system
+    #     always_run: true
+    #     pass_filenames: false
+    #     stages:
+    #       - "commit"
