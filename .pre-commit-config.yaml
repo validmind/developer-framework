@@ -46,3 +46,11 @@ repos:
         pass_filenames: false
         stages:
           - "push"
+    -   id: git-add
+        name: Add formatted files
+        entry: git add -u
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages:
+            - "push"

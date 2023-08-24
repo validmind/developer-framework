@@ -5,10 +5,8 @@
 import logging
 import os
 import time
-
 import sentry_sdk
 from sentry_sdk.utils import event_from_exception, exc_info_from_error
-
 from .__version__ import __version__
 
 __log_level = None
