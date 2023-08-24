@@ -15,7 +15,7 @@ lint:
 
 install:
 	poetry install
-	poetry run pre-commit install
+	poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
 
 # Quick target to run all checks
 check: copyright format lint test
