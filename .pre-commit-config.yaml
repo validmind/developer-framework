@@ -8,12 +8,20 @@ repos:
         args: ['--markdown-linebreak-ext=md']
         # exclude docs/ tests/ and .github/ directories
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
+        stages:
+          - "commit"
     -   id: end-of-file-fixer
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
+        stages:
+          - "commit"
     -   id: check-yaml
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
+        stages:
+          - "commit"
     -   id: check-added-large-files
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
+        stages:
+          - "commit"
 
 -   repo: local
     hooks:
@@ -34,13 +42,6 @@ repos:
     -   id: copyright
         name: Running make copyright
         entry: make copyright
-        language: system
-        pass_filenames: false
-        stages:
-          - "push"
-    -   id: docs
-        name: Running make docs
-        entry: make docs
         language: system
         pass_filenames: false
         stages:
