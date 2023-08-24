@@ -15,9 +15,6 @@ __log_level = None
 __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505239625465856"
 
 
-print("hello world")
-
-
 def _get_log_level():
     """Get the log level from the environment variable if not already set"""
     if __log_level is not None:
