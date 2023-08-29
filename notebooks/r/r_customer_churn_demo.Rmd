@@ -1,0 +1,148 @@
+---
+output: 
+  html_document: 
+    df_print: default
+---
+```{r}
+# install.packages("magrittr") # package installations are only needed the first time you use it
+# install.packages("dplyr")    # alternative installation of the %>%
+# kable and kableExtra for tables
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+# library(kableExtra)
+library(glue)
+```
+
+```{r}
+library(reticulate)
+use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
+reticulate::py_config()
+```
+
+```{r}
+vm <- import("validmind")
+```
+
+```{r}
+vm$init(
+  api_host="http://localhost:3000/api/v1/tracking",
+  api_key="e7841dd9cffc67f268addd3ee9cc58f2",
+  api_secret="7a8ab498d183d7a4907e82fac21827f30082d7acbff3dcdfcbb25d6728784e61",
+  project="clkvhtg6g0005q08h5h9uhtjl"
+)
+```
+
+```{r}
+library(dplyr)
+library(caTools)
+library(glmnet)
+```
+
+```{r}
+# 2. Read the dataset
+data <- read.csv('../datasets/bank_customer_churn.csv')
+```
+
+```{r}
+# 3. Handle categorical variables using one-hot encoding and remove unnecessary columns
+data <- data %>% select(-RowNumber, -CustomerId, -Surname)
+geo_dummies <- model.matrix(~Geography - 1, data=data)
+gender_dummies <- model.matrix(~Gender - 1, data=data)
+data <- data %>% select(-Geography, -Gender)
+data <- cbind(data, geo_dummies, gender_dummies)
+```
+
+```{r}
+# 4. Split the dataset into training and testing sets
+set.seed(123) # Setting seed for reproducibility
+split <- sample.split(data$Exited, SplitRatio = 0.7)
+train_data <- subset(data, split == TRUE)
+test_data <- subset(data, split == FALSE)
+```
+
+```{r}
+# 5. Run a logistic regression model
+model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
+```
+
+```{r}
+# 6. Evaluate the model
+pred_probs <- predict(model, newdata = test_data, type = "response")
+pred_classes <- ifelse(pred_probs > 0.5, 1, 0)
+```
+
+```{r}
+# Confusion Matrix
+table(test_data$Exited, pred_classes)
+```
+
+```{r}
+model
+```
+```{r}
+random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
+file_path <- paste0("/tmp/", random_name, ".RData")
+```
+
+```{r}
+save(model, file = file_path)
+```
+
+```{r}
+vm_dataset = vm$init_dataset(
+    dataset=data,
+    target_column="Exited",
+    class_labels=list("0" = "Did not exit", "1" = "Exited")
+)
+```
+
+```{r}
+# data_validation_results = vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
+```
+
+```{r}
+vm_train_ds = vm$init_dataset(
+    dataset=train_data,
+    target_column="Exited"
+)
+
+vm_test_ds = vm$init_dataset(
+    dataset=test_data,
+    target_column="Exited"
+)
+
+vm_model = vm$init_r_model(
+    model_path=file_path,
+    train_ds=vm_train_ds,
+    test_ds=vm_test_ds,
+)
+```
+
+```{r}
+model$coefficients
+```
+
+```{r}
+model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+```
+
+```{r}
+summarize_results <- function(results) {
+  for (result in results$results[[1]]) {
+    metric <- result$metric
+    print(glue("Results for metric: {metric$key}\n"))
+    if (!is.null(metric$summary$summarize)) {
+      summaries <- result$metric$summary$summarize()
+      for (summary in summaries) {
+        print.AsIs(summary)
+      }
+    }
+    cat("\n\n")
+  }
+}
+```
+
+```{r}
+summarize_results(model_validation_results)
+```
+

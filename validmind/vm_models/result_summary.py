@@ -64,3 +64,13 @@ class ResultSummary:
         Serializes the ResultSummary to a list of results
         """
         return [result.serialize() for result in self.results]
+
+    def summarize(self):
+        """
+        Returns a list of dataframes with the summary results. One dataframe/table
+        per result.
+        """
+        summary_df = pd.DataFrame(self.results[0].data)
+        # summary_df = summary_df.round(4)
+
+        return [pd.DataFrame(result.data) for result in self.results]

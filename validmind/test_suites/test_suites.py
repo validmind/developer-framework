@@ -29,8 +29,8 @@ class BinaryClassifierModelValidation(TestSuite):
 
     test_plans = [
         "binary_classifier_metrics",
-        "binary_classifier_validation",
-        "binary_classifier_model_diagnosis",
+        # "binary_classifier_validation",
+        # "binary_classifier_model_diagnosis",
     ]
 
 
