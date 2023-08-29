@@ -276,7 +276,6 @@ def init_r_model(
     #   'df.residual', 'df.null', 'y', 'converged', 'boundary', 'model', 'call', 'formula', 'terms',
     #   'data', 'offset', 'control', 'method', 'contrasts', 'xlevels'])
     # model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
-
     vm_model = RModel(
         r=r,
         model=model,
