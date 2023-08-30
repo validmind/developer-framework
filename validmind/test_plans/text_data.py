@@ -17,7 +17,7 @@ class TextDataQuality(TestPlan):
 
     name = "text_data_quality"
     tests = [
-        "validmind.data_validation.nlp.ClassImbalance",
+        "validmind.data_validation.ClassImbalance",
         "validmind.data_validation.nlp.Duplicates",
         "validmind.data_validation.nlp.StopWords",
         "validmind.data_validation.nlp.Punctuations",
