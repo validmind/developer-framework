@@ -3,7 +3,7 @@
 
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import ClassVar, TypedDict, List
+from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
 from .test_context import TestContextUtils

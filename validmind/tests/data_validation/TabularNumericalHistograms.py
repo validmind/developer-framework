@@ -2,6 +2,7 @@
 
 import numpy as np
 import plotly.graph_objs as go
+
 from validmind.vm_models import Figure, Metric
 
 

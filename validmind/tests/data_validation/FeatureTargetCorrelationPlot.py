@@ -1,8 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import plotly.graph_objects as go
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
+import plotly.graph_objects as go
+
 from validmind.vm_models import Figure, Metric
 
 

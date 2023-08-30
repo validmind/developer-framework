@@ -6,10 +6,12 @@ Models entrypoint
 
 from .dataset import VMDataset
 from .figure import Figure
-from .model import VMModel, ModelAttributes, R_MODEL_TYPES
-
 from .metric import Metric
 from .metric_result import MetricResult
+from .model import R_MODEL_TYPES, ModelAttributes, VMModel
+
+# Import plot_utils so we can initialize the default matplotlib params
+from .plot_utils import *  # noqa
 from .result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test import Test
 from .test_context import TestContext, TestContextUtils
@@ -22,9 +24,6 @@ from .test_plan_result import (
 from .test_result import TestResult, TestResults
 from .test_suite import TestSuite
 from .threshold_test import ThresholdTest
-
-# Import plot_utils so we can initialize the default matplotlib params
-from .plot_utils import *  # noqa
 
 __all__ = [
     "VMDataset",

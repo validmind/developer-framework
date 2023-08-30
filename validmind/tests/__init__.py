@@ -14,7 +14,6 @@ from ..utils import clean_docstring, format_dataframe
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
-
 logger = get_logger(__name__)
 
 

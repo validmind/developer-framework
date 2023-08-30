@@ -44,13 +44,12 @@ from numba.core.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWa
 warnings.simplefilter("ignore", category=NumbaDeprecationWarning)
 warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
-from .api_client import (  # noqa: E402
-    init,
-    log_dataset as _log_dataset_async,
-    log_metrics as _log_metrics_async,
-    log_test_results,
-    log_figure as _log_figure_async,
-)
+from .__version__ import __version__  # noqa: E402
+from .api_client import init
+from .api_client import log_dataset as _log_dataset_async  # noqa: E402
+from .api_client import log_figure as _log_figure_async
+from .api_client import log_metrics as _log_metrics_async
+from .api_client import log_test_results
 from .client import (  # noqa: E402
     get_test_suite,
     init_dataset,
@@ -63,7 +62,6 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
-from .__version__ import __version__  # noqa: E402
 
 
 def log_dataset(dataset):

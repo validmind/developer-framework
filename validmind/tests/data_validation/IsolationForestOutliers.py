@@ -1,17 +1,13 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+import itertools
 from dataclasses import dataclass
 
-from sklearn.ensemble import IsolationForest
-import itertools
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.ensemble import IsolationForest
 
-
-from validmind.vm_models import (
-    Figure,
-    Metric,
-)
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass

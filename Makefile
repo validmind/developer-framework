@@ -8,12 +8,17 @@ __check_defined = \
 
 format:
 	poetry run black validmind
+	poetry run isort validmind
 
 lint:
 	poetry run flake8 validmind
 
+install:
+	poetry install
+	poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
+
 # Quick target to run all checks
-check: format lint test
+check: copyright format lint test
 
 build:
 	poetry build

@@ -1,9 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 

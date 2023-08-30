@@ -143,7 +143,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.17.2&#39;</span>
+<span class="default_value">&#39;1.17.3&#39;</span>
 
         
     </div>
@@ -364,7 +364,7 @@ the project has not been initialized, then an error will be raised.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -380,9 +380,16 @@ suite, log the results to the ValidMind API and display them to the user.</p>
 
 <ul>
 <li><strong>section (str, optional):</strong>  The section to preview. Defaults to None.</li>
+<li><strong>send (bool, optional):</strong>  Whether to send the results to the ValidMind API. Defaults to True.</li>
 <li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
 <li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
 </ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>TestSuite: The completed TestSuite instance</p>
+</blockquote>
 
 <h6 id="raises">Raises:</h6>
 

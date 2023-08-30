@@ -3,8 +3,8 @@
 from dataclasses import dataclass
 from typing import List
 
-from pandas_profiling.config import Settings
-from pandas_profiling.model.typeset import ProfilingTypeSet
+from ydata_profiling.config import Settings
+from ydata_profiling.model.typeset import ProfilingTypeSet
 
 from validmind.vm_models import (
     ResultSummary,

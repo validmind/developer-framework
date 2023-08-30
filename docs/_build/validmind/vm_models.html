@@ -95,6 +95,9 @@
                     <a class="class" href="#VMModel">VMModel</a>
                             <ul class="memberlist">
                         <li>
+                                <a class="function" href="#VMModel.__init__">VMModel</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#VMModel.y_train_true">y_train_true</a>
                         </li>
                         <li>
@@ -126,9 +129,6 @@
                         </li>
                         <li>
                                 <a class="function" href="#VMModel.model_name">model_name</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.is_pytorch_model">is_pytorch_model</a>
                         </li>
                 </ul>
 
@@ -662,16 +662,15 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
                 </section>
                 <section id="VMModel">
                     <div class="attr class">
-                    <div class="decorator">@dataclass</div>
-
+            
     <span class="def">class</span>
-    <span class="name">VMModel</span><wbr>(<span class="base">abc.ABC</span>):
+    <span class="name">VMModel</span>:
 
         
     </div>
     <a class="headerlink" href="#VMModel"></a>
     
-            <div class="docstring"><p>An abstract base class that wraps a trained model instance and its associated data.</p>
+            <div class="docstring"><p>An base class that wraps a trained model instance and its associated data.</p>
 
 <h6 id="attributes">Attributes:</h6>
 
@@ -689,6 +688,18 @@ objects that can be sent to the API and 2) and plots and metadata for display pu
 </div>
 
 
+                            <div id="VMModel.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">VMModel</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="n"><a href="#ModelAttributes">validmind.vm_models.ModelAttributes</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.__init__"></a>
+    
+    
+
+                            </div>
                             <div id="VMModel.y_train_true" class="classattr">
                                 <div class="attr variable">
             <span class="name">y_train_true</span>
@@ -850,24 +861,10 @@ This is a wrapper around the model's if available</p>
 
 
                             </div>
-                            <div id="VMModel.is_pytorch_model" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">is_pytorch_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.is_pytorch_model"></a>
-    
-    
-
-                            </div>
                 </section>
                 <section id="ModelAttributes">
                     <div class="attr class">
-                    <div class="decorator">@dataclass()</div>
+                    <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
     <span class="name">ModelAttributes</span>:

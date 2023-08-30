@@ -1,8 +1,9 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
+
 import plotly.graph_objects as go
-from sklearn import metrics
+from sklearn.metrics import precision_recall_curve
 
 from validmind.vm_models import Figure, Metric
 
@@ -29,9 +30,7 @@ class PrecisionRecallCurve(Metric):
         y_true = self.model.y_test_true
         y_pred = self.model.predict_proba(self.model.test_ds.x)
         y_true = y_true.astype(y_pred.dtype)
-        precision, recall, pr_thresholds = metrics.precision_recall_curve(
-            y_true, y_pred
-        )
+        precision, recall, pr_thresholds = precision_recall_curve(y_true, y_pred)
 
         trace = go.Scatter(
             x=recall,
