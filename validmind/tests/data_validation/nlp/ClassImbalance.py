@@ -3,20 +3,21 @@
 """
 Threshold based tests
 """
-from typing import List
 from dataclasses import dataclass
-import pandas as pd
+from typing import List
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 
 from validmind.vm_models import (
-    VMDataset,
-    TestResult,
     Figure,
-    ThresholdTest,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
+    VMDataset,
 )
 
 

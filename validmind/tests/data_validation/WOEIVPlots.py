@@ -1,12 +1,14 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
-from validmind.vm_models import Figure, Metric
+import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import plotly.express as px
+
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass

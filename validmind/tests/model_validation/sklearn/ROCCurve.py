@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import plotly.graph_objects as go
-from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
 
 from validmind.vm_models import Figure, Metric
 

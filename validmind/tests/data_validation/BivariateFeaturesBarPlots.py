@@ -1,10 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import matplotlib.pyplot as plt
+from dataclasses import dataclass
+
 import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 import numpy as np
 
-from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 

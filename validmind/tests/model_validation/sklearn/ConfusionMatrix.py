@@ -1,8 +1,8 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-import numpy as np
 
+import numpy as np
 import plotly.figure_factory as ff
 from sklearn import metrics
 

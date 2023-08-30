@@ -5,12 +5,12 @@ from typing import List
 
 from validmind.logging import get_logger
 from validmind.vm_models import (
-    VMDataset,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
+    VMDataset,
 )
 
 logger = get_logger(__name__)

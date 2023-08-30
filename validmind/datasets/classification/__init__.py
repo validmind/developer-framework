@@ -5,7 +5,6 @@ Entrypoint for classification datasets.
 """
 import pandas as pd
 
-
 __all__ = [
     "customer_churn",
     "taiwan_credit",

@@ -1,8 +1,9 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import importlib.util
-import requests
 import os
+
+import requests
 
 
 class GithubTestProviderDownloadError(Exception):

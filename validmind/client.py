@@ -4,8 +4,8 @@
 Client interface for all data and model validation functions
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import xgboost as xgb
 from sklearn.linear_model import LinearRegression, LogisticRegression
 
@@ -19,31 +19,12 @@ from .errors import (
     MissingDocumentationTemplate,
     MissingRExtrasError,
     UnsupportedDatasetError,
-    UnsupportedRModelError,
     UnsupportedModelError,
+    UnsupportedRModelError,
 )
 from .logging import get_logger
 
 from .models.r_model import RModel
-
-from .template import (
-    get_template_test_suite,
-    preview_template as _preview_template,
-    run_template as _run_template,
-)
-from .test_plans import get_by_id as get_test_plan_by_id
-from .test_suites import get_by_id as get_test_suite_by_id
-
-from .vm_models import (
-    TestPlan,
-    TestSuite,
-)
-from .vm_models.model import (
-    VMModel,
-    R_MODEL_METHODS,
-    R_MODEL_TYPES,
-    get_model_class,
-)
 
 from .vm_models.dataset import (
     VMDataset,
@@ -51,6 +32,15 @@ from .vm_models.dataset import (
     DataFrameDataset,
     TorchDataset,
 )
+
+from .template import get_template_test_suite
+from .template import preview_template as _preview_template
+from .template import run_template as _run_template
+from .test_plans import get_by_id as get_test_plan_by_id
+from .test_suites import get_by_id as get_test_suite_by_id
+from .vm_models import TestPlan, TestSuite
+from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
+from .vm_models.model import VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
 
@@ -198,6 +188,8 @@ def init_r_model(
         vm.vm.Model: A VM Model instance
     """
 
+    # TODO: proper check for supported models
+    #
     # if model.get("method") not in R_MODEL_METHODS:
     #     raise UnsupportedRModelError(
     #         "R model method must be one of {}. Got {}".format(
@@ -292,6 +284,11 @@ def get_test_suite(
         kwargs: Additional keyword arguments to pass to the TestSuite
     """
     if test_suite_name is None:
+        if client_config.documentation_template is None:
+            raise MissingDocumentationTemplate(
+                "No documentation template found. Please run `vm.init()`"
+            )
+
         return get_template_test_suite(
             client_config.documentation_template,
             section=section,
@@ -358,7 +355,7 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, *args, **kwargs):
+def run_documentation_tests(section: str = None, send=True, *args, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -367,8 +364,12 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
 
     Args:
         section (str, optional): The section to preview. Defaults to None.
+        send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
+
+    Returns:
+        TestSuite: The completed TestSuite instance
 
     Raises:
         ValueError: If the project has not been initialized
@@ -378,9 +379,10 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
             "No documentation template found. Please run `vm.init()`"
         )
 
-    _run_template(
+    return _run_template(
         template=client_config.documentation_template,
         section=section,
+        send=send,
         *args,
         **kwargs,
     )

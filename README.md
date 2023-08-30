@@ -48,10 +48,11 @@ pip install validmind[r-support]
 
 - After cloning this repo, run:
 
-    ```bash
-    poetry shell
-    poetry install
-    ```
+```bash
+make install
+```
+
+This will install the dependencies and git hooks for the project.
 
 - To run Jupyter notebooks using the source code from the repo, you can use `poetry` to register
 a new kernel with Jupyter:
