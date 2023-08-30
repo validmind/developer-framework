@@ -61,7 +61,7 @@ class RModel(VMModel):
                 new_data.df.drop(new_data.target_column, axis=1)
             )
         else:
-            new_data_r = pandas2ri.py2rpy(new_data)
+            new_data_r = pandas2ri.py2rpy(new_data.df)
 
         return new_data_r
 

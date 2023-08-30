@@ -17,12 +17,14 @@ We will train a sample model and demonstrate the following documentation functio
 ```{r}
 # install.packages("magrittr") # package installations are only needed the first time you use it
 # install.packages("dplyr")    # alternative installation of the %>%
+# install.packages("xgboost")  # for training XGBoost models
 library(magrittr) # needs to be run every time you start R and want to use %>%
 library(dplyr)    # alternatively, this also loads %>%
 library(glue)
 library(dplyr)
 library(caTools)
 library(glmnet)
+library(xgboost)
 
 # Python support
 library(reticulate)
@@ -30,11 +32,15 @@ use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK
 reticulate::py_config()
 ```
 
+```{r}
+source("../../r/helpers.R")
+```
+
 ## **Initializing the ValidMind Client Library**
 
 Log in to the ValidMind platform with your registered email address, and navigate to the Documentation Projects page.
 
-### **Creating a new Documentation Project** 
+### **Creating a new Documentation Project**
 
 *(Note: if a documentation project has already been created, you can skip this section and head directly "Finding Project API key and secret")*
 
@@ -42,7 +48,7 @@ Clicking on "Create a new project" allows to you to register a new documentation
 
 Select "Customer Churn model" from the Model drop-down, and "Initial Validation" as Type. Finally, click on "Create Project".
 
-### **Finding the project API key and secret** 
+### **Finding the project API key and secret**
 
 In the "Client Integration" page of the newly created project, you will find the initialization code that allows the client library to associate documentation and tests with the appropriate project. The initialization code configures the following arguments:
 
@@ -72,7 +78,7 @@ vm$init(
 For the purpose of this demonstration, we will use a sample dataset provided by the ValidMind library.
 
 ```{r}
-# 2. Read the dataset
+# Read the dataset
 data <- read.csv('../datasets/bank_customer_churn.csv')
 ```
 
@@ -91,17 +97,21 @@ vm_dataset = vm$init_dataset(
 ## **Run the Data Validation Test Plan**
 
 ```{r}
-# tabular_suite = vm.run_test_suite("tabular_dataset", dataset=vm_dataset)
+tabular_suite_results <- vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
+```
+
+```{r}
+summarize_results(tabular_suite_results)
 ```
 
 ## **Run the Model Validation Test Plan**
 
 We will need to preprocess the dataset and produce the training, test and validation splits first.
 
-### **Preprocess the Raw Dataset**
+### Preprocess the Raw Dataset
 
 ```{r}
-# 3. Handle categorical variables using one-hot encoding and remove unnecessary columns
+# Handle categorical variables using one-hot encoding and remove unnecessary columns
 data <- data %>% select(-RowNumber, -CustomerId, -Surname)
 geo_dummies <- model.matrix(~Geography - 1, data=data)
 gender_dummies <- model.matrix(~Gender - 1, data=data)
@@ -110,35 +120,46 @@ data <- cbind(data, geo_dummies, gender_dummies)
 ```
 
 ```{r}
-# 4. Split the dataset into training and testing sets
+# Split the dataset into training and testing sets
 set.seed(123) # Setting seed for reproducibility
 split <- sample.split(data$Exited, SplitRatio = 0.7)
 train_data <- subset(data, split == TRUE)
 test_data <- subset(data, split == FALSE)
 ```
 
+### Create the xgb.DMatrix objects
+
 ```{r}
-# 5. Run a logistic regression model
-model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
+# convert data into DMatrix format
+x_train_df = train_data %>% select(-Exited)
+y_train_df = train_data %>% select(Exited)
+
+x_test_df = test_data %>% select(-Exited)
+y_test_df = test_data %>% select(Exited)
+
+dtrain <- xgb.DMatrix(data = as.matrix(x_train_df), label = as.matrix(y_train_df))
+dtest <- xgb.DMatrix(data = as.matrix(x_test_df), label = as.matrix(y_test_df))
+```
+
+### Train the XGBoost model
+
+```{r}
+params <- list(
+  objective = "binary:logistic",
+  eval_metric = "auc"
+)
+
+model <- xgb.train(
+  data = dtrain,
+  params = params,
+  nrounds = 1000,
+  watchlist = list(train = dtrain, test = dtest),
+  early_stopping_rounds = 100
+)
 ```
 
 ```{r}
-# 6. Evaluate the model
-pred_probs <- predict(model, newdata = test_data, type = "response")
-pred_classes <- ifelse(pred_probs > 0.5, 1, 0)
-```
-
-```{r}
-model
-```
-
-```{r}
-random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
-file_path <- paste0("/tmp/", random_name, ".RData")
-```
-
-```{r}
-save(model, file = file_path)
+model_path = save_model(model)
 ```
 
 ```{r}
@@ -153,7 +174,7 @@ vm_test_ds = vm$init_dataset(
 )
 
 vm_model = vm$init_r_model(
-    model_path=file_path,
+    model_path=model_path,
     train_ds=vm_train_ds,
     test_ds=vm_test_ds,
 )
@@ -163,22 +184,6 @@ vm_model = vm$init_r_model(
 
 ```{r}
 model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
-```
-
-```{r}
-summarize_results <- function(results) {
-  for (result in results$results[[1]]) {
-    metric <- result$metric
-    print(glue("Results for metric: {metric$key}\n"))
-    if (!is.null(metric$summary$summarize)) {
-      summaries <- result$metric$summary$summarize()
-      for (summary in summaries) {
-        print.AsIs(summary)
-      }
-    }
-    cat("\n\n")
-  }
-}
 ```
 
 ```{r}
