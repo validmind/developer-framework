@@ -76,7 +76,7 @@ class ClassImbalance(ThresholdTest):
                 {
                     target_column: class_label,
                     "Percentage of Rows (%)	": f"{proportion:.2f}%",
-                    "Passed": passed,
+                    "Pass/Fail": "Pass" if passed else "Fail",
                 }
             )
 
@@ -84,7 +84,7 @@ class ClassImbalance(ThresholdTest):
         results = [
             TestResult(
                 column=target_column,
-                passed=all(resultset.Passed),
+                passed=all(resultset["Pass/Fail"]),
                 values=resultset.to_dict(orient="records"),
             )
         ]
@@ -107,7 +107,7 @@ class ClassImbalance(ThresholdTest):
 
         return self.cache_results(
             results,
-            passed=all(resultset.Passed),
+            passed=all(resultset["Pass/Fail"]),
             figures=[
                 Figure(
                     for_object=self,
