@@ -185,3 +185,6 @@ catboost_info
 
 # Lending Club datasets
 lending_club_loan_data_*
+
+# Pickle files
+*.pkl

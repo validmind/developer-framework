@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+import numpy as np
 import plotly.graph_objects as go
 from sklearn.metrics import precision_recall_curve
 
@@ -27,9 +28,16 @@ class PrecisionRecallCurve(Metric):
         """
 
     def run(self):
-        y_true = self.model.y_test_true
-        y_pred = self.model.predict_proba(self.model.test_ds.x)
-        y_true = y_true.astype(y_pred.dtype)
+        # Extract the actual model
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        # y_true = self.model.y_test_true
+        # y_pred = self.model.predict_proba(self.model.test_ds.x)
+        # y_true = y_true.astype(y_pred.dtype)
+
+        y_true = np.array(model.test_ds.y)
+        y_pred = model.predict(model.test_ds.x)
+
         precision, recall, pr_thresholds = precision_recall_curve(y_true, y_pred)
 
         trace = go.Scatter(

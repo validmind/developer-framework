@@ -1,8 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
+import plotly.graph_objects as go
 
 from validmind.vm_models import Figure, Metric
 
@@ -23,7 +22,6 @@ class TimeSeriesLinePlot(Metric):
             raise ValueError("Index must be a datetime type")
 
         columns = list(self.dataset.df.columns)
-
         df = self.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
@@ -31,16 +29,22 @@ class TimeSeriesLinePlot(Metric):
 
         figures = []
         for col in columns:
-            plt.figure()
-            fig, _ = plt.subplots()
-            column_index_name = df.index.name
-            ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
-            plt.title(f"Time Series for {col}", weight="bold", fontsize=20)
+            # Creating the figure using Plotly
+            fig = go.Figure()
 
-            plt.xticks(fontsize=18)
-            plt.yticks(fontsize=18)
-            ax.set_xlabel("")
-            ax.set_ylabel("")
+            fig.add_trace(go.Scatter(x=df.index, y=df[col], mode="lines", name=col))
+
+            fig.update_layout(
+                title={
+                    "text": f"{col}",
+                    "y": 0.95,
+                    "x": 0.5,
+                    "xanchor": "center",
+                    "yanchor": "top",
+                },
+                font=dict(size=16),
+            )
+
             figures.append(
                 Figure(
                     for_object=self,
@@ -48,8 +52,6 @@ class TimeSeriesLinePlot(Metric):
                     figure=fig,
                 )
             )
-
-        plt.close("all")
 
         return self.cache_results(
             figures=figures,

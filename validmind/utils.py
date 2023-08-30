@@ -50,7 +50,7 @@ def nan_to_none(obj):
         return {k: nan_to_none(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [nan_to_none(v) for v in obj]
-    elif isinstance(obj, float) and math.isnan(obj):
+    elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
         return None
     return obj
 

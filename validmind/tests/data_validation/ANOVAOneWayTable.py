@@ -32,7 +32,7 @@ class ANOVAOneWayTable(Metric):
 
         return self.cache_results(
             {
-                "anova_results": anova_results,
+                "anova_results": anova_results.to_dict(orient="records"),
             }
         )
 
