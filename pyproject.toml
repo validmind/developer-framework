@@ -43,8 +43,14 @@ statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 torch = {version = ">=1.10.0", optional = true}
 tqdm = "^4.64.0"
-transformers = {version = "^4.0.0", optional = true}
 xgboost = "^1.5.2"
+scorecardpy = "^0.1.9.6"
+transformers = "^4.32.0"
+wget = "^3.2"
+sentencepiece = "^0.1.99"
+rouge = "^1.0.1"
+langdetect = "^1.0.9"
+textstat = "^0.7.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
