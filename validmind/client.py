@@ -26,13 +26,6 @@ from .logging import get_logger
 
 from .models.r_model import RModel
 
-from .vm_models.dataset import (
-    VMDataset,
-    NumpyDataset,
-    DataFrameDataset,
-    TorchDataset,
-)
-
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
