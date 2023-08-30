@@ -10,9 +10,9 @@ from typing import Optional, Union
 
 import pandas as pd
 
-from .result_summary import ResultSummary
 from ..errors import InvalidValueFormatterError
-from ..utils import format_records, format_key_values
+from ..utils import format_key_values, format_records
+from .result_summary import ResultSummary
 
 
 @dataclass

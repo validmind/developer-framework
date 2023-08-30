@@ -6,14 +6,11 @@ Threshold based tests
 
 import re
 from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from validmind.vm_models import (
-    VMDataset,
-    Figure,
-    ThresholdTest,
-)
+from validmind.vm_models import Figure, ThresholdTest, VMDataset
 
 
 @dataclass

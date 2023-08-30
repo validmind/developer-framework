@@ -1,8 +1,9 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import plotly.graph_objects as go
 
-from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 

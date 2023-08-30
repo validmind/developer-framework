@@ -4,15 +4,15 @@
 Threshold based tests
 """
 
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
 from validmind.vm_models import (
-    TestResult,
-    ThresholdTest,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
+    TestResult,
+    ThresholdTest,
 )
 
 

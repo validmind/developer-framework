@@ -4,15 +4,15 @@
 Figure objects track the figure schema supported by the ValidMind API
 """
 
+import base64
 import json
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Optional
 
-import base64
+import ipywidgets as widgets
 import matplotlib
 import plotly.graph_objs as go
-import ipywidgets as widgets
 
 from ..client_config import client_config
 from ..errors import InvalidFigureForObjectError, UnsupportedFigureError

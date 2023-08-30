@@ -6,7 +6,6 @@ from typing import List
 import pandas as pd
 from sklearn import metrics, preprocessing
 
-
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
