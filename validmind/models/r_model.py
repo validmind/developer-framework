@@ -2,13 +2,8 @@
 import numpy as np
 import pandas as pd
 
-from validmind.errors import MissingModelPredictFnError
 from validmind.vm_models.dataset import VMDataset
-from validmind.vm_models.model import (
-    ModelAttributes,
-    VMModel,
-    has_method_with_arguments,
-)
+from validmind.vm_models.model import ModelAttributes, VMModel
 
 
 class RModel(VMModel):

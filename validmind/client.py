@@ -4,10 +4,7 @@
 Client interface for all data and model validation functions
 """
 
-import numpy as np
 import pandas as pd
-import xgboost as xgb
-from sklearn.linear_model import LinearRegression, LogisticRegression
 
 from .client_config import client_config
 from .errors import (
@@ -15,17 +12,13 @@ from .errors import (
     GetTestSuiteError,
     InitializeTestPlanError,
     InitializeTestSuiteError,
-    InvalidXGBoostTrainedModelError,
     MissingDocumentationTemplate,
     MissingRExtrasError,
     UnsupportedDatasetError,
     UnsupportedModelError,
-    UnsupportedRModelError,
 )
 from .logging import get_logger
-
 from .models.r_model import RModel
-
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
