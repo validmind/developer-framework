@@ -1,5 +1,6 @@
 import datetime
 import inspect
+import os
 import re
 import pandas as pd
 import logging
@@ -119,6 +120,11 @@ class Developer:
         - filename: Name of the pickle file.
         - objects_to_save: Dictionary where keys are names/identifiers and values are the objects to be saved.
         """
+        # Ensure the directory exists
+        dir_name = os.path.dirname(filename)
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+
         with open(filename, "wb") as f:
             pickle.dump(objects_to_save, f)
 
