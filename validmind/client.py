@@ -171,8 +171,6 @@ def init_model(
 
 def init_r_model(
     model_path: str,
-    # model_type: str,
-    # model: object,
     train_ds: VMDataset = None,
     test_ds: VMDataset = None,
     validation_ds: VMDataset = None,
@@ -219,63 +217,6 @@ def init_r_model(
     model_name = loaded_objects[0]
     model = r[model_name]
 
-    # from rpy2.robjects import pandas2ri
-
-    # Activate the pandas conversion for rpy2
-    # pandas2ri.activate()
-
-    # if model_type not in R_MODEL_TYPES:
-    #     raise UnsupportedRModelError(
-    #         "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
-    #     )
-
-    # # convert the R model to an sklearn or xgboost estimator
-    # if model_type == "LogisticRegression":  # load the model
-    #     r_model = robjects.r["readRDS"](model_path)
-    #     intercept, *coefficients = robjects.r["coef"](r_model)
-
-    #     model = LogisticRegression()
-    #     model.intercept_ = intercept
-    #     model.coef_ = np.array(coefficients).reshape(1, -1)
-    #     model.classes_ = np.array([0, 1])
-    #     model.feature_names_in_ = np.array(
-    #         robjects.r["colnames"](robjects.r["model.matrix"](r_model))[1:]
-    #     )
-
-    # elif model_type == "LinearRegression":
-    #     r_model = robjects.r["readRDS"](model_path)
-    #     intercept, *coefficients = robjects.r["coef"](r_model)
-
-    #     model = LinearRegression()
-    #     model.intercept_ = intercept
-    #     model.coef_ = np.array(coefficients).reshape(1, -1)
-
-    # elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
-    #     # validate that path is a .json or .bin file not .rds
-    #     if not model_path.endswith(".json") and not model_path.endswith(".bin"):
-    #         raise InvalidXGBoostTrainedModelError(
-    #             "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
-    #             + "Please use `xgb.save(model, 'model.json')` to save the model."
-    #         )
-
-    #     booster = xgb.Booster(model_file=model_path)
-
-    #     model = (
-    #         xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
-    #     )
-    #     model._Booster = booster
-    # import statsmodels.api as sm
-
-    # X = train_ds.x
-    # X = sm.add_constant(X)  # Adds a constant term to the predictor
-    # y = train_ds.y
-
-    # R models are serialized as an object with the following keys:
-    # ['coefficients', 'residuals', 'fitted.values', 'effects', 'R', 'rank', 'qr', 'family',
-    #   'linear.predictors', 'deviance', 'aic', 'null.deviance', 'iter', 'weights', 'prior.weights',
-    #   'df.residual', 'df.null', 'y', 'converged', 'boundary', 'model', 'call', 'formula', 'terms',
-    #   'data', 'offset', 'control', 'method', 'contrasts', 'xlevels'])
-    # model = sm.GLM(y, X, family=sm.families.Binomial()).fit()
     vm_model = RModel(
         r=r,
         model=model,

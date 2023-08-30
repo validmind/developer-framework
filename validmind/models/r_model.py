@@ -46,9 +46,38 @@ class RModel(VMModel):
         self.r = r
         self.__load_model_predictions()
 
+    def __get_predict_data(self, new_data):
+        """
+        Builds the correct data shape and format for the predict method, depending
+        if it's a regular R model or an XGBoost model
+        """
+        from rpy2.robjects import pandas2ri
+
+        # Activate the pandas conversion for rpy2
+        pandas2ri.activate()
+
+        if self.__model_class() == "xgb.Booster":
+            new_data_r = pandas2ri.py2rpy(
+                new_data.df.drop(new_data.target_column, axis=1)
+            )
+        else:
+            new_data_r = pandas2ri.py2rpy(new_data)
+
+        return new_data_r
+
+    def __model_class(self):
+        """
+        Returns the model class name
+        """
+        return self.r["class"](self.model)[0]
+
     def r_predict(self, new_data_r):
         """
-        Predict method for the model. This is a wrapper around R's global predict
+        Predict method for the model. This is a wrapper around R's global predict.
+
+        An R model doesn't provide separate predict() and predict_proba() methods.
+        Instead, there is a global predict() method that returns the predicted
+        values according to the model type.
         """
         # Use the predict method on the loaded model (assuming the model's name in R is 'model')
         predicted_probs = self.r.predict(
@@ -56,24 +85,27 @@ class RModel(VMModel):
         )
         return predicted_probs
 
+    def r_xgb_predict(self, new_data_r):
+        """
+        Predict method for XGBoost models. This is a wrapper around R's global predict
+        """
+        new_data_matrix = self.r["as.matrix"](new_data_r)
+        new_data_r = self.r["xgb.DMatrix"](new_data_matrix)
+
+        predicted_probs = self.r.predict(
+            self.model, newdata=new_data_r, type="response"
+        )
+        return predicted_probs
+
     def __load_model_predictions(self):
-        from rpy2.robjects import pandas2ri
-
-        # Activate the pandas conversion for rpy2
-        pandas2ri.activate()
-
-        # An R model doesn't provide separate predict() and predict_proba() methods.
-        # Instead, there is a global predict() method that returns the predicted
-        # values according to the model type.
         if self.model and self.train_ds:
-            train_data_r = pandas2ri.py2rpy(self.train_ds.df)
-            self._y_train_predict = self.predict(train_data_r)
+            self._y_train_predict = self.predict(self.__get_predict_data(self.train_ds))
         if self.model and self.test_ds:
-            test_data_r = pandas2ri.py2rpy(self.test_ds.df)
-            self._y_test_predict = self.predict(test_data_r)
+            self._y_test_predict = self.predict(self.__get_predict_data(self.test_ds))
         if self.model and self.validation_ds:
-            validation_data_r = pandas2ri.py2rpy(self.validation_ds.df)
-            self._y_validation_predict = self.predict(validation_data_r)
+            self._y_validation_predict = self.predict(
+                self.__get_predict_data(self.validation_ds)
+            )
 
     def predict_proba(self, new_data):
         """
@@ -96,19 +128,28 @@ class RModel(VMModel):
                 f"new_data must be a DataFrame or ndarray. Got {new_data_class}"
             )
 
-        # Add a new column from self.test_ds to the new_data. This is needed because
-        # the R predict method requires the same columns as the training data.
-        new_data[self.test_ds.target_column] = 0
-        new_data_r = pandas2ri.py2rpy(new_data)
+        if self.__model_class() == "xgb.Booster":
+            new_data_r = pandas2ri.py2rpy(new_data)
+            predicted_probs = self.r_xgb_predict(new_data_r)
+        else:
+            # Add a new column from self.test_ds to the new_data. This is needed because
+            # the R predict method requires the same columns as the training data.
+            new_data[self.test_ds.target_column] = 0
+            new_data_r = pandas2ri.py2rpy(new_data)
+            predicted_probs = self.r_predict(new_data_r)
 
-        return self.r_predict(new_data_r)
+        return predicted_probs
 
     def predict(self, new_data_r):
         """
         Converts the predicted probabilities to classes
         """
-        predicted_probs = self.r_predict(new_data_r)
-        # TODO: do this only for classification models
+        if self.__model_class() == "xgb.Booster":
+            predicted_probs = self.r_xgb_predict(new_data_r)
+        else:
+            predicted_probs = self.r_predict(new_data_r)
+
+        # TODO: we're doing this only for classification models for now
         predicted_classes = np.where(predicted_probs > 0.5, 1, 0)
         return predicted_classes
 
@@ -140,6 +181,9 @@ class RModel(VMModel):
         """
         Returns model name
         """
+        if self.__model_class() == "xgb.Booster":
+            return "XGBoost"
+
         # Access the attributes of the model
         model_family = self.model.rx2("family")
         model_method = self.model.rx2("method")[0]

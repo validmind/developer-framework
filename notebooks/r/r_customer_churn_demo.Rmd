@@ -17,6 +17,7 @@ We will train a sample model and demonstrate the following documentation functio
 ```{r}
 # install.packages("magrittr") # package installations are only needed the first time you use it
 # install.packages("dplyr")    # alternative installation of the %>%
+# install.packages("xgboost")  # for training XGBoost models
 library(magrittr) # needs to be run every time you start R and want to use %>%
 library(dplyr)    # alternatively, this also loads %>%
 library(glue)
@@ -95,7 +96,7 @@ vm_dataset = vm$init_dataset(
 ## **Run the Data Validation Test Plan**
 
 ```{r}
-tabular_suite_results <- vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
+# tabular_suite_results <- vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
 ```
 
 ```{r}
@@ -155,7 +156,7 @@ summarize_results2 <- function(results) {
   }
 }
 
-summarize_results2(tabular_suite_results)
+# summarize_results2(tabular_suite_results)
 ```
 
 ## **Run the Model Validation Test Plan**
@@ -191,7 +192,7 @@ model
 ```
 
 ```{r}
-save_model(model)
+# model_path = save_model(model)
 ```
 
 ```{r}
@@ -205,17 +206,68 @@ vm_test_ds = vm$init_dataset(
     target_column="Exited"
 )
 
-vm_model = vm$init_r_model(
-    model_path=file_path,
-    train_ds=vm_train_ds,
-    test_ds=vm_test_ds,
-)
+# vm_model = vm$init_r_model(
+#     model_path=model_path,
+#     train_ds=vm_train_ds,
+#     test_ds=vm_test_ds,
+# )
 ```
 
 ### **Run the Binary Classification Test Plan**
 
 ```{r}
-model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+# model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+```
+
+```{r}
+# summarize_results2(model_validation_results)
+```
+# XGBoost
+
+```{r}
+library(xgboost)
+```
+```{r}
+# convert data into DMatrix format
+x_train_df = train_data %>% select(-Exited)
+y_train_df = train_data %>% select(Exited)
+
+x_test_df = test_data %>% select(-Exited)
+y_test_df = test_data %>% select(Exited)
+
+dtrain <- xgb.DMatrix(data = as.matrix(x_train_df), label = as.matrix(y_train_df))
+dtest <- xgb.DMatrix(data = as.matrix(x_test_df), label = as.matrix(y_test_df))
+```
+
+```{r}
+params <- list(
+  objective = "binary:logistic",
+  eval_metric = "auc"
+)
+
+xgb_model <- xgb.train(
+  data = dtrain,
+  params = params,
+  nrounds = 1000,
+  watchlist = list(train = dtrain, test = dtest),
+  early_stopping_rounds = 100
+)
+```
+
+```{r}
+model_path = save_model(xgb_model)
+```
+
+```{r}
+vm_xgb_model = vm$init_r_model(
+    model_path=model_path,
+    train_ds=vm_train_ds,
+    test_ds=vm_test_ds,
+)
+```
+
+```{r}
+model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_xgb_model)
 ```
 
 ```{r}
