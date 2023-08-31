@@ -25,9 +25,12 @@ class ResultTable:
     type: str = "table"
     metadata: ResultTableMetadata = None
 
-    def serialize(self):
+    def serialize(self, as_df=False):
         """
-        Serializes the Figure to a dictionary so it can be sent to the API
+        Serializes the Figure to a dictionary so it can be sent to the API.
+
+        This method accepts as_df parameter to return the data as a DataFrame
+        if we're returning the data to R.
         """
         table_result = {
             "type": self.type,
@@ -35,7 +38,12 @@ class ResultTable:
 
         # Convert to a DataFrame so that we can round the values in a standard way
         table_df = pd.DataFrame(self.data) if isinstance(self.data, list) else self.data
-        table_result["data"] = table_df.round(4).to_dict(orient="records")
+        table_df = table_df.round(4)
+
+        if as_df:
+            table_result["data"] = table_df
+        else:
+            table_result["data"] = table_df.to_dict(orient="records")
 
         if self.metadata is not None:
             table_result["metadata"] = vars(self.metadata)
@@ -59,8 +67,8 @@ class ResultSummary:
             self.results = []
         self.results.append(result)
 
-    def serialize(self):
+    def serialize(self, as_df=False):
         """
         Serializes the ResultSummary to a list of results
         """
-        return [result.serialize() for result in self.results]
+        return [result.serialize(as_df) for result in self.results]
