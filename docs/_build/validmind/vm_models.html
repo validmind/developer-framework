@@ -122,7 +122,13 @@
                                 <a class="function" href="#VMModel.predict">predict</a>
                         </li>
                         <li>
+                                <a class="function" href="#VMModel.model_language">model_language</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#VMModel.model_library">model_library</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMModel.model_library_version">model_library_version</a>
                         </li>
                         <li>
                                 <a class="function" href="#VMModel.model_class">model_class</a>
@@ -813,6 +819,23 @@ This is a wrapper around the model's if available</p>
 
 
                             </div>
+                            <div id="VMModel.model_language" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">model_language</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.model_language"></a>
+    
+            <div class="docstring"><p>Programming language used to train the model. Assume Python if this
+method is not implemented</p>
+</div>
+
+
+                            </div>
                             <div id="VMModel.model_library" class="classattr">
                                 <div class="attr function">
                     <div class="decorator">@abstractmethod</div>
@@ -824,7 +847,23 @@ This is a wrapper around the model's if available</p>
     </div>
     <a class="headerlink" href="#VMModel.model_library"></a>
     
-            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
+            <div class="docstring"><p>Model framework library</p>
+</div>
+
+
+                            </div>
+                            <div id="VMModel.model_library_version" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">model_library_version</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMModel.model_library_version"></a>
+    
+            <div class="docstring"><p>Model framework library version</p>
 </div>
 
 
@@ -948,7 +987,7 @@ This is a wrapper around the model's if available</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">as_df</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -991,13 +1030,16 @@ This is a wrapper around the model's if available</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">as_df</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#ResultTable.serialize"></a>
     
-            <div class="docstring"><p>Serializes the Figure to a dictionary so it can be sent to the API</p>
+            <div class="docstring"><p>Serializes the Figure to a dictionary so it can be sent to the API.</p>
+
+<p>This method accepts as_df parameter to return the data as a DataFrame
+if we're returning the data to R.</p>
 </div>
 
 
