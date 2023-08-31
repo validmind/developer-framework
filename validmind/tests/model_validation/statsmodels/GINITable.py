@@ -19,19 +19,19 @@ class GINITable(Metric):
     required_inputs = ["model"]
 
     def run(self):
-        model = self.model
+        model = self.model[0] if isinstance(self.model, list) else self.model
 
-        X_train = self.model.train_ds.x
-        y_train = self.model.train_ds.y
+        X_train = model.train_ds.x
+        y_train = model.train_ds.y
 
-        X_test = self.model.test_ds.x
-        y_test = self.model.test_ds.y
+        X_test = model.test_ds.x
+        y_test = model.test_ds.y
 
         summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)
 
         return self.cache_results(
             {
-                "metrics_summary": summary_metrics,
+                "metrics_summary": summary_metrics.to_dict(orient="records"),
             }
         )
 
@@ -43,9 +43,9 @@ class GINITable(Metric):
         for dataset, X, y in zip(
             ["Train", "Test"], [X_train, X_test], [y_train, y_test]
         ):
-            # Get predicted probabilities
-            X = X[X_train.columns]  # Ensure X has the same columns as X_train
-            y_scores = model.predict(X)
+            y_scores = model.model.predict(X)
+
+            print("Predicted scores obtained...")
 
             # Compute AUC, GINI, and KS
             auc = self.compute_auc(y, y_scores)
@@ -63,17 +63,20 @@ class GINITable(Metric):
 
     def compute_auc(self, y_true, y_scores):
         """Computes the Area Under the Curve (AUC)."""
+        print("Computing AUC...")
         auc = roc_auc_score(y_true, y_scores)
         return auc
 
     def compute_gini(self, y_true, y_scores):
         """Computes the Gini coefficient."""
+        print("Computing GINI...")
         auc = self.compute_auc(y_true, y_scores)
         gini = 2 * auc - 1
         return gini
 
     def compute_ks(self, y_true, y_scores):
         """Computes the Kolmogorov-Smirnov (KS) statistic."""
+        print("Computing KS...")
         fpr, tpr, _ = roc_curve(y_true, y_scores)
         ks = np.max(tpr - fpr)
         return ks

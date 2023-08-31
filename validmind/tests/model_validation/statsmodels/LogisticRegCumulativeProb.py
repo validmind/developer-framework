@@ -86,16 +86,25 @@ class LogisticRegCumulativeProb(Metric):
         return fig
 
     def run(self):
-        target_column = self.model.train_ds.target_column
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        target_column = model.train_ds.target_column
         title = self.params["title"]
 
-        X_train = self.model.train_ds.x.copy()
-        y_train = self.model.train_ds.y.copy()
-        X_test = self.model.test_ds.x.copy()
-        y_test = self.model.test_ds.y.copy()
+        # Create a copy of training and testing dataframes
+        df_train = model.train_ds._df.copy()
+        df_test = model.test_ds._df.copy()
 
-        X_train = self.compute_probabilities(self.model, X_train)
-        X_test = self.compute_probabilities(self.model, X_test)
+        # Drop target_column to create feature dataframes
+        X_train = df_train.drop(columns=[target_column])
+        X_test = df_test.drop(columns=[target_column])
+
+        # Subset only target_column to create target dataframes
+        y_train = df_train[[target_column]]
+        y_test = df_test[[target_column]]
+
+        X_train = self.compute_probabilities(model, X_train)
+        X_test = self.compute_probabilities(model, X_test)
 
         df_train = pd.concat([X_train, y_train], axis=1)
         df_test = pd.concat([X_test, y_test], axis=1)

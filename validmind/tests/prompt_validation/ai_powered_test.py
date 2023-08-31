@@ -1,8 +1,10 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 from abc import ABC, abstractmethod
 
 import openai
 
 from validmind.vm_models import ThresholdTest
+
 
 class BasePromptTest(ThresholdTest, ABC):
     """
@@ -21,7 +23,7 @@ class BasePromptTest(ThresholdTest, ABC):
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": test_prompt},
-            ]
+            ],
         )
         return response.choices[0].message["content"]
 
@@ -56,9 +58,7 @@ class BasePromptTest(ThresholdTest, ABC):
             results=[
                 ResultTable(
                     data=pd.DataFrame(results_table),
-                    metadata=ResultTableMetadata(
-                        title=f"{self.name} Test"
-                    ),
+                    metadata=ResultTableMetadata(title=f"{self.name} Test"),
                 )
             ]
         )

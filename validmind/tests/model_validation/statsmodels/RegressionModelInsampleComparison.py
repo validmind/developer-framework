@@ -35,10 +35,12 @@ class RegressionModelInsampleComparison(Metric):
         if self.models is not None:
             all_models.extend(self.models)
 
-        results = self._in_sample_performance_ols(all_models)
+        in_sample_performance = self._in_sample_performance_ols(all_models)
+        in_sample_performance_df = pd.DataFrame(in_sample_performance)
+
         return self.cache_results(
             {
-                "in_sample_performance": pd.DataFrame(results).to_dict(
+                "in_sample_performance": in_sample_performance_df.to_dict(
                     orient="records"
                 ),
             }
@@ -63,8 +65,9 @@ class RegressionModelInsampleComparison(Metric):
 
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
-            y_true = self.model.train_ds.y
-            y_pred = self.model.model.predict(self.model.train_ds.x)
+            X = model.train_ds.x
+            y_true = model.train_ds.y
+            y_pred = model.model.predict(X)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
