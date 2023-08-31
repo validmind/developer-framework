@@ -267,6 +267,7 @@ class TestPlan:
 
     def _run_test(self, test):
         try:
+            test.validate_context()
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
             log_performance(
                 func=test.run,
@@ -325,8 +326,6 @@ class TestPlan:
                 model=self.model,
                 models=self.models,
             )
-
-        self.validate_context()
 
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)

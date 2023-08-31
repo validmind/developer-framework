@@ -26,42 +26,71 @@ class ClassifierPerformance(Metric):
 
     name = "classifier_performance"
     default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
+
     default_metrics = {
-        "accuracy": metrics.accuracy_score,
-        "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
-        "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
-        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
-        "roc_auc": partial(multiclass_roc_auc_score),
+        "accuracy": {
+            "func": metrics.accuracy_score,
+            "name": "Accuracy",
+            "definition": "Overall, how often is the model correct?",
+            "formula": "TP + TN / (TP + TN + FP + FN)",
+        },
+        "precision": {
+            "func": partial(metrics.precision_score, zero_division=0, average="micro"),
+            "name": "Precision",
+            "definition": 'When the model predicts "{target_column}", how often is it correct?',
+            "formula": "TP / (TP + FP)",
+        },
+        "recall": {
+            "func": partial(metrics.recall_score, zero_division=0, average="micro"),
+            "name": "Recall",
+            "definition": 'When it\'s actually "{target_column}", how often does the model predict "{target_column}"?',
+            "formula": "TP / (TP + FN)",
+        },
+        "f1": {
+            "func": partial(metrics.f1_score, zero_division=0, average="micro"),
+            "name": "F1",
+            "definition": "Harmonic mean of precision and recall",
+            "formula": "2 x (Precision x Recall) / (Precision + Recall)",
+        },
+        "roc_auc": {
+            "func": partial(multiclass_roc_auc_score),
+            "name": "ROC AUC",
+            "definition": "Area under the Receiver Operating Characteristic curve",
+            "formula": "TPR / FPR",
+        },
     }
 
-    # This will need to be moved to the backend
-    metric_definitions = {
-        "accuracy": "Overall, how often is the model correct?",
-        "precision": 'When the model predicts "{target_column}", how often is it correct?',
-        "recall": 'When it\'s actually "{target_column}", how often does the model predict "{target_column}"?',
-        "f1": "Harmonic mean of precision and recall",
-        "roc_auc": "Area under the Receiver Operating Characteristic curve",
-    }
+    def metrics(self):
+        """
+        Resolves the metrics to be used in the test by filtering out any default
+        metric that is ommitted via params
+        """
+        metrics_names = self.params.get("metrics", self.default_params["metrics"])
+        metrics = {
+            metric_name: self.default_metrics[metric_name]
+            for metric_name in metrics_names
+        }
 
-    metric_formulas = {
-        "accuracy": "TP + TN / (TP + TN + FP + FN)",
-        "precision": "TP / (TP + FP)",
-        "recall": "TP / (TP + FN)",
-        "f1": "2 x (Precision x Recall) / (Precision + Recall)",
-        "roc_auc": "TPR / FPR",
-    }
+        return metrics
 
     def summary(self, metric_value: dict):
+        # Get the target column from any of the datasets available
+        ds = self.model.train_ds or self.model.test_ds
+        target_column = ds.target_column
+
+        metrics = self.metrics()
+
         # Turns the metric value into a table of [{metric_name: value}]
         summary_in_sample_performance = []
         for metric_name, metric_value in metric_value.items():
+            metric_dict = metrics[metric_name]
             summary_in_sample_performance.append(
                 {
-                    "Metric": metric_name.title(),
-                    "Definition": self.metric_definitions[metric_name].format(
-                        target_column=self.model.train_ds.target_column
+                    "Metric": metric_dict["name"],
+                    "Definition": metric_dict["definition"].format(
+                        target_column=target_column
                     ),
-                    "Formula": self.metric_formulas[metric_name],
+                    "Formula": metric_dict["formula"],
                     "Value": format_number(metric_value),
                 }
             )
@@ -85,11 +114,10 @@ class ClassifierPerformance(Metric):
         class_pred = self.y_pred()
         results = {}
 
-        metrics = self.params.get("metrics", self.default_params["metrics"])
-        for metric_name in metrics:
-            if metric_name not in self.default_metrics:
-                raise ValueError(f"Metric {metric_name} not supported.")
-            metric_func = self.default_metrics[metric_name]
+        metrics = self.metrics()
+
+        for metric_name, metric_dict in metrics.items():
+            metric_func = metric_dict["func"]
             y_true = y_true.astype(class_pred.dtype)
             if (
                 metric_name == "precision"

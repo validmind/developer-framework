@@ -88,13 +88,19 @@ class TestContextUtils:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        for element in self.required_inputs:
-            if not hasattr(self, element):
-                raise MissingRequiredTestContextError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
-                )
 
-            if getattr(self, element) is None:
+        def recursive_attr_check(obj, attr_chain):
+            attrs = attr_chain.split(".")
+            if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
+                return False
+            return len(attrs) == 1 or recursive_attr_check(
+                getattr(obj, attrs[0]),
+                ".".join(attrs[1:]),
+            )
+
+        for element in self.required_inputs:
+            if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+                    f"{element}' is a required input and must be passed "
+                    "as a keyword argument to the test plan"
                 )
