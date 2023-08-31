@@ -40,12 +40,14 @@ class PermutationFeatureImportance(Metric):
     def run(self):
         x = self.model.train_ds.x_df()
         y = self.model.train_ds.y_df()
+
         model_library = self.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
             or model_library == "catboost"
             or model_library == "transformers"
+            or model_library == "R"
         ):
             raise ValueError(f"Skipping PFI for {model_library} models")
 

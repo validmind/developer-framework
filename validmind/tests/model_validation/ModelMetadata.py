@@ -17,16 +17,23 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
     """
     architecture = model.model_name()
     framework = model.model_library()
+    framework_version = model.model_library_version()
+    language = model.model_language()
 
-    try:
-        framework_version = sys.modules[framework].__version__
-    except (KeyError, AttributeError):
-        framework_version = "N/A"
+    if language is None:
+        language = f"Python {python_version()}"
+
+    if framework_version is None:
+        try:
+            framework_version = sys.modules[framework].__version__
+        except (KeyError, AttributeError):
+            framework_version = "N/A"
 
     return {
         "architecture": architecture,
         "framework": framework,
         "framework_version": framework_version,
+        "language": language,
     }
 
 
@@ -71,6 +78,5 @@ class ModelMetadata(Metric):
         Extracts model metadata from a model object instance
         """
         model_info = _get_info_from_model_instance(self.model)
-        model_info["language"] = f"Python {python_version()}"
 
         return self.cache_results(model_info)

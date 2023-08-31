@@ -76,6 +76,7 @@ class SHAPGlobalImportance(Metric):
             "catboost",
             "transformers",
             "FoundationModel",
+            "R",
         ]:
             logger.info(f"Skiping SHAP for {model_library} models")
             return

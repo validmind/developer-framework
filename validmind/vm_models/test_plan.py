@@ -275,6 +275,9 @@ class TestPlan:
                 logger=logger,
             )()  # this is a decorator so we need to call it
         except Exception as e:
+            # TODO: introduce an environment variable to control whether to raise
+            # exceptions on the first failure or to continue running the tests
+            #
             logger.error(
                 f"Failed to run test '{test.name}': ({e.__class__.__name__}) {e}"
             )

@@ -27,21 +27,14 @@ repos:
     hooks:
     -   id: format
         name: Running make format
-        entry: make format
-        language: system
+        entry: ./scripts/format_and_add.sh
+        language: script
         pass_filenames: false
         stages:
-          - "push"
+          - "commit"
     -   id: lint
         name: Running make lint
         entry: make lint
-        language: system
-        pass_filenames: false
-        stages:
-          - "push"
-    -   id: copyright
-        name: Running make copyright
-        entry: make copyright
         language: system
         pass_filenames: false
         stages:
