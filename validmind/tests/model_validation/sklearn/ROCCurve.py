@@ -6,6 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.metrics import roc_auc_score, roc_curve
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -35,7 +36,7 @@ class ROCCurve(Metric):
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:
-            raise ValueError(
+            raise SkipTestError(
                 "ROC Curve is only supported for binary classification models"
             )
 

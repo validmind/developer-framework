@@ -206,7 +206,7 @@ def init_r_model(
     return vm_model
 
 
-def run_test_plan(test_plan_name, send=True, **kwargs):
+def run_test_plan(test_plan_name, send=True, fail_fast=False, **kwargs):
     """High Level function for running a test plan
 
     This function provides a high level interface for running a test plan. It removes the need
@@ -217,6 +217,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     Args:
         test_plan_name (str): The test plan name (e.g. 'classifier')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test plan. These will provide
             the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
             See the documentation for the specific test plan for more details.
@@ -235,6 +236,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         )
 
     try:
+        kwargs["fail_fast"] = fail_fast
         plan = Plan(**kwargs)
     except ValueError as exc:
         raise InitializeTestPlanError(
@@ -285,7 +287,7 @@ def get_test_suite(
     return get_test_suite_by_id(test_suite_name)(*args, **kwargs)
 
 
-def run_test_suite(test_suite_name, send=True, **kwargs):
+def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
     """High Level function for running a test suite
 
     This function provides a high level interface for running a test suite. A test suite is
@@ -295,6 +297,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     Args:
         test_suite_name (str): The test suite name (e.g. 'classifier_full_suite')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
             the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
             See the documentation for the specific test plan, metric or threshold test for more details.
@@ -313,6 +316,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
         )
 
     try:
+        kwargs["fail_fast"] = fail_fast
         suite = Suite(**kwargs)
     except ValueError as exc:
         raise InitializeTestSuiteError(
@@ -341,7 +345,9 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, send=True, *args, **kwargs):
+def run_documentation_tests(
+    section: str = None, send=True, fail_fast=False, *args, **kwargs
+):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -351,6 +357,7 @@ def run_documentation_tests(section: str = None, send=True, *args, **kwargs):
     Args:
         section (str, optional): The section to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
@@ -369,6 +376,7 @@ def run_documentation_tests(section: str = None, send=True, *args, **kwargs):
         template=client_config.documentation_template,
         section=section,
         send=send,
+        fail_fast=fail_fast,
         *args,
         **kwargs,
     )

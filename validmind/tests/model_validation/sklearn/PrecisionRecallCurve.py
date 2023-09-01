@@ -6,6 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.metrics import precision_recall_curve
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -36,7 +37,7 @@ class PrecisionRecallCurve(Metric):
 
         # PR curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:
-            raise ValueError(
+            raise SkipTestError(
                 "Precision Recall Curve is only supported for binary classification models"
             )
 

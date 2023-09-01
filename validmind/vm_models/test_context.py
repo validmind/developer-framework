@@ -12,6 +12,19 @@ from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetE
 from .dataset import VMDataset
 from .model import VMModel
 
+# More human readable context names for error messages
+CONTEXT_NAMES = {
+    "dataset": "Dataset",
+    "model": "Model",
+    "models": "Models",
+    "model.train_ds": "Model Training Dataset",
+    "model.test_ds": "Model Testing Dataset",
+    "model.validation_ds": "Model Validation Dataset",
+    "train_ds": "Training Dataset",
+    "test_ds": "Testing Dataset",
+    "validation_ds": "Validation Dataset",
+}
+
 
 @dataclass
 class TestContext:
@@ -101,7 +114,8 @@ class TestContextUtils:
         required_inputs = self.required_inputs or []
         for element in required_inputs:
             if not recursive_attr_check(self, element):
+                context_name = CONTEXT_NAMES.get(element, element)
                 raise MissingRequiredTestContextError(
-                    f"{element}' is a required input and must be passed "
+                    f"{context_name} '{element}' is a required input and must be passed "
                     "as a keyword argument to the test plan"
                 )
