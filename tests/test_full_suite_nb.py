@@ -77,7 +77,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
 
         async def run_test_suite():
             return vm.run_test_suite(
-                "binary_classifier_full_suite",
+                "classifier_full_suite",
                 dataset=self.vm_dataset,
                 model=self.vm_model,
             )

@@ -74,6 +74,7 @@ class SHAPGlobalImportance(Metric):
             "statsmodels",
             "pytorch",
             "catboost",
+            "transformers",
             "FoundationModel",
             "R",
         ]:
