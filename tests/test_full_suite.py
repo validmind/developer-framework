@@ -72,7 +72,7 @@ class TestFullTestSuite(unittest.TestCase):
         self.assertIsInstance(self.vm_model, VMModel)
 
         result = vm.run_test_suite(
-            "binary_classifier_full_suite",
+            "classifier_full_suite",
             dataset=self.vm_dataset,
             model=self.vm_model,
         )

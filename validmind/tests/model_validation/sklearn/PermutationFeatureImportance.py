@@ -31,7 +31,7 @@ class PermutationFeatureImportance(Metric):
     """
 
     name = "pfi"
-    required_inputs = ["model"]
+    required_inputs = ["model", "model.train_ds", "model.test_ds"]
     default_params = {
         "fontsize": None,
         "figure_height": 1000,
@@ -40,14 +40,16 @@ class PermutationFeatureImportance(Metric):
     def run(self):
         x = self.model.train_ds.x_df()
         y = self.model.train_ds.y_df()
+
         model_library = self.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
             or model_library == "catboost"
+            or model_library == "transformers"
+            or model_library == "R"
         ):
-            logger.info(f"Skipping PFI for {model_library} models")
-            return
+            raise ValueError(f"Skipping PFI for {model_library} models")
 
         pfi_values = permutation_importance(
             self.model.model,

@@ -9,11 +9,7 @@ from ..logging import get_logger
 from ..tests import list_tests as real_list_tests
 from ..tests import load_test
 from ..utils import format_dataframe
-from .binary_classifier import (
-    BinaryClassifierDiagnosis,
-    BinaryClassifierMetrics,
-    BinaryClassifierPerformance,
-)
+from .classifier import ClassifierDiagnosis, ClassifierMetrics, ClassifierPerformance
 from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
@@ -34,9 +30,9 @@ from .time_series import (
 logger = get_logger(__name__)
 
 core_test_plans = {
-    "binary_classifier_metrics": BinaryClassifierMetrics,
-    "binary_classifier_validation": BinaryClassifierPerformance,
-    "binary_classifier_model_diagnosis": BinaryClassifierDiagnosis,
+    "classifier_metrics": ClassifierMetrics,
+    "classifier_validation": ClassifierPerformance,
+    "classifier_model_diagnosis": ClassifierDiagnosis,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,
     "time_series_data_quality": TimeSeriesDataQuality,

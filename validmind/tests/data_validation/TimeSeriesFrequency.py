@@ -1,6 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
+
 import pandas as pd
 import plotly.graph_objects as go
 

@@ -90,6 +90,7 @@ class TestSuite(TestPlan):
                 pbar=self.pbar,
                 pbar_description=self.pbar_description,
                 pbar_box=self.pbar_box,
+                fail_fast=self.fail_fast,
             )
             self._test_plan_instances.append(test_plan)
 

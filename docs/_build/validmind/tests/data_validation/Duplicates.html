@@ -79,9 +79,12 @@
     </div>
     <a class="headerlink" href="#Duplicates"></a>
     
-            <div class="docstring"><p>The duplicates test measures the number of duplicate rows found in
-the dataset. If a primary key column is specified, the dataset is
-checked for duplicate primary keys as well.</p>
+            <div class="docstring"><p>The duplicates test measures the number of duplicate entries found in the dataset.</p>
+
+<ul>
+<li>If the dataset has a <code>text_column</code> property then the test will check for duplicate entries in that column.</li>
+<li>If a primary key column is specified, the dataset is checked for duplicate primary keys as well.</li>
+</ul>
 </div>
 
 

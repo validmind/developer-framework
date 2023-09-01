@@ -11,7 +11,11 @@ import sklearn
 
 import validmind
 from validmind import (
-    init_dataset, init_model, get_test_suite, preview_template, run_documentation_tests
+    init_dataset,
+    init_model,
+    get_test_suite,
+    preview_template,
+    run_documentation_tests,
 )
 
 
@@ -27,7 +31,7 @@ class MockedConfig:
                 "id": "test_section_1",
                 "title": "Test Section",
                 "index_only": True,
-                "order": 0
+                "order": 0,
             },
             {
                 "id": "test_subsection_1",
@@ -44,7 +48,7 @@ class MockedConfig:
                 "id": "test_section_2",
                 "title": "Test Section 2",
                 "index_only": True,
-                "order": 1
+                "order": 1,
             },
             {
                 "id": "test_subsection_2",
@@ -57,26 +61,21 @@ class MockedConfig:
                     },
                 ],
             },
-        ]
+        ],
     }
+
 
 class TestInitDataset(TestCase):
     def test_init_dataset_pandas(self):
         # Test initializing a Pandas DataFrame
-        df = pd.DataFrame({
-            "col1": [1, 2, 3],
-            "col2": ["a", "b", "c"]
-        })
+        df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
         vm_dataset = init_dataset(df, target_column="col1")
         self.assertIsInstance(vm_dataset._df, pd.DataFrame)
         self.assertTrue(vm_dataset._df.equals(df))
 
     def test_init_dataset_numpy(self):
         # Test initializing a numpy ndarray
-        arr = np.array([
-            [1, 2, 3],
-            [4, 5, 6]
-        ])
+        arr = np.array([[1, 2, 3], [4, 5, 6]])
         vm_dataset = init_dataset(arr, target_column=2)
         self.assertIsInstance(vm_dataset._df, pd.DataFrame)
         self.assertTrue(vm_dataset._df.equals(pd.DataFrame(arr)))
@@ -94,9 +93,10 @@ class TestInitModel(TestCase):
 
 # Run methods are tested in test_full_suite_nb.py and test_full_suite.py
 
+
 class TestGetTestSuite(TestCase):
     def test_get_specfic_suite(self):
-        test_suite = get_test_suite("binary_classifier_full_suite")
+        test_suite = get_test_suite("classifier_full_suite")
         self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
 
     @mock.patch(
@@ -107,6 +107,7 @@ class TestGetTestSuite(TestCase):
         test_suite = get_test_suite()
         self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
         self.assertEqual(len(test_suite._test_plan_classes), 2)
+
 
 # TODO: Fix this test
 # class TestPreviewTemplate(TestCase):
@@ -131,17 +132,14 @@ class TestRunDocumentationTests(TestCase):
     def test_run_documentation_tests(self):
         # create a very simple logistic regression model
         model = sklearn.linear_model.LogisticRegression()
-        dataset = pd.DataFrame([
-            [1, 1],
-            [1, 0],
-            [0, 1],
-            [0, 0]
-        ], columns=["x", "y"])
+        dataset = pd.DataFrame([[1, 1], [1, 0], [0, 1], [0, 0]], columns=["x", "y"])
         model.fit(dataset[["x"]], dataset["y"])
         vm_dataset = init_dataset(dataset, target_column="y")
         vm_model = init_model(model, train_ds=vm_dataset, test_ds=vm_dataset)
 
-        test_suite = run_documentation_tests(model=vm_model, dataset=vm_dataset, send=False)
+        test_suite = run_documentation_tests(
+            model=vm_model, dataset=vm_dataset, send=False
+        )
 
         self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
         self.assertEqual(len(test_suite._test_plan_classes), 2)

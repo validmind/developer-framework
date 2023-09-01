@@ -6,6 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 from sklearn.metrics import roc_auc_score, roc_curve
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -32,6 +33,12 @@ class ROCCurve(Metric):
 
         y_true = model.test_ds.y
         y_pred = model.predict(model.test_ds.x)
+
+        # ROC curve is only supported for binary classification
+        if len(np.unique(y_true)) > 2:
+            raise SkipTestError(
+                "ROC Curve is only supported for binary classification models"
+            )
 
         y_true = y_true.astype(y_pred.dtype).flatten()
         assert np.all((y_pred >= 0) & (y_pred <= 1)), "Invalid probabilities in y_pred."

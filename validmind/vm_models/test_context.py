@@ -12,6 +12,19 @@ from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetE
 from .dataset import VMDataset
 from .model import VMModel
 
+# More human readable context names for error messages
+CONTEXT_NAMES = {
+    "dataset": "Dataset",
+    "model": "Model",
+    "models": "Models",
+    "model.train_ds": "Model Training Dataset",
+    "model.test_ds": "Model Testing Dataset",
+    "model.validation_ds": "Model Validation Dataset",
+    "train_ds": "Training Dataset",
+    "test_ds": "Testing Dataset",
+    "validation_ds": "Validation Dataset",
+}
+
 
 @dataclass
 class TestContext:
@@ -88,13 +101,21 @@ class TestContextUtils:
         Validates that the context elements are present
         in the instance so that the test plan can be run
         """
-        for element in self.required_inputs:
-            if not hasattr(self, element):
-                raise MissingRequiredTestContextError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
-                )
 
-            if getattr(self, element) is None:
+        def recursive_attr_check(obj, attr_chain):
+            attrs = attr_chain.split(".")
+            if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
+                return False
+            return len(attrs) == 1 or recursive_attr_check(
+                getattr(obj, attrs[0]),
+                ".".join(attrs[1:]),
+            )
+
+        required_inputs = self.required_inputs or []
+        for element in required_inputs:
+            if not recursive_attr_check(self, element):
+                context_name = CONTEXT_NAMES.get(element, element)
                 raise MissingRequiredTestContextError(
-                    f"Test plan '{self.name}' requires '{element}' to be present in the test context"
+                    f"{context_name} '{element}' is a required input and must be passed "
+                    "as a keyword argument to the test plan"
                 )

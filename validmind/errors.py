@@ -313,6 +313,14 @@ class UnsupportedModelError(BaseError):
     pass
 
 
+class SkipTestError(BaseError):
+    """
+    Useful error to throw when a test cannot be executed.
+    """
+
+    pass
+
+
 def raise_api_error(error_string):
     """
     Safely try to parse JSON from the response message in case the API
@@ -343,3 +351,14 @@ def raise_api_error(error_string):
 
     error_class = error_map.get(api_code, APIRequestError)
     raise error_class(api_description)
+
+
+def should_raise_on_fail_fast(error) -> bool:
+    """
+    Determine whether an error should be raised when fail_fast is True.
+    """
+    error_class = error.__class__.__name__
+    return error_class not in [
+        "MissingRequiredTestContextError",
+        "SkipTestError",
+    ]
