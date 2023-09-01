@@ -98,7 +98,8 @@ class TestContextUtils:
                 ".".join(attrs[1:]),
             )
 
-        for element in self.required_inputs:
+        required_inputs = self.required_inputs or []
+        for element in required_inputs:
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
                     f"{element}' is a required input and must be passed "

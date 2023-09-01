@@ -11,8 +11,8 @@ from ..tests import load_test
 from ..utils import format_dataframe
 from ..vm_models import TestSuite
 from .test_suites import (
-    BinaryClassifierFullSuite,
-    BinaryClassifierModelValidation,
+    ClassifierFullSuite,
+    ClassifierModelValidation,
     TabularDataset,
     TimeSeriesDataset,
     TimeSeriesModelValidation,
@@ -21,8 +21,8 @@ from .test_suites import (
 logger = get_logger(__name__)
 
 core_test_suites = {
-    "binary_classifier_full_suite": BinaryClassifierFullSuite,
-    "binary_classifier_model_validation": BinaryClassifierModelValidation,
+    "classifier_full_suite": ClassifierFullSuite,
+    "classifier_model_validation": ClassifierModelValidation,
     "tabular_dataset": TabularDataset,
     "time_series_dataset": TimeSeriesDataset,
     "time_series_model_validation": TimeSeriesModelValidation,

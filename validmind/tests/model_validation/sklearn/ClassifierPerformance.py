@@ -7,7 +7,7 @@ from numpy import unique
 from sklearn import metrics, preprocessing
 
 from validmind.utils import format_number
-from validmind.vm_models import Metric, ResultSummary, ResultTable
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
@@ -25,83 +25,109 @@ class ClassifierPerformance(Metric):
     """
 
     name = "classifier_performance"
-    default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
 
-    default_metrics = {
-        "accuracy": {
-            "func": metrics.accuracy_score,
-            "name": "Accuracy",
-            "definition": "Overall, how often is the model correct?",
-            "formula": "TP + TN / (TP + TN + FP + FN)",
-        },
-        "precision": {
-            "func": partial(metrics.precision_score, zero_division=0, average="micro"),
-            "name": "Precision",
-            "definition": 'When the model predicts "{target_column}", how often is it correct?',
-            "formula": "TP / (TP + FP)",
-        },
-        "recall": {
-            "func": partial(metrics.recall_score, zero_division=0, average="micro"),
-            "name": "Recall",
-            "definition": 'When it\'s actually "{target_column}", how often does the model predict "{target_column}"?',
-            "formula": "TP / (TP + FN)",
-        },
-        "f1": {
-            "func": partial(metrics.f1_score, zero_division=0, average="micro"),
-            "name": "F1",
-            "definition": "Harmonic mean of precision and recall",
-            "formula": "2 x (Precision x Recall) / (Precision + Recall)",
-        },
-        "roc_auc": {
-            "func": partial(multiclass_roc_auc_score),
-            "name": "ROC AUC",
-            "definition": "Area under the Receiver Operating Characteristic curve",
-            "formula": "TPR / FPR",
-        },
-    }
-
-    def metrics(self):
+    def binary_summary(self, metric_value: dict):
         """
-        Resolves the metrics to be used in the test by filtering out any default
-        metric that is ommitted via params
+        When building a binary classification summary we take the positive class
+        metrics as the global metrics.
         """
-        metrics_names = self.params.get("metrics", self.default_params["metrics"])
-        metrics = {
-            metric_name: self.default_metrics[metric_name]
-            for metric_name in metrics_names
-        }
+        # Assume positive class is "1" and throw an error if that's not the case
+        if "1.0" not in metric_value:
+            raise ValueError(
+                "Positive class not found in the metrics. Please make sure the positive class is labeled as '1' when testing a binary classifier."
+            )
 
-        return metrics
-
-    def summary(self, metric_value: dict):
-        # Get the target column from any of the datasets available
-        ds = self.model.train_ds or self.model.test_ds
-        target_column = ds.target_column
-
-        metrics = self.metrics()
-
-        # Turns the metric value into a table of [{metric_name: value}]
-        summary_in_sample_performance = []
-        for metric_name, metric_value in metric_value.items():
-            metric_dict = metrics[metric_name]
-            summary_in_sample_performance.append(
+        table = []
+        for metric_name in ["precision", "recall", "f1-score"]:
+            table.append(
                 {
-                    "Metric": metric_dict["name"],
-                    "Definition": metric_dict["definition"].format(
-                        target_column=target_column
-                    ),
-                    "Formula": metric_dict["formula"],
-                    "Value": format_number(metric_value),
+                    "Metric": metric_name.capitalize()
+                    if metric_name != "f1-score"
+                    else "F1",
+                    "Value": metric_value["1.0"][metric_name],
                 }
             )
+
+        table.extend(
+            [
+                {
+                    "Metric": "Accuracy" if metric_name == "accuracy" else "ROC AUC",
+                    "Value": metric_value[metric_name],
+                }
+                for metric_name in ["accuracy", "roc_auc"]
+            ]
+        )
 
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=summary_in_sample_performance,
+                    data=table,
+                    metadata=ResultTableMetadata(title="Classification Report"),
                 ),
             ]
         )
+
+    def multiclass_summary(self, metric_value: dict):
+        """
+        When building a multi-class summary we need to calculate weighted average,
+        macro average and per class metrics.
+        """
+        classes = {str(i) for i in unique(self.y_true())}
+        pr_f1_table = [
+            {
+                "Class": class_name,
+                "Precision": metric_value[class_name]["precision"],
+                "Recall": metric_value[class_name]["recall"],
+                "F1": metric_value[class_name]["f1-score"],
+            }
+            for class_name in classes
+        ]
+        pr_f1_table.extend(
+            [
+                {
+                    "Class": "Weighted Average",
+                    "Precision": metric_value["weighted avg"]["precision"],
+                    "Recall": metric_value["weighted avg"]["recall"],
+                    "F1": metric_value["weighted avg"]["f1-score"],
+                },
+                {
+                    "Class": "Macro Average",
+                    "Precision": metric_value["macro avg"]["precision"],
+                    "Recall": metric_value["macro avg"]["recall"],
+                    "F1": metric_value["macro avg"]["f1-score"],
+                },
+            ]
+        )
+
+        acc_roc_auc_table = [
+            {
+                "Metric": "Accuracy" if metric_name == "accuracy" else "ROC AUC",
+                "Value": metric_value[metric_name],
+            }
+            for metric_name in ["accuracy", "roc_auc"]
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=pr_f1_table,
+                    metadata=ResultTableMetadata(title="Precision, Recall, and F1"),
+                ),
+                ResultTable(
+                    data=acc_roc_auc_table,
+                    metadata=ResultTableMetadata(title="Accuracy and ROC AUC"),
+                ),
+            ]
+        )
+
+    def summary(self, metric_value: list):
+        """
+        This summary varies depending if we're evaluating a binary or multi-class model
+        """
+        if len(unique(self.y_true())) > 2:
+            return self.multiclass_summary(metric_value)
+
+        return self.binary_summary(metric_value)
 
     def y_true(self):
         raise NotImplementedError
@@ -114,20 +140,7 @@ class ClassifierPerformance(Metric):
         class_pred = self.y_pred()
         results = {}
 
-        metrics = self.metrics()
+        report = metrics.classification_report(y_true, class_pred, output_dict=True)
+        report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
 
-        for metric_name, metric_dict in metrics.items():
-            metric_func = metric_dict["func"]
-            y_true = y_true.astype(class_pred.dtype)
-            if (
-                metric_name == "precision"
-                or metric_name == "recall"
-                or metric_name == "f1"
-            ):
-                results[metric_name] = metric_func(
-                    y_true, class_pred, pos_label=unique(y_true)[0]
-                )
-            else:
-                results[metric_name] = metric_func(y_true, class_pred)
-
-        return self.cache_results(results)
+        return self.cache_results(report)

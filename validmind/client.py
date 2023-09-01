@@ -215,7 +215,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     run it.
 
     Args:
-        test_plan_name (str): The test plan name (e.g. 'binary_classifier')
+        test_plan_name (str): The test plan name (e.g. 'classifier')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
         **kwargs: Additional keyword arguments to pass to the test plan. These will provide
             the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
@@ -293,7 +293,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     class based on the test_suite_name, initialize each of the test plans, and run them.
 
     Args:
-        test_suite_name (str): The test suite name (e.g. 'binary_classifier_full_suite')
+        test_suite_name (str): The test suite name (e.g. 'classifier_full_suite')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
             the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.

@@ -10,12 +10,12 @@ custom test plan from the project's configuration
 from validmind.vm_models import TestPlan
 
 
-class BinaryClassifierMetrics(TestPlan):
+class ClassifierMetrics(TestPlan):
     """
     Test plan for sklearn classifier metrics
     """
 
-    name = "binary_classifier_metrics"
+    name = "classifier_metrics"
     tests = [
         "validmind.model_validation.ModelMetadata",
         "validmind.data_validation.DatasetSplit",
@@ -30,12 +30,12 @@ class BinaryClassifierMetrics(TestPlan):
     ]
 
 
-class BinaryClassifierPerformance(TestPlan):
+class ClassifierPerformance(TestPlan):
     """
     Test plan for sklearn classifier models
     """
 
-    name = "binary_classifier_validation"
+    name = "classifier_validation"
     tests = [
         "validmind.model_validation.sklearn.MinimumAccuracy",
         "validmind.model_validation.sklearn.MinimumF1Score",
@@ -44,12 +44,12 @@ class BinaryClassifierPerformance(TestPlan):
     ]
 
 
-class BinaryClassifierDiagnosis(TestPlan):
+class ClassifierDiagnosis(TestPlan):
     """
     Test plan for sklearn classifier model diagnosis tests
     """
 
-    name = "binary_classifier_model_diagnosis"
+    name = "classifier_model_diagnosis"
     tests = [
         "validmind.model_validation.sklearn.OverfitDiagnosis",
         "validmind.model_validation.sklearn.WeakspotsDiagnosis",
