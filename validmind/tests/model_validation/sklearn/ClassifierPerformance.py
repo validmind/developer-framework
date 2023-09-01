@@ -1,12 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-from functools import partial
 
 from numpy import unique
 from sklearn import metrics, preprocessing
 
-from validmind.utils import format_number
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
@@ -138,7 +136,6 @@ class ClassifierPerformance(Metric):
     def run(self):
         y_true = self.y_true()
         class_pred = self.y_pred()
-        results = {}
 
         report = metrics.classification_report(y_true, class_pred, output_dict=True)
         report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
