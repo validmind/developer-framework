@@ -41,6 +41,12 @@
                                 <a class="function" href="#ClassifierPerformance.__init__">ClassifierPerformance</a>
                         </li>
                         <li>
+                                <a class="function" href="#ClassifierPerformance.binary_summary">binary_summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ClassifierPerformance.multiclass_summary">multiclass_summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#ClassifierPerformance.summary">summary</a>
                         </li>
                         <li>
@@ -117,21 +123,49 @@
     
 
                             </div>
+                            <div id="ClassifierPerformance.binary_summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">binary_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ClassifierPerformance.binary_summary"></a>
+    
+            <div class="docstring"><p>When building a binary classification summary we take the positive class
+metrics as the global metrics.</p>
+</div>
+
+
+                            </div>
+                            <div id="ClassifierPerformance.multiclass_summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">multiclass_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ClassifierPerformance.multiclass_summary"></a>
+    
+            <div class="docstring"><p>When building a multi-class summary we need to calculate weighted average,
+macro average and per class metrics.</p>
+</div>
+
+
+                            </div>
                             <div id="ClassifierPerformance.summary" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">list</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#ClassifierPerformance.summary"></a>
     
-            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
-The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
-short summary of the metric results.</p>
-
-<p>We return None here because the metric summary is optional.</p>
+            <div class="docstring"><p>This summary varies depending if we're evaluating a binary or multi-class model</p>
 </div>
 
 

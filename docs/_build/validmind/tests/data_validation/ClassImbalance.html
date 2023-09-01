@@ -63,7 +63,9 @@
                     <h1 class="modulename">
 <a href="./../../../validmind.html">validmind</a><wbr>.<a href="./../../tests.html">tests</a><wbr>.<a href="./../data_validation.html">data_validation</a><wbr>.ClassImbalance    </h1>
 
-                
+                        <div class="docstring"><p>Threshold based tests</p>
+</div>
+
                 
                 
                 
@@ -106,9 +108,11 @@ class and the minority class in the target column.</p>
     </div>
     <a class="headerlink" href="#ClassImbalance.summary"></a>
     
-            <div class="docstring"><p>The class imbalance test returns results like these:
-[{"values": {"0": 0.798, "1": 0.202}, "column": "Exited", "passed": true}]
-So we build a table with 2 rows, one for each class.</p>
+            <div class="docstring"><p>Return the threshold test summary. May be overridden by subclasses. Defaults to showing
+a table with test_name(optional), column and passed.</p>
+
+<p>The test summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the test results.</p>
 </div>
 
 
