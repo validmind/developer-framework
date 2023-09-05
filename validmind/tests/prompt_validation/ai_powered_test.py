@@ -1,64 +1,33 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
-from abc import ABC, abstractmethod
+
+import re
 
 import openai
 
-from validmind.vm_models import ThresholdTest
 
-
-class BasePromptTest(ThresholdTest, ABC):
+class AIPoweredTest:
     """
-    Base class for tests powered by prompt-based language models.
+    Base class for tests powered by gpt4
     """
 
-    model_name = "gpt-4"  # Default model
-
-    def call_model(self, system_prompt, test_prompt):
+    def call_model(self, user_prompt: str, system_prompt: str = None):
         """
-        Call the specified model with the constructed prompts and return the response.
-        For now, we assume that all models have a similar API structure.
+        Call GPT4 with the passed prompts and return the response.
         """
         response = openai.ChatCompletion.create(
             model=self.model_name,
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": test_prompt},
+                {"role": "user", "content": user_prompt},
             ],
         )
         return response.choices[0].message["content"]
 
-    @abstractmethod
-    def build_system_prompt(self):
+    def get_score(self, response: str):
         """
-        Build the system prompt. To be implemented by subclasses.
-        """
-        pass
+        Get just the numeric data in the response string and convert it to an int
 
-    @abstractmethod
-    def build_test_prompt(self):
+        e.g. "The score is 8" -> 8, "10" -> 10
         """
-        Build the test prompt. To be implemented by subclasses.
-        """
-        pass
-
-    def summary(self, results, all_passed):
-        """
-        Generate a summary of the test results.
-        """
-        result = results[0]
-        results_table = [
-            {
-                "Score": result.values["score"],
-                "Threshold": result.values["threshold"],
-                "Pass/Fail": "Pass" if result.passed else "Fail",
-            }
-        ]
-
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=pd.DataFrame(results_table),
-                    metadata=ResultTableMetadata(title=f"{self.name} Test"),
-                )
-            ]
-        )
+        # use regex to get the first number (for now this should work)
+        return int(re.search(r"\d+", response).group(0))
