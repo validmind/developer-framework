@@ -58,7 +58,6 @@ class RobustnessDiagnosis(ThresholdTest):
         """
 
     def run(self):
-
         # Validate X std deviation parameter
         if "scaling_factor_std_dev_list" not in self.params:
             raise ValueError("scaling_factor_std_dev_list must be provided in params")
@@ -205,7 +204,7 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Dataset Type"].append(dataset_type)
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
-        y_prediction = self.model.model.predict(df)
+        y_prediction = self.model.predict(df)
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction) * 100)
 

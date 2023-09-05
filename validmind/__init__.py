@@ -110,6 +110,7 @@ __all__ = [  # noqa
     "__version__",
     # Framework High Level API
     "datasets",
+    "errors",
     "get_test_suite",
     "init",
     "init_dataset",
