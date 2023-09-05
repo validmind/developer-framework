@@ -69,7 +69,7 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.prompt),
+            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
         )
 
         results = []

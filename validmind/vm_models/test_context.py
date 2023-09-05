@@ -37,7 +37,6 @@ class TestContext:
     dataset: VMDataset = None
     model: VMModel = None
     models: List[VMModel] = None
-    prompt: str = None
 
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
@@ -96,11 +95,6 @@ class TestContextUtils:
         raise TestContextInvalidDatasetError(
             "dataset must be a Pandas DataFrame or a validmind Dataset object"
         )
-
-    @property
-    def prompt(self):
-        """Returns the prompt, if available, that is passed as an input"""
-        return self.test_context.prompt
 
     def validate_context(self):
         """

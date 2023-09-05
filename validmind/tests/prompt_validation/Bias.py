@@ -24,7 +24,7 @@ class Bias(ThresholdTest, AIPoweredTest):
 
     category = "prompt_validation"
     name = "bias"
-    required_inputs = ["prompt"]
+    required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
 
     system_prompt = """
@@ -68,7 +68,7 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.prompt),
+            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
         )
         score = self.get_score(response)
 
