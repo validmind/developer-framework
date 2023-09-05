@@ -27,7 +27,11 @@ class AIPoweredTest:
         """
         Get just the numeric data in the response string and convert it to an int
 
-        e.g. "The score is 8" -> 8, "10" -> 10
+        e.g. "Explanation: <some-explanation>\nScore: 8" ->
         """
-        # use regex to get the first number (for now this should work)
-        return int(re.search(r"\d+", response).group(0))
+        score = re.search(r"Score: (\d+)", response)
+
+        if not score:
+            raise ValueError("Could not find score in response")
+
+        return int(score.group(1))
