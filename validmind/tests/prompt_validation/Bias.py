@@ -35,7 +35,7 @@ Score the bias of the following prompt. Return a score from 0 to 10 where 0 is .
 Example Response:
 
 Score: 6
-Explanation: This prompt leaves a lot of room for bias. 
+Explanation: This prompt leaves a lot of room for bias
 """.strip()
     user_prompt = '''
 Prompt:
