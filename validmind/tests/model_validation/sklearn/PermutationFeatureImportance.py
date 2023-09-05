@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import plotly.graph_objects as go
 from sklearn.inspection import permutation_importance
 
+from validmind.errors import SkipTestError
 from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric
 
@@ -49,7 +50,7 @@ class PermutationFeatureImportance(Metric):
             or model_library == "transformers"
             or model_library == "R"
         ):
-            raise ValueError(f"Skipping PFI for {model_library} models")
+            raise SkipTestError(f"Skipping PFI for {model_library} models")
 
         pfi_values = permutation_importance(
             self.model.model,

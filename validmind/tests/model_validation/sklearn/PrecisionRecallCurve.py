@@ -29,11 +29,8 @@ class PrecisionRecallCurve(Metric):
         """
 
     def run(self):
-        # Extract the actual model
-        model = self.model[0] if isinstance(self.model, list) else self.model
-
-        y_true = np.array(model.test_ds.y)
-        y_pred = model.predict(model.test_ds.x)
+        y_true = np.array(self.model.test_ds.y)
+        y_pred = self.model.predict(self.model.test_ds.x)
 
         # PR curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

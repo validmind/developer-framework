@@ -6,6 +6,10 @@ from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
 
 
+def get_full_class_name(obj):
+    return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
+
+
 class RModel(VMModel):
     """
     An R model class that wraps a "fitted" R model instance and its associated data.
@@ -41,24 +45,31 @@ class RModel(VMModel):
         self.r = r
         self.__load_model_predictions()
 
-    def __get_predict_data(self, new_data):
+    def __get_predict_data_as_df(self, new_data):
         """
-        Builds the correct data shape and format for the predict method, depending
+        Builds the correct data shape and format for the predict method when the
+        caller has passed a Pandas dataframe as input. This function makes sure to
+        adjust the shape of the input dataset to the predict() signature depending
         if it's a regular R model or an XGBoost model
         """
-        from rpy2.robjects import pandas2ri
-
-        # Activate the pandas conversion for rpy2
-        pandas2ri.activate()
-
         if self.__model_class() == "xgb.Booster":
-            new_data_r = pandas2ri.py2rpy(
-                new_data.df.drop(new_data.target_column, axis=1)
-            )
-        else:
-            new_data_r = pandas2ri.py2rpy(new_data.df)
+            return new_data.df.drop(new_data.target_column, axis=1)
 
-        return new_data_r
+        return new_data.df
+
+    def __load_model_predictions(self):
+        if self.model and self.train_ds:
+            self._y_train_predict = self.predict(
+                self.__get_predict_data_as_df(self.train_ds)
+            )
+        if self.model and self.test_ds:
+            self._y_test_predict = self.predict(
+                self.__get_predict_data_as_df(self.test_ds)
+            )
+        if self.model and self.validation_ds:
+            self._y_validation_predict = self.predict(
+                self.__get_predict_data_as_df(self.validation_ds)
+            )
 
     def __model_class(self):
         """
@@ -92,16 +103,6 @@ class RModel(VMModel):
         )
         return predicted_probs
 
-    def __load_model_predictions(self):
-        if self.model and self.train_ds:
-            self._y_train_predict = self.predict(self.__get_predict_data(self.train_ds))
-        if self.model and self.test_ds:
-            self._y_test_predict = self.predict(self.__get_predict_data(self.test_ds))
-        if self.model and self.validation_ds:
-            self._y_validation_predict = self.predict(
-                self.__get_predict_data(self.validation_ds)
-            )
-
     def predict_proba(self, new_data):
         """
         Calls the R global predict method with type="response" to get the predicted probabilities
@@ -111,14 +112,14 @@ class RModel(VMModel):
         # Activate the pandas conversion for rpy2
         pandas2ri.activate()
 
-        new_data_class = new_data.__class__.__name__
+        new_data_class = get_full_class_name(new_data)
 
-        if new_data_class == "ndarray":
+        if new_data_class == "numpy.ndarray":
             # We need to reconstruct the DataFrame from the ndarray using the column names
             new_data = pd.DataFrame(
                 new_data, columns=self.test_ds.get_features_columns()
             )
-        elif new_data_class != "DataFrame":
+        elif new_data_class != "pandas.core.frame.DataFrame":
             raise ValueError(
                 f"new_data must be a DataFrame or ndarray. Got {new_data_class}"
             )
@@ -135,10 +136,29 @@ class RModel(VMModel):
 
         return predicted_probs
 
-    def predict(self, new_data_r):
+    def predict(self, new_data):
         """
         Converts the predicted probabilities to classes
         """
+        from rpy2.robjects import pandas2ri
+
+        # Activate the pandas conversion for rpy2
+        pandas2ri.activate()
+
+        new_data_class = get_full_class_name(new_data)
+
+        if new_data_class == "numpy.ndarray":
+            # We need to reconstruct the DataFrame from the ndarray using the column names
+            new_data = pd.DataFrame(
+                new_data, columns=self.test_ds.get_features_columns()
+            )
+        elif new_data_class != "pandas.core.frame.DataFrame":
+            raise ValueError(
+                f"new_data must be a DataFrame or ndarray. Got {new_data_class}"
+            )
+
+        new_data_r = pandas2ri.py2rpy(new_data)
+
         if self.__model_class() == "xgb.Booster":
             predicted_probs = self.r_xgb_predict(new_data_r)
         else:
