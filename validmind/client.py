@@ -37,6 +37,7 @@ def init_dataset(
     dataset,
     index=None,
     index_name: str = None,
+    date_time_index: bool = False,
     column_names: list = None,
     options: dict = None,
     text_column: str = None,
@@ -78,6 +79,7 @@ def init_dataset(
             target_column=target_column,
             text_column=text_column,
             target_class_labels=class_labels,
+            date_time_index=date_time_index,
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
@@ -89,6 +91,7 @@ def init_dataset(
             target_column=target_column,
             text_column=text_column,
             target_class_labels=class_labels,
+            date_time_index=date_time_index,
         )
     elif dataset_class == "TensorDataset":
         logger.info("Torch TensorDataset detected. Initializing VM Dataset instance...")

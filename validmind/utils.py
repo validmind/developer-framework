@@ -65,6 +65,8 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         if isinstance(obj, np.bool_):
             return bool(obj)
+        if isinstance(obj, pd.Timestamp):
+            return str(obj)
         return super().default(obj)
 
     def encode(self, obj):

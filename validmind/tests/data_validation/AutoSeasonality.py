@@ -40,11 +40,11 @@ class AutoSeasonality(Metric):
         # Parse input parameters
         if "min_period" not in self.params:
             raise ValueError("min_period must be provided in params")
-        min_period = self.params["min_period"]
+        min_period = int(self.params["min_period"])
 
         if "max_period" not in self.params:
             raise ValueError("max_period must be provided in params")
-        max_period = self.params["max_period"]
+        max_period = int(self.params["max_period"])
 
         df = self.dataset.df
 
