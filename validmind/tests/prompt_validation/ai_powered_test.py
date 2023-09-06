@@ -10,6 +10,8 @@ class AIPoweredTest:
     Base class for tests powered by gpt4
     """
 
+    model_name = "gpt-4"
+
     def call_model(self, user_prompt: str, system_prompt: str = None):
         """
         Call GPT4 with the passed prompts and return the response.
