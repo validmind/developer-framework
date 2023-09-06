@@ -1,19 +1,23 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+"""
+Threshold based tests
+"""
 from dataclasses import dataclass
 from typing import List
 
-from validmind.logging import get_logger
+import pandas as pd
+import plotly.graph_objs as go
+
 from validmind.vm_models import (
-    VMDataset,
+    Figure,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
     TestResult,
     ThresholdTest,
+    VMDataset,
 )
-
-logger = get_logger(__name__)
 
 
 @dataclass
@@ -24,31 +28,16 @@ class ClassImbalance(ThresholdTest):
     """
 
     category = "data_quality"
+    # Changing the name test to avoid a name clash
     name = "class_imbalance"
     required_inputs = ["dataset"]
-    default_params = {"min_percent_threshold": 0.2}
+    default_params = {"min_percent_threshold": 10}
 
     def summary(self, results: List[TestResult], all_passed: bool):
-        """
-        The class imbalance test returns results like these:
-        [{"values": {"0": 0.798, "1": 0.202}, "column": "Exited", "passed": true}]
-        So we build a table with 2 rows, one for each class.
-        """
-
-        results_table = []
-        result = results[0]
-        for class_name, class_percent in result.values.items():
-            results_table.append(
-                {
-                    "Class": f'{class_name} ({"Negative" if class_name == "0" or class_name == 0 else "Positive"})',
-                    "Percentage of Rows (%)": class_percent * 100,
-                }
-            )
-
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
+                    data=results[0].values,
                     metadata=ResultTableMetadata(
                         title=f"Class Imbalance Results for Column {self.dataset.target_column}"
                     ),
@@ -62,9 +51,7 @@ class ClassImbalance(ThresholdTest):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
         if self.dataset.target_column is None:
-            logger.info(
-                "Skipping class_imbalance test because no target column is defined"
-            )
+            print("Skipping class_imbalance test because no target column is defined")
             return
 
         target_column = self.dataset.target_column
@@ -72,14 +59,60 @@ class ClassImbalance(ThresholdTest):
             normalize=True
         )
 
-        # Does the minority class represent more than our threshold?
-        passed = imbalance_percentages.min() > self.params["min_percent_threshold"]
+        classes = list(imbalance_percentages.index)
+        percentages = list(imbalance_percentages.values)
+
+        # Calculating the total number of rows
+        # total_rows = sum(percentages)
+
+        # Checking class imbalance
+        imbalanced_classes = []
+        for i, percentage in enumerate(percentages):
+            class_label = classes[i]
+            proportion = percentage * 100
+            passed = proportion > self.params["min_percent_threshold"]
+
+            imbalanced_classes.append(
+                {
+                    target_column: class_label,
+                    "Percentage of Rows (%)	": f"{proportion:.2f}%",
+                    "Pass/Fail": "Pass" if passed else "Fail",
+                }
+            )
+
+        resultset = pd.DataFrame(imbalanced_classes)
         results = [
             TestResult(
                 column=target_column,
-                passed=passed,
-                values=imbalance_percentages.to_dict(),
+                passed=all(resultset["Pass/Fail"]),
+                values=resultset.to_dict(orient="records"),
             )
         ]
 
-        return self.cache_results(results, passed=passed)
+        # Create a bar chart trace
+        trace = go.Bar(
+            x=imbalance_percentages.index,
+            y=imbalance_percentages.values,
+        )
+
+        # Create a layout for the chart
+        layout = go.Layout(
+            title=f"Class Imbalance Results for Target Column {self.dataset.target_column}",
+            xaxis=dict(title="Class"),
+            yaxis=dict(title="Percentage"),
+        )
+
+        # Create a figure and add the trace and layout
+        fig = go.Figure(data=[trace], layout=layout)
+
+        return self.cache_results(
+            results,
+            passed=all(resultset["Pass/Fail"]),
+            figures=[
+                Figure(
+                    for_object=self,
+                    key=f"{self.name}",
+                    figure=fig,
+                )
+            ],
+        )

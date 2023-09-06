@@ -2,6 +2,7 @@
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+
 from validmind.vm_models import Figure, Metric
 
 
@@ -28,7 +29,8 @@ class TargetRateBarPlots(Metric):
         figures = []
         for feature in features:
             fig = make_subplots(
-                rows=1, cols=2, subplot_titles=("Counts", "Target Rate")
+                rows=1,
+                cols=2,
             )
 
             # Calculate counts and default rate for each category

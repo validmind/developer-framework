@@ -4,16 +4,13 @@
 Metrics functions for any Pandas-compatible datasets
 """
 
+import string
 from collections import defaultdict
 from dataclasses import dataclass
-import string
+
 import matplotlib.pyplot as plt
 
-from validmind.vm_models import (
-    Figure,
-    Metric,
-    VMDataset,
-)
+from validmind.vm_models import Figure, Metric, VMDataset
 
 
 @dataclass

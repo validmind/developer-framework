@@ -11,3 +11,5 @@ exclude =
     .pytest_cache,
     .mypy_cache,
     sandbox
+per-file-ignores =
+    validmind/__init__.py: E402

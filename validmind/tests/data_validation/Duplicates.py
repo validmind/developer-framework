@@ -15,9 +15,9 @@ from validmind.vm_models import (
 @dataclass
 class Duplicates(ThresholdTest):
     """
-    The duplicates test measures the number of duplicate rows found in
-    the dataset. If a primary key column is specified, the dataset is
-    checked for duplicate primary keys as well.
+    The duplicates test measures the number of duplicate entries found in the dataset.
+    - If the dataset has a `text_column` property then the test will check for duplicate entries in that column.
+    - If a primary key column is specified, the dataset is checked for duplicate primary keys as well.
     """
 
     category = "data_quality"
@@ -32,13 +32,8 @@ class Duplicates(ThresholdTest):
         So we build a table with 1 row and show number of duplicates and percentage of duplicates.
         """
         result = results[0]
-        results_table = [
-            {
-                "Number of Duplicates": result.values["n_duplicates"],
-                "Percentage of Duplicates (%)": result.values["p_duplicates"] * 100,
-                "Pass/Fail": "Pass" if result.passed else "Fail",
-            }
-        ]
+        results_table = [{k: v for k, v in row.items()} for row in result.values]
+
         return ResultSummary(
             results=[
                 ResultTable(
@@ -53,14 +48,40 @@ class Duplicates(ThresholdTest):
     def run(self):
         rows = self.dataset.df.shape[0]
 
-        n_duplicates = len(self.dataset.df[self.dataset.df.duplicated(keep=False)])
-        p_duplicates = n_duplicates / rows
+        duplicate_rows_query = {"keep": False}
+        if self.dataset.text_column:
+            duplicate_rows_query["subset"] = [self.dataset.text_column]
+
+        duplicate_rows = self.dataset.df[
+            self.dataset.df.duplicated(**duplicate_rows_query)
+        ]
+
+        duplicate_rows_group_by = (
+            self.dataset.text_column
+            if self.dataset.text_column
+            else self.dataset.df.columns.tolist()
+        )
+
+        percentage_colummn_assign = {
+            "Percentage of Rows (%)": lambda x: x["Number of Duplicates"] / rows * 100
+        }
+
+        duplicate_results = (
+            duplicate_rows.groupby(duplicate_rows_group_by)
+            .size()
+            .reset_index(name="Number of Duplicates")
+            .sort_values(by=["Number of Duplicates"], ascending=False)
+            .assign(**percentage_colummn_assign)
+        )
+
+        # test has passed if the total sum of duplicates is less than the threshold
+        n_duplicates = duplicate_results["Number of Duplicates"].sum()
         passed = n_duplicates < self.params["min_threshold"]
 
         results = [
             TestResult(
                 passed=passed,
-                values={"n_duplicates": n_duplicates, "p_duplicates": p_duplicates},
+                values=duplicate_results.to_dict(orient="records"),
             )
         ]
 

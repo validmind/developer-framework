@@ -3,17 +3,14 @@
 import asyncio
 import json
 import math
-
 from typing import Any
 
 import nest_asyncio
 import numpy as np
 import pandas as pd
-
 from IPython.core import getipython
 from numpy import ndarray
 from tabulate import tabulate
-
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
@@ -53,7 +50,7 @@ def nan_to_none(obj):
         return {k: nan_to_none(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [nan_to_none(v) for v in obj]
-    elif isinstance(obj, float) and math.isnan(obj):
+    elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
         return None
     return obj
 

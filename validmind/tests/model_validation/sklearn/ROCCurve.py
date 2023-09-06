@@ -4,8 +4,9 @@ from dataclasses import dataclass
 
 import numpy as np
 import plotly.graph_objects as go
-from sklearn.metrics import roc_curve, roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -27,8 +28,17 @@ class ROCCurve(Metric):
         """
 
     def run(self):
-        y_true = self.model.y_test_true
-        y_pred = self.model.predict_proba(self.model.test_ds.x)
+        # Extract the actual model
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        y_true = model.test_ds.y
+        y_pred = model.predict(model.test_ds.x)
+
+        # ROC curve is only supported for binary classification
+        if len(np.unique(y_true)) > 2:
+            raise SkipTestError(
+                "ROC Curve is only supported for binary classification models"
+            )
 
         y_true = y_true.astype(y_pred.dtype).flatten()
         assert np.all((y_pred >= 0) & (y_pred <= 1)), "Invalid probabilities in y_pred."
@@ -58,6 +68,8 @@ class ROCCurve(Metric):
             title="ROC Curve",
             xaxis=dict(title="False Positive Rate"),
             yaxis=dict(title="True Positive Rate"),
+            width=700,
+            height=500,
         )
 
         fig = go.Figure(data=[trace0, trace1], layout=layout)

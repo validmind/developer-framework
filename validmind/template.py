@@ -1,8 +1,9 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-from ipywidgets import Accordion, HTML, VBox
-from IPython.display import display
 from pprint import pformat
+
+from IPython.display import display
+from ipywidgets import HTML, Accordion, VBox
 
 from .html_templates.content_blocks import (
     failed_content_block_html,
@@ -10,7 +11,7 @@ from .html_templates.content_blocks import (
     test_content_block_html,
 )
 from .logging import get_logger
-from .tests import describe_test, LoadTestError
+from .tests import LoadTestError, describe_test
 from .utils import is_notebook
 from .vm_models.test_plan import TestPlan
 from .vm_models.test_suite import TestSuite
@@ -198,9 +199,7 @@ def _create_section_test_plan(section):
     Returns:
         A dynamically-created TestPlan Class
     """
-    section_tests = _get_section_tests(section)
-
-    if section_tests:
+    if section_tests := _get_section_tests(section):
         return type(
             f"{section['title'].title().replace(' ', '')}TestPlan",
             (TestPlan,),
@@ -263,7 +262,7 @@ def get_template_test_suite(template, section=None, *args, **kwargs):
     return _create_template_test_suite(template, section)(*args, **kwargs)
 
 
-def run_template(template, section, *args, **kwargs):
+def run_template(template, section, send=True, fail_fast=False, *args, **kwargs):
     """Run all tests in a template
 
     This function will collect all tests used in a template into a TestSuite and then
@@ -272,10 +271,16 @@ def run_template(template, section, *args, **kwargs):
     Args:
         template: A valid flat template
         section: The section of the template to run (if not provided, run all sections)
+        send: Whether to send the results to the ValidMind API
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
-        The result of running the test suite.
+        The completed TestSuite instance
     """
-    return get_template_test_suite(template, section, *args, **kwargs).run()
+    kwargs["fail_fast"] = fail_fast
+    test_suite = get_template_test_suite(template, section, *args, **kwargs)
+    test_suite.run(send=send)
+
+    return test_suite

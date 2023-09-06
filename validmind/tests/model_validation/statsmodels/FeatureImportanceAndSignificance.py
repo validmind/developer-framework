@@ -1,9 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-from sklearn.inspection import permutation_importance
+
 import pandas as pd
 import plotly.graph_objects as go
+from sklearn.inspection import permutation_importance
+
 from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric
 

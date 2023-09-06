@@ -2,7 +2,9 @@
 
 from dataclasses import dataclass
 from typing import List
+
 import pandas as pd
+from numpy import unique
 from sklearn import metrics
 
 from validmind.vm_models import (
@@ -54,7 +56,10 @@ class MinimumF1Score(ThresholdTest):
         class_pred = self.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
 
-        f1_score = metrics.f1_score(y_true, class_pred, average="micro")
+        if len(unique(y_true)) > 2:
+            f1_score = metrics.f1_score(y_true, class_pred, average="macro")
+        else:
+            f1_score = metrics.f1_score(y_true, class_pred)
 
         passed = f1_score > self.params["min_threshold"]
         results = [

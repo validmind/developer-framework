@@ -6,7 +6,6 @@ TODO: move this to new test plan based structure.
 Utilities for inspecting client models
 """
 import numpy as np
-
 from scipy import stats
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 

@@ -1,8 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import pandas as pd
 from scipy.stats import chi2_contingency
-from dataclasses import dataclass
+
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
@@ -34,7 +36,7 @@ class ChiSquaredFeaturesTable(Metric):
 
         return self.cache_results(
             {
-                "chi_squared_results": chi_squared_results,
+                "chi_squared_results": chi_squared_results.to_dict(orient="records"),
             }
         )
 

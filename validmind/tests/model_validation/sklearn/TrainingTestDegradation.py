@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from functools import partial
 from typing import List
+
 import pandas as pd
 from sklearn import metrics
 
@@ -24,7 +25,7 @@ class TrainingTestDegradation(ThresholdTest):
 
     category = "model_performance"
     name = "training_test_degradation"
-    required_inputs = ["model"]
+    required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {
         "metrics": ["accuracy", "precision", "recall", "f1"],

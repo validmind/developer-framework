@@ -179,9 +179,13 @@ notebooks/r_demo/*model.json
 
 # CatBoost geneated files
 catboost_info
+*.dump
 
 # Ignore pytorch models
 *.pt
 
 # Lending Club datasets
 lending_club_loan_data_*
+
+# Pickle files
+*.pkl

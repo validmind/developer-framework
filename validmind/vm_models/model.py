@@ -5,11 +5,10 @@ Model class wrapper module
 """
 import importlib
 import inspect
-
 from abc import abstractmethod
 from dataclasses import dataclass
-from .dataset import VMDataset
 
+from .dataset import VMDataset
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -26,6 +25,10 @@ R_MODEL_TYPES = [
     "LinearRegression",
     "XGBClassifier",
     "XGBRegressor",
+]
+
+R_MODEL_METHODS = [
+    "glm.fit",
 ]
 
 
@@ -157,9 +160,24 @@ class VMModel:
         pass
 
     @abstractmethod
+    def model_language(self, *args, **kwargs):
+        """
+        Programming language used to train the model. Assume Python if this
+        method is not implemented
+        """
+        pass
+
+    @abstractmethod
     def model_library(self, *args, **kwargs):
         """
-        Predict method for the model. This is a wrapper around the model's
+        Model framework library
+        """
+        pass
+
+    @abstractmethod
+    def model_library_version(self, *args, **kwargs):
+        """
+        Model framework library version
         """
         pass
 
@@ -186,11 +204,14 @@ def has_method_with_arguments(cls, method_name, n_args):
     if not inspect.ismethod(method) and not inspect.isfunction(method):
         return False
 
-    signature = inspect.signature(method)
-    parameters = signature.parameters
+    # Need to refine this logic since predict_proba can have
+    # any number of arguments
+    #
+    # signature = inspect.signature(method)
+    # parameters = signature.parameters
 
-    if len(parameters) != n_args:
-        return False
+    # if len(parameters) != n_args:
+    #     return False
 
     return True
 
