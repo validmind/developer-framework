@@ -18,12 +18,14 @@ Finally, define and **configure** the specific use case we are working on by set
 # install.packages("magrittr") # package installations are only needed the first time you use it
 # install.packages("dplyr")    # alternative installation of the %>%
 # install.packages("xgboost")  # for training XGBoost models
+# install.packages("zoo")
 library(magrittr) # needs to be run every time you start R and want to use %>%
 library(dplyr)    # alternatively, this also loads %>%
 library(glue)
 library(dplyr)
 library(caTools)
 library(glmnet)
+library(zoo)
 
 # Python support
 library(reticulate)
@@ -185,71 +187,70 @@ suite_results <- vm$run_test_suite(
 summarize_results(suite_results)
 ```
 
+### Handle Dataset Frequencies
 
-
-
----
-
-## **Run the Model Validation Test Plan**
-
-We will need to preprocess the dataset and produce the training, test and validation splits first.
-
-### **Preprocess the Raw Dataset**
+Show the frequencies of each variable in the raw dataset.
 
 ```{r}
-# Handle categorical variables using one-hot encoding and remove unnecessary columns
-data <- data %>% select(-RowNumber, -CustomerId, -Surname)
-geo_dummies <- model.matrix(~Geography - 1, data=data)
-gender_dummies <- model.matrix(~Gender - 1, data=data)
-data <- data %>% select(-Geography, -Gender)
-data <- cbind(data, geo_dummies, gender_dummies)
+frequencies <- vm$datasets$regression$identify_frequencies(df)
+frequencies
 ```
 
-```{r}
-# Split the dataset into training and testing sets
-set.seed(123) # Setting seed for reproducibility
-split <- sample.split(data$Exited, SplitRatio = 0.7)
-train_data <- subset(data, split == TRUE)
-test_data <- subset(data, split == FALSE)
-```
+Handle frequencies by resampling all variables to a common frequency.
 
 ```{r}
-# Run a logistic regression model
-model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
-```
-
-```{r}
-model
-```
-
-```{r}
-model_path = save_model(model)
-```
-
-```{r}
-vm_train_ds = vm$init_dataset(
-    dataset=train_data,
-    target_column="Exited"
+preprocessed_df <- vm$datasets$regression$resample_to_common_frequency(
+  df,
+  common_frequency=fred$frequency
 )
+frequencies <- vm$datasets$regression$identify_frequencies(preprocessed_df)
+frequencies
+```
 
-vm_test_ds = vm$init_dataset(
-    dataset=test_data,
-    target_column="Exited"
-)
+### Handle Missing Values
 
-vm_model = vm$init_r_model(
-    model_path=model_path,
-    train_ds=vm_train_ds,
-    test_ds=vm_test_ds,
+Handle the missing values by droping all the `nan` values.
+
+```{r}
+preprocessed_df <- na.omit(preprocessed_df)
+```
+
+### Handle Stationarity
+
+Handle stationarity by taking the first difference.
+
+```{r}
+preprocessed_df <- as.data.frame(lapply(preprocessed_df, diff))
+
+# Backward missing values
+preprocessed_df <- as.data.frame(lapply(preprocessed_df, function(col) {
+  na.locf(col, fromLast = TRUE)
+}))
+```
+#### Run the Time Series Dataset Test Suite
+
+We can re-run the dataset test suite after cleaning up the data.
+
+```{r}
+vm_dataset <- vm$init_dataset(
+    dataset=preprocessed_df,
+    target_column=fred$target_column,
+    date_time_index=TRUE
 )
 ```
 
-### **Run the Binary Classification Test Plan**
-
 ```{r}
-model_validation_results = vm$run_test_suite("classifier_model_validation", model=vm_model, fail_fast = TRUE)
+# Error in py_call_impl(callable, call_args$unnamed, call_args$named) :
+# numpy.core._exceptions._ArrayMemoryError: Unable to allocate 15.9 PiB for an array with shape (2236713889723964,) and data type float64
+
+suite_results <- vm$run_test_suite(
+    "time_series_dataset",
+    dataset=vm_dataset,
+    config=config,
+    fail_fast=TRUE
+)
 ```
 
 ```{r}
-summarize_results(model_validation_results)
+summarize_results(suite_results)
 ```
