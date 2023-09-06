@@ -124,8 +124,8 @@ def list_tests(filter=None, task=None, pretty=True):
 
         for d in directories:
             for path in Path(__file__).parent.joinpath(d).glob("**/**/*.py"):
-                if path.name.startswith("__"):
-                    continue  # skip __init__.py and other special files
+                if path.name.startswith("__") or not path.name[0].isupper():
+                    continue  # skip __init__.py and other special files as well as non Test files
 
                 test_id = (
                     f"validmind.{d}.{path.parent.stem}.{path.stem}"
