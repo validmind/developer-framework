@@ -89,7 +89,7 @@ class RegressionModelSensitivityPlot(Metric):
         predictions = {}
 
         for label, shocked_dataset in shocked_datasets.items():
-            y_pred = model.model.predict(shocked_dataset)
+            y_pred = model.predict(shocked_dataset)
             predictions[label] = y_pred
 
         return predictions

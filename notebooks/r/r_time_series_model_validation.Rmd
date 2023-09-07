@@ -68,9 +68,9 @@ vm <- import("validmind")
 
 vm$init(
   api_host="http://localhost:3000/api/v1/tracking",
-  api_key="e7841dd9cffc67f268addd3ee9cc58f2",
-  api_secret="7a8ab498d183d7a4907e82fac21827f30082d7acbff3dcdfcbb25d6728784e61",
-  project="clm6z6tzo02l97y8h5jwanckx"
+  api_key="...",
+  api_secret="...",
+  project="..."
 )
 ```
 
@@ -83,14 +83,28 @@ vm$init(
 fred <- import("validmind.datasets.regression.fred")
 
 fred3 <- fred$load_model('fred_loan_rates_model_3')
-model_A <- fred3[[1]]
+# model_A <- fred3[[1]] - this is a pre-trained model so it can't be loaded in R
 train_df_A <- fred3[[2]]
 test_df_A <- fred3[[3]]
 
 fred4 <- fred$load_model('fred_loan_rates_model_4')
-model_B <- fred4[[1]]
+# model_B <- fred4[[1]] - this is a pre-trained model so it can't be loaded in R
 train_df_B <- fred4[[2]]
 test_df_B <- fred4[[3]]
+```
+
+Train two models:
+
+- model_A is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" as exogenous variable
+- model_B is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" and "FEDFUNDS" as exogenous variables
+
+```{r}
+model_A <- lm(MORTGAGE30US ~ GS10, data=train_df_A)
+summary(model_A)
+```
+```{r}
+model_B <- lm(MORTGAGE30US ~ GS10 + FEDFUNDS, data=train_df_B)
+summary(model_B)
 ```
 
 #### Create ValidMind Datasets
@@ -119,16 +133,21 @@ vm_test_ds_B <- vm$init_dataset(
 #### Create ValidMind Models
 
 ```{r}
+model_A_path = save_model(model_A)
+model_B_path = save_model(model_B)
+```
+
+```{r}
 # Initialize model A
-vm_model_A <- vm$init_model(
-    model=model_A,
+vm_model_A <- vm$init_r_model(
+    model_path=model_A_path,
     train_ds=vm_train_ds_A,
     test_ds=vm_test_ds_A
 )
 
 # Initialize model B
-vm_model_B <- vm$init_model(
-    model=model_B,
+vm_model_B <- vm$init_r_model(
+    model_path=model_B_path,
     train_ds=vm_train_ds_B,
     test_ds=vm_test_ds_B
 )
@@ -149,6 +168,7 @@ Users can input the configuration to a test suite using **`config`**, allowing f
 config <- list(
   regression_forecast_plot_levels = list(transformation = "integrate"),
   regression_sensitivity_plot = list(
+
     transformation = "integrate",
     shocks = c(0.1, 0.2)
   )
@@ -161,6 +181,7 @@ suite_results <- vm$run_test_suite(
     model=vm_model_B,
     models=list_of_models,
     config=config,
+    fail_fast = TRUE,
 )
 ```
 

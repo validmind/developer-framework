@@ -35,6 +35,9 @@ class RModel(VMModel):
         validation_ds: VMDataset = None,
         attributes: ModelAttributes = None,
     ):
+        self.r = r
+        self._is_classification_model = False
+
         super().__init__(
             model=model,
             train_ds=train_ds,
@@ -42,7 +45,8 @@ class RModel(VMModel):
             validation_ds=validation_ds,
             attributes=attributes,
         )
-        self.r = r
+
+        self._is_classification_model = self.__is_classification_model()
         self.__load_model_predictions()
 
     def __get_predict_data_as_df(self, new_data):
@@ -77,6 +81,44 @@ class RModel(VMModel):
         """
         return self.r["class"](self.model)[0]
 
+    def __is_classification_model(self):
+        """
+        Only supported classification models are XGBClassifier and GLM with binomial family (logistic regression).
+
+        Since R uses a single global predict() method for any model, we try to figure out
+        if the predict() method called by our tests is supposed to return probabilities or classes
+        """
+        model_class_name = self.__model_class()
+
+        if model_class_name == "xgb.Booster":
+            model_params = self.model.rx2("params")
+            model_objective = model_params.rx2("objective")[0]
+            return model_objective == "binary:logistic"
+        elif model_class_name == "glm":
+            model_family = self.model.rx2("family").rx2("family")[0]
+            return model_family == "binomial"
+
+        return False
+
+    def __glm_model_class(self):
+        """
+        Returns the model class name for GLM models which include family and link function
+        """
+        # Access the attributes of the model
+        model_family = self.model.rx2("family")
+        model_method = self.model.rx2("method")[0]
+
+        # Extract the family name and link function
+        family_name = model_family.rx2("family")[0]
+        link_function = model_family.rx2("link")[0]
+
+        # Reconstruct the string in Python
+        output = (
+            f"{model_method} (Family: {family_name}, Link function: {link_function})"
+        )
+
+        return output
+
     def r_predict(self, new_data_r):
         """
         Predict method for the model. This is a wrapper around R's global predict.
@@ -107,36 +149,9 @@ class RModel(VMModel):
         """
         Calls the R global predict method with type="response" to get the predicted probabilities
         """
-        from rpy2.robjects import pandas2ri
+        return self.predict(new_data, return_probs=True)
 
-        # Activate the pandas conversion for rpy2
-        pandas2ri.activate()
-
-        new_data_class = get_full_class_name(new_data)
-
-        if new_data_class == "numpy.ndarray":
-            # We need to reconstruct the DataFrame from the ndarray using the column names
-            new_data = pd.DataFrame(
-                new_data, columns=self.test_ds.get_features_columns()
-            )
-        elif new_data_class != "pandas.core.frame.DataFrame":
-            raise ValueError(
-                f"new_data must be a DataFrame or ndarray. Got {new_data_class}"
-            )
-
-        if self.__model_class() == "xgb.Booster":
-            new_data_r = pandas2ri.py2rpy(new_data)
-            predicted_probs = self.r_xgb_predict(new_data_r)
-        else:
-            # Add a new column from self.test_ds to the new_data. This is needed because
-            # the R predict method requires the same columns as the training data.
-            new_data[self.test_ds.target_column] = 0
-            new_data_r = pandas2ri.py2rpy(new_data)
-            predicted_probs = self.r_predict(new_data_r)
-
-        return predicted_probs
-
-    def predict(self, new_data):
+    def predict(self, new_data, return_probs=False):
         """
         Converts the predicted probabilities to classes
         """
@@ -164,9 +179,11 @@ class RModel(VMModel):
         else:
             predicted_probs = self.r_predict(new_data_r)
 
-        # TODO: we're doing this only for classification models for now
-        predicted_classes = np.where(predicted_probs > 0.5, 1, 0)
-        return predicted_classes
+        if self._is_classification_model and return_probs is False:
+            predicted_classes = np.where(predicted_probs > 0.5, 1, 0)
+            return predicted_classes
+
+        return predicted_probs
 
     def model_language(self):
         """
@@ -196,20 +213,42 @@ class RModel(VMModel):
         """
         Returns model name
         """
-        if self.__model_class() == "xgb.Booster":
+        model_class_name = self.__model_class()
+
+        if model_class_name == "lm":
+            return "Linear Regression"
+        elif model_class_name == "xgb.Booster":
             return "XGBoost"
+        elif model_class_name == "glm":
+            return self.__glm_model_class()
 
-        # Access the attributes of the model
-        model_family = self.model.rx2("family")
-        model_method = self.model.rx2("method")[0]
+        return model_class_name
 
-        # Extract the family name and link function
-        family_name = model_family.rx2("family")[0]
-        link_function = model_family.rx2("link")[0]
+    def regression_coefficients(self):
+        """
+        Returns the regression coefficients summary of the model
+        """
+        # Each list in this list contains the coefficients for one feature, starting with the intercept
+        coefficient_values = self.r.summary(self.model).rx2("coefficients")
 
-        # Reconstruct the string in Python
-        output = (
-            f"{model_method} (Family: {family_name}, Link function: {link_function})"
+        # Extract the coefficient names by calling the model terms.
+        # [[1]] is the endogenous variable and the rest are the coefficients
+        model_terms = self.model.rx2["terms"]
+        variables_attr = self.r.attr(model_terms, "variables")
+
+        variables_list = [str(variables_attr[i]) for i in range(1, len(variables_attr))]
+
+        # Build a dataframe where each row is a feature (including the intercept) and each column is one
+        # of the values in the coefficient_values list, which has: [Estimate, Std. Error, t value, Pr(>|t|)]
+        # Remove the first row which is the intercept
+        coefficient_values = coefficient_values[1:]
+        coefficients_df = pd.DataFrame(
+            coefficient_values,
+            columns=["Estimate", "Std. Error", "t value", "Pr(>|t|)"],
         )
 
-        return output
+        # Add the feature names as a column and rearrange to have feature name as the first column
+        coefficients_df["Feature"] = variables_list[1:]
+        coefficients_df = coefficients_df[["Feature"] + list(coefficients_df.columns)]
+
+        return coefficients_df

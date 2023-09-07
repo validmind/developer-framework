@@ -46,7 +46,7 @@ class RegressionModelsPerformance(Metric):
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.train_ds.y
-            y_pred = model.model.predict(model.train_ds.x)
+            y_pred = model.predict(model.train_ds.x)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
@@ -74,7 +74,7 @@ class RegressionModelsPerformance(Metric):
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.test_ds.y
-            y_pred = model.model.predict(model.test_ds.x)
+            y_pred = model.predict(model.test_ds.x)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
