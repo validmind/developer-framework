@@ -27,6 +27,6 @@ sections:
       - content_type: test
         content_id: validmind.prompt_validation.NegativeInstruction
       - content_type: test
-        content_id: validmind.prompt_validation.Escape
+        content_id: validmind.prompt_validation.Delimitation
       - content_type: test
         content_id: validmind.prompt_validation.Robustness
