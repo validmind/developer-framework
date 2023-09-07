@@ -1,22 +1,38 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-
-from .ClassifierPerformance import ClassifierPerformance
+from functools import partial
 from numpy import unique
 import pandas as pd
+from sklearn import metrics, preprocessing
 from validmind.utils import format_number
-from validmind.vm_models import ResultSummary, ResultTable
+from validmind.vm_models import Metric, ResultSummary, ResultTable
+
+
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(y_test)
+    y_test = lb.transform(y_test)
+    y_pred = lb.transform(y_pred)
+    return metrics.roc_auc_score(y_test, y_pred, average=average)
 
 
 @dataclass
-class ModelsPerformanceComparison(ClassifierPerformance):
+class ModelsPerformanceComparison(Metric):
     """
     Test that outputs the models performance comparison on the test data.
     """
 
     name = "models_performance_comparison"
     required_inputs = ["model", "models", "model.test_ds"]
+    default_params = {"metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"]}
+    default_metrics = {
+        "accuracy": metrics.accuracy_score,
+        "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
+        "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
+        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
+        "roc_auc": partial(multiclass_roc_auc_score),
+    }
 
     def description(self):
         return """
@@ -35,13 +51,11 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         df = pd.DataFrame(metric_value)
         df.index.name = 'metric'
         df = df.reset_index()
-        df["definition"] = df.metric.apply(lambda m: self.metric_definitions[m].format(
-            target_column=self.model.train_ds.target_column))
-        df["formula"] = df.metric.apply(lambda m: self.metric_formulas[m])
+
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=df
+                    data=df.to_dict("records")
                 ),
             ]
         )
@@ -80,4 +94,4 @@ class ModelsPerformanceComparison(ClassifierPerformance):
                     result[metric_name] = format_number(metric_func(y_true, class_pred))
             results["model_" + str(m)] = result
             m += 1
-        return self.cache_results(pd.DataFrame(results))
+        return self.cache_results(results)
