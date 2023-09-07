@@ -19,7 +19,35 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Clarity(ThresholdTest, AIPoweredTest):
     """
-    Test that the prompt is clear
+    **Purpose:**
+    The Clarity Evaluation is designed to assess whether prompts provided to a Language Learning
+    Model (LLM) are unmistakably clear in their instructions. With clear prompts, the LLM is better
+    suited to more accurately and effectively interpret and respond to instructions in the prompt
+
+    **Test Mechanism:**
+    Using GPT4, prompts are scrutinized for clarity, considering aspects like detail inclusion,
+    persona adoption, step-by-step instructions, use of examples, and desired output length.
+    Each prompt is graded on a scale from 1 to 10 based on its clarity. Prompts scoring at or above
+    a predetermined threshold (default is 7) are marked as clear. This threshold can be adjusted
+    via the test parameters.
+
+    **Why Clarity Matters:**
+    Clear prompts minimize the room for misinterpretation, allowing the LLM to generate more
+    relevant and accurate responses. Ambiguous or vague instructions might leave the model
+    guessing, leading to suboptimal outputs.
+
+    **Tactics for Ensuring Clarity that will be referenced during evaluation:**
+    1. **Detail Inclusion:** Provide essential details or context to prevent the LLM from making
+    assumptions.
+    2. **Adopt a Persona:** Use system messages to specify the desired persona for the LLM's
+    responses.
+    3. **Specify Steps:** For certain tasks, delineate the required steps explicitly, helping the
+    model in sequential understanding.
+    4. **Provide Examples:** While general instructions are efficient, in some scenarios,
+    "few-shot" prompting or style examples can guide the LLM more effectively.
+    5. **Determine Output Length:** Define the targeted length of the response, whether in terms of
+    paragraphs, bullet points, or other units. While word counts aren't always precise, specifying
+    formats like paragraphs can offer more predictable results.
     """
 
     category = "prompt_validation"
@@ -30,14 +58,26 @@ class Clarity(ThresholdTest, AIPoweredTest):
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You also can provide general feedback for the prompt.
 
-Score the clarity of the following prompt. Return a score from 0 to 10 where 0 is not clear at all and 10 is very clear. Also provide a short explanation for your score.'
+Consider the following documentation on prompt clarity guidelines when evaluating the prompt:
+'''
+**Why Clarity Matters:** 
+Clear prompts minimize the room for misinterpretation, allowing the LLM to generate more relevant and accurate responses. Ambiguous or vague instructions might leave the model guessing, leading to suboptimal outputs.
 
-Example Response:
+**Tactics for Ensuring Clarity that will be referenced during evaluation:** 
+1. **Detail Inclusion:** Provide essential details or context to prevent the LLM from making assumptions.
+2. **Adopt a Persona:** Use system messages to specify the desired persona for the LLM's responses.
+3. **Specify Steps:** For certain tasks, delineate the required steps explicitly, helping the model in sequential understanding.
+4. **Provide Examples:** While general instructions are efficient, in some scenarios, "few-shot" prompting or style examples can guide the LLM more effectively.
+5. **Determine Output Length:** Define the targeted length of the response, whether in terms of paragraphs, bullet points, or other units. While word counts aren't always precise, specifying formats like paragraphs can offer more predictable results.
+'''
 
-Score: 2
-Explanation: This prompt is not very clear. It leaves a lot of room for interpretation on the part of the model and will most likely result in poor responses. To improve this prompt, add more details about what you want the model to do.
+Score the clarity of the user-submitted prompt. Return a score from 0 to 10 where 0 is not clear at all and 10 is very clear. Also provide a short explanation for your score.
 
-(Note: this example is itself not very clear. In your response, you should be more specific about what details to add.)
+Response Format:
+```
+Score: <score>
+Explanation: <explanation>
+```
 """.strip()
     user_prompt = '''
 Prompt:
@@ -61,7 +101,7 @@ Prompt:
                 ResultTable(
                     data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(
-                        title="Clarity Test on Prompt",
+                        title="Clarity Test for LLM Prompt",
                     ),
                 )
             ]

@@ -19,7 +19,32 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class NegativeInstruction(ThresholdTest, AIPoweredTest):
     """
-    Test that the prompt does not contain negative instructions
+    **Purpose:**
+    The Positive Instructional Assessment evaluates prompts provided to a Language Learning Model
+    (LLM) to ensure they are framed using affirmative and proactive language. By focusing on what
+    should be done rather than what should be avoided, prompts can guide the LLM more effectively
+    towards generating appropriate and desired outputs.
+
+    **Test Mechanism:**
+    Employing GPT4 as an avaluator, each prompt is meticulously analyzed and graded on use of
+    positive instructions on a scale from 1 to 10. The grade indicates how well the prompt employs
+    affirmative language while avoiding negative or prohibitive instructions. Prompts that achieve a
+    grade equal to or exceeding a predetermined threshold (default set to 7) are recognized as
+    adhering to positive instruction best practices. This threshold can be adjusted via the test
+    parameters.
+
+    **Why Positive Instructions Matter:**
+    Prompts that are phrased in the affirmative, emphasizing what to do, tend to direct the LLM
+    more clearly than those that focus on what not to do. Negative instructions can lead to
+    ambiguities and undesired model responses. By emphasizing clarity and proactive guidance, we
+    optimize the chances of obtaining relevant and targeted responses from the LLM.
+
+    **Example:**
+    Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as,
+    "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the
+    genres mentioned, inadvertently producing undesired results. On the other hand, a
+    positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides
+    clear guidance on the desired output.
     """
 
     category = "prompt_validation"
@@ -30,14 +55,23 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You also can provide general feedback for the prompt.
 
+Consider the following documentation regarding negative instructions in prompts and utilize it to grade the user-submitted prompt:
+'''
 Best practices for LLM prompt engineering suggest that positive instructions should be preferred over negative instructions. For example, instead of saying "Don't do X", it is better to say "Do Y". This is because the model is more likely to generate the desired output if it is given a positive instruction.
-Based on this best practice, please score the following prompt on a scale of 1-10, with 10 being the best score and 1 being the worst score.
+**Why Positive Instructions Matter:** 
+Prompts that are phrased in the affirmative, emphasizing what to do, tend to direct the LLM more clearly than those that focus on what not to do. Negative instructions can lead to ambiguities and undesired model responses. By emphasizing clarity and proactive guidance, we optimize the chances of obtaining relevant and targeted responses from the LLM.
+**Example Application:** 
+Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as, "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the genres mentioned, inadvertently producing undesired results. On the other hand, a positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides clear guidance on the desired output.
+'''
+
+Based on this best practice, please score the user-submitted prompt on a scale of 1-10, with 10 being the best score and 1 being the worst score.
 Provide an explanation for your score.
 
-Example Response:
-
-Score: 9
-Explanation: The prompt has all positive instructions except for the last one stating "Don't respond with an explanation". This could be rephrased as a positive instruction.
+Response Format:
+```
+Score: <score>
+Explanation: <explanation>
+```
 """.strip()
     user_prompt = '''
 Prompt:

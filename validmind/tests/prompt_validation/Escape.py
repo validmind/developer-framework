@@ -17,27 +17,57 @@ from .ai_powered_test import AIPoweredTest
 
 
 @dataclass
-class Escape(ThresholdTest, AIPoweredTest):
+class Delimination(ThresholdTest, AIPoweredTest):
     """
-    Test that the prompt is escaped properly
+    **Purpose:**
+    The Delimination Test ensures that prompts provided to the Language Learning Model
+    (LLM) use delimiters correctly to distinctly mark sections of the input. Properly delimited
+    prompts simplify the LLM's interpretation process, ensuring accurate and precise responses.
+
+    **Test Mechanism:**
+    Using GPT4, prompts are checked for their appropriate use of delimiters such as triple
+    quotation marks, XML tags, and section titles. Each prompt receives a score from 1 to 10
+    based on its delimitation integrity. Prompts scoring at or above a set threshold (default is 7)
+    pass the check. This threshold can be modified as needed.
+
+    **Why Proper Delimitation Matters:**
+    Delimiters play a crucial role in segmenting and organizing prompts, especially when diverse
+    data or multiple tasks are involved. They help in clearly distinguishing between different
+    parts of the input, reducing ambiguity for the LLM. As task complexity increases, the correct
+    use of delimiters becomes even more critical to ensure the LLM understands the prompt's
+    intent.
+
+    **Example:**
+    When given a prompt like:
+
+    ```USER: Summarize the text delimited by triple quotes. '''insert text here'''```
+
+    or:
+
+    ```USER: <article> insert first article here </article>
+    <article> insert second article here </article>```
+
+    The LLM can more accurately discern sections of the text to be treated differently, thanks to
+    the clear delimitation.
     """
 
     category = "prompt_validation"
-    name = "escape"
+    name = "delimination"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You also can provide general feedback for the prompt.
 
-LLM Prompts that include different sections and user inputs should be properly escaped. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input or code block etc.
-This is to ensure that the prompt is parsed correctly by the model and that the user input is not interpreted as part of the prompt.
-Identify any issues in the submitted prompt and give a score from 1 to® 10 based on the number and severity of issues.
+LLM Prompts that include different sections and user inputs should be properly deliminated. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input, reference text or code block etc.
+This is to ensure that the prompt is parsed correctly by the model, different pieces of the prompt are understood as separate and any user-provided inputs are not interpreted as part of the prompt.
+Identify any issues in the user-submitted prompt and give a score from 1 to 10 based on the number and severity of issues.
 
-Example Response:
-
-Score: 7
-Explanation: The prompt is properly escaped for the most part. However, best practices suggest that the user input should be enclosed in triple quotes or backticks instead of single quotes.
+Response Format:
+```
+Score: <score>
+Explanation: <explanation>
+```
 """.strip()
     user_prompt = '''
 Prompt:
@@ -61,7 +91,7 @@ Prompt:
                 ResultTable(
                     data=pd.DataFrame(results_table),
                     metadata=ResultTableMetadata(
-                        title="Escape Test on Prompt",
+                        title="Delimination Test for LLM Prompt",
                     ),
                 )
             ]
