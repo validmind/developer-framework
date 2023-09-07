@@ -10,7 +10,7 @@ non_test_content_block_html = """
 
 test_content_block_html = """
 <div>
-  <h4>{title}</h4>
+  <h2>{title}</h2>
   {description}
 </div>
 <h5 class="vm_required_context">
