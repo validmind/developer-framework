@@ -17,10 +17,10 @@ from .ai_powered_test import AIPoweredTest
 
 
 @dataclass
-class Delimination(ThresholdTest, AIPoweredTest):
+class Delimitation(ThresholdTest, AIPoweredTest):
     """
     **Purpose:**
-    The Delimination Test ensures that prompts provided to the Language Learning Model
+    The Delimitation Test ensures that prompts provided to the Language Learning Model
     (LLM) use delimiters correctly to distinctly mark sections of the input. Properly delimited
     prompts simplify the LLM's interpretation process, ensuring accurate and precise responses.
 
@@ -52,14 +52,14 @@ class Delimination(ThresholdTest, AIPoweredTest):
     """
 
     category = "prompt_validation"
-    name = "delimination"
+    name = "delimitation"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 
-LLM Prompts that include different sections and user inputs should be properly deliminated. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input, reference text or code block etc.
+LLM Prompts that include different sections and user inputs should be properly delimitated. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input, reference text or code block etc.
 This is to ensure that the prompt is parsed correctly by the model, different pieces of the prompt are understood as separate and any user-provided inputs are not interpreted as part of the prompt.
 Identify any issues in the user-submitted prompt and give a score from 1 to 10 based on the number and severity of issues.
 
