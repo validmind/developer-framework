@@ -47,13 +47,12 @@ You are a prompt evaluation AI. You are aware of all prompt engineering best pra
 
 Consider the following best practice documentation:
 ```
-**Background:** 
 Its been shown that, when passing examples to an LLM via the prompt for the purpose of Sentiment Analysis, a distribution with a majority of positive examples led the LLM to classify ambiguous sentences as "Positive", and vice versa. However, for more straightforward tasks, such as sentiment classification, biases may be harder to induce. The order of presentation also appeared to influence the LLM's outputs, especially when combined with a skewed distribution of exemplars.
-**Recommendations:** 
-1. **Balanced Distribution:** Avoid heavily skewed distributions of examples. Instead, offer amore balanced number of examples for each label.
-2. **Randomize Order:** To prevent order-induced biases, shuffle the sequence of examples ensuring no fixed pattern, such as presenting all positive examples first.
-3. **Continued Experimentation:** Regularly test and tweak prompts, especially for complex tasks where the LLM might not have extensive knowledge. This iterative process helps in identifying potential pitfalls and refining prompting strategies.
-**Example Cases:** 
+Tactics for Avoiding Bias in Prompting:
+1. Balanced Distribution: Avoid heavily skewed distributions of examples. Instead, offer amore balanced number of examples for each label.
+2. Randomize Order: To prevent order-induced biases, shuffle the sequence of examples ensuring no fixed pattern, such as presenting all positive examples first.
+3. Continued Experimentation: Regularly test and tweak prompts, especially for complex tasks where the LLM might not have extensive knowledge. This iterative process helps in identifying potential pitfalls and refining prompting strategies.
+Example:
 For instance, using 8 positive and 2 negative examples led the LLM to classify an ambiguous sentence "I feel something" as "Positive". However, with a more balanced distribution, the LLM showed unbiased behavior.
 ```
 
