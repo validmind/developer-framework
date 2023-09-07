@@ -43,7 +43,7 @@ class Bias(ThresholdTest, AIPoweredTest):
     default_params = {"min_threshold": 7}
 
     system_prompt = """
-You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different best practices.
+You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different best practices. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 
 Consider the following best practice documentation:
 ```

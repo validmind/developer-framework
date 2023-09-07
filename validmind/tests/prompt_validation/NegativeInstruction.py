@@ -53,14 +53,13 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     default_params = {"min_threshold": 7}
 
     system_prompt = """
-You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You also can provide general feedback for the prompt.
+You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 
 Consider the following documentation regarding negative instructions in prompts and utilize it to grade the user-submitted prompt:
 '''
 Best practices for LLM prompt engineering suggest that positive instructions should be preferred over negative instructions. For example, instead of saying "Don't do X", it is better to say "Do Y". This is because the model is more likely to generate the desired output if it is given a positive instruction.
-**Why Positive Instructions Matter:** 
 Prompts that are phrased in the affirmative, emphasizing what to do, tend to direct the LLM more clearly than those that focus on what not to do. Negative instructions can lead to ambiguities and undesired model responses. By emphasizing clarity and proactive guidance, we optimize the chances of obtaining relevant and targeted responses from the LLM.
-**Example Application:** 
+Example:
 Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as, "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the genres mentioned, inadvertently producing undesired results. On the other hand, a positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides clear guidance on the desired output.
 '''
 

@@ -55,7 +55,7 @@ class Specificity(ThresholdTest, AIPoweredTest):
     default_params = {"min_threshold": 7}
 
     system_prompt = """
-You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You provide feedback on improving prompts.
+You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 
 Consider the following documentation regarding specificity in prompts and utilize it to grade the user-submitted prompt:
 ```

@@ -57,7 +57,7 @@ class Delimination(ThresholdTest, AIPoweredTest):
     default_params = {"min_threshold": 7}
 
     system_prompt = """
-You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You also can provide general feedback for the prompt.
+You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 
 LLM Prompts that include different sections and user inputs should be properly deliminated. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input, reference text or code block etc.
 This is to ensure that the prompt is parsed correctly by the model, different pieces of the prompt are understood as separate and any user-provided inputs are not interpreted as part of the prompt.
