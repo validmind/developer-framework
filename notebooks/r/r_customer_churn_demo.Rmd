@@ -66,9 +66,9 @@ vm <- import("validmind")
 
 vm$init(
   api_host="http://localhost:3000/api/v1/tracking",
-  api_key="e7841dd9cffc67f268addd3ee9cc58f2",
-  api_secret="7a8ab498d183d7a4907e82fac21827f30082d7acbff3dcdfcbb25d6728784e61",
-  project="clkvhtg6g0005q08h5h9uhtjl"
+  api_key="...",
+  api_secret="...",
+  project="..."
 )
 ```
 
@@ -160,7 +160,7 @@ vm_model = vm$init_r_model(
 ### **Run the Binary Classification Test Plan**
 
 ```{r}
-model_validation_results = vm$run_test_suite("binary_classifier_model_validation", model=vm_model)
+model_validation_results = vm$run_test_suite("classifier_model_validation", model=vm_model, fail_fast = TRUE)
 ```
 
 ```{r}

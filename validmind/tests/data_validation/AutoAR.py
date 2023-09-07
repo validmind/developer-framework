@@ -24,7 +24,7 @@ class AutoAR(Metric):
         if "max_ar_order" not in self.params:
             raise ValueError("max_ar_order must be provided in params")
 
-        max_ar_order = self.params["max_ar_order"]
+        max_ar_order = int(self.params["max_ar_order"])
 
         df = self.dataset.df
 
