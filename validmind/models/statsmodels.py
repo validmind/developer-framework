@@ -1,4 +1,6 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
+import pandas as pd
+
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes
 
@@ -36,3 +38,21 @@ class StatsModelsModel(SKlearnModel):
             validation_ds=validation_ds,
             attributes=attributes,
         )
+
+    def model_class(self):
+        """
+        Returns the model class name
+        """
+        return "statsmodels"
+
+    def regression_coefficients(self):
+        """
+        Returns the regression coefficients summary of the model
+        """
+        raw_summary = self.model.summary()
+
+        table = raw_summary.tables[1].data
+        headers = table.pop(0)
+        headers[0] = "Feature"
+
+        return pd.DataFrame(table, columns=headers)

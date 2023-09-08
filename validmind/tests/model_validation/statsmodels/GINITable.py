@@ -43,7 +43,7 @@ class GINITable(Metric):
         for dataset, X, y in zip(
             ["Train", "Test"], [X_train, X_test], [y_train, y_test]
         ):
-            y_scores = model.model.predict(X)
+            y_scores = model.predict(X)
 
             print("Predicted scores obtained...")
 
