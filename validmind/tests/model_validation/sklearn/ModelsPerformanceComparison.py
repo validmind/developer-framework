@@ -4,6 +4,7 @@ from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_sco
 from dataclasses import dataclass
 from numpy import unique
 from sklearn import metrics
+from validmind.errors import SkipTestError
 from validmind.vm_models import ResultSummary, ResultTable, ResultTableMetadata
 
 
@@ -24,10 +25,10 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         """
 
     def y_true(self):
-        return self.model.y_train_true
+        return self.model.y_test_true
 
     def y_pred(self):
-        return self.model.y_train_predict
+        return self.model.y_test_predict
 
     def binary_summary(self, metric_value: dict):
         """
@@ -79,7 +80,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     def run(self):
         # Check models list is not empty
         if not self.models:
-            raise ValueError("List of models must be provided in the models parameter to compare")
+            raise SkipTestError("List of models must be provided as a `models` parameter to compare perforance")
 
         all_models = [self.model]
 
