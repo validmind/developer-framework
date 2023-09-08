@@ -23,6 +23,11 @@ class BivariateFeaturesBarPlots(Metric):
     def run(self):
         features_pairs = self.params["features_pairs"]
 
+        if features_pairs is None:
+            raise ValueError(
+                "The features_pairs parameter is required for this metric."
+            )
+
         figures = self.plot_bivariate_bar(features_pairs)
 
         return self.cache_results(figures=figures)

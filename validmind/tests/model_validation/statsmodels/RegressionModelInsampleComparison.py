@@ -67,7 +67,7 @@ class RegressionModelInsampleComparison(Metric):
             X_columns = model.train_ds.get_features_columns()
             X = model.train_ds.x
             y_true = model.train_ds.y
-            y_pred = model.model.predict(X)
+            y_pred = model.predict(X)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

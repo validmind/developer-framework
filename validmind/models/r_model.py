@@ -237,14 +237,17 @@ class RModel(VMModel):
         variables_attr = self.r.attr(model_terms, "variables")
 
         variables_list = [str(variables_attr[i]) for i in range(1, len(variables_attr))]
+        # Remove "Const" from the list of variables for Poisson regression
+        variables_list = [v for v in variables_list if v != "Const"]
 
         # Build a dataframe where each row is a feature (including the intercept) and each column is one
         # of the values in the coefficient_values list, which has: [Estimate, Std. Error, t value, Pr(>|t|)]
+        # We use ["coef", "std errr", "z", "P>|z|"] to stay consistent with the statsmodels implementation
         # Remove the first row which is the intercept
         coefficient_values = coefficient_values[1:]
         coefficients_df = pd.DataFrame(
             coefficient_values,
-            columns=["Estimate", "Std. Error", "t value", "Pr(>|t|)"],
+            columns=["coef", "std err", "z", "P>|z|"],
         )
 
         # Add the feature names as a column and rearrange to have feature name as the first column

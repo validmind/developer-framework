@@ -26,7 +26,7 @@ class ChiSquaredFeaturesTable(Metric):
 
         # Ensure cat_features is provided
         if not cat_features:
-            raise ValueError("The 'cat_features' parameter must be provided.")
+            cat_features = self.dataset.get_categorical_features_columns()
 
         df = self.dataset.df
 
