@@ -37,3 +37,16 @@ class AIPoweredTest:
             raise ValueError("Could not find score in response")
 
         return int(score.group(1))
+
+    def get_explanation(self, response: str):
+        """
+        Get just the explanation from the response string
+
+        e.g. "Explanation: <some-explanation>\nScore: 8" -> "<some-explanation>"
+        """
+        explanation = re.search(r"Explanation: (.*)", response)
+
+        if not explanation:
+            raise ValueError("Could not find explanation in response")
+
+        return explanation.group(1)

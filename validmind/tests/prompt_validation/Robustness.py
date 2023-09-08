@@ -20,7 +20,20 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Robustness(ThresholdTest, AIPoweredTest):
     """
-    Test that the prompt is concise
+    **Purpose:**
+    The Robustness Integrity Assessment evaluates the resilience and reliability of prompts
+    provided to a Language Learning Model (LLM). The primary objective is to ensure that prompts
+    consistently produce accurate and desired outputs, even in diverse or challenging scenarios.
+
+    **Test Mechanism:**
+    Prompts are subjected to various conditions, alterations, and contexts to check their stability
+    in eliciting consistent responses from the LLM. Factors such as different phrasings,
+    inclusion of potential distractors, and varied input complexities are introduced to test the robustness of the prompt.
+
+    **Why Robustness Matters:**
+    A robust prompt ensures consistent performance and reduces the likelihood of unexpected or
+    off-tangent outputs. This consistency is vital for applications where predictability and
+    reliability of the LLM's response are paramount.
     """
 
     category = "prompt_validation"
@@ -28,11 +41,11 @@ class Robustness(ThresholdTest, AIPoweredTest):
     required_inputs = ["model"]
 
     system_prompt = """
-You are a prompt evaluation researcher AI. LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a sepecific type.
+You are a prompt evaluation researcher AI. LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a specific type.
 
 Consider the prompt that will be submitted and generate 10 test inputs that can be used to evaluate the robustness of the prompt.
 The test inputs should be valid inputs but should be designed to try and break the output.
-Common strategies to use include contradictions, edge cases, typos, etc.
+Common strategies to use include contradictions, edge cases, typos, and any method that can force the model to generate an incorrect output.
 
 For example:
 Give this prompt, "Analyse the following code and rate its complexity with a score from 1 to 10\n\n{{input_code}}", a good test would be to input something other than valid code and see if the model still generates a score.

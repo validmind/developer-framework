@@ -85,6 +85,7 @@ Prompt:
             {
                 "Score": result.values["score"],
                 "Threshold": result.values["threshold"],
+                "Explanation": result.values["explanation"],
                 "Pass/Fail": "Pass" if result.passed else "Fail",
             }
         ]
@@ -106,6 +107,7 @@ Prompt:
             user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
         )
         score = self.get_score(response)
+        explanation = self.get_explanation(response)
 
         passed = score > self.params["min_threshold"]
         results = [
@@ -113,6 +115,7 @@ Prompt:
                 passed=passed,
                 values={
                     "score": score,
+                    "explanation": explanation,
                     "threshold": self.params["min_threshold"],
                 },
             )
