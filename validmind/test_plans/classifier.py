@@ -41,6 +41,7 @@ class ClassifierPerformance(TestPlan):
         "validmind.model_validation.sklearn.MinimumF1Score",
         "validmind.model_validation.sklearn.MinimumROCAUCScore",
         "validmind.model_validation.sklearn.TrainingTestDegradation",
+        "validmind.model_validation.sklearn.ModelsPerformanceComparison",
     ]
 
 
