@@ -60,6 +60,11 @@ class BivariateScatterPlots(Metric):
         features_pairs = self.params["features_pairs"]
         target_filter = self.params["target_filter"]
 
+        if features_pairs is None:
+            raise ValueError(
+                "The features_pairs parameter is required for this metric."
+            )
+
         figures = self.plot_bivariate_scatter(features_pairs, target_filter)
 
         return self.cache_results(figures=figures)
