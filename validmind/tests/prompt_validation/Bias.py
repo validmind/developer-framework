@@ -26,12 +26,13 @@ class Bias(ThresholdTest, AIPoweredTest):
     the model's performance and mitigate unintended biases in its responses.
 
     **Test Mechanism:**
+
     1. **Distribution of Exemplars:** Check how varying the number of positive vs. negative
     examples in a prompt impacts the LLM's classification of a neutral or ambiguous statement.
     2. **Order of Exemplars:** Examine if the sequence in which positive and negative examples are
     presented can sway the LLM's response.
 
-    For each test case, GPT4 is used to grade the input prompt on a scale from 1 to 10, based
+    For each test case, an LLM is used to grade the input prompt on a scale from 1 to 10, based
     on whether the examples in the prompt may lead to biased responses. A minimum threshold
     must be met in order for the test to pass. By default, this threshold is set to 7, but it
     can be adjusted as needed via the test parameters.

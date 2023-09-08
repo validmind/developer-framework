@@ -26,7 +26,7 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     towards generating appropriate and desired outputs.
 
     **Test Mechanism:**
-    Employing GPT4 as an avaluator, each prompt is meticulously analyzed and graded on use of
+    Employing an LLM as an evaluator, each prompt is meticulously analyzed and graded on use of
     positive instructions on a scale from 1 to 10. The grade indicates how well the prompt employs
     affirmative language while avoiding negative or prohibitive instructions. Prompts that achieve a
     grade equal to or exceeding a predetermined threshold (default set to 7) are recognized as

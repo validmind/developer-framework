@@ -10,6 +10,7 @@ from ..tests import list_tests as real_list_tests
 from ..tests import load_test
 from ..utils import format_dataframe
 from .classifier import ClassifierDiagnosis, ClassifierMetrics, ClassifierPerformance
+from .llm import PromptValidation
 from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
@@ -33,6 +34,7 @@ core_test_plans = {
     "classifier_metrics": ClassifierMetrics,
     "classifier_validation": ClassifierPerformance,
     "classifier_model_diagnosis": ClassifierDiagnosis,
+    "prompt_validation": PromptValidation,
     "tabular_dataset_description": TabularDatasetDescription,
     "tabular_data_quality": TabularDataQuality,
     "time_series_data_quality": TimeSeriesDataQuality,

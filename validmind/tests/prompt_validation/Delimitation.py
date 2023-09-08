@@ -25,7 +25,7 @@ class Delimitation(ThresholdTest, AIPoweredTest):
     prompts simplify the LLM's interpretation process, ensuring accurate and precise responses.
 
     **Test Mechanism:**
-    Using GPT4, prompts are checked for their appropriate use of delimiters such as triple
+    Using an LLM, prompts are checked for their appropriate use of delimiters such as triple
     quotation marks, XML tags, and section titles. Each prompt receives a score from 1 to 10
     based on its delimitation integrity. Prompts scoring at or above a set threshold (default is 7)
     pass the check. This threshold can be modified as needed.

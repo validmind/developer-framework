@@ -26,7 +26,7 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     the LLM receives relevant input without being overwhelmed.
 
     **Test Mechanism:**
-    Using GPT4, this test puts input prompts through a conciseness analysis where it's graded
+    Using an LLM, this test puts input prompts through a conciseness analysis where it's graded
     on a scale from 1 to 10. The grade reflects how well the prompt maintains clarity while
     avoiding verbosity. Prompts that achieve a grade equal to or surpassing a predefined threshold
     (default set to 7) are considered successful in being concise. This threshold can be adjusted

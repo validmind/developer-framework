@@ -5,6 +5,7 @@ from typing import List
 
 import pandas as pd
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -24,7 +25,7 @@ class Robustness(ThresholdTest, AIPoweredTest):
 
     category = "prompt_validation"
     name = "robustness"
-    required_inputs = ["prompt", "model"]
+    required_inputs = ["model"]
 
     system_prompt = """
 You are a prompt evaluation researcher AI. LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a sepecific type.
@@ -34,7 +35,7 @@ The test inputs should be valid inputs but should be designed to try and break t
 Common strategies to use include contradictions, edge cases, typos, etc.
 
 For example:
-Give this prompt, "Anlyse the following code and rate its complexity with a score from 1 to 10\n\n{{input_code}}", a good test would be to input something other than valid code and see if the model still generates a score.
+Give this prompt, "Analyse the following code and rate its complexity with a score from 1 to 10\n\n{{input_code}}", a good test would be to input something other than valid code and see if the model still generates a score.
 """.strip()
     user_prompt = '''
 Return 10 test inputs separated by a new line
@@ -46,13 +47,13 @@ Prompt:
 '''.strip()
 
     def summary(self, results: List[TestResult], all_passed: bool):
-        result = results[0]
         results_table = [
             {
                 "Test Input": result.values["input"],
                 "Model Output": result.values["output"],
                 "Pass/Fail": "Pass" if result.passed else "Fail",
             }
+            for result in results
         ]
 
         return ResultSummary(
@@ -73,12 +74,22 @@ Prompt:
         )
 
         results = []
+        target_class_labels = self.model.test_ds.target_classes()
+
+        # Guard against too many classes (maybe not a classification model)
+        if len(target_class_labels) > 10:
+            raise SkipTestError(
+                "Too many target classes to test robustness. Skipping test."
+            )
 
         for test_input in response.split("\n"):
-            result = self.model.predict(test_input)
+            test_input_df = pd.DataFrame(
+                [test_input], columns=[self.model.test_ds.text_column]
+            )
+            result = self.model.predict(test_input_df)[0]
 
             fail = False
-            if result not in self.model.classes:
+            if result not in target_class_labels:
                 fail = True
 
             results.append(

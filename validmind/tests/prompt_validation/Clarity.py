@@ -25,7 +25,7 @@ class Clarity(ThresholdTest, AIPoweredTest):
     suited to more accurately and effectively interpret and respond to instructions in the prompt
 
     **Test Mechanism:**
-    Using GPT4, prompts are scrutinized for clarity, considering aspects like detail inclusion,
+    Using an LLM, prompts are scrutinized for clarity, considering aspects like detail inclusion,
     persona adoption, step-by-step instructions, use of examples, and desired output length.
     Each prompt is graded on a scale from 1 to 10 based on its clarity. Prompts scoring at or above
     a predetermined threshold (default is 7) are marked as clear. This threshold can be adjusted

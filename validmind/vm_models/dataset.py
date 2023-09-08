@@ -331,6 +331,12 @@ class NumpyDataset(VMDataset):
             column for column in categorical_columns if column != self.target_column
         ]
 
+    def target_classes(self):
+        """
+        Returns the unique number of target classes for the target (Y) variable.
+        """
+        return [str(i) for i in np.unique(self.y)]
+
 
 @dataclass
 class DataFrameDataset(NumpyDataset):

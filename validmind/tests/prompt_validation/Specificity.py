@@ -27,7 +27,7 @@ class Specificity(ThresholdTest, AIPoweredTest):
     eliminating ambiguity and steering the LLM toward desired outcomes.
 
     **Test Mechanism:**
-    Utilizing GPT4, each prompt is graded on a specificity scale ranging from 1 to 10. The grade
+    Utilizing an LLM, each prompt is graded on a specificity scale ranging from 1 to 10. The grade
     reflects how well the prompt adheres to principles of clarity, detail, and relevancy without
     being overly verbose. Prompts that achieve a grade equal to or exceeding a predefined threshold
     (default set to 7) are deemed to pass the evaluation, while those falling below are marked as
