@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 13.1.1"/>
-    <title>validmind.tests.model_validation.statsmodels.DFGLSArch API documentation</title>
+    <title>validmind.tests.model_validation.sklearn.ModelsPerformanceComparison API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,11 +17,11 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>            <a class="pdoc-button module-list-button" href="../statsmodels.html">
+        <div>            <a class="pdoc-button module-list-button" href="../sklearn.html">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-</svg>                &nbsp;validmind.tests.model_validation.statsmodels</a>
+</svg>                &nbsp;validmind.tests.model_validation.sklearn</a>
 
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
@@ -32,13 +32,31 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#DFGLSArch">DFGLSArch</a>
+                    <a class="class" href="#ModelsPerformanceComparison">ModelsPerformanceComparison</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#DFGLSArch.__init__">DFGLSArch</a>
+                                <a class="function" href="#ModelsPerformanceComparison.__init__">ModelsPerformanceComparison</a>
                         </li>
                         <li>
-                                <a class="function" href="#DFGLSArch.run">run</a>
+                                <a class="function" href="#ModelsPerformanceComparison.description">description</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.y_true">y_true</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.y_pred">y_pred</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.binary_summary">binary_summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.multiclass_summary">multiclass_summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.summary">summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelsPerformanceComparison.run">run</a>
                         </li>
                 </ul>
 
@@ -58,42 +76,130 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../model_validation.html">model_validation</a><wbr>.<a href="./../statsmodels.html">statsmodels</a><wbr>.DFGLSArch    </h1>
+<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../model_validation.html">model_validation</a><wbr>.<a href="./../sklearn.html">sklearn</a><wbr>.ModelsPerformanceComparison    </h1>
 
                 
                 
                 
                 
             </section>
-                <section id="DFGLSArch">
+                <section id="ModelsPerformanceComparison">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DFGLSArch</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ModelsPerformanceComparison</span><wbr>(<span class="base"><a href="ClassifierPerformance.html#ClassifierPerformance">validmind.tests.model_validation.sklearn.ClassifierPerformance.ClassifierPerformance</a></span>):
 
         
     </div>
-    <a class="headerlink" href="#DFGLSArch"></a>
+    <a class="headerlink" href="#ModelsPerformanceComparison"></a>
     
-            <div class="docstring"><p>Dickey-Fuller GLS unit root test for
-establishing the order of integration of time series</p>
+            <div class="docstring"><p>Test that outputs the models performance comparison on the test data.</p>
 </div>
 
 
-                            <div id="DFGLSArch.__init__" class="classattr">
+                            <div id="ModelsPerformanceComparison.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DFGLSArch</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ModelsPerformanceComparison</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
-    <a class="headerlink" href="#DFGLSArch.__init__"></a>
+    <a class="headerlink" href="#ModelsPerformanceComparison.__init__"></a>
     
     
 
                             </div>
-                            <div id="DFGLSArch.run" class="classattr">
+                            <div id="ModelsPerformanceComparison.description" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.description"></a>
+    
+            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
+to returning the class' docstring</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.y_true" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">y_true</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.y_true"></a>
+    
+    
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.y_pred" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">y_pred</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.y_pred"></a>
+    
+    
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.binary_summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">binary_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.binary_summary"></a>
+    
+            <div class="docstring"><p>When building a binary classification summary for all the models. We take the positive class
+metrics as the global metrics.</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.multiclass_summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">multiclass_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.multiclass_summary"></a>
+    
+            <div class="docstring"><p>The multi-class summary method that calculates weighted average,
+macro average and per class metrics of all the models.</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelsPerformanceComparison.summary"></a>
+    
+            <div class="docstring"><p>This summary varies depending if we're evaluating a binary or multi-class model</p>
+</div>
+
+
+                            </div>
+                            <div id="ModelsPerformanceComparison.run" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
@@ -101,9 +207,9 @@ establishing the order of integration of time series</p>
 
         
     </div>
-    <a class="headerlink" href="#DFGLSArch.run"></a>
+    <a class="headerlink" href="#ModelsPerformanceComparison.run"></a>
     
-            <div class="docstring"><p>Calculates Dickey-Fuller GLS metric for each of the dataset features</p>
+            <div class="docstring"><p>Run the calculation and cache its results</p>
 </div>
 
 
@@ -112,18 +218,13 @@ establishing the order of integration of time series</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
-                                <dd id="DFGLSArch.key" class="variable">key</dd>
-                <dd id="DFGLSArch.summary" class="function">summary</dd>
-                <dd id="DFGLSArch.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="DFGLSArch.description" class="function">description</dd>
+                                <dd id="ModelsPerformanceComparison.key" class="variable">key</dd>
+                <dd id="ModelsPerformanceComparison.cache_results" class="function">cache_results</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
-                                <dd id="DFGLSArch.df" class="variable">df</dd>
-                <dd id="DFGLSArch.validate_context" class="function">validate_context</dd>
+                                <dd id="ModelsPerformanceComparison.df" class="variable">df</dd>
+                <dd id="ModelsPerformanceComparison.validate_context" class="function">validate_context</dd>
 
             </div>
                                 </dl>
