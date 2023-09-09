@@ -30,7 +30,7 @@ class PrecisionRecallCurve(Metric):
 
     def run(self):
         if self.model.model_library() == "FoundationModel":
-            raise SkipTestError(f"Skipping PrecisionRecallCurve for Foundation models")
+            raise SkipTestError("Skipping PrecisionRecallCurve for Foundation models")
 
         y_true = np.array(self.model.test_ds.y)
         y_pred = self.model.predict(self.model.test_ds.x)
