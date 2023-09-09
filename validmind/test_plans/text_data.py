@@ -22,6 +22,5 @@ class TextDataQuality(TestPlan):
         "validmind.data_validation.nlp.StopWords",
         "validmind.data_validation.nlp.Punctuations",
         "validmind.data_validation.nlp.Mentions",
-        "validmind.data_validation.nlp.Hashtags",
         "validmind.data_validation.nlp.CommonWords",
     ]

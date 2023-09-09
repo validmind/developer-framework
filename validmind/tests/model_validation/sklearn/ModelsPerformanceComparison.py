@@ -1,11 +1,14 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_score
 from dataclasses import dataclass
+
 from numpy import unique
 from sklearn import metrics
+
 from validmind.errors import SkipTestError
 from validmind.vm_models import ResultSummary, ResultTable, ResultTableMetadata
+
+from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_score
 
 
 @dataclass
@@ -41,7 +44,9 @@ class ModelsPerformanceComparison(ClassifierPerformance):
             results.append(
                 ResultTable(
                     data=result.results[0].data,
-                    metadata=ResultTableMetadata(title=f"{result.results[0].metadata.title}: {m}"),
+                    metadata=ResultTableMetadata(
+                        title=f"{result.results[0].metadata.title}: {m}"
+                    ),
                 )
             )
         return ResultSummary(results=results)
@@ -57,13 +62,17 @@ class ModelsPerformanceComparison(ClassifierPerformance):
             results.append(
                 ResultTable(
                     data=result.results[0].data,
-                    metadata=ResultTableMetadata(title=f"{result.results[0].metadata.title}: {m}"),
+                    metadata=ResultTableMetadata(
+                        title=f"{result.results[0].metadata.title}: {m}"
+                    ),
                 )
             )
             results.append(
                 ResultTable(
                     data=result.results[1].data,
-                    metadata=ResultTableMetadata(title=f"{result.results[1].metadata.title}: {m}"),
+                    metadata=ResultTableMetadata(
+                        title=f"{result.results[1].metadata.title}: {m}"
+                    ),
                 )
             )
         return ResultSummary(results=results)
@@ -80,7 +89,9 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     def run(self):
         # Check models list is not empty
         if not self.models:
-            raise SkipTestError("List of models must be provided as a `models` parameter to compare perforance")
+            raise SkipTestError(
+                "List of models must be provided as a `models` parameter to compare perforance"
+            )
 
         all_models = [self.model]
 

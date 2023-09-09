@@ -28,6 +28,9 @@ class ROCCurve(Metric):
         """
 
     def run(self):
+        if self.model.model_library() == "FoundationModel":
+            raise SkipTestError(f"Skipping ROCCurve for Foundation models")
+
         # Extract the actual model
         model = self.model[0] if isinstance(self.model, list) else self.model
 

@@ -13,6 +13,8 @@ from ..vm_models import TestSuite
 from .test_suites import (
     ClassifierFullSuite,
     ClassifierModelValidation,
+    LLMClassifierFullSuite,
+    NLPClassifierFullSuite,
     TabularDataset,
     TimeSeriesDataset,
     TimeSeriesModelValidation,
@@ -23,6 +25,8 @@ logger = get_logger(__name__)
 core_test_suites = {
     "classifier_full_suite": ClassifierFullSuite,
     "classifier_model_validation": ClassifierModelValidation,
+    "llm_classifier_full_suite": LLMClassifierFullSuite,
+    "nlp_classifier_full_suite": NLPClassifierFullSuite,
     "tabular_dataset": TabularDataset,
     "time_series_dataset": TimeSeriesDataset,
     "time_series_model_validation": TimeSeriesModelValidation,

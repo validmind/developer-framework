@@ -77,3 +77,33 @@ class TimeSeriesModelValidation(TestSuite):
         "time_series_forecast",
         "time_series_sensitivity",
     ]
+
+
+class NLPClassifierFullSuite(TestSuite):
+    """
+    Full test suite for NLP classification models.
+    """
+
+    name = "nlp_classifier_full_suite"
+
+    test_plans = [
+        "text_data_quality",
+        "classifier_metrics",
+        "classifier_validation",
+        "classifier_model_diagnosis",
+    ]
+
+
+class LLMClassifierFullSuite(TestSuite):
+    """
+    Full test suite for LLM classification models.
+    """
+
+    name = "llm_classifier_full_suite"
+
+    test_plans = [
+        "text_data_quality",
+        "classifier_metrics",
+        "classifier_validation",
+        "prompt_validation",
+    ]
