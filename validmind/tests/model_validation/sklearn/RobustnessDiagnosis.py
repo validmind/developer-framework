@@ -58,11 +58,6 @@ class RobustnessDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        # model_library = Model.model_library(self.model.model)
-        # if model_library == "statsmodels" or model_library == "pytorch":
-        #     print(f"Skiping Robustness Diagnosis test for {model_library} models")
-        #     return
-
         # Validate X std deviation parameter
         if "scaling_factor_std_dev_list" not in self.params:
             raise ValueError("scaling_factor_std_dev_list must be provided in params")
@@ -97,6 +92,11 @@ class RobustnessDiagnosis(ThresholdTest):
         # Remove target column if it exist in the list
         features_list = self.model.train_ds.get_features_columns()
 
+        if self.model.train_ds.text_column in features_list:
+            raise ValueError(
+                "Skiping Robustness Diagnosis test for the dataset with text column"
+            )
+
         train_df = self.model.train_ds.x_df().copy()
         train_y_true = self.model.train_ds.y
 
@@ -110,7 +110,6 @@ class RobustnessDiagnosis(ThresholdTest):
             self.default_metrics.keys()
         )
         results = {k: [] for k in results_headers}
-
         # Iterate scaling factor for the standard deviation list
         for x_std_dev in x_std_dev_list:
             temp_train_df = train_df.copy()
@@ -205,7 +204,7 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Dataset Type"].append(dataset_type)
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
-        y_prediction = self.model.model.predict(df)
+        y_prediction = self.model.predict(df)
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction) * 100)
 

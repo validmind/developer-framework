@@ -4,12 +4,7 @@ from dataclasses import dataclass
 
 from sklearn.metrics import mean_squared_error, r2_score
 
-from validmind.vm_models import (
-    Metric,
-    ResultSummary,
-    ResultTable,
-    ResultTableMetadata,
-)
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass
@@ -51,7 +46,8 @@ class RegressionModelsPerformance(Metric):
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.train_ds.y
-            y_pred = model.model.predict(model.train_ds.x)
+            # R models will not predict the same number of rows as the test dataset
+            y_pred = model.predict(model.train_ds.x)[0 : len(y_true)]
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
@@ -79,7 +75,8 @@ class RegressionModelsPerformance(Metric):
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.test_ds.y
-            y_pred = model.model.predict(model.test_ds.x)
+            # R models will not predict the same number of rows as the test dataset
+            y_pred = model.predict(model.test_ds.x)[0 : len(y_true)]
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

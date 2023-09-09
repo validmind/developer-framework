@@ -1,9 +1,12 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-import plotly.graph_objects as go
-from sklearn import metrics
 
+import numpy as np
+import plotly.graph_objects as go
+from sklearn.metrics import precision_recall_curve
+
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -26,12 +29,19 @@ class PrecisionRecallCurve(Metric):
         """
 
     def run(self):
-        y_true = self.model.y_test_true
-        y_pred = self.model.predict_proba(self.model.test_ds.x)
-        y_true = y_true.astype(y_pred.dtype)
-        precision, recall, pr_thresholds = metrics.precision_recall_curve(
-            y_true, y_pred
-        )
+        if self.model.model_library() == "FoundationModel":
+            raise SkipTestError("Skipping PrecisionRecallCurve for Foundation models")
+
+        y_true = np.array(self.model.test_ds.y)
+        y_pred = self.model.predict(self.model.test_ds.x)
+
+        # PR curve is only supported for binary classification
+        if len(np.unique(y_true)) > 2:
+            raise SkipTestError(
+                "Precision Recall Curve is only supported for binary classification models"
+            )
+
+        precision, recall, pr_thresholds = precision_recall_curve(y_true, y_pred)
 
         trace = go.Scatter(
             x=recall,

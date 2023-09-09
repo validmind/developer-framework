@@ -1,6 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import os
+
 import pandas as pd
 
 current_path = os.path.dirname(os.path.abspath(__file__))

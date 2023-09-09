@@ -10,18 +10,18 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional
 
-import markdown
 import ipywidgets as widgets
+import markdown
 import pandas as pd
 from IPython.display import display
 
 from .. import api_client
+from ..utils import NumpyEncoder
 from .dataset import VMDataset
 from .figure import Figure
 from .metric_result import MetricResult
 from .result_summary import ResultSummary
 from .test_result import TestResults
-from ..utils import NumpyEncoder
 
 
 async def update_metadata(content_id: str, text: str) -> None:

@@ -1,8 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import pandas as pd
 from dataclasses import dataclass
+
+import pandas as pd
 import plotly.graph_objects as go
+
 from validmind.vm_models import Figure, Metric
 
 
@@ -61,8 +63,8 @@ class PDRatingClassPlot(Metric):
         y_test = self.model.test_ds.y.copy()
 
         # Compute probabilities
-        X_train["probability"] = self.model.model.predict(X_train)
-        X_test["probability"] = self.model.model.predict(X_test)
+        X_train["probability"] = self.model.predict(X_train)
+        X_test["probability"] = self.model.predict(X_test)
 
         df_train = pd.concat([X_train, y_train], axis=1)
         df_test = pd.concat([X_test, y_test], axis=1)

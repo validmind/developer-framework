@@ -1,8 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
+
+import pandas as pd
 import plotly.graph_objects as go
 from scipy import stats
+
 from validmind.vm_models import Figure, Metric
 
 
@@ -22,10 +25,11 @@ class RegressionCoeffsPlot(Metric):
     required_inputs = ["models"]
 
     @staticmethod
-    def plot_coefficients_with_ci(model_fit, model_name):
+    def plot_coefficients_with_ci(model, model_name):
         # Extract estimated coefficients and standard errors
-        coef = model_fit.params
-        std_err = model_fit.bse
+        coefficients = model.regression_coefficients()
+        coef = pd.to_numeric(coefficients["coef"])
+        std_err = pd.to_numeric(coefficients["std err"])
 
         # Calculate confidence intervals
         confidence_level = 0.95  # 95% confidence interval
@@ -38,7 +42,7 @@ class RegressionCoeffsPlot(Metric):
 
         fig.add_trace(
             go.Bar(
-                x=model_fit.model.exog_names,
+                x=list(coefficients["Feature"].values),
                 y=coef,
                 name="Estimated Coefficients",
                 error_y=dict(
@@ -58,7 +62,7 @@ class RegressionCoeffsPlot(Metric):
         )
 
         return fig, {
-            "values": list(model_fit.params),
+            "values": list(coef),
             "lower_ci": list(lower_ci),
             "upper_ci": list(upper_ci),
         }
@@ -75,11 +79,10 @@ class RegressionCoeffsPlot(Metric):
         if self.models is not None:
             all_models.extend(self.models)
 
-        for i, m in enumerate(all_models):
+        for i, model in enumerate(all_models):
             model_name = f"Model {i+1}"
-            model_fit = m.model
 
-            fig, metric_values = self.plot_coefficients_with_ci(model_fit, model_name)
+            fig, metric_values = self.plot_coefficients_with_ci(model, model_name)
             all_figures.append(
                 Figure(
                     for_object=self,

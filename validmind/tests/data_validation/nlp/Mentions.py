@@ -5,15 +5,12 @@ Threshold based tests
 """
 import re
 from dataclasses import dataclass
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import plotly.express as px
 
-from validmind.vm_models import (
-    VMDataset,
-    Figure,
-    ThresholdTest,
-)
+from validmind.vm_models import Figure, ThresholdTest, VMDataset
 
 
 @dataclass

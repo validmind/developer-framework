@@ -1,0 +1,256 @@
+# Time Series Data Validation Full Suite
+
+## 1. Introduction
+
+The Time Series Data Validation Demo notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **Developer Framework**. Ensuring the quality and an a robust exploratory data analysis of time series data is essential for accurate model predictions and robust decision-making processes.
+
+In this demo, we will walk through different **data validation suites of tests** tailored for time series data, showcasing how these tools can assist you in identifying potential issues and inconsistencies in the data.
+
+## 2. Setup
+
+Prepare the environment for our analysis. First, **import** all necessary libraries and modules required for our analysis. Next, **connect** to the ValidMind MRM platform, which provides a comprehensive suite of tools and services for model validation.
+
+Finally, define and **configure** the specific use case we are working on by setting up any required parameters, data sources, or other settings that will be used throughout the analysis.
+
+## **Initializing the Python environment**
+
+```{r}
+# install.packages("magrittr") # package installations are only needed the first time you use it
+# install.packages("dplyr")    # alternative installation of the %>%
+# install.packages("xgboost")  # for training XGBoost models
+# install.packages("zoo")
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+library(glue)
+library(dplyr)
+library(caTools)
+library(glmnet)
+library(zoo)
+
+# Python support
+library(reticulate)
+use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
+reticulate::py_config()
+```
+
+```{r}
+source("../../r/helpers.R")
+```
+
+## **Initializing the ValidMind Client Library**
+
+Log in to the ValidMind platform with your registered email address, and navigate to the Documentation Projects page.
+
+### **Creating a new Documentation Project**
+
+*(Note: if a documentation project has already been created, you can skip this section and head directly "Finding Project API key and secret")*
+
+Clicking on "Create a new project" allows to you to register a new documentation project for our demo model.
+
+Select "Customer Churn model" from the Model drop-down, and "Initial Validation" as Type. Finally, click on "Create Project".
+
+### **Finding the project API key and secret**
+
+In the "Client Integration" page of the newly created project, you will find the initialization code that allows the client library to associate documentation and tests with the appropriate project. The initialization code configures the following arguments:
+
+-   api_host: Location of the ValidMind API.
+
+-   api_key: Account API key.
+
+-   api_secret: Account Secret key.
+
+-   project: The project identifier. The \`project\` argument is mandatory since it allows the library to associate all data collected with a specific account project.
+
+The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
+
+```{r}
+vm <- import("validmind")
+
+vm$init(
+  api_host="http://localhost:3000/api/v1/tracking",
+  api_key="e7841dd9cffc67f268addd3ee9cc58f2",
+  api_secret="7a8ab498d183d7a4907e82fac21827f30082d7acbff3dcdfcbb25d6728784e61",
+  project="clm6z6tzo02l97y8h5jwanckx"
+)
+```
+
+## 3. Load Data
+
+```{r}
+fred <- import("validmind.datasets.regression.fred")
+
+target_column <- fred$target_column
+feature_columns = fred$feature_columns
+
+# Split the dataset into test and training
+df = fred$load_data()
+```
+
+```{r}
+summary(df)
+```
+## 5. Data Validation
+
+### User Configuration of Test Suite
+
+Users can input the configuration to a test suite using **`config`**, allowing fine-tuning the suite according to their specific data requirements.
+
+**Time Series Data Quality params**
+- `time_series_outliers` is set to identify outliers using a specific Z-score threshold
+- `time_series_missing_values` defines a minimum threshold to identify missing data points.
+
+**Time Series Univariate params**
+- *Visualization*: `time_series_line_plot` and `time_series_histogram` are designed to generate line and histogram plots respectively for each column in a DataFrame.
+
+- *Seasonality*:  `seasonal_decompose` and `auto_seasonality` are dedicated to analyzing the seasonal component of the time series. `seasonal_decompose` performs a seasonal decomposition of the data, while `auto_seasonality` aids in the automatic detection of seasonality.
+
+- *Stationarity*: `window_size` determines the number of consecutive data points used for calculating the rolling mean and standard deviation.
+
+- *ARIMA*: `acf_pacf_plot`, `auto_ar`, and `auto_ma` are part of the ARIMA (Autoregressive Integrated Moving Average) model analysis. `acf_pacf_plot` generates autocorrelation and partial autocorrelation plots, `auto_ar` determines the order of the autoregressive part of the model, and `auto_ma` does the same for the moving average part.
+
+
+**Time Series Multivariate params**
+- *Visualization*: `scatter_plot` is used to create scatter plots for each column in the DataFrame, offering a visual tool to understand the relationship between different variables in the dataset.
+
+- *Correlation*: `lagged_correlation_heatmap` facilitates the creation of a heatmap, which visually represents the lagged correlation between the target column and the feature columns of a demo dataset. This provides a convenient way to examine the time-delayed correlation between different series.
+
+- *Cointegration*: `engle_granger_coint` sets a threshold for conducting the Engle-Granger cointegration test, which is a statistical method used to identify the long-term correlation between two or more time series.
+
+
+```{r}
+config <- list(
+
+  # TIME SERIES DATA QUALITY PARAMS
+  time_series_outliers = list(
+    zscore_threshold = 3
+  ),
+  time_series_missing_values = list(
+    min_threshold = 2
+  ),
+
+  # TIME SERIES UNIVARIATE PARAMS
+  rolling_stats_plot = list(
+    window_size = 12
+  ),
+  seasonal_decompose = list(
+    seasonal_model = 'additive'
+  ),
+  auto_seasonality = list(
+    min_period = 1,
+    max_period = 3
+  ),
+  auto_stationarity = list(
+    max_order = 3,
+    threshold = 0.05
+  ),
+  auto_ar = list(
+    max_ar_order = 4
+  ),
+  auto_ma = list(
+    max_ma_order = 3
+  ),
+
+  # TIME SERIES MULTIVARIATE PARAMS
+  lagged_correlation_heatmap = list(
+    target_col = fred$target_column,
+    independent_vars = fred$feature_columns
+  ),
+  engle_granger_coint = list(
+    threshold = 0.05
+  )
+)
+```
+
+### Validation of Raw Dataset
+
+#### Run the Time Series Dataset Test Suite
+
+```{r}
+vm_dataset <- vm$init_dataset(
+    dataset=df,
+    target_column=fred$target_column,
+    date_time_index=TRUE
+)
+```
+
+
+```{r}
+suite_results <- vm$run_test_suite(
+    "time_series_dataset",
+    dataset=vm_dataset,
+    config=config,
+    fail_fast=TRUE
+)
+```
+
+```{r}
+summarize_results(suite_results)
+```
+
+### Handle Dataset Frequencies
+
+Show the frequencies of each variable in the raw dataset.
+
+```{r}
+frequencies <- vm$datasets$regression$identify_frequencies(df)
+frequencies
+```
+
+Handle frequencies by resampling all variables to a common frequency.
+
+```{r}
+preprocessed_df <- vm$datasets$regression$resample_to_common_frequency(
+  df,
+  common_frequency=fred$frequency
+)
+frequencies <- vm$datasets$regression$identify_frequencies(preprocessed_df)
+frequencies
+```
+
+### Handle Missing Values
+
+Handle the missing values by droping all the `nan` values.
+
+```{r}
+preprocessed_df <- na.omit(preprocessed_df)
+```
+
+### Handle Stationarity
+
+Handle stationarity by taking the first difference.
+
+```{r}
+preprocessed_df <- as.data.frame(lapply(preprocessed_df, diff))
+
+# Backward missing values
+preprocessed_df <- as.data.frame(lapply(preprocessed_df, function(col) {
+  na.locf(col, fromLast = TRUE)
+}))
+```
+#### Run the Time Series Dataset Test Suite
+
+We can re-run the dataset test suite after cleaning up the data.
+
+```{r}
+vm_dataset <- vm$init_dataset(
+    dataset=preprocessed_df,
+    target_column=fred$target_column,
+    date_time_index=TRUE
+)
+```
+
+```{r}
+# Error in py_call_impl(callable, call_args$unnamed, call_args$named) :
+# numpy.core._exceptions._ArrayMemoryError: Unable to allocate 15.9 PiB for an array with shape (2236713889723964,) and data type float64
+
+suite_results <- vm$run_test_suite(
+    "time_series_dataset",
+    dataset=vm_dataset,
+    config=config,
+    fail_fast=TRUE
+)
+```
+
+```{r}
+summarize_results(suite_results)
+```

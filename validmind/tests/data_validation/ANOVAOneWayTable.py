@@ -1,9 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import pandas as pd
 from dataclasses import dataclass
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+import pandas as pd
 from scipy.stats import f_oneway
+
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass
@@ -15,45 +17,47 @@ class ANOVAOneWayTable(Metric):
 
     name = "anova_one_way_table"
     required_inputs = ["dataset"]
-    default_params = {"num_features": None, "p_threshold": 0.05}
+    default_params = {"features": None, "p_threshold": 0.05}
 
     def run(self):
-        target_column = self.dataset.target_column
-        num_features = self.params["num_features"]
+        features = self.params["features"]
         p_threshold = self.params["p_threshold"]
 
-        df = self.dataset.df
+        # Select all numerical features if none are specified
+        if features is None:
+            features = self.dataset.get_numeric_features_columns()
 
-        anova_results = self.anova_numerical_features(
-            df, num_features, target_column, p_threshold
-        )
+        anova_results = self.anova_numerical_features(features, p_threshold)
 
         return self.cache_results(
             {
-                "anova_results": anova_results,
+                "anova_results": anova_results.to_dict(orient="records"),
             }
         )
 
-    def anova_numerical_features(self, df, features, target, p_threshold):
+    def anova_numerical_features(self, features, p_threshold):
+        target_column = self.dataset.target_column
+        df = self.dataset.df
+
         # Ensure the columns exist in the dataframe
         for var in features:
             if var not in df.columns:
                 raise ValueError(f"The column '{var}' does not exist in the dataframe.")
-        if target not in df.columns:
+        if target_column not in df.columns:
             raise ValueError(
-                f"The target column '{target}' does not exist in the dataframe."
+                f"The target column '{target_column}' does not exist in the dataframe."
             )
 
         # Ensure the target variable is not included in num_vars
-        if target in features:
-            features.remove(target)
+        if target_column in features:
+            features.remove(target_column)
 
         results = []
 
         for var in features:
             # Perform the ANOVA test
-            class_0 = df[df[target] == 0][var]
-            class_1 = df[df[target] == 1][var]
+            class_0 = df[df[target_column] == 0][var]
+            class_1 = df[df[target_column] == 1][var]
 
             f, p = f_oneway(class_0, class_1)
 

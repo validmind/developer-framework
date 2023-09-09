@@ -1,0 +1,190 @@
+# Time Series Model Validation Full Suite
+
+## 1. Introduction
+
+The Time Series Data Validation Full Suite notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **Developer Framework**.
+
+In this demo, we will use the `time_series_model_validation` **test suite** to run multiple model validation metrics on several pre-trained time series models.
+
+## 2. Setup
+
+Prepare the environment for our analysis. First, **import** all necessary libraries and modules required for our analysis. Next, **connect** to the ValidMind MRM platform, which provides a comprehensive suite of tools and services for model validation.
+
+Finally, define and **configure** the specific use case we are working on by setting up any required parameters, data sources, or other settings that will be used throughout the analysis.
+
+## Initializing the Python environment
+
+```{r}
+# install.packages("magrittr") # package installations are only needed the first time you use it
+# install.packages("dplyr")    # alternative installation of the %>%
+# install.packages("xgboost")  # for training XGBoost models
+# install.packages("zoo")
+library(magrittr) # needs to be run every time you start R and want to use %>%
+library(dplyr)    # alternatively, this also loads %>%
+library(glue)
+library(dplyr)
+library(caTools)
+library(glmnet)
+library(zoo)
+
+# Python support
+library(reticulate)
+use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
+reticulate::py_config()
+```
+
+```{r}
+source("../../r/helpers.R")
+```
+
+## Initializing the ValidMind Client Library
+
+Log in to the ValidMind platform with your registered email address, and navigate to the Documentation Projects page.
+
+### Creating a new Documentation Project
+
+*(Note: if a documentation project has already been created, you can skip this section and head directly "Finding Project API key and secret")*
+
+Clicking on "Create a new project" allows to you to register a new documentation project for our demo model.
+
+Select "Customer Churn model" from the Model drop-down, and "Initial Validation" as Type. Finally, click on "Create Project".
+
+### Finding the project API key and secret
+
+In the "Client Integration" page of the newly created project, you will find the initialization code that allows the client library to associate documentation and tests with the appropriate project. The initialization code configures the following arguments:
+
+-   api_host: Location of the ValidMind API.
+
+-   api_key: Account API key.
+
+-   api_secret: Account Secret key.
+
+-   project: The project identifier. The \`project\` argument is mandatory since it allows the library to associate all data collected with a specific account project.
+
+The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
+
+```{r}
+vm <- import("validmind")
+
+vm$init(
+  api_host="http://localhost:3000/api/v1/tracking",
+  api_key="...",
+  api_secret="...",
+  project="..."
+)
+```
+
+## 3. Load Models
+
+#### Load Pre-Trained Time Series Models
+
+```{r}
+# Currently only fred pre-trained models are available
+fred <- import("validmind.datasets.regression.fred")
+
+fred3 <- fred$load_model('fred_loan_rates_model_3')
+# model_A <- fred3[[1]] - this is a pre-trained model so it can't be loaded in R
+train_df_A <- fred3[[2]]
+test_df_A <- fred3[[3]]
+
+fred4 <- fred$load_model('fred_loan_rates_model_4')
+# model_B <- fred4[[1]] - this is a pre-trained model so it can't be loaded in R
+train_df_B <- fred4[[2]]
+test_df_B <- fred4[[3]]
+```
+
+Train two models:
+
+- model_A is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" as exogenous variable
+- model_B is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" and "FEDFUNDS" as exogenous variables
+
+```{r}
+model_A <- lm(MORTGAGE30US ~ GS10, data=train_df_A)
+summary(model_A)
+```
+```{r}
+model_B <- lm(MORTGAGE30US ~ GS10 + FEDFUNDS, data=train_df_B)
+summary(model_B)
+```
+
+#### Create ValidMind Datasets
+
+```{r}
+# Initialize training and testing datasets for model A
+vm_train_ds_A <- vm$init_dataset(
+  dataset=train_df_A,
+  target_column=fred$target_column
+)
+vm_test_ds_A <- vm$init_dataset(
+  dataset=test_df_A,
+  target_column=fred$target_column
+)
+
+# Initialize training and testing datasets for model B
+vm_train_ds_B <- vm$init_dataset(
+  dataset=train_df_B,
+  target_column=fred$target_column
+)
+vm_test_ds_B <- vm$init_dataset(
+  dataset=test_df_B,
+  target_column=fred$target_column
+)
+```
+#### Create ValidMind Models
+
+```{r}
+model_A_path = save_model(model_A)
+model_B_path = save_model(model_B)
+```
+
+```{r}
+# Initialize model A
+vm_model_A <- vm$init_r_model(
+    model_path=model_A_path,
+    train_ds=vm_train_ds_A,
+    test_ds=vm_test_ds_A
+)
+
+# Initialize model B
+vm_model_B <- vm$init_r_model(
+    model_path=model_B_path,
+    train_ds=vm_train_ds_B,
+    test_ds=vm_test_ds_B
+)
+
+list_of_models <- list(vm_model_A, vm_model_B)
+```
+
+## 4. Model Validation
+
+### User Configuration of Test Suite
+
+Users can input the configuration to a test suite using **`config`**, allowing fine-tuning the suite according to their specific data requirements.
+
+**Time Series Forecast params**
+- `transformation` specify the desired plotting settings for regression forecast evaluation. In this particular configuration, the chosen transformation is "integrate."
+
+```{r}
+config <- list(
+  regression_forecast_plot_levels = list(transformation = "integrate"),
+  regression_sensitivity_plot = list(
+
+    transformation = "integrate",
+    shocks = c(0.1, 0.2)
+  )
+)
+```
+
+```{r}
+suite_results <- vm$run_test_suite(
+    "time_series_model_validation",
+    model=vm_model_B,
+    models=list_of_models,
+    config=config,
+    fail_fast = TRUE,
+)
+```
+
+```{r}
+summarize_results(suite_results)
+```

@@ -5,24 +5,28 @@ Entrypoint for test suites.
 """
 import pandas as pd
 
-from .test_suites import (
-    BinaryClassifierFullSuite,
-    BinaryClassifierModelValidation,
-    TabularDataset,
-    TimeSeriesDataset,
-    TimeSeriesModelValidation,
-)
 from ..logging import get_logger
 from ..test_plans import get_by_id as get_test_plan
 from ..tests import load_test
 from ..utils import format_dataframe
 from ..vm_models import TestSuite
+from .test_suites import (
+    ClassifierFullSuite,
+    ClassifierModelValidation,
+    LLMClassifierFullSuite,
+    NLPClassifierFullSuite,
+    TabularDataset,
+    TimeSeriesDataset,
+    TimeSeriesModelValidation,
+)
 
 logger = get_logger(__name__)
 
 core_test_suites = {
-    "binary_classifier_full_suite": BinaryClassifierFullSuite,
-    "binary_classifier_model_validation": BinaryClassifierModelValidation,
+    "classifier_full_suite": ClassifierFullSuite,
+    "classifier_model_validation": ClassifierModelValidation,
+    "llm_classifier_full_suite": LLMClassifierFullSuite,
+    "nlp_classifier_full_suite": NLPClassifierFullSuite,
     "tabular_dataset": TabularDataset,
     "time_series_dataset": TimeSeriesDataset,
     "time_series_model_validation": TimeSeriesModelValidation,

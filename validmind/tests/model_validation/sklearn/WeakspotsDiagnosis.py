@@ -61,11 +61,6 @@ class WeakspotsDiagnosis(ThresholdTest):
         """
 
     def run(self):
-        # model_library = Model.model_library(self.model.model)
-        # if model_library == "statsmodels" or model_library == "pytorch":
-        #     print(f"Skiping Weakspots Diagnosis test for {model_library} models")
-        #     return
-
         thresholds = self.params["thresholds"]
 
         # Ensure there is a threshold for each metric
@@ -77,6 +72,11 @@ class WeakspotsDiagnosis(ThresholdTest):
             features_list = self.model.train_ds.get_features_columns()
         else:
             features_list = self.params["features_columns"]
+
+        if self.model.train_ds.text_column in features_list:
+            raise ValueError(
+                "Skiping Weakspots Diagnosis test for the dataset with text column"
+            )
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(

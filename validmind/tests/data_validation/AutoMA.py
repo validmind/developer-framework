@@ -24,7 +24,7 @@ class AutoMA(Metric):
         if "max_ma_order" not in self.params:
             raise ValueError("max_ma_order must be provided in params")
 
-        max_ma_order = self.params["max_ma_order"]
+        max_ma_order = int(self.params["max_ma_order"])
 
         df = self.dataset.df
 

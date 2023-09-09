@@ -10,9 +10,9 @@ from typing import ClassVar, List, Union
 import ipywidgets as widgets
 from IPython.display import display
 
-from ..errors import MissingRequiredTestContextError
+from ..errors import MissingRequiredTestContextError, should_raise_on_fail_fast
 from ..logging import get_logger, log_performance
-from ..tests import load_test, LoadTestError
+from ..tests import LoadTestError, load_test
 from ..utils import clean_docstring, is_notebook, run_async, run_async_check
 from .dataset import VMDataset
 from .model import VMModel
@@ -40,6 +40,7 @@ class TestPlan:
     _global_config: dict() = None
     _test_configs: dict() = None
     test_context: TestContext = None
+    fail_fast: bool = False
 
     # Reference to the test classes (dynamic import after initialization)
     _tests: List[object] = None
@@ -218,7 +219,7 @@ class TestPlan:
             logger.debug(f"Checking if required input '{element}' is present")
             if not recursive_attr_check(self, element):
                 raise MissingRequiredTestContextError(
-                    f"{element}' is required_inputs and must be passed "
+                    f"{element}' is a required input and must be passed "
                     "as a keyword argument to the test plan"
                 )
 
@@ -267,6 +268,7 @@ class TestPlan:
 
     def _run_test(self, test):
         try:
+            test.validate_context()
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
             log_performance(
                 func=test.run,
@@ -274,7 +276,13 @@ class TestPlan:
                 logger=logger,
             )()  # this is a decorator so we need to call it
         except Exception as e:
-            logger.error(f"Failed to run test '{test.name}': {e}")
+            # Re-raise the exception if we are in fail fast mode
+            if self.fail_fast and should_raise_on_fail_fast(e):
+                raise e
+
+            logger.error(
+                f"Failed to run test '{test.name}': ({e.__class__.__name__}) {e}"
+            )
             test.result = TestPlanFailedResult(
                 name=f"Failed {test.test_type}",
                 error=e,
@@ -323,8 +331,6 @@ class TestPlan:
                 model=self.model,
                 models=self.models,
             )
-
-        self.validate_context()
 
         if self.pbar is None:
             self._init_pbar(render_summary=render_summary, send=send)

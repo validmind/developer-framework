@@ -6,8 +6,10 @@ Dataset class wrapper
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
+
 from .dataset_utils import parse_dataset_variables
 
 
@@ -51,6 +53,7 @@ class NumpyDataset(VMDataset):
         raw_dataset,
         index=None,
         index_name=None,
+        date_time_index=False,
         column_names=None,
         target_column: str = None,
         text_column=None,
@@ -64,6 +67,7 @@ class NumpyDataset(VMDataset):
             raw_dataset (np.ndarray): The raw dataset as a NumPy array.
             index (np.ndarray): The raw dataset index as a NumPy array.
             index_name (str): The raw dataset index name as a NumPy array.
+            date_time_index (bool): Whether the index is a datetime index.
             column_names (List[str], optional): The column names of the dataset. Defaults to None.
             target_column (str, optional): The target column name of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
@@ -92,12 +96,31 @@ class NumpyDataset(VMDataset):
         self._text_column = text_column
         self._target_class_labels = target_class_labels
         self.options = options
+
         df = pd.DataFrame(self._raw_dataset, columns=self._column_names).infer_objects()
+
         if index is not None:
             df.set_index(pd.Index(index), inplace=True)
             df.index.name = index_name
+
+        if date_time_index:
+            df = self.__attempt_convert_index_to_datetime(df)
+
         self._df = df
         self.fields = parse_dataset_variables(self._df, self.options)
+
+    def __attempt_convert_index_to_datetime(self, df):
+        """
+        Attempts to convert the index of the dataset to a datetime index
+        and leaves the index unchanged if it fails.
+        """
+        converted_index = pd.to_datetime(df.index, errors="coerce")
+
+        # The conversion was successful if there are no NaT values
+        if not converted_index.isnull().any():
+            df.index = converted_index
+
+        return df
 
     @property
     def raw_dataset(self) -> np.ndarray:
@@ -308,6 +331,12 @@ class NumpyDataset(VMDataset):
             column for column in categorical_columns if column != self.target_column
         ]
 
+    def target_classes(self):
+        """
+        Returns the unique number of target classes for the target (Y) variable.
+        """
+        return [str(i) for i in np.unique(self.y)]
+
 
 @dataclass
 class DataFrameDataset(NumpyDataset):
@@ -322,6 +351,7 @@ class DataFrameDataset(NumpyDataset):
         text_column: str = None,
         target_class_labels: dict = None,
         options: dict = None,
+        date_time_index: bool = False,
     ):
         """
         Initializes a DataFrameDataset instance.
@@ -345,6 +375,7 @@ class DataFrameDataset(NumpyDataset):
             text_column=text_column,
             target_class_labels=target_class_labels,
             options=options,
+            date_time_index=date_time_index,
         )
 
 

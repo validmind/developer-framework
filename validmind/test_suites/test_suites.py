@@ -20,33 +20,33 @@ class TabularDataset(TestSuite):
     ]
 
 
-class BinaryClassifierModelValidation(TestSuite):
+class ClassifierModelValidation(TestSuite):
     """
     Test suite for binary classification models.
     """
 
-    name = "binary_classifier_model_validation"
+    name = "classifier_model_validation"
 
     test_plans = [
-        "binary_classifier_metrics",
-        "binary_classifier_validation",
-        "binary_classifier_model_diagnosis",
+        "classifier_metrics",
+        "classifier_validation",
+        "classifier_model_diagnosis",
     ]
 
 
-class BinaryClassifierFullSuite(TestSuite):
+class ClassifierFullSuite(TestSuite):
     """
     Full test suite for binary classification models.
     """
 
-    name = "binary_classifier_full_suite"
+    name = "classifier_full_suite"
 
     test_plans = [
         "tabular_dataset_description",
         "tabular_data_quality",
-        "binary_classifier_metrics",
-        "binary_classifier_validation",
-        "binary_classifier_model_diagnosis",
+        "classifier_metrics",
+        "classifier_validation",
+        "classifier_model_diagnosis",
     ]
 
 
@@ -76,4 +76,34 @@ class TimeSeriesModelValidation(TestSuite):
         "regression_models_evaluation",
         "time_series_forecast",
         "time_series_sensitivity",
+    ]
+
+
+class NLPClassifierFullSuite(TestSuite):
+    """
+    Full test suite for NLP classification models.
+    """
+
+    name = "nlp_classifier_full_suite"
+
+    test_plans = [
+        "text_data_quality",
+        "classifier_metrics",
+        "classifier_validation",
+        "classifier_model_diagnosis",
+    ]
+
+
+class LLMClassifierFullSuite(TestSuite):
+    """
+    Full test suite for LLM classification models.
+    """
+
+    name = "llm_classifier_full_suite"
+
+    test_plans = [
+        "text_data_quality",
+        "classifier_metrics",
+        "classifier_validation",
+        "prompt_validation",
     ]

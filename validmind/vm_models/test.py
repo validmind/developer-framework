@@ -3,7 +3,7 @@
 
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import ClassVar, TypedDict, List
+from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
 from .test_context import TestContextUtils
@@ -35,8 +35,8 @@ class Test(TestContextUtils):
     _ref_id: ClassVar[str]  # unique identifier (populated at init)
     _section_id: ClassVar[str]  # which section of template this test belongs to
 
-    params: dict  # populated by test plan from user-passed config
     result: object  # type should be overridden by parent classes
+    params: dict = None  # populated by test plan from user-passed config
 
     def __post_init__(self):
         """
@@ -45,7 +45,8 @@ class Test(TestContextUtils):
         self._ref_id = str(uuid4())
 
         # TODO: add validation for required inputs
-
+        if self.default_params is None:
+            self.default_params = {}
         self.params = {
             **(self.default_params or {}),
             **(self.params if self.params is not None else {}),

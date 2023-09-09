@@ -5,9 +5,6 @@ Client interface for all data and model validation functions
 """
 
 import pandas as pd
-import numpy as np
-import xgboost as xgb
-from sklearn.linear_model import LinearRegression, LogisticRegression
 
 from .client_config import client_config
 from .errors import (
@@ -15,39 +12,21 @@ from .errors import (
     GetTestSuiteError,
     InitializeTestPlanError,
     InitializeTestSuiteError,
-    InvalidXGBoostTrainedModelError,
     MissingDocumentationTemplate,
     MissingRExtrasError,
     UnsupportedDatasetError,
-    UnsupportedRModelError,
     UnsupportedModelError,
 )
 from .logging import get_logger
-from .template import (
-    get_template_test_suite,
-    preview_template as _preview_template,
-    run_template as _run_template,
-)
+from .models.r_model import RModel
+from .template import get_template_test_suite
+from .template import preview_template as _preview_template
+from .template import run_template as _run_template
 from .test_plans import get_by_id as get_test_plan_by_id
 from .test_suites import get_by_id as get_test_suite_by_id
-
-from .vm_models import (
-    TestPlan,
-    TestSuite,
-)
-
-from .vm_models.model import (
-    VMModel,
-    R_MODEL_TYPES,
-    get_model_class,
-)
-
-from .vm_models.dataset import (
-    VMDataset,
-    NumpyDataset,
-    DataFrameDataset,
-    TorchDataset,
-)
+from .vm_models import TestPlan, TestSuite
+from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
+from .vm_models.model import VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
 
@@ -58,6 +37,7 @@ def init_dataset(
     dataset,
     index=None,
     index_name: str = None,
+    date_time_index: bool = False,
     column_names: list = None,
     options: dict = None,
     text_column: str = None,
@@ -99,6 +79,7 @@ def init_dataset(
             target_column=target_column,
             text_column=text_column,
             target_class_labels=class_labels,
+            date_time_index=date_time_index,
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
@@ -110,6 +91,7 @@ def init_dataset(
             target_column=target_column,
             text_column=text_column,
             target_class_labels=class_labels,
+            date_time_index=date_time_index,
         )
     elif dataset_class == "TensorDataset":
         logger.info("Torch TensorDataset detected. Initializing VM Dataset instance...")
@@ -152,7 +134,9 @@ def init_model(
     """
     class_obj = get_model_class(model=model)
     if not class_obj:
-        raise UnsupportedModelError("Model type is not supported at the moment.")
+        raise UnsupportedModelError(
+            f"Model type {class_obj} is not supported at the moment."
+        )
 
     vm_model = class_obj(
         model=model,  # Trained model instance
@@ -164,7 +148,12 @@ def init_model(
     return vm_model
 
 
-def init_r_model(model_path: str, model_type: str) -> VMModel:
+def init_r_model(
+    model_path: str,
+    train_ds: VMDataset = None,
+    test_ds: VMDataset = None,
+    validation_ds: VMDataset = None,
+) -> VMModel:
     """
     Initializes a VM Model for an R model
 
@@ -187,6 +176,16 @@ def init_r_model(model_path: str, model_type: str) -> VMModel:
     Returns:
         vm.vm.Model: A VM Model instance
     """
+
+    # TODO: proper check for supported models
+    #
+    # if model.get("method") not in R_MODEL_METHODS:
+    #     raise UnsupportedRModelError(
+    #         "R model method must be one of {}. Got {}".format(
+    #             R_MODEL_METHODS, model.get("method")
+    #         )
+    #     )
+
     # first we need to load the model using rpy2
     # since rpy2 is an extra we need to conditionally import it
     try:
@@ -194,51 +193,23 @@ def init_r_model(model_path: str, model_type: str) -> VMModel:
     except ImportError:
         raise MissingRExtrasError()
 
-    if model_type not in R_MODEL_TYPES:
-        raise UnsupportedRModelError(
-            "model_type must be one of {}. Got {}".format(R_MODEL_TYPES, model_type)
-        )
+    r = robjects.r
+    loaded_objects = r.load(model_path)
+    model_name = loaded_objects[0]
+    model = r[model_name]
 
-    # convert the R model to an sklearn or xgboost estimator
-    if model_type == "LogisticRegression":  # load the model
-        r_model = robjects.r["readRDS"](model_path)
-        intercept, *coefficients = robjects.r["coef"](r_model)
+    vm_model = RModel(
+        r=r,
+        model=model,
+        train_ds=train_ds,
+        test_ds=test_ds,
+        validation_ds=validation_ds,
+    )
 
-        model = LogisticRegression()
-        model.intercept_ = intercept
-        model.coef_ = np.array(coefficients).reshape(1, -1)
-        model.classes_ = np.array([0, 1])
-        model.feature_names_in_ = np.array(
-            robjects.r["colnames"](robjects.r["model.matrix"](r_model))[1:]
-        )
-
-    elif model_type == "LinearRegression":
-        r_model = robjects.r["readRDS"](model_path)
-        intercept, *coefficients = robjects.r["coef"](r_model)
-
-        model = LinearRegression()
-        model.intercept_ = intercept
-        model.coef_ = np.array(coefficients).reshape(1, -1)
-
-    elif model_type == "XGBClassifier" or model_type == "XGBRegressor":
-        # validate that path is a .json or .bin file not .rds
-        if not model_path.endswith(".json") and not model_path.endswith(".bin"):
-            raise InvalidXGBoostTrainedModelError(
-                "XGBoost models must be a .json or .bin file. Got {}".format(model_path)
-                + "Please use `xgb.save(model, 'model.json')` to save the model."
-            )
-
-        booster = xgb.Booster(model_file=model_path)
-
-        model = (
-            xgb.XGBClassifier() if model_type == "XGBClassifier" else xgb.XGBRegressor()
-        )
-        model._Booster = booster
-
-    return init_model(model)
+    return vm_model
 
 
-def run_test_plan(test_plan_name, send=True, **kwargs):
+def run_test_plan(test_plan_name, send=True, fail_fast=False, **kwargs):
     """High Level function for running a test plan
 
     This function provides a high level interface for running a test plan. It removes the need
@@ -247,8 +218,9 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
     run it.
 
     Args:
-        test_plan_name (str): The test plan name (e.g. 'binary_classifier')
+        test_plan_name (str): The test plan name (e.g. 'classifier')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test plan. These will provide
             the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
             See the documentation for the specific test plan for more details.
@@ -267,6 +239,7 @@ def run_test_plan(test_plan_name, send=True, **kwargs):
         )
 
     try:
+        kwargs["fail_fast"] = fail_fast
         plan = Plan(**kwargs)
     except ValueError as exc:
         raise InitializeTestPlanError(
@@ -302,6 +275,11 @@ def get_test_suite(
         kwargs: Additional keyword arguments to pass to the TestSuite
     """
     if test_suite_name is None:
+        if client_config.documentation_template is None:
+            raise MissingDocumentationTemplate(
+                "No documentation template found. Please run `vm.init()`"
+            )
+
         return get_template_test_suite(
             client_config.documentation_template,
             section=section,
@@ -312,7 +290,7 @@ def get_test_suite(
     return get_test_suite_by_id(test_suite_name)(*args, **kwargs)
 
 
-def run_test_suite(test_suite_name, send=True, **kwargs):
+def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
     """High Level function for running a test suite
 
     This function provides a high level interface for running a test suite. A test suite is
@@ -320,8 +298,9 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
     class based on the test_suite_name, initialize each of the test plans, and run them.
 
     Args:
-        test_suite_name (str): The test suite name (e.g. 'binary_classifier_full_suite')
+        test_suite_name (str): The test suite name (e.g. 'classifier_full_suite')
         send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
             the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
             See the documentation for the specific test plan, metric or threshold test for more details.
@@ -340,6 +319,7 @@ def run_test_suite(test_suite_name, send=True, **kwargs):
         )
 
     try:
+        kwargs["fail_fast"] = fail_fast
         suite = Suite(**kwargs)
     except ValueError as exc:
         raise InitializeTestSuiteError(
@@ -368,7 +348,9 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, *args, **kwargs):
+def run_documentation_tests(
+    section: str = None, send=True, fail_fast=False, *args, **kwargs
+):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -377,8 +359,13 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
 
     Args:
         section (str, optional): The section to preview. Defaults to None.
+        send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
+        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
+
+    Returns:
+        TestSuite: The completed TestSuite instance
 
     Raises:
         ValueError: If the project has not been initialized
@@ -388,9 +375,11 @@ def run_documentation_tests(section: str = None, *args, **kwargs):
             "No documentation template found. Please run `vm.init()`"
         )
 
-    _run_template(
+    return _run_template(
         template=client_config.documentation_template,
         section=section,
+        send=send,
+        fail_fast=fail_fast,
         *args,
         **kwargs,
     )

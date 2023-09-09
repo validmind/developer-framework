@@ -1,9 +1,10 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from dataclasses import dataclass
 from validmind.vm_models import Figure, Metric
 
 
@@ -58,6 +59,11 @@ class BivariateScatterPlots(Metric):
     def run(self):
         features_pairs = self.params["features_pairs"]
         target_filter = self.params["target_filter"]
+
+        if features_pairs is None:
+            raise ValueError(
+                "The features_pairs parameter is required for this metric."
+            )
 
         figures = self.plot_bivariate_scatter(features_pairs, target_filter)
 

@@ -1,10 +1,12 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
-from dataclasses import dataclass
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
 from validmind.vm_models import Figure, Metric
 
 
@@ -81,22 +83,31 @@ class ScorecardHistogram(Metric):
         return fig
 
     def run(self):
-        target_column = self.model.train_ds.target_column
+        model = self.model[0] if isinstance(self.model, list) else self.model
+
+        target_column = model.train_ds.target_column
         title = self.params["title"]
         target_score = self.params["target_score"]
         target_odds = self.params["target_odds"]
         pdo = self.params["pdo"]
 
-        X_train = self.model.train_ds.x.copy()
-        y_train = self.model.train_ds.y.copy()
-        X_test = self.model.test_ds.x.copy()
-        y_test = self.model.test_ds.y.copy()
+        # Create a copy of training and testing dataframes
+        df_train = model.train_ds._df.copy()
+        df_test = model.test_ds._df.copy()
+
+        # Drop target_column to create feature dataframes
+        X_train = df_train.drop(columns=[target_column])
+        X_test = df_test.drop(columns=[target_column])
+
+        # Subset only target_column to create target dataframes
+        y_train = df_train[[target_column]]
+        y_test = df_test[[target_column]]
 
         X_train_scores = self.compute_scores(
-            self.model, X_train, target_score, target_odds, pdo
+            model, X_train, target_score, target_odds, pdo
         )
         X_test_scores = self.compute_scores(
-            self.model, X_test, target_score, target_odds, pdo
+            model, X_test, target_score, target_odds, pdo
         )
 
         df_train = pd.concat([X_train_scores, y_train], axis=1)
