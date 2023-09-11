@@ -207,11 +207,30 @@ def load_test(test_id, legacy=False):  # noqa: C901
 
 def describe_test(test_name: str = None, test_id: str = None, raw: bool = False):
     """Returns the test by test ID"""
+    matches = []
+
     if test_name is not None:
-        # TODO: we should rethink this a bit
+        # test_name can be passed as PascalCase or snake_case and test_ids are all
+        # PascalCase so we convert test_id and test_name to all lowercase without
+        # underscores to check the match.
+        test_name = test_name.lower().replace("_", "")
         for test_id in list_tests(pretty=False):
-            if test_id.endswith(test_name):
-                break
+            test_id_lower = test_id.lower()
+            if test_id_lower.endswith(test_name):
+                matches.append(test_id)
+    else:
+        matches.append(test_id)
+
+    if len(matches) == 0:
+        print(f"No test found with name: {test_name}")
+        return
+    elif len(matches) > 1:
+        print(
+            f"Found multiple matches for test name: {', '.join(matches)}. Please specify a unique test name."
+        )
+        return
+
+    test_id = matches[0]
 
     if __test_classes is None:
         test = load_test(test_id)
