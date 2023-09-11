@@ -215,8 +215,8 @@ def describe_test(test_name: str = None, test_id: str = None, raw: bool = False)
         # underscores to check the match.
         test_name = test_name.lower().replace("_", "")
         for test_id in list_tests(pretty=False):
-            test_id_lower = test_id.lower()
-            if test_id_lower.endswith(test_name):
+            test_id_lower = test_id.lower().replace("_", "")
+            if test_name == test_id_lower or test_id_lower.endswith(test_name):
                 matches.append(test_id)
     else:
         matches.append(test_id)
