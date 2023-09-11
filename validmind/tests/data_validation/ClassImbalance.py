@@ -81,10 +81,11 @@ class ClassImbalance(ThresholdTest):
             )
 
         resultset = pd.DataFrame(imbalanced_classes)
+        tests_failed = all(resultset["Pass/Fail"] == "Pass")
         results = [
             TestResult(
                 column=target_column,
-                passed=all(resultset["Pass/Fail"]),
+                passed=tests_failed,
                 values=resultset.to_dict(orient="records"),
             )
         ]
@@ -107,7 +108,7 @@ class ClassImbalance(ThresholdTest):
 
         return self.cache_results(
             results,
-            passed=all(resultset["Pass/Fail"]),
+            passed=tests_failed,
             figures=[
                 Figure(
                     for_object=self,
