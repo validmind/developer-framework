@@ -29,7 +29,7 @@ class AIPoweredTest:
         """
         Get just the numeric data in the response string and convert it to an int
 
-        e.g. "Explanation: <some-explanation>\nScore: 8" ->
+        e.g. "Score: 8\nExplanation: <some-explanation>" -> 8
         """
         score = re.search(r"Score: (\d+)", response)
 
@@ -42,9 +42,9 @@ class AIPoweredTest:
         """
         Get just the explanation from the response string
 
-        e.g. "Explanation: <some-explanation>\nScore: 8" -> "<some-explanation>"
+        e.g. "Score: 8\nExplanation: <some-explanation>" -> "<some-explanation>"
         """
-        explanation = re.search(r"Explanation: (.*)", response)
+        explanation = re.search(r"Explanation: (.+)", response, re.DOTALL)
 
         if not explanation:
             raise ValueError("Could not find explanation in response")
