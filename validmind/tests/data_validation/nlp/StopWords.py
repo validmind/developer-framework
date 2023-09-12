@@ -31,6 +31,7 @@ class StopWords(ThresholdTest):
     name = "stop_words"
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
+    tags = ["nlp"]
 
     def description(self):
         return """The purpose of the StopWords test is to perform a data quality test focused on identifying and analyzing

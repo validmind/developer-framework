@@ -23,6 +23,7 @@ class Hashtags(ThresholdTest):
     name = "hashtags"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_hashtags": 25}
+    tags = ["nlp"]
 
     def description(self):
         return """The Hashtags test analyzes the dataset by extracting the text column and applying a regular expression pattern

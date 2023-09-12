@@ -17,6 +17,7 @@ from validmind.vm_models import Figure, Metric, VMDataset
 class Punctuations(Metric):
     name = "punctuations"
     required_inputs = ["dataset", "dataset.text_column"]
+    tags = ["nlp"]
 
     def run(self):
         # Can only run this test if we have a Dataset object

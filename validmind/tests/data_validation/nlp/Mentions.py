@@ -19,6 +19,7 @@ class Mentions(ThresholdTest):
     category = "data_quality"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_mentions": 25}
+    tags = ["nlp"]
 
     def description(self):
         return """The purpose of the Mentions test is to perform a data quality test focused on analyzing mentions within a dataset.
