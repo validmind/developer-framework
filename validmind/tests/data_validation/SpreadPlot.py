@@ -13,7 +13,10 @@ class SpreadPlot(Metric):
 
     name = "spread_plot"
     required_inputs = ["dataset"]
-    tags = ["time_series_data"]
+    metadata = {
+        "task_types": [],
+        "tags": ["time_series_data"],
+    }
 
     @staticmethod
     def plot_spread(series1, series2, ax=None):

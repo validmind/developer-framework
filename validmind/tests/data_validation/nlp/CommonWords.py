@@ -18,7 +18,10 @@ from ....vm_models import Figure, Metric, VMDataset
 class CommonWords(Metric):
     name = "common_words"
     required_inputs = ["dataset", "dataset.text_column"]
-    tags = ["nlp"]
+    metadata = {
+        "task_types": [],
+        "tags": ["nlp"],
+    }
 
     def description(self):
         return """The purpose of the common words test is to analyze a dataset and identify the most common
