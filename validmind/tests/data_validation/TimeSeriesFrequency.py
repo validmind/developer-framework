@@ -24,6 +24,7 @@ class TimeSeriesFrequency(ThresholdTest):
     category = "data_quality"
     name = "time_series_frequency"
     required_inputs = ["dataset"]
+    tags = ["time_series_data"]
 
     def summary(self, results, all_passed):
         """

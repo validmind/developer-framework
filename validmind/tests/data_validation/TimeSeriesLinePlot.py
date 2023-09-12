@@ -15,6 +15,7 @@ class TimeSeriesLinePlot(Metric):
 
     name = "time_series_line_plot"
     required_inputs = ["dataset"]
+    tags = ["time_series_data"]
 
     def run(self):
         # Check if index is datetime

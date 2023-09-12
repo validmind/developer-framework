@@ -19,6 +19,7 @@ class AutoAR(Metric):
     name = "auto_ar"
     required_inputs = ["dataset"]
     default_params = {"max_ar_order": 3}
+    tags = ["time_series_data"]
 
     def run(self):
         if "max_ar_order" not in self.params:

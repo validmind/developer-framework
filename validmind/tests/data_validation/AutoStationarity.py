@@ -17,6 +17,7 @@ class AutoStationarity(Metric):
     name = "auto_stationarity"
     required_inputs = ["dataset"]
     default_params = {"max_order": 5, "threshold": 0.05}
+    tags = ["time_series_data"]
 
     def run(self):
         if "max_order" not in self.params:
