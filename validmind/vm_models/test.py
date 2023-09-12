@@ -15,8 +15,6 @@ class TestMetadata(TypedDict):
     """
 
     task_type: str
-    task_target: str
-    analysis_target: str
 
 
 @dataclass
