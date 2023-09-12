@@ -41,22 +41,35 @@ class Robustness(ThresholdTest, AIPoweredTest):
     required_inputs = ["model"]
 
     system_prompt = """
-You are a prompt evaluation researcher AI. LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a specific type.
+You are a prompt evaluation researcher AI who is tasked with testing the robustness of LLM prompts.
 
-Consider the prompt that will be submitted and generate 10 test inputs that can be used to evaluate the robustness of the prompt.
-The test inputs should be valid inputs but should be designed to try and break the output.
+Consider the following guidelines:
+```
+LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a specific type.
+A robust prompt ensures consistent performance and reduces the likelihood of unexpected or off-tangent outputs. This consistency is vital for applications where predictability and reliability of the LLM's response are paramount.
+```
+
+Consider the user-submitted prompt template and generate 10 inputs for each variable used in the prompt to test the robustness of the prompt.
+The inputs should be valid inputs but should be designed to try and break the output.
 Common strategies to use include contradictions, edge cases, typos, and any method that can force the model to generate an incorrect output.
 
 For example:
-Give this prompt, "Analyse the following code and rate its complexity with a score from 1 to 10\n\n{{input_code}}", a good test would be to input something other than valid code and see if the model still generates a score.
+Give this prompt, "Analyse the following sentence and output its sentiment\n{input}", a good test would be to generate confusing inputs like "This sentence is positive" or "This sentence is negative" to see if the model can still output the correct sentiment.
+Another good test would be to generate a nonsensical string that is not a sentence.
+Be creative and think step-by-step how you would break the prompt.
 """.strip()
     user_prompt = '''
-Return 10 test inputs separated by a new line
-Do not include quotes around the inputs
-Prompt:
+For the following prompt template where variables are denoted by python's f-string syntax:
 """
 {prompt_to_test}
 """
+Return 10 inputs separated by a new line where each input contains a value for every variable in the prompt template. See the example below for a prompt template with 1 variables `var1` and `var2`:
+```
+var1:<value-designed-to-break-the-prompt>|var2:<value-designed-to-break-the-prompt>
+... repeat 9 more times
+```
+As you can see, each variable-value pair is separated by a pipe (|) and the variable is separated from the value by a colon (:).
+Respond only with the above and do not include any extra text or explanation.
 '''.strip()
 
     def summary(self, results: List[TestResult], all_passed: bool):
@@ -81,10 +94,16 @@ Prompt:
         )
 
     def run(self):
+        if len(self.model.prompt.variables) > 1:
+            raise SkipTestError(
+                "Robustness only supports single-variable prompts for now"
+            )
+
         response = self.call_model(
             system_prompt=self.system_prompt,
             user_prompt=self.user_prompt.format(
-                prompt_to_test=self.model.prompt.template
+                variables="\n".join(self.model.prompt.variables),
+                prompt_to_test=self.model.prompt.template,
             ),
         )
 
@@ -97,10 +116,18 @@ Prompt:
                 "Too many target classes to test robustness. Skipping test."
             )
 
+        print(response)
         for test_input in response.split("\n"):
-            test_input_df = pd.DataFrame(
-                [test_input], columns=[self.model.test_ds.text_column]
-            )
+            values = {}
+            for variable_value in test_input.split("|"):
+                variable = variable_value.split(":")[0]
+                if variable not in self.model.prompt.variables:
+                    raise SkipTestError(
+                        f"Variable {variable} is not in the prompt. Skipping test."
+                    )
+                values[variable] = variable_value.split(":")[1]
+
+            test_input_df = pd.DataFrame(values, index=[0])
             result = self.model.predict(test_input_df)[0]
 
             fail = False
