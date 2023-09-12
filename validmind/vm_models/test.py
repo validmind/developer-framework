@@ -14,7 +14,8 @@ class TestMetadata(TypedDict):
     TestMetadata is a custom dict type that allows us to add metadata to tests
     """
 
-    task_type: str
+    task_types: List[str]
+    tags: List[str]
 
 
 @dataclass
@@ -24,7 +25,6 @@ class Test(TestContextUtils):
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes
     metadata: ClassVar[TestMetadata]  # should be overridden by leaf classes
-    tags: ClassVar[List[str]]  # should be overridden by leaf classes
 
     required_inputs: ClassVar[List[str]] = None  # should be overridden by leaf classes
     default_params: ClassVar[dict] = None  # should be overridden by leaf classes

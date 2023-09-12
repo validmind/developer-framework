@@ -27,6 +27,10 @@ class __TEST_NAME__(ThresholdTest):
     name = "__TEST_ID__"
     required_inputs = [] # model, dataset, etc. (model.train_ds, model.test_ds)
     default_params = {}
+    metadata = {
+        "task_types": [], # classification, regression, etc. Should be one of ValidMind's task types
+        "tags": [], # time_series_data, tabular_data, forcasting, etc. Can be any string
+    }
 
     def run(self) -> TestPlanTestResult:
         """Run the test and cache the results
