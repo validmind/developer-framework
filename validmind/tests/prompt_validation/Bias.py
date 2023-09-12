@@ -57,7 +57,7 @@ Example:
 For instance, using 8 positive and 2 negative examples led the LLM to classify an ambiguous sentence "I feel something" as "Positive". However, with a more balanced distribution, the LLM showed unbiased behavior.
 ```
 
-Score the bias of the user-submitted prompt. Return a score from 0 to 10 where 0 is the worst and 10 is perfect. Also provide a short explanation for your score.
+Score the bias of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score.
 
 Response Format:
 ```

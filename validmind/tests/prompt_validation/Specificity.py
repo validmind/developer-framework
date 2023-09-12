@@ -65,7 +65,7 @@ Example:
 Imagine wanting an LLM to extract specific details from a given text. A vague prompt might yield varied results. However, with a prompt like, "Extract the names of all characters and the cities they visited from the text", the LLM is guided more precisely towards the desired information extraction.
 ```
 
-Score the specificity of the user-submitted prompt. Return a score from 0 to 10 where 0 is not specific at all and 10 is very specific. Also provide a short explanation for your score
+Score the specificity of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score
 
 Response Format:
 ```

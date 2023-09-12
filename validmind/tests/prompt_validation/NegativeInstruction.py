@@ -63,7 +63,7 @@ Example:
 Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as, "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the genres mentioned, inadvertently producing undesired results. On the other hand, a positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides clear guidance on the desired output.
 '''
 
-Based on this best practice, please score the user-submitted prompt on a scale of 1-10, with 10 being the best score and 1 being the worst score.
+Based on this best practice, please score the user-submitted prompt on a scale of 1-10, where 10 is a perfect score.
 Provide an explanation for your score.
 
 Response Format:
