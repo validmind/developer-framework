@@ -95,13 +95,14 @@ test_df_B <- fred4[[3]]
 
 Train two models:
 
-- model_A is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" as exogenous variable
-- model_B is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" and "FEDFUNDS" as exogenous variables
+-   model_A is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" as exogenous variable
+-   model_B is a OLS with "MORTGAGE30US" as endogenous variable and "GS10" and "FEDFUNDS" as exogenous variables
 
 ```{r}
 model_A <- lm(MORTGAGE30US ~ GS10, data=train_df_A)
 summary(model_A)
 ```
+
 ```{r}
 model_B <- lm(MORTGAGE30US ~ GS10 + FEDFUNDS, data=train_df_B)
 summary(model_B)
@@ -130,6 +131,7 @@ vm_test_ds_B <- vm$init_dataset(
   target_column=fred$target_column
 )
 ```
+
 #### Create ValidMind Models
 
 ```{r}
@@ -161,14 +163,12 @@ list_of_models <- list(vm_model_A, vm_model_B)
 
 Users can input the configuration to a test suite using **`config`**, allowing fine-tuning the suite according to their specific data requirements.
 
-**Time Series Forecast params**
-- `transformation` specify the desired plotting settings for regression forecast evaluation. In this particular configuration, the chosen transformation is "integrate."
+**Time Series Forecast params** - `transformation` specify the desired plotting settings for regression forecast evaluation. In this particular configuration, the chosen transformation is "integrate."
 
 ```{r}
 config <- list(
   regression_forecast_plot_levels = list(transformation = "integrate"),
   regression_sensitivity_plot = list(
-
     transformation = "integrate",
     shocks = c(0.1, 0.2)
   )
@@ -178,10 +178,9 @@ config <- list(
 ```{r}
 suite_results <- vm$run_test_suite(
     "time_series_model_validation",
-    model=vm_model_B,
-    models=list_of_models,
-    config=config,
-    fail_fast = TRUE,
+    model = vm_model_B,
+    models = list_of_models,
+    config = config,
 )
 ```
 
