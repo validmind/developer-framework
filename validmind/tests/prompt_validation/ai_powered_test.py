@@ -1,5 +1,6 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
+import os
 import re
 
 import openai
@@ -10,7 +11,19 @@ class AIPoweredTest:
     Base class for tests powered by an LLM
     """
 
-    model_name = "gpt-4"
+    model_name = "gpt-3.5-turbo"
+
+    def __init__(self, *args, **kwargs):
+        if not os.environ.get("OPENAI_API_KEY"):
+            raise ValueError("OPENAI_API_KEY must be set to run AI-powered tests")
+
+        # this should be set already but just set it again in case user loaded dotenv
+        # after the module was initialized
+        openai.api_key = os.environ.get("OPENAI_API_KEY")
+
+        # allow overriding the model name (if user has access to and wants to use GPT4)
+        if os.environ.get("VM_OPENAI_MODEL"):
+            self.model_name = os.environ.get("VM_OPENAI_MODEL")
 
     def call_model(self, user_prompt: str, system_prompt: str = None):
         """
