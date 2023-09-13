@@ -16,8 +16,9 @@ Usage:
 """
 
 import os
-import click
 from pathlib import Path
+
+import click
 
 
 def _camel_to_snake(name):
