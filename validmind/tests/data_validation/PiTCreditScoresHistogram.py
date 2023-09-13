@@ -19,6 +19,11 @@ class PiTCreditScoresHistogram(Metric):
     required_context = ["dataset"]
     default_params = {"title": "Histogram of Scores"}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This metric calculates the scores for each instance in the training and test datasets,

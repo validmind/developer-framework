@@ -38,13 +38,13 @@ class WeakspotsDiagnosis(ThresholdTest):
             "recall": 0.5,
             "f1": 0.7,
         },
+    }
 
     metadata = {
         "task_types": [],
         "tags": [],
     }
 
-    }
     # TODO: allow configuring
     default_metrics = {
         "accuracy": metrics.accuracy_score,

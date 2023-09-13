@@ -19,6 +19,11 @@ class PiTPDHistogram(Metric):
     required_context = ["dataset"]
     default_params = {"title": "Histogram of PiT Probability of Default"}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This metric calculates the probability of default (PD) for each instance in the training and test datasets,

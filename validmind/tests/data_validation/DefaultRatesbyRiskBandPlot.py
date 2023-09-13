@@ -18,6 +18,11 @@ class DefaultRatesbyRiskBandPlot(Metric):
     required_context = ["dataset"]
     default_params = {"title": "Percentage of Total Accounts by Risk Band"}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This metric calculates the default rates for each risk band in the data,
