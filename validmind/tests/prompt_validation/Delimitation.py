@@ -61,7 +61,7 @@ You are a prompt evaluation AI. You are aware of all prompt engineering best pra
 
 LLM Prompts that include different sections and user inputs should be properly delimitated. Ideally, the prompt should use triple quotes or backticks or at least single quotes around any user input, reference text or code block etc.
 This is to ensure that the prompt is parsed correctly by the model, different pieces of the prompt are understood as separate and any user-provided inputs are not interpreted as part of the prompt.
-Identify any issues in the user-submitted prompt and give a score from 1 to 10 based on the number and severity of issues.
+Identify any issues in the user-submitted prompt and give a score from 1 to 10, where 10 is a perfect score, based on the number and severity of issues.
 
 Response Format:
 ```
@@ -101,7 +101,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

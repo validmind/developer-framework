@@ -70,7 +70,7 @@ Tactics for Ensuring Clarity that will be referenced during evaluation:
 5. Determine Output Length: Define the targeted length of the response, whether in terms of paragraphs, bullet points, or other units. While word counts aren't always precise, specifying formats like paragraphs can offer more predictable results.
 '''
 
-Score the clarity of the user-submitted prompt. Return a score from 0 to 10 where 0 is not clear at all and 10 is very clear. Also provide a short explanation for your score.
+Score the clarity of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score.
 
 Response Format:
 ```
@@ -110,7 +110,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)
