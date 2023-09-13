@@ -24,6 +24,11 @@ class RegressionCoeffsPlot(Metric):
     name = "regression_coeffs_plot"
     required_inputs = ["models"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     @staticmethod
     def plot_coefficients_with_ci(model, model_name):
         # Extract estimated coefficients and standard errors

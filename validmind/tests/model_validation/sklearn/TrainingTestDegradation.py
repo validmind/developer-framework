@@ -31,6 +31,12 @@ class TrainingTestDegradation(ThresholdTest):
         "metrics": ["accuracy", "precision", "recall", "f1"],
         "max_threshold": 0.10,  # Maximum 10% degradation
     }
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     default_metrics = {
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0, average="micro"),

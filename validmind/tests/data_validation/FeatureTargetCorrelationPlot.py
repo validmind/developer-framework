@@ -19,6 +19,11 @@ class FeatureTargetCorrelationPlot(Metric):
     required_inputs = ["dataset"]
     default_params = {"features": None, "fig_height": 600}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         features = self.params["features"]
         fig_height = self.params["fig_height"]

@@ -27,6 +27,11 @@ class MinimumROCAUCScore(ThresholdTest):
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def summary(self, results: List[TestResult], all_passed: bool):
         """
         The roc auc score test returns results like these:

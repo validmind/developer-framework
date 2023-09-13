@@ -26,6 +26,11 @@ class TooManyZeroValues(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"max_percent_threshold": 0.03}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def summary(self, results: List[TestResult], all_passed: bool):
         """
         The zeros test returns results like these:

@@ -19,6 +19,11 @@ class ChiSquaredFeaturesTable(Metric):
     required_inputs = ["dataset"]
     default_params = {"cat_features": None, "p_threshold": 0.05}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         target_column = self.dataset.target_column
         cat_features = self.params["cat_features"]

@@ -25,6 +25,11 @@ class SeasonalDecompose(Metric):
     required_inputs = ["dataset"]
     default_params = {"seasonal_model": "additive"}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def store_seasonal_decompose(self, column, sd_one_column):
         """
         Stores the seasonal decomposition results in the test context so they

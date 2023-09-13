@@ -19,6 +19,11 @@ class ROCCurve(Metric):
     name = "roc_curve"
     required_inputs = ["model"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         The ROC curve shows the trade-off between the true positive rate (TPR) and false positive rate (FPR)

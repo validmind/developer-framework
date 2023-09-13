@@ -20,6 +20,11 @@ class RegressionModelForecastPlot(Metric):
     name = "regression_forecast_plot"
     default_params = {"start_date": None, "end_date": None}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows plots of training and test datasets vs forecast trainining and forecast test.

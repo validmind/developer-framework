@@ -20,6 +20,11 @@ class RegressionFeatureSignificance(Metric):
     name = "regression_feature_significance"
     default_params = {"fontsize": 10, "p_threshold": 0.05}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows plots of feature p-values for each model.

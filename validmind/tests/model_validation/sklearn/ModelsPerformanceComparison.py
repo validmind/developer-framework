@@ -20,6 +20,11 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     name = "models_performance_comparison"
     required_inputs = ["model", "models", "model.test_ds"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows the models performance comparison on the training data. Popular

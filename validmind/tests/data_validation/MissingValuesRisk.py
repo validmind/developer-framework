@@ -17,6 +17,11 @@ class MissingValuesRisk(Metric):
     name = "missing_values_risk"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section provides an analysis of the risk associated with missing values in the dataset, providing two risk measures: 1) Percentage of missing values in the dataset 2) Percentage of variables with missing values.

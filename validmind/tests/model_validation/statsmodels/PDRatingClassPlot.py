@@ -16,7 +16,13 @@ class PDRatingClassPlot(Metric):
 
     name = "pd_rating_class_plot"
     required_inputs = ["model"]
-    default_parameters = {
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
+    default_params = {
         "title": "PD by Rating Class",
         "rating_classes": ["A", "B", "C", "D"],
     }

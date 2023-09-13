@@ -16,6 +16,11 @@ class TabularNumericalHistograms(Metric):
     name = "tabular_numerical_histograms"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         df = self.dataset.df
 

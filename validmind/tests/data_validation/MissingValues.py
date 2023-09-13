@@ -24,6 +24,11 @@ class MissingValues(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def summary(self, results: List[TestResult], all_passed: bool):
         """
         The missing values test returns results like these:

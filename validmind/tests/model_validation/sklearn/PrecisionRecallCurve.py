@@ -19,6 +19,11 @@ class PrecisionRecallCurve(Metric):
     name = "pr_curve"
     required_inputs = ["model"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         The precision-recall curve shows the trade-off between precision and recall for different thresholds.

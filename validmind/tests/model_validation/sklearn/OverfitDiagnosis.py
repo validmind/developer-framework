@@ -29,6 +29,12 @@ class OverfitDiagnosis(ThresholdTest):
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }

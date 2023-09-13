@@ -18,6 +18,11 @@ class DescriptiveStatistics(Metric):
     name = "descriptive_statistics"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section provides descriptive statistics for numerical

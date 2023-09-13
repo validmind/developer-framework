@@ -30,6 +30,11 @@ class FeatureImportanceAndSignificance(Metric):
         "bar_width": 0.3,
     }
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def compute_p_values_and_feature_importances(
         self, regression_model, decision_tree_model
     ):

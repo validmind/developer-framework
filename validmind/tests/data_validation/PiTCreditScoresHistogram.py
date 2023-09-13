@@ -17,7 +17,7 @@ class PiTCreditScoresHistogram(Metric):
 
     name = "pit_credit_scores_histogram"
     required_context = ["dataset"]
-    default_parameters = {"title": "Histogram of Scores"}
+    default_params = {"title": "Histogram of Scores"}
 
     def description(self):
         return """

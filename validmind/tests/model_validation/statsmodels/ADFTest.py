@@ -18,6 +18,11 @@ class ADFTest(ThresholdTest):
     name = "adf_test"
     default_params = {"threshold": 0.05}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         x_train = self.train_ds.raw_dataset
 

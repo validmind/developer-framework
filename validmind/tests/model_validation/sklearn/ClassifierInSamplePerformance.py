@@ -14,6 +14,11 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
     name = "classifier_in_sample_performance"
     required_inputs = ["model", "model.train_ds"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows the performance of the model on the training data. Popular

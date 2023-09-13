@@ -18,6 +18,11 @@ class ConfusionMatrix(Metric):
     name = "confusion_matrix"
     required_inputs = ["model"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         A confusion matrix is a table that is used to describe the performance of a classification

@@ -51,6 +51,11 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
 

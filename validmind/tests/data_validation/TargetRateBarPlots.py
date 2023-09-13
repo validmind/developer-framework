@@ -17,6 +17,11 @@ class TargetRateBarPlots(Metric):
     required_inputs = ["dataset"]
     default_params = {"default_column": None, "columns": None}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def plot_loan_default_ratio(self, default_column, columns=None):
         df = self.dataset.df
 

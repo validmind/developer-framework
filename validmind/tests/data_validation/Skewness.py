@@ -29,6 +29,11 @@ class Skewness(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"max_threshold": 1}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def summary(self, results: List[TestResult], all_passed: bool):
         """
         The skewness test returns results like these:

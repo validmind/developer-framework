@@ -23,6 +23,11 @@ class RegressionModelSensitivityPlot(Metric):
         "shocks": [0.1],
     }
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         logger.info(self.params)
 

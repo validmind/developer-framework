@@ -27,6 +27,11 @@ class TimeSeriesMissingValues(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def summary(self, results, all_passed):
         results_table = [
             {

@@ -38,6 +38,11 @@ class PermutationFeatureImportance(Metric):
         "figure_height": 1000,
     }
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         x = self.model.train_ds.x_df()
         y = self.model.train_ds.y_df()

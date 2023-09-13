@@ -16,7 +16,7 @@ class DefaultRatesbyRiskBandPlot(Metric):
 
     name = "default_rates_by_risk_band_plot"
     required_context = ["dataset"]
-    default_parameters = {"title": "Percentage of Total Accounts by Risk Band"}
+    default_params = {"title": "Percentage of Total Accounts by Risk Band"}
 
     def description(self):
         return """

@@ -19,6 +19,11 @@ class ANOVAOneWayTable(Metric):
     required_inputs = ["dataset"]
     default_params = {"features": None, "p_threshold": 0.05}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         features = self.params["features"]
         p_threshold = self.params["p_threshold"]

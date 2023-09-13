@@ -18,6 +18,11 @@ class MissingValuesBarPlot(Metric):
     required_inputs = ["dataset"]
     default_params = {"threshold": 80, "fig_height": 600}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         threshold = self.params["threshold"]
         fig_height = self.params["fig_height"]

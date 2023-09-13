@@ -22,6 +22,11 @@ class WOEBinPlots(Metric):
     required_context = ["dataset"]
     default_params = {"breaks_adj": None, "fig_height": 600, "fig_width": 500}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         df = self.dataset.df
         target_column = self.dataset.target_column

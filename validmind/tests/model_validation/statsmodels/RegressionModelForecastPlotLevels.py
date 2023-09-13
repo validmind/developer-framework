@@ -20,6 +20,11 @@ class RegressionModelForecastPlotLevels(Metric):
         "transformation": None,
     }
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows plots of training and test datasets vs forecast training and test.

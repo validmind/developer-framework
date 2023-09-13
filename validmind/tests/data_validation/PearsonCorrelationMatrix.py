@@ -18,6 +18,11 @@ class PearsonCorrelationMatrix(Metric):
     name = "pearson_correlation_matrix"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         columns = self.params.get("columns", list(self.dataset.df.columns))
 

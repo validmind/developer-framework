@@ -17,6 +17,11 @@ class TabularDescriptionTables(Metric):
     name = "tabular_description_tables"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section provides descriptive statistics for numerical,

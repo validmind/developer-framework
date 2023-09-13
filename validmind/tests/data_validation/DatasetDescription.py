@@ -24,6 +24,11 @@ class DatasetDescription(Metric):
     name = "dataset_description"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         self.describe()
         # This will populate the "fields" attribute in the dataset object

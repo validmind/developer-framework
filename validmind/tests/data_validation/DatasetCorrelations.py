@@ -18,6 +18,11 @@ class DatasetCorrelations(Metric):
     name = "dataset_correlations"
     required_inputs = ["dataset"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     # TODO: allow more metric metadata to be set, not just scope
     def __post_init__(self):
         self.scope = self.dataset.type

@@ -18,6 +18,11 @@ class WOEBinTable(Metric):
     required_context = ["dataset"]
     default_params = {"breaks_adj": None}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         target_column = self.dataset.target_column
         breaks_adj = self.params["breaks_adj"]

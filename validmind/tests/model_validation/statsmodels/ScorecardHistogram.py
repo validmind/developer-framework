@@ -18,7 +18,13 @@ class ScorecardHistogram(Metric):
 
     name = "scorecard_histogram"
     required_inputs = ["model"]
-    default_parameters = {
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
+    default_params = {
         "title": "Histogram of Scores",
         "target_score": 600,
         "target_odds": 50,

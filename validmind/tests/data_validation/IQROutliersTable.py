@@ -19,6 +19,11 @@ class IQROutliersTable(Metric):
     required_inputs = ["dataset"]
     default_params = {"features": None, "threshold": 1.5}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         features = self.params["features"]
         threshold = self.params["threshold"]

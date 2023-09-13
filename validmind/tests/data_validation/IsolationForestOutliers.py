@@ -31,6 +31,12 @@ class IsolationForestOutliers(Metric):
         "contamination": 0.1,
         "features_columns": None,
     }
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     required_inputs = ["dataset"]
 
     def description(self):

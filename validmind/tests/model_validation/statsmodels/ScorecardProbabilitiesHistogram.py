@@ -17,7 +17,13 @@ class ScorecardProbabilitiesHistogram(Metric):
 
     name = "scorecard_probabilities_histogram"
     required_inputs = ["model"]
-    default_parameters = {
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
+    default_params = {
         "title": "Probability of Default by Score Bucket",
         "target_score": 600,
         "target_odds": 50,

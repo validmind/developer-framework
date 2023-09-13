@@ -19,6 +19,12 @@ class SHAPGlobalImportance(Metric):
     """
 
     required_inputs = ["model"]
+
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     name = "shap"
 
     def description(self):

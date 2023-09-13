@@ -27,6 +27,11 @@ class PopulationStabilityIndex(Metric):
     name = "psi"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         PSI is a widely-used metric to assess the stability of a predictive model's score distribution when comparing

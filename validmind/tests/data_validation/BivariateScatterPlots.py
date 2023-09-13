@@ -19,6 +19,11 @@ class BivariateScatterPlots(Metric):
     required_inputs = ["dataset"]
     default_params = {"features_pairs": None, "target_filter": None}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def plot_bivariate_scatter(self, features_pairs, target_filter):
         status_var = self.dataset.target_column
         figures = []

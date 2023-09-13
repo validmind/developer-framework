@@ -19,6 +19,11 @@ class HeatmapFeatureCorrelations(Metric):
     required_inputs = ["dataset"]
     default_params = {"declutter": None, "fontsize": None, "num_features": None}
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         features = self.params["features"]
         declutter = self.params.get("declutter", False)

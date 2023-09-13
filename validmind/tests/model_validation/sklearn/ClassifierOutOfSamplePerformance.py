@@ -14,6 +14,11 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     name = "classifier_out_of_sample_performance"
     required_inputs = ["model", "model.test_ds"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows the performance of the model on the test data. Popular

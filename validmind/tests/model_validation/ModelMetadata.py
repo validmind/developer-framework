@@ -47,6 +47,11 @@ class ModelMetadata(Metric):
     name = "model_metadata"
     required_inputs = ["model"]
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     column_labels = {
         "architecture": "Modeling Technique",
         "framework": "Modeling Framework",

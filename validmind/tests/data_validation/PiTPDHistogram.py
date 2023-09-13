@@ -17,7 +17,7 @@ class PiTPDHistogram(Metric):
 
     name = "pit_pd_histogram"
     required_context = ["dataset"]
-    default_parameters = {"title": "Histogram of PiT Probability of Default"}
+    default_params = {"title": "Histogram of PiT Probability of Default"}
 
     def description(self):
         return """
