@@ -24,6 +24,11 @@ class ClassifierPerformance(Metric):
 
     name = "classifier_performance"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def binary_summary(self, metric_value: dict):
         """
         When building a binary classification summary we take the positive class

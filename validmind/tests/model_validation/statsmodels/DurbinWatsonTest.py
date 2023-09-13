@@ -16,6 +16,11 @@ class DurbinWatsonTest(Metric):
 
     name = "durbin_watson"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates DB for each of the dataset features

@@ -16,6 +16,11 @@ class DFGLSArch(Metric):
 
     name = "dickey_fuller_gls"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Dickey-Fuller GLS metric for each of the dataset features

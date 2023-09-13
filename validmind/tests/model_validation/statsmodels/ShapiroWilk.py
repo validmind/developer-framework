@@ -13,6 +13,11 @@ class ShapiroWilk(Metric):
 
     name = "shapiro_wilk"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.

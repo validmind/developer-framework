@@ -13,6 +13,11 @@ class JarqueBera(Metric):
 
     name = "jarque_bera"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates JB for each of the dataset features

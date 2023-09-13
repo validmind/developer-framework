@@ -14,6 +14,11 @@ class RunsTest(Metric):
 
     name = "runs_test"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates the run test for each of the dataset features

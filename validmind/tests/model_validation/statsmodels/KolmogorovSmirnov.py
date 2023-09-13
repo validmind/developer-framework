@@ -16,6 +16,11 @@ class KolmogorovSmirnov(Metric):
 
     name = "kolmogorov_smirnov"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates KS for each of the dataset features

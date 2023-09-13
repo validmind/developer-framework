@@ -17,6 +17,11 @@ class RegressionModelOutsampleComparison(Metric):
 
     name = "regression_outsample_performance"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows Out-of-sample comparison of regression models involves evaluating

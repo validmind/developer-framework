@@ -16,6 +16,11 @@ class PhillipsPerronArch(Metric):
 
     name = "phillips_perron"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates PP metric for each of the dataset features

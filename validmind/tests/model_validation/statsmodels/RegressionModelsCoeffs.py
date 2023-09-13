@@ -16,6 +16,11 @@ class RegressionModelsCoeffs(Metric):
 
     name = "regression_models_coefficients"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows the coefficients of different regression models that were

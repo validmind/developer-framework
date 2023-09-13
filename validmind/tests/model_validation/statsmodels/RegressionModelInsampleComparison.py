@@ -17,6 +17,11 @@ class RegressionModelInsampleComparison(Metric):
 
     name = "regression_insample_performance"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def description(self):
         return """
         This section shows In-sample comparison of regression models involves comparing

@@ -13,6 +13,11 @@ class ADF(Metric):
 
     name = "adf"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates ADF metric for each of the dataset features

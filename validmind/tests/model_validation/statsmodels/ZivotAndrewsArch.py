@@ -16,6 +16,11 @@ class ZivotAndrewsArch(Metric):
 
     name = "zivot_andrews"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Zivot-Andrews metric for each of the dataset features

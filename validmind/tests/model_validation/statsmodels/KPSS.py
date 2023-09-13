@@ -16,6 +16,11 @@ class KPSS(Metric):
 
     name = "kpss"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates KPSS for each of the dataset features

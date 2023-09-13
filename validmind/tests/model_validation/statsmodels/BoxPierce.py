@@ -14,6 +14,11 @@ class BoxPierce(Metric):
 
     name = "box_pierce"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Box-Pierce test for each of the dataset features

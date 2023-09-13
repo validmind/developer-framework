@@ -16,6 +16,11 @@ class Lilliefors(Metric):
 
     name = "lilliefors_test"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Lilliefors test for each of the dataset features

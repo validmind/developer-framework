@@ -14,6 +14,11 @@ class LJungBox(Metric):
 
     name = "ljung_box"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def run(self):
         """
         Calculates Ljung-Box test for each of the dataset features

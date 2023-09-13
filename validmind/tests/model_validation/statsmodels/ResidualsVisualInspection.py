@@ -20,6 +20,11 @@ class ResidualsVisualInspection(Metric):
 
     name = "residuals_visual_inspection"
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
     def get_residuals(self, column, series):
         """
         Get the seasonal decomposition residuals from the test

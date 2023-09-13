@@ -8,6 +8,12 @@ from validmind.vm_models import Metric
 
 logger = get_logger(__name__)
 
+    metadata = {
+        "task_types": [],
+        "tags": [],
+    }
+
+
 
 class AutoARIMA(Metric):
     """
