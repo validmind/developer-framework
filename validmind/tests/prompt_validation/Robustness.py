@@ -27,8 +27,10 @@ class Robustness(ThresholdTest, AIPoweredTest):
 
     **Test Mechanism:**
     Prompts are subjected to various conditions, alterations, and contexts to check their stability
-    in eliciting consistent responses from the LLM. Factors such as different phrasings,
-    inclusion of potential distractors, and varied input complexities are introduced to test the robustness of the prompt.
+    in eliciting consistent responses from the LLM. Factors such as different phrasings, inclusion
+    of potential distractors, and varied input complexities are introduced to test the robustness
+    of the prompt. By default, the test generates 10 inputs for the prompt but this can be adjusted
+    via the test parameters.
 
     **Why Robustness Matters:**
     A robust prompt ensures consistent performance and reduces the likelihood of unexpected or
@@ -39,24 +41,35 @@ class Robustness(ThresholdTest, AIPoweredTest):
     category = "prompt_validation"
     name = "robustness"
     required_inputs = ["model"]
+    default_params = {"num_tests": 10}
 
-    system_prompt = """
-You are a prompt evaluation researcher AI. LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a specific type.
+    system_prompt = '''
+You are a prompt evaluation researcher AI who is tasked with testing the robustness of LLM prompts.
 
-Consider the prompt that will be submitted and generate 10 test inputs that can be used to evaluate the robustness of the prompt.
-The test inputs should be valid inputs but should be designed to try and break the output.
-Common strategies to use include contradictions, edge cases, typos, and any method that can force the model to generate an incorrect output.
+Consider the following guidelines:
+```
+LLM prompts are used to guide a model to generate specific outputs or solve specific tasks. These prompts can be more or less robust, meaning that they can be more or less susceptible to breaking especially when the output needs to be a specific type.
+A robust prompt ensures consistent performance and reduces the likelihood of unexpected or off-tangent outputs. This consistency is vital for applications where predictability and reliability of the LLM's response are paramount.
+```
 
-For example:
-Give this prompt, "Analyse the following code and rate its complexity with a score from 1 to 10\n\n{{input_code}}", a good test would be to input something other than valid code and see if the model still generates a score.
-""".strip()
+Consider the user-submitted prompt template and generate an input for the variable in the template (denoted by brackets) that tests the robustness of the prompt.
+Contradictions, edge cases, typos, bad phrasing, distracting, complex or out-of-place words and phrases are just some of the strategies you can use when generating inputs.
+Be creative and think step-by-step how you would break the prompt. Then generate an input for the user-submitted prompt template that would break the prompt.
+Respond only with the value to be inserted into the prompt template and do not include quotes, explanations or any extra text.
+Example:
+Prompt:
+"""
+Analyse the following sentence and output its sentiment\n{sentence}
+"""
+Input:
+Nonsense string that has no sentiment
+'''.strip()
     user_prompt = '''
-Return 10 test inputs separated by a new line
-Do not include quotes around the inputs
 Prompt:
 """
 {prompt_to_test}
 """
+Input:
 '''.strip()
 
     def summary(self, results: List[TestResult], all_passed: bool):
@@ -81,23 +94,33 @@ Prompt:
         )
 
     def run(self):
-        response = self.call_model(
-            system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
-        )
+        # TODO: add support for multi-variable prompts
+        if len(self.model.prompt.variables) > 1:
+            raise SkipTestError(
+                "Robustness only supports single-variable prompts for now"
+            )
 
-        results = []
         target_class_labels = self.model.test_ds.target_classes()
-
         # Guard against too many classes (maybe not a classification model)
         if len(target_class_labels) > 10:
             raise SkipTestError(
                 "Too many target classes to test robustness. Skipping test."
             )
 
-        for test_input in response.split("\n"):
+        results = []
+
+        for _ in range(self.params["num_tests"]):
+            response = self.call_model(
+                system_prompt=self.system_prompt,
+                user_prompt=self.user_prompt.format(
+                    variables="\n".join(self.model.prompt.variables),
+                    prompt_to_test=self.model.prompt.template,
+                ),
+            )
+
             test_input_df = pd.DataFrame(
-                [test_input], columns=[self.model.test_ds.text_column]
+                [response],
+                columns=self.model.prompt.variables,
             )
             result = self.model.predict(test_input_df)[0]
 
@@ -109,7 +132,7 @@ Prompt:
                 TestResult(
                     passed=not fail,
                     values={
-                        "input": test_input,
+                        "input": response,
                         "output": result,
                     },
                 )
