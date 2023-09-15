@@ -24,8 +24,13 @@ class DatasetMetadata(Test):
     result: TestPlanDatasetResult = None
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": [
+            "classification",
+            "regression",
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["tabular_data", "time_series_data", "text_data"],
     }
 
     def __post_init__(self):
