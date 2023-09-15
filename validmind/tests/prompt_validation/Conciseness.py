@@ -50,10 +50,9 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     name = "conciseness"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
     }
 
     system_prompt = """

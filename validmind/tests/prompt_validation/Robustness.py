@@ -42,10 +42,9 @@ class Robustness(ThresholdTest, AIPoweredTest):
     name = "robustness"
     required_inputs = ["model"]
     default_params = {"num_tests": 10}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
     }
 
     system_prompt = '''
