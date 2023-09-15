@@ -18,8 +18,8 @@ class TargetRateBarPlots(Metric):
     default_params = {"default_column": None, "columns": None}
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data"],
     }
 
     def plot_loan_default_ratio(self, default_column, columns=None):
