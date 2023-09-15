@@ -29,10 +29,9 @@ class OverfitDiagnosis(ThresholdTest):
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
 
     default_params = {"features_columns": None, "cut_off_percentage": 4}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "text_classification"],
+        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
     }
 
     default_metrics = {

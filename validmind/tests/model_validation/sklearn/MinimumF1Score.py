@@ -27,10 +27,9 @@ class MinimumF1Score(ThresholdTest):
     name = "f1_score"
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "text_classification"],
+        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
     }
 
     def summary(self, results: List[TestResult], all_passed: bool):

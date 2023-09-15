@@ -21,8 +21,8 @@ class SHAPGlobalImportance(Metric):
     required_inputs = ["model"]
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "text_classification"],
+        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
     }
 
     name = "shap"

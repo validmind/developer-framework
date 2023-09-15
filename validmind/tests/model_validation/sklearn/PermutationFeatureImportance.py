@@ -37,10 +37,9 @@ class PermutationFeatureImportance(Metric):
         "fontsize": None,
         "figure_height": 1000,
     }
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "text_classification"],
+        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
     }
 
     def run(self):

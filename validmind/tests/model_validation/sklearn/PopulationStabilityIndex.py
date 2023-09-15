@@ -26,10 +26,9 @@ class PopulationStabilityIndex(Metric):
 
     name = "psi"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "text_classification"],
+        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
     }
 
     def description(self):
