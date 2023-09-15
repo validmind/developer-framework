@@ -32,8 +32,8 @@ class StopWords(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
     metadata = {
-        "task_types": [],
-        "tags": ["nlp"],
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data"],
     }
 
     def description(self):

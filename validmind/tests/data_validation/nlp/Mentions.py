@@ -20,8 +20,8 @@ class Mentions(ThresholdTest):
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_mentions": 25}
     metadata = {
-        "task_types": [],
-        "tags": ["nlp"],
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data"],
     }
 
     def description(self):

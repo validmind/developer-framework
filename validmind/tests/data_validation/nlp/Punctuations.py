@@ -18,8 +18,8 @@ class Punctuations(Metric):
     name = "punctuations"
     required_inputs = ["dataset", "dataset.text_column"]
     metadata = {
-        "task_types": [],
-        "tags": ["nlp"],
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data"],
     }
 
     def run(self):
