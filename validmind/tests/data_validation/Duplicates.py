@@ -15,15 +15,6 @@ from validmind.vm_models import (
 @dataclass
 class Duplicates(ThresholdTest):
     """
-
-    The duplicates test measures the number of duplicate entries found in the dataset.
-    - If the dataset has a `text_column` property then the test will check for duplicate entries in that column.
-    - If a primary key column is specified, the dataset is checked for duplicate primary keys as well.
-
-    The duplicates test measures the number of duplicate entries found in the dataset.
-    - If the dataset has a `text_column` property then the test will check for duplicate entries in that column.
-    - If a primary key column is specified, the dataset is checked for duplicate primary keys as well.
-
     The duplicates test measures the number of duplicate entries found in the dataset.
     - If the dataset has a `text_column` property then the test will check for duplicate entries in that column.
     - If a primary key column is specified, the dataset is checked for duplicate primary keys as well.
