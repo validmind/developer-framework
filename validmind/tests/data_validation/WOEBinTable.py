@@ -17,10 +17,9 @@ class WOEBinTable(Metric):
     name = "woe_bin_table"
     required_context = ["dataset"]
     default_params = {"breaks_adj": None}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "categorical_data"],
     }
 
     def run(self):

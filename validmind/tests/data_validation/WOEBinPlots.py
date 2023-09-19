@@ -21,10 +21,9 @@ class WOEBinPlots(Metric):
     name = "woe_bin_plots"
     required_context = ["dataset"]
     default_params = {"breaks_adj": None, "fig_height": 600, "fig_width": 500}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "visualization", "categorical_data"],
     }
 
     def run(self):

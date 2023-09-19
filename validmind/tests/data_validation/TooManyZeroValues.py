@@ -27,8 +27,8 @@ class TooManyZeroValues(ThresholdTest):
     default_params = {"max_percent_threshold": 0.03}
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression", "classification"],
+        "tags": ["tabular_data"],
     }
 
     def summary(self, results: List[TestResult], all_passed: bool):

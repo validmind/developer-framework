@@ -25,7 +25,7 @@ class TimeSeriesFrequency(ThresholdTest):
     name = "time_series_frequency"
     required_inputs = ["dataset"]
     metadata = {
-        "task_types": [],
+        "task_types": ["regression"],
         "tags": ["time_series_data"],
     }
 

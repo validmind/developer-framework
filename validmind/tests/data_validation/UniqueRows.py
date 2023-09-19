@@ -24,8 +24,8 @@ class UniqueRows(ThresholdTest):
     default_params = {"min_percent_threshold": 1}
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression", "classification"],
+        "tags": ["tabular_data"],
     }
 
     def summary(self, results: List[TestResult], all_passed: bool):

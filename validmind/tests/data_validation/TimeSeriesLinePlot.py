@@ -16,8 +16,8 @@ class TimeSeriesLinePlot(Metric):
     name = "time_series_line_plot"
     required_inputs = ["dataset"]
     metadata = {
-        "task_types": [],
-        "tags": ["time_series_data"],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "visualization"],
     }
 
     def run(self):
