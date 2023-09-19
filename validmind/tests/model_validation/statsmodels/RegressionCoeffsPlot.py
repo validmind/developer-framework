@@ -23,10 +23,9 @@ class RegressionCoeffsPlot(Metric):
 
     name = "regression_coeffs_plot"
     required_inputs = ["models"]
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["tabular_data", "visualization", "model_interpretation"],
     }
 
     @staticmethod

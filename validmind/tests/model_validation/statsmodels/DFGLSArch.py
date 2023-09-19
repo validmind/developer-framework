@@ -17,7 +17,7 @@ class DFGLSArch(Metric):
     name = "dickey_fuller_gls"
     metadata = {
         "task_types": ["regression"],
-        "tags": ["time_series_data", "forecasting", "unit_root_test", "statsmodels"],
+        "tags": ["time_series_data", "forecasting", "unit_root_test"],
     }
 
     def run(self):

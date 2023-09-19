@@ -19,10 +19,9 @@ class RegressionModelForecastPlot(Metric):
 
     name = "regression_forecast_plot"
     default_params = {"start_date": None, "end_date": None}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["forecasting", "visualization"],
     }
 
     def description(self):
