@@ -15,23 +15,26 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 
 @dataclass
 class Mentions(ThresholdTest):
+    """
+    The purpose of the Mentions test is to perform a data quality test focused on
+    analyzing mentions within a dataset. It aims to identify the most frequently
+    mentioned entities or usernames in a given text column and provides a visual
+    representation of the results using a treemap. The Mentions test analyzes the
+    dataset by extracting the text column and applying a regular expression pattern to
+    identify mentions (text preceded by '@') within the text. It then counts the
+    occurrences of each mention and selects the top mentions based on a specified
+    parameter or the default value. The results are visualized using a treemap plot,
+    where the size of each rectangle represents the frequency of the mention.
+    """
+
     name = "mentions"
     category = "data_quality"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_mentions": 25}
     metadata = {
         "task_types": ["text_classification", "text_summarization"],
-        "tags": ["nlp", "text_data"],
+        "tags": ["nlp", "text_data", "visualization", "freqency_analysis"],
     }
-
-    def description(self):
-        return """The purpose of the Mentions test is to perform a data quality test focused on analyzing mentions within a dataset.
-        It aims to identify the most frequently mentioned entities or usernames in a given text column and provides a visual representation
-        of the results using a treemap.
-        The Mentions test analyzes the dataset by extracting the text column and applying a regular expression pattern to identify mentions
-        (text preceded by '@') within the text. It then counts the occurrences of each mention and selects the top mentions based on a specified
-        parameter or the default value. The results are visualized using a treemap plot, where the size of each rectangle represents the
-        frequency of the mention."""
 
     def run(self):
         # Can only run this test if we have a Dataset object
