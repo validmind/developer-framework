@@ -18,7 +18,7 @@ class TabularNumericalHistograms(Metric):
 
     metadata = {
         "task_types": ["classification", "regression"],
-        "tags": ["tabular_data"],
+        "tags": ["tabular_data", "visualization"],
     }
 
     def run(self):

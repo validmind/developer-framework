@@ -8,15 +8,23 @@ from validmind.vm_models import Figure, Metric
 
 class RollingStatsPlot(Metric):
     """
-    This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.
+    This class provides a metric to visualize the stationarity of a given time series
+    dataset by plotting the rolling mean and rolling standard deviation. The rolling
+    mean represents the average of the time series data over a fixed-size sliding
+    window, which helps in identifying trends in the data. The rolling standard
+    deviation measures the variability of the data within the sliding window, showing
+    any changes in volatility over time. By analyzing these plots, users can gain
+    insights into the stationarity of the time series data and determine if any
+    transformations or differencing operations are required before applying time series
+    models.
     """
 
     name = "rolling_stats_plot"
     required_inputs = ["dataset"]
     default_params = {"window_size": 12}
     metadata = {
-        "task_types": [],
-        "tags": ["time_series_data"],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "visualization", "stationarity"],
     }
 
     def plot_rolling_statistics(self, col, window_size=12):

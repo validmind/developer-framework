@@ -18,10 +18,9 @@ class PiTCreditScoresHistogram(Metric):
     name = "pit_credit_scores_histogram"
     required_context = ["dataset"]
     default_params = {"title": "Histogram of Scores"}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "visualization", "credit_risk"],
     }
 
     def description(self):

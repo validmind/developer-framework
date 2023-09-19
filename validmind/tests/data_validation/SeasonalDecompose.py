@@ -24,10 +24,9 @@ class SeasonalDecompose(Metric):
     name = "seasonal_decompose"
     required_inputs = ["dataset"]
     default_params = {"seasonal_model": "additive"}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "seasonality", "statsmodels"],
     }
 
     def store_seasonal_decompose(self, column, sd_one_column):
