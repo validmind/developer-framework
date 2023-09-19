@@ -15,10 +15,9 @@ class RegressionModelsCoeffs(Metric):
     """
 
     name = "regression_models_coefficients"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["model_comparison"],
     }
 
     def description(self):

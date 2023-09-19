@@ -16,10 +16,9 @@ class RegressionModelInsampleComparison(Metric):
     """
 
     name = "regression_insample_performance"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["model_comparison"],
     }
 
     def description(self):

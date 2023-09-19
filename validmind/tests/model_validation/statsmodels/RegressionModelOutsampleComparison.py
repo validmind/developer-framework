@@ -16,10 +16,9 @@ class RegressionModelOutsampleComparison(Metric):
     """
 
     name = "regression_outsample_performance"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["model_comparison"],
     }
 
     def description(self):

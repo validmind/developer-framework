@@ -15,10 +15,9 @@ class ZivotAndrewsArch(Metric):
     """
 
     name = "zivot_andrews"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "stationarity", "unit_root_test"],
     }
 
     def run(self):

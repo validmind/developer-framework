@@ -13,10 +13,9 @@ class RunsTest(Metric):
     """
 
     name = "runs_test"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "statistical_test", "statsmodels"],
     }
 
     def run(self):
