@@ -20,8 +20,8 @@ class AutoSeasonality(Metric):
     required_inputs = ["dataset"]
     default_params = {"min_period": 1, "max_period": 4}
     metadata = {
-        "task_types": [],
-        "tags": ["time_series_data"],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
     }
 
     def evaluate_seasonal_periods(self, series, min_period, max_period):

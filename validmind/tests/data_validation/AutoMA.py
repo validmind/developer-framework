@@ -20,8 +20,8 @@ class AutoMA(Metric):
     required_inputs = ["dataset"]
     default_params = {"max_ma_order": 3}
     metadata = {
-        "task_types": [],
-        "tags": ["time_series_data"],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "statsmodels", "forecasting", "statistical_test"],
     }
 
     def run(self):

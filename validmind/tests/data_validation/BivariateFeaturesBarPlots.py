@@ -19,10 +19,15 @@ class BivariateFeaturesBarPlots(Metric):
     name = "bivariate_features_bar_plots"
     required_inputs = ["dataset"]
     default_params = {"features_pairs": None}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": [
+            "tabular_data",
+            "categorical_data",
+            "binary_classification",
+            "multiclass_classification",
+            "visualization",
+        ],
     }
 
     def run(self):
