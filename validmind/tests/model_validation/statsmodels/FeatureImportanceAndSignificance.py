@@ -29,10 +29,14 @@ class FeatureImportanceAndSignificance(Metric):
         "figure_height": 800,
         "bar_width": 0.3,
     }
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": [
+            "statsmodels",
+            "feature_importance",
+            "statistical_test",
+            "visualization",
+        ],
     }
 
     def compute_p_values_and_feature_importances(

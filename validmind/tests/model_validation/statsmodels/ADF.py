@@ -12,10 +12,16 @@ class ADF(Metric):
     """
 
     name = "adf"
-
+    required_inputs = ["dataset"]
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": [
+            "time_series_data",
+            "statsmodels",
+            "forecasting",
+            "statistical_test",
+            "stationarity",
+        ],
     }
 
     def run(self):

@@ -17,10 +17,15 @@ class ADFTest(ThresholdTest):
     category = "model_performance"  # right now we support "model_performance" and "data_quality"
     name = "adf_test"
     default_params = {"threshold": 0.05}
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": [
+            "time_series_data",
+            "statsmodels",
+            "forecasting",
+            "statistical_test",
+            "stationarity",
+        ],
     }
 
     def run(self):

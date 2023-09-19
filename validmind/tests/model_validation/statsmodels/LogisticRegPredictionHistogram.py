@@ -18,10 +18,9 @@ class LogisticRegPredictionHistogram(Metric):
 
     name = "logistic_reg_prediction_histogram"
     required_inputs = ["model"]
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "visualization", "credit_risk", "logistic_regression"],
     }
 
     default_params = {"title": "Histogram of Predictive Probabilities"}

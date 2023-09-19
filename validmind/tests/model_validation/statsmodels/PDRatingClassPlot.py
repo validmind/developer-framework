@@ -18,8 +18,8 @@ class PDRatingClassPlot(Metric):
     required_inputs = ["model"]
 
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["visualization", "credit_risk"],
     }
 
     default_params = {

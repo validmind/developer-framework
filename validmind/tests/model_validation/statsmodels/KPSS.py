@@ -15,10 +15,15 @@ class KPSS(Metric):
     """
 
     name = "kpss"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": [
+            "time_series_data",
+            "forecasting",
+            "stationarity",
+            "unit_root_test",
+            "statsmodels",
+        ],
     }
 
     def run(self):

@@ -17,10 +17,9 @@ class LogRegressionConfusionMatrix(Metric):
 
     name = "log_regression_confusion_matrix"
     required_inputs = ["model"]
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["classification"],
+        "tags": ["visualization", "model_performance", "logistic_regression"],
     }
 
     default_params = {

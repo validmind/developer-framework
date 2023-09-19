@@ -13,10 +13,9 @@ class BoxPierce(Metric):
     """
 
     name = "box_pierce"
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
     }
 
     def run(self):

@@ -46,10 +46,14 @@ class ModelMetadata(Metric):
 
     name = "model_metadata"
     required_inputs = ["model"]
-
     metadata = {
-        "task_types": [],
-        "tags": [],
+        "task_types": [
+            "classification",
+            "regression",
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["model_metadata"],
     }
 
     column_labels = {
