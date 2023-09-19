@@ -23,7 +23,6 @@ class DatasetDescription(Metric):
 
     name = "dataset_description"
     required_inputs = ["dataset"]
-
     metadata = {
         "task_types": [
             "classification",

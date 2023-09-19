@@ -17,7 +17,6 @@ class DatasetCorrelations(Metric):
 
     name = "dataset_correlations"
     required_inputs = ["dataset"]
-
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": ["tabular_data", "time_series_data"],

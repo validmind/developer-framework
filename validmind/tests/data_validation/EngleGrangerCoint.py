@@ -16,8 +16,8 @@ class EngleGrangerCoint(Metric):
     required_inputs = ["dataset"]
     default_params = {"threshold": 0.05}
     metadata = {
-        "task_types": [],
-        "tags": ["time_series_data"],
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "statistical_test", "forecasting"],
     }
 
     def run(self):
