@@ -39,7 +39,13 @@ class PermutationFeatureImportance(Metric):
     }
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "feature_importance",
+            "visualization",
+        ],
     }
 
     def run(self):

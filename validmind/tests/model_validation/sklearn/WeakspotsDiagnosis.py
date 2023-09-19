@@ -42,7 +42,13 @@ class WeakspotsDiagnosis(ThresholdTest):
 
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_diagnosis",
+            "visualization",
+        ],
     }
 
     # TODO: allow configuring

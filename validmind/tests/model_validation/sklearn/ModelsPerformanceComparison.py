@@ -21,7 +21,13 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     required_inputs = ["model", "models", "model.test_ds"]
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+            "model_comparison",
+        ],
     }
 
     def description(self):

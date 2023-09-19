@@ -13,10 +13,14 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
 
     name = "classifier_in_sample_performance"
     required_inputs = ["model", "model.train_ds"]
-
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+        ],
     }
 
     def description(self):

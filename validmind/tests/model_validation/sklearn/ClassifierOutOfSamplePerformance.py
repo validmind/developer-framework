@@ -13,10 +13,14 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
 
     name = "classifier_out_of_sample_performance"
     required_inputs = ["model", "model.test_ds"]
-
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+        ],
     }
 
     def description(self):

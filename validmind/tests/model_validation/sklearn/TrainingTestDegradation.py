@@ -34,7 +34,13 @@ class TrainingTestDegradation(ThresholdTest):
 
     metadata = {
         "task_types": ["classification", "text_classification"],
-        "tags": ["sklearn", "binary_classification", "multiclass_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+            "visualization",
+        ],
     }
 
     default_metrics = {
