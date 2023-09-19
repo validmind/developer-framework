@@ -17,6 +17,10 @@ class LaggedCorrelationHeatmap(Metric):
 
     name = "lagged_correlation_heatmap"
     required_inputs = ["dataset"]
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "visualization"],
+    }
 
     def _compute_correlations(self, df, target_col, independent_vars, num_lags):
         correlations = np.zeros((len(independent_vars), num_lags + 1))

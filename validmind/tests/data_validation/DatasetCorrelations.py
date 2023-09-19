@@ -19,7 +19,7 @@ class DatasetCorrelations(Metric):
     required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "time_series_data"],
+        "tags": ["tabular_data", "time_series_data", "correlation"],
     }
 
     # TODO: allow more metric metadata to be set, not just scope
