@@ -189,3 +189,4 @@ lending_club_loan_data_*
 
 # Pickle files
 *.pkl
+notebooks/llm/datasets/*.jsonl
