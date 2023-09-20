@@ -1,11 +1,17 @@
 Package: validmind
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Interface to the ValidMind platform for R
 Version: 0.1.0
-Author: Who wrote it
+Author: ValidMind, Inc.
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/validmind/validmind-python
+BugReports: https://github.com/validmind/validmind-python/issues
+RoxygenNote: 7.2.3
+Imports: 
+  glue,
+  reticulate

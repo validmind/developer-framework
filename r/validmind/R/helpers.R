@@ -1,3 +1,30 @@
+#' Retrieve a validmind (vm) object using reticulate
+#'
+#' @importFrom reticulate import
+#'
+#' @export
+vm <- function() {
+  vm <- import("validmind")
+
+  vm$init(
+    api_host="http://localhost:3000/api/v1/tracking",
+    api_key="...",
+    api_secret="...",
+    project="..."
+  )
+
+  return(vm)
+}
+
+#' Print a summary table
+#'
+#' @importFrom glue glue
+#'
+#' @param result_summary A summary of the results
+#'
+#' @importFrom glue glue
+#'
+#' @export
 print_summary_tables <- function(result_summary) {
   tables <- result_summary$serialize(as_df=TRUE)
   for (table in tables) {
@@ -8,6 +35,11 @@ print_summary_tables <- function(result_summary) {
   }
 }
 
+#' Provide a summarization of a single metric result
+#'
+#' @param result The result object
+#'
+#' @export
 summarize_metric_result <- function(result) {
   if (result$result_id == "dataset_description") {
     return()
@@ -21,6 +53,11 @@ summarize_metric_result <- function(result) {
   cat("\n\n")
 }
 
+#' Provide a summarization of a single test result
+#'
+#' @param result The result object
+#'
+#' @export
 summarize_test_result <- function(result) {
   test_result <- result$test_results
   print(glue("Results for test result: {test_result$test_name}\n"))
@@ -30,6 +67,11 @@ summarize_test_result <- function(result) {
   cat("\n\n")
 }
 
+#' Provide a summarization of a single result
+#'
+#' @param result The result object
+#'
+#' @export
 summarize_result <- function(result) {
   result_class <- class(result)[[1]]
 
@@ -43,22 +85,37 @@ summarize_result <- function(result) {
   }
 }
 
+#' Provide a summarization of all results
+#'
+#' @param results A list of result objects
+#'
+#' @return A numeric vector giving number of characters (code points) in each
+#'    element of the character vector. Missing string have missing length.
+#' @export
 summarize_results <- function(results) {
+  result_list <- list()
+
   for (index in 1:length(results$results)) {
     suite <- results$results[index][[1]]
     print(glue("Test Suite Results: {results$test_plans[index]}\n"))
     for (result in suite) {
-      summarize_result(result)
+      result_list[[length(result_list) + 1]] <- summarize_result(result)
     }
     cat("\n\n")
   }
+
+  return(result_list)
 }
 
 #' Save a model to a given file path
 #'
 #' @return A numeric vector giving number of characters (code points) in each
 #'    element of the character vector. Missing string have missing length.
+#'
+#' @param model The model object
+#'
 #' @export
+#'
 #' @examples
 #' my_model <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 #' save_model(my_model)
