@@ -25,7 +25,7 @@ class __TEST_NAME__(Metric):
     default_params = {}
     metadata = {
         "task_types": [],  # classification, regression, etc. Should be one of ValidMind's task types
-        "tags": [],  # time_series_data, tabular_data, forcasting, etc. Can be any string
+        "tags": [],  # time_series_data, tabular_data, forecasting, etc. Can be any string
     }
 
     def run(self) -> TestPlanMetricResult:
