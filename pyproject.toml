@@ -51,6 +51,8 @@ sentencepiece = "^0.1.99"
 rouge = "^1.0.1"
 langdetect = "^1.0.9"
 textstat = "^0.7.3"
+prettytable = "^3.9.0"
+evaluate = "^0.4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
