@@ -43,7 +43,7 @@ class StopWords(ThresholdTest):
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
     metadata = {
         "task_types": ["text_classification", "text_summarization"],
-        "tags": ["nlp", "text_data", "visualization", "freqency_analysis"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
     }
 
     def summary(self, results: List[TestResult], all_passed: bool):
