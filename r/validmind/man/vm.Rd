@@ -4,7 +4,21 @@
 \alias{vm}
 \title{Retrieve a validmind (vm) object using reticulate}
 \usage{
-vm()
+vm(
+  api_key,
+  api_secret,
+  project,
+  api_host = "http://localhost:3000/api/v1/tracking"
+)
+}
+\arguments{
+\item{api_key}{The ValidMind API key}
+
+\item{api_secret}{The ValidMind API secret}
+
+\item{project}{The ValidMind project}
+
+\item{api_host}{The ValidMind host, defaulting to local}
 }
 \description{
 Retrieve a validmind (vm) object using reticulate

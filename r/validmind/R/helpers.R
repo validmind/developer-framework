@@ -1,16 +1,22 @@
 #' Retrieve a validmind (vm) object using reticulate
 #'
+#' @param api_key The ValidMind API key
+#' @param api_secret The ValidMind API secret
+#' @param project The ValidMind project
+#' @param api_host The ValidMind host, defaulting to local
+#'
 #' @importFrom reticulate import
 #'
 #' @export
-vm <- function() {
+vm <- function(api_key, api_secret, project,
+               api_host = "http://localhost:3000/api/v1/tracking") {
   vm <- import("validmind")
 
   vm$init(
-    api_host="http://localhost:3000/api/v1/tracking",
-    api_key="...",
-    api_secret="...",
-    project="..."
+    api_host=api_host,
+    api_key=api_key,
+    api_secret=api_secret,
+    project=project
   )
 
   return(vm)
