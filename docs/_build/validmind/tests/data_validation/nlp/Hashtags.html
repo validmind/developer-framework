@@ -38,9 +38,6 @@
                                 <a class="function" href="#Hashtags.__init__">Hashtags</a>
                         </li>
                         <li>
-                                <a class="function" href="#Hashtags.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Hashtags.run">run</a>
                         </li>
                 </ul>
@@ -81,7 +78,13 @@
     </div>
     <a class="headerlink" href="#Hashtags"></a>
     
-            <div class="docstring"><p>The purpose of this test is to identify and analyze the most frequently used hashtags in a given text column of a dataset.</p>
+            <div class="docstring"><p>The Hashtags test analyzes the dataset by extracting the text column and applying a
+regular expression pattern to identify hashtags within the text. It then counts the
+occurrences of each hashtag and selects the top hashtags based on a specified
+parameter or the default value. The results are visualized using a bar plot, where
+the x-axis represents the hashtags and the y-axis represents their frequency
+counts. It aims to identify the most commonly used hashtags in a given text column
+and provide visual representation of their frequencies.</p>
 </div>
 
 
@@ -95,22 +98,6 @@
     <a class="headerlink" href="#Hashtags.__init__"></a>
     
     
-
-                            </div>
-                            <div id="Hashtags.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Hashtags.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="Hashtags.run" class="classattr">
@@ -134,6 +121,10 @@ to returning the class' docstring</p>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="Hashtags.summary" class="function">summary</dd>
                 <dd id="Hashtags.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.Test</dt>
+                                <dd id="Hashtags.description" class="function">description</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

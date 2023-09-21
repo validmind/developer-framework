@@ -38,9 +38,6 @@
                                 <a class="function" href="#Mentions.__init__">Mentions</a>
                         </li>
                         <li>
-                                <a class="function" href="#Mentions.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Mentions.run">run</a>
                         </li>
                 </ul>
@@ -81,7 +78,17 @@
     </div>
     <a class="headerlink" href="#Mentions"></a>
     
-    
+            <div class="docstring"><p>The purpose of the Mentions test is to perform a data quality test focused on
+analyzing mentions within a dataset. It aims to identify the most frequently
+mentioned entities or usernames in a given text column and provides a visual
+representation of the results using a treemap. The Mentions test analyzes the
+dataset by extracting the text column and applying a regular expression pattern to
+identify mentions (text preceded by '@') within the text. It then counts the
+occurrences of each mention and selects the top mentions based on a specified
+parameter or the default value. The results are visualized using a treemap plot,
+where the size of each rectangle represents the frequency of the mention.</p>
+</div>
+
 
                             <div id="Mentions.__init__" class="classattr">
                                 <div class="attr function">
@@ -93,22 +100,6 @@
     <a class="headerlink" href="#Mentions.__init__"></a>
     
     
-
-                            </div>
-                            <div id="Mentions.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Mentions.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="Mentions.run" class="classattr">
@@ -132,6 +123,10 @@ to returning the class' docstring</p>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="Mentions.summary" class="function">summary</dd>
                 <dd id="Mentions.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.Test</dt>
+                                <dd id="Mentions.description" class="function">description</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
