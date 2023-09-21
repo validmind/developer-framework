@@ -16,6 +16,10 @@ class TimeSeriesHistogram(Metric):
 
     name = "time_series_histogram"
     required_inputs = ["dataset"]
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "visualization"],
+    }
 
     def run(self):
         # Check if index is datetime

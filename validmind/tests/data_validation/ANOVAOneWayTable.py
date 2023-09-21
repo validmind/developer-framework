@@ -18,6 +18,16 @@ class ANOVAOneWayTable(Metric):
     name = "anova_one_way_table"
     required_inputs = ["dataset"]
     default_params = {"features": None, "p_threshold": 0.05}
+    metadata = {
+        "task_types": ["classification"],
+        "tags": [
+            "tabular_data",
+            "statistical_test",
+            "multiclass_classification",
+            "binary_classification",
+            "numerical_data",
+        ],
+    }
 
     def run(self):
         features = self.params["features"]

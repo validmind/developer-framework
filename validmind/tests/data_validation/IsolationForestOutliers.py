@@ -31,6 +31,11 @@ class IsolationForestOutliers(Metric):
         "contamination": 0.1,
         "features_columns": None,
     }
+    metadata = {
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "anomaly_detection"],
+    }
+
     required_inputs = ["dataset"]
 
     def description(self):

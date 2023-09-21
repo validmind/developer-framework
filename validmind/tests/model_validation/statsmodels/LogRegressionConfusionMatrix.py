@@ -17,7 +17,12 @@ class LogRegressionConfusionMatrix(Metric):
 
     name = "log_regression_confusion_matrix"
     required_inputs = ["model"]
-    default_parameters = {
+    metadata = {
+        "task_types": ["classification"],
+        "tags": ["visualization", "model_performance", "logistic_regression"],
+    }
+
+    default_params = {
         "cut_off_threshold": 0.5,  # Add a cut_off_threshold parameter
     }
 

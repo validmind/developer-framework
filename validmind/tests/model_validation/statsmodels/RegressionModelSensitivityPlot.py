@@ -22,6 +22,10 @@ class RegressionModelSensitivityPlot(Metric):
         "transformation": None,
         "shocks": [0.1],
     }
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["senstivity_analysis", "visualization"],
+    }
 
     def run(self):
         logger.info(self.params)

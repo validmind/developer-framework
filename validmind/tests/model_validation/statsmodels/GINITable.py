@@ -17,6 +17,10 @@ class GINITable(Metric):
 
     name = "gini_table"
     required_inputs = ["model"]
+    metadata = {
+        "task_types": ["classification"],
+        "tags": ["visualization", "model_performance"],
+    }
 
     def run(self):
         model = self.model[0] if isinstance(self.model, list) else self.model

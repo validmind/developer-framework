@@ -28,6 +28,10 @@ class TimeSeriesOutliers(ThresholdTest):
     name = "time_series_outliers"
     required_inputs = ["dataset"]
     default_params = {"zscore_threshold": 3}
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data"],
+    }
 
     def summary(self, results, all_passed: bool):
         """

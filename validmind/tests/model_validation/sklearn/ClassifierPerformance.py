@@ -23,6 +23,15 @@ class ClassifierPerformance(Metric):
     """
 
     name = "classifier_performance"
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+        ],
+    }
 
     def binary_summary(self, metric_value: dict):
         """

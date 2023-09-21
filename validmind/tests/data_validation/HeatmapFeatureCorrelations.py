@@ -18,6 +18,10 @@ class HeatmapFeatureCorrelations(Metric):
     name = "heatmap_feature_correlations"
     required_inputs = ["dataset"]
     default_params = {"declutter": None, "fontsize": None, "num_features": None}
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "visualization", "correlation"],
+    }
 
     def run(self):
         features = self.params["features"]

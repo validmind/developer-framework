@@ -23,6 +23,16 @@ class DatasetMetadata(Test):
     params: dict = None
     result: TestPlanDatasetResult = None
 
+    metadata = {
+        "task_types": [
+            "classification",
+            "regression",
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["tabular_data", "time_series_data", "text_data"],
+    }
+
     def __post_init__(self):
         """
         Set default params if not provided

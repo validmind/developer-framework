@@ -18,8 +18,18 @@ class SHAPGlobalImportance(Metric):
     SHAP Global Importance
     """
 
-    required_inputs = ["model"]
     name = "shap"
+    required_inputs = ["model"]
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "feature_importance",
+            "visualization",
+        ],
+    }
 
     def description(self):
         return """

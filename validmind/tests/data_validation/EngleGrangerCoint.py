@@ -15,6 +15,10 @@ class EngleGrangerCoint(Metric):
     name = "engle_granger_coint"
     required_inputs = ["dataset"]
     default_params = {"threshold": 0.05}
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "statistical_test", "forecasting"],
+    }
 
     def run(self):
         threshold = self.params["threshold"]
