@@ -33,7 +33,7 @@ class Mentions(ThresholdTest):
     default_params = {"top_mentions": 25}
     metadata = {
         "task_types": ["text_classification", "text_summarization"],
-        "tags": ["nlp", "text_data", "visualization", "freqency_analysis"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
     }
 
     def run(self):
