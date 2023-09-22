@@ -8,6 +8,7 @@ vm(
   api_key,
   api_secret,
   project,
+  python_version,
   api_host = "http://localhost:3000/api/v1/tracking"
 )
 }

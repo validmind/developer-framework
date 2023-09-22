@@ -5,11 +5,13 @@
 #' @param project The ValidMind project
 #' @param api_host The ValidMind host, defaulting to local
 #'
-#' @importFrom reticulate import
+#' @importFrom reticulate import use_python py_config
 #'
 #' @export
-vm <- function(api_key, api_secret, project,
+vm <- function(api_key, api_secret, project, python_version,
                api_host = "http://localhost:3000/api/v1/tracking") {
+  use_python(python_version)
+
   vm <- import("validmind")
 
   vm$init(
@@ -32,13 +34,7 @@ vm <- function(api_key, api_secret, project,
 #'
 #' @export
 print_summary_tables <- function(result_summary) {
-  tables <- result_summary$serialize(as_df=TRUE)
-  for (table in tables) {
-    if (!is.null(table$metadata)) {
-      print(glue("{table$metadata$title}\n"))
-    }
-    print(table$data)
-  }
+  return(result_summary$serialize(as_df=TRUE))
 }
 
 #' Provide a summarization of a single metric result
@@ -48,15 +44,12 @@ print_summary_tables <- function(result_summary) {
 #' @export
 summarize_metric_result <- function(result) {
   if (result$result_id == "dataset_description") {
-    return()
+    return(NULL)
   }
 
   metric <- result$metric
-  print(glue("Results for metric: {metric$key}\n"))
-  if (!is.null(metric$summary)) {
-    print_summary_tables(metric$summary)
-  }
-  cat("\n\n")
+
+  return(metric$summary)
 }
 
 #' Provide a summarization of a single test result
@@ -65,12 +58,13 @@ summarize_metric_result <- function(result) {
 #'
 #' @export
 summarize_test_result <- function(result) {
-  test_result <- result$test_results
-  print(glue("Results for test result: {test_result$test_name}\n"))
-  if (!is.null(test_result$summary)) {
-    print_summary_tables(test_result$summary)
+  if (result$result_id == "dataset_description") {
+    return(NULL)
   }
-  cat("\n\n")
+
+  metric <- result$test_results
+
+  return(metric$summary)
 }
 
 #' Provide a summarization of a single result
@@ -99,6 +93,7 @@ summarize_result <- function(result) {
 #'    element of the character vector. Missing string have missing length.
 #' @export
 summarize_results <- function(results) {
+  # Run the Python function
   result_list <- list()
 
   for (index in 1:length(results$results)) {
