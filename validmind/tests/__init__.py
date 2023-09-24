@@ -10,7 +10,7 @@ import pandas as pd
 
 from ..errors import LoadTestError
 from ..logging import get_logger
-from ..utils import clean_docstring, format_dataframe
+from ..utils import clean_docstring, format_dataframe, fuzzy_match
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
@@ -102,13 +102,16 @@ def _pretty_list_tests(tests):
     return format_dataframe(pd.DataFrame(table))
 
 
-def list_tests(filter=None, task=None, pretty=True):
+def list_tests(filter=None, task=None, tags=None, pretty=True):
     """List all tests in the tests directory.
 
     Args:
-        filter (str, optional): Find tests where any part of the ID matches the filter
-          string. Defaults to None.
-        task (str, optional): Find tests that match the task type. Defaults to None.
+        filter (str, optional): Find tests where the ID, task_type or tags match the
+            filter string. Defaults to None.
+        task (str, optional): Find tests that match the task type. Can be used to
+            narrow down matches from the filter string. Defaults to None.
+        tags (list, optional): Find tests that match list of tags. Can be used to
+            narrow down matches from the filter string. Defaults to None.
         pretty (bool, optional): If True, returns a pandas DataFrame with a
             formatted table. Defaults to False.
 
@@ -136,17 +139,54 @@ def list_tests(filter=None, task=None, pretty=True):
 
     tests = __tests
 
+    # first filter by the filter string since it's the most general search
+    if filter is not None:
+        _load_tests(tests)
+
+        matched_by_id = [
+            test_id for test_id in tests if filter.lower() in test_id.lower()
+        ]
+        matched_by_task = [
+            test_id
+            for test_id in tests
+            if hasattr(__test_classes[test_id], "metadata")
+            and any(
+                filter.lower() in task.lower()
+                for task in __test_classes[test_id].metadata["task_types"]
+            )
+        ]
+        matched_by_tags = [
+            test_id
+            for test_id in tests
+            if hasattr(__test_classes[test_id], "metadata")
+            and any(
+                fuzzy_match(tag, filter.lower())
+                for tag in __test_classes[test_id].metadata["tags"]
+            )
+        ]
+
+        tests = list(set(matched_by_id + matched_by_task + matched_by_tags))
+
+    # then filter by task type and tags since they are more specific
     if task is not None:
         _load_tests(tests)
+
         tests = [
             test_id
             for test_id in tests
             if hasattr(__test_classes[test_id], "metadata")
-            and task in __test_classes[test_id].metadata["task_type"]
+            and task in __test_classes[test_id].metadata["task_types"]
         ]
 
-    if filter is not None:
-        tests = [test_id for test_id in __tests if filter.lower() in test_id.lower()]
+    if tags is not None:
+        _load_tests(tests)
+
+        tests = [
+            test_id
+            for test_id in tests
+            if hasattr(__test_classes[test_id], "metadata")
+            and all(tag in __test_classes[test_id].metadata["tags"] for tag in tags)
+        ]
 
     if pretty:
         return _pretty_list_tests(tests)
