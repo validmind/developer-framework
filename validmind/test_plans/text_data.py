@@ -23,4 +23,5 @@ class TextDataQuality(TestPlan):
         "validmind.data_validation.nlp.Punctuations",
         "validmind.data_validation.nlp.Mentions",
         "validmind.data_validation.nlp.CommonWords",
+        "validmind.data_validation.nlp.TextDescription",
     ]

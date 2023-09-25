@@ -15,6 +15,7 @@ from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
 )
+from .summarization import SummarizationMetrics
 from .tabular_datasets import (
     TabularDataQuality,
     TabularDatasetDescription,
@@ -45,6 +46,7 @@ core_test_plans = {
     "regression_model_description": RegressionModelDescription,
     "regression_models_evaluation": RegressionModelsEvaluation,
     "text_data_quality": TextDataQuality,
+    "summarization_metrics": SummarizationMetrics,
 }
 
 # These test plans can be added by the user

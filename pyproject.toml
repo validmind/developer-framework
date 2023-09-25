@@ -46,6 +46,12 @@ shap = "^0.41.0"
 statsmodels = "^0.13.5"
 tabulate = "^0.8.9"
 textstat = "^0.7.3"
+pycocoevalcap = {version = "^1.2", optional = true}
+torchmetrics = {version = "^1.1.1", optional = true}
+levenshtein = {version = "^0.21.1", optional = true}
+datasets = {version = "^2.14.5", optional = true}
+bert-score = "^0.3.13"
+evaluate = "^0.4.0"
 torch = {version = ">=1.10.0", optional = true}
 tqdm = "^4.64.0"
 transformers = "^4.32.0"
@@ -70,8 +76,12 @@ sphinx-rtd-theme = "^1.2.0"
 twine = "^4.0.2"
 
 [tool.poetry.extras]
-all = ["openai", "rpy2", "torch", "transformers"]
-llm = ["torch", "transformers", "openai"]
+all = ["openai", "rpy2", "torch", "transformers",
+  "pycocoevalcap", "torchmetrics", "levenshtein",
+  "datasets"]
+llm = ["torch", "transformers", "openai",
+  "pycocoevalcap", "torchmetrics", "levenshtein",
+  "datasets"]
 pytorch = ["torch"]
 r-support = ["rpy2"]
 transformers = ["transformers"]
