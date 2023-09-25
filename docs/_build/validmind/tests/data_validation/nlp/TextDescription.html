@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 13.1.1"/>
-    <title>validmind.test_plans API documentation</title>
+    <title>validmind.tests.data_validation.nlp.TextDescription API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,11 +17,11 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>            <a class="pdoc-button module-list-button" href="../validmind.html">
+        <div>            <a class="pdoc-button module-list-button" href="../nlp.html">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-</svg>                &nbsp;validmind</a>
+</svg>                &nbsp;validmind.tests.data_validation.nlp</a>
 
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
@@ -32,33 +32,38 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#list_tests">list_tests</a>
-            </li>
-            <li>
-                    <a class="function" href="#list_plans">list_plans</a>
-            </li>
-            <li>
-                    <a class="function" href="#get_by_id">get_by_id</a>
-            </li>
-            <li>
-                    <a class="function" href="#describe_plan">describe_plan</a>
-            </li>
-            <li>
-                    <a class="function" href="#register_test_plan">register_test_plan</a>
+                    <a class="class" href="#TextDescription">TextDescription</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TextDescription.__init__">TextDescription</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.description">description</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.general_text_metrics">general_text_metrics</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.vocabulary_structure_metrics">vocabulary_structure_metrics</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.text_description_table">text_description_table</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.run">run</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.text_description_scatter_plot">text_description_scatter_plot</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TextDescription.summary">summary</a>
+                        </li>
+                </ul>
+
             </li>
     </ul>
 
 
-            <h3>Submodules</h3>
-            <ul>
-                    <li><a href="test_plans/classifier.html">classifier</a></li>
-                    <li><a href="test_plans/llm.html">llm</a></li>
-                    <li><a href="test_plans/statsmodels_timeseries.html">statsmodels_timeseries</a></li>
-                    <li><a href="test_plans/summarization.html">summarization</a></li>
-                    <li><a href="test_plans/tabular_datasets.html">tabular_datasets</a></li>
-                    <li><a href="test_plans/text_data.html">text_data</a></li>
-                    <li><a href="test_plans/time_series.html">time_series</a></li>
-            </ul>
 
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
@@ -71,105 +76,151 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../validmind.html">validmind</a><wbr>.test_plans    </h1>
+<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../data_validation.html">data_validation</a><wbr>.<a href="./../nlp.html">nlp</a><wbr>.TextDescription    </h1>
 
-                        <div class="docstring"><p>Test Plans entry point</p>
-</div>
-
+                
                 
                 
                 
             </section>
-                <section id="list_tests">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+                <section id="TextDescription">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">TextDescription</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
 
         
     </div>
-    <a class="headerlink" href="#list_tests"></a>
+    <a class="headerlink" href="#TextDescription"></a>
     
-            <div class="docstring"><p>List all tests in the tests directory.</p>
+    
 
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>filter (str, optional):</strong>  Find tests where any part of the ID matches the filter
-string. Defaults to None.</li>
-<li><strong>task (str, optional):</strong>  Find tests that match the task type. Defaults to None.</li>
-<li><strong>pretty (bool, optional):</strong>  If True, returns a pandas DataFrame with a
-formatted table. Defaults to False.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list or pandas.DataFrame: A list of all tests or a formatted table.</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="list_plans">
-                    <div class="attr function">
+                            <div id="TextDescription.__init__" class="classattr">
+                                <div class="attr function">
             
-        <span class="def">def</span>
-        <span class="name">list_plans</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">pretty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">TextDescription</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
-    <a class="headerlink" href="#list_plans"></a>
+    <a class="headerlink" href="#TextDescription.__init__"></a>
     
-            <div class="docstring"><p>Returns a list of all available test plans</p>
-</div>
+    
 
-
-                </section>
-                <section id="get_by_id">
-                    <div class="attr function">
+                            </div>
+                            <div id="TextDescription.description" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_by_id</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#get_by_id"></a>
+    <a class="headerlink" href="#TextDescription.description"></a>
     
-            <div class="docstring"><p>Returns the test plan by ID</p>
+            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
+to returning the class' docstring</p>
 </div>
 
 
-                </section>
-                <section id="describe_plan">
-                    <div class="attr function">
+                            </div>
+                            <div id="TextDescription.general_text_metrics" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">describe_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">style</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">general_text_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">text_column</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#describe_plan"></a>
+    <a class="headerlink" href="#TextDescription.general_text_metrics"></a>
     
-            <div class="docstring"><p>Returns a description of the test plan</p>
-</div>
+    
 
-
-                </section>
-                <section id="register_test_plan">
-                    <div class="attr function">
+                            </div>
+                            <div id="TextDescription.vocabulary_structure_metrics" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">plan_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">plan</span></span><span class="return-annotation">):</span></span>
+        <span class="name">vocabulary_structure_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">text_column</span>, </span><span class="param"><span class="n">unwanted_tokens</span>, </span><span class="param"><span class="n">num_top_words</span>, </span><span class="param"><span class="n">lang</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#register_test_plan"></a>
+    <a class="headerlink" href="#TextDescription.vocabulary_structure_metrics"></a>
     
-            <div class="docstring"><p>Registers a custom test plan</p>
+    
+
+                            </div>
+                            <div id="TextDescription.text_description_table" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">text_description_table</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">params</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TextDescription.text_description_table"></a>
+    
+    
+
+                            </div>
+                            <div id="TextDescription.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TextDescription.run"></a>
+    
+            <div class="docstring"><p>Run the calculation and cache its results</p>
 </div>
 
 
+                            </div>
+                            <div id="TextDescription.text_description_scatter_plot" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">text_description_scatter_plot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span>, </span><span class="param"><span class="n">params</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TextDescription.text_description_scatter_plot"></a>
+    
+    
+
+                            </div>
+                            <div id="TextDescription.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TextDescription.summary"></a>
+    
+            <div class="docstring"><p>Build one table for summarizing the regression analysis results</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                <dd id="TextDescription.key" class="variable">key</dd>
+                <dd id="TextDescription.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                <dd id="TextDescription.df" class="variable">df</dd>
+                <dd id="TextDescription.validate_context" class="function">validate_context</dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
     </main>
 <script>
@@ -224,7 +275,7 @@ formatted table. Defaults to False.</li>
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "../search.js";
+                script.src = "../../../../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -266,7 +317,7 @@ formatted table. Defaults to False.</li>
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `../${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../../../../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }
