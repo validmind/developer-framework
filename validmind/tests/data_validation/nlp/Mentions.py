@@ -62,9 +62,18 @@ class Mentions(ThresholdTest):
         row = pd.DataFrame({"scenario": []})
         row["scenario"] = b
         row["Percentage"] = a
-        fig = px.treemap(
-            row, path=["scenario"], values="Percentage", title="Tree of Mentions"
-        )
+        figures = []
+        if not row.empty():
+            fig = px.treemap(
+                row, path=["scenario"], values="Percentage", title="Tree of Mentions"
+            )
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=self.name,
+                    figure=fig,
+                )
+            )
 
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
@@ -72,11 +81,5 @@ class Mentions(ThresholdTest):
         return self.cache_results(
             [],
             passed=True,
-            figures=[
-                Figure(
-                    for_object=self,
-                    key=self.name,
-                    figure=fig,
-                )
-            ],
+            figures=figures,
         )
