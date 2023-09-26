@@ -106,7 +106,7 @@
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">tags</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -117,9 +117,12 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>filter (str, optional):</strong>  Find tests where any part of the ID matches the filter
-string. Defaults to None.</li>
-<li><strong>task (str, optional):</strong>  Find tests that match the task type. Defaults to None.</li>
+<li><strong>filter (str, optional):</strong>  Find tests where the ID, task_type or tags match the
+filter string. Defaults to None.</li>
+<li><strong>task (str, optional):</strong>  Find tests that match the task type. Can be used to
+narrow down matches from the filter string. Defaults to None.</li>
+<li><strong>tags (list, optional):</strong>  Find tests that match list of tags. Can be used to
+narrow down matches from the filter string. Defaults to None.</li>
 <li><strong>pretty (bool, optional):</strong>  If True, returns a pandas DataFrame with a
 formatted table. Defaults to False.</li>
 </ul>
