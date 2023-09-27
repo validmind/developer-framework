@@ -10,15 +10,15 @@ from typing import ClassVar, List, Union
 import ipywidgets as widgets
 from IPython.display import display
 
-from ..errors import MissingRequiredTestContextError, should_raise_on_fail_fast
-from ..logging import get_logger, log_performance
-from ..tests import LoadTestError, load_test
-from ..utils import clean_docstring, is_notebook, run_async, run_async_check
-from .dataset import VMDataset
-from .model import VMModel
-from .test import Test
-from .test_context import TestContext
-from .test_plan_result import TestPlanFailedResult, TestPlanResult
+from ...errors import MissingRequiredTestContextError, should_raise_on_fail_fast
+from ...logging import get_logger, log_performance
+from ...tests import LoadTestError, load_test
+from ...utils import clean_docstring, is_notebook, run_async, run_async_check
+from ..dataset import VMDataset
+from ..model import VMModel
+from ..results.test_plan_result import TestPlanFailedResult, TestPlanResult
+from ..test.test import Test
+from ..test_context import TestContext
 
 logger = get_logger(__name__)
 

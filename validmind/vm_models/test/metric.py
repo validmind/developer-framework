@@ -10,12 +10,12 @@ from typing import ClassVar, List, Optional, Union
 
 import pandas as pd
 
-from ..errors import MissingCacheResultsArgumentsError
-from ..utils import clean_docstring
-from .figure import Figure
-from .metric_result import MetricResult
+from ...errors import MissingCacheResultsArgumentsError
+from ...utils import clean_docstring
+from ..figure import Figure
+from ..results.metric_result import MetricResult
+from ..results.test_plan_result import TestPlanMetricResult
 from .test import Test
-from .test_plan_result import TestPlanMetricResult
 
 
 @dataclass

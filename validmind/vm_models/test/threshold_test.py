@@ -9,12 +9,12 @@ avoid confusion with the "tests" in the general data science/modeling sense.
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
-from ..utils import clean_docstring
-from .figure import Figure
-from .result_summary import ResultSummary, ResultTable
+from ...utils import clean_docstring
+from ..figure import Figure
+from ..results.result_summary import ResultSummary, ResultTable
+from ..results.test_plan_result import TestPlanTestResult
+from ..results.test_result import TestResult, TestResults
 from .test import Test
-from .test_plan_result import TestPlanTestResult
-from .test_result import TestResult, TestResults
 
 
 @dataclass

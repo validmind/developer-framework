@@ -47,7 +47,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
         import validmind as vm
         from validmind.vm_models.dataset import VMDataset
         from validmind.vm_models.model import VMModel
-        from validmind.vm_models.test_suite import TestSuite
+        from validmind.vm_models.test_suite.test_suite import TestSuite
 
         self.vm_dataset = vm.init_dataset(
             dataset=self.df,

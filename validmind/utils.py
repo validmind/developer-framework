@@ -6,15 +6,36 @@ import json
 import math
 from typing import Any
 
+import matplotlib.pylab as pylab
 import nest_asyncio
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from IPython.core import getipython
+from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
+
+
+########## SETUP SOME DEFAULTS FOR PLOTS ##########
+# Silence this warning: *c* argument looks like a single numeric RGB or
+# RGBA sequence, which should be avoided
+matplotlib_axes_logger.setLevel("ERROR")
+
+sns.set(rc={"figure.figsize": (20, 10)})
+
+params = {
+    "legend.fontsize": "x-large",
+    "axes.labelsize": "x-large",
+    "axes.titlesize": "x-large",
+    "xtick.labelsize": "x-large",
+    "ytick.labelsize": "x-large",
+}
+pylab.rcParams.update(params)
+####################################################
 
 
 def is_notebook() -> bool:

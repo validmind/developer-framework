@@ -71,8 +71,8 @@ class Figure:
         Returns the type of the object this figure is for
         """
         # Avoid circular imports
-        from .metric import Metric
-        from .threshold_test import ThresholdTest
+        from .test.metric import Metric
+        from .test.threshold_test import ThresholdTest
 
         if issubclass(self.for_object.__class__, Metric):
             return "metric"

@@ -13,9 +13,9 @@ from typing import ClassVar, List, Union
 import ipywidgets as widgets
 from IPython.display import display
 
-from ..test_plans import get_by_id as get_test_plan
-from ..utils import is_notebook
-from .test_context import TestContext
+from ...test_plans import get_by_id as get_test_plan
+from ...utils import is_notebook
+from ..test_context import TestContext
 from .test_plan import TestPlan
 
 
@@ -158,7 +158,7 @@ class TestSuite(TestPlan):
         Summarizes the results of the test suite.
         """
         # avoid circular import
-        from ..api_client import get_api_host, get_api_project
+        from ...api_client import get_api_host, get_api_project
 
         if not is_notebook():
             return

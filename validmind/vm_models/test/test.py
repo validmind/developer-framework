@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
-from ..utils import run_async
-from .test_context import TestContextUtils
+from ...utils import run_async
+from ..test_context import TestContextUtils
 
 
 class TestMetadata(TypedDict):
