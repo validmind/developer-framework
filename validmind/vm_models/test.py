@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
+from ..utils import run_async
 from .test_context import TestContextUtils
 
 
@@ -20,7 +21,6 @@ class TestMetadata(TypedDict):
 
 @dataclass
 class Test(TestContextUtils):
-
     # Class Variables
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes
@@ -77,3 +77,9 @@ class Test(TestContextUtils):
         Cache the results of the calculation
         """
         raise NotImplementedError("base class method should not be called")
+
+    def log(self):
+        """
+        Log the test results to ValidMind
+        """
+        run_async(self.result.log)

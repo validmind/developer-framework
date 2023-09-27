@@ -11,6 +11,7 @@ import pandas as pd
 from ..errors import LoadTestError
 from ..logging import get_logger
 from ..utils import clean_docstring, format_dataframe, fuzzy_match
+from ..vm_models import TestContext
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
@@ -299,6 +300,23 @@ def describe_test(test_name: str = None, test_id: str = None, raw: bool = False)
             }
         )
     )
+
+
+def run_test(test_id, *args, **kwargs):
+    """
+    Run a test by test ID. Any extra arguments will be passed to the test's run method.
+    The only special argument is `params` which can be used to override the test's default params.
+    """
+    TestClass = load_test(test_id)
+
+    test_params = kwargs.pop("params", None)
+    test_context = TestContext(*args, **kwargs)
+
+    test = TestClass(test_context=test_context, params=test_params)
+    test.run()
+    test.result.show()
+
+    return test
 
 
 def register_test_provider(namespace: str, test_provider: ExternalTestProvider) -> None:
