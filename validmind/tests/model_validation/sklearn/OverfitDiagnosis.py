@@ -21,7 +21,44 @@ from validmind.vm_models import (
 @dataclass
 class OverfitDiagnosis(ThresholdTest):
     """
-    Test that identify overfit regions with high residuals by histogram slicing techniques.
+    **Purpose**: The OverfitDiagnosis is a specialized component designed to identify regions prone to overfitting
+    through the utilization of histogram slicing techniques. The code purports to measure the discrepancies between the
+    performance of the model on the training dataset and the testing dataset, segmented into distinct regions
+    established based on the feature space. By identifying the overfitted regions or high residuals, the mechanism
+    guides towards the subsequent application of regularization techniques such as L1 or L2 regularization, dropout, or
+    early stopping, or data augmentation to enhance the overall performance of the model and its generalization ability.
+
+    **Test Mechanism**: The OverfitDiagnosis test is initiated by running the `run` method with pre-determined
+    `default_params` and `default_metrics`, with 'accuracy' as the specified metric. The method executes the test by
+    formulation distinct regions of the feature space based on binning techniques applied on feature columns from both
+    training and testing datasets, further appending the predicted values. Each formed region is analyzed for
+    performance discrepancies against actual values and the predictions of the model for both the datasets. The
+    performance difference, referred to as the 'gap', is calculated and compared against a cut-off percentage
+    indicating overfitting. In case of overfitting, the `run` method returns a **failed** status, while a successful
+    test results in a **passed** status. Meanwhile, the function also prepares figures illustrating the overfitting
+    regions.
+
+    **Signs of High Risk**: The signs of high-risk associated with this model include:
+
+    - A high value in the ‘gap’ between training and testing data accuracy – the larger the gap, the more overfit the
+    model.
+    - A high number and/or large regions of overfitting within the feature space.
+
+    **Strengths**:
+
+    - The technique allows for an insightful visual understanding by plotting overfitting regions.
+    - Evaluates potential overfitting on a per-feature basis, allowing for more direct interventions.
+    - Flexible test parameters such as 'cut_off_percentage' and 'features_column' for custom-tailored analysis.
+    - Can handle both categorical and numerical features.
+
+    **Limitations**:
+
+    - Currently, this test only applies to classification tasks. Regression tasks are not supported.
+    - Does not perform well with text-based features, limiting the utility in Natural Language Processing models.
+    - Highly dependent on 'bins' setting which determines how the feature space is segmented. Different bin settings
+    may produce different results.
+    - Cut-off percentage for overfitting is arbitrary and no guideline is provided to set it optimally.
+    - Performance metrics are limited to accuracy, limiting precision in the case of imbalanced datasets.
     """
 
     category = "model_diagnosis"

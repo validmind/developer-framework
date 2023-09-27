@@ -13,7 +13,42 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class LogisticRegCumulativeProb(Metric):
     """
-    Cumulative Probability Metric for Logistic Regression Models
+    **Purpose**: This metric is used to evaluate the distribution of predicted probabilities for positive and negative
+    classes in a logistic regression model. It's purpose is not only to measure the performance of the model but also
+    to visually assess the behavior of the model by plotting the cumulative probabilities for positive and negative
+    classes across the training and test datasets.
+
+    **Test Mechanism**: To test the logistic regression model, the metric computes the predicted probabilities for each
+    instance in  training and test datasets and adds it as a new column in these sets. The cumulative probabilities for
+    positive and negative classes are then calculated and sorted in ascending order. Subsequently, cumulative
+    distributions of these probabilities are created for both positive and negative classes across both training and
+    test datasets. The cumulative probabilities are presented visually in a plot. The plot has two subplots - one for
+    the training data and the other for the test data, with lines representing cumulative distributions of positive and
+    negative classes.
+
+    **Signs of High Risk**: Indicators of high risk include:
+    1. Imbalanced distribution of probabilities for either positive or negative classes.
+    2. Inconsistencies or significant differences between the cumulative probability distributions for the training
+    data versus the test data.
+    3. Inconsistencies or significant differences between the cumulative probability distributions for positive and
+    negative classes.
+
+    **Strengths**: Some major merits of using this metric are:
+    1. It not only returns numerical probabilities but also provides a visual representation of data which makes it
+    easier to understand and interpret the model's behavior.
+    2. It allows for comparison of model's behavior across training and testing datasets, which can provide insights
+    into how well the model is generalized.
+    3. It also distinguishes between positive and negative classes and their respective distribution patterns which can
+    aid in problem diagnosis.
+
+    **Limitations**: Despite its strengths, this metric also has few limitations:
+    1. It only applies to classification tasks and specifically to logistic regression models.
+    2. The graphical results require human interpretation and may not be directly applicable for automated risk
+    detection.
+    3. The method does not provide a single quantifiable measure of model risk, but rather a visual representation and
+    broad distributional information.
+    4. If the training and test datasets are not representative of the overall data distribution, the metric could
+    provide misleading results.
     """
 
     name = "logistic_reg_cumulative_prob"

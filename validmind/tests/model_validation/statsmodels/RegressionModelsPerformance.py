@@ -10,7 +10,31 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelsPerformance(Metric):
     """
-    Test that outputs the comparison of stats library regression models.
+    **Purpose**: This metric is intended to assess and compare the performance of different regression models. It
+    offers an insightful look into the models' ability to predict dependent variables, both on the data used for
+    training (in-sample) and new data (out-of-sample). Metrics such as R-squared, Adjusted R-squared, and Mean Squared
+    Error (MSE) are employed.
+
+    **Test Mechanism**: This test iterates over various regression models supplied as an input list. For each model, it
+    evaluates their in-sample and out-of-sample performance by capturing predictions for the training and test datasets
+    respectively, and comparing these predictions against actual values to calculate R-squared, Adjusted R-squared, and
+    Mean Squared Error (MSE). The models are individually evaluated in this manner, with their results being stored and
+    returned for comparison purposes.
+
+    **Signs of High Risk**: High risk or potential failures in the model's performance might be indicated by
+    excessively large MSE values, or unreasonably low R-squared and Adjusted R-squared values. If the model's
+    performance drastically declines when moving from in-sample to out-of-sample evaluations, this could also signify a
+    high risk of overfitting.
+
+    **Strengths**: This metric is versatile and allows for the comparison of multiple models at once, providing an
+    objective means of identifying the best-performing model. It provides both in-sample and out-of-sample evaluations,
+    thus informing about the model's performance on unseen data. The use of R-squared and Adjusted R-squared values in
+    addition to MSE provides a comprehensive view of the model's explainability and error rate.
+
+    **Limitations**: This test presupposes that the regression model's residuals are normally distributed, *i.e.*, a
+    key assumption of Ordinary Least Squares (OLS) regression. Thus, it may not appropriately assess models where this
+    assumption is violated. Additionally, it does not account for situations where predictive performance might not
+    directly correlate with higher R-squared or lower MSE values, especially in the event of excessively complex models.
     """
 
     name = "regression_models_performance"

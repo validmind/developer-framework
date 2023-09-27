@@ -15,7 +15,40 @@ logger = get_logger(__name__)
 @dataclass
 class SHAPGlobalImportance(Metric):
     """
-    SHAP Global Importance
+    **Purpose:**
+    The SHAP (SHapley Additive exPlanations) Global Importance metric is used to interpret the output of any machine
+    learning model by attributing the outcome to its contributing features. It quantifies the global importance of
+    features in the model using their absolute Shapley values. This metric can be applied for tasks like
+    classification, including binary and multiclass classification, and is a key component of the model risk management
+    strategy.
+
+    **Test Mechanism:**
+    First, an appropriate explainer based on the type of model is instantiated, either a TreeExplainer for tree models
+    (i.e., XGBClassifier, RandomForestClassifier, CatBoostClassifier) or a LinearExplainer for linear models (i.e.,
+    LogisticRegression, XGBRegressor, LinearRegression). The explainer then calculates and outputs the Shapley values.
+
+    These Shapley values are used to generate two types of plots: a Mean Importance plot (represents the significance
+    of each feature based on its absolute Shapley values) and a Summary Plot (combines the importance of each feature
+    with the effects). The function `_generate_shap_plot()` is used to generate these plots with mean and summary plot
+    types.
+
+    **Signs of High Risk:**
+    If a few features are overly dominant in the SHAP importance plots, it would suggest potential overfitting to these
+    features. If unexpected or speculative features appear to be highly important, it can indicate that the model is
+    making decisions based on incorrect or undesired reasons. The SHAP summary plot can also display high variability
+    or scattered values.
+
+    **Strengths:**
+    SHAP provides both global feature importance and a detailed view of how individual features impact the model's
+    decision logic on each instance. This is considered an advanced approach for understanding model behavior.
+    Moreover, SHAP supports several types of models, making it very flexible and offering consistent interpretations
+    across models.
+
+    **Limitations:**
+    SHAP computation can be slow and resource-intensive for complex models or large datasets. The technique depends on
+    the model class and doesn't support all types of models such as models from the "statsmodels", "pytorch",
+    "catboost", "transformers", "FoundationModel", and "R" libraries. Furthermore, high dimensionality can render
+    interpretation more challenging, and correlating importance with real-world influence can still be subjective.
     """
 
     name = "shap"
