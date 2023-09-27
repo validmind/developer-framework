@@ -129,20 +129,35 @@ def add_description_to_test(path):
         f.write("\n".join(lines))
 
 
+def review_test_description(test_paths):
+    """TODO: Implement AI test description review"""
+    pass
+
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, file_okay=True, dir_okay=True))
-def main(path):
+@click.argument("action", type=click.Choice(["add", "review"]))
+def main(path, action):
     """Recursively processes the specified DIRECTORY and updates files needing metadata injection."""
+    files = []
+
     # check if path is a file or directory
     if os.path.isfile(path):
         if path.endswith(".py"):
-            add_description_to_test(path)
+            files.append(path)
 
     elif os.path.isdir(path):
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file.endswith(".py") and file[0].isupper():
-                    add_description_to_test(os.path.join(root, file))
+                    files.append(os.path.join(root, file))
+
+    if action == "add":
+        for file in files:
+            add_description_to_test(file)
+
+    elif action == "review":
+        review_test_description(files)
 
 
 if __name__ == "__main__":
