@@ -30,12 +30,22 @@ class RobustnessDiagnosis(ThresholdTest):
     category = "model_diagnosis"
     name = "robustness"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
-
     default_params = {
         "features_columns": None,
         "scaling_factor_std_dev_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
         "accuracy_decay_threshold": 4,
     }
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_diagnosis",
+            "visualization",
+        ],
+    }
+
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }

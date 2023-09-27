@@ -26,6 +26,15 @@ class MinimumROCAUCScore(ThresholdTest):
     name = "roc_auc_score"
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+        ],
+    }
 
     def summary(self, results: List[TestResult], all_passed: bool):
         """

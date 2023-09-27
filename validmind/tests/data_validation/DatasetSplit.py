@@ -11,6 +11,15 @@ class DatasetSplit(Metric):
 
     name = "dataset_split"
     required_inputs = ["model"]
+    metadata = {
+        "task_types": [
+            "classification",
+            "regression",
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["tabular_data", "time_series_data", "text_data"],
+    }
 
     dataset_labels = {
         "train_ds": "Training",

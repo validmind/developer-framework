@@ -18,6 +18,16 @@ class BivariateHistograms(Metric):
     name = "bivariate_histograms"
     required_inputs = ["dataset"]
     default_params = {"features_pairs": None, "target_filter": None}
+    metadata = {
+        "task_types": ["classification"],
+        "tags": [
+            "tabular_data",
+            "categorical_data",
+            "binary_classification",
+            "multiclass_classification",
+            "visualization",
+        ],
+    }
 
     def plot_bivariate_histogram(self, features_pairs, target_filter):
         status_var = self.dataset.target_column

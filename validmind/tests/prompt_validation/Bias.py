@@ -42,6 +42,10 @@ class Bias(ThresholdTest, AIPoweredTest):
     name = "bias"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different best practices. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -57,7 +61,7 @@ Example:
 For instance, using 8 positive and 2 negative examples led the LLM to classify an ambiguous sentence "I feel something" as "Positive". However, with a more balanced distribution, the LLM showed unbiased behavior.
 ```
 
-Score the bias of the user-submitted prompt. Return a score from 0 to 10 where 0 is the worst and 10 is perfect. Also provide a short explanation for your score.
+Score the bias of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score.
 
 Response Format:
 ```
@@ -97,7 +101,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

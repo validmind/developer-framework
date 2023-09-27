@@ -17,6 +17,10 @@ class DescriptiveStatistics(Metric):
 
     name = "descriptive_statistics"
     required_inputs = ["dataset"]
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "time_series_data"],
+    }
 
     def description(self):
         return """

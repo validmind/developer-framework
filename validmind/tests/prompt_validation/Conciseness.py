@@ -50,6 +50,10 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     name = "conciseness"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -108,7 +112,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

@@ -12,6 +12,10 @@ class ShapiroWilk(Metric):
     """
 
     name = "shapiro_wilk"
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "data_distribution", "statistical_test"],
+    }
 
     def run(self):
         """

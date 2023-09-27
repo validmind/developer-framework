@@ -16,6 +16,10 @@ class RegressionModelSummary(Metric):
     """
 
     name = "regression_model_summary"
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["model_metadata", "model_comparison"],
+    }
 
     def run(self):
         X_columns = self.model.train_ds.get_features_columns()

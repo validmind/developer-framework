@@ -37,6 +37,16 @@ class PermutationFeatureImportance(Metric):
         "fontsize": None,
         "figure_height": 1000,
     }
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "feature_importance",
+            "visualization",
+        ],
+    }
 
     def run(self):
         x = self.model.train_ds.x_df()

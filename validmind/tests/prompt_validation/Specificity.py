@@ -53,6 +53,10 @@ class Specificity(ThresholdTest, AIPoweredTest):
     name = "specificity"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -65,7 +69,7 @@ Example:
 Imagine wanting an LLM to extract specific details from a given text. A vague prompt might yield varied results. However, with a prompt like, "Extract the names of all characters and the cities they visited from the text", the LLM is guided more precisely towards the desired information extraction.
 ```
 
-Score the specificity of the user-submitted prompt. Return a score from 0 to 10 where 0 is not specific at all and 10 is very specific. Also provide a short explanation for your score
+Score the specificity of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score
 
 Response Format:
 ```
@@ -105,7 +109,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

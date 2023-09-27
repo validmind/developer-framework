@@ -26,20 +26,25 @@ from validmind.vm_models import (
 
 @dataclass
 class StopWords(ThresholdTest):
+    """
+    The purpose of the StopWords test is to perform a data quality test focused on
+    identifying and analyzing the usage of stop words within a dataset. Stop words are
+    commonly used words in a language (e.g., "the", "and", "is") that are often
+    considered insignificant for analysis. The StopWords test analyzes the dataset by
+    creating a corpus of words from the specified text column. It then determines the
+    frequency of each stop word in the corpus and calculates the percentage of each
+    stop word in relation to the total number of words. The test results focus on
+    identifying the top stop words based on their percentage in the corpus.
+    """
 
     category = "data_quality"
     name = "stop_words"
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
-
-    def description(self):
-        return """The purpose of the StopWords test is to perform a data quality test focused on identifying and analyzing
-        the usage of stop words within a dataset. Stop words are commonly used words in a language (e.g., "the", "and", "is")
-        that are often considered insignificant for analysis.
-        The StopWords test analyzes the dataset by creating a corpus of words from the specified text column.
-        It then determines the frequency of each stop word in the corpus and calculates the percentage of each stop word in
-        relation to the total number of words. The test results focus on identifying the top stop words based on their
-        percentage in the corpus."""
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
+    }
 
     def summary(self, results: List[TestResult], all_passed: bool):
 

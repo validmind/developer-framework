@@ -17,7 +17,11 @@ class ScorecardBucketHistogram(Metric):
 
     name = "scorecard_bucket_histogram"
     required_inputs = ["model"]
-    default_parameters = {
+    metadata = {
+        "task_types": ["classification"],
+        "tags": ["tabular_data", "visualization", "credit_risk"],
+    }
+    default_params = {
         "title": "Distribution of Scores by Rating Classes",
         "target_score": 600,
         "target_odds": 50,

@@ -16,21 +16,23 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 @dataclass
 class Hashtags(ThresholdTest):
     """
-    The purpose of this test is to identify and analyze the most frequently used hashtags in a given text column of a dataset.
+    The Hashtags test analyzes the dataset by extracting the text column and applying a
+    regular expression pattern to identify hashtags within the text. It then counts the
+    occurrences of each hashtag and selects the top hashtags based on a specified
+    parameter or the default value. The results are visualized using a bar plot, where
+    the x-axis represents the hashtags and the y-axis represents their frequency
+    counts. It aims to identify the most commonly used hashtags in a given text column
+    and provide visual representation of their frequencies.
     """
 
     category = "data_quality"
     name = "hashtags"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_hashtags": 25}
-
-    def description(self):
-        return """The Hashtags test analyzes the dataset by extracting the text column and applying a regular expression pattern
-        to identify hashtags within the text. It then counts the occurrences of each hashtag and selects the top hashtags based
-        on a specified parameter or the default value. The results are visualized using a bar plot, where the x-axis represents
-        the hashtags and the y-axis represents their frequency counts.
-        It aims to identify the most commonly used hashtags in a given text column and provide visual representation of their
-        frequencies."""
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
+    }
 
     def run(self):
         # Can only run this test if we have a Dataset object

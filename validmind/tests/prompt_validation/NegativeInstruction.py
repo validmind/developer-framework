@@ -51,6 +51,10 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     name = "negative_instruction"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -63,7 +67,7 @@ Example:
 Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as, "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the genres mentioned, inadvertently producing undesired results. On the other hand, a positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides clear guidance on the desired output.
 '''
 
-Based on this best practice, please score the user-submitted prompt on a scale of 1-10, with 10 being the best score and 1 being the worst score.
+Based on this best practice, please score the user-submitted prompt on a scale of 1-10, where 10 is a perfect score.
 Provide an explanation for your score.
 
 Response Format:
@@ -104,7 +108,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

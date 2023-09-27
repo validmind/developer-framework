@@ -54,6 +54,10 @@ class Clarity(ThresholdTest, AIPoweredTest):
     name = "clarity"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -70,7 +74,7 @@ Tactics for Ensuring Clarity that will be referenced during evaluation:
 5. Determine Output Length: Define the targeted length of the response, whether in terms of paragraphs, bullet points, or other units. While word counts aren't always precise, specifying formats like paragraphs can offer more predictable results.
 '''
 
-Score the clarity of the user-submitted prompt. Return a score from 0 to 10 where 0 is not clear at all and 10 is very clear. Also provide a short explanation for your score.
+Score the clarity of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score.
 
 Response Format:
 ```
@@ -110,7 +114,9 @@ Prompt:
     def run(self):
         response = self.call_model(
             system_prompt=self.system_prompt,
-            user_prompt=self.user_prompt.format(prompt_to_test=self.model.prompt),
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.model.prompt.template
+            ),
         )
         score = self.get_score(response)
         explanation = self.get_explanation(response)

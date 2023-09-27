@@ -14,6 +14,10 @@ class RegressionModelsPerformance(Metric):
     """
 
     name = "regression_models_performance"
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["model_performance", "model_comparison"],
+    }
 
     def description(self):
         return """

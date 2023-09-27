@@ -16,14 +16,19 @@ from ....vm_models import Figure, Metric, VMDataset
 
 @dataclass
 class CommonWords(Metric):
+    """
+    The purpose of the common words test is to analyze a dataset and identify the most
+    common words within a specified text column. This test allows users to understand
+    the prevalent words within the dataset's text column and gain insights into the
+    dataset's language patterns.
+    """
+
     name = "common_words"
     required_inputs = ["dataset", "dataset.text_column"]
-
-    def description(self):
-        return """The purpose of the common words test is to analyze a dataset and identify the most common
-        words within a specified text column.
-        This test allows users to understand the prevalent words within the dataset's text column and gain
-        insights into the dataset's language patterns."""
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
+    }
 
     def run(self):
         # Can only run this test if we have a Dataset object
