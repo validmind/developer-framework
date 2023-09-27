@@ -160,7 +160,6 @@ pretty_print_tables <- function(datasets) {
   imap(datasets, ~{
     kable(.x, caption = .y) %>%
       kable_styling("striped") %>%
-      row_spec(0:nrow(.x), color = 'black') %>%
-      cat()
+      row_spec(0:nrow(.x), color = 'black')
   })
 }

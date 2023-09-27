@@ -117,8 +117,12 @@ raw_summary_results <- summarize_results(tabular_suite_results)
 ```
 
 ```{r, echo=FALSE, results='asis'}
-invisible(pretty_print_tables(raw_summary_results))
+pretty_summary_results <- pretty_print_tables(raw_summary_results)
+
+invisible(lapply(pretty_summary_results, cat))
+invisible(lapply(pretty_summary_results, print))
 ```
+
 
 ## **Run the Model Validation Test Plan**
 
