@@ -112,11 +112,11 @@ vm_dataset = vm_r$init_dataset(
 tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
 ```
 
-```{r}
+```{r, results='hide'}
 raw_summary_results <- summarize_results(tabular_suite_results)
 ```
 
-```{r, results='asis'}
+```{r, echo=FALSE, results='asis'}
 invisible(pretty_print_tables(raw_summary_results))
 ```
 
