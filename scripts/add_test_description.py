@@ -1,3 +1,12 @@
+"""Script that generates a description for a test using GPT-4 and automatically inserts it into the class docstring
+
+Usage:
+    python scripts/add_test_description.py <path> // path can be either a file or a directory
+
+Before running this, you need to either set an environment variable OPENAI_API_KEY
+or create a .env file in the root of the project with the following contents:
+OPENAI_API_KEY=<your api key>
+"""
 import os
 
 import click
