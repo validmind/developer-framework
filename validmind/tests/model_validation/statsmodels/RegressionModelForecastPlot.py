@@ -55,11 +55,6 @@ class RegressionModelForecastPlot(Metric):
         "tags": ["forecasting", "visualization"],
     }
 
-    def description(self):
-        return """
-        This section shows plots of training and test datasets vs forecast trainining and forecast test.
-        """
-
     def run(self):
         start_date = self.params["start_date"]
         end_date = self.params["end_date"]

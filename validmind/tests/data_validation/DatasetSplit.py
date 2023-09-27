@@ -58,19 +58,6 @@ class DatasetSplit(Metric):
         "total": "Total",
     }
 
-    def description(self):
-        return """
-        This section shows the size of the dataset split into training, test (and validation) sets
-        where applicable. The size of each dataset is shown in absolute terms and as a proportion
-        of the total dataset size.
-
-        The dataset split is important to understand because it can affect the performance of
-        the model. For example, if the training set is too small, the model may not be able to
-        learn the patterns in the data and will perform poorly on the test set. On the other hand,
-        if the test set is too small, the model may not be able to generalize well to unseen data
-        and will perform poorly on the validation set.
-        """
-
     def summary(self, raw_results):
         """
         Returns a summarized representation of the dataset split information

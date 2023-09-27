@@ -44,13 +44,6 @@ class RegressionModelsCoeffs(Metric):
         "tags": ["model_comparison"],
     }
 
-    def description(self):
-        return """
-        This section shows the coefficients of different regression models that were
-        trained on the same dataset. This can be useful for comparing how different
-        models weigh the importance of various features in the dataset.
-        """
-
     def _build_model_summaries(self, all_coefficients):
         all_models_df = pd.DataFrame()
 

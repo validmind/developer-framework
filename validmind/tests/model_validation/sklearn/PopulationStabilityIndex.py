@@ -67,16 +67,6 @@ class PopulationStabilityIndex(Metric):
         ],
     }
 
-    def description(self):
-        return """
-        PSI is a widely-used metric to assess the stability of a predictive model's score distribution when comparing
-        two separate samples (usually a development and a validation dataset or two separate time periods). It helps
-        determine if a model's performance has changed significantly over time or if there is a major shift in the
-        population characteristics.
-
-        In this section, we compare the PSI between the training and test datasets.
-        """
-
     def summary(self, metric_value):
         # Add a table with the PSI values for each feature
         # The data looks like this: [{"initial": 2652, "percent_initial": 0.5525, "new": 830, "percent_new": 0.5188, "psi": 0.0021},...

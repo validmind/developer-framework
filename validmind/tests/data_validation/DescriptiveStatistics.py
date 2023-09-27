@@ -49,12 +49,6 @@ class DescriptiveStatistics(Metric):
         "tags": ["tabular_data", "time_series_data"],
     }
 
-    def description(self):
-        return """
-        This section provides descriptive statistics for numerical
-        and categorical variables found in the dataset.
-        """
-
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]
         summary_stats = (

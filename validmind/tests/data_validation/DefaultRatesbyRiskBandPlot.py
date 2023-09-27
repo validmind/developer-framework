@@ -47,14 +47,6 @@ class DefaultRatesbyRiskBandPlot(Metric):
         "tags": ["tabular_data", "visualization", "credit_risk"],
     }
 
-    def description(self):
-        return """
-        This metric calculates the default rates for each risk band in the data,
-        and creates a bar plot to visualize these rates.
-        The bar plot offers a straightforward view of default rates across different risk bands,
-        which can help with evaluating and comparing the performance of credit risk models.
-        """
-
     @staticmethod
     def plot_band_percentages(df, risk_band_column, title):
         # Calculate the count of accounts in each risk band

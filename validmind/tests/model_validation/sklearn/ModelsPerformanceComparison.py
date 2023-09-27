@@ -54,13 +54,6 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         ],
     }
 
-    def description(self):
-        return """
-        This section shows the models performance comparison on the training data. Popular
-        metrics such as the accuracy, precision, recall, F1 score, etc. are
-        used to evaluate the models.
-        """
-
     def y_true(self):
         return self.model.y_test_true
 

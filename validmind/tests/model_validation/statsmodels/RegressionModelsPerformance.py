@@ -43,11 +43,6 @@ class RegressionModelsPerformance(Metric):
         "tags": ["model_performance", "model_comparison"],
     }
 
-    def description(self):
-        return """
-        This section shows the in-sample and out-of-sample comparison of regression models. In-sample comparison involves comparing the performance of different regression models on the same dataset that was used to train the models. Out-of-sample comparison evaluates the performance of the models on unseen data. This is typically done by calculating goodness-of-fit statistics such as R-squared and mean squared error (MSE) for each model, and then comparing these statistics to determine which model has the best fit to the data.
-        """
-
     def run(self):
         # Check models list is not empty
         if not self.models:

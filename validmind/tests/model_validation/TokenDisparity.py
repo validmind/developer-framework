@@ -45,10 +45,6 @@ class TokenDisparity(Metric):
     name = "token_disparity"
     required_inputs = ["model", "model.test_ds"]
 
-    def description(self):
-        return """
-        """
-
     def run(self):
         y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
         y_pred = self.model.y_test_predict

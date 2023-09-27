@@ -51,12 +51,6 @@ class TabularDescriptionTables(Metric):
         "tags": ["tabular_data"],
     }
 
-    def description(self):
-        return """
-        This section provides descriptive statistics for numerical,
-        categorical and datetime variables found in the dataset.
-        """
-
     def get_summary_statistics_numerical(self, numerical_fields):
         summary_stats = self.dataset.df[numerical_fields].describe().T
         summary_stats["Missing Values (%)"] = (

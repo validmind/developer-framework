@@ -43,17 +43,6 @@ class BertScore(Metric):
     name = "bert_score"
     required_inputs = ["model", "model.test_ds"]
 
-    def description(self):
-        return """BERTScore is a metric used to evaluate the quality of generated text or translations,
-        focusing on the similarity between the reference text and the generated text. It uses contextual
-        embeddings from BERT (Bidirectional Encoder Representations from Transformers) to compare the
-        two texts.
-        BERTScore is an automatic evaluation metric for text generation that computes a similarity score
-        for each token in the candidate sentence with each token in the reference sentence. It leverages
-        the pre-trained contextual embeddings from BERT models and matches words in candidate and reference
-        sentences by cosine similarity.
-        """
-
     def run(self):
         y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
         y_pred = self.model.y_test_predict

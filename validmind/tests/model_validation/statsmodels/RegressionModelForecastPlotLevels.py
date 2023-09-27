@@ -63,11 +63,6 @@ class RegressionModelForecastPlotLevels(Metric):
         "tags": ["forecasting", "visualization"],
     }
 
-    def description(self):
-        return """
-        This section shows plots of training and test datasets vs forecast training and test.
-        """
-
     def run(self):
         transformation = self.params["transformation"]
 

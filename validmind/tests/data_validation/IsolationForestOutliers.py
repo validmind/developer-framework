@@ -55,21 +55,6 @@ class IsolationForestOutliers(Metric):
 
     required_inputs = ["dataset"]
 
-    def description(self):
-        return """
-        The Isolation Forest test is an algorithm used for anomaly detection in datasets. It is based
-        on the concept of isolating anomalies rather than identifying normal data points. The test builds an ensemble
-        of isolation trees, which are binary trees created by randomly selecting features and splitting the data based
-        on random thresholds.
-
-        The main idea behind the Isolation Forest test is that anomalies are likely to be isolated quickly in these trees
-        compared to normal instances. Anomalies are expected to have shorter average path lengths in the trees,
-        as they are different from the majority of the data points.
-
-        It's important to note that the Isolation Forest test assumes anomalies are less frequent and have different properties
-        compared to normal instances. However, it may not be as effective in detecting anomalies that are close to each other
-        or in datasets where anomalies are more prevalent."""
-
     def run(self):
 
         if self.params["features_columns"] is None:

@@ -162,8 +162,3 @@ class RegressionModelSensitivityPlot(Metric):
                 ] = temp_df  # Include shock value in the key
 
         return shocked_dfs
-
-    def description(self):
-        return """
-        The sensitivity analysis metric applies various shocks or adjustments to one variable at a time while keeping all other variables constant. This allows for the examination of how changes in a specific variable affect the overall outcome or response of the system being analyzed.
-        """

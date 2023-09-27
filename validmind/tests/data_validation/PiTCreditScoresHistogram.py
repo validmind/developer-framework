@@ -47,12 +47,6 @@ class PiTCreditScoresHistogram(Metric):
         "tags": ["tabular_data", "visualization", "credit_risk"],
     }
 
-    def description(self):
-        return """
-        This metric calculates the scores for each instance in the training and test datasets,
-        and creates histograms to visualize the distributions of scores for the positive and negative classes.
-        """
-
     @staticmethod
     def plot_score_histogram(
         df,

@@ -57,11 +57,6 @@ class RegressionFeatureSignificance(Metric):
         ],
     }
 
-    def description(self):
-        return """
-        This section shows plots of feature p-values for each model.
-        """
-
     def run(self):
         fontsize = self.params["fontsize"]
         p_threshold = self.params["p_threshold"]

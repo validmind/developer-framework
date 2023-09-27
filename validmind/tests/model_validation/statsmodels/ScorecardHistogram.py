@@ -59,12 +59,6 @@ class ScorecardHistogram(Metric):
         "pdo": 20,
     }
 
-    def description(self):
-        return """
-        This metric calculates the credit score for each instance in the training and test datasets,
-        and creates histograms to visualize the distributions of scores for the positive and negative classes.
-        """
-
     @staticmethod
     def compute_scores(model, X, target_score, target_odds, pdo):
         X_copy = X.copy()

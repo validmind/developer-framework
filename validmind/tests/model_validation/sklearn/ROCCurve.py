@@ -61,14 +61,6 @@ class ROCCurve(Metric):
         ],
     }
 
-    def description(self):
-        return """
-        The ROC curve shows the trade-off between the true positive rate (TPR) and false positive rate (FPR)
-        for different thresholds. The area under the curve (AUC) is a measure of how well a model can
-        distinguish between two groups (e.g. default/non-default). The higher the AUC, the better the model is
-        at distinguishing between positive and negative classes.
-        """
-
     def run(self):
         if self.model.model_library() == "FoundationModel":
             raise SkipTestError("Skipping ROCCurve for Foundation models")

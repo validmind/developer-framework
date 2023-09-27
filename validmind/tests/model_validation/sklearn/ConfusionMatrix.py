@@ -61,15 +61,6 @@ class ConfusionMatrix(Metric):
         ],
     }
 
-    def description(self):
-        return """
-        A confusion matrix is a table that is used to describe the performance of a classification
-        model. For metrics such as **True Positives (TP)** and **True Negatives (TN)**, the higher their
-        values the better as the model is able to distinguish the correct class from the incorrect
-        class more effectively. For **False Positives (FP)** and **False Negatives (FN)**, the lower
-        their values the better.
-        """
-
     def run(self):
         y_true = self.model.y_test_true
         labels = np.unique(y_true)

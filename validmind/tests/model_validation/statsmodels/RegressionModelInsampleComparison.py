@@ -57,15 +57,6 @@ class RegressionModelInsampleComparison(Metric):
         "tags": ["model_comparison"],
     }
 
-    def description(self):
-        return """
-        This section shows In-sample comparison of regression models involves comparing
-        the performance of different regression models on the same dataset that was used
-        to train the models. This is typically done by calculating a goodness-of-fit statistic
-        such as the R-squared or mean squared error (MSE) for each model, and then comparing
-        these statistics to determine which model has the best fit to the data.
-        """
-
     def run(self):
         # Check models list is not empty
         if not self.models:

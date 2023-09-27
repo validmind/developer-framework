@@ -43,11 +43,6 @@ class MissingValuesRisk(Metric):
         "tags": ["tabular_data", "data_quality", "risk_analysis"],
     }
 
-    def description(self):
-        return """
-        This section provides an analysis of the risk associated with missing values in the dataset, providing two risk measures: 1) Percentage of missing values in the dataset 2) Percentage of variables with missing values.
-        """
-
     def run(self):
         total_cells = self.dataset.df.size
         total_missing = self.dataset.df.isnull().sum().sum()

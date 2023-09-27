@@ -97,13 +97,6 @@ class ModelMetadata(Metric):
             ]
         )
 
-    def description(self):
-        return """
-        This section describes attributes of the selected model such as its modeling
-        technique, training parameters, and task type. This helps understand the model's
-        capabilities and limitations in the context of a modeling framework.
-        """
-
     def run(self):
         """
         Extracts model metadata from a model object instance

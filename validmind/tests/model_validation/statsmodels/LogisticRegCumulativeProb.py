@@ -57,14 +57,7 @@ class LogisticRegCumulativeProb(Metric):
         "task_types": ["classification"],
         "tags": ["logistic_regression", "visualization"],
     }
-
     default_params = {"title": "Cumulative Probabilities"}
-
-    def description(self):
-        return """
-        This metric calculates the cumulative probabilities for each instance in the training and test datasets,
-        and creates a plot to visualize the distributions of probabilities for the positive and negative classes.
-        """
 
     @staticmethod
     def compute_probabilities(model, X):

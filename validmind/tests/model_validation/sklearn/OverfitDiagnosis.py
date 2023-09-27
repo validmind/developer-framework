@@ -40,7 +40,7 @@ class OverfitDiagnosis(ThresholdTest):
 
     **Signs of High Risk**: The signs of high-risk associated with this model include:
 
-    - A high value in the ‘gap’ between training and testing data accuracy – the larger the gap, the more overfit the
+    - A high value in the 'gap' between training and testing data accuracy - the larger the gap, the more overfit the
     model.
     - A high number and/or large regions of overfitting within the feature space.
 
@@ -78,23 +78,6 @@ class OverfitDiagnosis(ThresholdTest):
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
-
-    def description(self):
-        return """
-        Test that identify overfitting regions based on the train-test performance gap,
-        one can divide the feature space into regions and analyze the train-test performance
-        gap for each region. Regions with a large train-test performance gap can be considered as
-        overfitting regions, indicating that the model is overfitting in those regions.
-
-        Once overfitting regions have been identified, one can use various techniques to address the overfitting.
-        For example, one could use regularization techniques such as L1 or L2 regularization, dropout, or early
-        stopping to prevent the model from overfitting. Alternatively, one could use data augmentation techniques
-        to increase the size of the training data and reduce overfitting.
-
-        Overall, analyzing the train-test performance gap can provide valuable insights into the performance of
-        a machine learning model and help identify overfitting regions that need to be addressed to improve
-        the model's generalization performance.
-        """
 
     def run(self):
         if "cut_off_percentage" not in self.params:

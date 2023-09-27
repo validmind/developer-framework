@@ -82,23 +82,6 @@ class RobustnessDiagnosis(ThresholdTest):
         "accuracy": metrics.accuracy_score,
     }
 
-    def description(self):
-        return """
-        The robustness of a machine learning model refers to its ability to maintain performance
-        in the face of perturbations or changes to the input data. One way to test the robustness
-        of a model is by perturbing its input features and observing how the model's performance changes.
-
-        To perturb the input features, one can add random noise or modify the values of the features
-        within a certain range. By perturbing the input features, one can simulate different scenarios
-        in which the input data may be corrupted or incomplete, and test whether the model is able to
-        handle such scenarios.
-
-        The performance of the model can be measured in terms of its accuracy, precision, recall,
-        or any other relevant metric, both before and after perturbing the input features. A model
-        that is robust to perturbations should maintain a high level of performance even after the
-        input features have been perturbed.
-        """
-
     def run(self):
         # Validate X std deviation parameter
         if "scaling_factor_std_dev_list" not in self.params:

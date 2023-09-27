@@ -48,13 +48,6 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
         ],
     }
 
-    def description(self):
-        return """
-        This section shows the performance of the model on the test data. Popular
-        metrics such as the accuracy, precision, recall, F1 score, etc. are
-        used to evaluate the model.
-        """
-
     def y_true(self):
         return self.model.y_test_true
 
