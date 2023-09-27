@@ -190,3 +190,5 @@ lending_club_loan_data_*
 # Pickle files
 *.pkl
 .Rproj.user
+r/validmind/creds.txt
+notebooks/r/r_customer_churn_demo_package.html

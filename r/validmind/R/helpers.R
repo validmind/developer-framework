@@ -3,6 +3,7 @@
 #' @param api_key The ValidMind API key
 #' @param api_secret The ValidMind API secret
 #' @param project The ValidMind project
+#' @param python_version The Python Version to use
 #' @param api_host The ValidMind host, defaulting to local
 #'
 #' @importFrom reticulate import use_python py_config
@@ -89,6 +90,8 @@ summarize_result <- function(result) {
 #'
 #' @param results A list of result objects
 #'
+#' @importFrom dplyr bind_rows
+#'
 #' @return A numeric vector giving number of characters (code points) in each
 #'    element of the character vector. Missing string have missing length.
 #' @export
@@ -105,7 +108,21 @@ summarize_results <- function(results) {
     cat("\n\n")
   }
 
-  return(result_list)
+  i = 0
+  my_chunks <- list()
+  my_datasets <- list()
+  for (result in result_list) {
+    for (res in result$results) {
+      test <- bind_rows(res$data)
+
+      if (!is.null(test) && nrow(test) > 0) {
+        my_datasets[[length(my_datasets) + 1]] <- test
+        names(my_datasets)[[length(my_datasets)]] <- res$metadata$title
+      }
+    }
+  }
+
+  return(my_datasets)
 }
 
 #' Save a model to a given file path
@@ -124,5 +141,26 @@ save_model <- function(model) {
     random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
     file_path <- paste0("/tmp/", random_name, ".RData")
     save(model, file = file_path)
+
     return(file_path)
+}
+
+#' Pretty print a list of tables
+#'
+#' @return The HTML required for nice display of multiple output tables
+#'
+#' @param datasets The result returned from summarize_results()
+#'
+#' @importFrom purrr imap
+#' @importFrom knitr kable
+#' @importFrom kableExtra kable_styling row_spec
+#'
+#' @export
+pretty_print_tables <- function(datasets) {
+  imap(datasets, ~{
+    kable(.x, caption = .y) %>%
+      kable_styling("striped") %>%
+      row_spec(0:nrow(.x), color = 'black') %>%
+      cat()
+  })
 }

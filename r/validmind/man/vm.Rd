@@ -19,6 +19,8 @@ vm(
 
 \item{project}{The ValidMind project}
 
+\item{python_version}{The Python Version to use}
+
 \item{api_host}{The ValidMind host, defaulting to local}
 }
 \description{

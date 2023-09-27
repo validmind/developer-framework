@@ -12,6 +12,10 @@ LazyData: true
 URL: https://github.com/validmind/validmind-python
 BugReports: https://github.com/validmind/validmind-python/issues
 RoxygenNote: 7.2.3
-Imports: 
+Imports:
   glue,
-  reticulate
+  reticulate,
+  dplyr,
+  purrr,
+  knitr,
+  kableExtra

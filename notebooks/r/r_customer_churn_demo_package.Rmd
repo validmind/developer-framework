@@ -5,6 +5,12 @@ date: "2023-09-25"
 output: html_document
 ---
 
+<style>
+  table caption {
+    color: black;
+  }
+</style>
+
 # Analysis
 
 ```{r setup, include=FALSE}
@@ -21,11 +27,10 @@ library(caTools)
 library(glmnet)
 library(knitr)
 library(kableExtra)
+library(purrr)
 library(validmind)
 library(rmarkdown)
 library(htmltools)
-
-child_path <- tempfile(fileext = ".Rmd")
 ```
 
 # **Quickstart - Customer Churn Full Suite Model Documentation**
@@ -72,9 +77,9 @@ The code snippet can be copied and pasted directly in the cell below to initiali
 
 ```{r}
 vm_r <- vm(
-  api_key="",
-  api_secret="",
-  project="",
+  api_key="b34dfe4dcb5491212be3eefe77c85cd6",
+  api_secret="40f8d2d583baa9e730a7f8872dd57e2f4657c7918c13fa259ba7ccda8a60e858",
+  project="clmp6k8e800ds19mot0zu8o34",
   python_version=python_version,
   api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
@@ -108,58 +113,11 @@ tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_datas
 ```
 
 ```{r}
-x <- summarize_results(tabular_suite_results)
+raw_summary_results <- summarize_results(tabular_suite_results)
 ```
 
-```{r generate-chunks, echo=FALSE}
-library(kableExtra)
-library(glue)
-
-i = 0
-my_chunks <- list()
-my_datasets <- list()
-for (result in x) {
-  for (res in result$results) {
-      test <- bind_rows(res$data)
-
-      if (!is.null(test) && nrow(test) > 0) {
-        my_datasets[[length(my_datasets) + 1]] <- test
-
-        temp_file <- tempfile(fileext = ".RData")
-        save(test, file = temp_file)
-
-        res_title <- res$metadata$title
-
-        res_file <- tempfile(fileext = ".RData")
-        save(res_title, file = res_file)
-
-        my_chunks[[length(my_chunks) + 1]] <- glue("
-        ```{{r chunk-{i}, echo=FALSE}}
-        load('{temp_file}')
-        load('{res_file}')
-
-        h3(res_title)
-
-        test %>%
-          kable() %>%
-          kable_styling() %>%
-          row_spec(0:nrow(test), color = 'black')
-        ```
-        ")
-
-        i = i + 1
-      }
-  }
-}
-
-# Create a temporary R Markdown file
-writeLines(c("---", "title: 'ValidMind Results'", "output: html_document", "---", unlist(my_chunks)), child_path)
-
-# Render the temporary R Markdown file
-# output_file <- render(temp_file, output_format = "html_document", quiet = TRUE, output_dir = tempdir())
-```
-
-```{r child=child_path}
+```{r, results='asis'}
+invisible(pretty_print_tables(raw_summary_results))
 ```
 
 ## **Run the Model Validation Test Plan**
@@ -200,19 +158,19 @@ model_path = save_model(model)
 
 ```{r}
 vm_train_ds = vm_r$init_dataset(
-    dataset=train_data,
-    target_column="Exited"
+  dataset=train_data,
+  target_column="Exited"
 )
 
 vm_test_ds = vm_r$init_dataset(
-    dataset=test_data,
-    target_column="Exited"
+  dataset=test_data,
+  target_column="Exited"
 )
 
 vm_model = vm_r$init_r_model(
-    model_path=model_path,
-    train_ds=vm_train_ds,
-    test_ds=vm_test_ds,
+  model_path=model_path,
+  train_ds=vm_train_ds,
+  test_ds=vm_test_ds,
 )
 ```
 
