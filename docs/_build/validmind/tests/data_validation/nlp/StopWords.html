@@ -38,9 +38,6 @@
                                 <a class="function" href="#StopWords.__init__">StopWords</a>
                         </li>
                         <li>
-                                <a class="function" href="#StopWords.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#StopWords.summary">summary</a>
                         </li>
                         <li>
@@ -84,7 +81,16 @@
     </div>
     <a class="headerlink" href="#StopWords"></a>
     
-    
+            <div class="docstring"><p>The purpose of the StopWords test is to perform a data quality test focused on
+identifying and analyzing the usage of stop words within a dataset. Stop words are
+commonly used words in a language (e.g., "the", "and", "is") that are often
+considered insignificant for analysis. The StopWords test analyzes the dataset by
+creating a corpus of words from the specified text column. It then determines the
+frequency of each stop word in the corpus and calculates the percentage of each
+stop word in relation to the total number of words. The test results focus on
+identifying the top stop words based on their percentage in the corpus.</p>
+</div>
+
 
                             <div id="StopWords.__init__" class="classattr">
                                 <div class="attr function">
@@ -96,22 +102,6 @@
     <a class="headerlink" href="#StopWords.__init__"></a>
     
     
-
-                            </div>
-                            <div id="StopWords.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#StopWords.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="StopWords.summary" class="classattr">
@@ -153,6 +143,11 @@ short summary of the test results.</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
                                 <dd id="StopWords.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.Test</dt>
+                                <dd id="StopWords.description" class="function">description</dd>
+                <dd id="StopWords.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

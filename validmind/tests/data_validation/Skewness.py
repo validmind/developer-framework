@@ -28,6 +28,10 @@ class Skewness(ThresholdTest):
     name = "skewness"
     required_inputs = ["dataset"]
     default_params = {"max_threshold": 1}
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "data_quality"],
+    }
 
     def summary(self, results: List[TestResult], all_passed: bool):
         """

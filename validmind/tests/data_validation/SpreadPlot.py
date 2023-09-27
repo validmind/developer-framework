@@ -8,11 +8,19 @@ from validmind.vm_models import Figure, Metric
 
 class SpreadPlot(Metric):
     """
-    This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.
+    This class provides a metric to visualize the spread between pairs of time series
+    variables in a given dataset. By plotting the spread of each pair of variables in
+    separate figures, users can assess the relationship between the variables and
+    determine if any cointegration or other time series relationships exist between
+    them.
     """
 
     name = "spread_plot"
     required_inputs = ["dataset"]
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "visualization"],
+    }
 
     @staticmethod
     def plot_spread(series1, series2, ax=None):

@@ -15,6 +15,15 @@ class Lilliefors(Metric):
     """
 
     name = "lilliefors_test"
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": [
+            "tabular_data",
+            "data_distribution",
+            "statistical_test",
+            "statsmodels",
+        ],
+    }
 
     def run(self):
         """

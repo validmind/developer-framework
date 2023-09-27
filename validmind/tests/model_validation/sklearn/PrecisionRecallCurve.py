@@ -18,6 +18,16 @@ class PrecisionRecallCurve(Metric):
 
     name = "pr_curve"
     required_inputs = ["model"]
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+            "visualization",
+        ],
+    }
 
     def description(self):
         return """

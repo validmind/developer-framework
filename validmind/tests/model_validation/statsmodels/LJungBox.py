@@ -13,6 +13,10 @@ class LJungBox(Metric):
     """
 
     name = "ljung_box"
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
+    }
 
     def run(self):
         """

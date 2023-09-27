@@ -18,6 +18,10 @@ class IQROutliersTable(Metric):
     name = "iqr_outliers_table"
     required_inputs = ["dataset"]
     default_params = {"features": None, "threshold": 1.5}
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "numerical_data"],
+    }
 
     def run(self):
         features = self.params["features"]

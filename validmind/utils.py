@@ -1,6 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 import asyncio
+import difflib
 import json
 import math
 from typing import Any
@@ -292,3 +293,19 @@ def run_async_check(func, *args, **kwargs):
 
     except RuntimeError:
         pass
+
+
+def fuzzy_match(string: str, search_string: str, threshold=0.7):
+    """Check if a string matches another string using fuzzy matching
+
+    Args:
+        string (str): The string to check
+        search_string (str): The string to search for
+        threshold (float): The similarity threshold to use (Default: 0.7)
+
+    Returns:
+        True if the string matches the search string, False otherwise
+    """
+    score = difflib.SequenceMatcher(None, string, search_string).ratio()
+
+    return score >= threshold

@@ -18,6 +18,10 @@ class FeatureTargetCorrelationPlot(Metric):
     name = "feature_target_correlation_plot"
     required_inputs = ["dataset"]
     default_params = {"features": None, "fig_height": 600}
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "visualization", "feature_importance", "correlation"],
+    }
 
     def run(self):
         features = self.params["features"]

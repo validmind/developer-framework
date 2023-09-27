@@ -19,6 +19,10 @@ class ResidualsVisualInspection(Metric):
     """
 
     name = "residuals_visual_inspection"
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["statsmodels", "visualization"],
+    }
 
     def get_residuals(self, column, series):
         """

@@ -23,6 +23,11 @@ class UniqueRows(ThresholdTest):
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 1}
 
+    metadata = {
+        "task_types": ["regression", "classification"],
+        "tags": ["tabular_data"],
+    }
+
     def summary(self, results: List[TestResult], all_passed: bool):
         """
         The unique rows test returns results like these:

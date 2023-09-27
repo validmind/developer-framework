@@ -14,6 +14,15 @@ class ACFandPACFPlot(Metric):
 
     name = "acf_pacf_plot"
     required_inputs = ["dataset"]
+    metadata = {
+        "task_types": ["regression"],
+        "tags": [
+            "time_series_data",
+            "forecasting",
+            "statistical_test",
+            "visualization",
+        ],
+    }
 
     def run(self):
         # Check if index is datetime

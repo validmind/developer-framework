@@ -15,8 +15,16 @@ from validmind.vm_models import Figure, Metric, VMDataset
 
 @dataclass
 class Punctuations(Metric):
+    """
+    Metric that analyses the frequencies of punctuations in a given text dataset
+    """
+
     name = "punctuations"
     required_inputs = ["dataset", "dataset.text_column"]
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
+    }
 
     def run(self):
         # Can only run this test if we have a Dataset object

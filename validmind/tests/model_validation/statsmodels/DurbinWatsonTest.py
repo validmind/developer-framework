@@ -15,6 +15,10 @@ class DurbinWatsonTest(Metric):
     """
 
     name = "durbin_watson"
+    metadata = {
+        "task_types": ["regression"],
+        "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
+    }
 
     def run(self):
         """

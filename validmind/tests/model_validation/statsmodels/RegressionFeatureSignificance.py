@@ -19,6 +19,15 @@ class RegressionFeatureSignificance(Metric):
 
     name = "regression_feature_significance"
     default_params = {"fontsize": 10, "p_threshold": 0.05}
+    metadata = {
+        "task_types": ["regression"],
+        "tags": [
+            "statistical_test",
+            "model_interpretation",
+            "visualization",
+            "feature_importance",
+        ],
+    }
 
     def description(self):
         return """
