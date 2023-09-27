@@ -21,6 +21,38 @@ from ....vm_models import (
 
 @dataclass
 class TextDescription(Metric):
+    """
+    **Purpose**: This is an in-depth textual analysis test used to assess the lexical complexity, structure, and
+    vocabulary of a given dataset. The TextDescription metric measures various parameters such as the total number of
+    words, sentences, paragraphs, unique words, and punctuations. It is also responsible for paring down unwanted
+    tokens, measuring the average sentence length, and calculating the lexical diversity in the available text. This
+    metric's measures help in understanding the nature of the text and assessing the potential challenges of machine
+    learning algorithms deployed for textual analysis, language processing, or summarization.
+
+    **Test Mechanism**: The test operates by parsing the dataset and using the NLTK library to tokenize the text into
+    words, sentences, and paragraphs. It dissects the processed text further, removing stopwords declared in
+    'unwanted_tokens' and punctuations. It then calculates parameters such as the total number of words, sentences,
+    paragraphs, punctuations; average sentence length; and lexical diversity. The metric also condenses these results
+    and plots scatter plots for certain combinations of variables (Total Words vs Total Sentences, Total Words vs Total
+    Unique Words, etc.) to provide a visual depiction of the text structure.
+
+    **Signs of High Risk**: Anomaly in results or increased complexity in lexical diversity, long sentences and
+    paragraphs, high uniqueness of words, or an excess of unwanted tokens can signify risk in text processing ML
+    models. It suggests that the model's text absorption and processing capability can be compromised. Additionally,
+    missing or erroneous visualizations may also indicate issues with the text description analysis.
+
+    **Strengths**: This metric is an essential tool for ML model data pre-processing, focusing on textual analysis. It
+    provides a detailed dissection of a text dataset to understand structural and vocabulary complexity, which is
+    helpful to strategize a ML model's textual processing capability. Besides, it visualizes correlations between
+    chosen variables, helping further in grasping the text's structure and complexity.
+
+    **Limitations**: This metric relies heavily on the NLTK library, rendering it unsuitable for languages unsupported
+    by NLTK. The unwanted tokens and stop words are predefined, limiting customization by context or application. This
+    metric does not consider semantics or grammatical complexities, which can be crucial in language processing.
+    Finally, it assumes that the document is well-structured (with sentences and paragraphs); unstructured or poorly
+    formatted text may skew the results.
+    """
+
     name = "text_description"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {

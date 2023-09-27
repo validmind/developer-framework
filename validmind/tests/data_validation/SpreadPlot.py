@@ -8,11 +8,38 @@ from validmind.vm_models import Figure, Metric
 
 class SpreadPlot(Metric):
     """
-    This class provides a metric to visualize the spread between pairs of time series
-    variables in a given dataset. By plotting the spread of each pair of variables in
-    separate figures, users can assess the relationship between the variables and
-    determine if any cointegration or other time series relationships exist between
-    them.
+    **Purpose**:
+    The purpose of the SpreadPlot metric is to visually explore and understand the relationships between pairs of time
+    series variables in the given dataset. This understanding aids in identifying and assessing potential time series
+    relationships, such as cointegration, between variables.
+
+    **Test Mechanism**:
+    The test mechanism for this metric involves calculating and plotting the spread between each pair of time series
+    variables in the dataset. More specifically, the difference between two variables is computed and then plotted as a
+    line graph. This process is repeated for all unique pairs of variables in the dataset.
+
+    **Signs of High Risk**:
+    Signs of high risk related to this metric include the presence of large fluctuations in the spread over time,
+    unexpected patterns, or trends that might signal a potential risk in the underlying relationships between the
+    variables. Also, the presence of significant missing data or extreme outlier values could potentially distort the
+    spread, indicating a high risk.
+
+    **Strengths**:
+    The key strengths of using the SpreadPlot metric include:
+    1. Enables detailed visual inspection and interpretation of the relationships between time-series pairs.
+    2. Facilitates uncovering complex relationships like cointegration.
+    3. Enhances interpretability by visualizing the relationships, aiding in identifying outliers and trends.
+    4. Capable of handling multiple variable pairs from a dataset with a flexible and adaptable process.
+
+    **Limitations**:
+    Despite its strengths, the SpreadPlot metric also comes with certain limitations:
+    1. It's primarily a visualization tool and does not provide quantitative measurements or statistics to objectively
+    assess relationships.
+    2. Highly dependent on the quality and granularity of the data – missing data or outliers can significantly affect
+    the interpretation of the relationships.
+    3. Can become inefficient or challenging to interpret with a large number of variables due to the large number of
+    plots.
+    4. Might not fully capture complex non-linear relationships between variables.
     """
 
     name = "spread_plot"

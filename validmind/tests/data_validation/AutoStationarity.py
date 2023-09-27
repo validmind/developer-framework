@@ -9,8 +9,33 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 class AutoStationarity(Metric):
     """
-    Automatically detects stationarity for each time series in a DataFrame
-    using the Augmented Dickey-Fuller (ADF) test.
+    **Purpose**: This test, AutoStationarity, is used to automatically detect and evaluate the stationarity of each
+    time series in a Dataframe, using the Augmented Dickey-Fuller (ADF) test. Stationarity is a crucial property in
+    time series data, which indicates that a series' statistical features such as mean and variance are constant over
+    time. This property is an underlying assumption for many time-series models.
+
+    **Test Mechanism**: The test performs the Augmented Dickey-Fuller test on each time series in a provided DataFrame
+    to determine if the time series is stationary. A loop is ran over each column (time series) of the DataFrame. For
+    each series, the ADF test is performed up to a maximum order of differencing (default value 5, configurable via
+    params). The p-value of the ADF test is compared against a predefined threshold (default value 0.05, configurable
+    via params). If the p-value is less than the threshold, the series is considered stationary at the current order of
+    differencing.
+
+    **Signs of High Risk**: The high risk or failure in the model's performance may be indicated by a significant
+    number of series failing to achieve stationarity up to the maximum order of differencing. This might suggest that
+    the series are not well-modeled by a stationary process and other modeling strategies might be needed.
+
+    **Strengths**: By automating the ADF test, this metric allows for the mass analysis of stationarity across a
+    multitude of time series, greatly increasing the efficiency and reliability of the analysis. The use of the ADF
+    test, a commonly accepted method for testing stationarity, gives credibility to the results. Furthermore, the
+    implementation of max order and threshold parameters allows users to specify their preferred level of strictness in
+    the tests.
+
+    **Limitations**: The Augmented Dickey-Fuller test and stationarity check generally have limitations. They rely on
+    the assumption that the series are well-modeled by an autoregressive process, which may not be the case for all
+    time series. The stationarity check is also sensitive to the choice of the threshold value for the significance
+    level. Too high or too low threshold may lead to erroneous conclusions about stationary properties. There is also a
+    risk of over-differencing if the maximum order is set too high, leading to unnecessary cycles.
     """
 
     type = "dataset"

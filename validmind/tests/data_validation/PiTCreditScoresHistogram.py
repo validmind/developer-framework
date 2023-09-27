@@ -12,7 +12,31 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PiTCreditScoresHistogram(Metric):
     """
-    Score Histogram
+    **Purpose**: The PiT (Point in Time) Credit Scores Histogram metric is used to assess the performance of a
+    classification model with a focus on credit risk evaluation. It visualizes the distributions of observed and
+    predicted default scores and provides an intuitive comparison allowing for quick model assessment.
+
+    **Test Mechanism**: This metric leverages histograms to illustrate the differences in score distributions for both
+    observed and predicted results. It separates the scores into defaulted (1) and not defaulted (0) and makes a
+    histogram for each of these categories. The model compares the distributions of observed and predicted
+    classifications simultaneously, furnishing a clear idea about how well the model can predict the credit risk.
+
+    **Signs of High Risk**: If the observed and predicted histograms are significantly different, there may be risk
+    factors that the model is not adequately addressing. Additionally, if the predicted defaults are concentrated
+    towards one end of the graph or are less evenly distributed than the observed scores, this could indicate potential
+    issues with how the model is understanding the data or predicting outcomes.
+
+    **Strengths**: This metric provides an intuitive visual representation of model performance which can be easily
+    understood and interpreted even without extensive technical background. By comparing the distributions of observed
+    and predicted scores, it gives a clear picture about the model's ability in distinguishing between defaulting and
+    non-defaulting entities. It's especially tailored for credit risk assessment models and the PiT element takes into
+    consideration time evolution of credit risk.
+
+    **Limitations**: This visual method may not provide accurate enough information for detailed statistical analysis
+    and doesn't give precise, quantifiable measures of model performance. It relies on manual inspection and
+    comparison, making it subjective to human bias and potentially less reliable for catching subtle discrepancies.
+    Furthermore, this method doesn't work well when the score distributions overlap significantly or when there are too
+    many scores to be plotted, resulting in cluttered or hard-to-read graphs.
     """
 
     name = "pit_credit_scores_histogram"

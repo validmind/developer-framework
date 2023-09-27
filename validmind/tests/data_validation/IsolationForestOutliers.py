@@ -13,16 +13,33 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class IsolationForestOutliers(Metric):
     """
-    Isolation Forest.
-    This class implements the Isolation Forest algorithm for anomaly detection.
-    Attributes:
-        name (str): The name of the Isolation Forest.
-        default_params (dict): The default parameters for the Isolation Forest.
-        required_inputs (list): The required inputs for running the Isolation Forest.
+    **Purpose**: The purpose of the `IsolationForestOutliers` test is to identify anomalies or outliers in the model's
+    dataset. It assumes anomalous data points, due to their distinctive properties, can be detected more quickly by the
+    isolation forest algorithm. This algorithm evaluates anomalies through the creation of isolation trees and
+    identifying instances with shorter average path lengths in these trees, as these instances are expected to be
+    different from the majority of the data points.
 
-    Methods:
-        description(): Returns the description of the Isolation Forest.
-        run(): Runs the Isolation Forest algorithm.
+    **Test Mechanism**: This test uses the isolation forest algorithm, which isolates anomalies rather than identifying
+    normal data points. It runs by building an ensemble of isolation trees, utilizing binary trees created by randomly
+    selecting features and splitting the data based on random thresholds. For each pair of variables, it generates a
+    scatter plot distinguishing the identified outliers from the inliers. The test results are visualized in these
+    scatter plots showing the distinction of outliers from inliers.
+
+    **Signs of High Risk**: Signs of high risk or failure in the model's performance might be the presence of high
+    contamination which indicates a lot of anomalies, an inability to detect clusters of anomalies that are
+    geographically close in the feature space, detecting normal instances as anomalies or overlooking actual anomalies.
+
+    **Strengths**: The strengths of the isolation forest algorithm include its ability to handle large high-dimensional
+    datasets, its efficiency in isolating anomalies rather than normal instances tradition, and its insensitivity to
+    the underlying distribution of data. It is able to recognize anomalies even when they are not separated from the
+    data cloud by identifying distinctive properties of the anomalies. Additionally, it visualizes the test results,
+    aiding understanding and interpretability.
+
+    **Limitations**: Among its limitations, the isolation forest test might find it hard to detect anomalies that are
+    close to each other, or in datasets where anomalies are more prevalent. The results strongly rely on the
+    contamination parameter, which might need fine-tuning to be effective. It may also not be effective in detecting
+    collective anomalies if they behave similarly to normal data. Furthermore, it potentially lacks precision in
+    identifying which features contribute most to the anomalous behavior.
     """
 
     name = "isolation_forest"

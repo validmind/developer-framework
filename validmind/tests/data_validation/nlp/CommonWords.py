@@ -17,10 +17,30 @@ from ....vm_models import Figure, Metric, VMDataset
 @dataclass
 class CommonWords(Metric):
     """
-    The purpose of the common words test is to analyze a dataset and identify the most
-    common words within a specified text column. This test allows users to understand
-    the prevalent words within the dataset's text column and gain insights into the
-    dataset's language patterns.
+    **Purpose**: The CommonWords metric is used to identify and visualize the most prevalent words within a specified
+    text column of a dataset, giving insights into the prevalent language patterns and vocabulary. This is particularly
+    useful for Natural Language Processing (NLP) tasks such as text classification and text summarization.
+
+    **Test Mechanism**: The methodology for this test involves splitting the specified text column's entries into words
+    and collating them into a corpus. Subsequently, the frequency of each word is counted using Counter functionality.
+    The forty most commonly occurring words that aren't categorized as English stopwords are then visualized in a bar
+    chart. The x-axis shows formulated words and the y-axis indicates their frequency of appearance.
+
+    **Signs of High Risk**: Indicators of high risk may include a lack of distinct words within the list, or common
+    words primarily encompassing stopwords. In addition, the frequent appearance of irrelevant or inappropriate words
+    could indicate a poorly curated or noisy data set. Lastly, if the test returns an error due to the absence of a
+    valid Dataset object, it signifies a high risk as it can't be effectively implemented.
+
+    **Strengths**: This metric offers a clear insight into the language features – specifically, the word frequency –
+    of unstructured text data. It can reveal prominent vocabulary and language patterns, which can be vital for
+    effective feature extraction in NLP tasks. The visualization aspect aids in quickly capturing the patterns and
+    getting an intuitive feel of the data.
+
+    **Limitations**: This test is solely focused on word frequency and disregards semantic or context-related
+    information. It deliberately ignores stopwords, which, in some cases, might carry important significance.
+    Furthermore, it may only be applicable to English language text data as it uses English stopwords for filtering,
+    and does not account for data in other languages. The metric also requires a valid Dataset object, indicating a
+    dependency condition that limits applicability.
     """
 
     name = "common_words"

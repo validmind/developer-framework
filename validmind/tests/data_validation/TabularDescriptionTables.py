@@ -10,8 +10,37 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class TabularDescriptionTables(Metric):
     """
-    Collects a set of descriptive statistics for a tabular dataset, for
-    numerical, categorical and datetime variables.
+    **Purpose**: The primarily purpose of this metric is to gather and present descriptive statistics for numerical,
+    categorical and datetime variables from a given dataset. This helps in understanding the core traits of the dataset
+    like the count, mean, min, max, percentage of missing values, data types of fields, unique values in case of
+    categorical fields, amongst other descriptors.
+
+    **Test Mechanism**: The methodology for this metric involves first segregating the variables in the dataset into
+    their data types - numerical, categorical or datetime. Once they are segregated, the metric gathers the summary
+    statistics for each variable type. The capture of these summary statistics varies depending upon the type of
+    variable. For numerical variables, it extracts descriptors like count, mean, min, max, count of missing values and
+    data type. For categorical variables, it extracts descriptors like count, number of unique values, display of
+    unique values, count of missing values, and data type. For datetime variables, it extracts descriptors like count,
+    number of unique values, earliest and latest date, count of missing values and data type.
+
+    **Signs of High Risk**: There could be signs of high risk or failure when a substantial number of missing values is
+    observed in the descriptive statistics results. It signals potential issues regarding data collection, integrity,
+    and quality. Other red signals could include seeing inappropriate distributions for numerical variables (like
+    having negative values for a variable that should always be positive), or finding inappropriate data types (like a
+    continuous variable encoded as a categorical type).
+
+    **Strengths**: This metric provides a comprehensive overview of the dataset. It not only gives a snapshot into the
+    essence of the numerical, categorical, and datetime fields respectively but also identifies potential data quality
+    issues such as missing values or inconsistencies which are crucial for building credible machine learning models.
+    The metadata, notably the data type and missing value information, are vital for anyone including data scientists
+    dealing with the dataset before the modeling process.
+
+    **Limitations**: However, the limitations of this metric include not performing any deeper statistical analysis or
+    tests on the data. It doesn't handle issues such as outliers, or relationships between variables. It does not offer
+    insights into potential correlations or possible interactions between variables. It also stays silent on the
+    potential impact of missing values on the performance of the machine learning models. Furthermore, it doesn’t
+    investigate potential transformation requirements that may be necessary to enhance the performance of the chosen
+    algorithm.
     """
 
     name = "tabular_description_tables"
