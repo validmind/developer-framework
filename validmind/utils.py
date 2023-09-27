@@ -20,7 +20,7 @@ DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
 
 
-########## SETUP SOME DEFAULTS FOR PLOTS ##########
+# SETUP SOME DEFAULTS FOR PLOTS #
 # Silence this warning: *c* argument looks like a single numeric RGB or
 # RGBA sequence, which should be avoided
 matplotlib_axes_logger.setLevel("ERROR")
@@ -35,7 +35,7 @@ params = {
     "ytick.labelsize": "x-large",
 }
 pylab.rcParams.update(params)
-####################################################
+#################################
 
 
 def is_notebook() -> bool:
