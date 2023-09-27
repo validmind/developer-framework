@@ -16,39 +16,45 @@ logger = get_logger(__name__)
 class SHAPGlobalImportance(Metric):
     """
     **Purpose:**
-    The SHAP (SHapley Additive exPlanations) Global Importance metric is used to interpret the output of any machine
-    learning model by attributing the outcome to its contributing features. It quantifies the global importance of
-    features in the model using their absolute Shapley values. This metric can be applied for tasks like
-    classification, including binary and multiclass classification, and is a key component of the model risk management
-    strategy.
+    The SHAP (SHapley Additive exPlanations) Global Importance metric illuminates the outcomes of machine learning
+    models by attributing them to the contributing features. It assigns a quantifiable global importance to features
+    via their absolute Shapley values, making it applicable for tasks such as classification (both binary and
+    multiclass). This metric is pivotal in the model risk management strategy.
 
     **Test Mechanism:**
-    First, an appropriate explainer based on the type of model is instantiated, either a TreeExplainer for tree models
-    (i.e., XGBClassifier, RandomForestClassifier, CatBoostClassifier) or a LinearExplainer for linear models (i.e.,
-    LogisticRegression, XGBRegressor, LinearRegression). The explainer then calculates and outputs the Shapley values.
+    The first step involves choosing an appropriate explainer that matches the model type: TreeExplainer for tree-based
+    models (like XGBClassifier, RandomForestClassifier, CatBoostClassifier) and LinearExplainer for linear ones (such
+    as LogisticRegression, XGBRegressor, LinearRegression). Once the explainer calculates the Shapley values, they are
+    visualized through two specific plots:
 
-    These Shapley values are used to generate two types of plots: a Mean Importance plot (represents the significance
-    of each feature based on its absolute Shapley values) and a Summary Plot (combines the importance of each feature
-    with the effects). The function `_generate_shap_plot()` is used to generate these plots with mean and summary plot
-    types.
+    1. **Mean Importance Plot**: This graph denotes the significance of each feature grounded in its absolute Shapley
+    values. By computing the average of these absolute Shapley values across the entire dataset, the global importance
+    of features is elucidated.
+
+    2. **Summary Plot**: This visual representation amalgamates the importance of each feature with their effects. Each
+    dot on this plot symbolizes a Shapley value for a distinct feature in a specific instance. The vertical axis
+    represents the feature, while the horizontal axis corresponds to the Shapley value. A color gradient, shifting from
+    low to high, marks the feature's value. Overlapping points experience a slight vertical dispersion, offering a
+    snapshot of the Shapley values' distribution for each attribute. Features are methodically aligned in accordance
+    with their prominence. The function `_generate_shap_plot()` renders these plots with the aforementioned types.
 
     **Signs of High Risk:**
-    If a few features are overly dominant in the SHAP importance plots, it would suggest potential overfitting to these
-    features. If unexpected or speculative features appear to be highly important, it can indicate that the model is
-    making decisions based on incorrect or undesired reasons. The SHAP summary plot can also display high variability
-    or scattered values.
+    Overly dominant features in SHAP importance plots hint at potential model overfitting. Anomalies, like unexpected
+    or speculative features flaunting high importance, could suggest that the model's decisions are rooted in incorrect
+    or undesirable reasoning. Moreover, a SHAP summary plot teeming with high variability or scattered data points is a
+    cause for concern.
 
     **Strengths:**
-    SHAP provides both global feature importance and a detailed view of how individual features impact the model's
-    decision logic on each instance. This is considered an advanced approach for understanding model behavior.
-    Moreover, SHAP supports several types of models, making it very flexible and offering consistent interpretations
-    across models.
+    Beyond delineating global feature significance, SHAP offers a granular perspective on how individual attributes
+    shape the model's decision logic for each instance. This advanced method unravels model behavior with clarity. Its
+    flexibility is evident in its support for a diverse array of model types, ensuring uniform interpretations across
+    different models.
 
     **Limitations:**
-    SHAP computation can be slow and resource-intensive for complex models or large datasets. The technique depends on
-    the model class and doesn't support all types of models such as models from the "statsmodels", "pytorch",
-    "catboost", "transformers", "FoundationModel", and "R" libraries. Furthermore, high dimensionality can render
-    interpretation more challenging, and correlating importance with real-world influence can still be subjective.
+    For large datasets or intricate models, SHAP's computations might demand substantial time and resources. Moreover,
+    its compatibility does not extend to every model class, especially models from libraries like "statsmodels",
+    "pytorch", "catboost", "transformers", "FoundationModel", and "R". High-dimensional data can muddle
+    interpretations, and linking importance to tangible real-world impact retains a degree of subjectivity.
     """
 
     name = "shap"
@@ -63,23 +69,6 @@ class SHAPGlobalImportance(Metric):
             "visualization",
         ],
     }
-
-    def description(self):
-        return """
-        The Mean Importance plot below shows the significance of each feature
-        based on its absolute Shapley values. As we are measuring global importance,
-        the process involves computing the average of these absolute Shapley values
-        for each feature throughout the data.
-
-        The Summary Plot displayed further combines the importance of each feature
-        with their respective effects. Every dot in this plot represents a Shapley value
-        for a certain feature in a particular instance. The y-axis positioning is
-        determined by the feature, while the x-axis positioning is decided by the
-        Shapley value. The color gradation represents the feature's value, transitioning
-        from low to high. Points that overlap are scattered slightly in the y-axis
-        direction, giving us an idea of the Shapley values distribution for each feature.
-        The features are then arranged based on their importance levels.
-        """
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
         """

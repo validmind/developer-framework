@@ -23,11 +23,29 @@ from ....vm_models import (
 class TextDescription(Metric):
     """
     **Purpose**: This is an in-depth textual analysis test used to assess the lexical complexity, structure, and
-    vocabulary of a given dataset. The TextDescription metric measures various parameters such as the total number of
-    words, sentences, paragraphs, unique words, and punctuations. It is also responsible for paring down unwanted
-    tokens, measuring the average sentence length, and calculating the lexical diversity in the available text. This
-    metric's measures help in understanding the nature of the text and assessing the potential challenges of machine
-    learning algorithms deployed for textual analysis, language processing, or summarization.
+    vocabulary of a given dataset. The TextDescription metric measures various parameters such as:
+
+    - **Total Words**: Assess the length and complexity of the input text. Longer documents might require more
+    sophisticated summarization techniques, while shorter ones may need more concise summaries.
+    - **Total Sentences**: Understand the structural makeup of the content. Longer texts with numerous sentences might
+    require the model to generate longer summaries to capture essential information.
+    - **Avg Sentence Length**: Determine the average length of sentences in the text. This can help the model decide on
+    the appropriate length for generated summaries, ensuring they are coherent and readable.
+    - **Total Paragraphs**: Analyze how the content is organized into paragraphs. The model should be able to maintain
+    the logical structure of the content when producing summaries.
+    - **Total Unique Words**: Measure the diversity of vocabulary in the text. A higher count of unique words could
+    indicate more complex content, which the model needs to capture accurately.
+    - **Most Common Words**: Identify frequently occurring words that likely represent key themes. The model should pay
+    special attention to including these words and concepts in its summaries.
+    - **Total Punctuations**: Evaluate the usage of punctuation marks, which contribute to the tone and structure of
+    the content. The model should be able to maintain appropriate punctuation in summaries.
+    - **Lexical Diversity**: Calculate the richness of vocabulary in relation to the overall text length. A higher
+    lexical diversity suggests a broader range of ideas and concepts that the model needs to capture in its summaries.
+
+    It is also responsible for paring down unwanted tokens, measuring the average sentence length, and calculating the
+    lexical diversity in the available text. This metric's measures help in understanding the nature of the text and
+    assessing the potential challenges of machine learning algorithms deployed for textual analysis, language
+    processing, or summarization.
 
     **Test Mechanism**: The test operates by parsing the dataset and using the NLTK library to tokenize the text into
     words, sentences, and paragraphs. It dissects the processed text further, removing stopwords declared in
@@ -73,24 +91,6 @@ class TextDescription(Metric):
         "num_top_words": 3,
         "lang": "english",
     }
-
-    def description(self):
-        return """ - Total Words: Assess the length and complexity of the input text. Longer documents might
-        require more sophisticated summarization techniques, while shorter ones may need more concise summaries.
-        - Total Sentences: Understand the structural makeup of the content. Longer texts with numerous sentences
-        might require the model to generate longer summaries to capture essential information.
-        - Avg Sentence Length: Determine the average length of sentences in the text. This can help the model
-        decide on the appropriate length for generated summaries, ensuring they are coherent and readable.
-        - Total Paragraphs: Analyze how the content is organized into paragraphs. The model should be able to
-        maintain the logical structure of the content when producing summaries.
-        - Total Unique Words: Measure the diversity of vocabulary in the text. A higher count of unique words
-        could indicate more complex content, which the model needs to capture accurately.
-        - Most Common Words: Identify frequently occurring words that likely represent key themes. The model
-        should pay special attention to including these words and concepts in its summaries.
-        - Total Punctuations: Evaluate the usage of punctuation marks, which contribute to the tone and structure
-        of the content. The model should be able to maintain appropriate punctuation in summaries.
-        - Lexical Diversity: Calculate the richness of vocabulary in relation to the overall text length. A higher
-        lexical diversity suggests a broader range of ideas and concepts that the model needs to capture in its summaries."""
 
     def general_text_metrics(self, df, text_column):
         nltk.download("punkt", quiet=True)

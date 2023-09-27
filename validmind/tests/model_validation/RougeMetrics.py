@@ -13,37 +13,49 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RougeMetrics(Metric):
     """
-    **Purpose**: The purpose of the RougeMetrics metric is to evaluate the quality of machine-generated text,
-    particularly in relation to natural language generation tasks such as text summarization, machine translation, and
-    text generation. It aims to measure how effectively the machine-generated text captures key information and
-    concepts from a reference human-generated text. The included ROUGE metrics (which stand for Recall-Oriented
-    Understudy for Gisting Evaluation) are commonly used in the natural language processing (NLP) field to assess text
-    generation systems.
+    **Purpose**: ROUGE, or Recall-Oriented Understudy for Gisting Evaluation, serves as a robust metric framework aimed
+    at evaluating the caliber of machine-generated text. Especially pertinent in the arena of natural language
+    generation tasks, such as text summarization, machine translation, and text generation, its overarching goal is to
+    ascertain how effectively the machine-rendered text mirrors key information and concepts present in reference
+    human-crafted text. Owing to its efficacy, the ROUGE metrics have become staples in the NLP community for the
+    assessment of text generation systems.
 
-    **Test Mechanism**: The mechanism operates by comparing the machine-generated text and reference human-generated
-    text using the selected ROUGE metrics. This particular test includes a variety of ROUGE metrics (ROUGE-1, ROUGE-2,
-    ROUGE-L, and ROUGE-S), each providing a different evaluation perspective, involving overlap of n-grams, longest
-    common subsequences, and skip-bigrams. The calculated precision, recall, and F1-Score for each metric is then
-    plotted visually for easy interpretation.
+    **Test Mechanism**:
 
-    **Signs of High Risk**: Indications of high risk in relation to this metric could include low scores in one or all
-    of the applied ROUGE metrics. Low precision could indicate that the machine-generated text contains too much
-    unneeded information. Low recall signifies that important information from the reference text is missing in the
-    machine-generated text. Low F1 score would indicate a poor balance between precision and recall. Consistently low
-    scores across different test datasets may suggest underlying issues with the model's performance.
+    1. **Comparison Basis**: At its core, ROUGE operates by juxtaposing machine-generated content with a reference
+    human-constructed text.
 
-    **Strengths**: The main strength of using RougeMetrics for evaluating text generation models involves its
-    comprehensive view on text quality through the variety of evaluation metrics. It is permissive towards synonyms and
-    paraphrasing, thanks to the usage of n-grams, and it values the preservation of important phrases through the
-    longest common subsequence method. The visual plotting of precision, recall, and F1 scores allows for intuitive
-    understanding of model performance.
+    2. **Incorporated Metrics**:
+    - **ROUGE-N (N-gram Overlap)**: Focuses on the alignment of n-grams (sequential sets of n words) between the
+    generated and reference texts. Typical n-values include 1 (unigrams), 2 (bigrams), and 3 (trigrams). Each metric
+    calculates precision, recall, and F1-score components.
 
-    **Limitations**: Despite its strengths, this metric does have some limitations. It may fail to consider semantic
-    coherence or relevance of the generated text, focusing more on individual phrases or n-grams. It is not very good
-    at evaluating the fluency or grammatical correctness of the generated text. Furthermore, it might not extensively
-    evaluate the quality of long or complex sentences due to its fragmentation into smaller n-grams. Also, since it
-    relies on comparing with human-generated references, obtaining such references can sometimes be difficult or
-    impractical.
+    - **ROUGE-L (Longest Common Subsequence)**: Pinpoints the most extended shared word sequence present in both the
+    machine and reference texts, assessing the generated text's ability to encapsulate pivotal phrases.
+
+    - **ROUGE-S (Skip-bigram)**: Measures the concurrence of skip-bigrams, which are word pairings appearing within a
+    designated word window in the text. This metric is sensitive to word ordering but tolerates sporadic word
+    omissions.
+
+    3. **Visual Representation**: The determined precision, recall, and F1-score for each metric are plotted visually,
+    ensuring streamlined comprehension of the results.
+
+    **Signs of High Risk**: Warning signs under this metric umbrella encompass low scores across the ROUGE suite. A
+    diminished precision could insinuate the presence of redundant information in machine-produced text, while a low
+    recall might denote the omission of salient data from the reference text. A decreased F1 score pinpoints a
+    suboptimal harmony between precision and recall. Persistent low scores, especially across diverse test sets, may
+    herald intrinsic flaws in the model's prowess.
+
+    **Strengths**: ROUGE's primary asset is its multifaceted view on text quality, enabled by an array of evaluation
+    metrics. It graciously accommodates synonyms and rephrasing due to its n-gram-based approach, and it champions the
+    retention of salient word sequences via the longest common subsequence tactic. The visual representation of
+    precision, recall, and F1-scores facilitates an intuitive grasp of model efficacy.
+
+    **Limitations**: In spite of its advantages, certain constraints tether ROUGE. It might not adequately address the
+    semantic coherence, fluency, or grammatical integrity of the generated narrative, leaning more towards evaluating
+    isolated phrases or n-grams. The metric can be less discerning when critiquing elaborate sentences due to its
+    fragmentary nature. Moreover, as it banks on comparisons with human-made references, procuring such benchmarks can
+    be challenging or even impractical at times.
     """
 
     name = "rouge_metric"
@@ -51,36 +63,6 @@ class RougeMetrics(Metric):
     default_params = {
         "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l", "rouge-s"],
     }
-
-    def description(self):
-        return """
-        ROUGE (Recall-Oriented Understudy for Gisting Evaluation) is a set of metrics used for the automatic
-        evaluation of machine-generated text, particularly in the context of natural language generation tasks
-        such as text summarization, machine translation, and text generation. ROUGE measures the quality of
-        generated text by comparing it to reference (human-generated) text. The primary goal of ROUGE is to
-        assess the effectiveness of machine-generated text in capturing key information and concepts from the
-        reference text.
-
-        Here are the key components and metrics within the ROUGE family:
-
-        ROUGE-N (N-gram Overlap): ROUGE-N measures the overlap of n-grams (contiguous sequences of n words)
-        between the generated text and reference text. Common values for N are 1 (unigrams), 2 (bigrams), and
-        3 (trigrams). ROUGE-N typically includes precision, recall, and F1-score components.
-
-        ROUGE-L (Longest Common Subsequence): ROUGE-L measures the longest common subsequence between the generated
-        text and reference text. It considers the longest sequence of words that appears in both texts and evaluates
-        how well the generated text captures important phrases.
-
-        ROUGE-S (Skip-bigram): ROUGE-S focuses on measuring the overlap of skip-bigrams, which are pairs of words
-        that appear within a certain window of words in the text. It accounts for the order of words while allowing
-        for some word skipping.
-
-        ROUGE metrics are widely used in the evaluation of text generation systems, especially in research and
-        development of natural language processing models. They provide a quantitative way to assess the quality
-        of generated text by comparing it to human-authored references. Researchers and practitioners often report
-        multiple ROUGE scores (e.g., ROUGE-1, ROUGE-2, ROUGE-L) to provide a comprehensive evaluation of their models'
-        performance.
-        """
 
     def run(self):
         r_metrics = self.params["rouge_metrics"]
