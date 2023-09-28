@@ -35,6 +35,9 @@ class Test(TestContextUtils):
 
     result: object  # type should be overridden by parent classes
     params: dict = None  # populated by test plan from user-passed config
+    test_id: str = (
+        None  # populated when loading tests from suites. TBD start using this
+    )
 
     def __post_init__(self):
         """
