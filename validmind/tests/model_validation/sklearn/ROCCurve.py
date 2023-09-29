@@ -13,7 +13,39 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ROCCurve(Metric):
     """
-    ROC Curve
+    **Purpose**:
+    The Receiver Operating Characteristic (ROC) curve is a critical analysis tool for the performance of binary
+    classification models. The ROC curve displays the trade-off between the True Positive Rate (TPR) and False Positive
+    Rate (FPR) at varying threshold levels. The ROC curve, together with the Area Under the Curve (AUC), is designed to
+    provide a measure of how well the model can discriminate between the two classes in a binary classification problem
+    (e.g., default vs non-default). The higher the AUC score, the better the model is at correctly distinguishing
+    between the positive and negative classes.
+
+    **Test Mechanism**:
+    This script extracts the target model and datasets, where binary classification is a requirement. Next, it computes
+    predicted probabilities for the test set. It then calculates and plots the ROC curve using the true outcomes and
+    predicted probabilities, along with the line representing randomness (AUC of 0.5). The AUC score for the ROC curve
+    of the model is also computed, giving a numeric estimate of the model's performance. Any Infinite values in the ROC
+    threshold are identified and removed in the process. The resulting ROC curve, AUC score, and thresholds are
+    subsequently saved.
+
+    **Signs of High Risk**:
+    There would be a high risk associated with the performance of the model if the AUC score is below or close to 0.5,
+    or if the ROC curve is observed to be closer to the line of randomness (indicating no discriminative power). It's
+    essential to note that the AUC score must be significantly greater than 0.5 for the model to be considered
+    effective at its classification task.
+
+    **Strengths**:
+    The ROC Curve provides a comprehensive visual representation of a model’s discriminative power over all possible
+    classification thresholds, unlike metrics that only reveal model performance at a single set threshold. The AUC
+    Score, which summarizes the ROC curve into a single value, remains consistent in the face of imbalanced datasets,
+    making it an ideal choice for such cases.
+
+    **Limitations**:
+    This test is designed specifically for binary classification tasks, limiting its application to other model types.
+    Additionally, it might not perform well for models that output probabilities severely skewed towards 0 or 1. In an
+    extreme case, the ROC curve can exhibit high performance even in situations where the majority of classifications
+    are incorrect, if the model's score ranking is preserved. This is known as the "class imbalance problem."
     """
 
     name = "roc_curve"
@@ -28,14 +60,6 @@ class ROCCurve(Metric):
             "visualization",
         ],
     }
-
-    def description(self):
-        return """
-        The ROC curve shows the trade-off between the true positive rate (TPR) and false positive rate (FPR)
-        for different thresholds. The area under the curve (AUC) is a measure of how well a model can
-        distinguish between two groups (e.g. default/non-default). The higher the AUC, the better the model is
-        at distinguishing between positive and negative classes.
-        """
 
     def run(self):
         if self.model.model_library() == "FoundationModel":

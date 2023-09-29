@@ -16,13 +16,40 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 @dataclass
 class Hashtags(ThresholdTest):
     """
-    The Hashtags test analyzes the dataset by extracting the text column and applying a
-    regular expression pattern to identify hashtags within the text. It then counts the
-    occurrences of each hashtag and selects the top hashtags based on a specified
-    parameter or the default value. The results are visualized using a bar plot, where
-    the x-axis represents the hashtags and the y-axis represents their frequency
-    counts. It aims to identify the most commonly used hashtags in a given text column
-    and provide visual representation of their frequencies.
+    **Purpose**: The Hashtags test is designed to measure the frequency of hashtags used within a given text column in
+    a dataset. It is particularly useful for natural language processing tasks such as text classification and text
+    summarization. The goal is to identify common trends and patterns in the use of hashtags, which can serve as
+    critical indicators or features within a machine learning model.
+
+    **Test Mechanism**: The test implements a regular expression (regex) to extract all hashtags from the specified
+    text column. For each hashtag found, it makes a tally of its occurrences. It then outputs a list of the top N
+    hashtags (default is 25, but customizable), sorted by their counts in a descending order. The results are also
+    visualized in a bar-plot that indicates frequency counts on the y-axis and the corresponding hashtags on the x-axis.
+
+    **Signs of High Risk**: The indications of a potential high-risk situation may include:
+
+    - A low diversity in the usage of hashtags as indicated by a few hashtags being used disproportionately more than
+    the others.
+    - Repeated usage of one or few hashtags can be indicative of spam or biased dataset.
+    - If there are no or extremely few hashtags found in the dataset, it perhaps signifies that the text data does not
+    contain structured social media data.
+
+    **Strengths**: The Hashtags test has several strong points:
+
+    - It provides a concise visual representation of the frequency of hashtags, which can be critical for understanding
+    the trend about a particular topic in text data.
+    - It is instrumental in tasks specifically related to social media text analytics such as opinion analysis, trend
+    discovery, etc.
+    - The test is adaptable, allowing the flexibility to determine the number of top hashtags to be analyzed.
+
+    **Limitations**: Despite its strengths, the test has some limitations:
+
+    - The test assumes the presence of hashtags and therefore may not be applicable for text datasets that do not
+    contain hashtags (e.g., formal documents, scientific literature).
+    - Language-specific limitations of hashtag formulations are not explicitly addressed.
+    - It does not account for typographical errors, variations or synonyms in hashtags.
+    - This test does not provide context or sentiment associated with the hashtags. Thus the information provided may
+    have limited utility on its own.
     """
 
     category = "data_quality"

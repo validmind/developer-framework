@@ -12,7 +12,40 @@ logger = get_logger(__name__)
 
 class AutoAR(Metric):
     """
-    Automatically detects the AR order of a time series using both BIC and AIC.
+    **Purpose**:
+    The purpose of this test, referred to as AutoAR, is to automatically detect the Autoregressive (AR) order of a time
+    series using both Bayesian information criterion (BIC) and Akaike information criterion (AIC) for regression tasks.
+    The AR order specifies the number of previous terms in the series to use to predict the current term. The goal is
+    to select the appropriate AR model that best captures the trend and seasonality in the time series data.
+
+    **Test Mechanism**:
+    The test iterates over a range of possible AR orders up to a specified maximum. For each order, an autoregressive
+    model is fitted, and the BIC and AIC are computed. Both these statistical measures penalize models for complexity
+    (higher number of parameters), favoring simpler models that fit the data well. Additionally, the Augmented
+    Dickey-Fuller test is conducted to check stationarity of the time series; non-stationary series might produce
+    inaccurate results. The test results, including AR order, BIC, and AIC, are added into a dataframe for easy
+    comparison. Subsequently, the AR order with minimum BIC is determined as the "best" order for each variable.
+
+    **Signs of High Risk**:
+    - If a time series is not stationary (Augmented Dickey-Fuller test p-value > 0.05), it may lead to inaccurate
+    results.
+    - Issues with the model fitting process, such as computational or convergence problems, suggest a high risk.
+    - If the chosen AR order is consistently at the maximum specified order, this could suggest insufficiency of the
+    maximum set limit.
+
+    **Strengths**:
+    - The test automatically determines the optimal AR order, reducing potential bias involved in manual selection.
+    - The method attempts to balance goodness-of-fit against model simplicity, preventing overfitting.
+    - It factors in stationarity of the time series, essential for reliable AR modeling.
+    - The test consolidates the results into a clear, easily interpreted table.
+
+    **Limitations**:
+    - The test requires stationary input time series.
+    - Assumes linear relationship between the series and its lags.
+    - Finding the best model is limited to the maximum AR order provided in the parameters. A low max_ar_order may
+    yield suboptimal results.
+    - AIC and BIC may not always select the same model as the best; interpretation may need to consider the goal and
+    the trade-offs.
     """
 
     type = "dataset"

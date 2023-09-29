@@ -23,8 +23,40 @@ from validmind.vm_models import (
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
     """
-    Test robustness of model by perturbing the features column values by adding noise within scale
-    stardard deviation.
+    **Purpose**: The purpose of this test is to evaluate the robustness of a machine learning model. Robustness refers
+    to a model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
+    noise—added to its input data. Such simulated scenarios help to assess if the model can handle situations where the
+    input data might be incomplete or corrupted.
+
+    **Test Mechanism**: This test method works by adding Gaussian noise, proportional to a certain standard deviation
+    scale, to input features (only numerical) of both the training and testing datasets. The performance of the model
+    with perturbed features is then computed based on a metric (default is 'accuracy'). This process is iterated over a
+    list of defined scale factors. The results are then visualized using a line chart, depicting the accuracy trend
+    against the amount of noise introduced. A threshold is set to determine the decay in accuracy due to perturbation
+    that is deemed acceptable.
+
+    **Signs of High Risk**: Signs of high risk include significant drops in accuracy when noise is introduced to
+    feature inputs. If the decay in accuracy breaches the configured threshold, it is a strong indicator of a high-risk
+    condition. High risk may also pertain to a situation where one or more elements provided in the features list do
+    not match with the training dataset's numerical feature columns.
+
+    **Strengths**: The robustness diagnosis test offers the following advantages:
+    - It provides an empirical measure of the model's performance in handling noise or data perturbations, offering
+    insights into the model's reliability and stability.
+    - The test is flexible and customizable with the ability to select specific features to perturb and to control the
+    noise level applied.
+    - Detailed results visualization aids in the interpretability of robustness testing.
+
+    **Limitations**: Despite the benefits, the test also exhibits some limitations:
+    - It only perturbs the numerical features while leaving out features of non-numerical types, potentially providing
+    an incomplete robustness analysis.
+    - Default metric used is accuracy which might not always provide the best measure of a model's success, especially
+    for imbalanced datasets.
+    - The test is reliant on the assumption that the injected Gaussian noise is an adequate representation of potential
+    corruption or incompleteness in real-world data.
+    - The set decay threshold for accuracy might need to be fine-tuned or adjusted based on domain knowledge or
+    specific project requirements.
+    - The test might not perform as expected for datasets with a text column.
     """
 
     category = "model_diagnosis"
@@ -49,23 +81,6 @@ class RobustnessDiagnosis(ThresholdTest):
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
-
-    def description(self):
-        return """
-        The robustness of a machine learning model refers to its ability to maintain performance
-        in the face of perturbations or changes to the input data. One way to test the robustness
-        of a model is by perturbing its input features and observing how the model's performance changes.
-
-        To perturb the input features, one can add random noise or modify the values of the features
-        within a certain range. By perturbing the input features, one can simulate different scenarios
-        in which the input data may be corrupted or incomplete, and test whether the model is able to
-        handle such scenarios.
-
-        The performance of the model can be measured in terms of its accuracy, precision, recall,
-        or any other relevant metric, both before and after perturbing the input features. A model
-        that is robust to perturbations should maintain a high level of performance even after the
-        input features have been perturbed.
-        """
 
     def run(self):
         # Validate X std deviation parameter

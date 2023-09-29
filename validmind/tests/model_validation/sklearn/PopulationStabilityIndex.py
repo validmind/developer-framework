@@ -21,7 +21,38 @@ logger = get_logger(__name__)
 @dataclass
 class PopulationStabilityIndex(Metric):
     """
-    Population Stability Index between two datasets
+    **Purpose:**
+    The Population Stability Index (PSI) is used to evaluate how stable a predictive model's score distribution is when
+    two different datasets are compared - typically a development and a validation dataset or two separate time
+    periods. This assessment aids in understanding if a significant shift has occurred in the model's performance over
+    time or if there has been a severe change in population characteristics.
+
+    **Test Mechanism:**
+    In this script, the test mechanism involves comparing the PSI between the training and test datasets. The data from
+    each dataset is sorted and placed into either fixed bins or quantiles. The bin boundaries are established based on
+    the initial population in the case of quantiles. The values in the bins are counted and the proportions calculated.
+    The PSI is then calculated for each bin using a logarithmic transformation of the ratio of the proportions. A
+    summarising table and a grouped bar chart alongside a scatter plot are created showing the PSI, and percentage of
+    original and new data in each bin.
+
+    **Signs of High Risk:**
+    Signs of high risk would be captured by a high PSI value. A high PSI indicates a dramatic shift in the model's
+    performance or a significant change in population attributes, suggesting that the model may not be performing as
+    expected.
+
+    **Strengths:**
+    The PSI approach helps assess the stability of a model over time or across samples, which is critical for
+    understanding if the model's performance has changed significantly. It provides a quantitative measure (the PSI
+    value) that allows for direct comparisons across features. The calculation and interpretation of PSI is
+    straightforward making it an effective tool for model validation. The visual display further aids for better
+    understanding.
+
+    **Limitations:**
+    One potential drawback is that the PSI test doesn't take into account the interdependence between features. It also
+    doesn't provide insights into why the distributions are different. Additionally, PSI may not adequately handle
+    features with significant outliers. Finally, the test is performed here on the model predictions, not on the
+    underlying data distributions - differences in PSI could be due to feature drift, model drift, or both combined,
+    without a clear way to distinguish between them.
     """
 
     name = "psi"
@@ -35,16 +66,6 @@ class PopulationStabilityIndex(Metric):
             "model_performance",
         ],
     }
-
-    def description(self):
-        return """
-        PSI is a widely-used metric to assess the stability of a predictive model's score distribution when comparing
-        two separate samples (usually a development and a validation dataset or two separate time periods). It helps
-        determine if a model's performance has changed significantly over time or if there is a major shift in the
-        population characteristics.
-
-        In this section, we compare the PSI between the training and test datasets.
-        """
 
     def summary(self, metric_value):
         # Add a table with the PSI values for each feature
