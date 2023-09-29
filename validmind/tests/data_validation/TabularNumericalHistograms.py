@@ -8,9 +8,35 @@ from validmind.vm_models import Figure, Metric
 
 class TabularNumericalHistograms(Metric):
     """
-    Generates a visual analysis of numerical data by plotting the histogram.
-    The input dataset can have multiple numerical variables if necessary.
-    In this case, we produce a separate plot for each numerical variable.
+    **Purpose**: The purpose of this test is to provide visual analysis of numerical data through the generation of
+    histograms for each numerical feature in the dataset. Histograms aid in the exploratory analysis of data, offering
+    insight into the distribution of the data, skewness, presence of outliers, and central tendencies. It helps in
+    understanding if the inputs to the model are normally distributed which is a common assumption in many machine
+    learning algorithms.
+
+    **Test Mechanism**: This test scans the provided dataset and extracts all the numerical columns. For each numerical
+    column, it constructs a histogram using plotly, with 50 bins. The deployment of histograms offers a robust visual
+    aid, ensuring unruffled identification and understanding of numerical data distribution patterns.
+
+    **Signs of High Risk**: A high degree of skewness, unexpected data distributions or existence of extreme outliers
+    in the histograms may indicate issues with the data that the model is receiving. If data for a numerical feature is
+    expected to follow a certain distribution (like normal distribution) but does not, it could lead to sub-par
+    performance by the model. As such these instances should be treated as high-risk indicators.
+
+    **Strengths**: This test offers several advantages:
+
+    - It provides a simple, easy-to-interpret visualization of how data for each numerical attribute is distributed.
+    - It can help detect skewed values and outliers, that could potentially harm the AI model's performance.
+    - It can be applied to large datasets and multiple numerical variables conveniently.
+
+    **Limitations**: Despite its effectiveness, this test does have some limitations:
+
+    - It only works with numerical data, thus ignoring non-numerical or categorical data.
+    - It does not analyze relationships between different features, only the individual feature distributions.
+    - It is a univariate analysis, and may miss patterns or anomalies that only appear when considering multiple
+    variables together.
+    - It does not provide any insight into how these features affect the output of the model; it is purely an input
+    analysis tool.
     """
 
     name = "tabular_numerical_histograms"

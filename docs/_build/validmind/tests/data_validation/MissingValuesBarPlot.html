@@ -79,8 +79,33 @@
     </div>
     <a class="headerlink" href="#MissingValuesBarPlot"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of missing values by plotting horizontal bar plots with colored bars and a threshold line.
-The input dataset is required.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The 'MissingValuesBarPlot' metric generates a visual representation that highlights the percentage of
+missing values in each column of a dataset used in an ML model. This visualization is used to quickly identify and
+quantify missing data, a critical step in data preprocessing. Missing data can distort the predictions of an ML
+model and reduce its accuracy. The metric also applies a user-defined threshold to classify columns into those with
+missing data above (high-risk) and below (less-risk) the threshold.</p>
+
+<p><strong>Test Mechanism</strong>: This metric scans through each column in the input dataset and calculates the percentage of
+missing values. It preferentially selects columns that have at least some missing data (more than 0%). Each
+column's missing data percentage is then examined against the predefined threshold. Columns with missing data above
+the threshold are classified as high-risk. A bar plot is then generated; columns with missing data are displayed on
+the y-axis, while their corresponding missing data percentages are plotted on the x-axis. Each bar's color is
+dictated by the missing data's percentage relation to the threshold. Values below the threshold are grey, while
+ones above are light coral. A red dashed line represents the user-defined threshold on the plot.</p>
+
+<p><strong>Signs of High Risk</strong>: Columns in the dataset represented by light coral bars indicate a high risk. These columns
+have a higher percentage of missing values than the threshold. If a significant number of columns or crucial
+features fall into this category, it implies a substantial risk for reliable model performance.</p>
+
+<p><strong>Strengths</strong>: This method offers a snapshot overview of missing data across all the dataset's columns, making it
+easier to identify problematic areas promptly. It not only helps with quantitative assessment but also with pattern
+recognition through its visual summary. The user-defined threshold allows a customized level of risk tolerance. It
+also supports classification and regression tasks, adding to its versatility.</p>
+
+<p><strong>Limitations</strong>: This metric purely looks at the number of missing values and doesn't consider the type of
+missingness (MCAR, MAR, NMAR) or methods for handling missing entries (like imputation strategies). It also doesn't
+factor in the potential impact of missing data on the model's accuracy or precision. It might require expert
+understanding to interpret the findings and take appropriate action.</p>
 </div>
 
 

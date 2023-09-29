@@ -79,7 +79,54 @@
     </div>
     <a class="headerlink" href="#TooManyZeroValues"></a>
     
-            <div class="docstring"><p>The zeros test finds columns that have too many zero values.</p>
+            <div class="docstring"><p><strong>Purpose</strong>:
+The 'TooManyZeroValues' test is used to identify numerical columns in the data that have an abundance of zero
+values. If a column has too many zeros, it could indicate data sparsity or potential lack of variation, which may
+limit its utility in a machine learning model. The test quantifies 'too many' as a percentage of total values, set
+by default to 3%.</p>
+
+<p><strong>Test Mechanism</strong>:
+The application of this test involves iterating over each column of the dataset and determining if the column
+corresponds to numerical data. When a numeric column is identified, the function calculates the total count of zero
+values and their ratio to the total row number. If the proportion exceeds the preset threshold parameter (default
+0.03 or 3%), the column fails the test. The results from each column are summarised in a report that indicates the
+number and the percentage of zero values for each numeric column, along with whether the column passed or failed
+the test.</p>
+
+<p><strong>Signs of High Risk</strong>:
+The indicators of high risk associated with this test include:</p>
+
+<ol>
+<li>Numeric columns with a high ratio of zero values to the total number of rows (beyond the set threshold).</li>
+<li>Columns where all values registered are zero, implying a complete lack of data variation.</li>
+</ol>
+
+<p><strong>Strengths</strong>:
+This test offers several advantages:</p>
+
+<ol>
+<li>Helps in identifying columns with excessive zero values which otherwise might go unnoticed in a large dataset.</li>
+<li>Offers flexibility to adjust the threshold of what counts as 'too many' zero values, accommodating the specific
+needs of a given analysis or model.</li>
+<li>Reports both the count and percentage of zero values, shedding more light on the distribution and proportion of
+zeros within a column.</li>
+<li>Focuses specifically on numerical data, preventing the misapplication to non-numerical columns and avoiding
+false test failures.</li>
+</ol>
+
+<p><strong>Limitations</strong>:
+Certain limitation of this metric include:</p>
+
+<ol>
+<li>It merely checks for zero values and does not assess the relevance or the impact of other potentially
+problematic values in the dataset such as extremely high or extremely low numbers, null values or outliers.</li>
+<li>It cannot detect a pattern of zeros, which might be important in time series or longitudinal data.</li>
+<li>Zeroes might be meaningful in certain contexts, so labelling them as 'too many' could be a misinterpretation of
+the data.</li>
+<li>This test does not account for the dataset’s context and disregards that for certain columns, a high presence of
+zero values could be normal and does not necessarily indicate low data quality.</li>
+<li>Cannot evaluate non-numerical or categorical columns, that might carry different types of concerns or issues.</li>
+</ol>
 </div>
 
 

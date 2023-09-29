@@ -22,7 +22,44 @@ from validmind.vm_models import (
 @dataclass
 class WeakspotsDiagnosis(ThresholdTest):
     """
-    Test that identify weak regions with high residuals by histogram slicing techniques.
+    **Purpose:**
+    The weak spots test is designed to evaluate the performance of a machine learning model in specific regions of the
+    feature space. This test consists of dividing the feature space into various sections or slices, evaluating the
+    model's output within each of these sections, and identifying regions where the model's performance metrics fall
+    below specified thresholds. Performance metrics include accuracy, precision, recall, and F1 scores. This diagnostic
+    test helps identify areas where the machine learning model may not perform well, potentially exposing its
+    limitations and weaknesses.
+
+    **Test Mechanism:**
+    The test is performed by slicing the feature space of the training data set into multiple bins. For each bin, the
+    model's performance metrics are computed for both the training and test data sets. If any of the model's
+    performance metrics fall below the predetermined threshold for a particular bin on the test dataset, it is
+    identified as a "weak spot". The results are visually represented in a bar chart for each performance metric,
+    marking the bins failing the threshold.
+
+    **Signs of High Risk:**
+    High risk or failure in the model's performance is indicated when any of the model's performance metrics fall below
+    the set thresholds. If any bin performed significantly worse in the test dataset compared to the training dataset,
+    it might indicate overfitting in that region. Further, if a region or slice has low performance metrics, it
+    suggests that the model does not handle that type of input data well, which may lead to inaccurate predictions.
+
+    **Strengths:**
+    - The weak spots test helps identify specific regions of the feature space where the model's performance is subpar,
+    which can guide further refinement of the model.
+    - Plotting the performance metrics provides an intuitive way to understand the model's performance across different
+    regions.
+    - The test can be customizable, allowing users to specify various thresholds for multiple performance metrics based
+    on the needs of the specific application.
+
+    **Limitations:**
+    - By binning the feature space, the test could potentially oversimplify the model's behavior in each region. The
+    granular control of this slicing depends on the bins parameter, and can be coincidentally arbitrary.
+    - The test's effectiveness relies upon the chosen thresholds for the performance metrics, which may not be
+    universally applicable and subject to the model's specification and the application.
+    - The test does not handle datasets with a text column, thus limiting its applicability to only numerical or
+    categorical data.
+    - The test does not directly provide suggestions for model improvement, only highlighting potentially problematic
+    regions.
     """
 
     category = "model_diagnosis"
@@ -58,19 +95,6 @@ class WeakspotsDiagnosis(ThresholdTest):
         "recall": partial(metrics.recall_score, zero_division=0),
         "f1": partial(metrics.f1_score, zero_division=0),
     }
-
-    def description(self):
-        return """
-        A weak spots test is a type of testing that is performed on a machine learning model
-        to identify areas where the model may not perform well or may be vulnerable to errors.
-        The purpose of this testing is to identify the limitations and weaknesses of the model
-        so that appropriate measures can be taken to improve its performance.
-        The weak spots test typically involves subjecting the model to different types of data
-        that are different from the data used to train the model. For example, the test data may
-        contain outliers, missing data, or noise that was not present in the training data. The model
-        is then evaluated on this test data using appropriate metrics such as accuracy, precision,
-        recall, F1 score, etc.
-        """
 
     def run(self):
         thresholds = self.params["thresholds"]

@@ -79,8 +79,31 @@
     </div>
     <a class="headerlink" href="#MinimumAccuracy"></a>
     
-            <div class="docstring"><p>Test that the model's prediction accuracy on a dataset meets or
-exceeds a predefined threshold.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the Minimum Accuracy test is to validate that the model's prediction accuracy on a
+given dataset meets or exceeds a predefined minimum threshold. Accuracy is the fraction of predictions our model
+got right and is an essential metric to understand how well our model is performing. In the context of both binary
+and multiclass classifications, accurate labeling is crucial.</p>
+
+<p><strong>Test Mechanism</strong>: The mechanism of this threshold test involves comparing the model's accuracy score against the
+minimum threshold value specified (default value is 0.7). The accuracy score is calculated by using the sklearn's
+<code>accuracy_score</code> method between true label <code>y_true</code> and predicted label <code>class_pred</code>. If the accuracy score exceeds
+the threshold, the test is marked as passed. The test result is returned along with the accuracy score and the
+threshold used for the test.</p>
+
+<p><strong>Signs of High Risk</strong>: Signs of high risk within this test present themselves when the model is unable to meet or
+exceed the specified score threshold. If the model's accuracy score is consistently falling below the set
+threshold, it indicates a high risk of inaccurate predictions, which can reduce the model's effectiveness and
+dependability.</p>
+
+<p><strong>Strengths</strong>: The strength of the Minimum Accuracy test lies in its simplicity. It provides a straightforward
+measure of overall model performance across all classes. It's particularly advantageous when the classes are
+balanced. The test is also versatile and can be used with both binary and multiclass classification tasks.</p>
+
+<p><strong>Limitations</strong>: This test's limitations surface when dealing with imbalanced datasets. If the classes in the
+dataset are highly skewed, the accuracy score could be misleading, potentially favoring the majority class and
+providing a false sense of model performance. Another limitation is it does not provide a measure of the model's
+precision, recall, or ability to manage false positives and false negatives. It primarily focuses on overall
+correctness, which might not be sufficient for all types of model analytics.</p>
 </div>
 
 

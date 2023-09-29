@@ -79,7 +79,34 @@
     </div>
     <a class="headerlink" href="#TimeSeriesFrequency"></a>
     
-            <div class="docstring"><p>Test that detects frequencies in the data</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The TimeSeriesFrequency test is designed to evaluate the consistency in the frequency of data points
+in a time series dataset. The metric inspects the intervals or duration between each data point in the dataset and
+helps to determine if there is a fixed pattern (e.g. daily, weekly, monthly). This is important in time-series
+analysis, as irregularities in the data frequency can lead to erroneous results or may affect the model's ability
+to identify trends and patterns.</p>
+
+<p><strong>Test Mechanism</strong>: The test examines the dataframe index to verify that it's in datetime format. Afterwards, it
+identifies the frequency of each data series in the dataframe by employing pandas' <code>infer_freq</code> method, which
+infers the frequency of a given time series. It returns the frequency string as well as a dictionary that matches
+frequency strings to their respective labels. The frequencies of all variables in the dataset are then compared. If
+they all share one common frequency, the test passes; otherwise, it fails. A frequency plot that graphically
+depicts the time differences between consecutive entries in the dataframe index is also generated using Plotly.</p>
+
+<p><strong>Signs of High Risk</strong>: One significant sign of high risk is if the test fails, i.e., when there are multiple
+unique frequencies in the dataset. This could indicate irregular time intervals between observations, which could
+disrupt pattern recognition or trend analysis that the model is designed to conduct. Also, missing or null
+frequencies can signify data inconsistencies or gaps in the data collection process.</p>
+
+<p><strong>Strengths</strong>: This test provides a systematic way to check and visually represent the consistency of data
+frequency in a time series dataset. It increases reliability of the model by asserting that the timing and
+consistency of the observations are in line with the requirements of time series analysis. The visual plot
+generated provides an intuitive representation of the dataset's frequency distribution, catering to visual learners
+and aiding explanation and interpretation.</p>
+
+<p><strong>Limitations</strong>: This test is restricted to time-series datasets; hence, it is not applicable to all kinds of
+datasets. Moreover, the <code>infer_freq</code> method may not always infer the correct frequency in the presence of missing
+or irregular data points. Lastly, in some cases, mixed frequencies might be acceptable depending on the context or
+the model being developed, but this test considers them a failing condition.</p>
 </div>
 
 

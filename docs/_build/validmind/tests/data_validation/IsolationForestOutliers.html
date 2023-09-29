@@ -38,9 +38,6 @@
                                 <a class="function" href="#IsolationForestOutliers.__init__">IsolationForestOutliers</a>
                         </li>
                         <li>
-                                <a class="function" href="#IsolationForestOutliers.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#IsolationForestOutliers.run">run</a>
                         </li>
                 </ul>
@@ -79,23 +76,33 @@
     </div>
     <a class="headerlink" href="#IsolationForestOutliers"></a>
     
-            <div class="docstring"><p>Isolation Forest.
-This class implements the Isolation Forest algorithm for anomaly detection.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the <code><a href="#IsolationForestOutliers">IsolationForestOutliers</a></code> test is to identify anomalies or outliers in the model's
+dataset. It assumes anomalous data points, due to their distinctive properties, can be detected more quickly by the
+isolation forest algorithm. This algorithm evaluates anomalies through the creation of isolation trees and
+identifying instances with shorter average path lengths in these trees, as these instances are expected to be
+different from the majority of the data points.</p>
 
-<h6 id="attributes">Attributes:</h6>
+<p><strong>Test Mechanism</strong>: This test uses the isolation forest algorithm, which isolates anomalies rather than identifying
+normal data points. It runs by building an ensemble of isolation trees, utilizing binary trees created by randomly
+selecting features and splitting the data based on random thresholds. For each pair of variables, it generates a
+scatter plot distinguishing the identified outliers from the inliers. The test results are visualized in these
+scatter plots showing the distinction of outliers from inliers.</p>
 
-<ul>
-<li><strong>name (str):</strong>  The name of the Isolation Forest.</li>
-<li><strong>default_params (dict):</strong>  The default parameters for the Isolation Forest.</li>
-<li><strong>required_inputs (list):</strong>  The required inputs for running the Isolation Forest.</li>
-</ul>
+<p><strong>Signs of High Risk</strong>: Signs of high risk or failure in the model's performance might be the presence of high
+contamination which indicates a lot of anomalies, an inability to detect clusters of anomalies that are
+geographically close in the feature space, detecting normal instances as anomalies or overlooking actual anomalies.</p>
 
-<h6 id="methods">Methods:</h6>
+<p><strong>Strengths</strong>: The strengths of the isolation forest algorithm include its ability to handle large high-dimensional
+datasets, its efficiency in isolating anomalies rather than normal instances tradition, and its insensitivity to
+the underlying distribution of data. It is able to recognize anomalies even when they are not separated from the
+data cloud by identifying distinctive properties of the anomalies. Additionally, it visualizes the test results,
+aiding understanding and interpretability.</p>
 
-<blockquote>
-  <p>description(): Returns the description of the Isolation Forest.
-  run(): Runs the Isolation Forest algorithm.</p>
-</blockquote>
+<p><strong>Limitations</strong>: Among its limitations, the isolation forest test might find it hard to detect anomalies that are
+close to each other, or in datasets where anomalies are more prevalent. The results strongly rely on the
+contamination parameter, which might need fine-tuning to be effective. It may also not be effective in detecting
+collective anomalies if they behave similarly to normal data. Furthermore, it potentially lacks precision in
+identifying which features contribute most to the anomalous behavior.</p>
 </div>
 
 
@@ -109,22 +116,6 @@ This class implements the Isolation Forest algorithm for anomaly detection.</p>
     <a class="headerlink" href="#IsolationForestOutliers.__init__"></a>
     
     
-
-                            </div>
-                            <div id="IsolationForestOutliers.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#IsolationForestOutliers.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="IsolationForestOutliers.run" class="classattr">
@@ -152,7 +143,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="IsolationForestOutliers.log" class="function">log</dd>
+                                <dd id="IsolationForestOutliers.description" class="function">description</dd>
+                <dd id="IsolationForestOutliers.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -85,7 +85,45 @@
     </div>
     <a class="headerlink" href="#TimeSeriesOutliers"></a>
     
-            <div class="docstring"><p>Test that find outliers for time series data using the z-score method</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This test is designed to identify outliers in time-series data using the z-score method. It's vital
+for ensuring data quality before modeling, as outliers can skew predictive models and significantly impact their
+overall performance.</p>
+
+<p><strong>Test Mechanism</strong>: The test processes a given dataset which must have datetime indexing, checks if a
+'zscore_threshold' parameter has been supplied, and identifies columns with numeric data types. After finding
+numeric columns, the implementer then applies the z-score method to each numeric column, identifying outliers based
+on the threshold provided. Each outlier is listed together with their variable name, z-score, timestamp and
+relative threshold in a dictionary and converted to a DataFrame for convenient output. Additionally, it produces
+visual plots for each time series illustrating outliers in the context of the broader dataset. The
+'zscore_threshold' parameter sets the limit beyond which a data point will be labeled as an outlier. The default
+threshold is set at 3, indicating that any data point that falls 3 standard deviations away from the mean will be
+marked as an outlier.</p>
+
+<p><strong>Signs of High Risk</strong>: If many or substantial outliers are present within a dataset, this may be an indicator of
+high risk as it suggests that the dataset contains significant anomalies. This could potentially affect the
+performance of the machine learning models, if not properly addressed. Data points with z-scores higher than the
+set threshold would be flagged as outliers and could be considered as high risk.</p>
+
+<p><strong>Strengths</strong>:</p>
+
+<ol>
+<li>The z-score method is a popular and robust method for identifying outliers in a dataset.</li>
+<li>Time series maintenance is simplified through requiring a datetime index.</li>
+<li>Outliers are identified for each numeric feature individually.</li>
+<li>Provides an elaborate report which shows variables, date, z-score and whether the test passed or failed.</li>
+<li>Offers visual inspection for detected outliers in the respective time-series through plots.</li>
+</ol>
+
+<p><strong>Limitations</strong>:</p>
+
+<ol>
+<li>This test only identifies outliers in numeric columns, and won't identify outliers in categorical variables.</li>
+<li>The utility and accuracy of z-scores can be limited if the data doesn’t follow a normal distribution.</li>
+<li>The method relies on a subjective z-score threshold for deciding what constitutes an outlier, which might not
+always be suitable depending on the dataset and the use case.</li>
+<li>It does not address possible ways to handle identified outliers in the data.</li>
+<li>The necessity for a datetime index could limit the extent of its application.</li>
+</ol>
 </div>
 
 

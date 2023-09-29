@@ -12,7 +12,43 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelInsampleComparison(Metric):
     """
-    Test that output the comparison of stats library regression models.
+    **Purpose**: The purpose of this test metric, RegressionModelInsampleComparison, is to assess the performance of
+    regression models on the same dataset that they were trained on. The performance of the models is compared against
+    each other to identify which fits the data best. Evaluation metrics include goodness-of-fit statistics such as
+    R-Squared, Adjusted R-Squared, Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).
+
+    **Test Mechanism**: The test's implementation involves the following steps;
+    - First, a check is done to ensure that the list of models is not empty.
+    - After confirmation, the In-Sample performance of the models is computed by using a private function
+    `_in_sample_performance_ols`. This function:
+      - Loops through each model in the list
+      - For each model, it extracts the features (`X`) and target (`y_true`) from the training dataset and then
+    predicts target values (`y_pred`)
+      - The model's performance metrics are then computed using formulas for R-Squared, Adjusted R-Squared, MSE and
+    RMSE.
+      - The computed metrics, variables of the model and the model's identifier are saved in a dictionary and appended
+    to a list.
+    - The collected results are then saved and returned in form of a pandas dataframe.
+
+    **Signs of High Risk**: A high risk or failure of the model's performance can be indicated by waiting significantly
+    low values for R-Squared or Adjusted R-Squared and significantly high values for MSE and RMSE. The exact thresholds
+    may vary based on the specific context or domain in which the model is being applied.
+
+    **Strengths**:
+    - Enables direct comparison of different models' in-sample performance on the same data set, providing a clear
+    picture of which model is better suited to the data.
+    - It computes multiple evaluation methods (R-Squared, Adjusted R-Squared, MSE, RMSE), which provides a
+    comprehensive overview of the model's performance.
+
+    **Limitations**:
+    - This test only uses in-sample performance, i.e., how well a model fits the data it was trained on. It might not
+    indicate how the model performs on unseen or out-of-sample data, which is a core aspect of modeling tasks.
+    - It might be sensitive to overfitting as better in-sample performance might be a result of the model merely
+    memorizing the training data.
+    - It does not take into account other crucial factors like data's pattern of changes over time, also known as
+    temporal dynamics.
+    - The test doesn't offer a mechanism to automatically determine whether reported metrics are acceptable -
+    human/judgement-based interpretation is needed.
     """
 
     name = "regression_insample_performance"
@@ -20,15 +56,6 @@ class RegressionModelInsampleComparison(Metric):
         "task_types": ["regression"],
         "tags": ["model_comparison"],
     }
-
-    def description(self):
-        return """
-        This section shows In-sample comparison of regression models involves comparing
-        the performance of different regression models on the same dataset that was used
-        to train the models. This is typically done by calculating a goodness-of-fit statistic
-        such as the R-squared or mean squared error (MSE) for each model, and then comparing
-        these statistics to determine which model has the best fit to the data.
-        """
 
     def run(self):
         # Check models list is not empty

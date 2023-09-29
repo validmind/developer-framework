@@ -14,8 +14,37 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class WOEBinPlots(Metric):
     """
-    Generates a visual analysis of the WoE and IV values distribution for categorical variables.
-    The input dataset is required.
+    **Purpose**: The purpose of this test is to perform a visual analysis of the Weight of Evidence (WoE) and
+    Information Value (IV) for categorical variables in a provided dataset. This aids in understanding the predictive
+    power of each variable in a classification-based machine learning model by displaying the data distribution over
+    the different categories of each feature. WoE and IV are common metric in credit scoring models and provide
+    reliable statistical measures for variables' predictive power.
+
+    **Test Mechanism**: The test mechanism proceeds in predefined steps. It first selects non-numeric columns and
+    converts them to string type for proper binning. Afterward, it performs an automatic WoE binning on the selected
+    features in the dataset, which effectively groups the possible values of a variable into bins or categories. Once
+    this is done, the function generates two visual charts for each variable - a Bar chart for IV and a Scatter chart
+    for WoE values. These visualizations are rendered based on the distribution of the respective metric across the
+    different categories of each feature.
+
+    **Signs of High Risk**: Indicators of high potential risk include an error occurring during the binning process or
+    issues converting non-numeric columns to string data type. Furthermore, an uneven distribution of WoE and IV,
+    especially if certain bins dominate others significantly, might indicate that the model is excessively relying on
+    certain variables or categories for predictions, which could have an adverse impact on the model's generalizability
+    and robustness.
+
+    **Strengths**: One of the strengths of using this metric is that it provides a detailed visual presentation of how
+    feature categories relate to the target variable, giving an intuitive understanding of the feature's contribution
+    to the model. It also allows easy identification of highly impacting features, which can aid in feature selection
+    and in understanding the decision logic of the model. Furthermore, WoE transformations are monotonic, meaning they
+    preserve the rank ordering of the original data points, which simplifies subsequent analyses.
+
+    **Limitations**: One of the limitations of this method is that it is largely dependent on the binning process. An
+    inappropriate choice of the number of bins or the binning thresholds can lead to an inadequate representation of
+    the variable's distribution. Also, this method is most suitable for categorical data; encoding continuous variables
+    to categorical might sometimes lead to loss of information. Another limitation is that extreme or outlier values
+    can have a significant impact on WoE and IV calculation. Finally, it requires sufficient events per bin in order to
+    give reliable information value and weight of evidence.
     """
 
     name = "woe_bin_plots"
