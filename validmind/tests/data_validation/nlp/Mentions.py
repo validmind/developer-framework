@@ -63,7 +63,7 @@ class Mentions(ThresholdTest):
         row["scenario"] = b
         row["Percentage"] = a
         figures = []
-        if not row.empty():
+        if not row.empty:
             fig = px.treemap(
                 row, path=["scenario"], values="Percentage", title="Tree of Mentions"
             )
