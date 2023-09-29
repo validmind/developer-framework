@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from validmind.logging import get_logger
-from validmind.vm_models import Metric
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 DEFAULT_HISTOGRAM_BINS = 10
 DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
@@ -32,6 +32,41 @@ class DatasetDescription(Metric):
         ],
         "tags": ["tabular_data", "time_series_data", "text_data"],
     }
+
+    def summary(self, metric_value):
+        """
+        Build a dataset summary table. metric_value is a list of fields where each field
+        has an id, type (Numeric or Categorical), and statistics. The statistics object
+        depends on the type being Numeric or Categorical. For Numeric fields, it has
+        the following keys: count, mean, std, min, 25%, 50%, 75%, 90%, 95%, max. For
+        categorical fields, it has the following keys: count, unique, top, freq.
+        """
+        results_table = []
+        for field in metric_value:
+            field_id = field["id"]
+            field_type = field["type"]
+            field_statistics = field["statistics"]
+
+            results_table.append(
+                {
+                    "Name": field_id,
+                    "Type": field_type,
+                    "Count": field_statistics["count"],
+                    "Missing": field_statistics["n_missing"],
+                    "Missing %": field_statistics["missing"],
+                    "Distinct": field_statistics["n_distinct"],
+                    "Distinct %": field_statistics["distinct"],
+                }
+            )
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title="Dataset Description"),
+                )
+            ]
+        )
 
     def run(self):
         self.describe()
