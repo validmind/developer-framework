@@ -12,7 +12,46 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RegressionModelForecastPlotLevels(Metric):
     """
-    This metric creates a plot of forecast vs observed for each model in the list.
+    **Purpose:**
+    The purpose of `RegressionModelForecastPlotLevels` is to visually evaluate the performance of a given list of
+    regression models. It does this by plotting the forecasts of these models against the observed data in their
+    training and test datasets. It evaluates the model's ability to produce accurate and reliable forecasts when faced
+    with certain input features. The measure of accuracy here is the proximity of the forecasted values to the actual
+    observed values. In case of any transformations specified, the metric also handles transforming the data before the
+    comparison.
+
+    **Test Mechanism:**
+    The Python class in consideration accepts `transformation` as a parameter, which defaults to None. First, it checks
+    for the presence of model objects and raises a `ValueError` if none are provided. Next, it loops through each
+    model, generating predictive forecasts for the model's training and testing datasets. These forecasts are then
+    plotted against the actual (observed) values. If a transformation, such as "integrate", is specified, the class
+    carries out the transformation operation (i.e., it performs cumulative sums to create a new series). Finally, plots
+    are created comparing observed and forecasted values for both the original and transformed datasets.
+
+    **Signs of High Risk:**
+    High risk or failure in the model's performance can be inferred from the generated plots. If the forecasted values
+    deviate significantly from the observed values in either the training or test datasets, it suggests high risk. A
+    significant deviation could be a sign of overfitting or underfitting, which would be a cause for concern. Such
+    discrepancies could limit the model's ability to produce accurate and generalizable results.
+
+    **Strengths:**
+    - Visual evaluation: The metric provides a graphical way of evaluating the regression models, allowing easier
+    interpretation and assessment of the forecasting accuracy.
+    - Handles multiple models: The metric enables evaluation of multiple models at once, providing a comparative
+    overview of all models.
+    - Handles transformations: Ability to handle transformations such as "integrate" allows for broader scope and
+    flexibility in model evaluations.
+    - Detailed insight: The metric provides a detailed perspective by looking at the performance on both training and
+    testing datasets.
+
+    **Limitations:**
+    - Visual subjectivity: The metric relies heavily on visual evaluations, and interpretation can vary from person to
+    person.
+    - Limitation in transformations: Currently supports "integrate" transformation only. More complex transformation
+    might not be covered.
+    - Overhead: Plotting for large datasets might be computationally expensive and could increase runtime.
+    - Lack of numerical metrics: While visualization is useful, a corresponding numerical measure to support
+    observations would be beneficial.
     """
 
     name = "regression_forecast_plot_levels"
@@ -23,11 +62,6 @@ class RegressionModelForecastPlotLevels(Metric):
         "task_types": ["regression"],
         "tags": ["forecasting", "visualization"],
     }
-
-    def description(self):
-        return """
-        This section shows plots of training and test datasets vs forecast training and test.
-        """
 
     def run(self):
         transformation = self.params["transformation"]

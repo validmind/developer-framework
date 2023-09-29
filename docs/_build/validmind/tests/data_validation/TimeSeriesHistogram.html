@@ -72,9 +72,47 @@
     </div>
     <a class="headerlink" href="#TimeSeriesHistogram"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of time series data by plotting the
-histogram. The input dataset can have multiple time series if
-necessary. In this case we produce a separate plot for each time series.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This test conducts a histogram analysis on time series data. The goal is to evaluate the distribution
+of values in the dataset over a given time period, typically for regression tasks. Internet traffic, stock prices,
+weather data etc. could be time series data. Histograms provide insights into the data’s underlying probability
+distribution, skewness, peakness(kurtosis) etc.</p>
+
+<p><strong>Test Mechanism</strong>: The test requires a dataset column that must have a datetime type index. It iterates over each
+column in the provided dataset and generates a histogram using Seaborn's histplot function. If the dataset contains
+more than one time-series (i.e., more than one column with datetime type index), a separate histogram will be
+plotted for each. Additionally, a kernel density estimate (KDE) line is drawn for each histogram to indicate the
+data's underlying probability distribution. The x and y-axis labels are hidden to only focus on the data
+distribution.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The dataset does not contain a column with a datetime type index.</li>
+<li>The specified columns do not exist in the dataset.</li>
+<li>The distribution of data in the histogram exhibits high skewness or kurtosis, which might induce biases in the
+model.</li>
+<li>Presence of outliers that are far from the main data distribution.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides a visual diagnostic tool, which is a good starting point to understand the overall behavior and
+distribution trends of the dataset.</li>
+<li>Works well for both single and multiple time series data analysis.</li>
+<li>The Kernel Density Estimation (KDE) line offers a smooth estimate of the overall trend in data distribution.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>It only provides a high-level overview of data distribution and does not provide specific numeric measures of
+skewness, kurtosis, etc.</li>
+<li>It doesn’t show the precise data values and the actual data is grouped into bins, hence some detail is inherently
+lost (precision vs. general overview trade-off).</li>
+<li>Can't handle non-numeric data columns.</li>
+<li>The shape of the histogram can be sensitive to the number of bins used.</li>
+</ul>
 </div>
 
 

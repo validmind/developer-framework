@@ -11,8 +11,49 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class IQROutliersBarPlot(Metric):
     """
-    Generates a visual analysis of the outliers for numeric variables based on percentiles.
-    The input dataset is required.
+    **Purpose**: The InterQuartile Range Outliers Bar Plot (IQROutliersBarPlot) metric aims to visually analyse and
+    evaluate the extent of outliers in numeric variables based on percentiles. This metric is vital for understanding
+    data distribution, identifying abnormalities within a dataset and assessing the risk associated with processing
+    potentially skewed data that might impact the predictive performance of the machine learning model.
+
+    **Test Mechanism**: The test involves the following steps:
+
+    1. For each numeric feature, or column, in the dataset, it computes Q1 (25th percentile) and Q3 (75th percentile),
+    and then the Interquartile Range (IQR) which is the difference between Q3 and Q1.
+    2. It then calculates the thresholds for lower and upper bounds as Q1 minus `threshold` times IQR and Q3 plus
+    `threshold` times IQR, respectively. The default `threshold` is 1.5.
+    3. Any value in the feature that is less than the lower bound and greater than the upper bound is considered an
+    outlier.
+    4. The number of outliers are then calculated for different percentile categories like [0-25], [25-50], [50-75],
+    [75-100].
+    5. These counts are then used to prepare a bar plot for the feature showing the distribution of outliers across
+    different percentile ranges.
+
+    **Signs of High Risk**: High risk or failure in the model's performance could be indicated by:
+
+    1. Presence of large number of outliers in the data that will skew the distribution.
+    2. When the outliers are in higher percentiles (75-100). This indicates extreme values, which can have a more
+    prominent impact on the model's performance.
+    3. Certain features having a majority of their values as outliers, meaning these features may not contribute
+    positively to model's prediction power.
+
+    **Strengths**:
+
+    1. Identifies outliers in the data visually, which is easy to understand and can help in interpreting the potential
+    impact on the model.
+    2. Accommodates both total numeric features or a selected subset hence proving its flexibility.
+    3. Agnostic to the task type: can be used for both classification and regression tasks.
+    4. This metric can process large datasets as it does not rely on computationally expensive operations.
+
+    **Limitations**:
+
+    1. This metric only works with numerical variables and would not be applicable to categorical variables.
+    2. It uses a pre-defined threshold (defaulting to 1.5) to determine what constitutes an outlier. This threshold
+    might not be ideal for all cases.
+    3. This metric does not provide insights about the consequence of these outliers on the predictive performance of
+    the models, but only presents their presence and distribution.
+    4. It assumes that the data is unimodal and symmetric, which may not be always the case. For non-normal
+    distributions, the results might be misleading.
     """
 
     name = "iqr_outliers_bar_plot"

@@ -15,10 +15,33 @@ logger = get_logger(__name__)
 @dataclass
 class FeatureImportanceAndSignificance(Metric):
     """
-    This metric class computes and visualizes the feature importance and statistical significance
-    within a model's context. It compares the p-values from a regression model with the feature importances
-    from a decision tree model. The significance filter can be turned on or off, allowing for flexibility
-    in feature selection. The p-values and feature importances are normalized for comparison and visualization.
+    **Purpose**: The 'FeatureImportanceAndSignificance' test in the given script aims to calculate the importance and
+    statistical significance of features within the model's context. It achieves this by comparing the p-values from a
+    regression model and the feature importances from a decision tree model. This test aids in feature selection during
+    the model development process by identifying the most significant variables.
+
+    **Test Mechanism**: During this test, an initial comparison is made between the p-values from a regression model
+    and the importance of features from a decision tree model. Both the p-values and feature importances are then
+    normalized to ensure uniform comparison. The 'p_threshold' parameter is used to determine what p-value is
+    considered statistically significant. If 'significant_only' parameter is true, features with p-values below the
+    threshold will be included in the final output. The output includes interactive plots displaying Normalized
+    p-values and the corresponding Normalized Feature Importance. Errors are thrown if two models aren't provided (one
+    regression and one decision tree).
+
+    **Signs of High Risk**: High risk or warning signs in the context of this test might include very high or very low
+    p-values that stand out, suggesting a feature might not be meaningful. The risk may also exist if many unimportant
+    variables (with low feature importance) have significant p-values, which might indicate that the model is possibly
+    overfitted.
+
+    **Strengths**: It is an excellent test for feature selection mechanisms as it combines two perspectives:
+    statistical significance through p-values and feature importance using a machine learning model (decision tree).
+    Additionally, it includes an interactive visualization, facilitating comprehension of the results easily.
+
+    **Limitations**: This test only accepts two models - a regression model and a decision tree. Therefore, its
+    application may be limited if other model types are used. Furthermore, the test might not account for potential
+    correlative or causative relationships between the input features, which potentially can lead to inaccurate
+    importance and significance readings. Lastly, it heavily relies on the p-value as a cut-off for feature
+    significance, which critics argue can be arbitrary and might not reflect the true significance of the feature.
     """
 
     name = "feature_importance_and_significance"

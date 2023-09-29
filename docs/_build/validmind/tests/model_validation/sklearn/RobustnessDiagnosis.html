@@ -38,9 +38,6 @@
                                 <a class="function" href="#RobustnessDiagnosis.__init__">RobustnessDiagnosis</a>
                         </li>
                         <li>
-                                <a class="function" href="#RobustnessDiagnosis.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RobustnessDiagnosis.run">run</a>
                         </li>
                         <li>
@@ -82,8 +79,46 @@
     </div>
     <a class="headerlink" href="#RobustnessDiagnosis"></a>
     
-            <div class="docstring"><p>Test robustness of model by perturbing the features column values by adding noise within scale
-stardard deviation.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of this test is to evaluate the robustness of a machine learning model. Robustness refers
+to a model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
+noise—added to its input data. Such simulated scenarios help to assess if the model can handle situations where the
+input data might be incomplete or corrupted.</p>
+
+<p><strong>Test Mechanism</strong>: This test method works by adding Gaussian noise, proportional to a certain standard deviation
+scale, to input features (only numerical) of both the training and testing datasets. The performance of the model
+with perturbed features is then computed based on a metric (default is 'accuracy'). This process is iterated over a
+list of defined scale factors. The results are then visualized using a line chart, depicting the accuracy trend
+against the amount of noise introduced. A threshold is set to determine the decay in accuracy due to perturbation
+that is deemed acceptable.</p>
+
+<p><strong>Signs of High Risk</strong>: Signs of high risk include significant drops in accuracy when noise is introduced to
+feature inputs. If the decay in accuracy breaches the configured threshold, it is a strong indicator of a high-risk
+condition. High risk may also pertain to a situation where one or more elements provided in the features list do
+not match with the training dataset's numerical feature columns.</p>
+
+<p><strong>Strengths</strong>: The robustness diagnosis test offers the following advantages:</p>
+
+<ul>
+<li>It provides an empirical measure of the model's performance in handling noise or data perturbations, offering
+insights into the model's reliability and stability.</li>
+<li>The test is flexible and customizable with the ability to select specific features to perturb and to control the
+noise level applied.</li>
+<li>Detailed results visualization aids in the interpretability of robustness testing.</li>
+</ul>
+
+<p><strong>Limitations</strong>: Despite the benefits, the test also exhibits some limitations:</p>
+
+<ul>
+<li>It only perturbs the numerical features while leaving out features of non-numerical types, potentially providing
+an incomplete robustness analysis.</li>
+<li>Default metric used is accuracy which might not always provide the best measure of a model's success, especially
+for imbalanced datasets.</li>
+<li>The test is reliant on the assumption that the injected Gaussian noise is an adequate representation of potential
+corruption or incompleteness in real-world data.</li>
+<li>The set decay threshold for accuracy might need to be fine-tuned or adjusted based on domain knowledge or
+specific project requirements.</li>
+<li>The test might not perform as expected for datasets with a text column.</li>
+</ul>
 </div>
 
 
@@ -97,22 +132,6 @@ stardard deviation.</p>
     <a class="headerlink" href="#RobustnessDiagnosis.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RobustnessDiagnosis.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RobustnessDiagnosis.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RobustnessDiagnosis.run" class="classattr">
@@ -157,7 +176,8 @@ short summary of the test results.</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="RobustnessDiagnosis.log" class="function">log</dd>
+                                <dd id="RobustnessDiagnosis.description" class="function">description</dd>
+                <dd id="RobustnessDiagnosis.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

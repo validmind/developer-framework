@@ -79,7 +79,38 @@
     </div>
     <a class="headerlink" href="#PDRatingClassPlot"></a>
     
-            <div class="docstring"><p>Probability of Default (PD) Rating Class Plot</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Probability of Default (PD) Rating Class Plot is used to understand the distribution of default
+probabilities across different rating classes. This test is critical in inferring credit risk, as it shows the
+likelihood of default for different rating classes based on the predictions made by the model. The test is designed
+to visualize how effectively the model is able to differentiate between different risk levels in the credit data
+set.</p>
+
+<p><strong>Test Mechanism</strong>: This visualization metric classifies predicted probabilities of defaults into user-defined
+rating classes (defined in "rating_classes" in default parameters), performs a calculation of average default rate
+within each rating class, and then generates bar plots for each rating class. The generated bar plots aim to
+illustrate the average probability of default within each class, for both the training and testing data sets. The
+classification of predicted probabilities is performed using the pandas "cut" function, which segments and sorts
+the data values into bins.</p>
+
+<p><strong>Signs of High Risk</strong>: If the bar plots show that lower rating classes have higher average probabilities of
+default than higher rating classes, or there is little differentiation between the averages across rating classes,
+this indicates high risk in the model's ability to accurately predict default levels. Also, a model that produces a
+vast difference between probabilities for the training and testing set may indicate overfitting, which is also a
+sign of high risk.</p>
+
+<p><strong>Strengths</strong>: The strength of this metric lies in its ability to visually represent the effectiveness of the model
+in predicting credit default risk across different risk levels, allowing for easy interpretation. By visualizing
+the model's effectiveness for each rating class separately, it allows the analyst to quickly identify where the
+model is struggling. The inclusion of both training and testing data sets helps to quickly highlight issues of
+overfitting.</p>
+
+<p><strong>Limitations</strong>: The main limitation of this metric comes from predetermining the number of rating classes.
+Incorrect choices could either oversimplify or overcomplicate the picture of default rates. The metric relies
+heavily on the assumptions that the rating classes effectively separate different risk levels and that the defined
+boundaries between rating classes accurately represent the true risk distribution. Furthermore, the tests don't
+account for class imbalance in the data set that could skew the average probabilities. This metric alone cannot be
+used for determining the overall performance of the model, and should be used in combination with other evaluation
+metrics.</p>
 </div>
 
 

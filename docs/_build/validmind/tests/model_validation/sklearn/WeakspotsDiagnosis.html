@@ -38,9 +38,6 @@
                                 <a class="function" href="#WeakspotsDiagnosis.__init__">WeakspotsDiagnosis</a>
                         </li>
                         <li>
-                                <a class="function" href="#WeakspotsDiagnosis.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#WeakspotsDiagnosis.run">run</a>
                         </li>
                         <li>
@@ -82,7 +79,50 @@
     </div>
     <a class="headerlink" href="#WeakspotsDiagnosis"></a>
     
-            <div class="docstring"><p>Test that identify weak regions with high residuals by histogram slicing techniques.</p>
+            <div class="docstring"><p><strong>Purpose:</strong>
+The weak spots test is designed to evaluate the performance of a machine learning model in specific regions of the
+feature space. This test consists of dividing the feature space into various sections or slices, evaluating the
+model's output within each of these sections, and identifying regions where the model's performance metrics fall
+below specified thresholds. Performance metrics include accuracy, precision, recall, and F1 scores. This diagnostic
+test helps identify areas where the machine learning model may not perform well, potentially exposing its
+limitations and weaknesses.</p>
+
+<p><strong>Test Mechanism:</strong>
+The test is performed by slicing the feature space of the training data set into multiple bins. For each bin, the
+model's performance metrics are computed for both the training and test data sets. If any of the model's
+performance metrics fall below the predetermined threshold for a particular bin on the test dataset, it is
+identified as a "weak spot". The results are visually represented in a bar chart for each performance metric,
+marking the bins failing the threshold.</p>
+
+<p><strong>Signs of High Risk:</strong>
+High risk or failure in the model's performance is indicated when any of the model's performance metrics fall below
+the set thresholds. If any bin performed significantly worse in the test dataset compared to the training dataset,
+it might indicate overfitting in that region. Further, if a region or slice has low performance metrics, it
+suggests that the model does not handle that type of input data well, which may lead to inaccurate predictions.</p>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>The weak spots test helps identify specific regions of the feature space where the model's performance is subpar,
+which can guide further refinement of the model.</li>
+<li>Plotting the performance metrics provides an intuitive way to understand the model's performance across different
+regions.</li>
+<li>The test can be customizable, allowing users to specify various thresholds for multiple performance metrics based
+on the needs of the specific application.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>By binning the feature space, the test could potentially oversimplify the model's behavior in each region. The
+granular control of this slicing depends on the bins parameter, and can be coincidentally arbitrary.</li>
+<li>The test's effectiveness relies upon the chosen thresholds for the performance metrics, which may not be
+universally applicable and subject to the model's specification and the application.</li>
+<li>The test does not handle datasets with a text column, thus limiting its applicability to only numerical or
+categorical data.</li>
+<li>The test does not directly provide suggestions for model improvement, only highlighting potentially problematic
+regions.</li>
+</ul>
 </div>
 
 
@@ -96,22 +136,6 @@
     <a class="headerlink" href="#WeakspotsDiagnosis.__init__"></a>
     
     
-
-                            </div>
-                            <div id="WeakspotsDiagnosis.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#WeakspotsDiagnosis.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="WeakspotsDiagnosis.run" class="classattr">
@@ -156,7 +180,8 @@ short summary of the test results.</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="WeakspotsDiagnosis.log" class="function">log</dd>
+                                <dd id="WeakspotsDiagnosis.description" class="function">description</dd>
+                <dd id="WeakspotsDiagnosis.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
