@@ -1,8 +1,10 @@
 ---
 title: "Customer Churn Example (R)"
 author: "ValidMind"
-date: "2023-09-25"
-output: html_document
+date: "2023-09-29"
+output:
+  pdf_document: default
+params: null
 ---
 
 <style>
@@ -31,6 +33,14 @@ library(purrr)
 library(validmind)
 library(rmarkdown)
 library(htmltools)
+library(broom)
+library(huxtable)
+
+custom_print_hook <- function(x) {
+  cat(x)
+}
+
+knitr::knit_hooks$set(print = custom_print_hook)
 ```
 
 # **Quickstart - Customer Churn Full Suite Model Documentation**
@@ -119,7 +129,6 @@ raw_summary_results <- summarize_results(tabular_suite_results)
 ```{r, echo=FALSE, results='asis'}
 pretty_summary_results <- pretty_print_tables(raw_summary_results)
 
-invisible(lapply(pretty_summary_results, cat))
 invisible(lapply(pretty_summary_results, print))
 ```
 
@@ -152,8 +161,12 @@ test_data <- subset(data, split == FALSE)
 model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
 ```
 
-```{r}
-model
+```{r, echo=FALSE, results='asis'}
+model_summary <- tidy(model)
+
+pretty_model_results <- pretty_print_tables(list("Model Summary Results" = model_summary))
+
+invisible(lapply(pretty_model_results, print))
 ```
 
 ```{r}
@@ -184,6 +197,12 @@ vm_model = vm_r$init_r_model(
 model_validation_results = vm_r$run_test_suite("classifier_model_validation", model=vm_model, fail_fast = TRUE)
 ```
 
-```{r}
-summarize_results(model_validation_results)
+```{r, results='hide'}
+raw_model_results <- summarize_results(model_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_model_results <- pretty_print_tables(raw_model_results)
+
+invisible(lapply(pretty_model_results, print))
 ```
