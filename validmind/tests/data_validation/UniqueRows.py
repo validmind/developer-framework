@@ -15,7 +15,35 @@ from validmind.vm_models import (
 @dataclass
 class UniqueRows(ThresholdTest):
     """
-    Test that the number of unique rows is greater than a threshold
+    **Purpose**:
+    The purpose of the UniqueRows test is to assess the quality of the data that is being fed into the ML model,
+    specifically by checking that the number of unique rows in the dataset exceeds a certain threshold in order to
+    ensure diversity in the data. This is important as having a diverse range of data is crucial in training an
+    unbiased and robust model that performs well on unseen data.
+
+    **Test Mechanism**:
+    The testing mechanism first calculates the total number of rows in the dataset. Then, for each column in the
+    dataset, the number of unique rows is counted. The test passes if the percentage of unique rows (calculated as the
+    number of unique rows divided by the total number of rows) is less than the predefined minimum percent threshold
+    provided as a parameter to the function. The results are then cached, and an overall pass or fail is issued based
+    on whether all columns have passed the test.
+
+    **Signs of High Risk**:
+    Signs of high risk include columns of data where the number of unique rows is less than the predefined minimum
+    percent threshold. This lack of diversity in the data can be seen as an indicator of poor data quality, which could
+    potentially lead to model overfitting and a poor generalization ability, thereby posing a high risk.
+
+    **Strengths**:
+    The Strengths of the UniqueRows test include its ability to quickly and efficiently evaluate the diversity of data
+    across each column in the dataset. It allows an easy and systematic way to check data quality in terms of
+    uniqueness, which can be a critical aspect in creating an effective and unbiased ML model.
+
+    **Limitations**:
+    One limitation of the UniqueRows test is that it assumes that the quality of the data is directly proportional to
+    its uniqueness, which may not always be the case. There might be scenarios where certain non-unique rows are
+    important and shouldn't be discounted. Also, it doesn’t take into account the 'importance' of each column in
+    predicting the output and treats all columns equally. Finally, this test will not be useful or appropriate for
+    categorical variables where the number of unique categories is naturally limited.
     """
 
     category = "data_quality"

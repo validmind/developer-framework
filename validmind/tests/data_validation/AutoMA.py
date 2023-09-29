@@ -12,7 +12,39 @@ logger = get_logger(__name__)
 
 class AutoMA(Metric):
     """
-    Automatically detects the MA order of a time series using both BIC and AIC.
+    **Purpose**: The primary role of the `AutoMA` metric is to automatically determine the optimal Moving Average (MA)
+    order for each variable in the time series dataset. The decision of MA order is based on minimizing BIC (Bayesian
+    Information Criterion) and AIC (Akaike Information Criterion); both are statistical tools for model choice. Before
+    the fitting process begins, a stationarity test (Augmented Dickey-Fuller test) is conducted on each series.
+
+    **Test Mechanism**: First, the `AutoMA` algorithm checks whether the `max_ma_order` parameter is provided. It then
+    loops over all variables in the dataset, performing the Dickey-Fuller test for stationarity. For each variable (if
+    stationary), it fits an ARIMA model for orders running from 0 to `max_ma_order`. The output is a list showing BIC
+    and AIC values of the ARIMA models with different orders. For each variable, the MA order that offers the smallest
+    BIC is selected as the *best MA order*. The final results include a table summarizing the auto MA analysis and a
+    table listing the best MA order for each variable.
+
+    **Signs of High Risk**:
+    - If a series is non-stationary (p-value>0.05 in the Dickey-Fuller test), the result might be inaccurate.
+    - Any error while fitting the ARIMA models, especially with higher MA order, could indicate possible risks and
+    might require further investigation.
+
+    **Strengths**:
+    - This metric is beneficial for automating the selection process of the MA order for time series forecasting, thus
+    saving time and effort usually required in manual hyperparameter tuning.
+    - It applies both BIC and AIC, enhancing the chance of selecting the most suitable model.
+    - It checks for stationarity of the series prior to model fitting, ensuring that the underlying assumptions of the
+    MA model are met.
+
+    **Limitations**:
+    - If the time series is not stationary, the metric would provide inaccurate results. This limitation necessitates
+    pre-processing steps to stabilize the series before ARIMA model fitting.
+    - This metric uses a rudimentary model selection approach based on BIC and does not consider other possible model
+    selection strategies, which might be more appropriate depending on the specific dataset.
+    - The 'max_ma_order' parameter must be manually set, which may not always guarantee the best performance,
+    especially if set too low.
+    - The computation time raises with the increase in `max_ma_order`, thus the metric can be computationally expensive
+    for larger values.
     """
 
     type = "dataset"
