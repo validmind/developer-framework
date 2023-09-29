@@ -13,10 +13,7 @@ from ...utils import clean_docstring
 from ..figure import Figure
 from ..test_suite.result import TestSuiteThresholdTestResult
 from .result_summary import ResultSummary, ResultTable
-from .threshold_test_result import (
-    TestSuiteThresholdTestResult,
-    TestSuiteThresholdTestResults,
-)
+from .threshold_test_result import ThresholdTestResult, ThresholdTestResults
 from .test import Test
 
 
@@ -33,9 +30,9 @@ class ThresholdTest(Test):
     category: ClassVar[str]  # should be overridden by test classes
 
     # Instance Variables
-    result: TestResults = None  # populated by cache_results() method
+    result: ThresholdTestResults = None  # populated by cache_results() method
 
-    def summary(self, results: Optional[List[TestResult]], all_passed: bool):
+    def summary(self, results: Optional[List[ThresholdTestResult]], all_passed: bool):
         """
         Return the threshold test summary. May be overridden by subclasses. Defaults to showing
         a table with test_name(optional), column and passed.
@@ -63,7 +60,7 @@ class ThresholdTest(Test):
 
     def cache_results(
         self,
-        test_results_list: List[TestResult],
+        test_results_list: List[ThresholdTestResult],
         passed: bool,
         figures: Optional[List[Figure]] = None,
     ):
@@ -71,7 +68,7 @@ class ThresholdTest(Test):
         Cache the individual results of the threshold test as a list of TestResult objects
 
         Args:
-            result (List[TestResult]): The results of the threshold test
+            result (List[ThresholdTestResult]): The results of the threshold test
             passed (bool): Whether the threshold test passed or failed
 
         Returns:
