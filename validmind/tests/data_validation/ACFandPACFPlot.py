@@ -16,7 +16,7 @@ class ACFandPACFPlot(Metric):
     nature of the trend (for example, seasonality), degree of autocorrelation, and selecting order parameters for
     AutoRegressive Integrated Moving Average (ARIMA) models.
 
-    **Test Mechanism**: The python class `ACFandPACFPlot` receives a dataset with a time-based index. After checking
+    **Test Mechanism**: The `ACFandPACFPlot` test receives a dataset with a time-based index. After checking
     that the index is of datetime type and dealing with any NaN values, it generates ACF and PACF plots for each column
     in the dataset, creating a subplot for each. In case the dataset does not include key columns, an error is thrown.
 

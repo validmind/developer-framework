@@ -49,7 +49,7 @@ class TimeSeriesOutliers(ThresholdTest):
 
     **Limitations**:
     1. This test only identifies outliers in numeric columns, and won't identify outliers in categorical variables.
-    2. The utility and accuracy of z-scores can be limited if the data doesn’t follow a normal distribution.
+    2. The utility and accuracy of z-scores can be limited if the data doesn't follow a normal distribution.
     3. The method relies on a subjective z-score threshold for deciding what constitutes an outlier, which might not
     always be suitable depending on the dataset and the use case.
     4. It does not address possible ways to handle identified outliers in the data.

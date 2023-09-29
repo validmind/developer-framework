@@ -8,35 +8,31 @@ from validmind.vm_models import Figure, Metric
 
 class TimeSeriesLinePlot(Metric):
     """
-    **1. Purpose**:
+    **Purpose**:
     The "TimeSeriesLinePlot" metric is designed to generate and analyze time series data visual plots for model
     performance inspection purposes. This analysis manifests as line plots that represent various time series in the
     dataset. By visual plotting, the metric helps in the initial data inspection, which gives a sense of patterns,
     trends, seasonality, irregularity, and any anomalies that might occur over time in the given dataset.
 
-    **2. Test Mechanism**:
-    This Python class extracts the column names from the input dataset and iteratively generates line plots for each
-    column. The Python library 'Plotly' is used for creating the line plots. For every column (representing a time
-    series), a plot's time-series values are generated against the dataset's datetime index. Indexes that are not of
-    datetime type will trigger a ValueError.
+    **Test Mechanism**: This Python class extracts the column names from the input dataset and iteratively generates
+    line plots for each column. The Python library 'Plotly' is used for creating the line plots. For every column
+    (representing a time series), a plot's time-series values are generated against the dataset's datetime index.
+    Indexes that are not of datetime type will trigger a ValueError.
 
-    **3. Signs of High Risk**:
-    Red flags that could denote potential high risk scenarios include:
+    **Signs of High Risk**: Red flags that could denote potential high risk scenarios include:
     * Time-series data lacking datetime indices
     * Non-existence of provided columns in the dataset
     * Anomalous patterns or irregularities seen in time-series plots indicating high model instability or predictive
     error potential
 
-    **4. Strengths**:
-    This metric comes with several favourable assets:
+    **Strengths**: This metric comes with several favourable assets:
     * It succinctly visualizes complex time series data, facilitating easier interpretation and detection of temporal
     trends, patterns and anomalies.
     * It is highly adaptable and capable of functioning well with multiple time series within the same dataset.
     * By visual inspection, it allows the detection of anomalies and irregular patterns that could indicate a potential
     issue with the data or model performance.
 
-    **5. Limitations**:
-    Despite its numerous advantages, the metric has a few limitations:
+    **Limitations**: Despite its numerous advantages, the metric has a few limitations:
     * The effectiveness of this metric relies heavily on the quality and patterns of the input time series data.
     * It's solely a visual inspection tool and does not provide quantitative measurement. This can be a disadvantage
     when the aim is to compare and rank multiple models or when precise, numeric diagnostics are required.
