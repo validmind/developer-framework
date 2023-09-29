@@ -287,7 +287,7 @@ class TestPlan:
                 name=f"Failed {test.test_type}",
                 error=e,
                 message=f"Failed to run '{test.name}'",
-                result_id=test.name,
+                result_id=test.test_id,
             )
 
         if test.result is None:
@@ -295,7 +295,7 @@ class TestPlan:
                 name=f"Failed {test.test_type}",
                 error=None,
                 message=f"'{test.name}' did not return a result",
-                result_id=test.name,
+                result_id=test.test_id,
             )
             return
 
@@ -304,7 +304,7 @@ class TestPlan:
                 name=f"Failed {test.test_type}",
                 error=None,
                 message=f"'{test.name}' returned an invalid result: {test.result}",
-                result_id=test.name,
+                result_id=test.test_id,
             )
             return
 
