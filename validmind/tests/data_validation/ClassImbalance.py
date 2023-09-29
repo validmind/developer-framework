@@ -64,13 +64,11 @@ class ClassImbalance(ThresholdTest):
             normalize=True
         )
         if len(imbalance_percentages) > 10:
-            raise SkipTestError(f"Skipping {self.__class__.__name__} test as number of classes")
+            raise SkipTestError(f"Skipping {self.__class__.__name__} test as"
+                                "target column as more than 10 classes")
 
         classes = list(imbalance_percentages.index)
         percentages = list(imbalance_percentages.values)
-
-        # Calculating the total number of rows
-        # total_rows = sum(percentages)
 
         # Checking class imbalance
         imbalanced_classes = []
