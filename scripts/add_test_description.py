@@ -31,7 +31,7 @@ You will populate each section according to the following guidelines:
 1. *Purpose*: Brief explanation of why this metric is being used and what it is intended to evaluate or measure in relation to the model.
 2. *Test Mechanism*: Describe the methodology used to test or apply the metric, including any grading scales or thresholds
 3. *Signs of High Risk*: List or describe any signs or indicators that might suggest a high risk or a failure in the model's performance as related to this metric
-4. *Strengths**: List or describe the strengths or advantages of using this metric in evaluating the model
+4. *Strengths*: List or describe the strengths or advantages of using this metric in evaluating the model
 5. *Limitations*: List or describe the limitations or disadvantages of this metric, including any potential bias or areas it might not fully address
 
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test. Respond with a markdown description where each section name is in bold and is followed by a colon and then the content for that section. Respond only with the description and don't include any explanation or other text.
