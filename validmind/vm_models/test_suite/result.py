@@ -1,7 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-TestPlanResult
+TestSuiteResult
 """
 import asyncio
 import json
@@ -19,9 +19,9 @@ from ... import api_client
 from ...utils import NumpyEncoder
 from ..dataset import VMDataset
 from ..figure import Figure
-from .metric_result import MetricResult
-from .result_summary import ResultSummary
-from .test_result import TestResults
+from ..test.metric_result import MetricResult
+from ..test.result_summary import ResultSummary
+from ..test.test_result import TestResults
 
 
 async def update_metadata(content_id: str, text: str) -> None:
@@ -59,10 +59,10 @@ def plot_figures(figures: List[Figure]) -> None:
 
 
 @dataclass
-class TestPlanResult(ABC):
+class TestSuiteResult(ABC):
     """Base Class for test plan results"""
 
-    name: str = "TestPlanResult"
+    name: str = "TestSuiteResult"
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
@@ -144,7 +144,7 @@ class TestPlanResult(ABC):
 
 
 @dataclass
-class TestPlanFailedResult(TestPlanResult):
+class TestPlanFailedResult(TestSuiteResult):
     """
     Result wrapper for test plans that fail to load or run properly
     """
@@ -166,7 +166,7 @@ class TestPlanFailedResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanDatasetResult(TestPlanResult):
+class TestPlanDatasetResult(TestSuiteResult):
     """
     Result wrapper for datasets that run as part of a test plan
     """
@@ -186,7 +186,7 @@ class TestPlanDatasetResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanMetricResult(TestPlanResult):
+class TestPlanMetricResult(TestSuiteResult):
     """
     Result wrapper for metrics that run as part of a test plan
     """
@@ -297,7 +297,7 @@ class TestPlanMetricResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanTestResult(TestPlanResult):
+class TestPlanTestResult(TestSuiteResult):
     """
     Result wrapper for test results produced by the tests that run as part of a test plan
     """

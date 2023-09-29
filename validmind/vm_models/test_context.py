@@ -34,8 +34,13 @@ class TestContext:
     across different tests/metrics such as shared dataset metrics, etc.
     """
 
+    # Single dataset for dataset-only tests
     dataset: VMDataset = None
+
+    # Model and corresponding datasets for model related tests
     model: VMModel = None
+
+    # Multiple models for model comparison tests
     models: List[VMModel] = None
 
     # Custom context data that can be set by metrics or tests using this context

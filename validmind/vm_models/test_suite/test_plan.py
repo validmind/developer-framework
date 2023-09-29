@@ -16,7 +16,7 @@ from ...tests import LoadTestError, load_test
 from ...utils import clean_docstring, is_notebook, run_async, run_async_check
 from ..dataset import VMDataset
 from ..model import VMModel
-from ..result.test_plan_result import TestPlanFailedResult, TestPlanResult
+from ..result.test_suite_result import TestPlanFailedResult, TestPlanResult
 from ..test.test import Test
 from ..test_context import TestContext
 
@@ -41,18 +41,6 @@ class TestPlan:
     _test_configs: dict() = None
     test_context: TestContext = None
     fail_fast: bool = False
-
-    # Reference to the test classes (dynamic import after initialization)
-    _tests: List[object] = None
-
-    # Single dataset for dataset-only tests
-    dataset: VMDataset = None
-
-    # Model and corresponding datasets for model related tests
-    model: VMModel = None
-
-    # Multiple models for model comparison tests
-    models: List[VMModel] = None
 
     # ipywidgets progress bar
     pbar: widgets.IntProgress = None
@@ -94,59 +82,6 @@ class TestPlan:
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
-
-    def _load_test(self, test_id: str, test_class_props: dict = None):
-        """Loads a test class from a test id and appends it to the list of tests"""
-        try:
-            test_class = load_test(test_id)
-
-            if test_class_props:
-                for key, val in test_class_props.items():
-                    setattr(test_class, key, val)
-
-            self._tests.append(test_class)
-
-        except LoadTestError as e:
-            self.results.append(
-                TestPlanFailedResult(
-                    error=e,
-                    message=f"Failed to load test '{test_id}'",
-                    result_id=test_id,
-                )
-            )
-
-        except Exception as e:
-            logger.error(f"Failed to load test '{test_id}': {e}")
-            raise e
-
-    def _init_tests(self):
-        """Dynamically import the test classes based on the test names"""
-        self.results = []
-        self._tests = []
-
-        for test_id_or_class in self.tests:
-            # Check if test_id_or_class is a class and if it is a subclass of TestContextUtils
-            if isinstance(test_id_or_class, type) and issubclass(
-                test_id_or_class, Test
-            ):  # if its a test class, we just add it to the list
-                test_id_or_class.id = test_id_or_class.name
-                self._tests.append(test_id_or_class)
-                continue
-
-            test_class_props = None
-            if isinstance(test_id_or_class, dict):
-                # if its a dictionary, we pull the test_id out and then treat the rest
-                # of the dictionary as the attributes to set on the test class
-                # this is used to set a ref_id from the template
-                test_class_props = {
-                    key: val
-                    for key, val in test_id_or_class.items()
-                    if key != "test_id"
-                }
-                test_class_props["id"] = test_id_or_class["test_id"]
-                test_id_or_class = test_id_or_class["test_id"]
-
-            self._load_test(test_id_or_class, test_class_props)
 
     def get_required_inputs(self) -> List[str]:
         """
@@ -265,50 +200,6 @@ class TestPlan:
 
         if render_summary:
             display(self.pbar_box)
-
-    def _run_test(self, test):
-        try:
-            test.validate_context()
-            # run the test and log the performance if LOG_LEVEL is set to DEBUG
-            log_performance(
-                func=test.run,
-                name=test.name,
-                logger=logger,
-            )()  # this is a decorator so we need to call it
-        except Exception as e:
-            # Re-raise the exception if we are in fail fast mode
-            if self.fail_fast and should_raise_on_fail_fast(e):
-                raise e
-
-            logger.error(
-                f"Failed to run test '{test.name}': ({e.__class__.__name__}) {e}"
-            )
-            test.result = TestPlanFailedResult(
-                name=f"Failed {test.test_type}",
-                error=e,
-                message=f"Failed to run '{test.name}'",
-                result_id=test.name,
-            )
-
-        if test.result is None:
-            test.result = TestPlanFailedResult(
-                name=f"Failed {test.test_type}",
-                error=None,
-                message=f"'{test.name}' did not return a result",
-                result_id=test.name,
-            )
-            return
-
-        if not isinstance(test.result, TestPlanResult):
-            test.result = TestPlanFailedResult(
-                name=f"Failed {test.test_type}",
-                error=None,
-                message=f"'{test.name}' returned an invalid result: {test.result}",
-                result_id=test.name,
-            )
-            return
-
-        self.results.append(test.result)
 
     def run(  # noqa C901 'TestPlan.run' is too complex
         self, render_summary: bool = True, send: bool = True

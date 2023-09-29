@@ -1,7 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-TestResult models
+ThresholdTestResult models
 """
 from dataclasses import dataclass
 from typing import List, Optional
@@ -10,9 +10,9 @@ from .result_summary import ResultSummary
 
 
 @dataclass
-class TestResult:
+class ThresholdTestResult:
     """
-    TestResult model
+    ThresholdTestResult model
     """
 
     values: dict
@@ -24,7 +24,7 @@ class TestResult:
 
     def serialize(self):
         """
-        Serializes the TestResult to a dictionary so it can be sent to the API
+        Serializes the ThresholdTestResult to a dictionary so it can be sent to the API
         """
         test_result = {
             "values": self.values,
@@ -43,9 +43,9 @@ class TestResult:
 
 
 @dataclass
-class TestResults:
+class ThresholdTestResults:
     """
-    TestResults model
+    ThresholdTestResults model
     """
 
     category: str
@@ -53,12 +53,12 @@ class TestResults:
     ref_id: str
     params: dict
     passed: bool
-    results: List[TestResult]
+    results: List[ThresholdTestResult]
     summary: Optional[ResultSummary]
 
     def serialize(self):
         """
-        Serializes the TestResults to a dictionary so it can be sent to the API
+        Serializes the ThresholdTestResults to a dictionary so it can be sent to the API
         """
         test_results = {
             "category": self.category,

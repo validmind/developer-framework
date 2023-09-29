@@ -7,41 +7,29 @@ Models entrypoint
 from .dataset import VMDataset
 from .figure import Figure
 from .model import R_MODEL_TYPES, ModelAttributes, VMModel
-from .result.metric_result import MetricResult
-from .result.result_summary import ResultSummary, ResultTable, ResultTableMetadata
-from .result.test_plan_result import (
-    TestPlanDatasetResult,
-    TestPlanMetricResult,
-    TestPlanTestResult,
-)
-from .result.test_result import TestResult, TestResults
 from .test.metric import Metric
+from .test.metric_result import MetricResult
+from .test.result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test.test import Test
 from .test.threshold_test import ThresholdTest
-from .test_context import TestContext, TestContextUtils
-from .test_suite.test_plan import TestPlan
+from .test.threshold_test_result import ThresholdTestResult
+from .test_context import TestContext
 from .test_suite.test_suite import TestSuite
 
 __all__ = [
     "VMDataset",
-    "Figure",
-    "Metric",
-    "MetricResult",
     "VMModel",
+    "Figure",
     "ModelAttributes",
     "R_MODEL_TYPES",
     "ResultSummary",
     "ResultTable",
     "ResultTableMetadata",
     "Test",
-    "TestContext",
-    "TestContextUtils",
-    "TestPlan",
-    "TestPlanDatasetResult",
-    "TestPlanMetricResult",
-    "TestPlanTestResult",
-    "TestResult",
-    "TestResults",
-    "TestSuite",
+    "Metric",
+    "MetricResult",
     "ThresholdTest",
+    "ThresholdTestResult",
+    "TestContext",
+    "TestSuite",
 ]

@@ -11,9 +11,12 @@ from typing import ClassVar, List, Optional
 
 from ...utils import clean_docstring
 from ..figure import Figure
-from ..result.result_summary import ResultSummary, ResultTable
-from ..result.test_plan_result import TestPlanTestResult
-from ..result.test_result import TestResult, TestResults
+from ..test_suite.result import TestSuiteThresholdTestResult
+from .result_summary import ResultSummary, ResultTable
+from .threshold_test_result import (
+    TestSuiteThresholdTestResult,
+    TestSuiteThresholdTestResults,
+)
 from .test import Test
 
 
@@ -85,10 +88,10 @@ class ThresholdTest(Test):
 
         result_summary = self.summary(test_results_list, passed)
 
-        self.result = TestPlanTestResult(
+        self.result = TestSuiteThresholdTestResult(
             result_id=self.name,
             result_metadata=result_metadata,
-            test_results=TestResults(
+            test_results=ThresholdTestResults(
                 category=self.category,
                 test_name=self.name,
                 ref_id=self._ref_id,

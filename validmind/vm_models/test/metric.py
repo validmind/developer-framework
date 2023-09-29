@@ -13,8 +13,8 @@ import pandas as pd
 from ...errors import MissingCacheResultsArgumentsError
 from ...utils import clean_docstring
 from ..figure import Figure
-from ..result.metric_result import MetricResult
-from ..result.test_plan_result import TestPlanMetricResult
+from ..test_suite.result import TestSuiteMetricResult
+from .metric_result import MetricResult
 from .test import Test
 
 
@@ -32,7 +32,7 @@ class Metric(Test):
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
 
     # Instance Variables
-    result: TestPlanMetricResult = None  # populated by cache_results() method
+    result: TestSuiteMetricResult = None  # populated by cache_results() method
 
     @property
     def key(self):
@@ -82,7 +82,7 @@ class Metric(Test):
 
         result_summary = self.summary(metric_value)
 
-        test_plan_result = TestPlanMetricResult(
+        test_plan_result = TestSuiteMetricResult(
             result_id=self._key if hasattr(self, "_key") else self.name,
             result_metadata=result_metadata,
         )
