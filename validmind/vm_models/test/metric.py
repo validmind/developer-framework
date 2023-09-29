@@ -13,8 +13,8 @@ import pandas as pd
 from ...errors import MissingCacheResultsArgumentsError
 from ...utils import clean_docstring
 from ..figure import Figure
-from ..results.metric_result import MetricResult
-from ..results.test_plan_result import TestPlanMetricResult
+from ..result.metric_result import MetricResult
+from ..result.test_plan_result import TestPlanMetricResult
 from .test import Test
 
 

@@ -16,7 +16,7 @@ from ...tests import LoadTestError, load_test
 from ...utils import clean_docstring, is_notebook, run_async, run_async_check
 from ..dataset import VMDataset
 from ..model import VMModel
-from ..results.test_plan_result import TestPlanFailedResult, TestPlanResult
+from ..result.test_plan_result import TestPlanFailedResult, TestPlanResult
 from ..test.test import Test
 from ..test_context import TestContext
 

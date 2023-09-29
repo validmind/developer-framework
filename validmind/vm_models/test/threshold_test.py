@@ -11,9 +11,9 @@ from typing import ClassVar, List, Optional
 
 from ...utils import clean_docstring
 from ..figure import Figure
-from ..results.result_summary import ResultSummary, ResultTable
-from ..results.test_plan_result import TestPlanTestResult
-from ..results.test_result import TestResult, TestResults
+from ..result.result_summary import ResultSummary, ResultTable
+from ..result.test_plan_result import TestPlanTestResult
+from ..result.test_result import TestResult, TestResults
 from .test import Test
 
 
