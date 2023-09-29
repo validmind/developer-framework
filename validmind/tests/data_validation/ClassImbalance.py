@@ -5,11 +5,11 @@ Threshold based tests
 """
 from dataclasses import dataclass
 from typing import List
-from validmind.errors import SkipTestError
 
 import pandas as pd
 import plotly.graph_objs as go
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -97,8 +97,10 @@ class ClassImbalance(ThresholdTest):
             normalize=True
         )
         if len(imbalance_percentages) > 10:
-            raise SkipTestError(f"Skipping {self.__class__.__name__} test as"
-                                "target column as more than 10 classes")
+            raise SkipTestError(
+                f"Skipping {self.__class__.__name__} test as"
+                "target column as more than 10 classes"
+            )
 
         classes = list(imbalance_percentages.index)
         percentages = list(imbalance_percentages.values)

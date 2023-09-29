@@ -4,17 +4,13 @@
 import string
 from dataclasses import dataclass
 
+import matplotlib.pyplot as plt
 import nltk
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.express as px
 from nltk.corpus import stopwords
 
-from ....vm_models import (
-    Figure,
-    Metric,
-    VMDataset,
-)
+from ....vm_models import Figure, Metric, VMDataset
 
 
 @dataclass
