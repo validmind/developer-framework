@@ -13,8 +13,8 @@ from ...utils import clean_docstring
 from ..figure import Figure
 from ..test_suite.result import TestSuiteThresholdTestResult
 from .result_summary import ResultSummary, ResultTable
-from .threshold_test_result import ThresholdTestResult, ThresholdTestResults
 from .test import Test
+from .threshold_test_result import ThresholdTestResult, ThresholdTestResults
 
 
 @dataclass

@@ -12,16 +12,15 @@ from typing import ClassVar, List, Optional, Union
 
 import ipywidgets as widgets
 
+from ...errors import MissingRequiredTestContextError, should_raise_on_fail_fast
+from ...logging import get_logger, log_performance
+from ...tests import LoadTestError, load_test
+from ...utils import clean_docstring, is_notebook, run_async, run_async_check
 from ..dataset import VMDataset
 from ..model import VMModel
 from ..result.test_suite_result import TestPlanFailedResult, TestPlanResult
 from ..test.test import Test
 from ..test_context import TestContext
-from ...tests import load_test
-from ...errors import MissingRequiredTestContextError, should_raise_on_fail_fast
-from ...logging import get_logger, log_performance
-from ...tests import LoadTestError, load_test
-from ...utils import clean_docstring, is_notebook, run_async, run_async_check
 
 logger = get_logger(__name__)
 
@@ -94,10 +93,10 @@ class TestSuiteTest:
 
         except Exception as e:
             if fail_fast and should_raise_on_fail_fast(e):
-                raise e # Re-raise the exception if we are in fail fast mode
+                raise e  # Re-raise the exception if we are in fail fast mode
 
             logger.error(
-                f"Failed to run test '{self._test_instance.name}': "\
+                f"Failed to run test '{self._test_instance.name}': "
                 f"({e.__class__.__name__}) {e}"
             )
             self._result = TestPlanFailedResult(
@@ -123,8 +122,8 @@ class TestSuiteTest:
             self._result = TestPlanFailedResult(
                 name=f"Failed {self._test_instance.test_type}",
                 error=None,
-                message=f"'{self._test_instance.name}' returned an invalid result: "\
-                        f"{self._test_instance.result}",
+                message=f"'{self._test_instance.name}' returned an invalid result: "
+                f"{self._test_instance.result}",
                 result_id=self._test_instance.name,
             )
 
@@ -138,6 +137,7 @@ class TestSuiteTest:
             raise ValueError("Cannot log test result before running the test")
 
         self._result.log()
+
 
 @dataclass
 class TestSuiteSection:
@@ -163,7 +163,7 @@ class TestSuiteConfig:
     _section_params: dict
     _test_params: dict
 
-    def __post_init():
+    def __post_init__(self):
         """
         Post init hook
         """
@@ -179,7 +179,7 @@ class TestSuiteConfig:
         """
         for key, value in self.params.items():
             if isinstance(value, dict):
-                if key in
+                pass
 
 
 @dataclass
