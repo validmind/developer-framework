@@ -4,19 +4,13 @@
 import string
 from dataclasses import dataclass
 
+import matplotlib.pyplot as plt
 import nltk
 import pandas as pd
 import plotly.express as px
 from nltk.corpus import stopwords
 
-from ....vm_models import (
-    Figure,
-    Metric,
-    ResultSummary,
-    ResultTable,
-    ResultTableMetadata,
-    VMDataset,
-)
+from ....vm_models import Figure, Metric, VMDataset
 
 
 @dataclass
@@ -190,7 +184,6 @@ class TextDescription(Metric):
         figures = self.text_description_scatter_plot(df_text_description, params)
 
         return self.cache_results(
-            {"text_description": df_text_description.to_dict(orient="records")},
             figures=figures,
         )
 
@@ -199,26 +192,17 @@ class TextDescription(Metric):
 
         combinations_to_plot = params["combinations_to_plot"]
         figures = []
+        # Create hist plots for each column
+        for i, column in enumerate(df.columns):
+            fig = px.histogram(df, x=column)
+            fig.update_layout(bargap=0.2)
+            figures.append(Figure(for_object=self, key=self.key, figure=fig))
+
         for metric1, metric2 in combinations_to_plot:
             fig = px.scatter(
                 df, x=metric1, y=metric2, title=f"Scatter Plot: {metric1} vs {metric2}"
             )
             figures.append(Figure(for_object=self, key=self.key, figure=fig))
+        plt.close("all")
+
         return figures
-
-    def summary(self, metric_value):
-        """
-        Build one table for summarizing the regression analysis results
-        """
-        summary_regression = metric_value["text_description"]
-
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=summary_regression,
-                    metadata=ResultTableMetadata(
-                        title="Text Column description Results"
-                    ),
-                ),
-            ]
-        )
