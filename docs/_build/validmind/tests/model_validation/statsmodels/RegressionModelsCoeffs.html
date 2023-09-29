@@ -38,9 +38,6 @@
                                 <a class="function" href="#RegressionModelsCoeffs.__init__">RegressionModelsCoeffs</a>
                         </li>
                         <li>
-                                <a class="function" href="#RegressionModelsCoeffs.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RegressionModelsCoeffs.run">run</a>
                         </li>
                         <li>
@@ -82,7 +79,31 @@
     </div>
     <a class="headerlink" href="#RegressionModelsCoeffs"></a>
     
-            <div class="docstring"><p>Test that outputs the coefficients of stats library regression models.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The 'RegressionModelsCoeffs' test is designed to evaluate and compare the coefficients of different
+regression models that were trained on the same dataset. This metric assesses how each model weighted the
+importance of various features during training, which is useful for analyzing which features influenced the model's
+outputs the most, and how these influence patterns vary between different models.</p>
+
+<p><strong>Test Mechanism</strong>: This test measures the coefficients of each regression model by calling the
+'regression_coefficients()' method on the model. These coefficients are then compiled into a summary dataframe for
+all models. Each row in the dataframe corresponds to a model, with a column for each feature's coefficient. Note,
+this test is only applicable to 'statsmodels' and 'R' models, and will raise a 'SkipTestError' for models from
+other libraries.</p>
+
+<p><strong>Signs of High Risk</strong>: Instances that might suggest high risk associated with this test include: discrepancies in
+the way different models weigh features, if any coefficient is unexpectedly high or low, or the test could not be
+applied to certain models because they are not of the 'statsmodels' or 'R' types.</p>
+
+<p><strong>Strengths</strong>: This test is highly valuable for gaining insight into the training process of different models and
+for comparing how the models considered the importance of various features. By monitoring the feature coefficients,
+this test provides a more transparent evaluation of the model and surfaces crucial weights and biases in the
+training process.</p>
+
+<p><strong>Limitations</strong>: The primary limitation of this test is its compatibility: it is only designed for use with
+'statsmodels' and 'R' regression models. Beyond this, while the test contrasts the ways various models weigh
+features, it does not indicate which weighting is most appropriate or accurate, leaving room for interpretation.
+Lastly, this test does not account for potential overfitting or underfitting of models, and the coefficients it
+produces might not translate to effective performance on unseen data.</p>
 </div>
 
 
@@ -96,22 +117,6 @@
     <a class="headerlink" href="#RegressionModelsCoeffs.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RegressionModelsCoeffs.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RegressionModelsCoeffs.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RegressionModelsCoeffs.run" class="classattr">
@@ -153,7 +158,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="RegressionModelsCoeffs.log" class="function">log</dd>
+                                <dd id="RegressionModelsCoeffs.description" class="function">description</dd>
+                <dd id="RegressionModelsCoeffs.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

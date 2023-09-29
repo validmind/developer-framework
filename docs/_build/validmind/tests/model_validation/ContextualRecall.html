@@ -38,9 +38,6 @@
                                 <a class="function" href="#ContextualRecall.__init__">ContextualRecall</a>
                         </li>
                         <li>
-                                <a class="function" href="#ContextualRecall.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ContextualRecall.run">run</a>
                         </li>
                 </ul>
@@ -79,7 +76,58 @@
     </div>
     <a class="headerlink" href="#ContextualRecall"></a>
     
-            <div class="docstring"><p>Contextual recall</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Contextual Recall metric is utilized to gauge the proficiency of a natural language generation
+(NLG) model in crafting textual content that remains coherent and consistent with the presented context or prompt.
+It quantifies the model's aptitude to recollect and mirror the foundational context in its resultant output. In the
+realm of NLP tasks, it's paramount that models generate text reflecting contextual relevance.</p>
+
+<p><strong>Test Mechanism</strong>:</p>
+
+<ol>
+<li><strong>Prepare Reference and Candidate Texts</strong>:</li>
+</ol>
+
+<ul>
+<li><strong>Reference Texts</strong>: Gather your reference text(s) which epitomize the expected or ideal output for a designated
+context or prompt.</li>
+<li><strong>Candidate Texts</strong>: Using the same context, generate candidate text(s) from the NLG model under evaluation.</li>
+</ul>
+
+<ol start="2">
+<li><strong>Tokenization and Preprocessing</strong>:</li>
+</ol>
+
+<ul>
+<li>Tokenize both the reference and candidate texts into discernible words or tokens, using established libraries
+like NLTK.</li>
+</ul>
+
+<ol start="3">
+<li><strong>Compute Contextual Recall</strong>:</li>
+</ol>
+
+<ul>
+<li>Ascertain the overlap of tokens between the reference and candidate texts.</li>
+<li>The Contextual Recall score is deduced by dividing the number of overlapping tokens by the total token count of
+the reference text. The assessment is made for each test dataset instance, resulting in an array of scores. This
+series of scores is then illustrated via a line plot, showing score variations across rows.</li>
+</ul>
+
+<p><strong>Signs of High Risk</strong>: Low contextual recall scores are red flags. They imply that the model isn't efficiently
+echoing the original context in its generated content, culminating in outputs that are incoherent or contextually
+off-track. A persistent trend of low recall scores could presage model underperformance.</p>
+
+<p><strong>Strengths</strong>: The standout attribute of the contextual recall metric is its ability to quantifiably gauge a
+model's adherence to, and recollection of, both the context and factual elements in the generated narrative. This
+proves invaluable in applications demanding profound context comprehension, such as text continuation or
+interactive dialogue systems. The accompanying line plot visualization offers a lucid and intuitive representation
+of score variations.</p>
+
+<p><strong>Limitations</strong>: Although potent, the Contextual Recall metric might not holistically represent all dimensions of
+NLG model performance. Its predominant focus on word overlap might award high scores to texts that employ numerous
+common words, even if they lack coherence or meaningful context. It also bypasses the significance of word order,
+which might lead to inflated scores for scrambled outputs. Lastly, infrequent words, despite being used aptly,
+might not match as often, potentially undervaluing models proficient in their application.</p>
 </div>
 
 
@@ -93,22 +141,6 @@
     <a class="headerlink" href="#ContextualRecall.__init__"></a>
     
     
-
-                            </div>
-                            <div id="ContextualRecall.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ContextualRecall.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="ContextualRecall.run" class="classattr">
@@ -136,7 +168,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="ContextualRecall.log" class="function">log</dd>
+                                <dd id="ContextualRecall.description" class="function">description</dd>
+                <dd id="ContextualRecall.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

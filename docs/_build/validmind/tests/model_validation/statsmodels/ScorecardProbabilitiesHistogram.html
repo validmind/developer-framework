@@ -88,7 +88,37 @@
     </div>
     <a class="headerlink" href="#ScorecardProbabilitiesHistogram"></a>
     
-            <div class="docstring"><p>Scorecard Bucket Probability of Default Histogram</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This metric, referred to as the Scorecard Probabilities Histogram, is used to visualise and evaluate
+the risk classification of a model especially designed for the credit risk domain. It does this by examining the
+distribution of the probability of default across different score buckets. The score buckets are categories in
+which entities (like loan applicants) are placed based on their predicted default risk. Specifically, this metric
+is used to ensure the model correctly classifies entities into the appropriate risk categories (score buckets) and
+also properly represents their default probabilities.</p>
+
+<p><strong>Test Mechanism</strong>: The Scorecard Probabilities Histogram first calculates default probabilities using the
+'compute_probabilities' method where the output probability is added as a new column to the input dataset. Next,
+scores are computed using these probabilities, a target score, target odds and Points to Double the odds (pdo)
+factor in the 'compute_scores' method. These scores are further processed into buckets using the 'compute_buckets'
+method. Once data is bucketed, a histogram is plotted for each score bucket. This histogram takes the probabilities
+of default serious as the x-axis and their frequency as the y-axis using the 'plot_probabilities_histogram' method.
+The process is run separately for both training and testing data.</p>
+
+<p><strong>Signs of High Risk</strong>: If there is a significant overlap of different score buckets in the histogram, this can
+indicate that the model is not effectively distinguishing between different risk categories. Additionally, if
+extremely high or low probabilities are common across all buckets, there may be a skew in the model's predictions.</p>
+
+<p><strong>Strengths</strong>: The Scorecard Probabilities Histogram is an advantageous tool for observing and analysing the
+predicted default risk distribution across different risk categories. This metric allows us to visually inspect the
+model's performance and its calibration for different risk categories. Moreover, it also provides a mechanism to
+visualize how these classifications are distributed on the training and testing datasets separately which is
+beneficial for understanding model generalization.</p>
+
+<p><strong>Limitations</strong>: The Scorecard Probabilities Histogram does have limitations. For one, it assumes that the risk
+categories are linear and equally spaced, which may not always be the case. Secondly, the visualization may not
+provide adequate information if there are too few or too many score buckets. Lastly, while this metric effectively
+visualizes the distribution of probabilities, it provides no concrete numerical metric or threshold to definitively
+gauge the model's performance. For a more precise evaluation, it should be used in combination with other metrics
+and tools such as confusion matrix, AUC-ROC, Precision, Recall etc.</p>
 </div>
 
 
