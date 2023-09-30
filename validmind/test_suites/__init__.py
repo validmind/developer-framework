@@ -147,7 +147,7 @@ def describe_suite(test_suite_id: str, verbose=False):
                     "Test Suite ID": test_suite_id,
                     "Test Suite Name": test_suite.__name__,
                     "Test Suite Section": "",
-                    "Test ID": test_id,
+                    "Test ID": item,
                     "Test Name": test.__name__,
                     "Test Type": test.test_type,
                 }
