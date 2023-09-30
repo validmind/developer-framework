@@ -82,7 +82,7 @@ class Metric(Test):
 
         result_summary = self.summary(metric_value)
 
-        test_plan_result = TestSuiteMetricResult(
+        test_suite_result = TestSuiteMetricResult(
             result_id=self.test_id,
             result_metadata=result_metadata,
         )
