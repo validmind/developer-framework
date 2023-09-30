@@ -14,7 +14,7 @@ from .html_templates.content_blocks import (
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
 from .utils import is_notebook
-from .vm_models.test_suite.test_suite import TestSuite
+from .vm_models import TestContext, TestSuite, TestSuiteRunner
 
 logger = get_logger(__name__)
 
@@ -202,7 +202,7 @@ def _create_test_suite_section(section):
     """
     if section_tests := _get_section_tests(section):
         return {
-            "section_name": section["id"],
+            "section_id": section["id"],
             "section_description": section["title"],
             "section_tests": section_tests,
         }
@@ -258,7 +258,7 @@ def get_template_test_suite(template, section=None, *args, **kwargs):
     return _create_template_test_suite(template, section)(*args, **kwargs)
 
 
-def run_template(template, section, send=True, fail_fast=False, *args, **kwargs):
+def run_template(template, section, send=True, fail_fast=False, config=None, **kwargs):
     """Run all tests in a template
 
     This function will collect all tests used in a template into a TestSuite and then
@@ -269,14 +269,18 @@ def run_template(template, section, send=True, fail_fast=False, *args, **kwargs)
         section: The section of the template to run (if not provided, run all sections)
         send: Whether to send the results to the ValidMind API
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        *args: Arguments to pass to the TestSuite
+        config: A dictionary of test parameters to override the defaults
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
         The completed TestSuite instance
     """
-    kwargs["fail_fast"] = fail_fast
-    test_suite = get_template_test_suite(template, section, *args, **kwargs)
-    test_suite.run(send=send)
+    test_suite = get_template_test_suite(template)
+
+    runner = TestSuiteRunner(
+        test_suite=test_suite,
+        test_context=TestContext(**kwargs),
+        config=config,
+    ).run(send=send, fail_fast=fail_fast)
 
     return test_suite

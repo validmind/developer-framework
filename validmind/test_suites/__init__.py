@@ -97,10 +97,10 @@ def list_suites(pretty: bool = True):
         return list(all_test_suites.keys())
 
     table = []
-    for name, test_suite in all_test_suites.items():
+    for suite_id, test_suite in all_test_suites.items():
         table.append(
             {
-                "ID": name,
+                "ID": suite_id,
                 "Name": test_suite.__name__,
                 "Description": test_suite.__doc__.strip(),
                 "Test Suites": ", ".join(test_suite.sections),
@@ -159,7 +159,7 @@ def describe_suite(test_suite_id: str, verbose=False):
                     {
                         "Test Suite ID": test_suite_id,
                         "Test Suite Name": test_suite.__name__,
-                        "Test Suite Section": item["section_name"],
+                        "Test Suite Section": item["section_id"],
                         "Test ID": test_id,
                         "Test Name": test.__name__,
                         "Test Type": test.test_type,

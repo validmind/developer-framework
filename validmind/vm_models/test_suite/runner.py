@@ -45,10 +45,8 @@ class TestSuiteRunner:
         self._global_config = {}
         self._test_configs = {}
 
-        test_ids = [test.test_id for test in self.test_suite.tests]
-
         for key, value in self.config.items():
-            if key in test_ids:
+            if key in self.test_suite.get_test_ids():
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
@@ -58,10 +56,10 @@ class TestSuiteRunner:
         Loads the tests in a test suite
         """
         for section in self.test_suite.sections:
-            for test in section.section_tests:
+            for test in section.tests:
                 test.load(
                     test_context=self.context,
-                    config={
+                    test_config={
                         **self._global_config,
                         **self._test_configs.get(test.test_id, {}),
                     },
@@ -92,15 +90,13 @@ class TestSuiteRunner:
         This method will be called after the test suite has been run and all results have been
         collected. This method will log the results to ValidMind.
         """
-        self.pbar_description.value = (
-            f"Sending results of test suite '{self.name}' to ValidMind..."
-        )
+        self.pbar_description.value = f"Sending results of test suite '{self.test_suite.suite_id}' to ValidMind..."
 
         tests = [test for section in self.test_suite.sections for test in section.tests]
         # TODO: use asyncio.gather here for better performance
         for test in tests:
             self.pbar_description.value = (
-                f"Sending result to ValidMind: {test.result_id}..."
+                f"Sending result to ValidMind: {test.test_id}..."
             )
 
             try:
@@ -138,12 +134,15 @@ class TestSuiteRunner:
         """Runs the test suite, renders the summary and sends the results to ValidMind
 
         Args:
-            send (bool, optional): Whether to send the results to ValidMind. Defaults to True.
+            send (bool, optional): Whether to send the results to ValidMind.
+                Defaults to True.
+            fail_fast (bool, optional): Whether to stop running tests after the first
+                failure. Defaults to False.
         """
         self._start_progress_bar(send=send)
 
         for section in self.test_suite.sections:
-            for test in section.section_tests:
+            for test in section.tests:
                 self.pbar_description.value = f"Running {test.test_type}: {test.name}"
                 test.run(fail_fast=fail_fast)
                 self.pbar.value += 1

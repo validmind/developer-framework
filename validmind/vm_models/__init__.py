@@ -14,6 +14,7 @@ from .test.test import Test
 from .test.threshold_test import ThresholdTest
 from .test.threshold_test_result import ThresholdTestResult, ThresholdTestResults
 from .test_context import TestContext
+from .test_suite.runner import TestSuiteRunner
 from .test_suite.test_suite import TestSuite
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     "ThresholdTestResults",
     "TestContext",
     "TestSuite",
+    "TestSuiteRunner",
 ]

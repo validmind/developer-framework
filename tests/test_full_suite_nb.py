@@ -82,10 +82,9 @@ class TestFullTestSuiteNB(unittest.TestCase):
                 model=self.vm_model,
             )
 
-        result = asyncio.run(run_test_suite())
+        suite = asyncio.run(run_test_suite())
 
-        self.assertIsInstance(result, TestSuite)
-        self.assertTrue(len(result.results) > 0)
+        self.assertIsInstance(suite, TestSuite)
 
 
 if __name__ == "__main__":

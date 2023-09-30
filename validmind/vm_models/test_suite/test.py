@@ -19,10 +19,10 @@ class TestSuiteTest:
 
     test_id: str
 
-    _test_class: Test
-    _test_instance: Test
+    _test_class: Test = None
+    _test_instance: Test = None
 
-    result: object
+    result: object = None
 
     def __post_init__(self):
         """Load the test class from the test id"""
@@ -42,6 +42,14 @@ class TestSuiteTest:
     def title(self):
         return self.test_id.split(".")[-1].title().replace("_", " ")
 
+    @property
+    def name(self):
+        return self._test_class.name
+
+    @property
+    def test_type(self):
+        return self._test_class.test_type
+
     def get_default_params(self):
         """Returns the default params for the test"""
         if not self._test_class:
@@ -57,7 +65,7 @@ class TestSuiteTest:
         try:
             self._test_instance = self._test_class(
                 test_context=test_context,
-                test_config=test_config,
+                params=test_config,
             )
         except Exception as e:
             self.result = TestSuiteFailedResult(

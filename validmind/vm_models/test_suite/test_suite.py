@@ -29,7 +29,7 @@ class TestSuiteSection:
     Represents a section in a test suite - Internal use only
 
     In a test suite definition, tests can be grouped into sections by using a dict
-    instead of a string (Test ID). The dict must have a 'section_name' key and a
+    instead of a string (Test ID). The dict must have a 'section_id' key and a
     'section_tests' key. It can also have a 'section_description' key.
 
     Example:
@@ -38,7 +38,7 @@ class TestSuiteSection:
         "validmind.test_1",
         "validmind.test_1",
         {
-            "section_name": "Section 1",
+            "section_id": "Section 1",
             "section_description": "This is section 1",
             "section_tests": [
                 "validmind.test_1",
@@ -51,7 +51,7 @@ class TestSuiteSection:
 
     tests: List[TestSuiteTest]
     key: str
-    name: Optional[str] = None
+    section_id: Optional[str] = None
     description: Optional[str] = None
 
     def get_required_inputs(self) -> List[str]:
@@ -93,7 +93,7 @@ class TestSuite:
     Tests can be a flat list of strings or may be nested into sections by using a dict
     """
 
-    name: ClassVar[str]
+    suite_id: ClassVar[str]
     tests: ClassVar[List[Union[str, dict]]]
 
     sections: List[TestSuiteSection] = None
@@ -135,8 +135,8 @@ class TestSuite:
         for section_dict in section_dicts:
             self.sections.append(
                 TestSuiteSection(
-                    key=name_to_key(section_dict["section_name"]),
-                    name=section_dict["section_name"],
+                    key=name_to_key(section_dict["section_id"]),
+                    section_id=section_dict["section_id"],
                     description=section_dict.get("section_description", ""),
                     tests=[
                         TestSuiteTest(test_id)
@@ -151,18 +151,20 @@ class TestSuite:
 
     @property
     def title(self):
-        return self.name.title().replace("_", " ")
+        return self.suite_id.title().replace("_", " ")
 
-    def num_tests(self) -> int:
-        """
-        Returns the total number of tests in the test suite
-        """
-        num_tests = 0
+    def get_test_ids(self) -> List[str]:
+        """Get all test IDs from all sections"""
+        test_ids = []
 
         for section in self.sections:
-            num_tests += len(section.tests)
+            test_ids.extend(section.tests)
 
-        return num_tests
+        return test_ids
+
+    def num_tests(self) -> int:
+        """Returns the total number of tests in the test suite"""
+        return len(self.get_test_ids())
 
     def get_required_inputs(self) -> List[str]:
         """
