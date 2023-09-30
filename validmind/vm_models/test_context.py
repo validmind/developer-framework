@@ -104,7 +104,7 @@ class TestContextUtils:
     def validate_context(self):
         """
         Validates that the context elements are present
-        in the instance so that the test plan can be run
+        in the instance so that the test suite can be run
         """
 
         def recursive_attr_check(obj, attr_chain):
@@ -122,5 +122,5 @@ class TestContextUtils:
                 context_name = CONTEXT_NAMES.get(element, element)
                 raise MissingRequiredTestContextError(
                     f"{context_name} '{element}' is a required input and must be passed "
-                    "as a keyword argument to the test plan"
+                    "as a keyword argument to the test suite"
                 )

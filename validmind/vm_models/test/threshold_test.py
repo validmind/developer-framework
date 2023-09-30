@@ -72,7 +72,7 @@ class ThresholdTest(Test):
             passed (bool): Whether the threshold test passed or failed
 
         Returns:
-            TestPlanResult: The test plan result object
+            TestSuiteResult: The test suite result object
         """
         # Rename to self.result
         # At a minimum, send the test description
@@ -99,7 +99,7 @@ class ThresholdTest(Test):
             ),
         )
 
-        # Allow test results to attach figures to the test plan result
+        # Allow test results to attach figures to the test suite result
         if figures:
             self.result.figures = figures
 

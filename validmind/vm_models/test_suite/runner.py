@@ -87,13 +87,13 @@ class TestSuiteRunner:
         self.pbar_description.value = "Test suite complete!"
 
     async def log_results(self):
-        """Logs the results of the test plan to ValidMind
+        """Logs the results of the test suite to ValidMind
 
-        This method will be called after the test plan has been run and all results have been
+        This method will be called after the test suite has been run and all results have been
         collected. This method will log the results to ValidMind.
         """
         self.pbar_description.value = (
-            f"Sending results of test plan '{self.name}' to ValidMind..."
+            f"Sending results of test suite '{self.name}' to ValidMind..."
         )
 
         tests = [test for section in self.test_suite.sections for test in section.tests]
@@ -118,7 +118,7 @@ class TestSuiteRunner:
 
         while not done:
             if self.pbar.value == self.pbar.max:
-                self.pbar_description.value = "Test plan complete!"
+                self.pbar_description.value = "Test suite complete!"
                 done = True
 
             await asyncio.sleep(0.5)

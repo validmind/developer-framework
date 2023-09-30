@@ -262,8 +262,8 @@ def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
     """High Level function for running a test suite
 
     This function provides a high level interface for running a test suite. A test suite is
-    a collection of test plans. This function will automatically find the correct test suite
-    class based on the test_suite_name, initialize each of the test plans, and run them.
+    a collection of tests. This function will automatically find the correct test suite
+    class based on the test_suite_name, initialize each of the tests, and run them.
 
     Args:
         test_suite_name (str): The test suite name (e.g. 'classifier_full_suite')
@@ -271,7 +271,7 @@ def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
             the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-            See the documentation for the specific test plan, metric or threshold test for more details.
+            See the documentation for the specific metric or threshold test for more details.
 
     Raises:
         ValueError: If the test suite name is not found or if there is an error initializing the test suite

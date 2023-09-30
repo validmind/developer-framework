@@ -56,7 +56,7 @@ class TestSuiteSection:
 
     def get_required_inputs(self) -> List[str]:
         """
-        Returns the required inputs for the test plan. Defaults to the
+        Returns the required inputs for the test suite. Defaults to the
         required inputs of the tests
 
         Returns:

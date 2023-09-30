@@ -66,7 +66,7 @@ class DatasetMetadata(Test):
 
     def run(self):
         """
-        Just set the dataset to the result attribute of the test plan result
+        Just set the dataset to the result attribute of the test suite result
         and it will be logged via the `log_dataset` function
         """
         self.result = TestSuiteDatasetResult(

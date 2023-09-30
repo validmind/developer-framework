@@ -1,14 +1,20 @@
-from validmind.test_plans import register_test_plan
 from validmind.test_suites import register_test_suite
-from validmind.vm_models import TestPlan, TestSuite
+from validmind.vm_models import TestSuite
+
+from validmind.test_suites import (
+    RegressionModelDescription,
+    RegressionModelsEvaluation,
+    TabularDatasetDescription,
+    TabularDataQuality,
+)
 
 
-class TabularDataQualityExtra(TestPlan):
+class TabularDataQualityExtra(TestSuite):
     """
-    Expanded test plan for data quality on tabular datasets
+    Expanded test suite for data quality on tabular datasets
     """
 
-    name = "tabular_data_quality_extra"
+    suite_id = "tabular_data_quality_extra"
     tests = [
         "validmind.data_validation.FeatureTargetCorrelationPlot",
         "validmind.data_validation.IQROutliersBarPlot",
@@ -24,21 +30,32 @@ class CustomTabularDataset(TestSuite):
     Test suite for tabular datasets.
     """
 
-    name = "custom_tabular_dataset"
-
-    test_plans = [
-        "tabular_dataset_description",
-        "tabular_data_quality",
-        "tabular_data_quality_extra",
+    suite_id = "custom_tabular_dataset"
+    tests = [
+        {
+            "section_id": TabularDataQualityExtra.suite_id,
+            "section_description": TabularDataQualityExtra.__doc__,
+            "section_tests": TabularDataQualityExtra.tests,
+        }
+        {
+            "section_id": TabularDatasetDescription.suite_id,
+            "section_description": TabularDatasetDescription.__doc__,
+            "section_tests": TabularDatasetDescription.tests,
+        }
+        {
+            "section_id": TabularDataQualityExtra.suite_id,
+            "section_description": TabularDataQualityExtra.__doc__,
+            "section_tests": TabularDataQualityExtra.tests,
+        }
     ]
 
 
-class RegressionTestsExtra(TestPlan):
+class RegressionTestsExtra(TestSuite):
     """
-    Expanded test plan for regression models
+    Expanded test suite for regression models
     """
 
-    name = "regression_extra"
+    suite_id = "regression_extra"
     tests = [
         "validmind.model_validation.statsmodels.RegressionCoeffsPlot",
     ]
@@ -49,17 +66,28 @@ class RegressionSuite(TestSuite):
     Test suite for regression models.
     """
 
-    name = "custom_regression_suite"
-
-    test_plans = [
-        "regression_extra",
-        "regression_model_description",
-        "regression_models_evaluation",
+    suite_id = "custom_regression_suite"
+    tests = [
+        {
+            "section_id": RegressionTestsExtra.suite_id,
+            "section_description": RegressionTestsExtra.__doc__,
+            "section_tests": RegressionTestsExtra.tests,
+        },
+        {
+            "section_id": RegressionModelDescription.suite_id,
+            "section_description": RegressionModelDescription.__doc__,
+            "section_tests": RegressionModelDescription.tests,
+        },
+        {
+            "section_id": RegressionModelsEvaluation.suite_id,
+            "section_description": RegressionModelsEvaluation.__doc__,
+            "section_tests": RegressionModelsEvaluation.tests,
+        },
     ]
 
 
-register_test_plan("tabular_data_quality_extra", TabularDataQualityExtra)
+register_test_suite("tabular_data_quality_extra", TabularDataQualityExtra)
 register_test_suite("custom_tabular_dataset", CustomTabularDataset)
 
-register_test_plan("regression_extra", RegressionTestsExtra)
+register_test_suite("regression_extra", RegressionTestsExtra)
 register_test_suite("custom_regression_suite", RegressionSuite)

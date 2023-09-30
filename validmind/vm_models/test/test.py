@@ -33,7 +33,7 @@ class Test(TestContextUtils):
     _ref_id: ClassVar[str]  # unique identifier (populated at init)
 
     result: object  # type should be overridden by parent classes
-    params: dict = None  # populated by test plan from user-passed config
+    params: dict = None  # populated by test suite from user-passed config
 
     def __post_init__(self):
         """

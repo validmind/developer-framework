@@ -60,7 +60,7 @@ def plot_figures(figures: List[Figure]) -> None:
 
 @dataclass
 class TestSuiteResult(ABC):
-    """Base Class for test plan results"""
+    """Base Class for test suite results"""
 
     name: str = "TestSuiteResult"
     # id of the result, can be set by the subclass. This helps
@@ -146,7 +146,7 @@ class TestSuiteResult(ABC):
 @dataclass
 class TestSuiteFailedResult(TestSuiteResult):
     """
-    Result wrapper for test plans that fail to load or run properly
+    Result wrapper for test suites that fail to load or run properly
     """
 
     name: str = "Failed"
@@ -168,7 +168,7 @@ class TestSuiteFailedResult(TestSuiteResult):
 @dataclass
 class TestSuiteDatasetResult(TestSuiteResult):
     """
-    Result wrapper for datasets that run as part of a test plan
+    Result wrapper for datasets that run as part of a test suite
     """
 
     name: str = "Metric"
@@ -188,7 +188,7 @@ class TestSuiteDatasetResult(TestSuiteResult):
 @dataclass
 class TestSuiteMetricResult(TestSuiteResult):
     """
-    Result wrapper for metrics that run as part of a test plan
+    Result wrapper for metrics that run as part of a test suite
     """
 
     name: str = "Metric"
@@ -299,7 +299,7 @@ class TestSuiteMetricResult(TestSuiteResult):
 @dataclass
 class TestSuiteThresholdTestResult(TestSuiteResult):
     """
-    Result wrapper for test results produced by the tests that run as part of a test plan
+    Result wrapper for test results produced by the tests that run as part of a test suite
     """
 
     name: str = "Threshold Test"
