@@ -3,7 +3,8 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from validmind.vm_models import Test, TestSuiteDatasetResult
+from validmind.vm_models import Test
+from validmind.vm_models.test_suite.result import TestSuiteDatasetResult
 
 
 @dataclass

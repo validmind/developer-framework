@@ -170,8 +170,8 @@ class TestSuite:
         """
         required_inputs = set()
 
-        for test_plan in self._test_plan_instances:
-            required_inputs.update(test_plan.get_required_inputs())
+        for section in self.sections:
+            required_inputs.update(section.get_required_inputs())
 
         return list(required_inputs)
 

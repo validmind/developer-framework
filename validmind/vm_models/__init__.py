@@ -12,7 +12,7 @@ from .test.metric_result import MetricResult
 from .test.result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test.test import Test
 from .test.threshold_test import ThresholdTest
-from .test.threshold_test_result import ThresholdTestResult
+from .test.threshold_test_result import ThresholdTestResult, ThresholdTestResults
 from .test_context import TestContext
 from .test_suite.test_suite import TestSuite
 
@@ -30,6 +30,7 @@ __all__ = [
     "MetricResult",
     "ThresholdTest",
     "ThresholdTestResult",
+    "ThresholdTestResults",
     "TestContext",
     "TestSuite",
 ]
