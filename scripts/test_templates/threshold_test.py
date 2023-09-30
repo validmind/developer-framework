@@ -8,7 +8,7 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestPlanTestResult,
+    TestSuiteThresholdTestResult,
     TestResult,
     ThresholdTest,
 )
@@ -32,11 +32,11 @@ class __TEST_NAME__(ThresholdTest):
         "tags": [],  # time_series_data, tabular_data, forcasting, etc. Can be any string
     }
 
-    def run(self) -> TestPlanTestResult:
+    def run(self) -> TestSuiteThresholdTestResult:
         """Run the test and cache the results
 
         Returns:
-            TestPlanTestResult: The results of the test.
+            TestSuiteThresholdTestResult: The results of the test.
         """
         return self.cache_results(
             test_results_list=[

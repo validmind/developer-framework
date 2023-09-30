@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from validmind.vm_models import Test, TestPlanDatasetResult
+from validmind.vm_models import Test, TestSuiteDatasetResult
 
 
 @dataclass
@@ -18,7 +18,7 @@ class DatasetMetadata(Test):
 
     **Test Mechanism**: This class does not include a specific test or grading scale. Instead, it collects metadata
     associated with the dataset and logs it for future reference. The metadata is attached to the dataset object during
-    the post-initialization phase. The `run` method initializes a `TestPlanDatasetResult` object with a unique result
+    the post-initialization phase. The `run` method initializes a `TestSuiteDatasetResult` object with a unique result
     ID and dataset. The dataset metadata then gets associated with this ID for future use in more targeted validation
     efforts.
 
@@ -44,7 +44,7 @@ class DatasetMetadata(Test):
     # Instance Variables
     name = "dataset_metadata"
     params: dict = None
-    result: TestPlanDatasetResult = None
+    result: TestSuiteDatasetResult = None
 
     metadata = {
         "task_types": [
@@ -68,7 +68,7 @@ class DatasetMetadata(Test):
         Just set the dataset to the result attribute of the test plan result
         and it will be logged via the `log_dataset` function
         """
-        self.result = TestPlanDatasetResult(
+        self.result = TestSuiteDatasetResult(
             result_id="dataset_metadata", dataset=self.dataset
         )
 

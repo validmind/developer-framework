@@ -21,7 +21,7 @@ from ..dataset import VMDataset
 from ..figure import Figure
 from ..test.metric_result import MetricResult
 from ..test.result_summary import ResultSummary
-from ..test.test_result import TestResults
+from ..test.threshold_test_result import ThresholdTestResults
 
 
 async def update_metadata(content_id: str, text: str) -> None:
@@ -144,7 +144,7 @@ class TestSuiteResult(ABC):
 
 
 @dataclass
-class TestPlanFailedResult(TestSuiteResult):
+class TestSuiteFailedResult(TestSuiteResult):
     """
     Result wrapper for test plans that fail to load or run properly
     """
@@ -154,7 +154,7 @@ class TestPlanFailedResult(TestSuiteResult):
     message: str = None
 
     def __repr__(self) -> str:
-        return f'TestPlanFailedResult(result_id="{self.result_id}")'
+        return f'TestSuiteFailedResult(result_id="{self.result_id}")'
 
     def _to_widget(self):
         return widgets.HTML(
@@ -166,7 +166,7 @@ class TestPlanFailedResult(TestSuiteResult):
 
 
 @dataclass
-class TestPlanDatasetResult(TestSuiteResult):
+class TestSuiteDatasetResult(TestSuiteResult):
     """
     Result wrapper for datasets that run as part of a test plan
     """
@@ -176,7 +176,7 @@ class TestPlanDatasetResult(TestSuiteResult):
     dataset: VMDataset = None
 
     def __repr__(self) -> str:
-        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
+        return f'TestSuiteDatasetResult(result_id="{self.result_id}")'
 
     def _to_widget(self):
         return widgets.HTML(value=self.dataset.df.describe().to_html())
@@ -186,7 +186,7 @@ class TestPlanDatasetResult(TestSuiteResult):
 
 
 @dataclass
-class TestPlanMetricResult(TestSuiteResult):
+class TestSuiteMetricResult(TestSuiteResult):
     """
     Result wrapper for metrics that run as part of a test plan
     """
@@ -297,14 +297,14 @@ class TestPlanMetricResult(TestSuiteResult):
 
 
 @dataclass
-class TestPlanTestResult(TestSuiteResult):
+class TestSuiteThresholdTestResult(TestSuiteResult):
     """
     Result wrapper for test results produced by the tests that run as part of a test plan
     """
 
     name: str = "Threshold Test"
     figures: Optional[List[Figure]] = None
-    test_results: TestResults = None
+    test_results: ThresholdTestResults = None
 
     def __repr__(self) -> str:
         if self.test_results:

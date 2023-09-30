@@ -10,17 +10,12 @@ of plans for data validation and model validation with a single function call.
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union
 
-import ipywidgets as widgets
-
-from ...errors import MissingRequiredTestContextError, should_raise_on_fail_fast
+from ...errors import should_raise_on_fail_fast
 from ...logging import get_logger, log_performance
 from ...tests import LoadTestError, load_test
-from ...utils import clean_docstring, is_notebook, run_async, run_async_check
-from ..dataset import VMDataset
-from ..model import VMModel
-from ..result.test_suite_result import TestPlanFailedResult, TestPlanResult
 from ..test.test import Test
 from ..test_context import TestContext
+from .result import TestSuiteFailedResult, TestSuiteResult
 
 logger = get_logger(__name__)
 
@@ -41,16 +36,18 @@ class TestSuiteTest:
     """
 
     test_id: str
+
     _test_class: Test
     _test_instance: Test
-    _result: object
+
+    result: object
 
     def __post_init__(self):
         """Load the test class from the test id"""
         try:
             self._test_class = load_test(self.test_id)
         except LoadTestError as e:
-            self._result = TestPlanFailedResult(
+            self.result = TestSuiteFailedResult(
                 error=e,
                 message=f"Failed to load test '{self.test_id}'",
                 result_id=self.test_id,
@@ -58,6 +55,17 @@ class TestSuiteTest:
         except Exception as e:
             logger.error(f"Failed to load test '{self.test_id}': {e}")
             raise e
+
+    @property
+    def title(self):
+        return self.test_id.split(".")[-1].title().replace("_", " ")
+
+    def get_default_params(self):
+        """Returns the default params for the test"""
+        if not self._test_class:
+            return {}
+
+        return self._test_class.default_params
 
     def load(self, test_context: TestContext, test_config: dict = None):
         """Load an instance of the test class"""
@@ -70,7 +78,7 @@ class TestSuiteTest:
                 test_config=test_config,
             )
         except Exception as e:
-            self._result = TestPlanFailedResult(
+            self.result = TestSuiteFailedResult(
                 error=e,
                 message=f"Failed to load test '{self.test_id}'",
                 result_id=self.test_id,
@@ -99,7 +107,7 @@ class TestSuiteTest:
                 f"Failed to run test '{self._test_instance.name}': "
                 f"({e.__class__.__name__}) {e}"
             )
-            self._result = TestPlanFailedResult(
+            self.result = TestSuiteFailedResult(
                 name=f"Failed {self._test_instance.test_type}",
                 error=e,
                 message=f"Failed to run '{self._test_instance.name}'",
@@ -109,7 +117,7 @@ class TestSuiteTest:
             return
 
         if self._test_instance.result is None:
-            self._result = TestPlanFailedResult(
+            self.result = TestSuiteFailedResult(
                 name=f"Failed {self._test_instance.test_type}",
                 error=None,
                 message=f"'{self._test_instance.name}' did not return a result",
@@ -118,8 +126,8 @@ class TestSuiteTest:
 
             return
 
-        if not isinstance(self._test_instance.result, TestPlanResult):
-            self._result = TestPlanFailedResult(
+        if not isinstance(self._test_instance.result, TestSuiteResult):
+            self.result = TestSuiteFailedResult(
                 name=f"Failed {self._test_instance.test_type}",
                 error=None,
                 message=f"'{self._test_instance.name}' returned an invalid result: "
@@ -129,14 +137,14 @@ class TestSuiteTest:
 
             return
 
-        self._result = self._test_instance.result
+        self.result = self._test_instance.result
 
-    def log(self):
+    async def log(self):
         """Log the result for this test to ValidMind"""
-        if not self._result:
+        if not self.result:
             raise ValueError("Cannot log test result before running the test")
 
-        self._result.log()
+        await self.result.log()
 
 
 @dataclass
@@ -150,36 +158,33 @@ class TestSuiteSection:
     description: Optional[str] = None
     tests: List[TestSuiteTest]
 
-
-@dataclass
-class TestSuiteConfig:
-    """
-    Represents the config which holds test parameters for tests in a suite
-    """
-
-    params: dict
-
-    _global_params: dict
-    _section_params: dict
-    _test_params: dict
-
-    def __post_init__(self):
+    def get_required_inputs(self) -> List[str]:
         """
-        Post init hook
-        """
-        self._global_params = {}
-        self._section_params = {}
-        self._test_params = {}
+        Returns the required inputs for the test plan. Defaults to the
+        required inputs of the tests
 
-        self._build_params()
+        Returns:
+            List[str]: A list of required inputs elements
+        """
+        required_inputs = set()
 
-    def _build_params(self):
-        """
-        Builds the params for the test suite
-        """
-        for key, value in self.params.items():
-            if isinstance(value, dict):
-                pass
+        # bubble up the required inputs from the tests
+        for test in self.tests:
+            if not hasattr(test, "required_inputs") or test.required_inputs is None:
+                continue
+
+            required_inputs.update(test.required_inputs)
+
+        return list(required_inputs)
+
+    def get_default_config(self):
+        """Returns the default configuration for the test suite section"""
+        section_default_config = {}
+
+        for test in self.tests:
+            section_default_config[test.id] = test.get_default_params()
+
+        return section_default_config
 
 
 @dataclass
@@ -192,12 +197,12 @@ class TestSuite:
     Tests can be a flat list of strings or may be nested into sections by using a dict
     """
 
+    name: ClassVar[str]
     tests: ClassVar[List[Union[str, dict]]]
 
     sections: List[TestSuiteSection] = None
 
     test_context: TestContext = None
-    config: TestSuiteConfig = None
 
     def __post_init__(self):
         """
@@ -245,62 +250,52 @@ class TestSuite:
                 )
             )
 
+    @property
+    def description(self):
+        return self.__doc__
 
-class TestSuiteLoader:
-    """
-    Loads a test suite by instantiating the test classes with the test context and
-    config
-    """
+    @property
+    def title(self):
+        return self.name.title().replace("_", " ")
 
-    def __init__(self, test_suite: TestSuite):
-        self.test_suite = test_suite
-
-    def load(self):
+    def num_tests(self) -> int:
         """
-        Loads the tests in a test suite
+        Returns the total number of tests in the test suite
         """
-        for section in self.test_suite.sections:
-            for test in section.section_tests:
-                test.load()
+        num_tests = 0
 
+        for section in self.sections:
+            num_tests += len(section.tests)
 
-class TestSuiteRunner:
-    """
-    Runs a test suite
-    """
+        return num_tests
 
-    pbar: widgets.IntProgress = None
-    pbar_description: widgets.Label = None
-    pbar_box: widgets.HBox = None
-
-    def __init__(self, test_suite: TestSuite):
-        self.test_suite = test_suite
-
-    def run(self):
+    def get_required_inputs(self) -> List[str]:
         """
-        Runs the test suite
+        Returns the required inputs for the test suite.
         """
-        for section in self.test_suite.sections:
-            for test in section.section_tests:
-                test.run()
+        required_inputs = set()
 
-    def log(self):
+        for test_plan in self._test_plan_instances:
+            required_inputs.update(test_plan.get_required_inputs())
+
+        return list(required_inputs)
+
+    def get_default_config(self) -> dict:
+        """Returns the default configuration for the test suite
+
+        Each test in a test suite can accept parameters and those parameters can have
+        default values. Both the parameters and their defaults are set in the test
+        class and a config object can be passed to the test suite's run method to
+        override the defaults. This function returns a dictionary containing the
+        parameters and their default values for every test to allow users to view
+        and set values
+
+        Returns:
+            dict: A dictionary of test names and their default parameters
         """
-        Logs the results of the last test suite run to ValidMind
-        """
-        pass
+        default_config = {}
 
+        for section in self.sections:
+            default_config = {**default_config, **section.get_default_config()}
 
-class TestSuiteViewer:
-    """
-    Shows the results of a test suite
-    """
-
-    def __init__(self, test_suite: TestSuite):
-        self.test_suite = test_suite
-
-    def view(self):
-        """
-        Views the results of the last test suite run
-        """
-        pass
+        return default_config
