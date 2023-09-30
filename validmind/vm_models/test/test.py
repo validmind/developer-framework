@@ -31,6 +31,8 @@ class Test(TestContextUtils):
 
     # Instance Variables
     _ref_id: ClassVar[str]  # unique identifier (populated at init)
+    _section_id: ClassVar[str]  # which section of template this test belongs to
+    test_id: ClassVar[str] = None  # populated when loading tests from suites
 
     result: object  # type should be overridden by parent classes
     params: dict = None  # populated by test suite from user-passed config

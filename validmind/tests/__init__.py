@@ -30,7 +30,6 @@ __all__ = [
     "LocalTestProvider",
 ]
 
-__legacy_mapping = None
 __tests = None
 __test_classes = None
 
@@ -48,30 +47,6 @@ def _test_title(name):
         title += name[i]
 
     return title
-
-
-# TODO: remove this when all templates are updated to new naming convention
-def _get_legacy_test(content_id):
-    global __legacy_mapping
-
-    # create a mapping from test name (defined in the test class) to test ID
-    if __legacy_mapping is None:
-        __legacy_mapping = {}
-        for test_id in list_tests(pretty=False):
-            try:
-                test = load_test(test_id, legacy=True)
-            except LoadTestError:
-                continue
-
-            __legacy_mapping[test.name] = test_id
-
-    try:
-        return __legacy_mapping[content_id]
-    except KeyError:
-        raise LoadTestError(
-            f"Unable to load test {content_id}. "
-            f"Test not found or there was an error loading the test."
-        )
 
 
 def _load_tests(test_ids):
@@ -195,14 +170,8 @@ def list_tests(filter=None, task=None, tags=None, pretty=True):
     return tests
 
 
-def load_test(test_id, legacy=False):  # noqa: C901
-    print(test_id)
+def load_test(test_id):  # noqa: C901
     parts = test_id.split(".")
-
-    # for now this code will handle the legacy test IDs
-    # (e.g. "ModelMetadata" instead of "validmind.model_validation.ModelMetadata")
-    if len(parts) == 1:
-        return load_test(_get_legacy_test(test_id), legacy=True)
 
     error = None
     namespace = parts[0]
@@ -240,9 +209,7 @@ def load_test(test_id, legacy=False):  # noqa: C901
         logger.error(error)
         raise LoadTestError(error)
 
-    # TODO: restore non-legacy flag for test IDs once we have a migration plan for existing templates
-    # if not legacy:
-    #     test._key = test_id
+    test.test_id = test_id
 
     return test
 

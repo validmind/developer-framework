@@ -9,6 +9,7 @@ from typing import List
 import pandas as pd
 import plotly.graph_objs as go
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -95,12 +96,14 @@ class ClassImbalance(ThresholdTest):
         imbalance_percentages = self.dataset.df[target_column].value_counts(
             normalize=True
         )
+        if len(imbalance_percentages) > 10:
+            raise SkipTestError(
+                f"Skipping {self.__class__.__name__} test as"
+                "target column as more than 10 classes"
+            )
 
         classes = list(imbalance_percentages.index)
         percentages = list(imbalance_percentages.values)
-
-        # Calculating the total number of rows
-        # total_rows = sum(percentages)
 
         # Checking class imbalance
         imbalanced_classes = []

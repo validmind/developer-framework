@@ -78,7 +78,7 @@ class ThresholdTest(Test):
         # At a minimum, send the test description
         result_metadata = [
             {
-                "content_id": f"test_description:{self.name}",
+                "content_id": f"test_description:{self.test_id}",
                 "text": clean_docstring(self.description()),
             }
         ]
@@ -86,11 +86,14 @@ class ThresholdTest(Test):
         result_summary = self.summary(test_results_list, passed)
 
         self.result = TestSuiteThresholdTestResult(
-            result_id=self.name,
+            result_id=self.test_id,
             result_metadata=result_metadata,
             test_results=ThresholdTestResults(
                 category=self.category,
-                test_name=self.name,
+                # test_name=self.name,
+                # Now using the fully qualified test ID as `test_name`.
+                # Ideally the backend is updated to use `test_id` instead of `test_name`.
+                test_name=self.test_id,
                 ref_id=self._ref_id,
                 params=self.params,
                 passed=passed,

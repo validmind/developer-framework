@@ -41,7 +41,7 @@ class Figure:
             metadata = self.metadata or {}
             # Use underscore to avoid name collisions with user-defined metadata
             metadata["_type"] = self._get_for_object_type()
-            metadata["_name"] = getattr(self.for_object, "name", None)
+            metadata["_name"] = getattr(self.for_object, "test_id", None)
             metadata["_ref_id"] = getattr(self.for_object, "_ref_id", None)
             self.metadata = metadata
 

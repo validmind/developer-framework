@@ -75,15 +75,15 @@ class Metric(Test):
         # At a minimum, send the metric description
         result_metadata = [
             {
-                "content_id": f"metric_description:{self.name}",
+                "content_id": f"metric_description:{self.test_id}",
                 "text": clean_docstring(self.description()),
             }
         ]
 
         result_summary = self.summary(metric_value)
 
-        test_suite_result = TestSuiteMetricResult(
-            result_id=self._key if hasattr(self, "_key") else self.name,
+        test_plan_result = TestSuiteMetricResult(
+            result_id=self.test_id,
             result_metadata=result_metadata,
         )
 
@@ -93,7 +93,10 @@ class Metric(Test):
         test_suite_result.metric = MetricResult(
             type=self.type,
             scope=self.scope,
-            key=self.key,
+            # key=self.key,
+            # Now using the fully qualified test ID as `key`.
+            # Ideally the backend is updated to use `test_id` instead of `key`.
+            key=self.test_id,
             ref_id=self._ref_id,
             value=metric_result_value,
             value_formatter=self.value_formatter,
