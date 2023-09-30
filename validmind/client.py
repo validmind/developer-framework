@@ -8,9 +8,7 @@ import pandas as pd
 
 from .client_config import client_config
 from .errors import (
-    GetTestPlanError,
     GetTestSuiteError,
-    InitializeTestPlanError,
     InitializeTestSuiteError,
     MissingDocumentationTemplate,
     MissingRExtrasError,
@@ -23,7 +21,7 @@ from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
 from .test_suites import get_by_id as get_test_suite_by_id
-from .vm_models import TestPlan, TestSuite
+from .vm_models import TestSuite
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
 

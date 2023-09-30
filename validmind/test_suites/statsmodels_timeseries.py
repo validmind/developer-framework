@@ -9,10 +9,10 @@ from validmind.vm_models import TestSuite
 
 class RegressionModelDescription(TestSuite):
     """
-    Test plan for performance metric of regression model of statsmodels library
+    Test suite for performance metric of regression model of statsmodels library
     """
 
-    name = "regression_model_description"
+    suite_id = "regression_model_description"
     tests = [
         "validmind.data_validation.DatasetSplit",
         "validmind.model_validation.ModelMetadata",
@@ -21,10 +21,10 @@ class RegressionModelDescription(TestSuite):
 
 class RegressionModelsEvaluation(TestSuite):
     """
-    Test plan for metrics comparison of regression model of statsmodels library
+    Test suite for metrics comparison of regression model of statsmodels library
     """
 
-    name = "regression_models_evaluation"
+    suite_id = "regression_models_evaluation"
     tests = [
         "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
         "validmind.model_validation.statsmodels.RegressionModelsPerformance",

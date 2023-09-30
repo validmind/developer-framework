@@ -9,41 +9,57 @@ from ..logging import get_logger
 from ..tests import load_test
 from ..utils import format_dataframe
 from ..vm_models import TestSuite
-from .test_suites import (
+from .classifier import (
+    ClassifierDiagnosis,
     ClassifierFullSuite,
+    ClassifierMetrics,
     ClassifierModelValidation,
-    LLMClassifierFullSuite,
-    NLPClassifierFullSuite,
+    ClassifierPerformance,
+)
+from .llm import LLMClassifierFullSuite, PromptValidation
+from .nlp import NLPClassifierFullSuite
+from .statsmodels_timeseries import (
+    RegressionModelDescription,
+    RegressionModelsEvaluation,
+)
+from .tabular_datasets import (
+    TabularDataQuality,
     TabularDataset,
+    TabularDatasetDescription,
+)
+from .text_data import TextDataQuality
+from .time_series import (
+    TimeSeriesDataQuality,
     TimeSeriesDataset,
     TimeSeriesModelValidation,
+    TimeSeriesMultivariate,
+    TimeSeriesSensitivity,
+    TimeSeriesUnivariate,
 )
 
 logger = get_logger(__name__)
 
 core_test_suites = {
-    "classifier_full_suite": ClassifierFullSuite,
-    "classifier_model_validation": ClassifierModelValidation,
-    "llm_classifier_full_suite": LLMClassifierFullSuite,
-    "nlp_classifier_full_suite": NLPClassifierFullSuite,
-    "tabular_dataset": TabularDataset,
-    "time_series_dataset": TimeSeriesDataset,
-    "time_series_model_validation": TimeSeriesModelValidation,
-    "classifier_metrics": ClassifierMetrics,
-    "classifier_validation": ClassifierPerformance,
-    "classifier_model_diagnosis": ClassifierDiagnosis,
-    "prompt_validation": PromptValidation,
-    "tabular_dataset_description": TabularDatasetDescription,
-    "tabular_data_quality": TabularDataQuality,
-    "time_series_data_quality": TimeSeriesDataQuality,
-    "time_series_univariate": TimeSeriesUnivariate,
-    "time_series_multivariate": TimeSeriesMultivariate,
-    "time_series_forecast": TimeSeriesForecast,
-    "time_series_sensitivity": TimeSeriesSensitivity,
-    "regression_model_description": RegressionModelDescription,
-    "regression_models_evaluation": RegressionModelsEvaluation,
-    "text_data_quality": TextDataQuality,
-    "summarization_metrics": SummarizationMetrics,
+    ClassifierDiagnosis.suite_id: ClassifierDiagnosis,
+    ClassifierFullSuite.suite_id: ClassifierFullSuite,
+    ClassifierMetrics.suite_id: ClassifierMetrics,
+    ClassifierModelValidation.suite_id: ClassifierModelValidation,
+    ClassifierPerformance.suite_id: ClassifierPerformance,
+    LLMClassifierFullSuite.suite_id: LLMClassifierFullSuite,
+    PromptValidation.suite_id: PromptValidation,
+    NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
+    RegressionModelDescription.suite_id: RegressionModelDescription,
+    RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
+    TabularDataset.suite_id: TabularDataset,
+    TabularDatasetDescription.suite_id: TabularDatasetDescription,
+    TabularDataQuality.suite_id: TabularDataQuality,
+    TextDataQuality.suite_id: TextDataQuality,
+    TimeSeriesDataQuality.suite_id: TimeSeriesDataQuality,
+    TimeSeriesDataset.suite_id: TimeSeriesDataset,
+    TimeSeriesModelValidation.suite_id: TimeSeriesModelValidation,
+    TimeSeriesMultivariate.suite_id: TimeSeriesMultivariate,
+    TimeSeriesSensitivity.suite_id: TimeSeriesSensitivity,
+    TimeSeriesUnivariate.suite_id: TimeSeriesUnivariate,
 }
 
 # These test suites can be added by the user
@@ -87,7 +103,7 @@ def list_suites(pretty: bool = True):
                 "ID": name,
                 "Name": test_suite.__name__,
                 "Description": test_suite.__doc__.strip(),
-                "Test Plans": ", ".join(test_suite.test_plans),
+                "Test Suites": ", ".join(test_suite.sections),
             }
         )
 
@@ -115,7 +131,7 @@ def describe_suite(test_suite_id: str, verbose=False):
                         "ID": test_suite_id,
                         "Name": test_suite.__name__,
                         "Description": test_suite.__doc__.strip(),
-                        "Test Plans": ", ".join(test_suite.test_plans),
+                        "Test Suites": ", ".join(test_suite.sections),
                     }
                 ]
             )
