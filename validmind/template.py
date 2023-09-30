@@ -14,7 +14,6 @@ from .html_templates.content_blocks import (
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
 from .utils import is_notebook
-from .vm_models.test_suite.test_plan import TestPlan
 from .vm_models.test_suite.test_suite import TestSuite
 
 logger = get_logger(__name__)
@@ -191,25 +190,22 @@ def _get_section_tests(section):
     return tests
 
 
-def _create_section_test_plan(section):
-    """Create a test plan for a section in a template
+def _create_test_suite_section(section):
+    """Create a section object for a test suite that contains the tests in a section
+    in the template
 
     Args:
         section: a section of a template (in tree form)
 
     Returns:
-        A dynamically-created TestPlan Class
+        A TestSuite section dict
     """
     if section_tests := _get_section_tests(section):
-        return type(
-            f"{section['title'].title().replace(' ', '')}TestPlan",
-            (TestPlan,),
-            {
-                "name": section["id"],
-                "tests": section_tests,
-                "__doc__": section["title"],
-            },
-        )
+        return {
+            "section_name": section["id"],
+            "section_description": section["title"],
+            "section_tests": section_tests,
+        }
 
 
 def _create_template_test_suite(template, section=None):
@@ -223,26 +219,25 @@ def _create_template_test_suite(template, section=None):
     Returns:
         A dynamically-create TestSuite Class
     """
-    tree = _convert_sections_to_section_tree(
+    section_tree = _convert_sections_to_section_tree(
         sections=template["sections"],
         start_section_id=section,
     )
-    test_plans = [
-        plan
-        for section in tree
-        if (plan := _create_section_test_plan(section)) is not None
-    ]
-    test_suite = type(
+
+    # dynamically create a TestSuite class using `type` and populate it with the tests
+    return type(
         f"{template['template_name'].title().replace(' ', '')}TestSuite",
         (TestSuite,),
         {
             "name": template["template_id"],
-            "test_plans": test_plans,
+            "tests": [
+                section_dict
+                for section in section_tree
+                if (section_dict := _create_test_suite_section(section)) is not None
+            ],
             "__doc__": template["description"],
         },
     )
-
-    return test_suite
 
 
 def get_template_test_suite(template, section=None, *args, **kwargs):

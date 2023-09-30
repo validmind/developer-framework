@@ -6,7 +6,6 @@ Entrypoint for test suites.
 import pandas as pd
 
 from ..logging import get_logger
-from ..test_plans import get_by_id as get_test_plan
 from ..tests import load_test
 from ..utils import format_dataframe
 from ..vm_models import TestSuite
@@ -30,6 +29,21 @@ core_test_suites = {
     "tabular_dataset": TabularDataset,
     "time_series_dataset": TimeSeriesDataset,
     "time_series_model_validation": TimeSeriesModelValidation,
+    "classifier_metrics": ClassifierMetrics,
+    "classifier_validation": ClassifierPerformance,
+    "classifier_model_diagnosis": ClassifierDiagnosis,
+    "prompt_validation": PromptValidation,
+    "tabular_dataset_description": TabularDatasetDescription,
+    "tabular_data_quality": TabularDataQuality,
+    "time_series_data_quality": TimeSeriesDataQuality,
+    "time_series_univariate": TimeSeriesUnivariate,
+    "time_series_multivariate": TimeSeriesMultivariate,
+    "time_series_forecast": TimeSeriesForecast,
+    "time_series_sensitivity": TimeSeriesSensitivity,
+    "regression_model_description": RegressionModelDescription,
+    "regression_models_evaluation": RegressionModelsEvaluation,
+    "text_data_quality": TextDataQuality,
+    "summarization_metrics": SummarizationMetrics,
 }
 
 # These test suites can be added by the user
@@ -107,24 +121,38 @@ def describe_suite(test_suite_id: str, verbose=False):
             )
         )
 
-    df = pd.DataFrame()
+    tests = []
 
-    for test_plan_id in test_suite.test_plans:
-        test_plan = get_test_plan(test_plan_id)
-        for test_id in test_plan.tests:
-            test = load_test(test_id)
-            row = {
-                "Test Suite ID": test_suite_id,
-                "Test Suite Name": test_suite.__name__,
-                "Test Plan ID": test_plan_id,
-                "Test Plan Name": test_plan.__name__,
-                "Test ID": test_id,
-                "Test Name": test.__name__,
-                "Test Type": test.test_type,
-            }
-            df = pd.concat([df, pd.DataFrame([row])])
+    for item in test_suite.tests:
+        if isinstance(item, str):
+            test = load_test(item)
+            tests.append(
+                {
+                    "Test Suite ID": test_suite_id,
+                    "Test Suite Name": test_suite.__name__,
+                    "Test Suite Section": "",
+                    "Test ID": test_id,
+                    "Test Name": test.__name__,
+                    "Test Type": test.test_type,
+                }
+            )
+        elif isinstance(item, dict):
+            for test_id in item["section_tests"]:
+                test = load_test(item)
+                tests.append(
+                    {
+                        "Test Suite ID": test_suite_id,
+                        "Test Suite Name": test_suite.__name__,
+                        "Test Suite Section": item["section_name"],
+                        "Test ID": test_id,
+                        "Test Name": test.__name__,
+                        "Test Type": test.test_type,
+                    }
+                )
+        else:
+            raise ValueError(f"Invalid test suite item: {item}")
 
-    return format_dataframe(df.reset_index(drop=True))
+    return format_dataframe(pd.DataFrame(tests).reset_index(drop=True))
 
 
 # TODO: remove this... here for backwards compatibility

@@ -22,7 +22,6 @@ from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
-from .test_plans import get_by_id as get_test_plan_by_id
 from .test_suites import get_by_id as get_test_suite_by_id
 from .vm_models import TestPlan, TestSuite
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
@@ -210,45 +209,16 @@ def init_r_model(
 
 
 def run_test_plan(test_plan_name, send=True, fail_fast=False, **kwargs):
-    """High Level function for running a test plan
-
-    This function provides a high level interface for running a test plan. It removes the need
-    to manually initialize a TestPlan instance and run it. This function will automatically
-    find the correct test plan class based on the test_plan_name, initialize the test plan, and
-    run it.
-
-    Args:
-        test_plan_name (str): The test plan name (e.g. 'classifier')
-        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
-        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        **kwargs: Additional keyword arguments to pass to the test plan. These will provide
-            the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-            See the documentation for the specific test plan for more details.
-
-    Raises:
-        ValueError: If the test plan name is not found or if there is an error initializing the test plan
-
-    Returns:
-        dict: A dictionary of test results
-    """
-    try:
-        Plan: TestPlan = get_test_plan_by_id(test_plan_name)
-    except ValueError as exc:
-        raise GetTestPlanError(
-            "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
-        )
-
-    try:
-        kwargs["fail_fast"] = fail_fast
-        plan = Plan(**kwargs)
-    except ValueError as exc:
-        raise InitializeTestPlanError(
-            "Error initializing test plan {}. {}".format(test_plan_name, str(exc))
-        )
-
-    plan.run(send=send)
-
-    return plan
+    """DEPRECATED! Use `vm.run_test_suite` instead."""
+    logger.warning(
+        "`vm.run_test_plan` is deprecated. Please use `vm.run_test_suite` instead"
+    )
+    return run_test_suite(
+        test_suite_name=test_plan_name,
+        send=send,
+        fail_fast=fail_fast,
+        **kwargs,
+    )
 
 
 def get_test_suite(
