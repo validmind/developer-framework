@@ -178,10 +178,7 @@ def _get_section_tests(section):
         A list of tests in the section.
     """
     tests = [
-        {
-            "tag": f"{section['id']}",
-            "test_id": content["content_id"],
-        }
+        content["content_id"]
         for content in section.get("contents", [])
         if content["content_type"] in ["metric", "test"]
     ]
@@ -280,8 +277,8 @@ def run_template(template, section, send=True, fail_fast=False, config=None, **k
     test_suite = get_template_test_suite(template)
 
     TestSuiteRunner(
-        test_suite=test_suite,
-        test_context=TestContext(**kwargs),
+        suite=test_suite,
+        context=TestContext(**kwargs),
         config=config,
     ).run(send=send, fail_fast=fail_fast)
 

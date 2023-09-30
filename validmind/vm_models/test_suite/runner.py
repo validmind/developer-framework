@@ -18,7 +18,7 @@ class TestSuiteRunner:
     Runs a test suite
     """
 
-    test_suite: TestSuite = None
+    suite: TestSuite = None
     context: TestContext = None
     config: dict = None
 
@@ -29,24 +29,21 @@ class TestSuiteRunner:
     pbar_description: widgets.Label = None
     pbar_box: widgets.HBox = None
 
-    def __init__(self, test_suite: TestSuite, context: TestContext, config: dict):
-        self.test_suite = test_suite
+    def __init__(self, suite: TestSuite, context: TestContext, config: dict = None):
+        self.suite = suite
         self.context = context
-        self.config = config
+        self.config = config or {}
 
         self._split_configs()
         self._init_tests()
 
     def _split_configs(self):
         """Splits the config into a global config and test configs"""
-        if self.config is None:
-            return
-
         self._global_config = {}
         self._test_configs = {}
 
         for key, value in self.config.items():
-            if key in self.test_suite.get_test_ids():
+            if key in self.suite.get_test_ids():
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
@@ -55,7 +52,7 @@ class TestSuiteRunner:
         """
         Loads the tests in a test suite
         """
-        for section in self.test_suite.sections:
+        for section in self.suite.sections:
             for test in section.tests:
                 test.load(
                     test_context=self.context,
@@ -71,9 +68,7 @@ class TestSuiteRunner:
         """
         # TODO: make this work for when user runs only a section of the test suite
         # if we are sending then there is a task for each test and logging its result
-        num_tasks = (
-            self.test_suite.num_tests() * 2 if send else self.test_suite.num_tests()
-        )
+        num_tasks = self.suite.num_tests() * 2 if send else self.suite.num_tests()
 
         self.pbar_description = widgets.Label(value="Running test suite...")
         self.pbar = widgets.IntProgress(max=num_tasks, orientation="horizontal")
@@ -90,9 +85,11 @@ class TestSuiteRunner:
         This method will be called after the test suite has been run and all results have been
         collected. This method will log the results to ValidMind.
         """
-        self.pbar_description.value = f"Sending results of test suite '{self.test_suite.suite_id}' to ValidMind..."
+        self.pbar_description.value = (
+            f"Sending results of test suite '{self.suite.suite_id}' to ValidMind..."
+        )
 
-        tests = [test for section in self.test_suite.sections for test in section.tests]
+        tests = [test for section in self.suite.sections for test in section.tests]
         # TODO: use asyncio.gather here for better performance
         for test in tests:
             self.pbar_description.value = (
@@ -124,9 +121,9 @@ class TestSuiteRunner:
             return logger.info("Test suite done...")
 
         summary = TestSuiteSummary(
-            title=self.test_suite.title,
-            description=self.test_suite.description,
-            sections=self.test_suite.sections,
+            title=self.suite.title,
+            description=self.suite.description,
+            sections=self.suite.sections,
         )
         summary.display()
 
@@ -141,7 +138,7 @@ class TestSuiteRunner:
         """
         self._start_progress_bar(send=send)
 
-        for section in self.test_suite.sections:
+        for section in self.suite.sections:
             for test in section.tests:
                 self.pbar_description.value = f"Running {test.test_type}: {test.name}"
                 test.run(fail_fast=fail_fast)

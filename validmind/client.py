@@ -297,9 +297,9 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
         )
 
     TestSuiteRunner(
-        test_suite=suite,
-        config=config or {},
+        suite=suite,
         context=TestContext(**kwargs),
+        config=config or {},
     ).run(fail_fast=fail_fast, send=send)
 
     return suite
@@ -322,9 +322,7 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(
-    section: str = None, send=True, fail_fast=False, *args, **kwargs
-):
+def run_documentation_tests(section: str = None, send=True, fail_fast=False, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -335,7 +333,6 @@ def run_documentation_tests(
         section (str, optional): The section to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
@@ -354,7 +351,6 @@ def run_documentation_tests(
         section=section,
         send=send,
         fail_fast=fail_fast,
-        *args,
         **kwargs,
     )
 
