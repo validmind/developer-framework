@@ -38,6 +38,9 @@
                                 <a class="function" href="#DatasetDescription.__init__">DatasetDescription</a>
                         </li>
                         <li>
+                                <a class="function" href="#DatasetDescription.summary">summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#DatasetDescription.run">run</a>
                         </li>
                         <li>
@@ -132,6 +135,25 @@ categorical data. Lastly, this test does not inform on how the data will influen
     <a class="headerlink" href="#DatasetDescription.__init__"></a>
     
     
+
+                            </div>
+                            <div id="DatasetDescription.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetDescription.summary"></a>
+    
+            <div class="docstring"><p>Build a dataset summary table. metric_value is a list of fields where each field
+has an id, type (Numeric or Categorical), and statistics. The statistics object
+depends on the type being Numeric or Categorical. For Numeric fields, it has
+the following keys: count, mean, std, min, 25%, 50%, 75%, 90%, 95%, max. For
+categorical fields, it has the following keys: count, unique, top, freq.</p>
+</div>
+
 
                             </div>
                             <div id="DatasetDescription.run" class="classattr">
@@ -247,7 +269,6 @@ with a different bin size</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="DatasetDescription.key" class="variable">key</dd>
-                <dd id="DatasetDescription.summary" class="function">summary</dd>
                 <dd id="DatasetDescription.cache_results" class="function">cache_results</dd>
 
             </div>
