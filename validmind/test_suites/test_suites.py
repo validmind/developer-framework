@@ -20,36 +20,6 @@ class TabularDataset(TestSuite):
     ]
 
 
-class ClassifierModelValidation(TestSuite):
-    """
-    Test suite for binary classification models.
-    """
-
-    name = "classifier_model_validation"
-
-    test_plans = [
-        "classifier_metrics",
-        "classifier_validation",
-        "classifier_model_diagnosis",
-    ]
-
-
-class ClassifierFullSuite(TestSuite):
-    """
-    Full test suite for binary classification models.
-    """
-
-    name = "classifier_full_suite"
-
-    test_plans = [
-        "tabular_dataset_description",
-        "tabular_data_quality",
-        "classifier_metrics",
-        "classifier_validation",
-        "classifier_model_diagnosis",
-    ]
-
-
 class TimeSeriesDataset(TestSuite):
     """
     Test suite for time series datasets.

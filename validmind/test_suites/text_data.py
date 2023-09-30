@@ -7,10 +7,10 @@ Ideal setup is to have the API client to read a
 custom test plan from the project's configuration
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class TextDataQuality(TestPlan):
+class TextDataQuality(TestSuite):
     """
     Test plan for data quality on text data
     """

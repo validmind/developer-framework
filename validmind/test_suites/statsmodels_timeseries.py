@@ -1,13 +1,13 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-Time Series Test Plans from statsmodels
+Time Series Test Suites from statsmodels
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class RegressionModelDescription(TestPlan):
+class RegressionModelDescription(TestSuite):
     """
     Test plan for performance metric of regression model of statsmodels library
     """
@@ -19,7 +19,7 @@ class RegressionModelDescription(TestPlan):
     ]
 
 
-class RegressionModelsEvaluation(TestPlan):
+class RegressionModelsEvaluation(TestSuite):
     """
     Test plan for metrics comparison of regression model of statsmodels library
     """

@@ -3,10 +3,10 @@
 """
 Time Series Test Plans
 """
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class TimeSeriesUnivariate(TestPlan):
+class TimeSeriesUnivariate(TestSuite):
     """
     Test plan to perform time series univariate analysis.
     """
@@ -38,7 +38,7 @@ class TimeSeriesUnivariate(TestPlan):
         """
 
 
-class TimeSeriesMultivariate(TestPlan):
+class TimeSeriesMultivariate(TestSuite):
     """
     Test plan to perform time series multivariate analysis.
     """
@@ -67,7 +67,7 @@ class TimeSeriesMultivariate(TestPlan):
         """
 
 
-class TimeSeriesForecast(TestPlan):
+class TimeSeriesForecast(TestSuite):
     """
     Test plan to perform time series forecast tests.
     """
@@ -81,7 +81,7 @@ class TimeSeriesForecast(TestPlan):
         """
 
 
-class TimeSeriesSensitivity(TestPlan):
+class TimeSeriesSensitivity(TestSuite):
     """
     Test plan to perform time series forecast tests.
     """

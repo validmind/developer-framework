@@ -4,10 +4,10 @@
 Test plan for LLMs
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class PromptValidation(TestPlan):
+class PromptValidation(TestSuite):
     """
     Test plan for prompt validation
     """

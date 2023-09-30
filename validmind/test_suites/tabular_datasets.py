@@ -7,10 +7,10 @@ Ideal setup is to have the API client to read a
 custom test plan from the project's configuration
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class TabularDatasetDescription(TestPlan):
+class TabularDatasetDescription(TestSuite):
     """
     Test plan to extract metadata and descriptive
     statistics from a tabular dataset
@@ -25,7 +25,7 @@ class TabularDatasetDescription(TestPlan):
     ]
 
 
-class TabularDataQuality(TestPlan):
+class TabularDataQuality(TestSuite):
     """
     Test plan for data quality on tabular datasets
     """
@@ -43,7 +43,7 @@ class TabularDataQuality(TestPlan):
     ]
 
 
-class TimeSeriesDataQuality(TestPlan):
+class TimeSeriesDataQuality(TestSuite):
     """
     Test plan for data quality on time series datasets
     """
