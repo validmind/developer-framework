@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -59,7 +59,7 @@ class HighPearsonCorrelation(ThresholdTest):
         "tags": ["tabular_data", "data_quality", "correlation"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The high pearson correlation test returns results like these:
         [{"values": {"correlations": [{"column": "NumOfProducts", "correlation": -0.3044645622389459}]}, "column": "Balance", "passed": false}]
@@ -107,7 +107,7 @@ class HighPearsonCorrelation(ThresholdTest):
         passed = corr_df["Pass/Fail"].eq("Pass").all()
 
         results = [
-            TestResult(
+            ThresholdTestResult(
                 column=col1,
                 values={
                     "correlations": [

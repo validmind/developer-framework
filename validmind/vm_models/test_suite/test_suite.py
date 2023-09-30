@@ -26,13 +26,33 @@ def name_to_key(name: str) -> str:
 @dataclass
 class TestSuiteSection:
     """
-    Represents a section in a test suite
+    Represents a section in a test suite - Internal use only
+
+    In a test suite definition, tests can be grouped into sections by using a dict
+    instead of a string (Test ID). The dict must have a 'section_name' key and a
+    'section_tests' key. It can also have a 'section_description' key.
+
+    Example:
+    ```
+    tests = [
+        "validmind.test_1",
+        "validmind.test_1",
+        {
+            "section_name": "Section 1",
+            "section_description": "This is section 1",
+            "section_tests": [
+                "validmind.test_1",
+                "validmind.test_1",
+            ]
+        }
+    ]
+    ```
     """
 
+    tests: List[TestSuiteTest]
     key: str
     name: Optional[str] = None
     description: Optional[str] = None
-    tests: List[TestSuiteTest]
 
     def get_required_inputs(self) -> List[str]:
         """

@@ -9,7 +9,7 @@ from validmind.vm_models import (
     ResultTable,
     ResultTableMetadata,
     TestSuiteThresholdTestResult,
-    TestResult,
+    ThresholdTestResult,
     ThresholdTest,
 )
 
@@ -40,7 +40,7 @@ class __TEST_NAME__(ThresholdTest):
         """
         return self.cache_results(
             test_results_list=[
-                TestResult(
+                ThresholdTestResult(
                     passed=True,  # whether this test passed
                     values={
                         "hello": "world",
@@ -51,11 +51,11 @@ class __TEST_NAME__(ThresholdTest):
             figures=None,  # return a figure by importing from validmind.vm_models
         )
 
-    def summary(self, results: List[TestResult], all_passed: bool) -> ResultSummary:
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool) -> ResultSummary:
         """Summarize the results of the test.
 
         Args:
-            results (List[TestResult]): The results of the test.
+            results (List[ThresholdTestResult]): The results of the test.
             all_passed (bool): Whether all tests passed.
 
         Returns:

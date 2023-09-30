@@ -65,7 +65,7 @@ class ThresholdTest(Test):
         figures: Optional[List[Figure]] = None,
     ):
         """
-        Cache the individual results of the threshold test as a list of TestResult objects
+        Cache the individual results of the threshold test as a list of ThresholdTestResult objects
 
         Args:
             result (List[ThresholdTestResult]): The results of the threshold test

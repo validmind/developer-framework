@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -59,7 +59,7 @@ class MinimumAccuracy(ThresholdTest):
         ],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The accuracy score test returns results like these:
         [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
@@ -93,7 +93,7 @@ class MinimumAccuracy(ThresholdTest):
 
         passed = accuracy_score > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": accuracy_score,

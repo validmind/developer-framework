@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -95,7 +95,7 @@ class TimeSeriesFrequency(ThresholdTest):
         freq_df = self._identify_frequencies(self.dataset.df)
         n_frequencies = len(freq_df["Frequency"].unique())
         test_results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=n_frequencies == 1,
                 values=freq_df.to_dict(orient="list"),
             )

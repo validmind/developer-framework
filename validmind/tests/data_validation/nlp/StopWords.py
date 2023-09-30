@@ -18,8 +18,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
     VMDataset,
 )
 
@@ -69,7 +69,7 @@ class StopWords(ThresholdTest):
         "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
 
         # Create a DataFrame from the data
         df = pd.DataFrame(results[0].values, columns=["Word", "Percentage"])
@@ -122,7 +122,7 @@ class StopWords(ThresholdTest):
         ]
 
         test_results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values=top,
             )
