@@ -296,7 +296,7 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
             "Error initializing test suite {}. {}".format(test_suite_id, str(exc))
         )
 
-    runner = TestSuiteRunner(
+    TestSuiteRunner(
         test_suite=suite,
         config=config or {},
         context=TestContext(**kwargs),

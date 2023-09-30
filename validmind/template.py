@@ -277,7 +277,7 @@ def run_template(template, section, send=True, fail_fast=False, config=None, **k
     """
     test_suite = get_template_test_suite(template)
 
-    runner = TestSuiteRunner(
+    TestSuiteRunner(
         test_suite=test_suite,
         test_context=TestContext(**kwargs),
         config=config,
