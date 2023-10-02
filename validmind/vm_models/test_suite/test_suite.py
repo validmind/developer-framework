@@ -13,14 +13,7 @@ from .test import TestSuiteTest
 
 logger = get_logger(__name__)
 
-TOP_LEVEL_SECTION_KEY = "__top_level__"
-
-
-def name_to_key(name: str) -> str:
-    """
-    Converts a name to a key
-    """
-    return name.lower().replace(" ", "_")
+TOP_LEVEL_SECTION_ID = "__top_level__"
 
 
 @dataclass
@@ -38,7 +31,7 @@ class TestSuiteSection:
         "validmind.test_1",
         "validmind.test_1",
         {
-            "section_id": "Section 1",
+            "section_id": "section_1",
             "section_description": "This is section 1",
             "section_tests": [
                 "validmind.test_1",
@@ -50,8 +43,7 @@ class TestSuiteSection:
     """
 
     tests: List[TestSuiteTest]
-    key: str
-    section_id: Optional[str] = None
+    section_id: str = None
     description: Optional[str] = None
 
     def get_required_inputs(self) -> List[str]:
@@ -75,6 +67,7 @@ class TestSuiteSection:
 
     def get_default_config(self):
         """Returns the default configuration for the test suite section"""
+        # TODO: configuration across sections/tests needs more work
         section_default_config = {}
 
         for test in self.tests:
@@ -126,7 +119,7 @@ class TestSuite:
 
         # create top-level section to hold tests that are not in a section
         top_level_section = TestSuiteSection(
-            key=TOP_LEVEL_SECTION_KEY,
+            section_id=TOP_LEVEL_SECTION_ID,
             tests=[TestSuiteTest(test_id) for test_id in test_ids],
         )
         self.sections.append(top_level_section)
@@ -135,7 +128,6 @@ class TestSuite:
         for section_dict in section_dicts:
             self.sections.append(
                 TestSuiteSection(
-                    key=name_to_key(section_dict["section_id"]),
                     section_id=section_dict["section_id"],
                     description=section_dict.get("section_description", ""),
                     tests=[
