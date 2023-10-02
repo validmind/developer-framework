@@ -6,6 +6,9 @@ Test suites for LLMs
 
 from validmind.vm_models import TestSuite
 
+from .classifier import ClassifierMetrics, ClassifierValidation
+from .text_data import TextDataQuality
+
 
 class PromptValidation(TestSuite):
     """
@@ -31,8 +34,24 @@ class LLMClassifierFullSuite(TestSuite):
 
     suite_id = "llm_classifier_full_suite"
     tests = [
-        "text_data_quality",
-        "classifier_metrics",
-        "classifier_validation",
-        "prompt_validation",
+        {
+            "section_id": TextDataQuality.suite_id,
+            "section_description": TextDataQuality.__doc__,
+            "section_tests": TextDataQuality.tests,
+        },
+        {
+            "section_id": ClassifierMetrics.suite_id,
+            "section_description": ClassifierMetrics.__doc__,
+            "section_tests": ClassifierMetrics.tests,
+        },
+        {
+            "section_id": ClassifierValidation.suite_id,
+            "section_description": ClassifierValidation.__doc__,
+            "section_tests": ClassifierValidation.tests,
+        },
+        {
+            "section_id": PromptValidation.suite_id,
+            "section_description": PromptValidation.__doc__,
+            "section_tests": PromptValidation.tests,
+        },
     ]
