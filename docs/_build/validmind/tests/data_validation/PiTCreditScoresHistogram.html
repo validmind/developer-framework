@@ -38,9 +38,6 @@
                                 <a class="function" href="#PiTCreditScoresHistogram.__init__">PiTCreditScoresHistogram</a>
                         </li>
                         <li>
-                                <a class="function" href="#PiTCreditScoresHistogram.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#PiTCreditScoresHistogram.plot_score_histogram">plot_score_histogram</a>
                         </li>
                         <li>
@@ -82,7 +79,31 @@
     </div>
     <a class="headerlink" href="#PiTCreditScoresHistogram"></a>
     
-            <div class="docstring"><p>Score Histogram</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The PiT (Point in Time) Credit Scores Histogram metric is used to assess the performance of a
+classification model with a focus on credit risk evaluation. It visualizes the distributions of observed and
+predicted default scores and provides an intuitive comparison allowing for quick model assessment.</p>
+
+<p><strong>Test Mechanism</strong>: This metric leverages histograms to illustrate the differences in score distributions for both
+observed and predicted results. It separates the scores into defaulted (1) and not defaulted (0) and makes a
+histogram for each of these categories. The model compares the distributions of observed and predicted
+classifications simultaneously, furnishing a clear idea about how well the model can predict the credit risk.</p>
+
+<p><strong>Signs of High Risk</strong>: If the observed and predicted histograms are significantly different, there may be risk
+factors that the model is not adequately addressing. Additionally, if the predicted defaults are concentrated
+towards one end of the graph or are less evenly distributed than the observed scores, this could indicate potential
+issues with how the model is understanding the data or predicting outcomes.</p>
+
+<p><strong>Strengths</strong>: This metric provides an intuitive visual representation of model performance which can be easily
+understood and interpreted even without extensive technical background. By comparing the distributions of observed
+and predicted scores, it gives a clear picture about the model's ability in distinguishing between defaulting and
+non-defaulting entities. It's especially tailored for credit risk assessment models and the PiT element takes into
+consideration time evolution of credit risk.</p>
+
+<p><strong>Limitations</strong>: This visual method may not provide accurate enough information for detailed statistical analysis
+and doesn't give precise, quantifiable measures of model performance. It relies on manual inspection and
+comparison, making it subjective to human bias and potentially less reliable for catching subtle discrepancies.
+Furthermore, this method doesn't work well when the score distributions overlap significantly or when there are too
+many scores to be plotted, resulting in cluttered or hard-to-read graphs.</p>
 </div>
 
 
@@ -96,22 +117,6 @@
     <a class="headerlink" href="#PiTCreditScoresHistogram.__init__"></a>
     
     
-
-                            </div>
-                            <div id="PiTCreditScoresHistogram.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PiTCreditScoresHistogram.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="PiTCreditScoresHistogram.plot_score_histogram" class="classattr">
@@ -153,7 +158,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="PiTCreditScoresHistogram.log" class="function">log</dd>
+                                <dd id="PiTCreditScoresHistogram.description" class="function">description</dd>
+                <dd id="PiTCreditScoresHistogram.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

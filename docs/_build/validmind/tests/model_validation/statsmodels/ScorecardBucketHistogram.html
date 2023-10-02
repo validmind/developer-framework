@@ -85,7 +85,37 @@
     </div>
     <a class="headerlink" href="#ScorecardBucketHistogram"></a>
     
-            <div class="docstring"><p>Scorecard Bucket Probability of Default</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The 'Scorecard Bucket Histogram' is employed as a metric to evaluate the performance of a
+classification model, specifically in credit risk assessment. It categorizes model scores into different rating
+classes, and visualizes the distribution of scores or probabilities within each class. It essentially measures how
+different risk categories (classes) are distributed in the model scores and provides an insight into the model's
+classification ability, making it particularly useful in credit scoring and risk modelling where understanding
+probability of default is critical.</p>
+
+<p><strong>Test Mechanism</strong>: The test works by computing the probabilities for each record in the test and train dataset
+using the model's predict function. Subsequently, it calculates the scores using a predefined formula incorporating
+target score, target odds, and points to double odds (PDO). The scores are then bucketed into pre-defined rating
+classes (such as 'A', 'B', 'C', 'D') and plotted in a histogram for both the train and test datasets. The target
+score, target odds, points to double the odds (PDO), and rating classes are all customizable parameters, thus
+allowing for flexibility in test metrics based on differing model or industry norms.</p>
+
+<p><strong>Signs of High Risk</strong>: Indicators of high risk or failure in relation to this metric might include
+disproportionate scores within rating classes, excessive overlap between classes, or an inconsistent distribution
+of scores between the training and testing datasets. If the model is accurately classifying and risk is being
+evenly distributed, we'd anticipate smooth and relatively balanced histograms within classes.</p>
+
+<p><strong>Strengths</strong>: The strengths of this metric lie in its form of output, it provides a quick visual snap of score
+distribution; it breaks down complex predictions into simple, understandable classes making it easily interpretable
+for both technical and business audiences. Also, this metric caters to customization of parameters, but most
+importantly it gives ownership of the class definitions to the user. It is quite useful in the field of credit
+risk, giving a clear understanding of which class or 'Bucket' a potential borrower belongs to.</p>
+
+<p><strong>Limitations</strong>: One limitation of this metric is its reliance on manual setting of classes and other parameters
+(like target score, target odds, and PDO), which may lead to arbitrary classifications if not judiciously performed
+and could potentially introduce biases. Additionally, its effectiveness can be limited if used on non-tabular data.
+Furthermore, it does not provide a numerical value which can be easily compared across different models or runs,
+since the output is primarily visual. Consequently, it may not present the complete view of model performance, and
+should be used in conjunction with other metrics.</p>
 </div>
 
 

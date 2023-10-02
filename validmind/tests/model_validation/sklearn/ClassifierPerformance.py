@@ -19,7 +19,32 @@ def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
 @dataclass
 class ClassifierPerformance(Metric):
     """
-    Test that outputs the performance of the model on the training or test data.
+    **Purpose**: The provided script assesses the performance of Machine Learning classification models. The
+    performance is calculated by determining the precision, recall, F1-Score, accuracy, and the ROC AUC (Receiver
+    operating characteristic - Area under the curve) scores. The test accepts both binary and multiclass models.
+
+    **Test Mechanism**: The script generates a report that includes precision, recall, F1-Score, and accuracy using the
+    `classification_report` method from the scikit-learn's metrics module. For multiclass models, weighted and macro
+    averages for these scores are also computed. Additionally, the script calculates and includes the ROC AUC scores
+    for the model using a custom method, `multiclass_roc_auc_score`. The output of the test is a structured report that
+    differs depending on whether the model is binary or multiclass.
+
+    **Signs of High Risk**: Indicators of high risk or a failing model include low values for the metrics used -
+    precision, recall, F1-Score, accuracy, and ROC AUC. An imbalanced precision and recall score can also indicate a
+    high-risk model, as precision focuses on the correct prediction of the positive class, while recall focuses on the
+    number of correctly identified actual positive cases. A low ROC AUC score, particularly when it is close to 0.5 or
+    below, is a strong indicator of a failing model.
+
+    **Strengths**: This metric excels in its versatility by being capable of handling both binary and multiclass
+    models. It computes several commonly used performance metrics, providing a comprehensive view of the model's
+    performance. Using ROC-AUC as a metric can help in identifying the best threshold for classification, especially
+    when datasets are unbalanced.
+
+    **Limitations**: The test relies on labels being correctly identified for binary classification models, raising an
+    exception if the positive class is not labeled as "1", which might not always be the case in practical
+    applications. Furthermore, this script is designed only for classification models and cannot evaluate regression
+    models. The calculated metrics might not be informative in situations where the test dataset is not representative
+    of the data the model will encounter.
     """
 
     name = "classifier_performance"

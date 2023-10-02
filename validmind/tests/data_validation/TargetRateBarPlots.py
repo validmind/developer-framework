@@ -8,9 +8,31 @@ from validmind.vm_models import Figure, Metric
 
 class TargetRateBarPlots(Metric):
     """
-    Generates a visual analysis of target ratios by plotting bar plots.
-    The input dataset can have multiple categorical variables if necessary.
-    In this case, we produce a separate row of plots for each categorical variable.
+    **Purpose**: The purpose of this metric is to visually summarize the distinct categorizations made by a
+    classification-oriented machine learning model. Specifically, it generates bar plots representing target rate
+    ratios for different categorical variables within the input dataset. This makes it easier to evaluate the
+    performance of the classification model and gain quick insights into its accuracy.
+
+    **Test Mechanism**: The test mechanic involves the creation of two bar plots for each categorical feature in the
+    dataset. The first plot counts the number of times each category appears in the dataset, using a unique color to
+    facilitate identification. On the second plot, it calculates the average target rate for each category and plots
+    these averages. The target rate value comes from the column specified as "default_column." The plots are generated
+    using the Plotly library in Python, with subplots created for each feature. If no specific columns are indicated,
+    all categorical feature columns in the dataset will be used to generate the plot.
+
+    **Signs of High Risk**: High risk or failure signs might involve inconsistent or non-binary values in the
+    "default_column," making it difficult to calculate a meaningful default rate. Another risk sign could be an
+    unusually low or high default rate for any particular category, suggesting the model might be wrongly classifying
+    data points for those categories.
+
+    **Strengths**: The main strength of this metric is its ability to provide a clear, visual representation of the
+    model's categorization patterns. This helps stakeholders spot anomalies, inconsistencies, or trends in model
+    behavior quickly. The metric is also flexible, allowing for the examination of a single column or multiple columns
+    in the data.
+
+    **Limitations**: This metric only works well with categorical data, limiting its application to numeric or
+    continuous variables. It also assumes binary target values (only 0s and 1s), making it less useful for multi-class
+    problems. The bar plots can become confusing and less interpretable if the dataset has too many distinct categories.
     """
 
     name = "target_rate_bar_plots"

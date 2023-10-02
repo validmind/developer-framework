@@ -79,7 +79,33 @@
     </div>
     <a class="headerlink" href="#RegressionModelSummary"></a>
     
-            <div class="docstring"><p>Test that output the summary of regression models of statsmodel library.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This metric test evaluates the performance of regression models, specifically capturing their ability
+to predict the dependent variable(s) given changes in the independent variable(s). It measures the quality of the
+model using classic regression metrics such as R-Squared, Adjusted R-Squared, Mean Squared Error (MSE), and Root
+Mean Squared Error (RMSE).</p>
+
+<p><strong>Test Mechanism</strong>: This test utilizes the 'train_ds' attribute of the model to collect and assess the training
+data. It first retrieves the independent variables and uses the model to predict on the given features. The test
+calculates several standard regression performance metrics including R-Square, Adjusted R-Squared, Mean Squared
+Error (MSE), and Root Mean Squared Error (RMSE). These metrics quantify how close the predicted responses are to
+the true responses.</p>
+
+<p><strong>Signs of High Risk</strong>: High risk or potentially problematic model performance could be indicated by low R-Squared
+and Adjusted R-Squared values, or high MSE and RMSE values. Low R-squared and adjusted R-squared values suggest a
+poor fit between the model predictions and the true responses, indicating the model explains a small portion of the
+variance in the target variable. High MSE or RMSE represents a high prediction error, which points to poor model
+performance.</p>
+
+<p><strong>Strengths</strong>: This test offers an extensive evaluation of regression models as it combines four key measures of
+model accuracy and fit, offering a comprehensive view of the model's performance. Furthermore, both the R-Squared
+and the Adjusted R-Squared measures are readily interpretable, representing the proportion of total variation in
+the dependent variable that is explained by the independent variables.</p>
+
+<p><strong>Limitations</strong>: This test only applies to regression models and cannot be used to evaluate binary classification
+models or time series models, limiting its scope. Furthermore, while RMSE and MSE are good measures of prediction
+error, they can be sensitive to outliers, which might lead to an overestimation of the model's prediction error.
+Lastly, high R-squared or adjusted R-squared doesn't necessarily imply a good model, especially in cases where the
+model is overfitting the data.</p>
 </div>
 
 

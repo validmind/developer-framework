@@ -38,6 +38,9 @@
                                 <a class="function" href="#DatasetDescription.__init__">DatasetDescription</a>
                         </li>
                         <li>
+                                <a class="function" href="#DatasetDescription.summary">summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#DatasetDescription.run">run</a>
                         </li>
                         <li>
@@ -91,7 +94,34 @@
     </div>
     <a class="headerlink" href="#DatasetDescription"></a>
     
-            <div class="docstring"><p>Collects a set of descriptive statistics for a dataset</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This test is used to provide a variety of descriptive statistics about the input data used in a
+machine learning model. Such statistics include measures of central tendency, measures of dispersion, and frequency
+counts for each field (i.e. feature or variable) in the dataset. This helps in understanding the nature of the
+data, identifying outliers, and understanding how well the data meets the assumptions of the model.</p>
+
+<p><strong>Test Mechanism</strong>: The mechanism starts by transforming the input dataset to its basic form by reversing any
+one-hot encoding and extracting each field from the dataset. Descriptive statistics are then computed for each
+field depending on its data type (Numeric, Categorical, Boolean, Dummy, Text, Null). For numeric fields, statistics
+like mean, standard deviation, min, max and various percentiles are computed. For categorical and boolean fields,
+frequency counts of each category and the most frequent category (top) are computed. Missing and distinct values
+are computed for all fields. Additionally, the test generates histograms of the data for numeric and categorical
+types, as well as word count histograms for text simply by counting the number of occurrences of every distinct
+word.</p>
+
+<p><strong>Signs of High Risk</strong>: Areas of potential high risk include a significant proportion of missing or null values
+which may affect the model's performance. Also, predominance of a single value (low diversity) in a feature, high
+variance in a numeric feature, or high number of distinct categories in categorical features may signal problems
+with the model. High frequency of a particular word in text data could also indicate bias.</p>
+
+<p><strong>Strengths</strong>: This test effectively provides a comprehensive, high-level summary of the dataset. It aids in
+understanding the distribution, dispersion, and central tendency of numeric features, and the frequency
+distribution in categorical and text features. It effectively handles different data types and provides insight
+into the variety and distribution of field values.</p>
+
+<p><strong>Limitations</strong>: This metric doesn’t provide insights into the relationships between different fields or features;
+it only provides univariate analysis. The statistical description for text data is also quite limited, essentially
+being a bag-of-words model. The descriptive statistics like mean, standard deviation are not meaningful for ordinal
+categorical data. Lastly, this test does not inform on how the data will influence the model's performance.</p>
 </div>
 
 
@@ -105,6 +135,25 @@
     <a class="headerlink" href="#DatasetDescription.__init__"></a>
     
     
+
+                            </div>
+                            <div id="DatasetDescription.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetDescription.summary"></a>
+    
+            <div class="docstring"><p>Build a dataset summary table. metric_value is a list of fields where each field
+has an id, type (Numeric or Categorical), and statistics. The statistics object
+depends on the type being Numeric or Categorical. For Numeric fields, it has
+the following keys: count, mean, std, min, 25%, 50%, 75%, 90%, 95%, max. For
+categorical fields, it has the following keys: count, unique, top, freq.</p>
+</div>
+
 
                             </div>
                             <div id="DatasetDescription.run" class="classattr">
@@ -220,7 +269,6 @@ with a different bin size</p>
                                 <dl>
                                     <div><dt>validmind.vm_models.metric.Metric</dt>
                                 <dd id="DatasetDescription.key" class="variable">key</dd>
-                <dd id="DatasetDescription.summary" class="function">summary</dd>
                 <dd id="DatasetDescription.cache_results" class="function">cache_results</dd>
 
             </div>

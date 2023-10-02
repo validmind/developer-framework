@@ -11,8 +11,31 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateHistograms(Metric):
     """
-    Generates a visual analysis of categorical data by plotting bivariate histograms.
-    The input dataset and variable_pairs are required.
+    **Purpose**: This metric is used for visual data analysis, specifically for inspecting the distribution of
+    categorical variables. By presenting bivariate histograms, the metric assists in assessing correlations between
+    variables and distributions within each defined target class, giving us intuitive insights into the data's traits
+    and potential patterns.
+
+    **Test Mechanism**: The BivariateHistograms module requires an input dataset and a set of feature pairs. For each
+    pair of features in the dataset, a bivariate histogram is drawn using seaborn's histogram plotting function. This
+    histogram separates the data by the status of the target column, optionally restricted to a specific status by the
+    *target_filter* parameter. The module creates two histograms for each pair - one for each variable, where colors
+    distinguish between different target statuses.
+
+    **Signs of High Risk**: High risk signs would be irregular or unexpected distributions of data among categories.
+    For instance, extremely skewed distributions, differing significantly from normal or expected distributions, or
+    large discrepancies in distribution patterns between different target states, might all be reasons for concern.
+
+    **Strengths**: The key strength of this test lies in its simplicity and visualization power. It provides a quick,
+    consolidated view of data distributions across different target conditions for each variable pair, highlighting
+    potential correlations and patterns. This can be instrumental in detecting anomalies, understanding feature
+    interactions, and driving exploratory data analysis.
+
+    **Limitations**: This metric's limitations are inherent in its simplicity. The use of histograms might not be
+    effective in identifying complex patterns or detailed intricacies in the data. There could also be an issue of
+    overplotting with larger datasets. Additionally, this test only works with categorical data and may not provide
+    useful insights for numerical or continuous variables. Also, the interpretation of the visual results depends a lot
+    on the expertise of the observer.
     """
 
     name = "bivariate_histograms"

@@ -38,9 +38,6 @@
                                 <a class="function" href="#BertScore.__init__">BertScore</a>
                         </li>
                         <li>
-                                <a class="function" href="#BertScore.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#BertScore.run">run</a>
                         </li>
                 </ul>
@@ -79,7 +76,31 @@
     </div>
     <a class="headerlink" href="#BertScore"></a>
     
-            <div class="docstring"><p>Bert Score</p>
+            <div class="docstring"><p><strong>Purpose</strong>: BERTScore is a metric used to evaluate the quality of text generation models, focusing on the
+similarity between the reference text and the generated text. It leverages the contextual embeddings from BERT
+models to evaluate the similarity of the contents. Therefore, it distinctively measures how well a model has
+learned and can generate context-relevant results.</p>
+
+<p><strong>Test Mechanism</strong>: This metric derives the true values from the model's testing set and the model's predictions.
+BERTScore evaluates the precision, recall, and F1 score of the model according to the contextual similarity between
+the reference and the generated text. These scores are calculated for each token in the candidate sentences as
+compared to the reference sentences, taking into account cosine similarity with BERT embeddings. A line plot is
+generated for each metric (Precision, Recall and F1 Score), which visualizes the score changes across row indexes.</p>
+
+<p><strong>Signs of High Risk</strong>: If there's a general downward trend in Precision, Recall, or F1 Score or any noticeable
+instability/fluctuation in these metrics, it indicates high risk. A low Precision implies that predictions often
+include irrelevant contexts. A low Recall implies the models miss relevant contexts in predictions. A low F1 score
+indicates poor overall performance in both precision and recall.</p>
+
+<p><strong>Strengths</strong>: BERTScore is potent in detecting the quality of text that requires understanding the context, which
+is a typical demand in natural language processing tasks. This metric goes beyond simple n-gram matching and
+considers the semantic similarity in the context, which provides more meaningful evaluation results. The
+visualization allows observing the performance trends across different sets of predictions.</p>
+
+<p><strong>Limitations</strong>: BERTScore is dependent on BERT model embeddings; therefore, if the base BERT model is not
+well-suited for a specific task, it may impact the accuracy of BERTScore. In addition, although good at semantic
+understanding, it might not capture some nuances in text similarity that other metrics like BLEU or ROUGE can
+detect. Finally, it can be computationally expensive due to the use of BERT embeddings.</p>
 </div>
 
 
@@ -93,22 +114,6 @@
     <a class="headerlink" href="#BertScore.__init__"></a>
     
     
-
-                            </div>
-                            <div id="BertScore.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#BertScore.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="BertScore.run" class="classattr">
@@ -136,7 +141,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="BertScore.log" class="function">log</dd>
+                                <dd id="BertScore.description" class="function">description</dd>
+                <dd id="BertScore.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

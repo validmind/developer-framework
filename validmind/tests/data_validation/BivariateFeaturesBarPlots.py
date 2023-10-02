@@ -12,8 +12,40 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateFeaturesBarPlots(Metric):
     """
-    Generates a visual analysis of categorical data by plotting bivariate feautres bar plots.
-    The input dataset and features_pairs are required.
+    **Purpose**: The BivariateFeaturesBarPlots metric is used to conduct a visual analysis of categorical data in the
+    model. The primary aim is to evaluate and comprehend the relationship between different feature pairs while
+    emphasizing the model's target variable. These bivariate plots are extremely useful in revealing trends,
+    correlations, patterns or anomalies that might not be immediately obvious in tabular data.
+
+    **Test Mechanism**: The test constructs bar plots for each feature pair defined in the parameters. It groups the
+    dataset by each feature pair and calculates the mean of the target variable within each pair grouping. Each group
+    is represented as a bar in the plot with the height of the bar corresponding to the calculated mean. The colors of
+    the bars are determined by the specific category they belong to: either taken from a colormap or generated if the
+    number of categories exceeds the colormap's capacity.
+
+    **Signs of High Risk**: High risk or failure may be indicated if:
+
+    1. Any values are missing or inconsistent in the feature pairs.
+    2. Large differences or variations exist between the mean values of certain categories within the feature pairs.
+    3. The parameters for feature pairs are not defined or are defined incorrectly.
+
+    **Strengths**:
+
+    1. BivariateFeaturesBarPlots provides a clear, visual understanding of the relationships between feature pairs and
+    the target variable.
+    2. It allows for easy comparison of different categories within the feature pairs.
+    3. This metric can deal with a range of categorical data, thus increasing its broad applicability.
+    4. It's highly customizable, as users can define the feature pairs based on their specific requirements.
+
+    **Limitations**:
+
+    1. It can only be used with categorical data, limiting its utility with numerical or text data.
+    2. It's dependent on manual input for feature pairs, which may lead to overlooking important feature pairs if not
+    chosen wisely.
+    3. The generated bar plots can become very cluttered and hard to interpret when dealing with feature pairs with a
+    large number of categories.
+    4. This metric solely provides a visual analysis and doesn't provide any numerical or statistical measures for
+    quantifying the relationship between feature pairs.
     """
 
     name = "bivariate_features_bar_plots"
