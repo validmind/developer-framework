@@ -58,6 +58,15 @@ class TestSuiteSummary:
 
     _widgets: List[widgets.Widget] = None
 
+    def __post_init__(self):
+        # for now we display as soon as the class is initialized
+        # in the future we can offer more control here if necessary
+        # i.e. we return a summary object from the TestSuiteRunner and then call
+        # display on that object. This would be good for parallelized test suites
+        # if/when we start working with much larger models
+        self._build_summary()
+        self.display()
+
     def _add_title(self):
         title = f"""
         <h2>Test Suite Results: <i style="color: #DE257E">{self.title}</i></h2><hr>
