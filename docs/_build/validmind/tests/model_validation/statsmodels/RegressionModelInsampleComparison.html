@@ -38,9 +38,6 @@
                                 <a class="function" href="#RegressionModelInsampleComparison.__init__">RegressionModelInsampleComparison</a>
                         </li>
                         <li>
-                                <a class="function" href="#RegressionModelInsampleComparison.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RegressionModelInsampleComparison.run">run</a>
                         </li>
                         <li>
@@ -82,7 +79,54 @@
     </div>
     <a class="headerlink" href="#RegressionModelInsampleComparison"></a>
     
-            <div class="docstring"><p>Test that output the comparison of stats library regression models.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of this test metric, RegressionModelInsampleComparison, is to assess the performance of
+regression models on the same dataset that they were trained on. The performance of the models is compared against
+each other to identify which fits the data best. Evaluation metrics include goodness-of-fit statistics such as
+R-Squared, Adjusted R-Squared, Mean Squared Error (MSE) and Root Mean Squared Error (RMSE).</p>
+
+<p><strong>Test Mechanism</strong>: The test's implementation involves the following steps;</p>
+
+<ul>
+<li>First, a check is done to ensure that the list of models is not empty.</li>
+<li>After confirmation, the In-Sample performance of the models is computed by using a private function
+<code>_in_sample_performance_ols</code>. This function:
+<ul>
+<li>Loops through each model in the list</li>
+<li>For each model, it extracts the features (<code>X</code>) and target (<code>y_true</code>) from the training dataset and then
+predicts target values (<code>y_pred</code>)</li>
+<li>The model's performance metrics are then computed using formulas for R-Squared, Adjusted R-Squared, MSE and
+RMSE.</li>
+<li>The computed metrics, variables of the model and the model's identifier are saved in a dictionary and appended
+to a list.</li>
+</ul></li>
+<li>The collected results are then saved and returned in form of a pandas dataframe.</li>
+</ul>
+
+<p><strong>Signs of High Risk</strong>: A high risk or failure of the model's performance can be indicated by waiting significantly
+low values for R-Squared or Adjusted R-Squared and significantly high values for MSE and RMSE. The exact thresholds
+may vary based on the specific context or domain in which the model is being applied.</p>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Enables direct comparison of different models' in-sample performance on the same data set, providing a clear
+picture of which model is better suited to the data.</li>
+<li>It computes multiple evaluation methods (R-Squared, Adjusted R-Squared, MSE, RMSE), which provides a
+comprehensive overview of the model's performance.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>This test only uses in-sample performance, i.e., how well a model fits the data it was trained on. It might not
+indicate how the model performs on unseen or out-of-sample data, which is a core aspect of modeling tasks.</li>
+<li>It might be sensitive to overfitting as better in-sample performance might be a result of the model merely
+memorizing the training data.</li>
+<li>It does not take into account other crucial factors like data's pattern of changes over time, also known as
+temporal dynamics.</li>
+<li>The test doesn't offer a mechanism to automatically determine whether reported metrics are acceptable -
+human/judgement-based interpretation is needed.</li>
+</ul>
 </div>
 
 
@@ -96,22 +140,6 @@
     <a class="headerlink" href="#RegressionModelInsampleComparison.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RegressionModelInsampleComparison.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RegressionModelInsampleComparison.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RegressionModelInsampleComparison.run" class="classattr">
@@ -153,7 +181,8 @@ to returning the class' docstring</p>
 
             </div>
             <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="RegressionModelInsampleComparison.log" class="function">log</dd>
+                                <dd id="RegressionModelInsampleComparison.description" class="function">description</dd>
+                <dd id="RegressionModelInsampleComparison.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

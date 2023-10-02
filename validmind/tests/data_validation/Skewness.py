@@ -18,10 +18,35 @@ from validmind.vm_models import (
 @dataclass
 class Skewness(ThresholdTest):
     """
-    The skewness test measures the extent to which a distribution of
-    values differs from a normal distribution. A positive skew describes
-    a longer tail of values in the right and a negative skew describes a
-    longer tail of values in the left.
+    **Purpose**: The Skewness test is designed to measure the degree to which a given distribution deviates from a
+    normal distribution, indicating any asymmetry in the predictive model's data. The skewness metric can be positive
+    (indicating a distribution with a long tail to the right) or negative (signifying a tail to the left). As
+    consistency and correct data distribution is paramount to good model performance, understanding skewness can assist
+    in identifying data quality issues, making it integral for data profiling in both classic classification and
+    regression machine learning models.
+
+    **Test Mechanism**: The test is performed by calculating the skewness of numerical columns in the dataset. The
+    skewness is obtained from the DataFrame of the dataset, constrained to numerical data types. An absolute value for
+    the skewness is compared against a maximum threshold (default value of 1). If the calculated value is less than
+    this maximum threshold, the test is marked 'Pass'; otherwise, it's considered 'Fail'. The results are then cached,
+    with the list of result classes for each column indicating the column name, the passed status, and its skewness
+    value compliance.
+
+    **Signs of High Risk**: Indicators of high risk or potential model performance issues associated with this test
+    include high skewness levels that greatly exceed the max_threshold in a negative or positive direction,
+    representing skewed distribution in data. If data appears consistently skewed, it can show that the underlying
+    assumptions of the Machine Learning model may not apply, and can lead to poor model performance, wrong predictions,
+    or biased inferences.
+
+    **Strengths**: The skewness test allows for rapid identification of unequal data distributions, which may go
+    unnoticed but may considerably affect the performance of a machine learning model. The test is flexible and can be
+    adapted according to the users' needs, adjusting the maximum threshold parameter.
+
+    **Limitations**: The test only runs on numeric columns, which means that data in non-numeric columns could still
+    hold bias or problematic skewness not captured by this test. Secondly, it assumes data to follow a normal
+    distribution, which might not always be a realistic expectation in real-world data. Finally, by relying heavily on
+    a manually set threshold, the risk grading might be either too strict or too lenient depending on the chosen
+    threshold, something that might require expertise and iterations to perfect.
     """
 
     category = "data_quality"

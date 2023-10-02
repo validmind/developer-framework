@@ -9,9 +9,38 @@ from validmind.vm_models import Figure, Metric
 
 class TimeSeriesHistogram(Metric):
     """
-    Generates a visual analysis of time series data by plotting the
-    histogram. The input dataset can have multiple time series if
-    necessary. In this case we produce a separate plot for each time series.
+    **Purpose**: This test conducts a histogram analysis on time series data. The goal is to evaluate the distribution
+    of values in the dataset over a given time period, typically for regression tasks. Internet traffic, stock prices,
+    weather data etc. could be time series data. Histograms provide insights into the data’s underlying probability
+    distribution, skewness, peakness(kurtosis) etc.
+
+    **Test Mechanism**: The test requires a dataset column that must have a datetime type index. It iterates over each
+    column in the provided dataset and generates a histogram using Seaborn's histplot function. If the dataset contains
+    more than one time-series (i.e., more than one column with datetime type index), a separate histogram will be
+    plotted for each. Additionally, a kernel density estimate (KDE) line is drawn for each histogram to indicate the
+    data's underlying probability distribution. The x and y-axis labels are hidden to only focus on the data
+    distribution.
+
+    **Signs of High Risk**:
+    - The dataset does not contain a column with a datetime type index.
+    - The specified columns do not exist in the dataset.
+    - The distribution of data in the histogram exhibits high skewness or kurtosis, which might induce biases in the
+    model.
+    - Presence of outliers that are far from the main data distribution.
+
+    **Strengths**:
+    - Provides a visual diagnostic tool, which is a good starting point to understand the overall behavior and
+    distribution trends of the dataset.
+    - Works well for both single and multiple time series data analysis.
+    - The Kernel Density Estimation (KDE) line offers a smooth estimate of the overall trend in data distribution.
+
+    **Limitations**:
+    - It only provides a high-level overview of data distribution and does not provide specific numeric measures of
+    skewness, kurtosis, etc.
+    - It doesn’t show the precise data values and the actual data is grouped into bins, hence some detail is inherently
+    lost (precision vs. general overview trade-off).
+    - Can't handle non-numeric data columns.
+    - The shape of the histogram can be sensitive to the number of bins used.
     """
 
     name = "time_series_histogram"

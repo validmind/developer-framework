@@ -13,7 +13,37 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ScorecardHistogram(Metric):
     """
-    Score Histogram
+    **Purpose**: The **Scorecard Histogram** test provides a visual representation of the distribution of credit scores
+    produced by an ML model for classification tasks involving credit risk. The metric is primarily designed to analyze
+    how the model's scoring decision aligns with actual outcomes of credit loan applications. In addition, it helps
+    identify potential discrepancies between model predictions and real-world risk levels.
+
+    **Test Mechanism**: This model-specific metric uses the provided training and test datasets to generate a histogram
+    of credit scores for both default (negative class) and non-default (positive class) instances. It works by
+    calculating the credit score for each instance in the dataset using a logistic regression model's scorecard method
+    which takes into account the contributions of different features to the odds of being a default. It uses a default
+    point to odds (PDO) scaling factor and predefined target score and odds settings. The score distribution is
+    calculated and plotted separately for the training and test sets to facilitate insights into how well the model
+    generalizes to unseen data.
+
+    **Signs of High Risk**: Indications of potential risk or performance issues in relation to this metric include
+    significant discrepancies between the distributions of training and testing data, skewed distributions favoring a
+    particular score or class, or an abnormal distribution of scores that does not align with expected real-world
+    patterns. If positive and negative classes tend to have similar scores or their distributions overlap
+    significantly, it might suggest the model is not effective at differentiating between the classes.
+
+    **Strengths**: The Scorecard Histogram metric is useful for visually interpreting the credit scoring system of a
+    machine learning model and can provide a greater understanding of model behavior. It allows for direct comparison
+    of actual and predicted scores for both training and testing data, and provides a way to intuitively visualize
+    model's ability to differentiate between positive and negative classes. It also aids in uncovering patterns or
+    anomalies that might not be evident from numerical metrics alone.
+
+    **Limitations**: Although valuable for visual interpretation, this method doesn't quantify model's performance, and
+    hence might lack precision when it comes to complete model evaluation. It is also susceptible to the quality of the
+    input data—undue bias or noise in the data will impact both the score calculation and resultant histogram.
+    Additionally, the test is specific to credit scoring models, which limits its usefulness across a broader range of
+    machine learning tasks and models. Finally, the efficacy of the metric is somewhat tied to subjective
+    interpretation, as it relies on the analyst's assessment of the plot's characteristics and implications.
     """
 
     name = "scorecard_histogram"
@@ -28,12 +58,6 @@ class ScorecardHistogram(Metric):
         "target_odds": 50,
         "pdo": 20,
     }
-
-    def description(self):
-        return """
-        This metric calculates the credit score for each instance in the training and test datasets,
-        and creates histograms to visualize the distributions of scores for the positive and negative classes.
-        """
 
     @staticmethod
     def compute_scores(model, X, target_score, target_odds, pdo):

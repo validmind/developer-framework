@@ -81,8 +81,45 @@
     </div>
     <a class="headerlink" href="#ClassImbalance"></a>
     
-            <div class="docstring"><p>The class imbalance test measures the disparity between the majority
-class and the minority class in the target column.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the ClassImbalance test is to assess the distribution of the target classes in a
+dataset used for a machine learning model. Particularly, this method is geared towards ensuring that the classes
+are not too skewed, which could bias the predictions of the model. It is important to have a balanced dataset for
+training to avoid biased model with high accuracy for the majority class and low accuracy for the minority class.</p>
+
+<p><strong>Test Mechanism</strong>: The ClassImbalance test functions by determining the frequency (in percentage proportion) of
+each class in the target column of the dataset and checks whether each class appears in at least a particular
+minimum percentage of the total records. This minimum percentage is a parameter that can be pre-set or changed
+according to requirements; the default value in this case is set to 10%.</p>
+
+<p><strong>Signs of High Risk</strong>: Any class that constitutes less than the preset minimum percentage threshold is flagged as
+a high risk, indicating potential class imbalance. The function provides a pass/fail verdict for each class based
+on this criterion. In essence, if any class fails this test, the dataset is likely to contain an imbalanced class
+distribution.</p>
+
+<p><strong>Strengths</strong>:</p>
+
+<ol>
+<li>Identifies under-represented classes which can impact the performance of a machine learning model.</li>
+<li>Easy and fast to compute.</li>
+<li>The test is very informative as it not only detects imbalance but also quantifies the degree of imbalance.</li>
+<li>Adjustable threshold allows flexibility and adaptation to varying use-cases or domain-specific requirements.</li>
+<li>The test generates a visually intuitive plot showing classes and their corresponding proportions, aiding in
+interpretability and understanding of the data.</li>
+</ol>
+
+<p><strong>Limitations</strong>:</p>
+
+<ol>
+<li>The test might not perform well, or offer useful insights for datasets with too many classes. The imbalance may
+be inevitable due to the inherent class distribution.</li>
+<li>Sensitivity to the threshold value may lead to false discrimination of imbalance when the threshold is set too
+high.</li>
+<li>Irrespective of the percentage threshold, it does not account for different costs or impacts of
+misclassification of different classes, which can vary based on specific application or domain.</li>
+<li>While it can identify imbalances in class distribution, it does not offer direct ways to handle or correct such
+imbalances.</li>
+<li>The test is only applicable for classification tasks and not for regression or clustering tasks.</li>
+</ol>
 </div>
 
 

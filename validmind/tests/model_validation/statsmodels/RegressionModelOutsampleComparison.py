@@ -11,8 +11,34 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelOutsampleComparison(Metric):
     """
-    Test that evaluates the performance of different regression models on a separate test dataset
-    that was not used to train the models.
+    **Purpose**: The RegressionModelOutsampleComparison test is designed to evaluate the predictive performance of
+    multiple regression models by means of an out-of-sample test. Crucially, the aim of this test is to validate the
+    model's ability to generalize to unseen data, a need that arises from the challenge of overfitting. Two key
+    metrics, Mean Squared Error (MSE) and Root Mean Squared Error (RMSE), are computed for this purpose to provide a
+    quantifiable measure of the model's accuracy on the testing dataset.
+
+    **Test Mechanism**: To perform this test, multiple models (in the form of Ordinary Least Squares, or OLS regression
+    models) and a test dataset are required as inputs. For each model, predictions are made on the test dataset,
+    following which, the residuals are calculated. These residuals are then used to compute the MSE and RMSE for each
+    model. The outcomes of the test, including the model's descriptive name, its MSE, and RMSE, are stored and
+    outputted in a structured dataframe format.
+
+    **Signs of High Risk**: High values of MSE or RMSE indicate elevated risk, signifying that the model's predictions
+    significantly deviate from the actual values in the test dataset. Furthermore, persistently significant
+    discrepancies between training and testing performance across various models might suggest an issue with the input
+    data or with the model selection strategies.
+
+    **Strengths**: This test effectively provides a comparative evaluation of multiple models' out-of-sample
+    performance, enabling the identification of the best performing model. Moreover, by leveraging both MSE and RMSE,
+    one can gain insights about the model's prediction error. While MSE is sensitive to outliers, emphasising larger
+    errors, RMSE (being in the same unit as the dependent variable) provides a more interpretable measurement of
+    average prediction error.
+
+    **Limitations**: While this test provides valuable insights about model generalization, its applicability is
+    constrained to regression tasks, and specifically OLS models. Furthermore, it assumes that the test dataset is a
+    representative sample of the population that the built model is intended to be generalized to, which might not
+    always be the case. Lastly, the RMSE and MSE might be less meaningful when the dependent variable scale varies
+    significantly, or the residuals' distribution is heavily skewed or contains outliers.
     """
 
     name = "regression_outsample_performance"
@@ -20,15 +46,6 @@ class RegressionModelOutsampleComparison(Metric):
         "task_types": ["regression"],
         "tags": ["model_comparison"],
     }
-
-    def description(self):
-        return """
-        This section shows Out-of-sample comparison of regression models involves evaluating
-        the performance of different regression models on a separate test dataset that was not
-        used to train the models. This is typically done by calculating a goodness-of-fit statistic
-        such as the R-squared or mean squared error (MSE) for each model, and then comparing these
-        statistics to determine which model has the best fit to the test data.
-        """
 
     def run(self):
         # Check models list is not empty

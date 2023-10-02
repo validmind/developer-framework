@@ -91,7 +91,45 @@
     </div>
     <a class="headerlink" href="#GINITable"></a>
     
-            <div class="docstring"><p>Compute and display the AUC, GINI, and KS for train and test sets.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This metric 'GINITable' is used to calculate and display the AUC (Area under the ROC Curve), GINI
+coefficient, and KS (Kolmogorov-Smirnov) statistic for both training and testing datasets. These metrics are used
+to evaluate the performance of a classification model and quantify its discriminatory power, i.e., its ability to
+distinguish between different classes.</p>
+
+<p><strong>Test Mechanism</strong>: A dict is created to store performance metrics for both training and testing datasets. The
+algorithm loops over these datasets and computes the metrics for each. The Area under the ROC (Receiver Operating
+Characteristic) Curve (AUC) is calculated by invoking the compute_auc method, which uses the roc_auc_score function
+from Scikit-Learn. The GINI coefficient, a measure of statistical dispersion, is computed by doubling the AUC and
+subtracting 1. The Kolmogorov-Smirnov (KS) statistic is computed using the roc_curve function of Scikit-Learn,
+subtracting False Positive Rate (FPR) from True Positive Rate (TPR), and then finding the maximum value from the
+resulting dataset. The calculated metrics are stored in a pandas DataFrame for neat display.</p>
+
+<p><strong>Signs of High Risk</strong>: High risk is indicated when performance metrics values are low or there is a substantial
+discrepancy between the performance in training and testing datasets. A low AUC indicates poor classification
+performance, while a low GINI coefficient suggests low discriminatory power. High KS value, on the other hand, may
+indicate potential overfitting as it signifies a substantial gap between positive and negative distributions.</p>
+
+<p><strong>Strengths</strong>:</p>
+
+<ol>
+<li>This test provides multiple metrics (AUC, GINI, and KS) giving a broader perspective on the model's performance.</li>
+<li>It compares the performance of the model on both training and testing datasets, offering insight into potential
+overfitting or underfitting.</li>
+<li>The metrics used are invariant to class distribution and can effectively measure model performance even for
+imbalanced datasets.</li>
+<li>Displays the metrics in a user-friendly, neatly formatted table.</li>
+</ol>
+
+<p><strong>Limitations</strong>:</p>
+
+<ol>
+<li>The GINI coefficient and KS statistic are reliant on the AUC value, meaning any error in AUC calculation will
+propagate and affect these metrics too.</li>
+<li>It is mainly suitable for binary classification models and may require adjustments for multi-class scenarios.</li>
+<li>The metrics used are threshold-dependent and may vary significantly based on chosen cut-off points.</li>
+<li>The test does not contain any method to handle missing or inefficient data which might lead to inaccurate
+metrics if data is not preprocessed efficiently.</li>
+</ol>
 </div>
 
 

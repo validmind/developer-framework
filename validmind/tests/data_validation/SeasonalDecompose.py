@@ -17,7 +17,37 @@ logger = get_logger(__name__)
 
 class SeasonalDecompose(Metric):
     """
-    Calculates seasonal_decompose metric for each of the dataset features
+    **Purpose**: This test utilizes the Seasonal Decomposition of Time Series by Loess (STL) method to break down a
+    dataset into its fundamental components: observed, trend, seasonal, and residuals. The main purpose of this method
+    is to identify any hidden or non-intuitive patterns and ascertain certain attributes such as seasonality in the
+    dataset's features, helping to understand and validate the dataset further.
+
+    **Test Mechanism**: The test uses the seasonal_decompose function from the statsmodels.tsa.seasonal library to
+    assess each feature in the dataset. The seasonal_decompose function breaks down each analyzed feature into four
+    components: observed, trend, seasonal, and residuals. It generates graphical representations, essentially six
+    subplot graphs for each feature, to visually interpret the results. The Seasonal Decompose test also includes a
+    verification step to identify and exclude non-finite values before the seasonal decomposition.
+
+    **Signs of High Risk**: Signs of high risk associated with this test include:
+    - Non-finiteness: Having too many non-finite values in a dataset might imply a high risk since these values are
+    excluded before performing the seasonal decomposition.
+    - Frequent Warnings: Issue warnings when the test fails to infer frequency for a contested feature.
+    - High Seasonality: If the seasonal component is significantly high, forecasts might be highly unreliable due to
+    excessive seasonal changes.
+
+    **Strengths**: Strengths of this metric test include:
+    - Ability to Detect Seasonality: This code excels in detecting hidden seasonality patterns within features of
+    datasets.
+    - Visualization: This test provides visualizations, making it easier to interpret and comprehend.
+    - Works with Any Regression Model: It does not restrict its applicability to any specific regression model,
+    ensuring wider usability.
+
+    **Limitations**: Limitations of this method include:
+    - Dependencies on Assumptions: The test assumes that features in the dataset have a certain frequency. If no
+    frequency could be inferred for a variable, that feature will be excluded from analysis.
+    - Handling of Non-finite Values: The test excludes non-finite values during the analysis which could lead to
+    incomplete representation or understanding of the dataset.
+    - Not Reliable for Noisy Datasets: This test may generate unreliable results in the presence of heavy noise.
     """
 
     category = "univariate_analysis"
