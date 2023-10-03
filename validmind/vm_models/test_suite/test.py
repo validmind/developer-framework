@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from ...errors import should_raise_on_fail_fast
 from ...logging import get_logger, log_performance
 from ...tests import LoadTestError, load_test
+from ...utils import test_id_to_name
 from ..test.test import Test
 from ..test_context import TestContext
 from .result import TestSuiteFailedResult, TestSuiteResult
@@ -40,14 +41,7 @@ class TestSuiteTest:
 
     @property
     def title(self):
-        test_id_name = self.test_id.split(".")[-1]
-        # add space before each capital letter (except the first)
-        return "".join(
-            [
-                " " + char if char.isupper() and i != 0 else char
-                for i, char in enumerate(test_id_name)
-            ]
-        )
+        return test_id_to_name(self.test_id)
 
     @property
     def name(self):

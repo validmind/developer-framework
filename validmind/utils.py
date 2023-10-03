@@ -330,3 +330,12 @@ def fuzzy_match(string: str, search_string: str, threshold=0.7):
     score = difflib.SequenceMatcher(None, string, search_string).ratio()
 
     return score >= threshold
+
+
+def test_id_to_name(test_id: str):
+    return "".join(
+        [
+            " " + char if char.isupper() and i != 0 else char
+            for i, char in enumerate(test_id.split(".")[-1])
+        ]
+    )

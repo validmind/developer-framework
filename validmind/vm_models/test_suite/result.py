@@ -16,7 +16,7 @@ import pandas as pd
 from IPython.display import display
 
 from ... import api_client
-from ...utils import NumpyEncoder
+from ...utils import NumpyEncoder, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from ..test.metric_result import MetricResult
@@ -328,9 +328,10 @@ class TestSuiteThresholdTestResult(TestSuiteResult):
 
         test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
 
+        test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h2>{" ".join(self.test_results.test_name.split("_")).title()} {"✅" if self.test_results.passed else "❌"}</h2>
+            <h2>{" ".join(test_title)} {"✅" if self.test_results.passed else "❌"}</h2>
             """
         )
 
