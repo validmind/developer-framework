@@ -7,7 +7,7 @@ import pandas as pd
 
 from ..logging import get_logger
 from ..tests import load_test
-from ..utils import format_dataframe
+from ..utils import format_dataframe, test_id_to_name
 from ..vm_models import TestSuite
 from .classifier import (
     ClassifierDiagnosis,
@@ -76,6 +76,19 @@ def _get_all_test_suites():
     return {**core_test_suites, **custom_test_suites}
 
 
+def _get_test_suite_test_ids(test_suite_class: str):
+    test_ids = []
+
+    for item in test_suite_class.tests:
+        if isinstance(item, str):
+            test_ids.append(item)
+        elif isinstance(item, dict):
+            for test_id in item["section_tests"]:
+                test_ids.append(test_id)
+
+    return test_ids
+
+
 def get_by_id(test_suite_id: str):
     """
     Returns the test suite by ID
@@ -103,7 +116,7 @@ def list_suites(pretty: bool = True):
                 "ID": suite_id,
                 "Name": test_suite.__name__,
                 "Description": test_suite.__doc__.strip(),
-                "Test Suites": ", ".join(test_suite.sections),
+                "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
             }
         )
 
@@ -131,7 +144,7 @@ def describe_suite(test_suite_id: str, verbose=False):
                         "ID": test_suite_id,
                         "Name": test_suite.__name__,
                         "Description": test_suite.__doc__.strip(),
-                        "Test Suites": ", ".join(test_suite.sections),
+                        "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
                     }
                 ]
             )
@@ -154,14 +167,14 @@ def describe_suite(test_suite_id: str, verbose=False):
             )
         elif isinstance(item, dict):
             for test_id in item["section_tests"]:
-                test = load_test(item)
+                test = load_test(test_id)
                 tests.append(
                     {
                         "Test Suite ID": test_suite_id,
                         "Test Suite Name": test_suite.__name__,
                         "Test Suite Section": item["section_id"],
                         "Test ID": test_id,
-                        "Test Name": test.__name__,
+                        "Test Name": test_id_to_name(test_id),
                         "Test Type": test.test_type,
                     }
                 )

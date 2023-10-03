@@ -6,11 +6,7 @@ Test suites for NLP models
 
 from validmind.vm_models import TestSuite
 
-from .classifier import (
-    ClassifierDiagnosis,
-    ClassifierMetrics,
-    ClassifierModelValidation,
-)
+from .classifier import ClassifierDiagnosis, ClassifierMetrics, ClassifierPerformance
 from .text_data import TextDataQuality
 
 
@@ -32,9 +28,9 @@ class NLPClassifierFullSuite(TestSuite):
             "section_tests": ClassifierMetrics.tests,
         },
         {
-            "section_id": ClassifierModelValidation.suite_id,
-            "section_description": ClassifierModelValidation.__doc__,
-            "section_tests": ClassifierModelValidation.tests,
+            "section_id": ClassifierPerformance.suite_id,
+            "section_description": ClassifierPerformance.__doc__,
+            "section_tests": ClassifierPerformance.tests,
         },
         {
             "section_id": ClassifierDiagnosis.suite_id,

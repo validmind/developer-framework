@@ -145,7 +145,7 @@ class TestSuite:
     def title(self):
         return self.suite_id.title().replace("_", " ")
 
-    def get_test_ids(self) -> List[str]:
+    def get_tests(self) -> List[str]:
         """Get all test IDs from all sections"""
         test_ids = []
 
@@ -156,7 +156,7 @@ class TestSuite:
 
     def num_tests(self) -> int:
         """Returns the total number of tests in the test suite"""
-        return len(self.get_test_ids())
+        return len(self.get_tests())
 
     def get_required_inputs(self) -> List[str]:
         """
