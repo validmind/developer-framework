@@ -40,7 +40,14 @@ class TestSuiteTest:
 
     @property
     def title(self):
-        return self.test_id.split(".")[-1].title().replace("_", " ")
+        test_id_name = self.test_id.split(".")[-1]
+        # add space before each capital letter (except the first)
+        return "".join(
+            [
+                " " + char if char.isupper() and i != 0 else char
+                for i, char in enumerate(test_id_name)
+            ]
+        )
 
     @property
     def name(self):
