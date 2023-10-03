@@ -31,6 +31,9 @@ class TestSuiteSectionSummary:
 
     _widgets: List[widgets.Widget] = None
 
+    def __post_init__(self):
+        self._build_summary()
+
     def _add_description(self):
         description = f'<div class="result">{clean_docstring(self.description)}</div>'
         self._widgets.append(widgets.HTML(value=description))
@@ -49,13 +52,16 @@ class TestSuiteSectionSummary:
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
 
-    def build_summary(self):
+    def _build_summary(self):
         self._widgets = []
 
         self._add_description()
         self._add_tests_summary()
 
         self.summary = widgets.VBox(self._widgets)
+
+    def display(self):
+        display(self.summary)
 
 
 @dataclass
@@ -68,13 +74,7 @@ class TestSuiteSummary:
     _widgets: List[widgets.Widget] = None
 
     def __post_init__(self):
-        # for now we display as soon as the class is initialized
-        # in the future we can offer more control here if necessary
-        # i.e. we return a summary object from the TestSuiteRunner and then call
-        # display on that object. This would be good for parallelized test suites
-        # if/when we start working with much larger models
         self._build_summary()
-        self.display()
 
     def _add_title(self):
         title = f"""
@@ -107,13 +107,16 @@ class TestSuiteSummary:
         titles = []
 
         for section in self.sections:
+            if not section.tests:
+                continue
+
             children.append(
                 TestSuiteSectionSummary(
                     description=section.description,
                     tests=section.tests,
-                ).build_summary()
+                ).summary
             )
-            titles.append(section.section_id)
+            titles.append(id_to_name(section.section_id))
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
 
