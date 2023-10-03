@@ -26,7 +26,6 @@ from validmind.vm_models import (
 
 @dataclass
 class StopWords(ThresholdTest):
-
     category = "data_quality"
     name = "stop_words"
     required_inputs = ["dataset"]
@@ -42,7 +41,6 @@ class StopWords(ThresholdTest):
         percentage in the corpus."""
 
     def summary(self, results: List[TestResult], all_passed: bool):
-
         # Create a DataFrame from the data
         df = pd.DataFrame(results[0].values, columns=["Word", "Percentage"])
 

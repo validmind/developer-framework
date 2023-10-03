@@ -21,7 +21,6 @@ class TestMetadata(TypedDict):
 
 @dataclass
 class Test(TestContextUtils):
-
     # Class Variables
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes

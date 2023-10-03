@@ -12,7 +12,6 @@ target_column = "Sentiment"
 
 
 def load_data(full_dataset=False):
-
     data_file = os.path.join(dataset_path, "Covid_19.csv")
     df = pd.read_csv(data_file)
     df["OriginalTweet"] = df["OriginalTweet"].astype(str)
