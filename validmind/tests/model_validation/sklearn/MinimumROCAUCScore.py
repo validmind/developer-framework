@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -27,7 +27,7 @@ class MinimumROCAUCScore(ThresholdTest):
     the model's prediction. The test converts the multi-class target variables into binary format using
     `LabelBinarizer` before computing the score. If this ROC AUC score is higher than the predefined threshold
     (defaulted to 0.5), the test passes; otherwise, it fails. The results, including the ROC AUC score, the threshold,
-    and whether the test passed or failed, are then stored in a `TestResult` object.
+    and whether the test passed or failed, are then stored in a `ThresholdTestResult` object.
 
     **Signs of High Risk**: A high risk or failure in the model's performance as related to this metric would be
     represented by a low ROC AUC score, specifically any score lower than the predefined minimum threshold. This
@@ -65,7 +65,7 @@ class MinimumROCAUCScore(ThresholdTest):
         ],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The roc auc score test returns results like these:
         [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
@@ -103,7 +103,7 @@ class MinimumROCAUCScore(ThresholdTest):
 
         passed = roc_auc > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": roc_auc,

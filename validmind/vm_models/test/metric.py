@@ -10,12 +10,12 @@ from typing import ClassVar, List, Optional, Union
 
 import pandas as pd
 
-from ..errors import MissingCacheResultsArgumentsError
-from ..utils import clean_docstring
-from .figure import Figure
+from ...errors import MissingCacheResultsArgumentsError
+from ...utils import clean_docstring
+from ..figure import Figure
+from ..test_suite.result import TestSuiteMetricResult
 from .metric_result import MetricResult
 from .test import Test
-from .test_plan_result import TestPlanMetricResult
 
 
 @dataclass
@@ -32,7 +32,7 @@ class Metric(Test):
     value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
 
     # Instance Variables
-    result: TestPlanMetricResult = None  # populated by cache_results() method
+    result: TestSuiteMetricResult = None  # populated by cache_results() method
 
     @property
     def key(self):
@@ -62,10 +62,10 @@ class Metric(Test):
 
         Args:
             metric_value (Union[dict, list, pd.DataFrame]): The value of the metric
-            figures (Optional[object]): Any figures to attach to the test plan result
+            figures (Optional[object]): Any figures to attach to the test suite result
 
         Returns:
-            TestPlanResult: The test plan result object
+            TestSuiteResult: The test suite result object
         """
         if metric_value is None and figures is None:
             raise MissingCacheResultsArgumentsError(
@@ -75,35 +75,38 @@ class Metric(Test):
         # At a minimum, send the metric description
         result_metadata = [
             {
-                "content_id": f"metric_description:{self.name}",
+                "content_id": f"metric_description:{self.test_id}",
                 "text": clean_docstring(self.description()),
             }
         ]
 
         result_summary = self.summary(metric_value)
 
-        test_plan_result = TestPlanMetricResult(
-            result_id=self._key if hasattr(self, "_key") else self.name,
+        test_suite_result = TestSuiteMetricResult(
+            result_id=self.test_id,
             result_metadata=result_metadata,
         )
 
         # We can send an empty result to push an empty metric with a summary and plots
         metric_result_value = metric_value if metric_value is not None else {}
 
-        test_plan_result.metric = MetricResult(
+        test_suite_result.metric = MetricResult(
             type=self.type,
             scope=self.scope,
-            key=self.key,
+            # key=self.key,
+            # Now using the fully qualified test ID as `key`.
+            # Ideally the backend is updated to use `test_id` instead of `key`.
+            key=self.test_id,
             ref_id=self._ref_id,
             value=metric_result_value,
             value_formatter=self.value_formatter,
             summary=result_summary,
         )
 
-        # Allow metrics to attach figures to the test plan result
+        # Allow metrics to attach figures to the test suite result
         if figures:
-            test_plan_result.figures = figures
+            test_suite_result.figures = figures
 
-        self.result = test_plan_result
+        self.result = test_suite_result
 
         return self.result

@@ -9,8 +9,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 from .ai_powered_test import AIPoweredTest
@@ -89,7 +89,7 @@ Prompt:
 """
 '''.strip()
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [
             {
@@ -123,7 +123,7 @@ Prompt:
 
         passed = score > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": score,

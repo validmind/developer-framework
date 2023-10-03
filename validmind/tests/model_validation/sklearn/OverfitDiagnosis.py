@@ -13,8 +13,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -183,7 +183,7 @@ class OverfitDiagnosis(ThresholdTest):
             passed = results.empty
             results = results.to_dict(orient="records")
             test_results.append(
-                TestResult(
+                ThresholdTestResult(
                     test_name="accuracy",
                     column=feature_column,
                     passed=passed,
@@ -196,7 +196,7 @@ class OverfitDiagnosis(ThresholdTest):
             figures=test_figures,
         )
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
             record for result in results for record in result.values["records"]
         ]

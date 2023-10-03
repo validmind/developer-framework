@@ -1,7 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-TestPlanResult
+TestSuiteResult
 """
 import asyncio
 import json
@@ -15,13 +15,13 @@ import markdown
 import pandas as pd
 from IPython.display import display
 
-from .. import api_client
-from ..utils import NumpyEncoder
-from .dataset import VMDataset
-from .figure import Figure
-from .metric_result import MetricResult
-from .result_summary import ResultSummary
-from .test_result import TestResults
+from ... import api_client
+from ...utils import NumpyEncoder, test_id_to_name
+from ..dataset import VMDataset
+from ..figure import Figure
+from ..test.metric_result import MetricResult
+from ..test.result_summary import ResultSummary
+from ..test.threshold_test_result import ThresholdTestResults
 
 
 async def update_metadata(content_id: str, text: str) -> None:
@@ -59,10 +59,10 @@ def plot_figures(figures: List[Figure]) -> None:
 
 
 @dataclass
-class TestPlanResult(ABC):
-    """Base Class for test plan results"""
+class TestSuiteResult(ABC):
+    """Base Class for test suite results"""
 
-    name: str = "TestPlanResult"
+    name: str = "TestSuiteResult"
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
@@ -144,9 +144,9 @@ class TestPlanResult(ABC):
 
 
 @dataclass
-class TestPlanFailedResult(TestPlanResult):
+class TestSuiteFailedResult(TestSuiteResult):
     """
-    Result wrapper for test plans that fail to load or run properly
+    Result wrapper for test suites that fail to load or run properly
     """
 
     name: str = "Failed"
@@ -154,7 +154,7 @@ class TestPlanFailedResult(TestPlanResult):
     message: str = None
 
     def __repr__(self) -> str:
-        return f'TestPlanFailedResult(result_id="{self.result_id}")'
+        return f'TestSuiteFailedResult(result_id="{self.result_id}")'
 
     def _to_widget(self):
         return widgets.HTML(
@@ -166,9 +166,9 @@ class TestPlanFailedResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanDatasetResult(TestPlanResult):
+class TestSuiteDatasetResult(TestSuiteResult):
     """
-    Result wrapper for datasets that run as part of a test plan
+    Result wrapper for datasets that run as part of a test suite
     """
 
     name: str = "Metric"
@@ -176,7 +176,7 @@ class TestPlanDatasetResult(TestPlanResult):
     dataset: VMDataset = None
 
     def __repr__(self) -> str:
-        return f'TestPlanDatasetResult(result_id="{self.result_id}")'
+        return f'TestSuiteDatasetResult(result_id="{self.result_id}")'
 
     def _to_widget(self):
         return widgets.HTML(value=self.dataset.df.describe().to_html())
@@ -186,9 +186,9 @@ class TestPlanDatasetResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanMetricResult(TestPlanResult):
+class TestSuiteMetricResult(TestSuiteResult):
     """
-    Result wrapper for metrics that run as part of a test plan
+    Result wrapper for metrics that run as part of a test suite
     """
 
     name: str = "Metric"
@@ -297,14 +297,14 @@ class TestPlanMetricResult(TestPlanResult):
 
 
 @dataclass
-class TestPlanTestResult(TestPlanResult):
+class TestSuiteThresholdTestResult(TestSuiteResult):
     """
-    Result wrapper for test results produced by the tests that run as part of a test plan
+    Result wrapper for test results produced by the tests that run as part of a test suite
     """
 
     name: str = "Threshold Test"
     figures: Optional[List[Figure]] = None
-    test_results: TestResults = None
+    test_results: ThresholdTestResults = None
 
     def __repr__(self) -> str:
         if self.test_results:
@@ -328,9 +328,10 @@ class TestPlanTestResult(TestPlanResult):
 
         test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
 
+        test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h2>{" ".join(self.test_results.test_name.split("_")).title()} {"✅" if self.test_results.passed else "❌"}</h2>
+            <h2>{test_title} {"✅" if self.test_results.passed else "❌"}</h2>
             """
         )
 

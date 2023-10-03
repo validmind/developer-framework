@@ -21,7 +21,7 @@ from .client_config import client_config
 from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
-from .vm_models import Figure, Metric, TestResults, VMDataset
+from .vm_models import Figure, Metric, ThresholdTestResults, VMDataset
 
 # TODO: can't import types from vm_models because of circular dependency
 
@@ -377,7 +377,7 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
 
 
 async def log_test_result(
-    result: TestResults, dataset_type: str = "training"
+    result: ThresholdTestResults, dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -385,7 +385,7 @@ async def log_test_result(
     can also be called directly if the user wants to run tests on their own.
 
     Args:
-        result (validmind.TestResults): A TestResults object
+        result (validmind.ThresholdTestResults): A ThresholdTestResults object
         dataset_type (str, optional): The type of dataset. Can be one of
             "training", "test", or "validation". Defaults to "training".
 
@@ -407,7 +407,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[TestResults], dataset_type: str = "training"
+    results: List[ThresholdTestResults], dataset_type: str = "training"
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
@@ -415,7 +415,7 @@ def log_test_results(
     running tests but can also be called directly if the user wants to run tests on their own.
 
     Args:
-        results (list): A list of TestResults objects
+        results (list): A list of ThresholdTestResults objects
         dataset_type (str, optional): The type of dataset. Can be one of "training",
           "test", or "validation". Defaults to "training".
 

@@ -9,12 +9,12 @@ avoid confusion with the "tests" in the general data science/modeling sense.
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
-from ..utils import clean_docstring
-from .figure import Figure
+from ...utils import clean_docstring
+from ..figure import Figure
+from ..test_suite.result import TestSuiteThresholdTestResult
 from .result_summary import ResultSummary, ResultTable
 from .test import Test
-from .test_plan_result import TestPlanTestResult
-from .test_result import TestResult, TestResults
+from .threshold_test_result import ThresholdTestResult, ThresholdTestResults
 
 
 @dataclass
@@ -30,9 +30,9 @@ class ThresholdTest(Test):
     category: ClassVar[str]  # should be overridden by test classes
 
     # Instance Variables
-    result: TestResults = None  # populated by cache_results() method
+    result: ThresholdTestResults = None  # populated by cache_results() method
 
-    def summary(self, results: Optional[List[TestResult]], all_passed: bool):
+    def summary(self, results: Optional[List[ThresholdTestResult]], all_passed: bool):
         """
         Return the threshold test summary. May be overridden by subclasses. Defaults to showing
         a table with test_name(optional), column and passed.
@@ -60,37 +60,40 @@ class ThresholdTest(Test):
 
     def cache_results(
         self,
-        test_results_list: List[TestResult],
+        test_results_list: List[ThresholdTestResult],
         passed: bool,
         figures: Optional[List[Figure]] = None,
     ):
         """
-        Cache the individual results of the threshold test as a list of TestResult objects
+        Cache the individual results of the threshold test as a list of ThresholdTestResult objects
 
         Args:
-            result (List[TestResult]): The results of the threshold test
+            result (List[ThresholdTestResult]): The results of the threshold test
             passed (bool): Whether the threshold test passed or failed
 
         Returns:
-            TestPlanResult: The test plan result object
+            TestSuiteResult: The test suite result object
         """
         # Rename to self.result
         # At a minimum, send the test description
         result_metadata = [
             {
-                "content_id": f"test_description:{self.name}",
+                "content_id": f"test_description:{self.test_id}",
                 "text": clean_docstring(self.description()),
             }
         ]
 
         result_summary = self.summary(test_results_list, passed)
 
-        self.result = TestPlanTestResult(
-            result_id=self.name,
+        self.result = TestSuiteThresholdTestResult(
+            result_id=self.test_id,
             result_metadata=result_metadata,
-            test_results=TestResults(
+            test_results=ThresholdTestResults(
                 category=self.category,
-                test_name=self.name,
+                # test_name=self.name,
+                # Now using the fully qualified test ID as `test_name`.
+                # Ideally the backend is updated to use `test_id` instead of `test_name`.
+                test_name=self.test_id,
                 ref_id=self._ref_id,
                 params=self.params,
                 passed=passed,
@@ -99,7 +102,7 @@ class ThresholdTest(Test):
             ),
         )
 
-        # Allow test results to attach figures to the test plan result
+        # Allow test results to attach figures to the test suite result
         if figures:
             self.result.figures = figures
 

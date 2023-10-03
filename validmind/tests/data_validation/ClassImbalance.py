@@ -9,13 +9,14 @@ from typing import List
 import pandas as pd
 import plotly.graph_objs as go
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import (
     Figure,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
     VMDataset,
 )
 
@@ -70,7 +71,7 @@ class ClassImbalance(ThresholdTest):
         "tags": ["tabular_data", "binary_classification", "multiclass_classification"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         return ResultSummary(
             results=[
                 ResultTable(
@@ -95,12 +96,14 @@ class ClassImbalance(ThresholdTest):
         imbalance_percentages = self.dataset.df[target_column].value_counts(
             normalize=True
         )
+        if len(imbalance_percentages) > 10:
+            raise SkipTestError(
+                f"Skipping {self.__class__.__name__} test as"
+                "target column as more than 10 classes"
+            )
 
         classes = list(imbalance_percentages.index)
         percentages = list(imbalance_percentages.values)
-
-        # Calculating the total number of rows
-        # total_rows = sum(percentages)
 
         # Checking class imbalance
         imbalanced_classes = []
@@ -120,7 +123,7 @@ class ClassImbalance(ThresholdTest):
         resultset = pd.DataFrame(imbalanced_classes)
         tests_failed = all(resultset["Pass/Fail"] == "Pass")
         results = [
-            TestResult(
+            ThresholdTestResult(
                 column=target_column,
                 passed=tests_failed,
                 values=resultset.to_dict(orient="records"),

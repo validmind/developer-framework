@@ -7,8 +7,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -56,7 +56,7 @@ class UniqueRows(ThresholdTest):
         "tags": ["tabular_data"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The unique rows test returns results like these:
         [{"values": {"n_unique": 10000, "p_unique": 1.0}, "column": "Exited", "passed": true}]
@@ -86,7 +86,7 @@ class UniqueRows(ThresholdTest):
 
         unique_rows = self.dataset.df.nunique()
         results = [
-            TestResult(
+            ThresholdTestResult(
                 column=col,
                 passed=(unique_rows[col] / rows) < self.params["min_percent_threshold"],
                 values={
