@@ -14,6 +14,15 @@ from .test_suite import TestSuiteSection, TestSuiteTest
 logger = get_logger(__name__)
 
 
+def id_to_name(id: str) -> str:
+    # replace underscores, hyphens etc with spaces
+    name = id.replace("_", " ").replace("-", " ").replace(".", " ")
+    # capitalize each word
+    name = " ".join([word.capitalize() for word in name.split(" ")])
+
+    return name
+
+
 @dataclass
 class TestSuiteSectionSummary:
 
@@ -104,7 +113,7 @@ class TestSuiteSummary:
                     tests=section.tests,
                 ).build_summary()
             )
-            titles.append(section.name)
+            titles.append(section.section_id)
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
 
