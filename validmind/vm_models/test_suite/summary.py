@@ -55,7 +55,9 @@ class TestSuiteSectionSummary:
     def _build_summary(self):
         self._widgets = []
 
-        self._add_description()
+        if self.description:
+            self._add_description()
+
         self._add_tests_summary()
 
         self.summary = widgets.VBox(self._widgets)
@@ -120,6 +122,11 @@ class TestSuiteSummary:
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
 
+    def _add_top_level_section_summary(self):
+        self._widgets.append(
+            TestSuiteSectionSummary(tests=self.sections[0].tests).summary
+        )
+
     def _add_footer(self):
         footer = """
         <style>
@@ -141,7 +148,10 @@ class TestSuiteSummary:
         self._add_title()
         self._add_results_link()
         self._add_description()
-        self._add_sections_summary()
+        if len(self.sections) == 1:
+            self._add_top_level_section_summary()
+        else:
+            self._add_sections_summary()
 
         self.summary = widgets.VBox(self._widgets)
 
