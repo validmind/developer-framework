@@ -1,7 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 import ipywidgets as widgets
 from IPython.display import display
@@ -26,7 +26,7 @@ def id_to_name(id: str) -> str:
 @dataclass
 class TestSuiteSectionSummary:
 
-    description: str
+    description: Optional[str] = None
     tests: List[TestSuiteTest]
 
     _widgets: List[widgets.Widget] = None
