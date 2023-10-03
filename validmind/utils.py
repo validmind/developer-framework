@@ -4,6 +4,7 @@ import asyncio
 import difflib
 import json
 import math
+import re
 from typing import Any
 
 import matplotlib.pylab as pylab
@@ -333,9 +334,16 @@ def fuzzy_match(string: str, search_string: str, threshold=0.7):
 
 
 def test_id_to_name(test_id: str):
-    return "".join(
-        [
-            " " + char if char.isupper() and i != 0 else char
-            for i, char in enumerate(test_id.split(".")[-1])
-        ]
+    """Convert a test ID to a human-readable name"""
+    # Extract the last part of the ID string
+    last_part = test_id.split(".")[-1]
+
+    # Use a regular expression to find words and acronyms in the CamelCase string
+    words = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)", last_part)
+
+    # Join the words with spaces and capitalize the first letter of each word, keeping acronyms unchanged
+    title = " ".join(
+        [word.capitalize() if not word.isupper() else word for word in words]
     )
+
+    return title

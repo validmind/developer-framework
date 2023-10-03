@@ -331,7 +331,7 @@ class TestSuiteThresholdTestResult(TestSuiteResult):
         test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h2>{" ".join(test_title)} {"✅" if self.test_results.passed else "❌"}</h2>
+            <h2>{test_title} {"✅" if self.test_results.passed else "❌"}</h2>
             """
         )
 
