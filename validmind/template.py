@@ -228,7 +228,7 @@ def _create_template_test_suite(template, section=None):
         f"{template['template_name'].title().replace(' ', '')}TestSuite",
         (TestSuite,),
         {
-            "name": template["template_id"],
+            "suite_id": template["template_id"],
             "tests": [
                 section_dict
                 for section in section_tree
