@@ -15,8 +15,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
     VMDataset,
 )
 
@@ -71,7 +71,7 @@ class ClassImbalance(ThresholdTest):
         "tags": ["tabular_data", "binary_classification", "multiclass_classification"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         return ResultSummary(
             results=[
                 ResultTable(
@@ -123,7 +123,7 @@ class ClassImbalance(ThresholdTest):
         resultset = pd.DataFrame(imbalanced_classes)
         tests_failed = all(resultset["Pass/Fail"] == "Pass")
         results = [
-            TestResult(
+            ThresholdTestResult(
                 column=target_column,
                 passed=tests_failed,
                 values=resultset.to_dict(orient="records"),

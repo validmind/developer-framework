@@ -13,8 +13,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -142,7 +142,7 @@ class TimeSeriesOutliers(ThresholdTest):
             outliers_table["Date"] = outliers_table["Date"].astype(str)
 
         test_results.append(
-            TestResult(
+            ThresholdTestResult(
                 test_name="outliers",
                 passed=passed,
                 values=outliers_table.to_dict(orient="list"),

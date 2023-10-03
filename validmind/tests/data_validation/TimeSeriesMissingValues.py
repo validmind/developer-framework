@@ -11,8 +11,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -101,7 +101,7 @@ class TimeSeriesMissingValues(ThresholdTest):
         rows = df.shape[0]
         missing = df.isna().sum()
         test_results = [
-            TestResult(
+            ThresholdTestResult(
                 column=col,
                 passed=missing[col] < min_threshold,
                 values={"n_missing": missing[col], "p_missing": missing[col] / rows},

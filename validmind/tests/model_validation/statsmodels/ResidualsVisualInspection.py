@@ -82,7 +82,7 @@ class ResidualsVisualInspection(Metric):
         """
         Get the seasonal decomposition residuals from the test
         context or re-compute them if not available. This allows
-        running the test individually or as part of a test plan.
+        running the test individually or as part of a test suite.
         """
         sd_all_columns = self.test_context.get_context_data("seasonal_decompose")
         if sd_all_columns is None or column not in sd_all_columns:

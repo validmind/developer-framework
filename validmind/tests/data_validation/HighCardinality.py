@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -63,7 +63,7 @@ class HighCardinality(ThresholdTest):
         "tags": ["tabular_data", "data_quality", "categorical_data"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The high cardinality test returns results like these:
         [{"values": {"n_distinct": 0, "p_distinct": 0.0}, "column": "Exited", "passed": true}]
@@ -110,7 +110,7 @@ class HighCardinality(ThresholdTest):
             passed = n_distinct < num_threshold
 
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=passed,
                     values={

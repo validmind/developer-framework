@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -69,7 +69,7 @@ class TooManyZeroValues(ThresholdTest):
         "tags": ["tabular_data"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The zeros test returns results like these:
         [{"values": {"n_zeros": 10000, "p_zeros": 1.0}, "column": "Exited", "passed": true}]
@@ -112,7 +112,7 @@ class TooManyZeroValues(ThresholdTest):
             p_zeros = n_zeros / rows
 
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=p_zeros < self.params["max_percent_threshold"],
                     values={

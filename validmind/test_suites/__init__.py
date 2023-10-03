@@ -6,30 +6,60 @@ Entrypoint for test suites.
 import pandas as pd
 
 from ..logging import get_logger
-from ..test_plans import get_by_id as get_test_plan
 from ..tests import load_test
-from ..utils import format_dataframe
+from ..utils import format_dataframe, test_id_to_name
 from ..vm_models import TestSuite
-from .test_suites import (
+from .classifier import (
+    ClassifierDiagnosis,
     ClassifierFullSuite,
+    ClassifierMetrics,
     ClassifierModelValidation,
-    LLMClassifierFullSuite,
-    NLPClassifierFullSuite,
+    ClassifierPerformance,
+)
+from .llm import LLMClassifierFullSuite, PromptValidation
+from .nlp import NLPClassifierFullSuite
+from .statsmodels_timeseries import (
+    RegressionModelDescription,
+    RegressionModelsEvaluation,
+)
+from .tabular_datasets import (
+    TabularDataQuality,
     TabularDataset,
+    TabularDatasetDescription,
+)
+from .text_data import TextDataQuality
+from .time_series import (
+    TimeSeriesDataQuality,
     TimeSeriesDataset,
     TimeSeriesModelValidation,
+    TimeSeriesMultivariate,
+    TimeSeriesSensitivity,
+    TimeSeriesUnivariate,
 )
 
 logger = get_logger(__name__)
 
 core_test_suites = {
-    "classifier_full_suite": ClassifierFullSuite,
-    "classifier_model_validation": ClassifierModelValidation,
-    "llm_classifier_full_suite": LLMClassifierFullSuite,
-    "nlp_classifier_full_suite": NLPClassifierFullSuite,
-    "tabular_dataset": TabularDataset,
-    "time_series_dataset": TimeSeriesDataset,
-    "time_series_model_validation": TimeSeriesModelValidation,
+    ClassifierDiagnosis.suite_id: ClassifierDiagnosis,
+    ClassifierFullSuite.suite_id: ClassifierFullSuite,
+    ClassifierMetrics.suite_id: ClassifierMetrics,
+    ClassifierModelValidation.suite_id: ClassifierModelValidation,
+    ClassifierPerformance.suite_id: ClassifierPerformance,
+    LLMClassifierFullSuite.suite_id: LLMClassifierFullSuite,
+    PromptValidation.suite_id: PromptValidation,
+    NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
+    RegressionModelDescription.suite_id: RegressionModelDescription,
+    RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
+    TabularDataset.suite_id: TabularDataset,
+    TabularDatasetDescription.suite_id: TabularDatasetDescription,
+    TabularDataQuality.suite_id: TabularDataQuality,
+    TextDataQuality.suite_id: TextDataQuality,
+    TimeSeriesDataQuality.suite_id: TimeSeriesDataQuality,
+    TimeSeriesDataset.suite_id: TimeSeriesDataset,
+    TimeSeriesModelValidation.suite_id: TimeSeriesModelValidation,
+    TimeSeriesMultivariate.suite_id: TimeSeriesMultivariate,
+    TimeSeriesSensitivity.suite_id: TimeSeriesSensitivity,
+    TimeSeriesUnivariate.suite_id: TimeSeriesUnivariate,
 }
 
 # These test suites can be added by the user
@@ -44,6 +74,19 @@ def _get_all_test_suites():
     taking precedence, i.e. allowing overriding of core test suites
     """
     return {**core_test_suites, **custom_test_suites}
+
+
+def _get_test_suite_test_ids(test_suite_class: str):
+    test_ids = []
+
+    for item in test_suite_class.tests:
+        if isinstance(item, str):
+            test_ids.append(item)
+        elif isinstance(item, dict):
+            for test_id in item["section_tests"]:
+                test_ids.append(test_id)
+
+    return test_ids
 
 
 def get_by_id(test_suite_id: str):
@@ -67,13 +110,13 @@ def list_suites(pretty: bool = True):
         return list(all_test_suites.keys())
 
     table = []
-    for name, test_suite in all_test_suites.items():
+    for suite_id, test_suite in all_test_suites.items():
         table.append(
             {
-                "ID": name,
+                "ID": suite_id,
                 "Name": test_suite.__name__,
                 "Description": test_suite.__doc__.strip(),
-                "Test Plans": ", ".join(test_suite.test_plans),
+                "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
             }
         )
 
@@ -101,30 +144,44 @@ def describe_suite(test_suite_id: str, verbose=False):
                         "ID": test_suite_id,
                         "Name": test_suite.__name__,
                         "Description": test_suite.__doc__.strip(),
-                        "Test Plans": ", ".join(test_suite.test_plans),
+                        "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
                     }
                 ]
             )
         )
 
-    df = pd.DataFrame()
+    tests = []
 
-    for test_plan_id in test_suite.test_plans:
-        test_plan = get_test_plan(test_plan_id)
-        for test_id in test_plan.tests:
-            test = load_test(test_id)
-            row = {
-                "Test Suite ID": test_suite_id,
-                "Test Suite Name": test_suite.__name__,
-                "Test Plan ID": test_plan_id,
-                "Test Plan Name": test_plan.__name__,
-                "Test ID": test_id,
-                "Test Name": test.__name__,
-                "Test Type": test.test_type,
-            }
-            df = pd.concat([df, pd.DataFrame([row])])
+    for item in test_suite.tests:
+        if isinstance(item, str):
+            test = load_test(item)
+            tests.append(
+                {
+                    "Test Suite ID": test_suite_id,
+                    "Test Suite Name": test_suite.__name__,
+                    "Test Suite Section": "",
+                    "Test ID": item,
+                    "Test Name": test.__name__,
+                    "Test Type": test.test_type,
+                }
+            )
+        elif isinstance(item, dict):
+            for test_id in item["section_tests"]:
+                test = load_test(test_id)
+                tests.append(
+                    {
+                        "Test Suite ID": test_suite_id,
+                        "Test Suite Name": test_suite.__name__,
+                        "Test Suite Section": item["section_id"],
+                        "Test ID": test_id,
+                        "Test Name": test_id_to_name(test_id),
+                        "Test Type": test.test_type,
+                    }
+                )
+        else:
+            raise ValueError(f"Invalid test suite item: {item}")
 
-    return format_dataframe(df.reset_index(drop=True))
+    return format_dataframe(pd.DataFrame(tests).reset_index(drop=True))
 
 
 # TODO: remove this... here for backwards compatibility

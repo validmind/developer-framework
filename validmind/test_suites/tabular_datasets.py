@@ -1,22 +1,19 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-Test plan for tabular datasets
-
-Ideal setup is to have the API client to read a
-custom test plan from the project's configuration
+Test suites for tabular datasets
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class TabularDatasetDescription(TestPlan):
+class TabularDatasetDescription(TestSuite):
     """
-    Test plan to extract metadata and descriptive
+    Test suite to extract metadata and descriptive
     statistics from a tabular dataset
     """
 
-    name = "tabular_dataset_description"
+    suite_id = "tabular_dataset_description"
     tests = [
         "validmind.data_validation.DatasetMetadata",
         "validmind.data_validation.DatasetDescription",
@@ -25,12 +22,12 @@ class TabularDatasetDescription(TestPlan):
     ]
 
 
-class TabularDataQuality(TestPlan):
+class TabularDataQuality(TestSuite):
     """
-    Test plan for data quality on tabular datasets
+    Test suite for data quality on tabular datasets
     """
 
-    name = "tabular_data_quality"
+    suite_id = "tabular_data_quality"
     tests = [
         "validmind.data_validation.ClassImbalance",
         "validmind.data_validation.Duplicates",
@@ -43,14 +40,21 @@ class TabularDataQuality(TestPlan):
     ]
 
 
-class TimeSeriesDataQuality(TestPlan):
+class TabularDataset(TestSuite):
     """
-    Test plan for data quality on time series datasets
+    Test suite for tabular datasets.
     """
 
-    name = "time_series_data_quality"
+    suite_id = "tabular_dataset"
     tests = [
-        "validmind.data_validation.TimeSeriesOutliers",
-        "validmind.data_validation.TimeSeriesMissingValues",
-        "validmind.data_validation.TimeSeriesFrequency",
+        {
+            "section_id": TabularDatasetDescription.suite_id,
+            "section_description": TabularDatasetDescription.__doc__,
+            "section_tests": TabularDatasetDescription.tests,
+        },
+        {
+            "section_id": TabularDataQuality.suite_id,
+            "section_description": TabularDataQuality.__doc__,
+            "section_tests": TabularDataQuality.tests,
+        },
     ]

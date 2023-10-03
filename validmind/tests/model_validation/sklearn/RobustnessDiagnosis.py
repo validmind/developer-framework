@@ -15,8 +15,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -183,7 +183,7 @@ class RobustnessDiagnosis(ThresholdTest):
             ),
         )
         test_results.append(
-            TestResult(
+            ThresholdTestResult(
                 test_name="accuracy",
                 column=features_list,
                 passed=True,
@@ -194,7 +194,7 @@ class RobustnessDiagnosis(ThresholdTest):
             test_results, passed=df["Passed"].all(), figures=test_figures
         )
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
             record for result in results for record in result.values["records"]
         ]

@@ -33,12 +33,12 @@ summarize_test_result <- function(result) {
 summarize_result <- function(result) {
   result_class <- class(result)[[1]]
 
-  if (isTRUE(grepl("TestPlanDatasetResult", result_class))) {
+  if (isTRUE(grepl("TestSuiteDatasetResult", result_class))) {
     # Ignore for now
-    # print("TestPlanDatasetResult")
-  } else if (isTRUE(grepl("TestPlanMetricResult", result_class))) {
+    # print("TestSuiteDatasetResult")
+  } else if (isTRUE(grepl("TestSuiteMetricResult", result_class))) {
     summarize_metric_result(result)
-  } else if (isTRUE(grepl("TestPlanTestResult", result_class))) {
+  } else if (isTRUE(grepl("TestSuiteThresholdTestResult", result_class))) {
     summarize_test_result(result)
   }
 }

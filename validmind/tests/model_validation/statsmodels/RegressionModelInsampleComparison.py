@@ -5,8 +5,9 @@ from dataclasses import dataclass
 import pandas as pd
 from sklearn.metrics import mean_squared_error, r2_score
 
-from validmind.statsutils import adj_r2_score
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+from .statsutils import adj_r2_score
 
 
 @dataclass

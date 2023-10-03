@@ -1,21 +1,18 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-Test plan for text datasets
-
-Ideal setup is to have the API client to read a
-custom test plan from the project's configuration
+Test suites for text datasets
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class TextDataQuality(TestPlan):
+class TextDataQuality(TestSuite):
     """
-    Test plan for data quality on text data
+    Test suite for data quality on text data
     """
 
-    name = "text_data_quality"
+    suite_id = "text_data_quality"
     tests = [
         "validmind.data_validation.ClassImbalance",
         "validmind.data_validation.Duplicates",

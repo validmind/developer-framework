@@ -11,8 +11,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -79,7 +79,7 @@ class TrainingTestDegradation(ThresholdTest):
         "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The training test degradation test returns results like these:
         [{"values":
@@ -126,7 +126,7 @@ class TrainingTestDegradation(ThresholdTest):
 
             passed = degradation < self.params["max_threshold"]
             test_results.append(
-                TestResult(
+                ThresholdTestResult(
                     test_name=metric,
                     passed=passed,
                     values={
