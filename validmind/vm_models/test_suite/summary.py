@@ -96,7 +96,7 @@ class TestSuiteSummary:
         </h3>
         """.strip()
 
-        self._widgets.append(results_link)
+        self._widgets.append(widgets.HTML(value=results_link))
 
     def _add_description(self):
         description = f'<div class="result">{clean_docstring(self.description)}</div>'
