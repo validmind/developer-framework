@@ -12,6 +12,9 @@ logger = get_logger(__name__)
 
 class AutoSeasonality(Metric):
     """
+    Automatically identifies and quantifies optimal seasonality in time series data to improve forecasting model
+    performance.
+
     **Purpose:**
     The AutoSeasonality metric's purpose is to automatically detect and identify the best seasonal order or period for
     each variable in a time series dataset. This detection helps to quantify periodic patterns and seasonality that

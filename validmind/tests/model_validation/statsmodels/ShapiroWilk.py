@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class ShapiroWilk(Metric):
     """
+    Evaluates feature-wise normality of training data using the Shapiro-Wilk test.
+
     **Purpose**: The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard
     normal distribution. This analysis is crucial in machine learning modeling because the normality of the data can
     profoundly impact the performance of the model. This metric is especially useful in evaluating various features of

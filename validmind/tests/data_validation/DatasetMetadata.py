@@ -10,6 +10,8 @@ from validmind.vm_models.test_suite.result import TestSuiteDatasetResult
 @dataclass
 class DatasetMetadata(Test):
     """
+    Collects and logs essential metadata of training datasets for transparency in model validation.
+
     **Purpose**: The `DatasetMetadata` test is primarily aimed at collecting and logging essential descriptive
     statistics related to the training datasets. This test generates essential metadata such as the types of tasks
     (classification, regression, text_classification, text_summarization) and tags (tabular_data, time_series_data,

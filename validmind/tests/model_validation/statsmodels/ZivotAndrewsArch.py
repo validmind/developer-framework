@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class ZivotAndrewsArch(Metric):
     """
+    Evaluates the order of integration and stationarity of time series data using Zivot-Andrews unit root test.
+
     **Purpose**: The Zivot-Andrews Arch metric is used to evaluate the order of integration for a time series data in a
     machine learning model. It's designed to test for stationarity, a crucial aspect in time series analysis where data
     points are not dependent on time. Stationarity means that the statistical properties such as mean, variance and

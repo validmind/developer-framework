@@ -13,6 +13,9 @@ from .statsutils import adj_r2_score
 @dataclass
 class RegressionModelInsampleComparison(Metric):
     """
+    Evaluates and compares in-sample performance of multiple regression models using R-Squared, Adjusted R-Squared,
+    MSE, and RMSE.
+
     **Purpose**: The RegressionModelInsampleComparison test metric is utilized to evaluate and compare the performance
     of multiple regression models trained on the same dataset. Key performance indicators for this comparison include
     statistics related to the goodness of fit - R-Squared, Adjusted R-Squared, Mean Squared Error (MSE), and Root Mean

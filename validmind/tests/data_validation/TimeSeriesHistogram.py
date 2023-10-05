@@ -9,6 +9,8 @@ from validmind.vm_models import Figure, Metric
 
 class TimeSeriesHistogram(Metric):
     """
+    Visualizes distribution of time-series data using histograms and Kernel Density Estimation (KDE) lines.
+
     **Purpose**: The purpose of this metric is to perform a histogram analysis on time-series data. It primarily
     assesses the distribution of values within a dataset over a period of time, typically used for regression tasks.
     The types of data that this metric can be applicable to are diverse, ranging from internet traffic and stock prices

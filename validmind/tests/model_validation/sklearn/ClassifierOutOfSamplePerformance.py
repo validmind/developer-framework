@@ -8,6 +8,8 @@ from .ClassifierPerformance import ClassifierPerformance
 @dataclass
 class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     """
+    Assesses ML model's performance on out-of-sample data to measure generalization and guard against overfitting.
+
     **Purpose**: This test is designed to assess the performance of a Machine Learning model on out-of-sample data,
     specifically data not utilized during the training phase. The performance metrics used in the test (accuracy,
     precision, recall, and F1 score) serve to measure the model's generalization capability towards unseen data. The

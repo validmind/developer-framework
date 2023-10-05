@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ScorecardProbabilitiesHistogram(Metric):
     """
+    Evaluates risk classification of a model by visualizing the distribution of default probability across score
+    buckets.
+
     **Purpose**: The Scorecard Probabilities Histogram, a specific metric used within the credit risk domain, is
     designed to evaluate and visualize risk classification of a model. It aims at examining the distribution of the
     probability of default across varied score buckets, with the score buckets being categories that entities (e.g.,

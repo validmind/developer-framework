@@ -14,6 +14,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class WOEBinPlots(Metric):
     """
+    Generates visualizations of Weight of Evidence (WoE) and Information Value (IV) for understanding predictive power
+    of categorical variables in a data set.
+
     **Purpose**: This test is designed to visualize the Weight of Evidence (WoE) and Information Value (IV) for
     categorical variables in a provided dataset. By showcasing the data distribution across different categories of
     each feature, it aids in understanding each variable's predictive power in the context of a classification-based

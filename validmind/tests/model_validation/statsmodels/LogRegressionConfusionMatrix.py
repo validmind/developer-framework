@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class LogRegressionConfusionMatrix(Metric):
     """
+    Generates a confusion matrix for logistic regression model performance, utilizing thresholded probabilities for
+    classification assessments.
+
     **Purpose**: The Logistic Regression Confusion Matrix is a metric used to measure the performance of a logistic
     regression classification model. This metric is particularly useful for scenarios where a model's predictions are
     formulated by thresholding probabilities. The main advantage of this approach is that it includes true positives,

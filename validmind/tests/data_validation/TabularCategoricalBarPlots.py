@@ -9,6 +9,8 @@ from validmind.vm_models import Figure, Metric
 
 class TabularCategoricalBarPlots(Metric):
     """
+    Generates and visualizes bar plots for each category in categorical features to evaluate dataset's composition.
+
     **Purpose**: The purpose of this metric is to visually analyze categorical data using bar plots. It is intended to
     evaluate the dataset's composition by displaying the counts of each category in each categorical feature.
 

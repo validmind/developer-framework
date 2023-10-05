@@ -13,6 +13,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RougeMetrics(Metric):
     """
+    Evaluates the quality of machine-generated text using various ROUGE metrics, and visualizes the results.
+
     **Purpose**: The ROUGE, or Recall-Oriented Understudy for Gisting Evaluation, is a metric employed to assess the
     quality of machine-generated text. This evaluation technique is mainly used in natural language processing tasks,
     such as text summarization, machine translation, and text generation. Its goal is to measure how well the

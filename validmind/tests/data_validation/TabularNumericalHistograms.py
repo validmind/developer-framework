@@ -8,6 +8,9 @@ from validmind.vm_models import Figure, Metric
 
 class TabularNumericalHistograms(Metric):
     """
+    Generates histograms for each numerical feature in a dataset to provide visual insights into data distribution and
+    detect potential issues.
+
     **Purpose**: The purpose of this test is to provide visual analysis of numerical data through the generation of
     histograms for each numerical feature in the dataset. Histograms aid in the exploratory analysis of data, offering
     insight into the distribution of the data, skewness, presence of outliers, and central tendencies. It helps in

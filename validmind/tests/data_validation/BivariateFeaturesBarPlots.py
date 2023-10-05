@@ -12,6 +12,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateFeaturesBarPlots(Metric):
     """
+    Generates visual bar plots to analyze the relationship between paired features within categorical data in the model.
+
     **Purpose**: The BivariateFeaturesBarPlots metric is intended to perform a visual analysis of categorical data
     within the model. The goal is to assess and understand the specific relationships between various feature pairs,
     while simultaneously highlighting the model's target variable. This form of bivariate plotting is immensely

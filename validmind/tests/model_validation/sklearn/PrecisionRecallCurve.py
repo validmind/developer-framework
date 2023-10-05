@@ -13,6 +13,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PrecisionRecallCurve(Metric):
     """
+    Evaluates the precision-recall trade-off for binary classification models and visualizes the Precision-Recall curve.
+
     **Purpose**: The Precision Recall Curve metric is intended to evaluate the trade-off between precision and recall
     in classification models, particularly binary classification models. It assesses the model's capacity to produce
     accurate results (high precision), as well as its ability to capture a majority of all positive instances (high

@@ -8,6 +8,9 @@ from validmind.vm_models import Figure, Metric
 
 class SpreadPlot(Metric):
     """
+    Visualizes the spread relationship between pairs of time-series variables in a dataset, thereby aiding in
+    identification of potential correlations.
+
     **Purpose**:
     The SpreadPlot metric is intended to graphically illustrate and analyse the relationships between pairs of time
     series variables within a given dataset. This facilitated understanding helps in identifying and assessing

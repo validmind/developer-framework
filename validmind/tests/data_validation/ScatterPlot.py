@@ -8,6 +8,8 @@ from validmind.vm_models import Figure, Metric
 
 class ScatterPlot(Metric):
     """
+    Creates a scatter plot matrix to visually analyze feature relationships, patterns, and outliers in a dataset.
+
     **Purpose**: The ScatterPlot metric is designed to offer a visual analysis of a given dataset by constructing a
     scatter plot matrix encapsulating all the dataset's features (or columns). Its primary function lies in unearthing
     relationships, patterns, or outliers across different features, thus providing both quantitative and qualitative

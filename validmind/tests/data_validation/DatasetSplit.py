@@ -5,6 +5,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 class DatasetSplit(Metric):
     """
+    Evaluates and visualizes the distribution proportions among training, testing, and validation datasets of an ML
+    model.
+
     **Purpose:**
     The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
     validation datasets, if available, within a given machine learning model. The main purpose is to assess whether the

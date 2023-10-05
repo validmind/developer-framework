@@ -8,6 +8,8 @@ from validmind.vm_models import Figure, Metric
 
 class TabularDateTimeHistograms(Metric):
     """
+    Generates histograms to provide graphical insight into the distribution of time intervals in model's datetime data.
+
     **Purpose**: The `TabularDateTimeHistograms` metric is designed to provide graphical insight into the distribution
     of time intervals in a machine learning model's datetime data. By plotting histograms of differences between
     consecutive date entries in all datetime variables, it enables an examination of the underlying pattern of time

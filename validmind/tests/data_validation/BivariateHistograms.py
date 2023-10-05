@@ -11,6 +11,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateHistograms(Metric):
     """
+    Generates bivariate histograms for paired features, aiding in visual inspection of categorical variables'
+    distributions and correlations.
+
     **Purpose**: This metric, dubbed BivariateHistograms, is primarily used for visual data analysis via the inspection
     of variable distribution, specifically categorical variables. Its main objective is to ascertain any potential
     correlations between these variables and distributions within each defined target class. This is achieved by

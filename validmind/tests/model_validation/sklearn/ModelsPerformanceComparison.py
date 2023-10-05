@@ -14,6 +14,9 @@ from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_sco
 @dataclass
 class ModelsPerformanceComparison(ClassifierPerformance):
     """
+    Evaluates and compares the performance of multiple Machine Learning models using various metrics like accuracy,
+    precision, recall, and F1 score.
+
     **Purpose**: This metric test aims to evaluate and compare the performance of various Machine Learning models using
     test data. It employs multiple metrics such as accuracy, precision, recall, and the F1 score, among others, to
     assess model performance and assist in selecting the most effective model for the designated task.

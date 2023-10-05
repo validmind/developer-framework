@@ -10,6 +10,8 @@ from validmind.vm_models import ThresholdTest, ThresholdTestResult
 @dataclass
 class ADFTest(ThresholdTest):
     """
+    Assesses the stationarity of time series data using the Augmented Dickey-Fuller (ADF) test.
+
     **Purpose**: The Augmented Dickey-Fuller (ADF) metric test is designed to evaluate the presence of a unit root in a
     time series. This essentially translates to assessing the stationarity of a time series dataset. This is vital in
     time series analysis, regression tasks, and forecasting, as these often need the data to be stationary.

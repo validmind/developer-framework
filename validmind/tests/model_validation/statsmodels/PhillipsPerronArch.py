@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class PhillipsPerronArch(Metric):
     """
+    Executes Phillips-Perron test to assess the stationarity of time series data in each ML model feature.
+
     **Purpose**: The Phillips-Perron (PP) test is used to establish the order of integration in time series data,
     testing a null hypothesis that a time series is unit-root non-stationary. This is vital in forecasting and
     understanding the stochastic behavior of data within machine learning models. Essentially, the PP test aids in

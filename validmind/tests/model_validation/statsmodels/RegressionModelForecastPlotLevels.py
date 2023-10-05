@@ -12,6 +12,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RegressionModelForecastPlotLevels(Metric):
     """
+    Compares and visualizes forecasted and actual values of regression models on both raw and transformed datasets.
+
     **Purpose:**
     The `RegressionModelForecastPlotLevels` metric is designed to visually assess a series of regression models'
     performance. It achieves this by contrasting the models' forecasts with the observed data from the respective

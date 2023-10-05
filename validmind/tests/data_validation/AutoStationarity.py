@@ -9,6 +9,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 class AutoStationarity(Metric):
     """
+    Automates Augmented Dickey-Fuller test to assess stationarity across multiple time series in a DataFrame.
+
     **Purpose**: The AutoStationarity metric is intended to automatically detect and evaluate the stationary nature of
     each time series in a DataFrame. It incorporates the Augmented Dickey-Fuller (ADF) test, a statistical approach
     used to assess stationarity. Stationarity is a fundamental property suggesting that statistic features like mean

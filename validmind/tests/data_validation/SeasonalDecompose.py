@@ -17,6 +17,9 @@ logger = get_logger(__name__)
 
 class SeasonalDecompose(Metric):
     """
+    Decomposes dataset features into observed, trend, seasonal, and residual components to identify patterns and
+    validate dataset.
+
     **Purpose**: This test utilizes the Seasonal Decomposition of Time Series by Loess (STL) method to decompose a
     dataset into its fundamental components: observed, trend, seasonal, and residuals. The purpose is to identify
     implicit patterns, majorly any seasonality, in the dataset's features which aid in developing a more comprehensive

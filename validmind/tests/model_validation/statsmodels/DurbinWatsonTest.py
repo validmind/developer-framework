@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class DurbinWatsonTest(Metric):
     """
+    Assesses autocorrelation in time series data features using the Durbin-Watson statistic.
+
     **Purpose**: The Durbin-Watson Test metric detects autocorrelation in time series data (where a set of data values
     influences their predecessors). Autocorrelation is a crucial factor for regression tasks as these often assume the
     independence of residuals. A model with significant autocorrelation may give unreliable predictions.

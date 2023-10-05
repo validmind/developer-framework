@@ -13,6 +13,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ROCCurve(Metric):
     """
+    Evaluates binary classification model performance by generating and plotting the Receiver Operating Characteristic
+    (ROC) curve and calculating the Area Under Curve (AUC) score.
+
     **Purpose**:
     The Receiver Operating Characteristic (ROC) curve is designed to evaluate the performance of binary classification
     models. This curve illustrates the balance between the True Positive Rate (TPR) and False Positive Rate (FPR)

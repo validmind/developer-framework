@@ -12,6 +12,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PiTCreditScoresHistogram(Metric):
     """
+    Generates a histogram visualization for observed and predicted credit default scores.
+
     **Purpose**:
     The PiT (Point in Time) Credit Scores Histogram metric is used to evaluate the predictive performance of a credit
     risk assessment model. This metric provides a visual representation of observed versus predicted default scores and

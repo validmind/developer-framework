@@ -16,6 +16,8 @@ from validmind.vm_models import Figure, Metric, VMDataset
 @dataclass
 class Punctuations(Metric):
     """
+    Analyzes and visualizes the frequency distribution of punctuation usage in a given text dataset.
+
     **1. Purpose:** The Punctuations Metric's primary purpose is to analyze the frequency of punctuation usage within a
     given text dataset. This is often used in Natural Language Processing tasks, such as text classification and text
     summarization.

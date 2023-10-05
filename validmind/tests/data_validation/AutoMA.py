@@ -12,6 +12,9 @@ logger = get_logger(__name__)
 
 class AutoMA(Metric):
     """
+    Automatically selects the optimal Moving Average (MA) order for each variable in a time series dataset based on
+    minimal BIC and AIC values.
+
     **Purpose**: The `AutoMA` metric serves an essential role of automated decision-making for selecting the optimal
     Moving Average (MA) order for every variable in a given time series dataset. The selection is dependent on the
     minimalization of BIC (Bayesian Information Criterion) and AIC (Akaike Information Criterion); these are

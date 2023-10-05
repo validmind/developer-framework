@@ -19,6 +19,8 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Delimitation(ThresholdTest, AIPoweredTest):
     """
+    Evaluates the proper use of delimiters in prompts provided to Language Learning Models.
+
     **Purpose:**
     This test, dubbed the "Delimitation Test", is engineered to assess whether prompts provided to the Language
     Learning Model (LLM) correctly use delimiters to mark different sections of the input. Well-delimited prompts

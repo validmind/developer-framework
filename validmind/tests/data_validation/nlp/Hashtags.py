@@ -16,6 +16,8 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 @dataclass
 class Hashtags(ThresholdTest):
     """
+    Assesses hashtag frequency in a text column, highlighting usage trends and potential dataset bias or spam.
+
     **Purpose**: The Hashtags test is designed to measure the frequency of hashtags used within a given text column in
     a dataset. It is particularly useful for natural language processing tasks such as text classification and text
     summarization. The goal is to identify common trends and patterns in the use of hashtags, which can serve as

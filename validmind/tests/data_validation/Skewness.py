@@ -18,6 +18,9 @@ from validmind.vm_models import (
 @dataclass
 class Skewness(ThresholdTest):
     """
+    Evaluates the skewness of numerical data in a machine learning model and checks if it falls below a set maximum
+    threshold.
+
     **Purpose**: The purpose of the Skewness test is to measure the asymmetry in the distribution of data within a
     predictive machine learning model. Specifically, it evaluates the divergence of said distribution from a normal
     distribution. In understanding the level of skewness, we can potentially identify issues with data quality, an

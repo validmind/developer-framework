@@ -9,6 +9,9 @@ from validmind.vm_models import Figure, Metric
 
 class ACFandPACFPlot(Metric):
     """
+    Analyzes time series data using Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) plots to
+    reveal trends and correlations.
+
     **Purpose**: The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed
     to analyze time series data in machine learning models. It illuminates the correlation of the data over time by
     plotting the correlation of the series with its own lags (ACF), and the correlations after removing effects already

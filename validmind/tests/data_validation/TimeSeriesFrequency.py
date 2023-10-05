@@ -18,6 +18,8 @@ from validmind.vm_models import (
 @dataclass
 class TimeSeriesFrequency(ThresholdTest):
     """
+    Evaluates consistency of time series data frequency and generates a frequency plot.
+
     **Purpose**: The purpose of the TimeSeriesFrequency test is to evaluate the consistency in the frequency of data
     points in a time-series dataset. This test inspects the intervals or duration between each data point to determine
     if a fixed pattern (such as daily, weekly, or monthly) exists. The identification of such patterns is crucial to

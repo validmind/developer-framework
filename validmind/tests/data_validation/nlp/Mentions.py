@@ -16,6 +16,8 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 @dataclass
 class Mentions(ThresholdTest):
     """
+    Calculates and visualizes frequencies of '@' prefixed mentions in a text-based dataset for NLP model analysis.
+
     **Purpose**: This test, termed "Mentions", is designed to gauge the quality of data in a Natural Language
     Processing (NLP) or text-focused Machine Learning model. The primary objective is to identify and calculate the
     frequency of 'mentions' within a chosen text column of a dataset. A 'mention' in this context refers to individual

@@ -10,6 +10,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class TabularDescriptionTables(Metric):
     """
+    Summarizes key descriptive statistics for numerical, categorical, and datetime variables in a dataset.
+
     **Purpose**: The main purpose of this metric is to gather and present the descriptive statistics of numerical,
     categorical, and datetime variables present in a dataset. The attributes it measures include the count, mean,
     minimum and maximum values, percentage of missing values, data types of fields, and unique values for categorical

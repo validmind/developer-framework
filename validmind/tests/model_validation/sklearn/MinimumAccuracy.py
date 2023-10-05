@@ -18,6 +18,8 @@ from validmind.vm_models import (
 @dataclass
 class MinimumAccuracy(ThresholdTest):
     """
+    Checks if the model's prediction accuracy meets or surpasses a specified threshold.
+
     **Purpose**: The Minimum Accuracy test’s objective is to verify whether the model's prediction accuracy on a
     specific dataset meets or surpasses a predetermined minimum threshold. Accuracy, which is simply the ratio of right
     predictions to total predictions, is a key metric for evaluating the model's performance. Considering binary as

@@ -13,6 +13,8 @@ from .statsutils import adj_r2_score
 @dataclass
 class RegressionModelSummary(Metric):
     """
+    Evaluates regression model performance using metrics including R-Squared, Adjusted R-Squared, MSE, and RMSE.
+
     **Purpose**: This metric test evaluates the performance of regression models by measuring their predictive ability
     with regards to dependent variables given changes in the independent variables. Its measurement tools include
     conventional regression metrics such as R-Squared, Adjusted R-Squared, Mean Squared Error (MSE), and Root Mean

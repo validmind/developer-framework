@@ -14,6 +14,9 @@ logger = get_logger(__name__)
 @dataclass
 class RegressionModelSensitivityPlot(Metric):
     """
+    Tests the sensitivity of a regression model to variations in independent variables by applying shocks and
+    visualizing the effects.
+
     **Purpose**: The Regression Sensitivity Plot metric is designed to perform sensitivity analysis on regression
     models. This metric aims to measure the impact of slight changes (shocks) applied to individual variables on the
     system's outcome while keeping all other variables constant. By doing so, it analyzes the effects of each

@@ -18,6 +18,8 @@ from validmind.vm_models import (
 @dataclass
 class MinimumROCAUCScore(ThresholdTest):
     """
+    Validates model by checking if the ROC AUC score meets or surpasses a specified threshold.
+
     **Purpose**:
     This test metric, Minimum ROC AUC Score, is used to determine the model's performance by ensuring that the Receiver
     Operating Characteristic Area Under the Curve (ROC AUC) score on the validation dataset meets or exceeds a

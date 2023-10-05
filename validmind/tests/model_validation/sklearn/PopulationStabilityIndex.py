@@ -21,6 +21,9 @@ logger = get_logger(__name__)
 @dataclass
 class PopulationStabilityIndex(Metric):
     """
+    Evaluates the Population Stability Index (PSI) to quantify the stability of an ML model's predictions across
+    different datasets.
+
     **Purpose:**
     The Population Stability Index (PSI) serves as a quantitative assessment for evaluating the stability of a machine
     learning model's output distributions when comparing two different datasets. Typically, these would be a

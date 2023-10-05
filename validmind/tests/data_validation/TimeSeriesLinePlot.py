@@ -8,6 +8,8 @@ from validmind.vm_models import Figure, Metric
 
 class TimeSeriesLinePlot(Metric):
     """
+    Generates and analyses time-series data through line plots revealing trends, patterns, anomalies over time.
+
     **Purpose**: The TimeSeriesLinePlot metric is designed to generate and analyze time series data through the
     creation of line plots. This assists in the initial inspection of the data by providing a visual representation of
     patterns, trends, seasonality, irregularity, and anomalies that may be present in the dataset over a period of time.

@@ -15,6 +15,9 @@ logger = get_logger(__name__)
 @dataclass
 class PermutationFeatureImportance(Metric):
     """
+    Assesses the significance of each feature in a model by evaluating the impact on model performance when feature
+    values are randomly rearranged.
+
     **Purpose**: The purpose of the Permutation Feature Importance (PFI) metric is to assess the importance of each
     feature used by the Machine Learning model. The significance is measured by evaluating the decrease in the model's
     performance when the feature's values are randomly arranged.

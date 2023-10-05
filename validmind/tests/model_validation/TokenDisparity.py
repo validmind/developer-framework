@@ -14,6 +14,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class TokenDisparity(Metric):
     """
+    Assess and visualize token count disparity between model's predicted and actual dataset.
+
     **Purpose**:
     The Token Disparity metric is designed to assess the distributional congruence between the model's predicted
     outputs and the actual data. This is achieved by constructing histograms that illustrate the disparity in token

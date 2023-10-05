@@ -8,6 +8,9 @@ from validmind.vm_models import Metric
 @dataclass
 class DatasetCorrelations(Metric):
     """
+    Assesses correlation and association among features in a dataset, leveraging Pearson's R, Cramer's V, and
+    Correlation ratios.
+
     **Purpose**: The DatasetCorrelations metric is employed to examine the relationship between variables in a dataset,
     specifically designed for numerical and categorical data types. Using Pearson's R, Cramer's V, and Correlation
     ratios, it helps in understanding the linear relationship between numerical variables, association between

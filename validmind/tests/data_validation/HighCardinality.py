@@ -18,6 +18,8 @@ from validmind.vm_models import (
 @dataclass
 class HighCardinality(ThresholdTest):
     """
+    Assesses the number of unique values in categorical columns to detect high cardinality and potential overfitting.
+
     **Purpose**: The “High Cardinality” test is used to evaluate the number of unique values present in the categorical
     columns of a dataset. In this context, high cardinality implies the presence of a large number of unique,
     non-repetitive values in the dataset.

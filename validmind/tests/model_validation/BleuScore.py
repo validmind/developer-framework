@@ -11,6 +11,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class BleuScore(Metric):
     """
+    Assesses translation quality by comparing machine-translated sentences with human-translated ones using BLEU score.
+
     **Purpose**: The Bilingual Evaluation Understudy (BLEU) metric measures the quality of machine-translated text by
     comparing it to human-translated text. This comparison is done at the sentence level and is designed to bring
     machine translations closer to the quality of a professional human translation. It is commonly used in the field of

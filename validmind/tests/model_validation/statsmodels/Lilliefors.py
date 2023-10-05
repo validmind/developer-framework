@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class Lilliefors(Metric):
     """
+    Assesses the normality of feature distributions in an ML model's training dataset using the Lilliefors test.
+
     **Purpose**: The purpose of this metric is to utilize the Lilliefors test, named in honor of the Swedish
     statistician Hubert Lilliefors, in order to assess whether the features of the machine learning model's training
     dataset conform to a normal distribution. This is done because the assumption of normal distribution plays a vital

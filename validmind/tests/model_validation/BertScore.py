@@ -13,6 +13,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BertScore(Metric):
     """
+    Evaluates text generation models' performance by calculating precision, recall, and F1 score based on BERT
+    contextual embeddings.
+
     **Purpose**: The BERTScore metric is deployed to evaluate the competence of text generation models by focusing on
     the similarity between the reference and the generated text. It employs the contextual embeddings from BERT models
     to assess the similarity of the contents. This measures the extent to which a model has learned and can generate

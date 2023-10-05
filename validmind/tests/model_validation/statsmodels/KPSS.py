@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class KPSS(Metric):
     """
+    Executes KPSS unit root test to validate stationarity of time-series data in machine learning model.
+
     **Purpose**: The Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test is utilized to ensure the stationarity of
     data within the machine learning model. It specifically works on time-series data to establish the order of
     integration, which is a prime requirement for accurate forecasting, given the fundamental condition for any time

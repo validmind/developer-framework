@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class BoxPierce(Metric):
     """
+    Detects autocorrelation in time-series data through the Box-Pierce test to validate model performance.
+
     **Purpose:** The Box-Pierce test is utilized to detect the presence of autocorrelation in a time-series dataset.
     Autocorrelation, or serial correlation, refers to the degree of similarity between observations based on the
     temporal spacing between them. This test is essential for affirming the quality of a time-series model by ensuring

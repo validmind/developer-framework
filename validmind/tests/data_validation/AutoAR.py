@@ -12,6 +12,8 @@ logger = get_logger(__name__)
 
 class AutoAR(Metric):
     """
+    Automatically identifies the optimal Autoregressive (AR) order for a time series using BIC and AIC criteria.
+
     **Purpose**:
 
     The AutoAR test is intended to automatically identify the Autoregressive (AR) order of a time series by utilizing

@@ -11,6 +11,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class DefaultRatesbyRiskBandPlot(Metric):
     """
+    Generates a bar plot showcasing the distribution of default rates across different risk bands in a dataset.
+
     **Purpose**:
     The Default Rates by Risk Band Plot metric aims to quantify and visually represent default rates across varying
     risk bands within a specific dataset. This information is essential in evaluating the functionality of credit risk

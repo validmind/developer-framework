@@ -8,6 +8,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class MissingValuesRisk(Metric):
     """
+    Assesses and quantifies the risk related to missing values in a dataset used for training an ML model.
+
     **Purpose**: The Missing Values Risk metric is specifically designed to assess and quantify the risk associated
     with missing values in the dataset used for machine learning model training. It measures two specific risks: the
     percentage of total data that are missing, and the percentage of all variables (columns) that contain some missing

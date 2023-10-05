@@ -12,6 +12,9 @@ COOLWARM = [[0, "rgb(95,5,255)"], [0.5, "rgb(255,255,255)"], [1, "rgb(255,5,0)"]
 
 class LaggedCorrelationHeatmap(Metric):
     """
+    Assesses and visualizes correlation between target variable and lagged independent variables in a time-series
+    dataset.
+
     **Purpose**: The LaggedCorrelationHeatmap metric is utilized to appraise and illustrate the correlation between the
     target variable and delayed copies (lags) of independent variables in a time-series dataset. It assists in
     revealing relationships in time-series data where the influence of an independent variable on the dependent

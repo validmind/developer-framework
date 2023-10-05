@@ -11,6 +11,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PDRatingClassPlot(Metric):
     """
+    Assesses and visualizes credit risk distribution across different rating classes within a dataset via default
+    probabilities.
+
     **Purpose**: The purpose of the Probability of Default (PD) Rating Class Plot test is to measure and evaluate the
     distribution of calculated default probabilities across different rating classes. This is critical for
     understanding and inferring credit risk and can provide insights into how effectively the model is differentiating

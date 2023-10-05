@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class LJungBox(Metric):
     """
+    Assesses autocorrelations in dataset features by performing a Ljung-Box test on each feature.
+
     **Purpose**: The Ljung-Box test is a type of statistical test utilized to ascertain whether there are
     autocorrelations within a given dataset that differ significantly from zero. In the context of a machine learning
     model, this test is primarily used to evaluate data utilized in regression tasks, especially those involving time

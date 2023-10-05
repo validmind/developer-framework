@@ -11,6 +11,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class IQROutliersBarPlot(Metric):
     """
+    Visualizes outlier distribution across percentiles in numerical data using Interquartile Range (IQR) method.
+
     **Purpose**: The InterQuartile Range Outliers Bar Plot (IQROutliersBarPlot) metric aims to visually analyze and
     evaluate the extent of outliers in numeric variables based on percentiles. Its primary purpose is to clarify the
     dataset's distribution, flag possible abnormalities in it and gauge potential risks associated with processing

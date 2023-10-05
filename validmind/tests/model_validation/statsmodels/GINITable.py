@@ -12,6 +12,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class GINITable(Metric):
     """
+    Evaluates classification model performance using AUC, GINI, and KS metrics for training and test datasets.
+
     **Purpose**: The 'GINITable' metric is designed to evaluate the performance of a classification model by
     emphasizing its discriminatory power. Specifically, it calculates and presents three important metrics - the Area
     under the ROC Curve (AUC), the GINI coefficient, and the Kolmogov-Smirnov (KS) statistic - for both training and

@@ -19,6 +19,8 @@ from validmind.vm_models import (
 @dataclass
 class TimeSeriesMissingValues(ThresholdTest):
     """
+    Validates time-series data quality by confirming the count of missing values is below a certain threshold.
+
     **Purpose**:
     This test is designed to validate the quality of a historical time-series dataset by verifying that the number of
     missing values is below a specified threshold. As time-series models greatly depend on the continuity and

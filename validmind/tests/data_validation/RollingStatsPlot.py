@@ -8,6 +8,8 @@ from validmind.vm_models import Figure, Metric
 
 class RollingStatsPlot(Metric):
     """
+    This test evaluates the stationarity of time series data by plotting its rolling mean and standard deviation.
+
     **Purpose**: The `RollingStatsPlot` metric is employed to gauge the stationarity of time series data in a given
     dataset. This metric specifically evaluates the rolling mean and rolling standard deviation of the dataset over a
     pre-specified window size. The rolling mean provides an understanding of the average trend in the data, while the

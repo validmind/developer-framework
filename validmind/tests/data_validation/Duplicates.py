@@ -15,6 +15,8 @@ from validmind.vm_models import (
 @dataclass
 class Duplicates(ThresholdTest):
     """
+    Checks for and quantifies the presence of duplicate entries in the dataset or a specified column.
+
     **Purpose**: The Duplicates test is designed to assess the data quality of an ML model by identifying any duplicate
     entries in the data set. It focuses on seeking out duplication in a specified text column or among the primary keys
     of the data set, which could have serious implications for the performance and integrity of the model. Duplicate

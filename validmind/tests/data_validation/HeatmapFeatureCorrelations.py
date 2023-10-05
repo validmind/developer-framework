@@ -11,6 +11,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class HeatmapFeatureCorrelations(Metric):
     """
+    Creates a heatmap to visually represent correlation patterns between pairs of numerical features in a dataset.
+
     **Purpose:** The HeatmapFeatureCorrelations metric is utilized to evaluate the degree of interrelationships between
     pairs of input features within a dataset. This metric allows us to visually comprehend the correlation patterns
     through a heatmap, which can be essential in understanding which features may contribute most significantly to the

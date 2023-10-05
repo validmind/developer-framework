@@ -19,6 +19,8 @@ from validmind.vm_models import (
 @dataclass
 class TrainingTestDegradation(ThresholdTest):
     """
+    Tests if model performance degradation between training and test datasets exceeds a predefined threshold.
+
     **Purpose**: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
     between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to
     check the model's ability to generalize from its training data to unseen test data. It assesses key classification

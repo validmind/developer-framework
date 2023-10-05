@@ -11,6 +11,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelOutsampleComparison(Metric):
     """
+    Computes MSE and RMSE for multiple regression models using out-of-sample test to assess model's prediction accuracy
+    on unseen data.
+
     **Purpose**: The RegressionModelOutsampleComparison test is designed to evaluate the predictive performance of
     multiple regression models by means of an out-of-sample test. The primary aim of this test is to validate the
     model's ability to generalize to unseen data, a common challenge in the context of overfitting. It does this by

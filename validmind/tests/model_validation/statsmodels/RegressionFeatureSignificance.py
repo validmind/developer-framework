@@ -14,6 +14,8 @@ logger = get_logger(__name__)
 @dataclass
 class RegressionFeatureSignificance(Metric):
     """
+    Assesses and visualizes the statistical significance of features in a set of regression models.
+
     **Purpose**:
     The Regression Feature Significance metric assesses the significance of each feature in a given set of regression
     models. It creates a visualization displaying p-values for every feature of each model, assisting model developers

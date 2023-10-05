@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class KolmogorovSmirnov(Metric):
     """
+    Executes a feature-wise Kolmogorov-Smirnov test to evaluate alignment with normal distribution in datasets.
+
     **Purpose**: This metric employs the Kolmogorov-Smirnov (KS) test to evaluate the distribution of a dataset's
     features. It specifically gauges whether the data from each feature aligns with a normal distribution, a common
     presumption in many statistical methods and machine learning models.

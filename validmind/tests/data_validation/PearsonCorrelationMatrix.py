@@ -10,6 +10,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PearsonCorrelationMatrix(Metric):
     """
+    Evaluates linear dependency between numerical variables in a dataset via a Pearson Correlation coefficient heat map.
+
     **Purpose**: This test is intended to evaluate the extent of linear dependency between all pairs of numerical
     variables in the given dataset. It provides the Pearson Correlation coefficient, which reveals any high
     correlations present. The purpose of doing this is to identify potential redundancy, as variables that are highly

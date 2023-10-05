@@ -10,6 +10,8 @@ from validmind.vm_models import Metric
 @dataclass
 class DFGLSArch(Metric):
     """
+    Executes Dickey-Fuller GLS metric to determine order of integration and check stationarity in time series data.
+
     **Purpose**: The Dickey-Fuller GLS (DFGLS) Arch metric is utilized to determine the order of integration in time
     series data. For machine learning models dealing with time series and forecasting, this metric evaluates the
     existence of a unit root, thereby checking whether a time series is non-stationary. This analysis is a crucial

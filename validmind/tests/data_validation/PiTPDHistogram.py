@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PiTPDHistogram(Metric):
     """
+    Assesses credit risk prediction accuracy of a model by comparing actual and predicted defaults at a chosen point in
+    time.
+
     **Purpose**: The PiTPDHistogram metric uses Probability of Default (PD) calculations for individual instances
     within both training and test data sets in order to assess a model's proficiency in predicting credit risk. A
     distinctive point in time (PiT) is chosen for these PD calculations, and the results for both actual and predicted

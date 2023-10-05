@@ -15,6 +15,8 @@ from validmind.vm_models import (
 @dataclass
 class UniqueRows(ThresholdTest):
     """
+    Verifies the diversity of the dataset by ensuring that the count of unique rows exceeds a prescribed threshold.
+
     **Purpose**:
     The UniqueRows test is designed to gauge the quality of the data supplied to the machine learning model by
     verifying that the count of distinct rows in the dataset exceeds a specific threshold, thereby ensuring a varied

@@ -15,6 +15,8 @@ from validmind.vm_models import (
 @dataclass
 class MissingValues(ThresholdTest):
     """
+    Evaluates dataset quality by ensuring missing value ratio across all features does not exceed a set threshold.
+
     **Purpose**: This test is designed to evaluate the quality of a dataset by measuring the number of missing values
     across all features. The objective is to ensure that the ratio of missing data to total data is less than a
     predefined threshold, defaulting to 1, to maintain the data quality necessary for reliable predictive strength in a

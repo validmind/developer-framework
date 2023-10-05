@@ -10,6 +10,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class MissingValuesBarPlot(Metric):
     """
+    Creates a bar plot showcasing the percentage of missing values in each column of the dataset with risk
+    categorization based on a user-defined threshold.
+
     **Purpose:** The 'MissingValuesBarPlot' metric provides a color-coded visual representation of the percentage of
     missing values for each column in an ML model's dataset. The primary purpose of this metric is to easily identify
     and quantify missing data, which are essential steps in data preprocessing. The presence of missing data can

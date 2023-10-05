@@ -21,6 +21,8 @@ from validmind.vm_models import (
 @dataclass
 class TimeSeriesOutliers(ThresholdTest):
     """
+    Identifies and visualizes outliers in time-series data using z-score method.
+
     **Purpose**: This test is designed to identify outliers in time-series data using the z-score method. It's vital
     for ensuring data quality before modeling, as outliers can skew predictive models and significantly impact their
     overall performance.

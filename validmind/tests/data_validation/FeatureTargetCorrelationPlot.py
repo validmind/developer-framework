@@ -11,6 +11,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class FeatureTargetCorrelationPlot(Metric):
     """
+    Visualizes the correlation between input features and model's target output in a color-coded horizontal bar plot.
+
     **Purpose**: This test is designed to graphically illustrate the correlations between distinct input features and
     the target output of a Machine Learning model. Understanding how each feature influences the model's predictions is
     crucial - a higher correlation indicates stronger influence of the feature on the target variable. This correlation

@@ -8,6 +8,9 @@ from .ClassifierPerformance import ClassifierPerformance
 @dataclass
 class ClassifierInSamplePerformance(ClassifierPerformance):
     """
+    Evaluates ML model's in-sample performance using accuracy, precision, recall, and F1 score to assess generalization
+    and overfitting.
+
     **Purpose**: The purpose of this metric is to evaluate the performance of the machine learning model on the
     training data. This test gauges the model's ability to generalize its predictions to new, unseen data and assesses
     the level of the model's overfitting on the training set by measuring commonly-used metrics such as accuracy,

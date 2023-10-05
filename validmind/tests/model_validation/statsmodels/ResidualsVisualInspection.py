@@ -15,6 +15,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ResidualsVisualInspection(Metric):
     """
+    Provides a comprehensive visual analysis of residuals for regression models utilizing various plot types.
+
     **Purpose**: The main purpose of this metric is to visualize and analyze the residuals (the differences between the
     observed and predicted values) of a regression problem. It allows for a graphical exploration of the model's
     errors, helping to identify statistical patterns or anomalies that may indicate a systematic bias in the model's

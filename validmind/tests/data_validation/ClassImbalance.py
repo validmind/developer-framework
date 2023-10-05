@@ -24,6 +24,8 @@ from validmind.vm_models import (
 @dataclass
 class ClassImbalance(ThresholdTest):
     """
+    Evaluates and quantifies class distribution imbalance in a dataset used by a machine learning model.
+
     **Purpose**: The ClassImbalance test is designed to evaluate the distribution of target classes in a dataset that's
     utilized by a machine learning model. Specifically, it aims to ensure that the classes aren't overly skewed, which
     could lead to bias in the model's predictions. It's crucial to have a balanced training dataset to avoid creating a

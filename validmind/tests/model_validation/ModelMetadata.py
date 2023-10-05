@@ -12,9 +12,7 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable
 def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' is too complex
     model,
 ):
-    """
-    Attempts to extract all model info from a model object instance
-    """
+    """Attempts to extract all model info from a model object instance"""
     architecture = model.model_name()
     framework = model.model_library()
     framework_version = model.model_library_version()
@@ -40,6 +38,8 @@ def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' 
 @dataclass
 class ModelMetadata(Metric):
     """
+    Extracts and summarizes critical metadata from a machine learning model instance for comprehensive analysis.
+
     **Purpose:**
     This test is designed to collect and summarize important metadata related to a particular machine learning model.
     Such metadata includes the model's architecture (modeling technique), the version and type of modeling framework

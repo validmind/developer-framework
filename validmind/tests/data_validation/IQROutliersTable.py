@@ -11,6 +11,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class IQROutliersTable(Metric):
     """
+    Determines and summarizes outliers in numerical features using Interquartile Range method.
+
     **Purpose**: The "Interquartile Range Outliers Table" (IQROutliersTable) metric has been designed for identifying
     and summarizing outliers within numerical features of a dataset using the Interquartile Range (IQR) method. The
     purpose of this exercise is crucial in the pre-processing of data as outliers can substantially distort the

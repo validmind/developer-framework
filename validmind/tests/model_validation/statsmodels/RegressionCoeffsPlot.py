@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RegressionCoeffsPlot(Metric):
     """
+    Visualizes regression coefficients with 95% confidence intervals to assess predictor variables' impact on response
+    variable.
+
     **Purpose**: The Regression Coefficients with Confidence Intervals plot and metric aims to understand the impact of
     predictor variables on the response variable in question. This understanding is achieved via the visualization and
     analysis of the regression model by presenting the coefficients derived from the model along with their associated

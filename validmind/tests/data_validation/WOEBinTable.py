@@ -10,6 +10,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class WOEBinTable(Metric):
     """
+    Calculates and assesses the Weight of Evidence (WoE) and Information Value (IV) of each feature in a ML model.
+
     **Purpose**: The Weight of Evidence (WoE) and Information Value (IV) test is intended to evaluate the predictive
     power of each feature in the machine learning model. The test generates binned groups of values from each feature
     in a dataset, computes the WoE value and the IV value for each bin. These values provide insights on the

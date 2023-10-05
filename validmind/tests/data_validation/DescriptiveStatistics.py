@@ -11,6 +11,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class DescriptiveStatistics(Metric):
     """
+    Performs a detailed descriptive statistical analysis of both numerical and categorical data within a model's
+    dataset.
+
     **Purpose**: The purpose of the Descriptive Statistics metric is to provide a comprehensive summary of both
     numerical and categorical data within a dataset. This involves statistics such as count, mean, standard deviation,
     minimum and maximum values for numerical data. For categorical data, it calculates the count, number of unique

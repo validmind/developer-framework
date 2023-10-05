@@ -8,6 +8,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 class EngleGrangerCoint(Metric):
     """
+    Validates co-integration in pairs of time series data using the Engle-Granger test and classifies them as
+    'Cointegrated' or 'Not cointegrated'.
+
     **Purpose**: The intent of this Engle-Granger cointegration test is to explore and quantify the degree of
     co-movement between pairs of time series variables in a dataset. This is particularly useful in enhancing the
     accuracy of predictive regressions whenever the underlying variables are co-integrated, i.e., they move together

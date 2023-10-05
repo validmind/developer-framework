@@ -13,6 +13,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class LogisticRegCumulativeProb(Metric):
     """
+    Visualizes cumulative probabilities of positive and negative classes for both training and testing in logistic
+    regression models.
+
     **Purpose**: This metric is utilized to evaluate the distribution of predicted probabilities for positive and
     negative classes in a logistic regression model. It's not solely intended to measure the model's performance but
     also provides a visual assessment of the model's behavior by plotting the cumulative probabilities for positive and

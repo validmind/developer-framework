@@ -18,6 +18,9 @@ from validmind.vm_models import (
 @dataclass
 class TooManyZeroValues(ThresholdTest):
     """
+    Identifies numerical columns in a dataset that contain an excessive number of zero values, defined by a threshold
+    percentage.
+
     **Purpose**:
     The 'TooManyZeroValues' test is utilized to identify numerical columns in the dataset that may present a quantity
     of zero values considered excessive. The aim is to detect situations where these may implicate data sparsity or a

@@ -19,6 +19,9 @@ def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
 @dataclass
 class ClassifierPerformance(Metric):
     """
+    Evaluates performance of binary or multiclass classification models using precision, recall, F1-Score, accuracy,
+    and ROC AUC scores.
+
     **Purpose**: The supplied script is designed to evaluate the performance of Machine Learning classification models.
     It accomplishes this by computing precision, recall, F1-Score, and accuracy, as well as the ROC AUC (Receiver
     operating characteristic - Area under the curve) scores, thereby providing a comprehensive analytic view of the

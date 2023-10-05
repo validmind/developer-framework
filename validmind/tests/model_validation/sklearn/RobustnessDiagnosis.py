@@ -23,6 +23,9 @@ from validmind.vm_models import (
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
     """
+    Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
+    performance.
+
     **Purpose**:
 
     The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a

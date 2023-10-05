@@ -10,6 +10,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelsPerformance(Metric):
     """
+    Evaluates and compares regression models' performance using R-squared, Adjusted R-squared, and MSE metrics.
+
     **Purpose**: This metric is used to evaluate and compare the performance of various regression models. Through the
     use of key statistical measures such as R-squared, Adjusted R-squared, and Mean Squared Error (MSE), the
     performance of different models in predicting dependent variables can be assessed both on the data used for

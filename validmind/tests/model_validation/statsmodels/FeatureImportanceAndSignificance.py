@@ -15,6 +15,9 @@ logger = get_logger(__name__)
 @dataclass
 class FeatureImportanceAndSignificance(Metric):
     """
+    Evaluates and visualizes the statistical significance and feature importance using regression and decision tree
+    models.
+
     **Purpose**: The 'FeatureImportanceAndSignificance' test evaluates the statistical significance and the importance
     of features in the context of the machine learning model. By comparing the p-values from a regression model and the
     feature importances from a decision tree model, this test aids in determining the most significant variables from a

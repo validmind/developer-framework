@@ -13,6 +13,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class LogisticRegPredictionHistogram(Metric):
     """
+    Generates and visualizes histograms of the Probability of Default predictions for both positive and negative
+    classes in training and testing datasets.
+
     **Purpose**: This code is designed to generate histograms that display the Probability of Default (PD) predictions
     for positive and negative classes in both the training and testing datasets. By doing so, it evaluates the
     performance of a logistic regression model, particularly in the context of credit risk prediction.

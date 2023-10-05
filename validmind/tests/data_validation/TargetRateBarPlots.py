@@ -8,6 +8,9 @@ from validmind.vm_models import Figure, Metric
 
 class TargetRateBarPlots(Metric):
     """
+    Generates bar plots visualizing the default rates of categorical features for a classification machine learning
+    model.
+
     **Purpose**: This test, implemented as a metric, is designed to provide an intuitive, graphical summary of the
     decision-making patterns exhibited by a categorical classification machine learning model. The model's performance
     is evaluated using bar plots depicting the ratio of target rates—meaning the proportion of positive classes—for

@@ -13,6 +13,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ContextualRecall(Metric):
     """
+    Evaluates a Natural Language Generation model's ability to generate contextually relevant and factually correct
+    text.
+
     **Purpose**:
     The Contextual Recall metric is used to evaluate the ability of a natural language generation (NLG) model to
     generate text that appropriately reflects the given context or prompt. It measures the model's capability to

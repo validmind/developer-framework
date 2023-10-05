@@ -22,6 +22,9 @@ from validmind.vm_models import (
 @dataclass
 class WeakspotsDiagnosis(ThresholdTest):
     """
+    Identifies and visualizes weak spots in a machine learning model's performance across various sections of the
+    feature space.
+
     **Purpose:**
     The weak spots test is applied to evaluate the performance of a machine learning model within specific regions of
     its feature space. This test slices the feature space into various sections, evaluating the model's outputs within

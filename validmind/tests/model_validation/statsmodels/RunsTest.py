@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class RunsTest(Metric):
     """
+    Executes Runs Test on ML model to detect non-random patterns in output data sequence.
+
     **Purpose**: The Runs Test is a statistical procedure used to determine whether the sequence of data extracted from
     the ML model behaves randomly or not. Specifically, it analyzes runs, sequences of consecutive positives or
     negatives, in the data to check if there are more or fewer runs than expected under the assumption of randomness.

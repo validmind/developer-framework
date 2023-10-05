@@ -13,6 +13,8 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class IsolationForestOutliers(Metric):
     """
+    Detects outliers in a dataset using the Isolation Forest algorithm and visualizes results through scatter plots.
+
     **Purpose**: The `IsolationForestOutliers` test is designed to identify anomalies or outliers in the model's
     dataset using the isolation forest algorithm. This algorithm assumes that anomalous data points can be isolated
     more quickly due to their distinctive properties. By creating isolation trees and identifying instances with

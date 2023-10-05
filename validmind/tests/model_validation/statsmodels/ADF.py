@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class ADF(Metric):
     """
+    Assesses the stationarity of a time series dataset using the Augmented Dickey-Fuller (ADF) test.
+
     **Purpose**: The Augmented Dickey-Fuller (ADF) test metric is used here to determine the order of integration,
     i.e., the stationarity of a given time series data. The stationary property of data is pivotal in many machine
     learning models as it impacts the reliability and effectiveness of predictions and forecasts.

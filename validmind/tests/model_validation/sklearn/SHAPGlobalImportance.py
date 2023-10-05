@@ -15,6 +15,8 @@ logger = get_logger(__name__)
 @dataclass
 class SHAPGlobalImportance(Metric):
     """
+    Evaluates and visualizes global feature importance using SHAP values for model explanation and risk identification.
+
     **Purpose:**
     The SHAP (SHapley Additive exPlanations) Global Importance metric aims to elucidate model outcomes by attributing
     them to the contributing features. It assigns a quantifiable global importance to each feature via their respective

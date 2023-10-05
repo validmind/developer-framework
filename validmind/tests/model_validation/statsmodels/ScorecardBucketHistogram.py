@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ScorecardBucketHistogram(Metric):
     """
+    Evaluates and visualizes distribution of risk categories in a classification model's scores, useful in credit risk
+    assessment.
+
     **Purpose**: The 'Scorecard Bucket Histogram' is employed as a metric to evaluate the performance of a
     classification model, specifically in credit risk assessment. It categorizes model scores into different rating
     classes, and visualizes the distribution of scores or probabilities within each class. It essentially measures how

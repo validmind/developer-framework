@@ -19,6 +19,8 @@ from validmind.vm_models import (
 @dataclass
 class MinimumF1Score(ThresholdTest):
     """
+    Evaluates if the model's F1 score on the validation set meets a predefined minimum threshold.
+
     **Purpose:**
     The main objective of this test is to ensure that the F1 score, a balanced measure of precision and recall, of the
     model meets or surpasses a predefined threshold on the validation dataset. The F1 score is highly useful for

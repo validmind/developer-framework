@@ -11,6 +11,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateScatterPlots(Metric):
     """
+    Generates bivariate scatterplots to visually inspect relationships between pairs of predictor variables in machine
+    learning classification tasks.
+
     **Purpose**: This metric is intended for visual inspection and monitoring of relationships between pairs of
     variables in a machine learning model targeting classification tasks. It is especially useful for understanding how
     predictor variables (features) behave in relation to each other and how they are distributed for different classes

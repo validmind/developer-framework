@@ -11,6 +11,8 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class ChiSquaredFeaturesTable(Metric):
     """
+    Executes Chi-Squared test for each categorical feature against a target column to assess significant association.
+
     **Purpose**: The `ChiSquaredFeaturesTable` metric is used to carry out a Chi-Squared test of independence for each
     categorical feature variable against a designated target column. The primary goal is to determine if a significant
     association exists between the categorical features and the target variable. This method typically finds its use in

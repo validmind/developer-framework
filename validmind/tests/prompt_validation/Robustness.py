@@ -20,6 +20,8 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Robustness(ThresholdTest, AIPoweredTest):
     """
+    Assesses the robustness of prompts provided to a Language Learning Model under varying conditions and contexts.
+
     **Purpose:**
     The Robustness test is meant to evaluate the resilience and reliability of prompts provided to a Language Learning
     Model (LLM). The aim of this test is to guarantee that the prompts consistently generate accurate and the expected

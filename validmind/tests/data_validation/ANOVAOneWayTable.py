@@ -11,6 +11,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class ANOVAOneWayTable(Metric):
     """
+    Applies one-way ANOVA (Analysis of Variance) to identify statistically significant numerical features in the
+    dataset.
+
     **Purpose**: The ANOVA (Analysis of Variance) One-Way Table metric is utilized to determine whether the mean of
     numerical variables differs across different groups identified by target or categorical variables. Its primary
     purpose is to scrutinize the significant impact of categorical variables on numerical ones. This method proves

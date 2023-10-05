@@ -12,6 +12,9 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ConfusionMatrix(Metric):
     """
+    Evaluates and visually represents the classification ML model's predictive performance using a Confusion Matrix
+    heatmap.
+
     **Purpose**: The Confusion Matrix tester is designed to assess the performance of a classification Machine Learning
     model. This performance is evaluated based on how well the model is able to correctly classify True Positives, True
     Negatives, False Positives, and False Negatives - fundamental aspects of model accuracy.

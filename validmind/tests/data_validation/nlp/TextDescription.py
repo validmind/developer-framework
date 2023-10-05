@@ -16,6 +16,9 @@ from ....vm_models import Figure, Metric, VMDataset
 @dataclass
 class TextDescription(Metric):
     """
+    Performs comprehensive textual analysis on a dataset using NLTK, evaluating various parameters and generating
+    visualizations.
+
     **Purpose**: This test uses the TextDescription metric to conduct a comprehensive textual analysis of a given
     dataset. Various parameters such as total words, total sentences, average sentence length, total paragraphs, total
     unique words, most common words, total punctuations, and lexical diversity are evaluated. This metric aids in

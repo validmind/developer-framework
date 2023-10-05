@@ -14,6 +14,9 @@ logger = get_logger(__name__)
 @dataclass
 class RegressionModelForecastPlot(Metric):
     """
+    Generates plots to visually compare the forecasted outcomes of one or more regression models against actual
+    observed values over a specified date range.
+
     **Purpose:** The "regression_forecast_plot" is intended to visually depict the performance of one or more
     regression models by comparing the model's forecasted outcomes against actual observed values within a specified
     date range. This metric is especially useful in time-series models or any model where the outcome changes over

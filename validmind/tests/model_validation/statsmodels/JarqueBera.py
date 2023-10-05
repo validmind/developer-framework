@@ -7,6 +7,8 @@ from validmind.vm_models import Metric
 
 class JarqueBera(Metric):
     """
+    Assesses normality of dataset features in an ML model using the Jarque-Bera test.
+
     **Purpose**: The purpose of the Jarque-Bera test as implemented in this metric is to determine if the features in
     the dataset of a given Machine Learning model follows a normal distribution. This is crucial for understanding the
     distribution and behavior of the model's features, as numerous statistical methods assume normal distribution of

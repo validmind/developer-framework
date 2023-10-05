@@ -18,6 +18,8 @@ from validmind.vm_models import (
 @dataclass
 class HighPearsonCorrelation(ThresholdTest):
     """
+    Identifies highly correlated feature pairs in a dataset suggesting feature redundancy or multicollinearity.
+
     **Purpose**: The High Pearson Correlation test measures the linear relationship between features in a dataset, with
     the main goal of identifying high correlations that might indicate feature redundancy or multicollinearity.
     Identification of such issue allows developers and risk management teams to properly deal with potential impacts on

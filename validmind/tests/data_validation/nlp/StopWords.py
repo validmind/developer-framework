@@ -27,6 +27,8 @@ from validmind.vm_models import (
 @dataclass
 class StopWords(ThresholdTest):
     """
+    Evaluates and visualizes the frequency of English stop words in a text dataset against a defined threshold.
+
     **Purpose**: The StopWords threshold test is a tool designed for assessing the quality of text data in an ML model.
     It focuses on the identification and analysis of "stop words" in a given dataset. Stop words are frequent, common,
     yet semantically insignificant words (for example: "the", "and", "is") in a language. This test evaluates the

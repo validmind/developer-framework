@@ -11,6 +11,8 @@ logger = get_logger(__name__)
 
 class AutoARIMA(Metric):
     """
+    Evaluates ARIMA models for time-series forecasting, ranking them using Bayesian and Akaike Information Criteria.
+
     **Purpose**: The AutoARIMA validation test is designed to evaluate and rank AutoRegressive Integrated Moving
     Average (ARIMA) models. These models are primarily used for forecasting time-series data. The validation test
     automatically fits multiple ARIMA models, with varying parameters, to every variable within the given dataset. The

@@ -17,6 +17,8 @@ from ....vm_models import Figure, Metric, VMDataset
 @dataclass
 class CommonWords(Metric):
     """
+    Identifies and visualizes the 40 most frequent non-stopwords in a specified text column within a dataset.
+
     **Purpose**: The CommonWords metric is used to identify and visualize the most prevalent words within a specified
     text column of a dataset. This provides insights into the prevalent language patterns and vocabulary, especially
     useful in Natural Language Processing (NLP) tasks such as text classification and text summarization.

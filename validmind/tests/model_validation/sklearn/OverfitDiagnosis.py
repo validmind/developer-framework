@@ -21,6 +21,8 @@ from validmind.vm_models import (
 @dataclass
 class OverfitDiagnosis(ThresholdTest):
     """
+    Detects and visualizes overfit regions in an ML model by comparing performance on training and test datasets.
+
     **Purpose**: The OverfitDiagnosis test is devised to detect areas within a Machine Learning model that might be
     prone to overfitting. It achieves this by comparing the model's performance on both the training and testing
     datasets. These datasets are broken down into distinct sections defined by a Feature Space. Areas, where the model
