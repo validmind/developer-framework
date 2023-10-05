@@ -13,31 +13,38 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BertScore(Metric):
     """
-    **Purpose**: BERTScore is a metric used to evaluate the quality of text generation models, focusing on the
-    similarity between the reference text and the generated text. It leverages the contextual embeddings from BERT
-    models to evaluate the similarity of the contents. Therefore, it distinctively measures how well a model has
-    learned and can generate context-relevant results.
+    **Purpose**: The BERTScore metric is deployed to evaluate the competence of text generation models by focusing on
+    the similarity between the reference and the generated text. It employs the contextual embeddings from BERT models
+    to assess the similarity of the contents. This measures the extent to which a model has learned and can generate
+    contextually relevant results.
 
-    **Test Mechanism**: This metric derives the true values from the model's testing set and the model's predictions.
-    BERTScore evaluates the precision, recall, and F1 score of the model according to the contextual similarity between
-    the reference and the generated text. These scores are calculated for each token in the candidate sentences as
-    compared to the reference sentences, taking into account cosine similarity with BERT embeddings. A line plot is
-    generated for each metric (Precision, Recall and F1 Score), which visualizes the score changes across row indexes.
+    **Test Mechanism**: The true values derived from the model's test dataset and the model's predictions are employed
+    in this metric. BERTScore calculates the precision, recall, and F1 score of the model considering the contextual
+    similarity between the reference and the produced text. These scores are computed for each token in the predicted
+    sentences as compared to the reference sentences, while considering the cosine similarity with BERT embeddings. A
+    line plot depicting the score changes across row indexes is generated for each metric i.e., Precision, Recall, and
+    F1 Score.
 
-    **Signs of High Risk**: If there's a general downward trend in Precision, Recall, or F1 Score or any noticeable
-    instability/fluctuation in these metrics, it indicates high risk. A low Precision implies that predictions often
-    include irrelevant contexts. A low Recall implies the models miss relevant contexts in predictions. A low F1 score
-    indicates poor overall performance in both precision and recall.
+    **Signs of High Risk**:
+    - Observable downward trend in Precision, Recall, or F1 Score.
+    - Noticeable instability or fluctuation in these metrics. Lower Precision implies that predictions often
+    incorporate irrelevant contexts.
+    - Declining Recall suggests that the model frequently omits relevant contexts during predictions.
+    - Lower F1 score signals poor overall performance in both precision and recall.
 
-    **Strengths**: BERTScore is potent in detecting the quality of text that requires understanding the context, which
-    is a typical demand in natural language processing tasks. This metric goes beyond simple n-gram matching and
-    considers the semantic similarity in the context, which provides more meaningful evaluation results. The
-    visualization allows observing the performance trends across different sets of predictions.
+    **Strengths**:
+    - BERTScore efficiently detects the quality of text that requires to comprehend the context, a common requirement
+    in natural language processing tasks.
+    - This metric advances beyond the simple n-gram matching and considers the semantic similarity in the context,
+    thereby providing more meaningful evaluation results.
+    - The integrated visualization function allows tracking of the performance trends across different prediction sets.
 
-    **Limitations**: BERTScore is dependent on BERT model embeddings; therefore, if the base BERT model is not
-    well-suited for a specific task, it may impact the accuracy of BERTScore. In addition, although good at semantic
-    understanding, it might not capture some nuances in text similarity that other metrics like BLEU or ROUGE can
-    detect. Finally, it can be computationally expensive due to the use of BERT embeddings.
+    **Limitations**:
+    - Dependence on BERT model embeddings for BERTScore implies that if the base BERT model is not suitable for a
+    specific task, it might impair the accuracy of BERTScore.
+    - Despite being good at understanding semantics, it might be incapable of capturing certain nuances in text
+    similarity that other metrics like BLEU or ROUGE could detect.
+    - Can be computationally expensive due to the utilization of BERT embeddings.
     """
 
     name = "bert_score"

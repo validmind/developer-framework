@@ -14,32 +14,43 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class TokenDisparity(Metric):
     """
-    **Purpose**: The purpose of the Token Disparity metric is to evaluate the distributional match between the
-    predicted and actual outputs (tokens) of the model. This is done by creating a comparison through histograms that
-    outline the disparity in the number of tokens in both columns. The metric is also used to assess the verbosity of
-    the model's predictions in comparison to the actual data.
+    **Purpose**:
+    The Token Disparity metric is designed to assess the distributional congruence between the model's predicted
+    outputs and the actual data. This is achieved by constructing histograms that illustrate the disparity in token
+    count between the two columns. Additionally, this metric is used to measure the model's verbosity in comparison to
+    the genuine dataset.
 
-    **Test Mechanism**: The test is implemented by tokenizing the two columns: one for the real data and the other for
-    the generated or predicted data. It uses the BERT tokenizer to tokenize the content of each column. Then, it counts
-    the tokens in each column. These counts are then arranged into two different histograms to visualize the
-    distribution of token counts in the real data and the generated data. The metric quantifies the distribution
-    disparity by comparing the histogram of the true tokens with the histogram of predicted tokens.
+    **Test Mechanism**:
+    The mechanism of running this test involves tokenizing both columns: one containing the actual data and the other
+    containing the model's predictions. The BERT tokenizer is used for tokenizing the contents of each column. After
+    tokenization, tokens in each column are counted and represented in two distinct histograms to facilitate the
+    visualization of token count distribution in the actual and predicted data. To quantify the difference in
+    distribution, the histogram of the actual tokens is compared with the histogram of the predicted tokens.
 
-    **Signs of High Risk**: High risk or failures might be indicated by significant differences in distribution
-    typologies between the two histograms, especially if the predicted histogram considerably diverges from the
-    reference histogram. It may signify that the model is generating outputs with unexpected verbosity, resulting in
-    either far too many or too few tokens than expected.
+    **Signs of High Risk**:
+    High risk or potential failure in model performance may be suggested by:
 
-    **Strengths**: The primary strength of this metric is that it provides a clear and visual comparison of predicted
-    versus actual token distributions in the model. It helps in understanding the consistency and quality of the
-    model's output in terms of length and verbosity. It also allows detection of potential issues in the model's output
-    generation capabilities, such as over-generation or under-generation of tokens compared to the actual data.
+    - Significant incongruities in distribution patterns between the two histograms.
+    - Marked divergence of the predicted histogram from the reference histogram, indicating that the model may be
+    generating output with unexpected verbosity.
+    - This might result in an output that has a significantly higher or lower number of tokens than expected.
 
-    **Limitations**: This metric focuses strictly on the count of tokens without considering the semantics behind the
-    tokens. Therefore, it may overlook issues related to the meaningfulness or relevance of the produced tokens.
-    Furthermore, it assumes that a similar distribution of token counts between predicted and actual data implies
-    accurate output, which may not always hold true. Also, it depends on the BERT tokenizer which may not be the best
-    tokenizer for all kinds of text data.
+    **Strengths**:
+    Strengths of the Token Disparity metric include:
+
+    - It provides a clear and visual comparison of predicted versus actual token distributions, enhancing understanding
+    of the model's output consistency and verbosity.
+    - It is able to detect potential issues with the model's output generation capability, such as over-production or
+    under-production of tokens compared to the actual data set.
+
+    **Limitations**:
+    Limitations of the Token Disparity metric include:
+
+    - The metric focuses solely on token count, disregarding the semantics behind those tokens. Consequently, it may
+    miss out on issues related to relevance or meaningfulness of produced tokens.
+    - The assumption that similar token count between predicted and actual data suggests accurate output, which is not
+    always the case.
+    - Dependence on the BERT tokenizer, which may not always be the optimum choice for all types of text data.
     """
 
     name = "token_disparity"
