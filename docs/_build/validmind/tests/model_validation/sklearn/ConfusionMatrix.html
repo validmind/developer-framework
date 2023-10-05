@@ -38,9 +38,6 @@
                                 <a class="function" href="#ConfusionMatrix.__init__">ConfusionMatrix</a>
                         </li>
                         <li>
-                                <a class="function" href="#ConfusionMatrix.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ConfusionMatrix.run">run</a>
                         </li>
                 </ul>
@@ -73,42 +70,63 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ConfusionMatrix</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ConfusionMatrix</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ConfusionMatrix"></a>
     
-            <div class="docstring"><p>Confusion Matrix</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Confusion Matrix tester is tasked with evaluating the performance of a classification Machine
+Learning model. The matrix indicates how well the model can accurately distinguish true and false positives and
+negatives - basic indicators of model accuracy.</p>
+
+<p><strong>Test Mechanism</strong>: The classification model's results (<code>y_test_predict</code>) are compared against the actual results
+(<code>y_test_true</code>). The unique labels identified from <code>y_test_true</code> are used to create a confusion matrix using
+scikit-learn's metrics. The matrix is then rendered using Plotly's <code>create_annotated_heatmap</code> function. Outcomes
+such as True Positives (TP), True Negatives (TN), False Positives (FP), and False Negatives (FN) are plotted in a
+color-coded heatmap, providing a visualized 2D representation of the model's performance.</p>
+
+<p><strong>Signs of High Risk</strong>: High risks associated with the model are signaled by high numbers of False Positives (FP)
+and False Negatives (FN), which demonstrates the model's inability to accurately classify. On the other hand, low
+numbers of True Positives (TP) and True Negatives (TN) also indicate problematic situation, meaning the model is
+unable to correctly identify the class labels.</p>
+
+<p><strong>Strengths</strong>: Utilizing a Confusion Matrix has various strengths:</p>
+
+<ul>
+<li>It allows a clear and simple visual summary of the classification model's prediction accuracy.</li>
+<li>It provides explicit metrics for True Positives (TP), True Negatives (TN), False Positives (FP), and False
+Negatives (FN), making it easy to highlight potential improvements.</li>
+<li>It's beneficial for multi-class classification problems, since it can provide readability for complex models in a
+simplified manner.</li>
+<li>It assists in understanding the different types of errors your model might make, by providing both Type-I and
+Type-II errors.</li>
+</ul>
+
+<p><strong>Limitations</strong>: However, the Confusion Matrix also comes with limitations:</p>
+
+<ul>
+<li>In conditions of unbalanced classes, the utility of the confusion matrix can be limited. It might quite
+erroneously perceive a model to perform well when it's merely predicting the majority class.</li>
+<li>It does not deliver a single unified statistic that can appraise model performance. It merely indicates different
+facets of model performance separately.</li>
+<li>It's largely a descriptive technique and does not allow for statistical hypothesis testing.</li>
+<li>Misinterpretation risks also exist, as it doesn't directly provide precision, recall or F1-score data. These
+metrics need to be computed separately.</li>
+</ul>
 </div>
 
 
                             <div id="ConfusionMatrix.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ConfusionMatrix</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ConfusionMatrix</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ConfusionMatrix.__init__"></a>
     
     
-
-                            </div>
-                            <div id="ConfusionMatrix.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ConfusionMatrix.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="ConfusionMatrix.run" class="classattr">
@@ -129,14 +147,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ConfusionMatrix.key" class="variable">key</dd>
                 <dd id="ConfusionMatrix.summary" class="function">summary</dd>
                 <dd id="ConfusionMatrix.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="ConfusionMatrix.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="ConfusionMatrix.description" class="function">description</dd>
+                <dd id="ConfusionMatrix.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

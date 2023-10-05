@@ -7,17 +7,41 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
 @dataclass
 class Duplicates(ThresholdTest):
     """
-    The duplicates test measures the number of duplicate entries found in the dataset.
-    - If the dataset has a `text_column` property then the test will check for duplicate entries in that column.
-    - If a primary key column is specified, the dataset is checked for duplicate primary keys as well.
+    **Purpose**: The Duplicates test aims to evaluate the quality of data in an ML model by identifying duplicate
+    entries in the dataset. It specifically targets duplication in a designated text column or among the primary keys
+    of the dataset, which can have significant implications for model performance and integrity. Duplicate entries can
+    potentially distort data distribution and skew model training.
+
+    **Test Mechanism**: The test works by counting the total number of duplicate entries within the dataset. If a
+    'text_column' property is specified, the algorithm will count duplicates within this column. If any primary key is
+    declared, the test will be run on the primary keys as well. The number of duplicates ('n_duplicates') is then
+    compared to a predefined minimum threshold (default 'min_threshold' is set to 1) to determine if the test has
+    passed. Results include total number of duplicates, and the percentage of duplicate rows in the overall dataset
+    ('p_duplicates').
+
+    **Signs of High Risk**: The existence of a significant number of duplicates, especially exceeding the minimum
+    threshold, indicates high risk. Potential issues include an overrepresentation of certain data (thus skewing
+    results), or the indication of inefficient data collecting methods leading to data redundancy. Models that
+    predominantly fail this test may need to have their data preprocessing methods or source data reviewed.
+
+    **Strengths**: The Duplicates test is versatile and can be applied to both text data and tabular data formats. It
+    also provides results calculated both as a count and as a percentage of the total dataset, facilitating a
+    comprehensive understanding of the extent of duplication. This metric can effectively flag data quality issues that
+    can skew your model performance and lead to inaccurate predictions.
+
+    **Limitations**: The Duplicates test only targets exact duplication in entries, which might overlook close
+    'almost-duplicate' entries, or normalized forms of entries, that may also impact data distribution and model
+    integrity. Data variations due to errors, slight changes in phrasing, or other inconsistencies may not be detected.
+    Furthermore, a high number of duplicates in a dataset may not always indicate poor data quality, depending on the
+    nature of data and the problem being addressed.
     """
 
     category = "data_quality"
@@ -29,7 +53,7 @@ class Duplicates(ThresholdTest):
         "tags": ["tabular_data", "data_quality", "text_data"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The duplicates test returns results like these:
         [{"values": {"n_duplicates": 0, "p_duplicates": 0.0}, "passed": true}]
@@ -83,7 +107,7 @@ class Duplicates(ThresholdTest):
         passed = n_duplicates < self.params["min_threshold"]
 
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values=duplicate_results.to_dict(orient="records"),
             )
@@ -104,7 +128,7 @@ class Duplicates(ThresholdTest):
             col_p_duplicates = col_n_duplicates / rows
             col_passed = col_n_duplicates < self.params["min_threshold"]
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=col_passed,
                     values={

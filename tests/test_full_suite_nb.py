@@ -47,7 +47,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
         import validmind as vm
         from validmind.vm_models.dataset import VMDataset
         from validmind.vm_models.model import VMModel
-        from validmind.vm_models.test_suite import TestSuite
+        from validmind.vm_models.test_suite.test_suite import TestSuite
 
         self.vm_dataset = vm.init_dataset(
             dataset=self.df,
@@ -82,10 +82,9 @@ class TestFullTestSuiteNB(unittest.TestCase):
                 model=self.vm_model,
             )
 
-        result = asyncio.run(run_test_suite())
+        suite = asyncio.run(run_test_suite())
 
-        self.assertIsInstance(result, TestSuite)
-        self.assertTrue(len(result.results) > 0)
+        self.assertIsInstance(suite, TestSuite)
 
 
 if __name__ == "__main__":

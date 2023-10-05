@@ -73,21 +73,44 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">MinimumAccuracy</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">MinimumAccuracy</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#MinimumAccuracy"></a>
     
-            <div class="docstring"><p>Test that the model's prediction accuracy on a dataset meets or
-exceeds a predefined threshold.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the Minimum Accuracy test is to validate that the model's prediction accuracy on a
+given dataset meets or exceeds a predefined minimum threshold. Accuracy is the fraction of predictions our model
+got right and is an essential metric to understand how well our model is performing. In the context of both binary
+and multiclass classifications, accurate labeling is crucial.</p>
+
+<p><strong>Test Mechanism</strong>: The mechanism of this threshold test involves comparing the model's accuracy score against the
+minimum threshold value specified (default value is 0.7). The accuracy score is calculated by using the sklearn's
+<code>accuracy_score</code> method between true label <code>y_true</code> and predicted label <code>class_pred</code>. If the accuracy score exceeds
+the threshold, the test is marked as passed. The test result is returned along with the accuracy score and the
+threshold used for the test.</p>
+
+<p><strong>Signs of High Risk</strong>: Signs of high risk within this test present themselves when the model is unable to meet or
+exceed the specified score threshold. If the model's accuracy score is consistently falling below the set
+threshold, it indicates a high risk of inaccurate predictions, which can reduce the model's effectiveness and
+dependability.</p>
+
+<p><strong>Strengths</strong>: The strength of the Minimum Accuracy test lies in its simplicity. It provides a straightforward
+measure of overall model performance across all classes. It's particularly advantageous when the classes are
+balanced. The test is also versatile and can be used with both binary and multiclass classification tasks.</p>
+
+<p><strong>Limitations</strong>: This test's limitations surface when dealing with imbalanced datasets. If the classes in the
+dataset are highly skewed, the accuracy score could be misleading, potentially favoring the majority class and
+providing a false sense of model performance. Another limitation is it does not provide a measure of the model's
+precision, recall, or ability to manage false positives and false negatives. It primarily focuses on overall
+correctness, which might not be sufficient for all types of model analytics.</p>
 </div>
 
 
                             <div id="MinimumAccuracy.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MinimumAccuracy</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">MinimumAccuracy</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -100,7 +123,7 @@ exceeds a predefined threshold.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -130,11 +153,11 @@ exceeds a predefined threshold.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="MinimumAccuracy.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="MinimumAccuracy.description" class="function">description</dd>
                 <dd id="MinimumAccuracy.log" class="function">log</dd>
 

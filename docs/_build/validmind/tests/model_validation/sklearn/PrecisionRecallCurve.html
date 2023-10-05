@@ -38,9 +38,6 @@
                                 <a class="function" href="#PrecisionRecallCurve.__init__">PrecisionRecallCurve</a>
                         </li>
                         <li>
-                                <a class="function" href="#PrecisionRecallCurve.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#PrecisionRecallCurve.run">run</a>
                         </li>
                 </ul>
@@ -73,42 +70,49 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PrecisionRecallCurve</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PrecisionRecallCurve</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PrecisionRecallCurve"></a>
     
-            <div class="docstring"><p>Precision Recall Curve</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Precision Recall Curve metric is intended to evaluate the trade-off between precision and recall
+in classification models, particularly binary classification models. It assesses the model's capacity to produce
+accurate results (high precision), as well as its ability to capture a majority of all positive instances (high
+recall).</p>
+
+<p><strong>Test Mechanism</strong>: The test extracts ground truth labels and prediction probabilities from the model's test
+dataset. It applies the precision_recall_curve method from the sklearn metrics module to these extracted labels and
+predictions, which computes a precision-recall pair for each possible threshold. This calculation results in an
+array of precision and recall scores that can be plotted against each other to form the Precision-Recall Curve.
+This curve is then visually represented by using Plotly's scatter plot.</p>
+
+<p><strong>Signs of High Risk</strong>: A lower area under the Precision-Recall Curve signifies high risk. This corresponds to a
+model yielding a high amount of false positives (low precision) and/or false negatives (low recall). If the curve
+is closer to the bottom left of the plot, rather than being closer to the top right corner, it can be a sign of
+high risk.</p>
+
+<p><strong>Strengths</strong>: This metric aptly represents the balance between precision (minimizing false positives) and recall
+(minimizing false negatives), which is especially critical in scenarios where both values are significant. Through
+the graphic representation, it enables an intuitive understanding of the model's performance across different
+threshold levels.</p>
+
+<p><strong>Limitations</strong>: This metric is only applicable to binary classification models – it raises errors for multiclass
+classification models or Foundation models. Also, it may not fully represent the overall accuracy of the model if
+the cost of false positives and false negatives are extremely different, or if the dataset is heavily imbalanced.</p>
 </div>
 
 
                             <div id="PrecisionRecallCurve.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PrecisionRecallCurve</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PrecisionRecallCurve</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#PrecisionRecallCurve.__init__"></a>
     
     
-
-                            </div>
-                            <div id="PrecisionRecallCurve.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PrecisionRecallCurve.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="PrecisionRecallCurve.run" class="classattr">
@@ -129,14 +133,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PrecisionRecallCurve.key" class="variable">key</dd>
                 <dd id="PrecisionRecallCurve.summary" class="function">summary</dd>
                 <dd id="PrecisionRecallCurve.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="PrecisionRecallCurve.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="PrecisionRecallCurve.description" class="function">description</dd>
+                <dd id="PrecisionRecallCurve.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

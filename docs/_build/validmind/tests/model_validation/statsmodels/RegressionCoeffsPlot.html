@@ -73,26 +73,47 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RegressionCoeffsPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RegressionCoeffsPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RegressionCoeffsPlot"></a>
     
-            <div class="docstring"><p>Regression Coefficients with Confidence Intervals Plot</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Regression Coefficients with Confidence Intervals plot and metric is used to gain an understanding
+of the impacts of predictor variables on the response variable under examination. It enables the visualization and
+analysis of the regression model by displaying the set of coefficients derived from the model and their associated
+95% confidence intervals. This provides insight into the variability and uncertainty associated with the model's
+estimates.</p>
 
-<p>This class is used to generate a visualization of the coefficients from a regression model, as well as their corresponding
-confidence intervals. It serves as a useful diagnostic tool for statistical analysis and model interpretation. The visualization
-displays each of the predictor variables on the x-axis, with their associated regression coefficients on the y-axis. Error bars
-are used to indicate the range of the confidence intervals, providing an understanding of the variability and uncertainty
-associated with the model's estimates.</p>
+<p><strong>Test Mechanism</strong>: The test extracts the estimated coefficients and their associated standard errors from the
+regression model. Then, it calculates and draws confidence intervals using a 95% confidence level (standard
+convention in statistics), which provides an indication of the range where the true value can be expected to fall
+in 95% of the samples. For instance, if the same regression were run multiple times with samples taken from the
+same population. The process then visualizes these as a bar plot, with predictor variables on the x-axis and their
+corresponding coefficients on the y-axis, and the calculated upper and lower margins of the confidence intervals
+being illustrated as error bars.</p>
+
+<p><strong>Signs of High Risk</strong>: If the zero value (indicating no effect) is within the calculated confidence interval, it
+suggests that that particular feature/coefficient may not significantly contribute to prediction in the model. If
+multiple coefficients demonstrate this behavior, the overall reliability of the model could be questioned.
+Additionally, very wide confidence intervals could suggest high uncertainty in the associated coefficient estimates.</p>
+
+<p><strong>Strengths</strong>: This metric provides a straightforward and easily understood visualization of the significance and
+impact of the individual predictor variables in a regression model. The inclusion of confidence intervals allows
+for an examination of the uncertainty around each coefficient estimate.</p>
+
+<p><strong>Limitations</strong>: This test is reliant on certain assumptions about the data: it assumes normality of the residuals
+and independence of observations, which might not be the case in all types of datasets. Additionally, it does not
+take into account multi-collinearity (correlation between predictor variables), which can distort the model and
+make interpretation of the coefficients difficult. Finally, this test is only applicable to regression tasks and
+tabular data sets, and is not suitable for other types of machine learning tasks or data structures.</p>
 </div>
 
 
                             <div id="RegressionCoeffsPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RegressionCoeffsPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RegressionCoeffsPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -133,13 +154,13 @@ associated with the model's estimates.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RegressionCoeffsPlot.key" class="variable">key</dd>
                 <dd id="RegressionCoeffsPlot.summary" class="function">summary</dd>
                 <dd id="RegressionCoeffsPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="RegressionCoeffsPlot.description" class="function">description</dd>
                 <dd id="RegressionCoeffsPlot.log" class="function">log</dd>
 

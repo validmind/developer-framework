@@ -72,20 +72,43 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Punctuations</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">Punctuations</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#Punctuations"></a>
     
-            <div class="docstring"><p>Metric that analyses the frequencies of punctuations in a given text dataset</p>
+            <div class="docstring"><p><strong>1. Purpose:</strong> The main goal of the Punctuations Metric is to analyze the frequency of punctuation usage within a
+given text dataset. This heuristic is often used in Natural Language Processing tasks such as text classification
+and text summarization.</p>
+
+<p><strong>2. Test Mechanism:</strong> The test begins by checking the input's eligibility, specifying that the "dataset" must be
+of a VMDataset type. The next step is to create a corpus of the dataset by splitting the text of the input dataset
+on spaces. Then, it tallies the usage of each unique punctuation character in the text corpus. The distribution of
+the frequencies of each punctuation symbol is subsequently depicted as a bar graph. Results are stored as Figures
+and associated with the main Punctuations object.</p>
+
+<p><strong>3. Signs of High Risk:</strong> Given the nature of the test, risks are typically associated with the quality of text
+data. One sign of high risk might be an excessive or unusual frequency of certain punctuation marks, which may
+denote dubious quality, data corruption, or skewed data.</p>
+
+<p><strong>4. Strengths:</strong> The primary strength of this metric is providing insights into the distribution of punctuation
+use in a text dataset. This could be valuable in validating the quality, consistency, and nature of data. It could
+also offer hints about the style or tonality of the text corpus (e.g., frequent exclamation use might signify a
+more informal, emotional context).</p>
+
+<p><strong>5. Limitations:</strong> This test exclusively looks at punctuation usage and thus can overlook other crucial text
+characteristics. Additionally, it’s crucial not to make broad cultural or tonality assumptions based solely on
+punctuation distribution since these may vary widely across different languages and contexts. It may also be less
+effective when dealing with languages that employ non-standard or different punctuation. Finally, the visualized
+results may lack interpretability when there are many unique punctuation marks in the dataset.</p>
 </div>
 
 
                             <div id="Punctuations.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Punctuations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Punctuations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -112,13 +135,13 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="Punctuations.key" class="variable">key</dd>
                 <dd id="Punctuations.summary" class="function">summary</dd>
                 <dd id="Punctuations.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="Punctuations.description" class="function">description</dd>
                 <dd id="Punctuations.log" class="function">log</dd>
 

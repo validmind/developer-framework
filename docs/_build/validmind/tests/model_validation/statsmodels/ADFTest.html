@@ -70,21 +70,54 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ADFTest</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">ADFTest</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#ADFTest"></a>
     
-            <div class="docstring"><p>Augmented Dickey-Fuller Metric for establishing the order of integration of
-time series</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the Augmented Dickey-Fuller (ADF) metric test is to test the null hypothesis that a
+unit root is present in a time series. In other words, the ADF test aims to check the stationarity of a given
+time-series dataset. It plays a crucial role in the phases of time series analysis, regression tasks, and
+forecasting, as these techniques often require the data to be stationary.</p>
+
+<p><strong>Test Mechanism</strong>: The ADF test applies the Python “statsmodels” library's function "adfuller" to each column of
+the training dataset. By doing so, it calculates the ADF statistic, p-value, the number of lags used, and the
+number of observations in the sample for each column. If the p-value for a column is smaller than the predefined
+threshold (typically 0.05), then it is considered as having passed the test, thus concluding that the series is
+stationary.</p>
+
+<p><strong>Signs of High Risk</strong>: If the p-value exceeds the threshold value, the test for that column is considered as
+failed, which indicates a high risk or potential model performance issue. A high p-value implies that the null
+hypothesis (indicating a unit root) cannot be rejected, meaning that the series is non-stationary and may cause
+unreliable and spurious results in the model's performance and forecast.</p>
+
+<p><strong>Strengths</strong>: The ADF test holds several key advantages:</p>
+
+<ol>
+<li>Test for stationarity: The ADF test provides a rigorous mechanism for testing the stationarity of time series
+data, which is critical for many machine learning and statistical models.</li>
+<li>Comprehensive output: The function provides rich output, including the number of lags used and the number of
+observations, which can be useful for understanding the behavior of the series.</li>
+</ol>
+
+<p><strong>Limitations</strong>: However, the ADF test also presents some limitations:</p>
+
+<ol>
+<li>Dependence on threshold: The result of the test is highly dependent on the threshold chosen. An inappropriate
+threshold may lead to incorrect rejection or acceptance of the null hypothesis.</li>
+<li>Inefficient for trending data: The ADF test assumes no deterministic trend in the data. If a deterministic trend
+exists, the test may identify a stationary series as non-stationary.</li>
+<li>May lead to false positive: Particularly for larger datasets, the ADF test tends to reject the null hypothesis
+(indicating a unit root), which can lead to a high propensity for false positives.</li>
+</ol>
 </div>
 
 
                             <div id="ADFTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ADFTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ADFTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -111,12 +144,12 @@ time series</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="ADFTest.summary" class="function">summary</dd>
                 <dd id="ADFTest.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ADFTest.description" class="function">description</dd>
                 <dd id="ADFTest.log" class="function">log</dd>
 

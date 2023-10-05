@@ -11,8 +11,43 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class ANOVAOneWayTable(Metric):
     """
-    Perform an ANOVA F-test for each numerical variable with the target.
-    The input dataset and target column are required.
+    **Purpose**: The ANOVA (Analysis of Variance) One Way Table metric is used to evaluate whether the mean of
+    numerical variables differs across different groups identified by the target or categorical variables. It plays a
+    key role in identifying whether categorical variables have a significant effect on the numerical variables of
+    interest. This metric helps in understanding and detecting features that are statistically significant with regard
+    to the target variable in a given dataset.
+
+    **Test Mechanism**: This metric performs an ANOVA F-test on each of the numerical variables against the target.
+    Should no specific features be indicated, the test is conducted on all numerical features. A p-value is generated
+    for each test and compared against a specified threshold, defaulting to 0.05 if none is given. The feature is
+    marked as 'Pass' if the p-value is less than or equal to the specified threshold, indicating that there is a
+    significant difference in the means of the groups, and 'Fail' otherwise. The test results are returned in a
+    DataFrame indicating the variable name, F statistic value, p-value, threshold, and pass/fail status for each
+    numerical variable.
+
+    **Signs of High Risk**: High risk or failure in the model may be indicated by a large number of 'Fail' results in
+    the ANOVA F-test. This suggests that many numerical variables in the dataset display no statistically significant
+    difference across the target variable groups, potentially leading to underperforming predictions. Additionally,
+    features with high p-values also indicate a high risk as they display a larger chance of obtaining the observed
+    data given that the null hypothesis is true.
+
+    **Strengths**:
+    - The ANOVA One Way Table is an efficient tool in identifying statistically significant features as it compares the
+    means of multiple groups simultaneously.
+    - This metric is flexible and can handle situations where numerical features have not been specified by testing all
+    numerical features in the dataset.
+    - It provides a convenient way to measure the statistical significance of numerical variables and assists in
+    picking those variables that significantly influence the classifier's predictions.
+
+    **Limitations**:
+    - The ANOVA One Way Table metric assumes that the data is normally distributed, which might not be the case,
+    potentially leading to inaccurate test results.
+    - The F-test is sensitive to variance changes, and therefore, this metric might not perform well in datasets with
+    high variance.
+    - The ANOVA One Way test does not indicate which specific group means are statistically different from each other;
+    it merely tells that there is a difference.
+    - The metric does not provide insight into interactions between variables, and it might fail to detect significant
+    effects due to these interactions.
     """
 
     name = "anova_one_way_table"

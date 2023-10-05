@@ -38,9 +38,6 @@
                                 <a class="function" href="#BleuScore.__init__">BleuScore</a>
                         </li>
                         <li>
-                                <a class="function" href="#BleuScore.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#BleuScore.run">run</a>
                         </li>
                         <li>
@@ -76,42 +73,52 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">BleuScore</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">BleuScore</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#BleuScore"></a>
     
-            <div class="docstring"><p>Bleu Score</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Bilingual Evaluation Understudy (BLEU) metric measures the quality of machine-translated text by
+comparing it to human-translated text. This comparison is done at the sentence level and is designed to bring
+machine translations closer to the quality of a professional human translation. It is commonly used in the field of
+translation evaluation, and its purpose is to assess the accuracy of a model's output against that of a benchmark.</p>
+
+<p><strong>Test Mechanism</strong>: The implementation of the BLEU score involves using the NLTK's word_tokenize function to split
+the text into individual words, upon which the BLEU score can be calculated. The method employs the evaluate
+library's BLEU metric to compute the BLEU score for each translated sentence, comparing the model's translations
+(predictions) against the actual, correct translations (references). The results are returned as a single score
+which indicates the average 'distance' between the generated translations and the human translations across the
+entire test set.</p>
+
+<p><strong>Signs of High Risk</strong>: Low BLEU scores indicate high model risk. This occurs when there is a significant
+discrepancy between the machine translation and its human equivalent. This may be due to the model not learning
+effectively, overfitting the training data, or not handling the nuances of the language effectively. Machine bias
+toward a certain language style or mode of translation can also result in lower scores.</p>
+
+<p><strong>Strengths</strong>: The main strength of the BLEU score is its simplicity and interpretability. It provides an intuitive
+way to assess the quality of translated texts that can correlate well with human judgements. Additionally, it
+operates at a granular level (sentence level), enabling more precise assessment of errors. Lastly, it encapsulates
+the performance of the model with a single, comprehensive score that is easy to compare and monitor.</p>
+
+<p><strong>Limitations</strong>: The BLEU score places emphasis on exact matches, which can lead to bias in favor of literal
+translations. As a result, it may not fully capture the quality of more complex or flexible translations that don't
+adhere strictly to a word-for-word structure. Another limitation is that it doesn't directly evaluate the
+intelligibility or grammatical correctness of the translations. Moreover, it may not identify errors that arise
+from subtle nuances in language, cultural contexts, or ambiguities.</p>
 </div>
 
 
                             <div id="BleuScore.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">BleuScore</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">BleuScore</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#BleuScore.__init__"></a>
     
     
-
-                            </div>
-                            <div id="BleuScore.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#BleuScore.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="BleuScore.run" class="classattr">
@@ -147,13 +154,14 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="BleuScore.key" class="variable">key</dd>
                 <dd id="BleuScore.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="BleuScore.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="BleuScore.description" class="function">description</dd>
+                <dd id="BleuScore.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

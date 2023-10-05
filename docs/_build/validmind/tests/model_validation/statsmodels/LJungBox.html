@@ -66,15 +66,38 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LJungBox</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">LJungBox</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#LJungBox"></a>
     
-            <div class="docstring"><p>The Ljung-Box test is a statistical test used to determine
-whether a given set of data has autocorrelations
-that are different from zero.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Ljung-Box test is a type of statistical test utilized to ascertain whether there are
+autocorrelations within a given dataset that differ significantly from zero. In the context of a machine learning
+model, this test is primarily used to evaluate data utilized in regression tasks, especially those involving time
+series and forecasting.</p>
+
+<p><strong>Test Mechanism</strong>: The test operates by iterating over each feature within the training dataset and applying the
+<code>acorr_ljungbox</code> function from the <code>statsmodels.stats.diagnostic</code> library. This function calculates the Ljung-Box
+statistic and p-value for each feature. These results are then stored in a dictionary where the keys are the
+feature names and the values are dictionaries containing the statistic and p-value respectively. Generally, a lower
+p-value indicates a higher likelihood of significant autocorrelations within the feature.</p>
+
+<p><strong>Signs of High Risk</strong>: A high risk or failure in the model's performance relating to this test might be indicated
+by high Ljung-Box statistic values or low p-values. These outcomes suggest the presence of significant
+autocorrelations in the respective features, which, if not properly considered or handled in the machine learning
+model, can negatively affect model performance or bias.</p>
+
+<p><strong>Strengths</strong>: The Ljung-Box test is a powerful tool for detecting autocorrelations within datasets, especially in
+time series data. It provides quantitative measures (statistic and p-value) that allow for precise evaluation of
+autocorrelation and can be instrumental in avoiding issues related to autoregressive residuals and other challenges
+in regression models.</p>
+
+<p><strong>Limitations</strong>: Despite its utility, the Ljung-Box test is not without its limitations. For instance, it cannot
+detect all types of non-linearity or complex interrelationships among variables. Additionally, testing individual
+features may not fully encapsulate the dynamics of the data if features interact with each other. Lastly, it is
+designed more for traditional statistical models and may not be fully compatible with certain types of complex
+machine learning models.</p>
 </div>
 
 
@@ -96,14 +119,14 @@ that are different from zero.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="LJungBox.__init__" class="function">Metric</dd>
                 <dd id="LJungBox.key" class="variable">key</dd>
                 <dd id="LJungBox.summary" class="function">summary</dd>
                 <dd id="LJungBox.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="LJungBox.description" class="function">description</dd>
                 <dd id="LJungBox.log" class="function">log</dd>
 

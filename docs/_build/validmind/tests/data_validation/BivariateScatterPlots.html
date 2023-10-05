@@ -73,21 +73,50 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">BivariateScatterPlots</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">BivariateScatterPlots</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#BivariateScatterPlots"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of categorical data by plotting bivariate scatter plots.
-The input dataset and variable_pairs are required.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This metric is intended for visual inspection and monitoring of relationships between pairs of
+variables in a machine learning model targeting classification tasks. It is especially useful for understanding how
+predictor variables (features) behave in relation to each other and how they are distributed for different classes
+of the target variable, which could inform feature selection, model-building strategies, and even alert to possible
+biases and irregularities in the data.</p>
+
+<p><strong>Test Mechanism</strong>: This metric operates by creating a scatter plot for each pair of the selected features in the
+dataset. If the parameters "features_pairs" are not specified, an error will be thrown. The metric offers
+flexibility by allowing the user to filter on a specific target class - specified by the "target_filter" parameter</p>
+
+<ul>
+<li>for more granified insights. Each scatterplot is then color-coded based on the category of the target variable
+for better visual differentiation. The seaborn scatterplot library is used for generating the plots.</li>
+</ul>
+
+<p><strong>Signs of High Risk</strong>: High risk indicators in this context would be related to visual patterns which might
+suggest non-linear relationships, substantial skewness, multicollinearity, clustering, or isolated outlier points
+in the scatter plot. Such issues could affect the assumptions and performance of some models, especially the ones
+assuming linearity like linear regression or logistic regression.</p>
+
+<p><strong>Strengths</strong>: Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint
+complex relationships between two variables. It helps in outlier detection, identification of variable associations
+and trends, including non-linear patterns which can be overlooked by other linear-focused metrics or tests. The
+implementation also supports visualizing binary or multi-class classification datasets.</p>
+
+<p><strong>Limitations</strong>: Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and
+might not reveal the full picture in higher dimensions or where interactions are present. They also are not ideal
+for very large datasets as points will overlap and render the visualization less informative. Further, scatterplots
+are more of an exploratory tool rather than a formal statistical test, so they don't provide any quantitative
+measure of model quality or performance. Interpretation of scatterplots relies heavily on the domain knowledge and
+judgment of the viewer, which can introduce subjective bias.</p>
 </div>
 
 
                             <div id="BivariateScatterPlots.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">BivariateScatterPlots</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">BivariateScatterPlots</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,13 +156,13 @@ The input dataset and variable_pairs are required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="BivariateScatterPlots.key" class="variable">key</dd>
                 <dd id="BivariateScatterPlots.summary" class="function">summary</dd>
                 <dd id="BivariateScatterPlots.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="BivariateScatterPlots.description" class="function">description</dd>
                 <dd id="BivariateScatterPlots.log" class="function">log</dd>
 

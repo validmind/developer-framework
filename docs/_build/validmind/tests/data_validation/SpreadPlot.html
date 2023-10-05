@@ -69,17 +69,50 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">SpreadPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">SpreadPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#SpreadPlot"></a>
     
-            <div class="docstring"><p>This class provides a metric to visualize the spread between pairs of time series
-variables in a given dataset. By plotting the spread of each pair of variables in
-separate figures, users can assess the relationship between the variables and
-determine if any cointegration or other time series relationships exist between
-them.</p>
+            <div class="docstring"><p><strong>Purpose</strong>:
+The purpose of the SpreadPlot metric is to visually explore and understand the relationships between pairs of time
+series variables in the given dataset. This understanding aids in identifying and assessing potential time series
+relationships, such as cointegration, between variables.</p>
+
+<p><strong>Test Mechanism</strong>:
+The test mechanism for this metric involves calculating and plotting the spread between each pair of time series
+variables in the dataset. More specifically, the difference between two variables is computed and then plotted as a
+line graph. This process is repeated for all unique pairs of variables in the dataset.</p>
+
+<p><strong>Signs of High Risk</strong>:
+Signs of high risk related to this metric include the presence of large fluctuations in the spread over time,
+unexpected patterns, or trends that might signal a potential risk in the underlying relationships between the
+variables. Also, the presence of significant missing data or extreme outlier values could potentially distort the
+spread, indicating a high risk.</p>
+
+<p><strong>Strengths</strong>:
+The key strengths of using the SpreadPlot metric include:</p>
+
+<ol>
+<li>Enables detailed visual inspection and interpretation of the relationships between time-series pairs.</li>
+<li>Facilitates uncovering complex relationships like cointegration.</li>
+<li>Enhances interpretability by visualizing the relationships, aiding in identifying outliers and trends.</li>
+<li>Capable of handling multiple variable pairs from a dataset with a flexible and adaptable process.</li>
+</ol>
+
+<p><strong>Limitations</strong>:
+Despite its strengths, the SpreadPlot metric also comes with certain limitations:</p>
+
+<ol>
+<li>It's primarily a visualization tool and does not provide quantitative measurements or statistics to objectively
+assess relationships.</li>
+<li>Highly dependent on the quality and granularity of the data – missing data or outliers can significantly affect
+the interpretation of the relationships.</li>
+<li>Can become inefficient or challenging to interpret with a large number of variables due to the large number of
+plots.</li>
+<li>Might not fully capture complex non-linear relationships between variables.</li>
+</ol>
 </div>
 
 
@@ -125,14 +158,14 @@ them.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="SpreadPlot.__init__" class="function">Metric</dd>
                 <dd id="SpreadPlot.key" class="variable">key</dd>
                 <dd id="SpreadPlot.summary" class="function">summary</dd>
                 <dd id="SpreadPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="SpreadPlot.description" class="function">description</dd>
                 <dd id="SpreadPlot.log" class="function">log</dd>
 

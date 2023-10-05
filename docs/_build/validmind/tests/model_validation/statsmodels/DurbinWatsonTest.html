@@ -70,21 +70,45 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DurbinWatsonTest</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">DurbinWatsonTest</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#DurbinWatsonTest"></a>
     
-            <div class="docstring"><p>The Durbin-Watson Metric is a statistical test that
-can be used to detect autocorrelation in a time series.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Durbin-Watson Test metric is utilized to detect autocorrelation (i.e., a set of data values are
+influenced by their predecessors) in time series data. This is especially important in regression tasks, where the
+independence of residuals is often assumed. If there is a significant autocorrelation, the predictions of the model
+may not be reliable.</p>
+
+<p><strong>Test Mechanism</strong>: The Durbin-Watson Test metric generates a statistical value for each feature of the training
+dataset. This is done through the <code>durbin_watson</code> function from the <code>statsmodels</code> library in Python. The function
+is looped through all columns of the dataset, calculating and storing the Durbin-Watson (DB) value for each column.
+The results are then cached and made available for further analysis. A Durbin-Watson metric value close to 2
+suggests no autocorrelation, a value toward 0 indicates positive autocorrelation, and a value toward 4 shows
+negative autocorrelation.</p>
+
+<p><strong>Signs of High Risk</strong>: If the Durbin-Watson value for any of the features is significantly different from 2, it
+indicates a high risk as it may point to significant autocorrelation issues within the dataset. Particularly, a
+value closer to '0' might hint at positive autocorrelation, while a value closer to '4' might suggest negative
+autocorrelation. These autocorrelation issues could lead to unreliable prediction models.</p>
+
+<p><strong>Strengths</strong>: This metric is particularly powerful in identifying autocorrelation in the residuals of prediction
+models. With this metric, we can diagnose whether residuals have autocorrelation, which could violate the
+assumptions of various modeling techniques, particularly in regression analysis and time-series data modeling.</p>
+
+<p><strong>Limitations</strong>: The Durbin-Watson Test has several limitations. First, it only detects linear autocorrelation and
+may miss other types of relationships. Second, it is significantly influenced by the order of data points, and
+shuffling the order can lead to entirely different results. Lastly, the test only checks for autocorrelation
+between a variable and its immediate preceding variable, essentially it's of order one, and cannot detect higher
+order autocorrelation.</p>
 </div>
 
 
                             <div id="DurbinWatsonTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DurbinWatsonTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">DurbinWatsonTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -111,13 +135,13 @@ can be used to detect autocorrelation in a time series.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="DurbinWatsonTest.key" class="variable">key</dd>
                 <dd id="DurbinWatsonTest.summary" class="function">summary</dd>
                 <dd id="DurbinWatsonTest.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="DurbinWatsonTest.description" class="function">description</dd>
                 <dd id="DurbinWatsonTest.log" class="function">log</dd>
 

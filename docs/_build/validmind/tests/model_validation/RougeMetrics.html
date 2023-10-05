@@ -38,9 +38,6 @@
                                 <a class="function" href="#RougeMetrics.__init__">RougeMetrics</a>
                         </li>
                         <li>
-                                <a class="function" href="#RougeMetrics.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RougeMetrics.run">run</a>
                         </li>
                 </ul>
@@ -73,42 +70,69 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RougeMetrics</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RougeMetrics</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RougeMetrics"></a>
     
-            <div class="docstring"><p>rouge Metric</p>
+            <div class="docstring"><p><strong>Purpose</strong>: ROUGE, or Recall-Oriented Understudy for Gisting Evaluation, serves as a robust metric framework aimed
+at evaluating the caliber of machine-generated text. Especially pertinent in the arena of natural language
+generation tasks, such as text summarization, machine translation, and text generation, its overarching goal is to
+ascertain how effectively the machine-rendered text mirrors key information and concepts present in reference
+human-crafted text. Owing to its efficacy, the ROUGE metrics have become staples in the NLP community for the
+assessment of text generation systems.</p>
+
+<p><strong>Test Mechanism</strong>:</p>
+
+<ol>
+<li><p><strong>Comparison Basis</strong>: At its core, ROUGE operates by juxtaposing machine-generated content with a reference
+human-constructed text.</p></li>
+<li><p><strong>Incorporated Metrics</strong>:</p></li>
+</ol>
+
+<ul>
+<li><p><strong>ROUGE-N (N-gram Overlap)</strong>: Focuses on the alignment of n-grams (sequential sets of n words) between the
+generated and reference texts. Typical n-values include 1 (unigrams), 2 (bigrams), and 3 (trigrams). Each metric
+calculates precision, recall, and F1-score components.</p></li>
+<li><p><strong>ROUGE-L (Longest Common Subsequence)</strong>: Pinpoints the most extended shared word sequence present in both the
+machine and reference texts, assessing the generated text's ability to encapsulate pivotal phrases.</p></li>
+</ul>
+
+<ol start="3">
+<li><strong>Visual Representation</strong>: The determined precision, recall, and F1-score for each metric are plotted visually,
+ensuring streamlined comprehension of the results.</li>
+</ol>
+
+<p><strong>Signs of High Risk</strong>: Warning signs under this metric umbrella encompass low scores across the ROUGE suite. A
+diminished precision could insinuate the presence of redundant information in machine-produced text, while a low
+recall might denote the omission of salient data from the reference text. A decreased F1 score pinpoints a
+suboptimal harmony between precision and recall. Persistent low scores, especially across diverse test sets, may
+herald intrinsic flaws in the model's prowess.</p>
+
+<p><strong>Strengths</strong>: ROUGE's primary asset is its multifaceted view on text quality, enabled by an array of evaluation
+metrics. It graciously accommodates synonyms and rephrasing due to its n-gram-based approach, and it champions the
+retention of salient word sequences via the longest common subsequence tactic. The visual representation of
+precision, recall, and F1-scores facilitates an intuitive grasp of model efficacy.</p>
+
+<p><strong>Limitations</strong>: In spite of its advantages, certain constraints tether ROUGE. It might not adequately address the
+semantic coherence, fluency, or grammatical integrity of the generated narrative, leaning more towards evaluating
+isolated phrases or n-grams. The metric can be less discerning when critiquing elaborate sentences due to its
+fragmentary nature. Moreover, as it banks on comparisons with human-made references, procuring such benchmarks can
+be challenging or even impractical at times.</p>
 </div>
 
 
                             <div id="RougeMetrics.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RougeMetrics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RougeMetrics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#RougeMetrics.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RougeMetrics.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RougeMetrics.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RougeMetrics.run" class="classattr">
@@ -129,14 +153,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RougeMetrics.key" class="variable">key</dd>
                 <dd id="RougeMetrics.summary" class="function">summary</dd>
                 <dd id="RougeMetrics.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="RougeMetrics.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="RougeMetrics.description" class="function">description</dd>
+                <dd id="RougeMetrics.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

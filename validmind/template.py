@@ -14,8 +14,7 @@ from .html_templates.content_blocks import (
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
 from .utils import is_notebook
-from .vm_models.test_plan import TestPlan
-from .vm_models.test_suite import TestSuite
+from .vm_models import TestContext, TestSuite, TestSuiteRunner
 
 logger = get_logger(__name__)
 
@@ -75,7 +74,9 @@ def _create_content_widget(content):
                 test_content_block_html.format(
                     title=test_deets["Name"],
                     description=markdown(test_deets["Description"]),
-                    required_inputs=", ".join(test_deets["Required Inputs"]),
+                    required_inputs=", ".join(
+                        test_deets["Required Inputs"] or ["None"]
+                    ),
                     params_table="\n".join(
                         [
                             f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
@@ -177,10 +178,7 @@ def _get_section_tests(section):
         A list of tests in the section.
     """
     tests = [
-        {
-            "tag": f"{section['id']}",
-            "test_id": content["content_id"],
-        }
+        content["content_id"]
         for content in section.get("contents", [])
         if content["content_type"] in ["metric", "test"]
     ]
@@ -191,25 +189,22 @@ def _get_section_tests(section):
     return tests
 
 
-def _create_section_test_plan(section):
-    """Create a test plan for a section in a template
+def _create_test_suite_section(section):
+    """Create a section object for a test suite that contains the tests in a section
+    in the template
 
     Args:
         section: a section of a template (in tree form)
 
     Returns:
-        A dynamically-created TestPlan Class
+        A TestSuite section dict
     """
     if section_tests := _get_section_tests(section):
-        return type(
-            f"{section['title'].title().replace(' ', '')}TestPlan",
-            (TestPlan,),
-            {
-                "name": section["id"],
-                "tests": section_tests,
-                "__doc__": section["title"],
-            },
-        )
+        return {
+            "section_id": section["id"],
+            "section_description": section["title"],
+            "section_tests": section_tests,
+        }
 
 
 def _create_template_test_suite(template, section=None):
@@ -223,29 +218,28 @@ def _create_template_test_suite(template, section=None):
     Returns:
         A dynamically-create TestSuite Class
     """
-    tree = _convert_sections_to_section_tree(
+    section_tree = _convert_sections_to_section_tree(
         sections=template["sections"],
         start_section_id=section,
     )
-    test_plans = [
-        plan
-        for section in tree
-        if (plan := _create_section_test_plan(section)) is not None
-    ]
-    test_suite = type(
+
+    # dynamically create a TestSuite class using `type` and populate it with the tests
+    return type(
         f"{template['template_name'].title().replace(' ', '')}TestSuite",
         (TestSuite,),
         {
-            "name": template["template_id"],
-            "test_plans": test_plans,
+            "suite_id": template["template_id"],
+            "tests": [
+                section_dict
+                for section in section_tree
+                if (section_dict := _create_test_suite_section(section)) is not None
+            ],
             "__doc__": template["description"],
         },
     )
 
-    return test_suite
 
-
-def get_template_test_suite(template, section=None, *args, **kwargs):
+def get_template_test_suite(template, section=None):
     """Get a TestSuite instance containing all tests in a template
 
     This function will collect all tests used in a template into a dynamically-created
@@ -254,16 +248,14 @@ def get_template_test_suite(template, section=None, *args, **kwargs):
     Args:
         template: A valid flat template
         section: The section of the template to run (if not provided, run all sections)
-        *args: Arguments to pass to the TestSuite
-        **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
         The TestSuite instance
     """
-    return _create_template_test_suite(template, section)(*args, **kwargs)
+    return _create_template_test_suite(template, section)()
 
 
-def run_template(template, section, send=True, fail_fast=False, *args, **kwargs):
+def run_template(template, section, send=True, fail_fast=False, config=None, **kwargs):
     """Run all tests in a template
 
     This function will collect all tests used in a template into a TestSuite and then
@@ -274,14 +266,18 @@ def run_template(template, section, send=True, fail_fast=False, *args, **kwargs)
         section: The section of the template to run (if not provided, run all sections)
         send: Whether to send the results to the ValidMind API
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        *args: Arguments to pass to the TestSuite
-        **kwargs: Keyword arguments to pass to the TestSuite
+        config: A dictionary of test parameters to override the defaults
+        **kwargs: variables to pass into the TestContext i.e. model, dataset etc.
 
     Returns:
         The completed TestSuite instance
     """
-    kwargs["fail_fast"] = fail_fast
-    test_suite = get_template_test_suite(template, section, *args, **kwargs)
-    test_suite.run(send=send)
+    test_suite = get_template_test_suite(template, section)
+
+    TestSuiteRunner(
+        suite=test_suite,
+        context=TestContext(**kwargs),
+        config=config,
+    ).run(send=send, fail_fast=fail_fast)
 
     return test_suite

@@ -73,21 +73,47 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">HeatmapFeatureCorrelations</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">HeatmapFeatureCorrelations</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#HeatmapFeatureCorrelations"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of correlations by plotting a heatmap.
-The input dataset is required.</p>
+            <div class="docstring"><p><strong>Purpose:</strong> The HeatmapFeatureCorrelations metric is utilized to evaluate the degree of interrelationships between
+pairs of input features within a dataset. This metric allows us to visually comprehend the correlation patterns
+through a heatmap, which can be essential in understanding which features may contribute most significantly to the
+performance of the model. Features that have high intercorrelation can potentially reduce the model's ability to
+learn, thus impacting the overall performance and stability of the machine learning model.</p>
+
+<p><strong>Test Mechanism:</strong> The metric executes the correlation test by computing the Pearson correlations for all pairs of
+numerical features. It then generates a heatmap plot using seaborn, a Python data visualization library. The
+colormap ranges from -1 to 1, indicating perfect negative correlation and perfect positive correlation
+respectively. A 'declutter' option is provided which, if set to true, removes variable names and numerical
+correlations from the plot to provide a more streamlined view. The size of feature names and correlation
+coefficients can be controlled through 'fontsize' parameters.</p>
+
+<p><strong>Signs of High Risk:</strong> Indicators of potential risk include features with high absolute correlation values. Since
+this suggests a significant degree of multicollinearity, it might lead to instabilities in the trained model and
+can also result in overfitting. Furthermore, the presence of multiple homogeneous blocks of high positive or
+negative correlation within the plot might indicate redundant or irrelevant features included within the dataset.</p>
+
+<p><strong>Strengths:</strong> The strength of this metric lies in its ability to visually represent the extent and direction of
+correlation between any two numeric features, which aids in the interpretation and understanding of complex data
+relationships. The heatmap provides an immediate and intuitively understandable representation, hence, it is
+extremely useful for high-dimensional datasets where extracting meaningful relationships might be challenging.</p>
+
+<p><strong>Limitations:</strong> The central limitation might be that it can only calculate correlation between numeric features,
+making it unsuitable for categorical variables unless they are already numerically encoded in a meaningful manner.
+Also, it uses Pearson's correlation, which only measures linear relationships between features. It may perform
+poorly in cases where the relationship is non-linear. Moreover, large feature sets might result in cluttered and
+difficult-to-read correlation heatmaps, especially when the 'declutter' option is set to false.</p>
 </div>
 
 
                             <div id="HeatmapFeatureCorrelations.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">HeatmapFeatureCorrelations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">HeatmapFeatureCorrelations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,13 +153,13 @@ The input dataset is required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="HeatmapFeatureCorrelations.key" class="variable">key</dd>
                 <dd id="HeatmapFeatureCorrelations.summary" class="function">summary</dd>
                 <dd id="HeatmapFeatureCorrelations.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="HeatmapFeatureCorrelations.description" class="function">description</dd>
                 <dd id="HeatmapFeatureCorrelations.log" class="function">log</dd>
 

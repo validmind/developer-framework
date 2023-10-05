@@ -72,14 +72,60 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AutoSeasonality</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">AutoSeasonality</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#AutoSeasonality"></a>
     
-            <div class="docstring"><p>Automatically detects the optimal seasonal order for a time series dataset
-using the seasonal_decompose method.</p>
+            <div class="docstring"><p><strong>Purpose:</strong>
+The AutoSeasonality metric is intended to automatically detect and determine the optimal seasonal order or period
+for each variable in a time series dataset. The aim here is to quantify the inherent periodic pattern and
+seasonality that recurs after fixed intervals of time in the dataset. This is especially crucial for
+forecasting-based models, where understanding the seasonality component of the series can substantially enhance
+prediction accuracy.</p>
+
+<p><strong>Test Mechanism:</strong>
+The implementation uses the seasonal decomposition method from Statsmodels Python library, broken down into
+'additive' model type for each variable within the defined range of 'min_period' and 'max_period'. The test applies
+the seasonal decompose function to each seasonality period in the range and calculates the mean residual error for
+each period. The seasonal period that minimizes these residual errors is selected as the 'Best Period'. The results
+include the 'Best Period', along with the calculated residual errors and the determination of 'Seasonality' or 'No
+Seasonality'.</p>
+
+<p><strong>Signs of High Risk:</strong>
+The following factors may indicate high risk or failure in the model's performance:</p>
+
+<ul>
+<li>If the optimal seasonal period or 'Best Period' is consistently at the maximum or minimum limit of the provided
+range for a majority of variables, this might signify that the specified range doesn't adequately capture the true
+seasonality of the series.</li>
+<li>A high average 'Residual Error' for the 'Best Period' could imply issues with the performance of the model.</li>
+</ul>
+
+<p><strong>Strengths:</strong>
+This metric offers several advantages for time series dataset analysis:</p>
+
+<ul>
+<li>It provides a robust, automated approach to identifying and quantifying the optimal seasonality.</li>
+<li>It is applicable to multiple variables in a dataset, offering a comprehensive assessment of each variable's
+seasonality.</li>
+<li>It uses concrete and measurable statistical methods to derive seasonality, enhancing the objectivity and
+reproducibility of the model.</li>
+</ul>
+
+<p><strong>Limitations:</strong>
+There are also a few limitations of this metric:</p>
+
+<ul>
+<li>Errors may arise if the time series exhibits random walk behaviour or lacks a clear seasonality, as the seasonal
+decomposition model may not be appropriate.</li>
+<li>The defined range for the seasonal period (min_period and max_period) can influence the results. If the true
+seasonality period lies outside this range, this approach will not be able to identify the actual seasonality.</li>
+<li>It may not fully interpret complex patterns that go beyond the simple additive model for seasonal decomposition.</li>
+<li>The tool may infer seasonality where none exists if random fluctuations in the data match the defined seasonal
+period range.</li>
+</ul>
 </div>
 
 
@@ -130,13 +176,13 @@ and another for the best seasonality period results</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="AutoSeasonality.__init__" class="function">Metric</dd>
                 <dd id="AutoSeasonality.key" class="variable">key</dd>
                 <dd id="AutoSeasonality.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="AutoSeasonality.description" class="function">description</dd>
                 <dd id="AutoSeasonality.log" class="function">log</dd>
 

@@ -38,9 +38,6 @@
                                 <a class="function" href="#TextDescription.__init__">TextDescription</a>
                         </li>
                         <li>
-                                <a class="function" href="#TextDescription.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#TextDescription.general_text_metrics">general_text_metrics</a>
                         </li>
                         <li>
@@ -54,9 +51,6 @@
                         </li>
                         <li>
                                 <a class="function" href="#TextDescription.text_description_scatter_plot">text_description_scatter_plot</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TextDescription.summary">summary</a>
                         </li>
                 </ul>
 
@@ -88,40 +82,74 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">TextDescription</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">TextDescription</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#TextDescription"></a>
     
-    
+            <div class="docstring"><p><strong>Purpose</strong>: This is an in-depth textual analysis test used to assess the lexical complexity, structure, and
+vocabulary of a given dataset. The TextDescription metric measures various parameters such as:</p>
+
+<ul>
+<li><strong>Total Words</strong>: Assess the length and complexity of the input text. Longer documents might require more
+sophisticated summarization techniques, while shorter ones may need more concise summaries.</li>
+<li><strong>Total Sentences</strong>: Understand the structural makeup of the content. Longer texts with numerous sentences might
+require the model to generate longer summaries to capture essential information.</li>
+<li><strong>Avg Sentence Length</strong>: Determine the average length of sentences in the text. This can help the model decide on
+the appropriate length for generated summaries, ensuring they are coherent and readable.</li>
+<li><strong>Total Paragraphs</strong>: Analyze how the content is organized into paragraphs. The model should be able to maintain
+the logical structure of the content when producing summaries.</li>
+<li><strong>Total Unique Words</strong>: Measure the diversity of vocabulary in the text. A higher count of unique words could
+indicate more complex content, which the model needs to capture accurately.</li>
+<li><strong>Most Common Words</strong>: Identify frequently occurring words that likely represent key themes. The model should pay
+special attention to including these words and concepts in its summaries.</li>
+<li><strong>Total Punctuations</strong>: Evaluate the usage of punctuation marks, which contribute to the tone and structure of
+the content. The model should be able to maintain appropriate punctuation in summaries.</li>
+<li><strong>Lexical Diversity</strong>: Calculate the richness of vocabulary in relation to the overall text length. A higher
+lexical diversity suggests a broader range of ideas and concepts that the model needs to capture in its summaries.</li>
+</ul>
+
+<p>It is also responsible for paring down unwanted tokens, measuring the average sentence length, and calculating the
+lexical diversity in the available text. This metric's measures help in understanding the nature of the text and
+assessing the potential challenges of machine learning algorithms deployed for textual analysis, language
+processing, or summarization.</p>
+
+<p><strong>Test Mechanism</strong>: The test operates by parsing the dataset and using the NLTK library to tokenize the text into
+words, sentences, and paragraphs. It dissects the processed text further, removing stopwords declared in
+'unwanted_tokens' and punctuations. It then calculates parameters such as the total number of words, sentences,
+paragraphs, punctuations; average sentence length; and lexical diversity. The metric also condenses these results
+and plots scatter plots for certain combinations of variables (Total Words vs Total Sentences, Total Words vs Total
+Unique Words, etc.) to provide a visual depiction of the text structure.</p>
+
+<p><strong>Signs of High Risk</strong>: Anomaly in results or increased complexity in lexical diversity, long sentences and
+paragraphs, high uniqueness of words, or an excess of unwanted tokens can signify risk in text processing ML
+models. It suggests that the model's text absorption and processing capability can be compromised. Additionally,
+missing or erroneous visualizations may also indicate issues with the text description analysis.</p>
+
+<p><strong>Strengths</strong>: This metric is an essential tool for ML model data pre-processing, focusing on textual analysis. It
+provides a detailed dissection of a text dataset to understand structural and vocabulary complexity, which is
+helpful to strategize a ML model's textual processing capability. Besides, it visualizes correlations between
+chosen variables, helping further in grasping the text's structure and complexity.</p>
+
+<p><strong>Limitations</strong>: This metric relies heavily on the NLTK library, rendering it unsuitable for languages unsupported
+by NLTK. The unwanted tokens and stop words are predefined, limiting customization by context or application. This
+metric does not consider semantics or grammatical complexities, which can be crucial in language processing.
+Finally, it assumes that the document is well-structured (with sentences and paragraphs); unstructured or poorly
+formatted text may skew the results.</p>
+</div>
+
 
                             <div id="TextDescription.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TextDescription</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TextDescription</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#TextDescription.__init__"></a>
     
     
-
-                            </div>
-                            <div id="TextDescription.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TextDescription.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="TextDescription.general_text_metrics" class="classattr">
@@ -191,31 +219,18 @@ to returning the class' docstring</p>
     
 
                             </div>
-                            <div id="TextDescription.summary" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TextDescription.summary"></a>
-    
-            <div class="docstring"><p>Build one table for summarizing the regression analysis results</p>
-</div>
-
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="TextDescription.key" class="variable">key</dd>
+                <dd id="TextDescription.summary" class="function">summary</dd>
                 <dd id="TextDescription.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="TextDescription.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="TextDescription.description" class="function">description</dd>
+                <dd id="TextDescription.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -76,21 +76,44 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">WOEBinTable</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">WOEBinTable</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#WOEBinTable"></a>
     
-            <div class="docstring"><p>Implements WoE-based automatic binning for features in a dataset and calculates their Information Value (IV).
-Utilizes the 'scorecardpy' library for the binning process.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Weight of Evidence (WoE) and Information Value (IV) test is intended to evaluate the predictive
+power of each feature in the machine learning model. The test generates binned groups of values from each feature
+in a dataset, computes the WoE value and the IV value for each bin. These values provide insights on the
+relationship between each feature and the target variable and their contribution towards the predictive output of
+the model.</p>
+
+<p><strong>Test Mechanism</strong>: The metric leverages the <code>scorecardpy.woebin</code> method to perform WoE based automatic binning on
+the dataset. Depending on the parameter <code>breaks_adj</code>, the method adjusts the cut-off points for binning numeric
+variables. The bins are then used to calculate the WoE and IV. The metric requires a dataset with the target
+variable defined. The metric outputs a dataframe that comprises the bin boundaries, WoE, and IV values for each
+feature.</p>
+
+<p><strong>Signs of High Risk</strong>: Indicators of high risk associated with this metric might include high IV values, which
+denote variables with too much predictive power which might lead to overfitting. Another sign of risk could be
+errors during the binning process, which might be due to inappropriate data types or poorly defined bins.</p>
+
+<p><strong>Strengths</strong>: The WoE and IV test is highly effective for feature selection in binary classification problems, as
+it quantifies how much predictive information is packed within each feature regarding the binary outcome.
+Furthermore, the WoE transformation creates a monotonic relationship between the target and independent variables.</p>
+
+<p><strong>Limitations</strong>: This method is mainly designed for binary classification tasks, therefore it might not be
+applicable or reliable for multi-class classification or regression tasks. Additionally, if the dataset has many
+features or the features are not binnable or they are non-numeric, this process might encounter difficulties.
+Furthermore, this metric doesn't help in identifying if the predictive factor being observed is a coincidence or a
+real phenomenon due to data randomness.</p>
 </div>
 
 
                             <div id="WOEBinTable.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">WOEBinTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">WOEBinTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -153,12 +176,12 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="WOEBinTable.key" class="variable">key</dd>
                 <dd id="WOEBinTable.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="WOEBinTable.description" class="function">description</dd>
                 <dd id="WOEBinTable.log" class="function">log</dd>
 

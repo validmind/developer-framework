@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
-from ..utils import run_async
-from .test_context import TestContextUtils
+from ...utils import run_async
+from ..test_context import TestContextUtils
 
 
 class TestMetadata(TypedDict):
@@ -32,9 +32,10 @@ class Test(TestContextUtils):
     # Instance Variables
     _ref_id: ClassVar[str]  # unique identifier (populated at init)
     _section_id: ClassVar[str]  # which section of template this test belongs to
+    test_id: ClassVar[str] = None  # populated when loading tests from suites
 
     result: object  # type should be overridden by parent classes
-    params: dict = None  # populated by test plan from user-passed config
+    params: dict = None  # populated by test suite from user-passed config
 
     def __post_init__(self):
         """

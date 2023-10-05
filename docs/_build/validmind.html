@@ -60,6 +60,9 @@
                     <a class="function" href="#run_test_suite">run_test_suite</a>
             </li>
             <li>
+                    <a class="variable" href="#test_plans">test_plans</a>
+            </li>
+            <li>
                     <a class="function" href="#log_dataset">log_dataset</a>
             </li>
             <li>
@@ -80,7 +83,6 @@
                     <li><a href="validmind/datasets.html">datasets</a></li>
                     <li><a href="validmind/errors.html">errors</a></li>
                     <li><a href="validmind/tests.html">tests</a></li>
-                    <li><a href="validmind/test_plans.html">test_plans</a></li>
                     <li><a href="validmind/test_suites.html">test_suites</a></li>
                     <li><a href="validmind/vm_models.html">vm_models</a></li>
             </ul>
@@ -105,7 +107,7 @@ the documentation and validation of your models.</p>
 <p>The Developer Framework is designed to be model agnostic. If your model is built in Python, ValidMind's
 Python library will provide all the standard functionality without requiring your developers to rewrite any functions.</p>
 
-<p>The Developer Framework provides a rich suite of documentation tools and test plans, from documenting
+<p>The Developer Framework provides a rich suite of documentation tools and test suites, from documenting
 descriptions of your dataset to testing your models for weak spots and overfit areas. The Developer Framework
 helps you automate the generation of model documentation by feeding the ValidMind platform with documentation
 artifacts and test results to the ValidMind platform.</p>
@@ -144,7 +146,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.20.0&#39;</span>
+<span class="default_value">&#39;1.21.1&#39;</span>
 
         
     </div>
@@ -157,7 +159,7 @@ and to upload to the ValidMind Platform.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">TestSuite</span>:</span></span>
+        <span class="name">get_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">*</span><span class="n">args</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">TestSuite</span>:</span></span>
 
         
     </div>
@@ -166,18 +168,18 @@ and to upload to the ValidMind Platform.</p>
             <div class="docstring"><p>Gets a TestSuite object for the current project or a specific test suite</p>
 
 <p>This function provides an interface to retrieve the TestSuite instance for the
-current project or a specific TestSuite instance identified by test_suite_name.
-The project Test Suite will contain Test Plans for every section in the project's
-documentation template and these Test Plans will contain all the tests associated
-with that section.</p>
+current project or a specific TestSuite instance identified by test_suite_id.
+The project Test Suite will contain sections for every section in the project's
+documentation template and these Test Suite Sections will contain all the tests
+associated with that template section.</p>
 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>test_suite_name (str, optional):</strong>  The test suite name. If not passed, then the
+<li><strong>test_suite_id (str, optional):</strong>  The test suite name. If not passed, then the
 project's test suite will be returned. Defaults to None.</li>
 <li><strong>section (str, optional):</strong>  The section of the documentation template from which
-to retrieve the test suite. This only applies if test_suite_name is None.
+to retrieve the test suite. This only applies if test_suite_id is None.
 Defaults to None.</li>
 <li><strong>args:</strong>  Additional arguments to pass to the TestSuite</li>
 <li><strong>kwargs:</strong>  Additional keyword arguments to pass to the TestSuite</li>
@@ -365,7 +367,7 @@ the project has not been initialized, then an error will be raised.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -383,7 +385,6 @@ suite, log the results to the ValidMind API and display them to the user.</p>
 <li><strong>section (str, optional):</strong>  The section to preview. Defaults to None.</li>
 <li><strong>send (bool, optional):</strong>  Whether to send the results to the ValidMind API. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
 <li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
 </ul>
 
@@ -453,35 +454,7 @@ suite, log the results to the ValidMind API and display them to the user.</p>
     </div>
     <a class="headerlink" href="#run_test_plan"></a>
     
-            <div class="docstring"><p>High Level function for running a test plan</p>
-
-<p>This function provides a high level interface for running a test plan. It removes the need
-to manually initialize a TestPlan instance and run it. This function will automatically
-find the correct test plan class based on the test_plan_name, initialize the test plan, and
-run it.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>test_plan_name (str):</strong>  The test plan name (e.g. 'classifier')</li>
-<li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</li>
-<li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test plan. These will provide
-the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific test plan for more details.</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the test plan name is not found or if there is an error initializing the test plan</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>dict: A dictionary of test results</p>
-</blockquote>
+            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_test_suite</code> instead.</p>
 </div>
 
 
@@ -490,7 +463,7 @@ See the documentation for the specific test plan for more details.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="n">config</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -499,18 +472,21 @@ See the documentation for the specific test plan for more details.</li>
             <div class="docstring"><p>High Level function for running a test suite</p>
 
 <p>This function provides a high level interface for running a test suite. A test suite is
-a collection of test plans. This function will automatically find the correct test suite
-class based on the test_suite_name, initialize each of the test plans, and run them.</p>
+a collection of tests. This function will automatically find the correct test suite
+class based on the test_suite_id, initialize each of the tests, and run them.</p>
 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>test_suite_name (str):</strong>  The test suite name (e.g. 'classifier_full_suite')</li>
-<li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False is useful for testing. Defaults to True.</li>
+<li><strong>test_suite_id (str):</strong>  The test suite name (e.g. 'classifier_full_suite')</li>
+<li><strong>config (dict, optional):</strong>  A dictionary of parameters to pass to the tests in the
+test suite. Defaults to None.</li>
+<li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False
+is useful for testing. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
 <li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test suite. These will provide
 the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific test plan, metric or threshold test for more details.</li>
+See the documentation for the specific metric or threshold test for more details.</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>
@@ -526,6 +502,17 @@ See the documentation for the specific test plan, metric or threshold test for m
 </blockquote>
 </div>
 
+
+                </section>
+                <section id="test_plans">
+                    <div class="attr variable">
+            <span class="name">test_plans</span>
+
+        
+    </div>
+    <a class="headerlink" href="#test_plans"></a>
+    
+    
 
                 </section>
                 <section id="log_dataset">
@@ -625,7 +612,7 @@ See the documentation for the specific test plan, metric or threshold test for m
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
+        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
 
         
     </div>
@@ -639,7 +626,7 @@ running tests but can also be called directly if the user wants to run tests on 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>results (list):</strong>  A list of TestResults objects</li>
+<li><strong>results (list):</strong>  A list of ThresholdTestResults objects</li>
 <li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training",
 "test", or "validation". Defaults to "training".</li>
 </ul>

@@ -11,15 +11,48 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
 @dataclass
 class TimeSeriesMissingValues(ThresholdTest):
     """
-    Test that the number of missing values is less than a threshold
+    **Purpose**:
+    This test is designed to verify that the number of missing values in a historical time-series dataset is below a
+    specified threshold. Since time-series models rely on continuity and temporality of data points, missing values
+    could affect the model's performance. Therefore, this test intends to maintain data quality and readiness for the
+    machine learning model.
+
+    **Test Mechanism**:
+    The test process begins by checking if the dataset has a datetime index; if not, an error is raised. Next, a lower
+    limit threshold for missing values is set and a missing values check is run on each column of the dataset, with a
+    test result object being generated whether the number of missing values is below the specified threshold. The
+    percentage of missing values is also calculated alongside the raw count.
+
+    As a visualization aid, the test generates two plots (a bar plot and a heatmap) to better illustrate the
+    distribution and quantity of missing values per variable, if any exist. The test results, missing values count,
+    missing values percentage, and the pass/fail status are returned in a results table.
+
+    **Signs of High Risk**:
+    If any column in the dataset contains a number of missing values exceeding the threshold, it is considered a
+    failure and a high-risk scenario. This could be due to incomplete data collection, faulty sensors, or data
+    preprocessing errors. A continuous visual 'streak' in the 'heatmap' might also indicate a systematic error during
+    data collection.
+
+    **Strengths**:
+    This test is beneficial in promptly identifying missing values which might impact the model's performance. It is
+    broadly applicable and customizable through the threshold parameter. Going beyond raw numbers to calculate the
+    percentile of missing values adds a more relative understanding of data scarcity. It also includes a robust
+    mechanism to visually represent data quality, facilitating quicker and friendlier misinterpretation.
+
+    **Limitations**:
+    Though the test effectively identifies missing values, it does not suggest methods to deal with them. It assumes
+    that the dataset should have datetime index, limiting its use to time series analysis only. The test is sensitive
+    to the 'min_threshold' parameter and might raise false alarms if it's set too strictly, or might miss problematic
+    data if it's set too loosely. Lastly, the test solely focuses on 'missingness' and might overlook other aspects of
+    data quality.
     """
 
     category = "data_quality"
@@ -68,7 +101,7 @@ class TimeSeriesMissingValues(ThresholdTest):
         rows = df.shape[0]
         missing = df.isna().sum()
         test_results = [
-            TestResult(
+            ThresholdTestResult(
                 column=col,
                 passed=missing[col] < min_threshold,
                 values={"n_missing": missing[col], "p_missing": missing[col] / rows},

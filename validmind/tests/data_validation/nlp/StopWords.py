@@ -18,8 +18,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
     VMDataset,
 )
 
@@ -27,14 +27,37 @@ from validmind.vm_models import (
 @dataclass
 class StopWords(ThresholdTest):
     """
-    The purpose of the StopWords test is to perform a data quality test focused on
-    identifying and analyzing the usage of stop words within a dataset. Stop words are
-    commonly used words in a language (e.g., "the", "and", "is") that are often
-    considered insignificant for analysis. The StopWords test analyzes the dataset by
-    creating a corpus of words from the specified text column. It then determines the
-    frequency of each stop word in the corpus and calculates the percentage of each
-    stop word in relation to the total number of words. The test results focus on
-    identifying the top stop words based on their percentage in the corpus.
+    **Purpose**: The StopWords test is a data quality assessment tool specifically designed for text data. It
+    identifies and analyzes the usage of 'stop words' within a dataset. Stop words are frequent, common words in a
+    language (e.g., "the", "and", "is"), which are typically considered insignificant for in-depth analysis. The test
+    quantifies the frequency of each stop word in the dataset, further calculating their proportional usage compared to
+    the total word count. Ultimately, it aims to highlight the prevailing stop words based on their usage frequency.
+
+    **Test Mechanism**: The test triggers once it receives a 'VMDataset' object; in absence of which, it raises an
+    error. The text column of the dataset undergoes an inspection for the creation of a 'corpus' (a collection of
+    written texts representing the dataset). With the help of Natural Language Toolkit's (NLTK) stop word repository,
+    the test screens the corpus for any stop words and logs their frequency. Each stop word, expressed as a percentage
+    usage out of the total corpus, is compared against a 'min_percent_threshold'. If the percentage exceeds this
+    threshold, the test is deemed as failed. The test returns the top prevailing stop words, decided by the 'num_words'
+    parameter, and their percentages. It also provides a bar chart visualization of the top stop words and their usage
+    frequency for intuitive understanding.
+
+    **Signs of High Risk**: Potential signs indicating high risk are if the percentage of any stop words exceeds the
+    predefined 'min_percent_threshold' and the application's context where a major presence of stop words could
+    negatively impact the analytical performance due to noise generation.
+
+    **Strengths**: The main strengths of the StopWords test include its ability to scrutinize and quantify the usage of
+    stop words in a dataset, which might often be overlooked due to their insignificant semantic meaning. The test
+    gives insights into potential noise in the text data, which could interfere with model training efficiency.
+    Furthermore, the bar chart visualization provided by the test facilitates readily interpretable and actionable
+    insights.
+
+    **Limitations**: While robust for stop word analysis, the test does exhibit a few limitations. It only works with
+    English stop words and therefore may not perform well on datasets in other languages. The effectiveness of the test
+    depends on the 'min_percent_threshold', which might need to be fine-tuned for different datasets. Additionally, the
+    test does not consider the context of the stop words used within the dataset, and hence, it might overlook their
+    significance if used in certain contexts. Lastly, the test checks only the frequency of stop words and does not
+    offer direct measures of model performance or predictive accuracy.
     """
 
     category = "data_quality"
@@ -46,7 +69,7 @@ class StopWords(ThresholdTest):
         "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
 
         # Create a DataFrame from the data
         df = pd.DataFrame(results[0].values, columns=["Word", "Percentage"])
@@ -99,7 +122,7 @@ class StopWords(ThresholdTest):
         ]
 
         test_results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values=top,
             )

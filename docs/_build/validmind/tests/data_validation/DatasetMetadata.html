@@ -70,23 +70,46 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DatasetMetadata</span><wbr>(<span class="base">validmind.vm_models.test.Test</span>):
+    <span class="name">DatasetMetadata</span><wbr>(<span class="base">validmind.vm_models.test.test.Test</span>):
 
         
     </div>
     <a class="headerlink" href="#DatasetMetadata"></a>
     
-            <div class="docstring"><p>Custom class to collect a set of descriptive statistics for a dataset.
-This class will log dataset metadata via <code>log_dataset</code> instead of a metric.
-Dataset metadata is necessary to initialize dataset object that can be related
-to different metrics and test results</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The main objective of the <code><a href="#DatasetMetadata">DatasetMetadata</a></code> test is to gather and log crucial descriptive statistics
+about the datasets used during model training. It serves as an important tool for monitoring relevant
+characteristics of the dataset, such as task types (classification, regression, text_classification,
+text_summarization) and tags (tabular_data, time_series_data, text_data). This helps ensure that model validation
+exercises are conducted with full transparency and context by connecting different metrics and test results to the
+underlying dataset.</p>
+
+<p><strong>Test Mechanism</strong>: This class does not include a specific test or grading scale. Instead, it collects metadata
+associated with the dataset and logs it for future reference. The metadata is attached to the dataset object during
+the post-initialization phase. The <code><a href="#DatasetMetadata.run">run</a></code> method initializes a <code>TestSuiteDatasetResult</code> object with a unique result
+ID and dataset. The dataset metadata then gets associated with this ID for future use in more targeted validation
+efforts.</p>
+
+<p><strong>Signs of High Risk</strong>: The risks associated with this process are not connected with model performance or biases.
+However, incomplete metadata, incorrect dataset labels, or missing dataset types could lead to inaccuracies in
+model risk assessment and may constitute signs of risk within the metadata gathering process itself.</p>
+
+<p><strong>Strengths</strong>: A key strength of this class is the transparency it brings to model validation exercises by
+providing detailed information about the dataset. This can help in diagnosing errors, identifying correlations to
+the model's behavior, ensuring correct task and data-type associations, and enabling superior model explanations.
+Also, it can support dataset versioning by logging each dataset's metadata, offering a trackable history of changes.</p>
+
+<p><strong>Limitations</strong>: The <code><a href="#DatasetMetadata">DatasetMetadata</a></code> class could lack completeness or accuracy, particularly if metadata is not
+adequately added or is incorrect. The process does not inherently evaluate the quality of the dataset or directly
+validate the model's predictions, so it must be combined with other tests for a comprehensive evaluation. Lastly,
+any potential bias in the dataset won't be recognized using this class. Bias detection would require separate tests
+tailored specifically towards fairness and bias detection.</p>
 </div>
 
 
                             <div id="DatasetMetadata.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DatasetMetadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanDatasetResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">DatasetMetadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteDatasetResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -105,7 +128,7 @@ to different metrics and test results</p>
     </div>
     <a class="headerlink" href="#DatasetMetadata.run"></a>
     
-            <div class="docstring"><p>Just set the dataset to the result attribute of the test plan result
+            <div class="docstring"><p>Just set the dataset to the result attribute of the test suite result
 and it will be logged via the <code>log_dataset</code> function</p>
 </div>
 
@@ -114,7 +137,7 @@ and it will be logged via the <code>log_dataset</code> function</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.test.Test</dt>
+                                    <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="DatasetMetadata.description" class="function">description</dd>
                 <dd id="DatasetMetadata.summary" class="function">summary</dd>
                 <dd id="DatasetMetadata.cache_results" class="function">cache_results</dd>

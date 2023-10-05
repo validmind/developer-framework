@@ -73,20 +73,48 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">UniqueRows</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">UniqueRows</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#UniqueRows"></a>
     
-            <div class="docstring"><p>Test that the number of unique rows is greater than a threshold</p>
+            <div class="docstring"><p><strong>Purpose</strong>:
+The purpose of the UniqueRows test is to assess the quality of the data that is being fed into the ML model,
+specifically by checking that the number of unique rows in the dataset exceeds a certain threshold in order to
+ensure diversity in the data. This is important as having a diverse range of data is crucial in training an
+unbiased and robust model that performs well on unseen data.</p>
+
+<p><strong>Test Mechanism</strong>:
+The testing mechanism first calculates the total number of rows in the dataset. Then, for each column in the
+dataset, the number of unique rows is counted. The test passes if the percentage of unique rows (calculated as the
+number of unique rows divided by the total number of rows) is less than the predefined minimum percent threshold
+provided as a parameter to the function. The results are then cached, and an overall pass or fail is issued based
+on whether all columns have passed the test.</p>
+
+<p><strong>Signs of High Risk</strong>:
+Signs of high risk include columns of data where the number of unique rows is less than the predefined minimum
+percent threshold. This lack of diversity in the data can be seen as an indicator of poor data quality, which could
+potentially lead to model overfitting and a poor generalization ability, thereby posing a high risk.</p>
+
+<p><strong>Strengths</strong>:
+The Strengths of the UniqueRows test include its ability to quickly and efficiently evaluate the diversity of data
+across each column in the dataset. It allows an easy and systematic way to check data quality in terms of
+uniqueness, which can be a critical aspect in creating an effective and unbiased ML model.</p>
+
+<p><strong>Limitations</strong>:
+One limitation of the UniqueRows test is that it assumes that the quality of the data is directly proportional to
+its uniqueness, which may not always be the case. There might be scenarios where certain non-unique rows are
+important and shouldn't be discounted. Also, it doesn’t take into account the 'importance' of each column in
+predicting the output and treats all columns equally. Finally, this test will not be useful or appropriate for
+categorical variables where the number of unique categories is naturally limited.</p>
 </div>
 
 
                             <div id="UniqueRows.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">UniqueRows</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">UniqueRows</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -99,7 +127,7 @@
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -129,11 +157,11 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="UniqueRows.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="UniqueRows.description" class="function">description</dd>
                 <dd id="UniqueRows.log" class="function">log</dd>
 

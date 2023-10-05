@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from validmind.logging import get_logger
-from validmind.vm_models import Metric
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 DEFAULT_HISTOGRAM_BINS = 10
 DEFAULT_HISTOGRAM_BIN_SIZES = [5, 10, 20, 50]
@@ -18,7 +18,34 @@ logger = get_logger(__name__)
 @dataclass
 class DatasetDescription(Metric):
     """
-    Collects a set of descriptive statistics for a dataset
+    **Purpose**: This test is used to provide a variety of descriptive statistics about the input data used in a
+    machine learning model. Such statistics include measures of central tendency, measures of dispersion, and frequency
+    counts for each field (i.e. feature or variable) in the dataset. This helps in understanding the nature of the
+    data, identifying outliers, and understanding how well the data meets the assumptions of the model.
+
+    **Test Mechanism**: The mechanism starts by transforming the input dataset to its basic form by reversing any
+    one-hot encoding and extracting each field from the dataset. Descriptive statistics are then computed for each
+    field depending on its data type (Numeric, Categorical, Boolean, Dummy, Text, Null). For numeric fields, statistics
+    like mean, standard deviation, min, max and various percentiles are computed. For categorical and boolean fields,
+    frequency counts of each category and the most frequent category (top) are computed. Missing and distinct values
+    are computed for all fields. Additionally, the test generates histograms of the data for numeric and categorical
+    types, as well as word count histograms for text simply by counting the number of occurrences of every distinct
+    word.
+
+    **Signs of High Risk**: Areas of potential high risk include a significant proportion of missing or null values
+    which may affect the model's performance. Also, predominance of a single value (low diversity) in a feature, high
+    variance in a numeric feature, or high number of distinct categories in categorical features may signal problems
+    with the model. High frequency of a particular word in text data could also indicate bias.
+
+    **Strengths**: This test effectively provides a comprehensive, high-level summary of the dataset. It aids in
+    understanding the distribution, dispersion, and central tendency of numeric features, and the frequency
+    distribution in categorical and text features. It effectively handles different data types and provides insight
+    into the variety and distribution of field values.
+
+    **Limitations**: This metric doesn’t provide insights into the relationships between different fields or features;
+    it only provides univariate analysis. The statistical description for text data is also quite limited, essentially
+    being a bag-of-words model. The descriptive statistics like mean, standard deviation are not meaningful for ordinal
+    categorical data. Lastly, this test does not inform on how the data will influence the model's performance.
     """
 
     name = "dataset_description"
@@ -32,6 +59,41 @@ class DatasetDescription(Metric):
         ],
         "tags": ["tabular_data", "time_series_data", "text_data"],
     }
+
+    def summary(self, metric_value):
+        """
+        Build a dataset summary table. metric_value is a list of fields where each field
+        has an id, type (Numeric or Categorical), and statistics. The statistics object
+        depends on the type being Numeric or Categorical. For Numeric fields, it has
+        the following keys: count, mean, std, min, 25%, 50%, 75%, 90%, 95%, max. For
+        categorical fields, it has the following keys: count, unique, top, freq.
+        """
+        results_table = []
+        for field in metric_value:
+            field_id = field["id"]
+            field_type = field["type"]
+            field_statistics = field["statistics"]
+
+            results_table.append(
+                {
+                    "Name": field_id,
+                    "Type": field_type,
+                    "Count": field_statistics["count"],
+                    "Missing": field_statistics["n_missing"],
+                    "Missing %": field_statistics["missing"],
+                    "Distinct": field_statistics["n_distinct"],
+                    "Distinct %": field_statistics["distinct"],
+                }
+            )
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title="Dataset Description"),
+                )
+            ]
+        )
 
     def run(self):
         self.describe()

@@ -38,9 +38,6 @@
                                 <a class="function" href="#MissingValuesRisk.__init__">MissingValuesRisk</a>
                         </li>
                         <li>
-                                <a class="function" href="#MissingValuesRisk.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#MissingValuesRisk.run">run</a>
                         </li>
                         <li>
@@ -76,45 +73,51 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">MissingValuesRisk</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">MissingValuesRisk</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#MissingValuesRisk"></a>
     
-            <div class="docstring"><p>Analyzes the risk associated with missing values in a tabular dataset, providing
-two risk measures:
-1) Percentage of missing values in the dataset
-2) Percentage of variables with missing values.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This metric, Missing Values Risk, is intended to evaluate and quantify the risk associated with
+missing values in the data set being used for machine learning model training. This metric determines two specific
+risk measures: 1) what percentage of total data in the dataset are missing values, and 2) what percentage of total
+variables (i.e., columns) in the dataset have at least some missing values.</p>
+
+<p><strong>Test Mechanism</strong>: The metric tests the dataset by first calculating the total number of datapoints in the data
+set and the total count of missing values. Then, it examines each column(variable) to find out how many contain at
+least one missing data point. By meticulously counting missing data points across the whole dataset and then within
+each variable(column), the metric determines the percentage of missing values in the total dataset and the
+percentage of columns(variables) with missing values.</p>
+
+<p><strong>Signs of High Risk</strong>: High percentages in either of the risk measures could indicate a high risk. If the dataset
+has a high percentage of missing values, then it can significantly affect the performance and reliability of the
+model. Similarly, if a lot of variables (columns) in the dataset have missing values, the model might be prone to
+bias or overfitting.</p>
+
+<p><strong>Strengths</strong>: This metric provides invaluable insight into the dataset's readiness for model training, as missing
+values can severely impact both the model's performance and its predictions. Quantifying the risk posed by missing
+values allows for targeted methods to handle these values properly, either through deletion, imputation, or other
+strategies. The metric is flexible and can be applied to both classification and regression tasks, thereby
+maintaining its utility across a broad range of models and scenarios.</p>
+
+<p><strong>Limitations</strong>: This metric only identifies and quantifies the risk of missing values but does not offer any
+solutions to mitigate this risk. More specifically, it does not infer whether the missingness is random or linked
+to some underlying issue in data collection or preprocessing. Nonetheless, identifying the presence and extent of
+missingness is the essential first step in data-quality improvement.</p>
 </div>
 
 
                             <div id="MissingValuesRisk.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MissingValuesRisk</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">MissingValuesRisk</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#MissingValuesRisk.__init__"></a>
     
     
-
-                            </div>
-                            <div id="MissingValuesRisk.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#MissingValuesRisk.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="MissingValuesRisk.run" class="classattr">
@@ -154,13 +157,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="MissingValuesRisk.key" class="variable">key</dd>
                 <dd id="MissingValuesRisk.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="MissingValuesRisk.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="MissingValuesRisk.description" class="function">description</dd>
+                <dd id="MissingValuesRisk.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

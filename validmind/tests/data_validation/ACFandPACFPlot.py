@@ -9,7 +9,31 @@ from validmind.vm_models import Figure, Metric
 
 class ACFandPACFPlot(Metric):
     """
-    Plots ACF and PACF for a given time series dataset.
+    **Purpose**: The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed
+    for analyzing time series data in machine learning models. These plots provide valuable insights about the data
+    correlation over a period of time. The ACF plots the correlation of the series with its own lags, while the PACF
+    plots correlations after removing the effects already explained by earlier lags. This helps in identifying the
+    nature of the trend (for example, seasonality), degree of autocorrelation, and selecting order parameters for
+    AutoRegressive Integrated Moving Average (ARIMA) models.
+
+    **Test Mechanism**: The python class `ACFandPACFPlot` receives a dataset with a time-based index. After checking
+    that the index is of datetime type and dealing with any NaN values, it generates ACF and PACF plots for each column
+    in the dataset, creating a subplot for each. In case the dataset does not include key columns, an error is thrown.
+
+    **Signs of High Risk**: An indication of model risk in relation to the ACF and PACF plot test includes sudden drops
+    in the correlation at a specific lag or consistent high correlation across multiple lags. Both could indicate
+    non-stationarity in the data, which might suggest that the model estimated on this data might not generalize well
+    to future data.
+
+    **Strengths**: The ACF and PACF plots provide clear graphical representations of the correlation in time series
+    data. This is particularly useful for identifying important characteristics such as seasonality, trends, and
+    correlation patterns within the data. This allows for better model configuration, more specifically in the
+    selection of parameters for ARIMA models.
+
+    **Limitations**: ACF and PACF plots can only be used with time series data, and are thus not applicable to every ML
+    model. Additionally, they require a large and consistent dataset, as gaps can lead to misleading results. These
+    plots only show linear correlation, ignoring potential nonlinear relationships. Lastly, they may not be intuitive
+    for non-experts to interpret and are not a substitute for more advanced analyses.
     """
 
     name = "acf_pacf_plot"

@@ -72,13 +72,52 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">SeasonalDecompose</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">SeasonalDecompose</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#SeasonalDecompose"></a>
     
-            <div class="docstring"><p>Calculates seasonal_decompose metric for each of the dataset features</p>
+            <div class="docstring"><p><strong>Purpose</strong>: This test utilizes the Seasonal Decomposition of Time Series by Loess (STL) method to break down a
+dataset into its fundamental components: observed, trend, seasonal, and residuals. The main purpose of this method
+is to identify any hidden or non-intuitive patterns and ascertain certain attributes such as seasonality in the
+dataset's features, helping to understand and validate the dataset further.</p>
+
+<p><strong>Test Mechanism</strong>: The test uses the seasonal_decompose function from the statsmodels.tsa.seasonal library to
+assess each feature in the dataset. The seasonal_decompose function breaks down each analyzed feature into four
+components: observed, trend, seasonal, and residuals. It generates graphical representations, essentially six
+subplot graphs for each feature, to visually interpret the results. The Seasonal Decompose test also includes a
+verification step to identify and exclude non-finite values before the seasonal decomposition.</p>
+
+<p><strong>Signs of High Risk</strong>: Signs of high risk associated with this test include:</p>
+
+<ul>
+<li>Non-finiteness: Having too many non-finite values in a dataset might imply a high risk since these values are
+excluded before performing the seasonal decomposition.</li>
+<li>Frequent Warnings: Issue warnings when the test fails to infer frequency for a contested feature.</li>
+<li>High Seasonality: If the seasonal component is significantly high, forecasts might be highly unreliable due to
+excessive seasonal changes.</li>
+</ul>
+
+<p><strong>Strengths</strong>: Strengths of this metric test include:</p>
+
+<ul>
+<li>Ability to Detect Seasonality: This code excels in detecting hidden seasonality patterns within features of
+datasets.</li>
+<li>Visualization: This test provides visualizations, making it easier to interpret and comprehend.</li>
+<li>Works with Any Regression Model: It does not restrict its applicability to any specific regression model,
+ensuring wider usability.</li>
+</ul>
+
+<p><strong>Limitations</strong>: Limitations of this method include:</p>
+
+<ul>
+<li>Dependencies on Assumptions: The test assumes that features in the dataset have a certain frequency. If no
+frequency could be inferred for a variable, that feature will be excluded from analysis.</li>
+<li>Handling of Non-finite Values: The test excludes non-finite values during the analysis which could lead to
+incomplete representation or understanding of the dataset.</li>
+<li>Not Reliable for Noisy Datasets: This test may generate unreliable results in the presence of heavy noise.</li>
+</ul>
 </div>
 
 
@@ -133,14 +172,14 @@ JSON serializable format that can be sent to the API.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="SeasonalDecompose.__init__" class="function">Metric</dd>
                 <dd id="SeasonalDecompose.key" class="variable">key</dd>
                 <dd id="SeasonalDecompose.summary" class="function">summary</dd>
                 <dd id="SeasonalDecompose.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="SeasonalDecompose.description" class="function">description</dd>
                 <dd id="SeasonalDecompose.log" class="function">log</dd>
 

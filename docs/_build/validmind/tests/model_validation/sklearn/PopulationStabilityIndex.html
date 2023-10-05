@@ -38,9 +38,6 @@
                                 <a class="function" href="#PopulationStabilityIndex.__init__">PopulationStabilityIndex</a>
                         </li>
                         <li>
-                                <a class="function" href="#PopulationStabilityIndex.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#PopulationStabilityIndex.summary">summary</a>
                         </li>
                         <li>
@@ -76,42 +73,57 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PopulationStabilityIndex</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PopulationStabilityIndex</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PopulationStabilityIndex"></a>
     
-            <div class="docstring"><p>Population Stability Index between two datasets</p>
+            <div class="docstring"><p><strong>Purpose:</strong>
+The Population Stability Index (PSI) is used to evaluate how stable a predictive model's score distribution is when
+two different datasets are compared - typically a development and a validation dataset or two separate time
+periods. This assessment aids in understanding if a significant shift has occurred in the model's performance over
+time or if there has been a severe change in population characteristics.</p>
+
+<p><strong>Test Mechanism:</strong>
+In this script, the test mechanism involves comparing the PSI between the training and test datasets. The data from
+each dataset is sorted and placed into either fixed bins or quantiles. The bin boundaries are established based on
+the initial population in the case of quantiles. The values in the bins are counted and the proportions calculated.
+The PSI is then calculated for each bin using a logarithmic transformation of the ratio of the proportions. A
+summarising table and a grouped bar chart alongside a scatter plot are created showing the PSI, and percentage of
+original and new data in each bin.</p>
+
+<p><strong>Signs of High Risk:</strong>
+Signs of high risk would be captured by a high PSI value. A high PSI indicates a dramatic shift in the model's
+performance or a significant change in population attributes, suggesting that the model may not be performing as
+expected.</p>
+
+<p><strong>Strengths:</strong>
+The PSI approach helps assess the stability of a model over time or across samples, which is critical for
+understanding if the model's performance has changed significantly. It provides a quantitative measure (the PSI
+value) that allows for direct comparisons across features. The calculation and interpretation of PSI is
+straightforward making it an effective tool for model validation. The visual display further aids for better
+understanding.</p>
+
+<p><strong>Limitations:</strong>
+One potential drawback is that the PSI test doesn't take into account the interdependence between features. It also
+doesn't provide insights into why the distributions are different. Additionally, PSI may not adequately handle
+features with significant outliers. Finally, the test is performed here on the model predictions, not on the
+underlying data distributions - differences in PSI could be due to feature drift, model drift, or both combined,
+without a clear way to distinguish between them.</p>
 </div>
 
 
                             <div id="PopulationStabilityIndex.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PopulationStabilityIndex</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PopulationStabilityIndex</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#PopulationStabilityIndex.__init__"></a>
     
     
-
-                            </div>
-                            <div id="PopulationStabilityIndex.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PopulationStabilityIndex.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="PopulationStabilityIndex.summary" class="classattr">
@@ -151,13 +163,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PopulationStabilityIndex.key" class="variable">key</dd>
                 <dd id="PopulationStabilityIndex.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="PopulationStabilityIndex.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="PopulationStabilityIndex.description" class="function">description</dd>
+                <dd id="PopulationStabilityIndex.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

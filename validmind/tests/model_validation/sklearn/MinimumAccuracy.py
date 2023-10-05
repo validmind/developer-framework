@@ -10,16 +10,39 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
 @dataclass
 class MinimumAccuracy(ThresholdTest):
     """
-    Test that the model's prediction accuracy on a dataset meets or
-    exceeds a predefined threshold.
+    **Purpose**: The purpose of the Minimum Accuracy test is to validate that the model's prediction accuracy on a
+    given dataset meets or exceeds a predefined minimum threshold. Accuracy is the fraction of predictions our model
+    got right and is an essential metric to understand how well our model is performing. In the context of both binary
+    and multiclass classifications, accurate labeling is crucial.
+
+    **Test Mechanism**: The mechanism of this threshold test involves comparing the model's accuracy score against the
+    minimum threshold value specified (default value is 0.7). The accuracy score is calculated by using the sklearn's
+    `accuracy_score` method between true label `y_true` and predicted label `class_pred`. If the accuracy score exceeds
+    the threshold, the test is marked as passed. The test result is returned along with the accuracy score and the
+    threshold used for the test.
+
+    **Signs of High Risk**: Signs of high risk within this test present themselves when the model is unable to meet or
+    exceed the specified score threshold. If the model's accuracy score is consistently falling below the set
+    threshold, it indicates a high risk of inaccurate predictions, which can reduce the model's effectiveness and
+    dependability.
+
+    **Strengths**: The strength of the Minimum Accuracy test lies in its simplicity. It provides a straightforward
+    measure of overall model performance across all classes. It's particularly advantageous when the classes are
+    balanced. The test is also versatile and can be used with both binary and multiclass classification tasks.
+
+    **Limitations**: This test's limitations surface when dealing with imbalanced datasets. If the classes in the
+    dataset are highly skewed, the accuracy score could be misleading, potentially favoring the majority class and
+    providing a false sense of model performance. Another limitation is it does not provide a measure of the model's
+    precision, recall, or ability to manage false positives and false negatives. It primarily focuses on overall
+    correctness, which might not be sufficient for all types of model analytics.
     """
 
     category = "model_performance"
@@ -36,7 +59,7 @@ class MinimumAccuracy(ThresholdTest):
         ],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The accuracy score test returns results like these:
         [{"values": {"score": 0.734375, "threshold": 0.7}, "passed": true}]
@@ -70,7 +93,7 @@ class MinimumAccuracy(ThresholdTest):
 
         passed = accuracy_score > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": accuracy_score,

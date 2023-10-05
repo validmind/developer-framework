@@ -11,8 +11,30 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class FeatureTargetCorrelationPlot(Metric):
     """
-    Generates a visual analysis of correlations between features and target by plotting a bar plot.
-    The input dataset is required.
+    **Purpose**: The purpose of this test is to visually analyze and display the correlations between different input
+    features and the target output of a Machine Learning model. This is important in understanding how each feature
+    impacts the model's predictions. A high correlation means the feature strongly influences the target variable -
+    something particularly useful in feature selection and understanding model behaviour.
+
+    **Test Mechanism**: The FeatureTargetCorrelationPlot test computes correlations between features and the target
+    variable of a given dataset. The correlations are calculated and then plotted in a horizontal bar graph, with color
+    varying according to the strength of the correlation. An automatic hover template is also provided for descriptive
+    tooltips. The features to be analyzed can be specified, and the graph's height can be adjusted per requirement.
+
+    **Signs of High Risk**: Absence of any strong correlations (either positive or negative) between features and the
+    target variable might suggest a high risk as it indicates that the given features don't have a significant
+    influence on the prediction output. Also, duplication of correlation values might indicate redundancy in feature
+    selection.
+
+    **Strengths**: This test provides a visual aid, significantly improving the interpretation of correlations and
+    giving a clear, easy-to-understand overview of how each feature impacts the model's target variable. This aids in
+    feature selection and in understanding the nature of model predictions. Additionally, the hover template provides
+    precise correlation values for each feature, essential for a granular level understanding.
+
+    **Limitations**: The test only works with numerical data, so variables of other types must be preprocessed. Also,
+    the plot assumes a linear correlation - it cannot efficiently capture non-linear relationships. One more limitation
+    is that it may not accurately reflect importance for models that use complex interactions of features, like
+    Decision Trees or Neural Networks.
     """
 
     name = "feature_target_correlation_plot"

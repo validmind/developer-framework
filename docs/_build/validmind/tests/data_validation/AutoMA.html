@@ -69,13 +69,54 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AutoMA</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">AutoMA</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#AutoMA"></a>
     
-            <div class="docstring"><p>Automatically detects the MA order of a time series using both BIC and AIC.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The primary role of the <code><a href="#AutoMA">AutoMA</a></code> metric is to automatically determine the optimal Moving Average (MA)
+order for each variable in the time series dataset. The decision of MA order is based on minimizing BIC (Bayesian
+Information Criterion) and AIC (Akaike Information Criterion); both are statistical tools for model choice. Before
+the fitting process begins, a stationarity test (Augmented Dickey-Fuller test) is conducted on each series.</p>
+
+<p><strong>Test Mechanism</strong>: First, the <code><a href="#AutoMA">AutoMA</a></code> algorithm checks whether the <code>max_ma_order</code> parameter is provided. It then
+loops over all variables in the dataset, performing the Dickey-Fuller test for stationarity. For each variable (if
+stationary), it fits an ARIMA model for orders running from 0 to <code>max_ma_order</code>. The output is a list showing BIC
+and AIC values of the ARIMA models with different orders. For each variable, the MA order that offers the smallest
+BIC is selected as the <em>best MA order</em>. The final results include a table summarizing the auto MA analysis and a
+table listing the best MA order for each variable.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>If a series is non-stationary (p-value>0.05 in the Dickey-Fuller test), the result might be inaccurate.</li>
+<li>Any error while fitting the ARIMA models, especially with higher MA order, could indicate possible risks and
+might require further investigation.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This metric is beneficial for automating the selection process of the MA order for time series forecasting, thus
+saving time and effort usually required in manual hyperparameter tuning.</li>
+<li>It applies both BIC and AIC, enhancing the chance of selecting the most suitable model.</li>
+<li>It checks for stationarity of the series prior to model fitting, ensuring that the underlying assumptions of the
+MA model are met.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>If the time series is not stationary, the metric would provide inaccurate results. This limitation necessitates
+pre-processing steps to stabilize the series before ARIMA model fitting.</li>
+<li>This metric uses a rudimentary model selection approach based on BIC and does not consider other possible model
+selection strategies, which might be more appropriate depending on the specific dataset.</li>
+<li>The 'max_ma_order' parameter must be manually set, which may not always guarantee the best performance,
+especially if set too low.</li>
+<li>The computation time raises with the increase in <code>max_ma_order</code>, thus the metric can be computationally expensive
+for larger values.</li>
+</ul>
 </div>
 
 
@@ -113,13 +154,13 @@ and another for the best MA Order results</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="AutoMA.__init__" class="function">Metric</dd>
                 <dd id="AutoMA.key" class="variable">key</dd>
                 <dd id="AutoMA.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="AutoMA.description" class="function">description</dd>
                 <dd id="AutoMA.log" class="function">log</dd>
 

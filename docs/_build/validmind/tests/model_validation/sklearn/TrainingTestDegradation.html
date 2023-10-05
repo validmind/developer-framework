@@ -73,21 +73,59 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">TrainingTestDegradation</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">TrainingTestDegradation</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#TrainingTestDegradation"></a>
     
-            <div class="docstring"><p>Test that the degradation in performance between the training and test datasets
-does not exceed a predefined threshold.</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
+between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to
+check the model's ability to generalize from its training data to unseen test data. It assesses key classification
+metric scores such as accuracy, precision, recall and f1 score, to verify the model's robustness and reliability.</p>
+
+<p><strong>Test Mechanism</strong>: The code applies several predefined metrics including accuracy, precision, recall and f1 scores
+to the model's predictions for both the training and test datasets. It calculates the degradation as the difference
+between the training score and test score divided by the training score. The test is considered successful if the
+degradation for each metric is less than the preset maximum threshold of 10%. The results are summarized in a table
+showing each metric's train score, test score, degradation percentage, and pass/fail status.</p>
+
+<p><strong>Signs of High Risk</strong>: High risk or failure in the model's performance related to this test can be indicated by
+one or more of the following:</p>
+
+<ol>
+<li>A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.</li>
+<li>A high difference or gap between the metric scores on the training and the test datasets.</li>
+<li>The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.</li>
+</ol>
+
+<p><strong>Strengths</strong>:</p>
+
+<ol>
+<li>This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for
+predicting its practical real-world performance.</li>
+<li>By evaluating multiple metrics, it takes into account different facets of model performance and enables a more
+holistic evaluation.</li>
+<li>The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for
+different scenarios.</li>
+</ol>
+
+<p><strong>Limitations</strong>:</p>
+
+<ol>
+<li>The test compares raw performance on training and test data, but does not factor in the nature of the data.
+Areas with less representation in the training set, for instance, might still perform poorly on unseen data.</li>
+<li>It requires good coverage and balance in the test and training datasets to produce reliable results, which may
+not always be available.</li>
+<li>The test is currently only designed for classification tasks.</li>
+</ol>
 </div>
 
 
                             <div id="TrainingTestDegradation.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TrainingTestDegradation</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TrainingTestDegradation</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -100,7 +138,7 @@ does not exceed a predefined threshold.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -131,11 +169,11 @@ does not exceed a predefined threshold.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="TrainingTestDegradation.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="TrainingTestDegradation.description" class="function">description</dd>
                 <dd id="TrainingTestDegradation.log" class="function">log</dd>
 

@@ -73,20 +73,53 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">TimeSeriesMissingValues</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">TimeSeriesMissingValues</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#TimeSeriesMissingValues"></a>
     
-            <div class="docstring"><p>Test that the number of missing values is less than a threshold</p>
+            <div class="docstring"><p><strong>Purpose</strong>:
+This test is designed to verify that the number of missing values in a historical time-series dataset is below a
+specified threshold. Since time-series models rely on continuity and temporality of data points, missing values
+could affect the model's performance. Therefore, this test intends to maintain data quality and readiness for the
+machine learning model.</p>
+
+<p><strong>Test Mechanism</strong>:
+The test process begins by checking if the dataset has a datetime index; if not, an error is raised. Next, a lower
+limit threshold for missing values is set and a missing values check is run on each column of the dataset, with a
+test result object being generated whether the number of missing values is below the specified threshold. The
+percentage of missing values is also calculated alongside the raw count.</p>
+
+<p>As a visualization aid, the test generates two plots (a bar plot and a heatmap) to better illustrate the
+distribution and quantity of missing values per variable, if any exist. The test results, missing values count,
+missing values percentage, and the pass/fail status are returned in a results table.</p>
+
+<p><strong>Signs of High Risk</strong>:
+If any column in the dataset contains a number of missing values exceeding the threshold, it is considered a
+failure and a high-risk scenario. This could be due to incomplete data collection, faulty sensors, or data
+preprocessing errors. A continuous visual 'streak' in the 'heatmap' might also indicate a systematic error during
+data collection.</p>
+
+<p><strong>Strengths</strong>:
+This test is beneficial in promptly identifying missing values which might impact the model's performance. It is
+broadly applicable and customizable through the threshold parameter. Going beyond raw numbers to calculate the
+percentile of missing values adds a more relative understanding of data scarcity. It also includes a robust
+mechanism to visually represent data quality, facilitating quicker and friendlier misinterpretation.</p>
+
+<p><strong>Limitations</strong>:
+Though the test effectively identifies missing values, it does not suggest methods to deal with them. It assumes
+that the dataset should have datetime index, limiting its use to time series analysis only. The test is sensitive
+to the 'min_threshold' parameter and might raise false alarms if it's set too strictly, or might miss problematic
+data if it's set too loosely. Lastly, the test solely focuses on 'missingness' and might overlook other aspects of
+data quality.</p>
 </div>
 
 
                             <div id="TimeSeriesMissingValues.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TimeSeriesMissingValues</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TimeSeriesMissingValues</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -132,11 +165,11 @@ short summary of the test results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="TimeSeriesMissingValues.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="TimeSeriesMissingValues.description" class="function">description</dd>
                 <dd id="TimeSeriesMissingValues.log" class="function">log</dd>
 

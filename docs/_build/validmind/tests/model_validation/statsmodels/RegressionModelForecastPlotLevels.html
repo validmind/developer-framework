@@ -38,9 +38,6 @@
                                 <a class="function" href="#RegressionModelForecastPlotLevels.__init__">RegressionModelForecastPlotLevels</a>
                         </li>
                         <li>
-                                <a class="function" href="#RegressionModelForecastPlotLevels.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RegressionModelForecastPlotLevels.run">run</a>
                         </li>
                         <li>
@@ -76,42 +73,71 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RegressionModelForecastPlotLevels</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RegressionModelForecastPlotLevels</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RegressionModelForecastPlotLevels"></a>
     
-            <div class="docstring"><p>This metric creates a plot of forecast vs observed for each model in the list.</p>
+            <div class="docstring"><p><strong>Purpose:</strong>
+The purpose of <code><a href="#RegressionModelForecastPlotLevels">RegressionModelForecastPlotLevels</a></code> is to visually evaluate the performance of a given list of
+regression models. It does this by plotting the forecasts of these models against the observed data in their
+training and test datasets. It evaluates the model's ability to produce accurate and reliable forecasts when faced
+with certain input features. The measure of accuracy here is the proximity of the forecasted values to the actual
+observed values. In case of any transformations specified, the metric also handles transforming the data before the
+comparison.</p>
+
+<p><strong>Test Mechanism:</strong>
+The Python class in consideration accepts <code>transformation</code> as a parameter, which defaults to None. First, it checks
+for the presence of model objects and raises a <code>ValueError</code> if none are provided. Next, it loops through each
+model, generating predictive forecasts for the model's training and testing datasets. These forecasts are then
+plotted against the actual (observed) values. If a transformation, such as "integrate", is specified, the class
+carries out the transformation operation (i.e., it performs cumulative sums to create a new series). Finally, plots
+are created comparing observed and forecasted values for both the original and transformed datasets.</p>
+
+<p><strong>Signs of High Risk:</strong>
+High risk or failure in the model's performance can be inferred from the generated plots. If the forecasted values
+deviate significantly from the observed values in either the training or test datasets, it suggests high risk. A
+significant deviation could be a sign of overfitting or underfitting, which would be a cause for concern. Such
+discrepancies could limit the model's ability to produce accurate and generalizable results.</p>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>Visual evaluation: The metric provides a graphical way of evaluating the regression models, allowing easier
+interpretation and assessment of the forecasting accuracy.</li>
+<li>Handles multiple models: The metric enables evaluation of multiple models at once, providing a comparative
+overview of all models.</li>
+<li>Handles transformations: Ability to handle transformations such as "integrate" allows for broader scope and
+flexibility in model evaluations.</li>
+<li>Detailed insight: The metric provides a detailed perspective by looking at the performance on both training and
+testing datasets.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>Visual subjectivity: The metric relies heavily on visual evaluations, and interpretation can vary from person to
+person.</li>
+<li>Limitation in transformations: Currently supports "integrate" transformation only. More complex transformation
+might not be covered.</li>
+<li>Overhead: Plotting for large datasets might be computationally expensive and could increase runtime.</li>
+<li>Lack of numerical metrics: While visualization is useful, a corresponding numerical measure to support
+observations would be beneficial.</li>
+</ul>
 </div>
 
 
                             <div id="RegressionModelForecastPlotLevels.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RegressionModelForecastPlotLevels</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RegressionModelForecastPlotLevels</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#RegressionModelForecastPlotLevels.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RegressionModelForecastPlotLevels.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RegressionModelForecastPlotLevels.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RegressionModelForecastPlotLevels.run" class="classattr">
@@ -145,14 +171,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RegressionModelForecastPlotLevels.key" class="variable">key</dd>
                 <dd id="RegressionModelForecastPlotLevels.summary" class="function">summary</dd>
                 <dd id="RegressionModelForecastPlotLevels.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
-                                <dd id="RegressionModelForecastPlotLevels.log" class="function">log</dd>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="RegressionModelForecastPlotLevels.description" class="function">description</dd>
+                <dd id="RegressionModelForecastPlotLevels.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

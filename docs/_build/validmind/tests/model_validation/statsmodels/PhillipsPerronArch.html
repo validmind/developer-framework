@@ -70,21 +70,56 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PhillipsPerronArch</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PhillipsPerronArch</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PhillipsPerronArch"></a>
     
-            <div class="docstring"><p>Phillips-Perron (PP) unit root test for
-establishing the order of integration of time series</p>
+            <div class="docstring"><p><strong>Purpose</strong>: The Phillips-Perron (PP) test is being used to establish the order of integration in time series data.
+It is a method for testing a null hypothesis that a time series is unit-root non-stationary. When applied to
+machine learning models, it helps in forecasting and understanding the stochastic behavior of data. In sense, it is
+used to ensure the robustness of the results and make valid predictions out of regression analysis models.</p>
+
+<p><strong>Test Mechanism</strong>: The PP test is applied to each feature present in the dataset. A data frame is acquired from
+the dataset and for each column in this data frame, the PhillipsPerron method is used to calculate its statistic
+value, p-value, used lags and number of observations. This method is calculating the PP metric for each feature and
+caching the results.</p>
+
+<p><strong>Signs of High Risk</strong>: Indicators of high risk related to this metric could include:</p>
+
+<ul>
+<li>High P-value, which might suggest that the series has a unit root and thus is non-stationary.</li>
+<li>Test statistic values that exceed the critical values, providing further evidence of non-stationarity.</li>
+<li>If the 'usedlag' value is high for a series, there may be autocorrelation issues which can further complicate
+model performance.</li>
+</ul>
+
+<p><strong>Strengths</strong>: The strengths of the PP test are as follows:</p>
+
+<ul>
+<li>It is robust against heteroskedasticity in the error term.</li>
+<li>It examines relatively long time series.</li>
+<li>It helps to identify if the time series is stationary or not, which affects the selection of appropriate models
+for forecasting.</li>
+</ul>
+
+<p><strong>Limitations</strong>: However, the PP test has some limitations:</p>
+
+<ul>
+<li>It can only be utilized in a univariate time series framework.</li>
+<li>The PP test does rely on asymptotic theory, therefore, for small sample sizes the power of the test can
+substantially reduce.</li>
+<li>Non-stationary time series might require differencing to convert them into stationary series, which might lead to
+loss of important data points.</li>
+</ul>
 </div>
 
 
                             <div id="PhillipsPerronArch.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PhillipsPerronArch</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PhillipsPerronArch</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -111,13 +146,13 @@ establishing the order of integration of time series</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PhillipsPerronArch.key" class="variable">key</dd>
                 <dd id="PhillipsPerronArch.summary" class="function">summary</dd>
                 <dd id="PhillipsPerronArch.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="PhillipsPerronArch.description" class="function">description</dd>
                 <dd id="PhillipsPerronArch.log" class="function">log</dd>
 
