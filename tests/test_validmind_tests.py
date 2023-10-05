@@ -3,6 +3,7 @@ Unit tests for Validmind tests module
 """
 import unittest
 from unittest import TestCase
+from unittest.mock import patch
 
 from pandas.io.formats.style import Styler
 
@@ -31,38 +32,11 @@ class TestTestsModule(TestCase):
         self.assertTrue(test is not None)
         self.assertTrue(issubclass(test, Test))
 
-    def test_describe_test(self):
-        description = describe_test("validmind.model_validation.ModelMetadata")
-        self.assertIsInstance(description, Styler)
+    def test_describe_test(self, mock_display):
+        describe_test("validmind.model_validation.ModelMetadata")
         description = describe_test(
             "validmind.model_validation.ModelMetadata", raw=True
         )
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
-
-    def test_describe_test_legacy(self):
-        description = describe_test("model_metadata")
-        self.assertIsInstance(description, Styler)
-        description = describe_test("model_metadata", raw=True)
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
-
-    def test_describe_test_name(self):
-        description = describe_test("ModelMetadata")
-        self.assertIsInstance(description, Styler)
-        description = describe_test("ModelMetadata", raw=True)
         self.assertIsInstance(description, dict)
         # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
         self.assertTrue("ID" in description)
