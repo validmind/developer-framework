@@ -33,10 +33,6 @@ class RougeMetrics(Metric):
     - **ROUGE-L (Longest Common Subsequence)**: Pinpoints the most extended shared word sequence present in both the
     machine and reference texts, assessing the generated text's ability to encapsulate pivotal phrases.
 
-    - **ROUGE-S (Skip-bigram)**: Measures the concurrence of skip-bigrams, which are word pairings appearing within a
-    designated word window in the text. This metric is sensitive to word ordering but tolerates sporadic word
-    omissions.
-
     3. **Visual Representation**: The determined precision, recall, and F1-score for each metric are plotted visually,
     ensuring streamlined comprehension of the results.
 
@@ -61,7 +57,7 @@ class RougeMetrics(Metric):
     name = "rouge_metric"
     required_inputs = ["model", "model.test_ds"]
     default_params = {
-        "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l", "rouge-s"],
+        "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l"],
     }
 
     def run(self):

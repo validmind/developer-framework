@@ -43,7 +43,9 @@ class TestSuiteRunner:
         self._test_configs = {}
 
         for key, value in self.config.items():
-            if key in self.suite.get_tests():
+            test_ids = [test.test_id for test in self.suite.get_tests()]
+
+            if key in test_ids:
                 self._test_configs[key] = value
             else:
                 self._global_config[key] = value
