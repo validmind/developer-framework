@@ -11,31 +11,33 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class RegressionModelsCoeffs(Metric):
     """
-    **Purpose**: The 'RegressionModelsCoeffs' test is designed to evaluate and compare the coefficients of different
-    regression models that were trained on the same dataset. This metric assesses how each model weighted the
-    importance of various features during training, which is useful for analyzing which features influenced the model's
-    outputs the most, and how these influence patterns vary between different models.
+    **Purpose**: The 'RegressionModelsCoeffs' metric is utilized to evaluate and compare coefficients of different
+    regression models trained on the same dataset. By examining how each model weighted the importance of different
+    features during training, this metric provides key insights into which factors have the most impact on the model's
+    predictions and how these patterns differ across models.
 
-    **Test Mechanism**: This test measures the coefficients of each regression model by calling the
-    'regression_coefficients()' method on the model. These coefficients are then compiled into a summary dataframe for
-    all models. Each row in the dataframe corresponds to a model, with a column for each feature's coefficient. Note,
-    this test is only applicable to 'statsmodels' and 'R' models, and will raise a 'SkipTestError' for models from
-    other libraries.
+    **Test Mechanism**: The test operates by extracting the coefficients of each regression model using the
+    'regression_coefficients()' method. These coefficients are then consolidated into a dataframe, with each row
+    representing a model and columns corresponding to each feature's coefficient. It must be noted that this test is
+    exclusive to 'statsmodels' and 'R' models, other models will result in a 'SkipTestError'.
 
-    **Signs of High Risk**: Instances that might suggest high risk associated with this test include: discrepancies in
-    the way different models weigh features, if any coefficient is unexpectedly high or low, or the test could not be
-    applied to certain models because they are not of the 'statsmodels' or 'R' types.
+    **Signs of High Risk**:
+    - Discrepancies in how different models weight the same features
+    - Unexpectedly high or low coefficients
+    - The test is inapplicable to certain models because they are not from 'statsmodels' or 'R' libraries
 
-    **Strengths**: This test is highly valuable for gaining insight into the training process of different models and
-    for comparing how the models considered the importance of various features. By monitoring the feature coefficients,
-    this test provides a more transparent evaluation of the model and surfaces crucial weights and biases in the
-    training process.
+    **Strengths**:
+    - Enables insight into the training process of different models
+    - Allows comparison of feature importance across models
+    - Through the review of feature coefficients, the test provides a more transparent evaluation of the model and
+    highlights significant weights and biases in the training procedure
 
-    **Limitations**: The primary limitation of this test is its compatibility: it is only designed for use with
-    'statsmodels' and 'R' regression models. Beyond this, while the test contrasts the ways various models weigh
-    features, it does not indicate which weighting is most appropriate or accurate, leaving room for interpretation.
-    Lastly, this test does not account for potential overfitting or underfitting of models, and the coefficients it
-    produces might not translate to effective performance on unseen data.
+    **Limitations**:
+    - The test is only compatible with 'statsmodels' and 'R' regression models
+    - While the test provides contrast in feature weightings among models, it does not establish the most appropriate
+    or accurate weighting, thus remaining subject to interpretation
+    - It does not account for potential overfitting or underfitting of models
+    - The computed coefficients might not lead to effective performance on unseen data
     """
 
     name = "regression_models_coefficients"

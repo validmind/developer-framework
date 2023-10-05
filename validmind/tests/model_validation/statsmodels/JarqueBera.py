@@ -8,32 +8,35 @@ from validmind.vm_models import Metric
 class JarqueBera(Metric):
     """
     **Purpose**: The purpose of the Jarque-Bera test as implemented in this metric is to determine if the features in
-    the dataset of a given Machine Learning model follows a normal distribution. This is essential in understanding the
+    the dataset of a given Machine Learning model follows a normal distribution. This is crucial for understanding the
     distribution and behavior of the model's features, as numerous statistical methods assume normal distribution of
     the data.
 
-    **Test Mechanism**: The test mechanism involves computing the Jarque-Bera statistic and the associated p-value,
-    skew and kurtosis for each feature in the dataset. Necessary variables like the Jarque-Bera statistic, p-value,
-    skew and kurtosis are computed using the 'jarque_bera' function from the 'statsmodels' library in python and stored
-    in a dictionary. The jarque_bera function evaluates the skewness and kurtosis of the input dataset to determine if
-    it follows a normal distribution. A significant p-value (usually less than 0.05) suggests that the feature does not
+    **Test Mechanism**: The test mechanism involves computing the Jarque-Bera statistic, p-value, skew, and kurtosis
+    for each feature in the dataset. It utilizes the 'jarque_bera' function from the 'statsmodels' library in Python,
+    storing the results in a dictionary. The test evaluates the skewness and kurtosis to ascertain whether the dataset
+    follows a normal distribution. A significant p-value (typically less than 0.05) implies that the data does not
     possess normal distribution.
 
-    **Signs of High Risk**: High risk associated with this test would be a significantly high Jarque-Bera statistic and
-    a low p-value (typically < 0.05). These indicate that the data deviates significantly from a normal distribution,
-    thereby implying that a machine learning model may not function as intended as many models expect feature data to
-    be normally distributed.
+    **Signs of High Risk**:
+    - A high Jarque-Bera statistic and a low p-value (usually less than 0.05) indicates high-risk conditions.
+    - Such results suggest the data significantly deviates from a normal distribution. If a machine learning model
+    expects feature data to be normally distributed, these findings imply that it may not function as intended.
 
-    **Strengths**: The strength of this test lies in its ability to provide insights into the shape of the data
-    distribution. It helps determine whether a given set of data follows a normal distribution or not, enabling risk
-    assessment, especially for models that assume normal distribution of data. By measuring skewness and kurtosis, it
-    also provides extra insights on the nature and magnitude of distribution deviation.
+    **Strengths**:
+    - This test provides insights into the shape of the data distribution, helping determine whether a given set of
+    data follows a normal distribution.
+    - This is particularly useful for risk assessment for models that assume a normal distribution of data.
+    - By measuring skewness and kurtosis, it provides additional insights into the nature and magnitude of a
+    distribution's deviation.
 
-    **Limitations**: The Jarque-Bera test only checks for normality of the data distribution and will not provide
-    insights about other types of distributions. Datasets which are not normally distributed but may follow some other
-    distribution, may lead to incorrect risk assessments. Additionally, this test is very sensitive to large sample
-    sizes, often rejecting the null hypothesis (that data is normally distributed) for even slight deviations in larger
-    datasets.
+    **Limitations**:
+    - The Jarque-Bera test only checks for normality in the data distribution. It cannot provide insights into other
+    types of distributions.
+    - Datasets that aren't normally distributed but follow some other distribution might lead to inaccurate risk
+    assessments.
+    - The test is highly sensitive to large sample sizes, often rejecting the null hypothesis (that data is normally
+    distributed) even for minor deviations in larger datasets.
     """
 
     name = "jarque_bera"

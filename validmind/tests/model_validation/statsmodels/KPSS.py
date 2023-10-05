@@ -10,29 +10,35 @@ from validmind.vm_models import Metric
 @dataclass
 class KPSS(Metric):
     """
-    **Purpose**: The Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test is utilized to check the stationarity of
-    data within the machine learning model. It is used on time-series data specifically, to establish the order of
-    integration, which in turn helps in providing accurate forecasting. The baseline condition for any time series
-    model is that the series should be stationary.
+    **Purpose**: The Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test is utilized to ensure the stationarity of
+    data within the machine learning model. It specifically works on time-series data to establish the order of
+    integration, which is a prime requirement for accurate forecasting, given the fundamental condition for any time
+    series model is that the series should be stationary.
 
-    **Test Mechanism**: Given a dataset, this metric calculates the KPSS score for each feature in the dataset. Each
-    KPSS score consists of a statistic, a p-value, a used lag, and critical values. The KPSS score calculates the
-    hypothesis that an observable time series is stationary around a deterministic trend. If the calculated statistic
-    is greater than the critical value, the null hypothesis is rejected, indicating that the series is not stationary.
+    **Test Mechanism**: This metric evaluates the KPSS score for every feature present in the dataset. Within the KPSS
+    score, there are various components, namely: a statistic, a p-value, a used lag, and critical values. The core
+    scheme behind the KPSS score is to test the hypothesis that an observable time series is stationary around a
+    deterministic trend. If the computed statistic surpasses the critical value, the null hypothesis is dismissed,
+    inferring the series is non-stationary.
 
-    **Signs of High Risk**: High risk in relation to this metric would be signified by a high KPSS score, specifically
-    if the calculated statistic is greater than the critical value. This implies that the null hypothesis is rejected
-    and the series is not stationary, making the model ineffective for forecasting.
+    **Signs of High Risk**:
+    - High KPSS score represents a considerable risk, particularly if the calculated statistic is higher than the
+    critical value.
+    - If the null hypothesis is rejected and the series is recognized as non-stationary, it heavily influences the
+    model's forecasting capability rendering it less effective.
 
-    **Strengths**: The KPSS test has several advantages. It assesses directly the stationarity of a series, which is
-    the basic condition of many time-series models and is therefore a crucial step in model validation. Furthermore,
-    the underlying intuition of the test is intuitive and straightforward, making it easily understandable for
-    developers and risk management teams.
+    **Strengths**:
+    - The KPSS test directly measures the stationarity of a series, allowing it to fulfill a key prerequisite for many
+    time-series models, making it a valuable tool for model validation.
+    - The logics underpinning the test are intuitive and simple, making it understandable and accessible for developers
+    and risk management teams.
 
-    **Limitations**: Despite its strengths, KPSS does have some limitations. The test assumes the absence of a unit
-    root in the series and does not differentiate between series that are stationary and series that are
-    near-stationary. The test may also have limited power against certain alternatives, and the validity of the test
-    depends on the number of lags chosen.
+    **Limitations**:
+    - The KPSS test presumes the absence of a unit root in the series and does not differentiate between series that
+    are stationary and those border-lining stationarity.
+    - The test might show restricted power against specific alternatives.
+    - The reliability of the test is contingent on the number of lags selected, which introduces potential bias in the
+    measurement.
     """
 
     name = "kpss"

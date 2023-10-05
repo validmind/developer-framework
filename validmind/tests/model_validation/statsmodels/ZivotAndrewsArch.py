@@ -12,29 +12,32 @@ class ZivotAndrewsArch(Metric):
     """
     **Purpose**: The Zivot-Andrews Arch metric is used to evaluate the order of integration for a time series data in a
     machine learning model. It's designed to test for stationarity, a crucial aspect in time series analysis where data
-    points are assumed not to be dependent on time. Stationarity is an indication that the statistical properties such
-    as mean, variance and autocorrelation are all constant over time.
+    points are not dependent on time. Stationarity means that the statistical properties such as mean, variance and
+    autocorrelation are all constant over time.
 
-    **Test Mechanism**: For each feature in the dataset, the Zivot-Andrews unit root test is performed using
-    ZivotAndrews function imported from the arch.unitroot module. It returns the zivot-andrews metric for each feature
-    which consists of the statistical value, p-value (probability value), the number of used lags and the number of
-    observations. The p-value is then later utilized to make a decision on the null hypothesis (unit root exists,
-    series is non-stationary) based on a chosen significance level.
+    **Test Mechanism**: The Zivot-Andrews unit root test is performed on each feature in the dataset using the
+    `ZivotAndrews` function from the `arch.unitroot` module. This function returns the Zivot-Andrews metric for each
+    feature, which includes the statistical value, p-value (probability value), the number of used lags, and the number
+    of observations. The p-value is later used to decide on the null hypothesis (the time series has a unit root and is
+    non-stationary) based on a chosen level of significance.
 
-    **Signs of High Risk**: High risk can be suggested by a high p-value. This could imply that there's an insufficient
-    basis to reject the null hypothesis, which states that the time series has a unit root and is therefore
-    non-stationary. Non-stationary time series data may lead to misleading statistics and unreliable Machine Learning
-    models.
+    **Signs of High Risk**:
+    - A high p-value can suggest high risk. This might indicate that there's insufficient evidence to reject the null
+    hypothesis, which would mean the time series has a unit root and is therefore non-stationary.
+    - Non-stationary time series data can lead to misleading statistics and unreliable machine learning models.
 
-    **Strengths**: The Zivot-Andrews Arch metric can dynamically test for stationarity against structural breaks in
-    time series data, which provides a robust evaluation of stationarity of features. It becomes very useful in the
-    cases of financial, economic or any time-series data where data observations don't have a consistent pattern, and
-    structural breaks might occur.
+    **Strengths**:
+    - The Zivot-Andrews Arch metric dynamically tests for stationarity against structural breaks in time series data,
+    offering robust evaluation of stationarity in features.
+    - This metric is especially beneficial with financial, economic, or other time-series data where data observations
+    lack a consistent pattern and structural breaks may occur.
 
-    **Limitations**: The Zivot-Andrews Arch metric test assumes that data under consideration comes from a
-    single-equation, autoregressive model. Thus, it may not be suitable for multivariate time series data or data that
-    doesn't follow the autoregressive model assumption. Additionally, it might not account for sudden shocks or changes
-    in the trend of the time series data which can significantly impact the stationarity of the data.
+    **Limitations**:
+    - The Zivot-Andrews Arch metric assumes that data is derived from a single-equation, autoregressive model. It may,
+    therefore, not be appropriate for multivariate time series data or data which does not align with the
+    autoregressive model assumption.
+    - It might not take into account unexpected shocks or changes in the series trend which can both have a significant
+    impact on the stationarity of the data.
     """
 
     name = "zivot_andrews"

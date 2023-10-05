@@ -11,35 +11,45 @@ logger = get_logger(__name__)
 
 class AutoARIMA(Metric):
     """
-    **Purpose**: This validation test is designed to evaluate and rank ARIMA models, which are popular forecasting
-    models used, amongst other things, for time series prediction tasks. The script automatically fits multiple ARIMA
-    models (with varying orders of differencing, autoregression, and moving average parameters) for each variable in
-    the provided dataset. It then ranks them based on their Bayesian Information Criterion (BIC) and Akaike Information
-    Criterion (AIC) values. This allows efficient selection of the most suitable model for forecasting, based on these
-    standard statistical measures.
+    **Purpose**: The AutoARIMA validation test is designed to evaluate and rank AutoRegressive Integrated Moving
+    Average (ARIMA) models. These models are primarily used for forecasting time-series data. The validation test
+    automatically fits multiple ARIMA models, with varying parameters, to every variable within the given dataset. The
+    models are then ranked based on their Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC)
+    values, which provide a basis for the efficient model selection process.
 
-    **Test Mechanism**: The metric works by generating a range of possible combinations of ARIMA model parameters
-    within a predefined limit (max_p, max_d, max_q representing autoregressive, differencing, and moving average
-    components respectively). It fits all these models on the provided time-series data. For each ARIMA model, it
-    calculates and records the BIC and AIC value, which serve as performance measures for the model fit. Furthermore,
-    prior to the parameter fitting, it runs an Augmented Dickey-Fuller test for stationarity on the series. If the
-    series isn't stationary, it sends out a warning, as ARIMA models require the input series to be stationary.
+    **Test Mechanism**:
+    This metric proceeds by generating an array of feasible combinations of ARIMA model parameters which are within a
+    prescribed limit. These limits include `max_p`, `max_d`, `max_q`; they represent the autoregressive, differencing,
+    and moving average components respectively. Upon applying these sets of parameters, the validation test fits each
+    ARIMA model to the time-series data provided. For each model, it subsequently proceeds to calculate and record both
+    the BIC and AIC values, which serve as performance indicators for the model fit. Prior to this parameter fitting
+    process, the Augmented Dickey-Fuller test for data stationarity is conducted on the data series. If a series is
+    found to be non-stationary, a warning message is sent out, given that ARIMA models necessitate input series to be
+    stationary.
 
-    **Signs of High Risk**: If the p-value of the Augmented Dickey-Fuller test for any variable is greater than 0.05, a
-    warning is logged indicating that the series might not be stationary, and this can lead to inaccurate results.
-    Secondly, if there is consistent failure in fitting ARIMA models (evident through logged errors), it might indicate
-    issues with the data or model stability.
+    **Signs of High Risk**:
+    * If the p-value of the Augmented Dickey-Fuller test for a variable exceeds 0.05, a warning is logged. This warning
+    indicates that the series might not be stationary, leading to potentially inaccurate results.
+    * Consistent failure in fitting ARIMA models (as made evident through logged errors) might disclose issues with
+    either the data or model stability.
 
-    **Strengths**: This mechanism streamlines the potentially complex task of selecting the most suitable ARIMA model
-    based on BIC and AIC criteria. It checks for and warns about non-stationarity in the data, a crucial assumption for
-    ARIMA models. The exhaustive approach in checking all possible combinations of model parameters maximizes the
-    potential for finding the best-fit model.
+    **Strengths**:
+    * The AutoARIMA validation test simplifies the often complex task of selecting the most suitable ARIMA model based
+    on BIC and AIC criteria.
+    * The mechanism incorporates a check for non-stationarity within the data, which is a critical prerequisite for
+    ARIMA models.
+    * The exhaustive search through all possible combinations of model parameters enhances the likelihood of
+    identifying the best-fit model.
 
-    **Limitations**: The approach can be computationally expensive given that it creates and fits multiple ARIMA models
-    per variable. Secondly, a high p-value in the Augmented Dickey-Fuller test indicates a lack of stationarity, but it
-    doesn't make any transformations on the data to rectify this. Additionally, model selection is purely based on BIC
-    and AIC criteria, which might not yield the best predictive model in all scenarios. Also, it's limited to
-    regression tasks on time series data and won't work effectively for other types of Machine Learning tasks.
+    **Limitations**:
+    * This validation test can be computationally costly as it involves creating and fitting multiple ARIMA models for
+    every variable.
+    * Although the test checks for non-stationarity and logs warnings where present, it does not apply any
+    transformations to the data to establish stationarity.
+    * The selection of models leans solely on BIC and AIC criteria, which may not yield the best predictive model in
+    all scenarios.
+    * The test is only applicable to regression tasks involving time-series data, and may not work effectively for
+    other types of machine learning tasks.
     """
 
     name = "auto_arima"

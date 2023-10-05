@@ -13,33 +13,36 @@ from .statsutils import adj_r2_score
 @dataclass
 class RegressionModelSummary(Metric):
     """
-    **Purpose**: This metric test evaluates the performance of regression models, specifically capturing their ability
-    to predict the dependent variable(s) given changes in the independent variable(s). It measures the quality of the
-    model using classic regression metrics such as R-Squared, Adjusted R-Squared, Mean Squared Error (MSE), and Root
-    Mean Squared Error (RMSE).
+    **Purpose**: This metric test evaluates the performance of regression models by measuring their predictive ability
+    with regards to dependent variables given changes in the independent variables. Its measurement tools include
+    conventional regression metrics such as R-Squared, Adjusted R-Squared, Mean Squared Error (MSE), and Root Mean
+    Squared Error (RMSE).
 
-    **Test Mechanism**: This test utilizes the 'train_ds' attribute of the model to collect and assess the training
-    data. It first retrieves the independent variables and uses the model to predict on the given features. The test
-    calculates several standard regression performance metrics including R-Square, Adjusted R-Squared, Mean Squared
-    Error (MSE), and Root Mean Squared Error (RMSE). These metrics quantify how close the predicted responses are to
-    the true responses.
+    **Test Mechanism**: This test employs the 'train_ds' attribute of the model to gather and analyze the training
+    data. Initially, it fetches the independent variables and uses the model to make predictions on these given
+    features. Subsequently, it calculates several standard regression performance metrics including R-Square, Adjusted
+    R-Squared, Mean Squared Error (MSE), and Root Mean Squared Error (RMSE), which quantify the approximation of the
+    predicted responses to the actual responses.
 
-    **Signs of High Risk**: High risk or potentially problematic model performance could be indicated by low R-Squared
-    and Adjusted R-Squared values, or high MSE and RMSE values. Low R-squared and adjusted R-squared values suggest a
-    poor fit between the model predictions and the true responses, indicating the model explains a small portion of the
-    variance in the target variable. High MSE or RMSE represents a high prediction error, which points to poor model
-    performance.
+    **Signs of High Risk**:
+    - Low R-Squared and Adjusted R-Squared values. A poor fit between the model predictions and the true responses is
+    indicated by low values of these metrics, suggesting the model explains a small fraction of the variance in the
+    target variable.
+    - High MSE and RMSE values represent a high prediction error and point to poor model performance.
 
-    **Strengths**: This test offers an extensive evaluation of regression models as it combines four key measures of
-    model accuracy and fit, offering a comprehensive view of the model's performance. Furthermore, both the R-Squared
-    and the Adjusted R-Squared measures are readily interpretable, representing the proportion of total variation in
-    the dependent variable that is explained by the independent variables.
+    **Strengths**:
+    - Offers an extensive evaluation of regression models by combining four key measures of model accuracy and fit.
+    - Provides a comprehensive view of the model's performance.
+    - Both the R-Squared and Adjusted R-Squared measures are readily interpretable. They represent the proportion of
+    total variation in the dependent variable that can be explained by the independent variables.
 
-    **Limitations**: This test only applies to regression models and cannot be used to evaluate binary classification
-    models or time series models, limiting its scope. Furthermore, while RMSE and MSE are good measures of prediction
-    error, they can be sensitive to outliers, which might lead to an overestimation of the model's prediction error.
-    Lastly, high R-squared or adjusted R-squared doesn't necessarily imply a good model, especially in cases where the
-    model is overfitting the data.
+    **Limitations**:
+    - Applicable exclusively to regression models. It is not suited for evaluating binary classification models or time
+    series models, thus limiting its scope.
+    - Although RMSE and MSE are sound measures of prediction error, they might be sensitive to outliers, potentially
+    leading to an overestimation of the model's prediction error.
+    - A high R-squared or adjusted R-squared may not necessarily indicate a good model, especially in cases where the
+    model is possibly overfitting the data.
     """
 
     name = "regression_model_summary"
