@@ -1,9 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import itertools
-from dataclasses import dataclass
 
-import evaluate
+from dataclasses import dataclass
 
 from validmind.vm_models import Metric
 
