@@ -141,19 +141,24 @@ def fix_test_description(path):
         f.write("\n".join(lines))
 
 
+def _is_test_file(path):
+    return path.endswith(".py") and path[0].isupper()
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def main(path):
     """Recursively processes the specified DIRECTORY and updates files needing metadata injection."""
 
     if os.path.isfile(path):
-        if path.endswith(".py"):
+        if _is_test_file(path):
             fix_test_description(path)
+        else:
+            raise ValueError(f"File {path} is not a test file")
 
     elif os.path.isdir(path):
         for root, dirs, files in os.walk(path):
             for file in files:
-                if file.endswith(".py") and file[0].isupper():
+                if _is_test_file(file):
                     fix_test_description(os.path.join(root, file))
 
 
