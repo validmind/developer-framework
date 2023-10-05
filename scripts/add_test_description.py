@@ -87,7 +87,7 @@ Finally, you will write a clear, descriptive and informative single sentence sum
 
 This one-liner will be used as the first line of the test docstring (description). It should be no more than 120 characters ideally.
 It does not have to be a complete sentence but should be grammatically correct. (think of it as a titular description for the test)
-Respond with the summary and don't include any explanation or other text. Do not respond with quotes around the summary.
+Respond with only the summary and don't include any explanation or other text
 """.strip()
 
 def indent_and_wrap(text, indentation=4, wrap_length=120):
@@ -204,7 +204,7 @@ def add_summary_to_test(path):
 
     click.echo("\n")
 
-    summary = indent_and_wrap(summary.strip())
+    summary = indent_and_wrap(summary.strip().strip('"').strip("'"))
 
     insert_line_num = None
     lines = file_contents.split("\n")
@@ -296,7 +296,7 @@ def _is_test_file(path):
 @click.argument("path", type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def main(action, path):
     """Recursively processes the specified DIRECTORY and updates files needing metadata injection."""
-    files = []
+    tests_to_process = []
 
     # check if path is a file or directory
     if os.path.isfile(path):
@@ -309,18 +309,18 @@ def main(action, path):
         for root, dirs, files in os.walk(path):
             for file in files:
                 if _is_test_file(file):
-                    files.append(os.path.join(root, file))
+                    tests_to_process.append(os.path.join(root, file))
 
     if action == "add":
-        for file in files:
+        for file in tests_to_process:
             add_description_to_test(file)
 
     elif action == "review":
-        for file in files:
+        for file in tests_to_process:
             fix_test_description(path)
 
     elif action == "summarize":
-        for file in files:
+        for file in tests_to_process:
             add_summary_to_test(file)
 
 
