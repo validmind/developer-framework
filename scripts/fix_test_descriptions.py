@@ -1,7 +1,7 @@
-"""Script that generates a description for a test using GPT-4 and automatically inserts it into the class docstring
+"""Script that reviews a description for a test using GPT-4 and automatically fixes any issue
 
 Usage:
-    python scripts/add_test_description.py <path> // path can be either a file or a directory
+    python scripts/fix_test_description.py <path> // path can be either a file or a directory
 
 Before running this, you need to either set an environment variable OPENAI_API_KEY
 or create a .env file in the root of the project with the following contents:
@@ -20,24 +20,35 @@ prompt = """
 You are an expert in validating Machine Learning models using MRM (Model Risk Management) best practices. You are also an expert in writing descriptions that are pleasant to read while being very useful.
 You will be provided the source code for a metric or threshold test that is run against an ML model. You will analyze the code to determine the details and implementation of the test. Finally, you will write clear, descriptive and informative descriptions in the format described that will document the tests for developers and risk management teams.
 
-For each test you will return a description with the following sections:
+For each test there are the following sections present:
 1. Purpose
 2. Test Mechanism
 3. Signs of High Risk
 4. Strengths
 5. Limitations
 
-You will populate each section according to the following guidelines:
+These sections have been populated with content according to the following guidelines:
 1. Purpose: Brief explanation of why this metric is being used and what it is intended to evaluate or measure in relation to the model.
 2. Test Mechanism: Describe the methodology used to test or apply the metric, including any grading scales or thresholds
-3. Signs of High Risk: List or describe any signs or indicators that might suggest a high risk or a failure in the model's performance as related to this metric
-4. Strengths: List or describe the strengths or advantages of using this metric in evaluating the model
-5. Limitations: List or describe the limitations or disadvantages of this metric, including any potential bias or areas it might not fully address
+3. Signs of High Risk: List any signs or indicators that might suggest a high risk or a failure in the model's performance as related to this metric
+4. Strengths: List the strengths or advantages of using this metric in evaluating the model
+5. Limitations: List the limitations or disadvantages of this metric, including any potential bias or areas it might not fully address
 
+The following prompt was given to GPT4 to generate the descriptions:
+'''
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test.
 Respond with a markdown description where each section name is in bold and is followed by a colon and then the content for that section.
 For sections 3-5, the content should be a list of bullet points unless the section has only one or two items, in which case it can be a paragraph.
 Respond only with the description and don't include any explanation or other text.
+'''
+
+Finally, the user submitted the code for the test.
+
+You will now review the descriptions and fix any of the following issues that may be present:
+1. The description is missing a section
+2. Sections 3-5 are not formatted as a list of bullet points
+3. The description is missing a colon after the section name
+4. The description is missing a blank line between sections
 """.strip()
 
 
@@ -66,10 +77,8 @@ def indent_and_wrap(text, indentation=4, wrap_length=120):
     return '\n'.join(result)
 
 
-def add_description_to_test(path):
-    """Generate a test description using gpt4
-    You can switch to gpt3.5 if you don't have access but gpt4 should do a better job
-    """
+def fix_test_description(path):
+    """You can switch to gpt3.5 if you don't have access but gpt4 should do a better job"""
     # get file contents from path
     click.echo(f"\n\n{path}:\n")
     with open(path, "r") as f:
@@ -132,35 +141,20 @@ def add_description_to_test(path):
         f.write("\n".join(lines))
 
 
-def review_test_description(test_paths):
-    """TODO: Implement AI test description review"""
-    pass
-
-
 @click.command()
 @click.argument("path", type=click.Path(exists=True, file_okay=True, dir_okay=True))
-@click.argument("action", type=click.Choice(["add", "review"]), default="add")
-def main(path, action):
+def main(path):
     """Recursively processes the specified DIRECTORY and updates files needing metadata injection."""
-    files = []
 
-    # check if path is a file or directory
     if os.path.isfile(path):
         if path.endswith(".py"):
-            files.append(path)
+            fix_test_description(path)
 
     elif os.path.isdir(path):
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file.endswith(".py") and file[0].isupper():
-                    files.append(os.path.join(root, file))
-
-    if action == "add":
-        for file in files:
-            add_description_to_test(file)
-
-    elif action == "review":
-        review_test_description(files)
+                    fix_test_description(os.path.join(root, file))
 
 
 if __name__ == "__main__":
