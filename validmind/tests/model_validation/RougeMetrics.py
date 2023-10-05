@@ -64,7 +64,7 @@ class RougeMetrics(Metric):
     name = "rouge_metric"
     required_inputs = ["model", "model.test_ds"]
     default_params = {
-        "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l", "rouge-s"],
+        "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l"],
     }
 
     def run(self):

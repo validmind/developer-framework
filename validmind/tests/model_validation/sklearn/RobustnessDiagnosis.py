@@ -118,9 +118,6 @@ class RobustnessDiagnosis(ThresholdTest):
                 + "dataset numerical feature columns"
             )
 
-        # Remove target column if it exist in the list
-        features_list = self.model.train_ds.get_features_columns()
-
         if self.model.train_ds.text_column in features_list:
             raise ValueError(
                 "Skiping Robustness Diagnosis test for the dataset with text column"
