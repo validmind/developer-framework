@@ -18,31 +18,32 @@ from validmind.vm_models import (
 @dataclass
 class MinimumROCAUCScore(ThresholdTest):
     """
-    **Purpose**: This test metric, Minimum ROC AUC Score, is used to determine the model's performance by ensuring that
-    the Receiver Operating Characteristic Area Under the Curve (ROC AUC) score on the validation dataset meets or
-    exceeds a predefined threshold. The ROC AUC score is an indicator of how well the model is capable of
-    distinguishing between different classes, making it a crucial measure in binary and multiclass classification tasks.
+    **Purpose**:
+    This test metric, Minimum ROC AUC Score, is used to determine the model's performance by ensuring that the Receiver
+    Operating Characteristic Area Under the Curve (ROC AUC) score on the validation dataset meets or exceeds a
+    predefined threshold. The ROC AUC score is an indicator of how well the model is capable of distinguishing between
+    different classes, making it a crucial measure in binary and multiclass classification tasks.
 
-    **Test Mechanism**: This test implementation calculates the multiclass ROC AUC score on the true target values and
-    the model's prediction. The test converts the multi-class target variables into binary format using
-    `LabelBinarizer` before computing the score. If this ROC AUC score is higher than the predefined threshold
-    (defaulted to 0.5), the test passes; otherwise, it fails. The results, including the ROC AUC score, the threshold,
-    and whether the test passed or failed, are then stored in a `ThresholdTestResult` object.
+    **Test Mechanism**:
+    This test implementation calculates the multiclass ROC AUC score on the true target values and the model's
+    prediction. The test converts the multi-class target variables into binary format using `LabelBinarizer` before
+    computing the score. If this ROC AUC score is higher than the predefined threshold (defaulted to 0.5), the test
+    passes; otherwise, it fails. The results, including the ROC AUC score, the threshold, and whether the test passed
+    or failed, are then stored in a `ThresholdTestResult` object.
 
-    **Signs of High Risk**: A high risk or failure in the model's performance as related to this metric would be
-    represented by a low ROC AUC score, specifically any score lower than the predefined minimum threshold. This
-    suggests that the model is struggling to distinguish between different classes effectively.
+    **Signs of High Risk**:
+    - A high risk or failure in the model's performance as related to this metric would be represented by a low ROC AUC
+    score, specifically any score lower than the predefined minimum threshold. This suggests that the model is
+    struggling to distinguish between different classes effectively.
 
-    **Strengths**: This metric is advantageous for the following reasons:
-
+    **Strengths**:
     - The test considers both the true positive rate and false positive rate, providing a comprehensive performance
     measure.
     - ROC AUC score is threshold-independent meaning it measures the model's quality across various classification
     thresholds.
     - Works robustly with binary as well as multi-class classification problems.
 
-    **Limitations**: Despite its strengths, the metric presents certain limitations:
-
+    **Limitations**:
     - ROC AUC may not be useful if the class distribution is highly imbalanced; it could perform well in terms of AUC
     but still fail to predict the minority class.
     - The test does not provide insight into what specific aspects of the model are causing poor performance if the ROC

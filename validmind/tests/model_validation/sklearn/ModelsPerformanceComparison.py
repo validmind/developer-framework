@@ -14,31 +14,36 @@ from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_sco
 @dataclass
 class ModelsPerformanceComparison(ClassifierPerformance):
     """
-    **Purpose**: This metric test is intended to evaluate and compare the performance of multiple Machine Learning
-    models on test data. It uses a number of metrics including accuracy, precision, recall, and F1 score among others,
-    to measure model performance and aid in the selection of the most effective model for the given task.
+    **Purpose**: This metric test aims to evaluate and compare the performance of various Machine Learning models using
+    test data. It employs multiple metrics such as accuracy, precision, recall, and the F1 score, among others, to
+    assess model performance and assist in selecting the most effective model for the designated task.
 
-    **Test Mechanism**: This test involves using Scikit-learn’s performance metrics to assess model's performance in
-    both binary and multiclass classification tasks. To compare the performances, it evaluates each model on the test
-    dataset and produces a detailed classification report. This includes the aforesaid metrics, along with the roc_auc
-    score. Depending on whether the task at hand is binary or multiclass classification, it calculates metrics globally
-    for the "positive" class or their weighted averages, macro averages, and per class metrics respectively. If no
-    models are provided, the test is skipped.
+    **Test Mechanism**: The test employs Scikit-learn’s performance metrics to evaluate each model's performance for
+    both binary and multiclass classification tasks. To compare performances, the test runs each model against the test
+    dataset, then produces a comprehensive classification report. This report includes metrics such as accuracy,
+    precision, recall, and the F1 score. Based on whether the task at hand is binary or multiclass classification, it
+    calculates metrics globally for the "positive" class or, alternatively, their weighted averages, macro averages,
+    and per class metrics. The test will be skipped if no models are supplied.
 
-    **Signs of High Risk**: High risk or poor model performance might be indicated by low accuracy, precision, recall,
-    and/or F1 scores, or a low area under the Receiver Operating Characteristic (ROC) curve (roc_auc). If the metrics'
-    scores are significantly lower than alternative models, it might suggest a high failure risk.
+    **Signs of High Risk**:
+    - Low scores in accuracy, precision, recall, and F1 metrics indicate a potentially high risk.
+    - A low area under the Receiver Operating Characteristic (ROC) curve (roc_auc score) is another possible indicator
+    of high risk.
+    - If the metrics scores are significantly lower than alternative models, this might suggest a high risk of failure.
 
-    **Strengths**: This test allows for straightforward performance comparison of multiple models, accommodating both
-    binary and multiclass classification tasks. It provides a comprehensive report of key performance metrics, offering
-    a holistic view of model performance. It also includes ROC AUC, a robust performance metric that is capable of
-    dealing effectively with class imbalance issues.
+    **Strengths**:
+    - The test provides a simple way to compare the performance of multiple models, accommodating both binary and
+    multiclass classification tasks.
+    - It provides a holistic view of model performance through a comprehensive report of key performance metrics.
+    - The inclusion of the ROC AUC score is advantageous, as this robust performance metric can effectively handle
+    class imbalance issues.
 
-    **Limitations**: This test may not be comprehensive for more complex performance evaluations that consider other
-    factors, such as speed of prediction, computational cost, or specific business constraints. It's also reliant on
-    the provided test dataset, so the chosen models' performance could differ on unseen data or when the data
-    distribution changes. The ROC AUC score isn't necessarily meaningful for multilabel/multiclass tasks, and can be
-    hard to interpret in such contexts.
+    **Limitations**:
+    - This test may not be suitable for more complex performance evaluations that consider factors such as prediction
+    speed, computational cost, or business-specific constraints.
+    - The test's reliability depends on the provided test dataset; hence, the selected models' performance could vary
+    with unseen data or changes in the data distribution.
+    - The ROC AUC score might not be as meaningful or easily interpretable for multilabel/multiclass tasks.
     """
 
     name = "models_performance_comparison"
