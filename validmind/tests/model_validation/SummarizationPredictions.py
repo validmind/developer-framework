@@ -18,7 +18,7 @@ class SummarizationPredictions(Metric):
     required_inputs = ["model"]
     metadata = {
         "task_types": ["text_summarization"],
-        "tags": ["summarization_predictions"],
+        "tags": ["summarization"],
     }
 
     def description(self):
@@ -29,7 +29,7 @@ class SummarizationPredictions(Metric):
     def run(self):
         display_limit = self.params["display_limit"]
 
-        # Check model and dataset attributes
+        # Check model attributes
         if not hasattr(self, "model"):
             raise AttributeError("The 'model' attribute is missing.")
 
@@ -48,7 +48,7 @@ class SummarizationPredictions(Metric):
         df = pd.DataFrame(
             {
                 "Input Text": text_input,
-                "True Summaries": y_true.reshape(-1),
+                "Target Text": y_true.reshape(-1),
                 "Predicted Summaries": y_pred,
             }
         )
