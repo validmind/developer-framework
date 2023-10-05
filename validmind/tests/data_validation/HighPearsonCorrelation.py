@@ -18,36 +18,38 @@ from validmind.vm_models import (
 @dataclass
 class HighPearsonCorrelation(ThresholdTest):
     """
-    **Purpose**: The Pearson Correlation test is intended to measure the linear relationship between features in the
-    dataset, specifically ensuring that the pairwise Pearson correlation coefficients do not surpass a certain
-    threshold. High correlation between two variables might indicate redundancy or multicollinearity. Identifying such
-    correlations can alert the risk management team or developers about issues in the dataset which may have an impact
-    on the performance and interpretability of the Machine Learning model.
+    **Purpose**: The High Pearson Correlation test measures the linear relationship between features in a dataset, with
+    the main goal of identifying high correlations that might indicate feature redundancy or multicollinearity.
+    Identification of such issue allows developers and risk management teams to properly deal with potential impacts on
+    the machine learning model's performance and interpretability.
 
-    **Test Mechanism**: This Python implementation of the test first generates pairwise Pearson correlations for all
-    the features in the dataset. It then sorts these correlations and eliminates duplicate and self-correlations (where
-    a feature is correlated with itself). A Pass or Fail is assigned based on whether the absolute value of the
-    correlation coefficient exceeds a predefined threshold (default to 0.3). The top 10 strongest correlations,
-    regardless of whether they pass or fail, are returned.
+    **Test Mechanism**: The test works by generating pairwise Pearson correlations for all features in the dataset,
+    then sorting and eliminating duplicate and self-correlations. It assigns a Pass or Fail based on whether the
+    absolute value of the correlation coefficient surpasses a pre-set threshold (defaulted at 0.3). It lastly returns
+    the top ten strongest correlations regardless of passing or failing status.
 
-    **Signs of High Risk**: The presence of correlation coefficients exceeding the specified threshold indicates high
-    risk. This means that the features share a strong linear relationship, leading to potential multicollinearity and
-    model overfitting. Redundancy of variables can undermine the interpretability of the model because it’s unclear
-    which variable's predictive power is true.
+    **Signs of High Risk**:
+    - A high risk indication would be the presence of correlation coefficients exceeding the threshold.
+    - If the features share a strong linear relationship, this could lead to potential multicollinearity and model
+    overfitting.
+    - Redundancy of variables can undermine the interpretability of the model due to uncertainty over the authenticity
+    of individual variable's predictive power.
 
     **Strengths**:
-    - The Pearson Correlation test is a simple and fast way to identify pairwise relationships between features.
-    - Provides clear output: Results show the pairs of correlated variables along with their Pearson correlation
-    coefficient and a Pass or Fail status.
-    - Helps in early identification of potential multicollinearity issues which can impact model training.
+    - The High Pearson Correlation test provides a quick and simple means of identifying relationships between feature
+    pairs.
+    - It generates a transparent output which not only displays pairs of correlated variables but also delivers the
+    Pearson correlation coefficient and a Pass or Fail status for each.
+    - It aids early identification of potential multicollinearity issues that may disrupt model training.
 
     **Limitations**:
-    - Limited to linear relationships only: Pearson correlation cannot depict non-linear relationships or dependencies.
-    - Sensitive to outliers: A few outliers can significantly change the correlation coefficient.
-    - Redundancy identification only possible for pairwise correlation: If three or more variables are linearly
-    dependent, this method might not identify that complex relationship.
-    - Top 10 result limitation: It only keeps the top 10 high correlations, which might not fully capture the data's
-    complexity. Configuration for the number of kept results needs to be implemented.
+    - The Pearson correlation test can only delineate linear relationships. It fails to shed light on nonlinear
+    relationships or dependencies.
+    - It is sensitive to outliers where a few outliers could notably affect the correlation coefficient.
+    - It is limited to identifying redundancy only within feature pairs. When three or more variables are linearly
+    dependent, it may fail to spot this complex relationship.
+    - The top 10 result filter might not fully capture the richness of the data; an option to configure the number of
+    retained results could be helpful.
     """
 
     category = "data_quality"

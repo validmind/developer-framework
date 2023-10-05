@@ -23,32 +23,29 @@ class Hashtags(ThresholdTest):
 
     **Test Mechanism**: The test implements a regular expression (regex) to extract all hashtags from the specified
     text column. For each hashtag found, it makes a tally of its occurrences. It then outputs a list of the top N
-    hashtags (default is 25, but customizable), sorted by their counts in a descending order. The results are also
-    visualized in a bar-plot that indicates frequency counts on the y-axis and the corresponding hashtags on the x-axis.
+    hashtags (default is 25, but customizable), sorted by their counts in descending order. The results are also
+    visualized in a bar plot, with frequency counts on the y-axis and the corresponding hashtags on the x-axis.
 
-    **Signs of High Risk**: The indications of a potential high-risk situation may include:
-
-    - A low diversity in the usage of hashtags as indicated by a few hashtags being used disproportionately more than
-    the others.
-    - Repeated usage of one or few hashtags can be indicative of spam or biased dataset.
+    **Signs of High Risk**:
+    - A low diversity in the usage of hashtags, as indicated by a few hashtags being used disproportionately more than
+    others.
+    - Repeated usage of one or few hashtags can be indicative of spam or a biased dataset.
     - If there are no or extremely few hashtags found in the dataset, it perhaps signifies that the text data does not
     contain structured social media data.
 
-    **Strengths**: The Hashtags test has several strong points:
-
+    **Strengths**:
     - It provides a concise visual representation of the frequency of hashtags, which can be critical for understanding
-    the trend about a particular topic in text data.
-    - It is instrumental in tasks specifically related to social media text analytics such as opinion analysis, trend
-    discovery, etc.
+    trends about a particular topic in text data.
+    - It is instrumental in tasks specifically related to social media text analytics, such as opinion analysis and
+    trend discovery.
     - The test is adaptable, allowing the flexibility to determine the number of top hashtags to be analyzed.
 
-    **Limitations**: Despite its strengths, the test has some limitations:
-
+    **Limitations**:
     - The test assumes the presence of hashtags and therefore may not be applicable for text datasets that do not
     contain hashtags (e.g., formal documents, scientific literature).
-    - Language-specific limitations of hashtag formulations are not explicitly addressed.
-    - It does not account for typographical errors, variations or synonyms in hashtags.
-    - This test does not provide context or sentiment associated with the hashtags. Thus the information provided may
+    - Language-specific limitations of hashtag formulations are not taken into account.
+    - It does not account for typographical errors, variations, or synonyms in hashtags.
+    - This test does not provide context or sentiment associated with the hashtags, so the information provided may
     have limited utility on its own.
     """
 

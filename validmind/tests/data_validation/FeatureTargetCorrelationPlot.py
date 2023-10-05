@@ -11,30 +11,34 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class FeatureTargetCorrelationPlot(Metric):
     """
-    **Purpose**: The purpose of this test is to visually analyze and display the correlations between different input
-    features and the target output of a Machine Learning model. This is important in understanding how each feature
-    impacts the model's predictions. A high correlation means the feature strongly influences the target variable -
-    something particularly useful in feature selection and understanding model behaviour.
+    **Purpose**: This test is designed to graphically illustrate the correlations between distinct input features and
+    the target output of a Machine Learning model. Understanding how each feature influences the model's predictions is
+    crucial - a higher correlation indicates stronger influence of the feature on the target variable. This correlation
+    study is especially advantageous during feature selection and for comprehending the model's operation.
 
-    **Test Mechanism**: The FeatureTargetCorrelationPlot test computes correlations between features and the target
-    variable of a given dataset. The correlations are calculated and then plotted in a horizontal bar graph, with color
-    varying according to the strength of the correlation. An automatic hover template is also provided for descriptive
-    tooltips. The features to be analyzed can be specified, and the graph's height can be adjusted per requirement.
+    **Test Mechanism**: This FeatureTargetCorrelationPlot test computes and presents the correlations between the
+    features and the target variable using a specific dataset. These correlations are calculated, graphically
+    represented in a horizontal bar plot, and color-coded based on the strength of the correlation. A hovering template
+    can also be utilized for informative tooltips. It is possible to specify the features to be analyzed and adjust the
+    graph's height according to need.
 
-    **Signs of High Risk**: Absence of any strong correlations (either positive or negative) between features and the
-    target variable might suggest a high risk as it indicates that the given features don't have a significant
-    influence on the prediction output. Also, duplication of correlation values might indicate redundancy in feature
-    selection.
+    **Signs of High Risk**:
+    - There are no strong correlations (either positive or negative) between features and the target variable. This
+    could suggest high risk as the supplied features do not appear to significantly impact the prediction output.
+    - The presence of duplicated correlation values might hint at redundancy in the feature set.
 
-    **Strengths**: This test provides a visual aid, significantly improving the interpretation of correlations and
-    giving a clear, easy-to-understand overview of how each feature impacts the model's target variable. This aids in
-    feature selection and in understanding the nature of model predictions. Additionally, the hover template provides
-    precise correlation values for each feature, essential for a granular level understanding.
+    **Strengths**:
+    - Provides visual assistance to interpreting correlations more effectively.
+    - Gives a clear and simple tour of how each feature affects the model's target variable.
+    - Beneficial for feature selection and grasping the model's prediction nature.
+    - Precise correlation values for each feature are offered by the hover template, contributing to a granular-level
+    comprehension.
 
-    **Limitations**: The test only works with numerical data, so variables of other types must be preprocessed. Also,
-    the plot assumes a linear correlation - it cannot efficiently capture non-linear relationships. One more limitation
-    is that it may not accurately reflect importance for models that use complex interactions of features, like
-    Decision Trees or Neural Networks.
+    **Limitations**:
+    - The test only accepts numerical data, meaning variables of other types need to be prepared beforehand.
+    - The plot assumes all correlations to be linear, thus non-linear relationships might not be captured effectively.
+    - Not apt for models that employ complex feature interactions, like Decision Trees or Neural Networks, as the test
+    may not accurately reflect their importance.
     """
 
     name = "feature_target_correlation_plot"

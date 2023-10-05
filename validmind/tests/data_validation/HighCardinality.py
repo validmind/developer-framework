@@ -18,36 +18,32 @@ from validmind.vm_models import (
 @dataclass
 class HighCardinality(ThresholdTest):
     """
-    **Purpose**: The “High Cardinality” test functions to assess and evaluate the number of unique values present in
-    the categorical columns of a dataset. Cardinality represents the measure of distinct elements residing in a set. In
-    context of this test, high cardinality implies presence of a large quantity of unique, non-repetitive values in the
-    dataset.
+    **Purpose**: The “High Cardinality” test is used to evaluate the number of unique values present in the categorical
+    columns of a dataset. In this context, high cardinality implies the presence of a large number of unique,
+    non-repetitive values in the dataset.
 
-    **Test Mechanism**: This test begins by inferring the type of the dataset and initializing numeric threshold based
-    on the test parameters. If the “threshold_type” is set to “percent”, it calculates the numeric threshold as the
-    product of “percent_threshold” and the count of rows in the dataset. Subsequently, the test commences iteration
-    through each column in the dataset. It limits the evaluation to those columns which are categorized as
-    "Categorical". For each categorical column, the number of distinct values (n_distinct) and the percentage of
-    distinct values (p_distinct) are computed. The test asserts success if n_distinct is less than the calculated
-    numeric threshold. The summary method compiles results in tabulated form, with details for each column including
-    column name, number of distinct values, percentage of distinct values, and pass/fail status.
+    **Test Mechanism**: The test first infers the dataset's type and then calculates an initial numeric threshold based
+    on the test parameters. It only considers columns classified as "Categorical". For each of these columns, the
+    number of distinct values (n_distinct) and the percentage of distinct values (p_distinct) are calculated. The test
+    will pass if n_distinct is less than the calculated numeric threshold. Lastly, the results, which include details
+    such as column name, number of distinct values, and pass/fail status, are compiled into a table.
 
-    **Signs of High Risk**: High risk or failure in model performance may be indicated by a large number of distinct
-    values (high cardinality) in one or more categorical columns. If any column fails the test (n_distinct >=
-    num_threshold), it is a sign of high risk.
+    **Signs of High Risk**:
+    - A large number of distinct values (high cardinality) in one or more categorical columns implies a high risk.
+    - A column failing the test (n_distinct >= num_threshold) is another indicator of high risk.
 
-    **Strengths**: The High Cardinality test is valuable in detecting overfitting risks and potential noise. High
-    cardinality in categorical variables may trigger overfitting in machine learning models as the models can
-    excessively adapt to the training data. It also helps in identifying potential outliers and inconsistencies,
-    therefore aids in enhancing the data quality. It can be applied to both classification and regression task types,
-    which lends versatility to the test.
+    **Strengths**:
+    - The High Cardinality test is effective in early detection of potential overfitting and unwanted noise.
+    - It aids in identifying potential outliers and inconsistencies, thereby improving data quality.
+    - The test can be applied to both, classification and regression task types, demonstrating its versatility.
 
-    **Limitations**: Despite its numerous benefits, the High Cardinality test has certain limitations. It is solely
-    applicable to "Categorical" data types, and not suitable for numerical or continuous features, limiting its scope.
-    Furthermore, the test does not inherently assert the relevance or importance of unique values in categorical
-    features, thus critical data points may be overlooked. The threshold (both number and percent) used for the test is
-    static and likely to be non-optimal for diverse datasets and applications, it might benefit from additional
-    mechanisms to adapt and fine-tune this dynamic.
+    **Limitations**:
+    - The test is restricted to only "Categorical" data types and is thus not suitable for numerical or continuous
+    features, limiting its scope.
+    - The test does not consider the relevance or importance of unique values in categorical features, potentially
+    causing it to overlook critical data points.
+    - The threshold (both number and percent) used for the test is static and may not be optimal for diverse datasets
+    and varied applications. Further mechanisms to adjust and refine this threshold could enhance its effectiveness.
     """
 
     category = "data_quality"

@@ -15,33 +15,39 @@ from validmind.vm_models import (
 @dataclass
 class Duplicates(ThresholdTest):
     """
-    **Purpose**: The Duplicates test aims to evaluate the quality of data in an ML model by identifying duplicate
-    entries in the dataset. It specifically targets duplication in a designated text column or among the primary keys
-    of the dataset, which can have significant implications for model performance and integrity. Duplicate entries can
-    potentially distort data distribution and skew model training.
+    **Purpose**: The Duplicates test is designed to assess the data quality of an ML model by identifying any duplicate
+    entries in the data set. It focuses on seeking out duplication in a specified text column or among the primary keys
+    of the data set, which could have serious implications for the performance and integrity of the model. Duplicate
+    entries could potentially skew the data distribution and influence model training inaccurately.
 
-    **Test Mechanism**: The test works by counting the total number of duplicate entries within the dataset. If a
-    'text_column' property is specified, the algorithm will count duplicates within this column. If any primary key is
-    declared, the test will be run on the primary keys as well. The number of duplicates ('n_duplicates') is then
-    compared to a predefined minimum threshold (default 'min_threshold' is set to 1) to determine if the test has
-    passed. Results include total number of duplicates, and the percentage of duplicate rows in the overall dataset
-    ('p_duplicates').
+    **Test Mechanism**: This test operates by calculating the total number of duplicate entries in the data set. The
+    algorithm will count duplicates within the 'text_column' if this property is specified. If primary keys are
+    defined, the test will also be applied on them. The count of duplicates ('n_duplicates') is then compared to a
+    predefined minimum threshold (the default 'min_threshold' is set at 1) to determine whether the test has passed or
+    not. The results include the total number of duplicates as well as the percentage of duplicate rows in comparison
+    to the overall dataset ('p_duplicates').
 
-    **Signs of High Risk**: The existence of a significant number of duplicates, especially exceeding the minimum
-    threshold, indicates high risk. Potential issues include an overrepresentation of certain data (thus skewing
-    results), or the indication of inefficient data collecting methods leading to data redundancy. Models that
-    predominantly fail this test may need to have their data preprocessing methods or source data reviewed.
+    **Signs of High Risk**:
+    - A large amount of duplicates, particularly those exceeding the predefined minimum threshold, point toward a high
+    risk situation.
+    - Overrepresentation of certain data which can lead to skewed results.
+    - Indication of inefficient data collecting techniques leading to data redundancy.
+    - Models that fail this test predominantly may necessitate a closer examination of their data preprocessing methods
+    or source data.
 
-    **Strengths**: The Duplicates test is versatile and can be applied to both text data and tabular data formats. It
-    also provides results calculated both as a count and as a percentage of the total dataset, facilitating a
-    comprehensive understanding of the extent of duplication. This metric can effectively flag data quality issues that
-    can skew your model performance and lead to inaccurate predictions.
+    **Strengths**:
+    - The Duplicates test is highly adaptable, being capable of being used with both text data and tabular data formats.
+    - It is able to provide results both numerically and as a percentage of the total data set, allowing for a broader
+    understanding of the extent of duplication.
+    - Its utility lies in effectively flagging any data quality issues that could potentially upset model performance
+    and generate erroneous predictions.
 
-    **Limitations**: The Duplicates test only targets exact duplication in entries, which might overlook close
-    'almost-duplicate' entries, or normalized forms of entries, that may also impact data distribution and model
-    integrity. Data variations due to errors, slight changes in phrasing, or other inconsistencies may not be detected.
-    Furthermore, a high number of duplicates in a dataset may not always indicate poor data quality, depending on the
-    nature of data and the problem being addressed.
+    **Limitations**:
+    - The Duplicates test solely targets exact duplication in entries, meaning it may overlook near-duplicates or
+    normalized forms of entries that might also affect data distribution and model integrity.
+    - Data variations caused by errors, phrasing changes, or inconsistencies may not be detected.
+    - A substantial number of duplicates in a datasets may not always denote poor data quality, as this can be
+    dependent on the nature of the data and the problem being addressed.
     """
 
     category = "data_quality"

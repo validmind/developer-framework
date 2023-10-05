@@ -35,25 +35,27 @@ class TimeSeriesOutliers(ThresholdTest):
     threshold is set at 3, indicating that any data point that falls 3 standard deviations away from the mean will be
     marked as an outlier.
 
-    **Signs of High Risk**: If many or substantial outliers are present within a dataset, this may be an indicator of
-    high risk as it suggests that the dataset contains significant anomalies. This could potentially affect the
-    performance of the machine learning models, if not properly addressed. Data points with z-scores higher than the
-    set threshold would be flagged as outliers and could be considered as high risk.
+    **Signs of High Risk**:
+    - If many or substantial outliers are present within a dataset, this may be an indicator of high risk as it
+    suggests that the dataset contains significant anomalies.
+    - This could potentially affect the performance of the machine learning models, if not properly addressed.
+    - Data points with z-scores higher than the set threshold would be flagged as outliers and could be considered as
+    high risk.
 
     **Strengths**:
-    1. The z-score method is a popular and robust method for identifying outliers in a dataset.
-    2. Time series maintenance is simplified through requiring a datetime index.
-    3. Outliers are identified for each numeric feature individually.
-    4. Provides an elaborate report which shows variables, date, z-score and whether the test passed or failed.
-    5. Offers visual inspection for detected outliers in the respective time-series through plots.
+    - The z-score method is a popular and robust method for identifying outliers in a dataset.
+    - Time series maintenance is simplified through requiring a datetime index.
+    - Outliers are identified for each numeric feature individually.
+    - Provides an elaborate report which shows variables, date, z-score and whether the test passed or failed.
+    - Offers visual inspection for detected outliers in the respective time-series through plots.
 
     **Limitations**:
-    1. This test only identifies outliers in numeric columns, and won't identify outliers in categorical variables.
-    2. The utility and accuracy of z-scores can be limited if the data doesn't follow a normal distribution.
-    3. The method relies on a subjective z-score threshold for deciding what constitutes an outlier, which might not
+    - This test only identifies outliers in numeric columns, and won't identify outliers in categorical variables.
+    - The utility and accuracy of z-scores can be limited if the data doesn't follow a normal distribution.
+    - The method relies on a subjective z-score threshold for deciding what constitutes an outlier, which might not
     always be suitable depending on the dataset and the use case.
-    4. It does not address possible ways to handle identified outliers in the data.
-    5. The necessity for a datetime index could limit the extent of its application.
+    - It does not address possible ways to handle identified outliers in the data.
+    - The necessity for a datetime index could limit the extent of its application.
     """
 
     category = "data_quality"

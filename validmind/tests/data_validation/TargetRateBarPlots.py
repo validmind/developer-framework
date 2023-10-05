@@ -8,31 +8,35 @@ from validmind.vm_models import Figure, Metric
 
 class TargetRateBarPlots(Metric):
     """
-    **Purpose**: The purpose of this metric is to visually summarize the distinct categorizations made by a
-    classification-oriented machine learning model. Specifically, it generates bar plots representing target rate
-    ratios for different categorical variables within the input dataset. This makes it easier to evaluate the
-    performance of the classification model and gain quick insights into its accuracy.
+    **Purpose**: This test, implemented as a metric, is designed to provide an intuitive, graphical summary of the
+    decision-making patterns exhibited by a categorical classification machine learning model. The model's performance
+    is evaluated using bar plots depicting the ratio of target rates—meaning the proportion of positive classes—for
+    different categorical inputs. This allows for an easy, at-a-glance understanding of the model's accuracy.
 
-    **Test Mechanism**: The test mechanic involves the creation of two bar plots for each categorical feature in the
-    dataset. The first plot counts the number of times each category appears in the dataset, using a unique color to
-    facilitate identification. On the second plot, it calculates the average target rate for each category and plots
-    these averages. The target rate value comes from the column specified as "default_column." The plots are generated
-    using the Plotly library in Python, with subplots created for each feature. If no specific columns are indicated,
-    all categorical feature columns in the dataset will be used to generate the plot.
+    **Test Mechanism**: The test involves creating a pair of bar plots for each categorical feature in the dataset. The
+    first plot depicts the frequency of each category in the dataset, with each category visually distinguished by its
+    unique color. The second plot shows the mean target rate of each category (sourced from the "default_column").
+    Plotly, a Python library, is used to generate these plots, with distinct plots created for each feature. If no
+    specific columns are selected, the test will generate plots for each categorical column in the dataset.
 
-    **Signs of High Risk**: High risk or failure signs might involve inconsistent or non-binary values in the
-    "default_column," making it difficult to calculate a meaningful default rate. Another risk sign could be an
-    unusually low or high default rate for any particular category, suggesting the model might be wrongly classifying
-    data points for those categories.
+    **Signs of High Risk**:
+    - Inconsistent or non-binary values in the "default_column" could complicate or render impossible the calculation
+    of average target rates.
+    - Particularly low or high target rates for a specific category might suggest that the model is misclassifying
+    instances of that category.
 
-    **Strengths**: The main strength of this metric is its ability to provide a clear, visual representation of the
-    model's categorization patterns. This helps stakeholders spot anomalies, inconsistencies, or trends in model
-    behavior quickly. The metric is also flexible, allowing for the examination of a single column or multiple columns
-    in the data.
+    **Strengths**:
+    - This test offers a visually interpretable breakdown of the model's decisions, providing an easy way to spot
+    irregularities, inconsistencies, or patterns.
+    - Its flexibility allows for the inspection of one or multiple columns, as needed.
 
-    **Limitations**: This metric only works well with categorical data, limiting its application to numeric or
-    continuous variables. It also assumes binary target values (only 0s and 1s), making it less useful for multi-class
-    problems. The bar plots can become confusing and less interpretable if the dataset has too many distinct categories.
+    **Limitations**:
+    - The test is less useful when dealing with numeric or continuous data, as it's designed specifically for
+    categorical features.
+    - If the model in question is dealing with a multi-class problem rather than binary classification, the test's
+    assumption of binary target values (0s and 1s) becomes a significant limitation.
+    - The readability of the bar plots drops as the number of distinct categories increases in the dataset, which can
+    make them harder to understand and less useful.
     """
 
     name = "target_rate_bar_plots"

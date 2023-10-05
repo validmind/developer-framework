@@ -13,33 +13,36 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class IsolationForestOutliers(Metric):
     """
-    **Purpose**: The purpose of the `IsolationForestOutliers` test is to identify anomalies or outliers in the model's
-    dataset. It assumes anomalous data points, due to their distinctive properties, can be detected more quickly by the
-    isolation forest algorithm. This algorithm evaluates anomalies through the creation of isolation trees and
-    identifying instances with shorter average path lengths in these trees, as these instances are expected to be
-    different from the majority of the data points.
+    **Purpose**: The `IsolationForestOutliers` test is designed to identify anomalies or outliers in the model's
+    dataset using the isolation forest algorithm. This algorithm assumes that anomalous data points can be isolated
+    more quickly due to their distinctive properties. By creating isolation trees and identifying instances with
+    shorter average path lengths, the test is able to pick out data points that differ from the majority.
 
-    **Test Mechanism**: This test uses the isolation forest algorithm, which isolates anomalies rather than identifying
-    normal data points. It runs by building an ensemble of isolation trees, utilizing binary trees created by randomly
-    selecting features and splitting the data based on random thresholds. For each pair of variables, it generates a
-    scatter plot distinguishing the identified outliers from the inliers. The test results are visualized in these
-    scatter plots showing the distinction of outliers from inliers.
+    **Test Mechanism**: The test uses the isolation forest algorithm, which builds an ensemble of isolation trees by
+    randomly selecting features and splitting the data based on random thresholds. It isolates anomalies rather than
+    focusing on normal data points. For each pair of variables, a scatter plot is generated which distinguishes the
+    identified outliers from the inliers. The results of the test can be visualized using these scatter plots,
+    illustrating the distinction between outliers and inliers.
 
-    **Signs of High Risk**: Signs of high risk or failure in the model's performance might be the presence of high
-    contamination which indicates a lot of anomalies, an inability to detect clusters of anomalies that are
-    geographically close in the feature space, detecting normal instances as anomalies or overlooking actual anomalies.
+    **Signs of High Risk**:
+    - The presence of high contamination, indicating a large number of anomalies
+    - Inability to detect clusters of anomalies that are close in the feature space
+    - Misclassifying normal instances as anomalies
+    - Failure to detect actual anomalies
 
-    **Strengths**: The strengths of the isolation forest algorithm include its ability to handle large high-dimensional
-    datasets, its efficiency in isolating anomalies rather than normal instances tradition, and its insensitivity to
-    the underlying distribution of data. It is able to recognize anomalies even when they are not separated from the
-    data cloud by identifying distinctive properties of the anomalies. Additionally, it visualizes the test results,
-    aiding understanding and interpretability.
+    **Strengths**:
+    - Ability to handle large, high-dimensional datasets
+    - Efficiency in isolating anomalies instead of normal instances
+    - Insensitivity to the underlying distribution of data
+    - Ability to recognize anomalies even when they are not separated from the main data cloud through identifying
+    distinctive properties
+    - Visually presents the test results for better understanding and interpretability
 
-    **Limitations**: Among its limitations, the isolation forest test might find it hard to detect anomalies that are
-    close to each other, or in datasets where anomalies are more prevalent. The results strongly rely on the
-    contamination parameter, which might need fine-tuning to be effective. It may also not be effective in detecting
-    collective anomalies if they behave similarly to normal data. Furthermore, it potentially lacks precision in
-    identifying which features contribute most to the anomalous behavior.
+    **Limitations**:
+    - Difficult to detect anomalies that are close to each other or prevalent in datasets
+    - Dependency on the contamination parameter which may need fine-tuning to be effective
+    - Potential failure in detecting collective anomalies if they behave similarly to normal data
+    - Potential lack of precision in identifying which features contribute most to the anomalous behavior
     """
 
     name = "isolation_forest"

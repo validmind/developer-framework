@@ -12,31 +12,36 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PiTCreditScoresHistogram(Metric):
     """
-    **Purpose**: The PiT (Point in Time) Credit Scores Histogram metric is used to assess the performance of a
-    classification model with a focus on credit risk evaluation. It visualizes the distributions of observed and
-    predicted default scores and provides an intuitive comparison allowing for quick model assessment.
+    **Purpose**:
+    The PiT (Point in Time) Credit Scores Histogram metric is used to evaluate the predictive performance of a credit
+    risk assessment model. This metric provides a visual representation of observed versus predicted default scores and
+    enables quick and intuitive comparison for model assessment.
 
-    **Test Mechanism**: This metric leverages histograms to illustrate the differences in score distributions for both
-    observed and predicted results. It separates the scores into defaulted (1) and not defaulted (0) and makes a
-    histogram for each of these categories. The model compares the distributions of observed and predicted
-    classifications simultaneously, furnishing a clear idea about how well the model can predict the credit risk.
+    **Test Mechanism**:
+    This metric generates histograms for both observed and predicted score distributions of defaults and non-defaults.
+    The simultaneous representation of both the observed and predicted scores sheds light on the model's ability to
+    accurately predict credit risk.
 
-    **Signs of High Risk**: If the observed and predicted histograms are significantly different, there may be risk
-    factors that the model is not adequately addressing. Additionally, if the predicted defaults are concentrated
-    towards one end of the graph or are less evenly distributed than the observed scores, this could indicate potential
-    issues with how the model is understanding the data or predicting outcomes.
+    **Signs of High Risk**:
+    - Significant discrepancies between the observed and predicted histograms, suggesting that the model may not be
+    adequately addressing certain risk factors.
+    - Concentration of predicted defaults towards one end of the graph, or uneven distribution in comparison to
+    observed scores, indicating potential issues in the model's interpretation of the data or outcome prediction.
 
-    **Strengths**: This metric provides an intuitive visual representation of model performance which can be easily
-    understood and interpreted even without extensive technical background. By comparing the distributions of observed
-    and predicted scores, it gives a clear picture about the model's ability in distinguishing between defaulting and
-    non-defaulting entities. It's especially tailored for credit risk assessment models and the PiT element takes into
-    consideration time evolution of credit risk.
+    **Strengths**:
+    - Provides an intuitive visual representation of model performance that's easy to comprehend, even for individuals
+    without a technical background.
+    - Useful for understanding the model's ability to distinguish between defaulting and non-defaulting entities.
+    - Specifically tailored for assessing credit risk models. The Point in Time (PiT) factor considers the evolution of
+    credit risk over time.
 
-    **Limitations**: This visual method may not provide accurate enough information for detailed statistical analysis
-    and doesn't give precise, quantifiable measures of model performance. It relies on manual inspection and
-    comparison, making it subjective to human bias and potentially less reliable for catching subtle discrepancies.
-    Furthermore, this method doesn't work well when the score distributions overlap significantly or when there are too
-    many scores to be plotted, resulting in cluttered or hard-to-read graphs.
+    **Limitations**:
+    - As the information is visual, precise and quantitative results for detailed statistical analyses may not be
+    obtained.
+    - The method relies on manual inspection and comparison, introducing subjectivity and potential bias.
+    - Subtle discrepancies might go unnoticed and it could be less reliable for identifying such cues.
+    - Performance may degrade when score distributions overlap significantly or when too many scores are plotted,
+    resulting in cluttered or hard-to-decipher graphs.
     """
 
     name = "pit_credit_scores_histogram"

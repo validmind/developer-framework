@@ -8,32 +8,38 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 class EngleGrangerCoint(Metric):
     """
-    **Purpose**: The purpose of this metric is to use the Engle-Granger test to examine for cointegration between pairs
-    of time series variables in a given dataset. This can be beneficial for assessing the extent to which two time
-    series variables move together over time. Predictive regressions can be substantially more accurate if the
-    variables involved are co-integrated.
+    **Purpose**: The intent of this Engle-Granger cointegration test is to explore and quantify the degree of
+    co-movement between pairs of time series variables in a dataset. This is particularly useful in enhancing the
+    accuracy of predictive regressions whenever the underlying variables are co-integrated, i.e., they move together
+    over time.
 
-    **Test Mechanism**: This test first prepares the input dataset by dropping any non-applicable values. It then
-    iterates pairs of variables, applying the Engle-Granger cointegration test to each pair. The test yield a 'p'
-    value, which is then compared to a pre-set threshold to determine whether the corresponding variables are
-    cointegrated or not. If the 'p' value is less than or equal to the threshold, the decision is 'Cointegrated', if
-    not, 'Not cointegrated'. The metric returns a summary table of the cointegration results for each pair of time
-    series variables.
+    **Test Mechanism**: The test first drops any non-applicable values from the input dataset and then iterates over
+    each pair of variables to apply the Engle-Granger cointegration test. The test generates a 'p' value, which is then
+    compared against a pre-specified threshold (0.05 by default). The pair is labeled as 'Cointegrated' if the 'p'
+    value is less than or equal to the threshold or 'Not cointegrated' otherwise. A summary table is returned by the
+    metric showing cointegration results for each variable pair.
 
-    **Signs of High Risk**: High risk can be indicated if a large number of variables that are expected to be
-    cointegrated fail the test. Also, if a significant number of 'p' values obtained are near the threshold, it also
-    poses a risk as minor data variations can skew the decision between 'Cointegrated' and 'Not cointegrated'.
+    **Signs of High Risk**:
+    - A high risk might be indicated if a significant number of variables that were hypothesized to be cointegrated do
+    not pass the test.
+    - Another sign of high risk is if a considerable number of 'p' values are close to the threshold. This is a risk
+    because minor fluctuations in the data can switch the decision between 'Cointegrated' and 'Not cointegrated'.
 
-    **Strengths**: This test is a powerful method for analysing the relationship between time series, particularly when
-    it's important to know whether variables are moving together in a statistically significant manner. Objectively
-    evaluating such relationships can drive better forecasting in many domains, especially in finance or economics
-    where prediction models often depend on understanding how different variables move together over time.
+    **Strengths**:
+    - The Engle-Granger cointegration test provides an effective way to analyze relationships between time series,
+    particularly in contexts where it's essential to check if variables are moving together in a statistically
+    significant manner.
+    - It is useful in various domains, especially finance or economics. Here, predictive models often hinge on
+    understanding how different variables move together over time.
 
-    **Limitations**: Cointegration tests, such as the Engle-Granger, often assume that time series are integrated of
-    the same order, which is not always true in multi-variate time series datasets. Non-stationary characteristics in
-    the series or the presence of structural breaks might give falsely positive or negative cointegration results.
-    Additionally, the method doesn't work very well with small sample sizes due to a lack of power. Thus, the test must
-    be used with caution, and where possible, corroborated with other predictive indicators.
+    **Limitations**:
+    - The Engle-Granger cointegration test assumes that the time series are integrated of the same order, which isn't
+    always true in multivariate time series datasets.
+    - The presence of non-stationary characteristics in the series or structural breaks can result in falsely positive
+    or negative cointegration results.
+    - The test may not perform well for small sample sizes due to lack of statistical power. Therefore, it should be
+    used with caution, and whenever possible, supplemented with other predictive indicators for a more robust model
+    evaluation.
     """
 
     type = "dataset"

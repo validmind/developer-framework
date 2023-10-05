@@ -16,32 +16,36 @@ from validmind.vm_models import Figure, ThresholdTest, VMDataset
 @dataclass
 class Mentions(ThresholdTest):
     """
-    **Purpose**: The "Mentions" test focuses on the aspect of data quality in an NLP (Natural Language Processing) or
-    text-based Machine Learning model. Its main objective is to identify and analyze the frequency of 'mentions' within
-    a given dataset, particularly within a selected text column. 'Mentions' in this context are discrete elements of
-    text that are preceded by '@'. The output would reveal the most frequently mentioned entities or usernames, which
-    could be crucial to certain applications like social media analyses, customer sentiment analyses, etc.
+    **Purpose**: This test, termed "Mentions", is designed to gauge the quality of data in a Natural Language
+    Processing (NLP) or text-focused Machine Learning model. The primary objective is to identify and calculate the
+    frequency of 'mentions' within a chosen text column of a dataset. A 'mention' in this context refers to individual
+    text elements that are prefixed by '@'. The output of this test reveals the most frequently mentioned entities or
+    usernames, which can be integral for applications such as social media analyses, customer sentiment analyses, and
+    so on.
 
-    **Test Mechanism**: Upon validating the presence of a text column in the provided dataset, this test applies a
-    regular expression pattern to extract these mentions. The number of occurrences for each unique mention is then
-    counted. The top mentions, based on user-specified parameters or by default the top 25, are selected for
-    representation. This thresholding process forms the main mechanism of this test, showcasing high-frequency
-    elements. The results are visually rendered in a treemap plot, wherein each rectangle's size is indicative of the
-    corresponding mention's frequency.
+    **Test Mechanism**: The test first verifies the existence of a text column in the provided dataset. It then employs
+    a regular expression pattern to extract mentions from the text. Subsequently, the frequency of each unique mention
+    is calculated. The test selects the most frequent mentions based on default or user-defined parameters, the default
+    being the top 25, for representation. This process of thresholding forms the core of the test. A treemap plot
+    visualizes the test results, where the size of each rectangle corresponds to the frequency of a particular mention.
 
-    **Signs of High Risk**: Execution failure for this test could be linked to the absence of a valid text column in
-    the dataset. One other indicators of high risk includes the absence of mentions in the text data, meaning that
-    there might not be any text preceded by '@'. This conditions could indicate sparse or poor-quality data, affecting
-    the model's ability to generalize or learn appropriately.
+    **Signs of High Risk**:
+    - The lack of a valid text column in the dataset, which would result in the failure of the test execution.
+    - The absence of any mentions within the text data, indicating that there might not be any text associated with
+    '@'. This situation could point towards sparse or poor-quality data, thereby hampering the model's generalization
+    or learning capabilities.
 
-    **Strengths**: This test is specifically optimized for textual datasets, making it particularly powerful in NLP
-    contexts. It allows rapid identification of dominant elements, displaying them visually for easy interpretation.
-    This allows potentially pivotal insights about the most mentioned entities or usernames to be extracted.
+    **Strengths**:
+    - The test is specifically optimized for text-based datasets which gives it distinct power in the context of NLP.
+    - It enables quick identification and visually appealing representation of the predominant elements or mentions.
+    - It can provide crucial insights about the most frequently mentioned entities or usernames.
 
-    **Limitations**: This test can be limited by its dependence on '@' for the identification of mentions. Aspects of
-    text not preceded by '@' could be potentially useful, but remain overlooked by this test. Additionally, this test
-    is not suitable for datasets without textual data. The test doesn't present insights on less frequently occurring
-    data or outliers, potentially leaving important patterns unrevealed.
+    **Limitations**:
+    - The test only recognizes mentions that are prefixed by '@', hence useful textual aspects not preceded by '@'
+    might be ignored.
+    - This test isn't suited for datasets devoid of textual data.
+    - It does not provide insights on less frequently occurring data or outliers, which means potentially significant
+    patterns could be overlooked.
     """
 
     name = "mentions"

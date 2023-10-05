@@ -11,31 +11,40 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class BivariateHistograms(Metric):
     """
-    **Purpose**: This metric is used for visual data analysis, specifically for inspecting the distribution of
-    categorical variables. By presenting bivariate histograms, the metric assists in assessing correlations between
-    variables and distributions within each defined target class, giving us intuitive insights into the data's traits
-    and potential patterns.
+    **Purpose**: This metric, dubbed BivariateHistograms, is primarily used for visual data analysis via the inspection
+    of variable distribution, specifically categorical variables. Its main objective is to ascertain any potential
+    correlations between these variables and distributions within each defined target class. This is achieved by
+    offering an intuitive avenue into gaining insights into the characteristics of the data and any plausible patterns
+    therein.
 
-    **Test Mechanism**: The BivariateHistograms module requires an input dataset and a set of feature pairs. For each
-    pair of features in the dataset, a bivariate histogram is drawn using seaborn's histogram plotting function. This
-    histogram separates the data by the status of the target column, optionally restricted to a specific status by the
-    *target_filter* parameter. The module creates two histograms for each pair - one for each variable, where colors
-    distinguish between different target statuses.
+    **Test Mechanism**: The working mechanism of the BivariateHistograms module revolves around an input dataset and a
+    series of feature pairs. It uses seaborn's histogram plotting function and matplotlib techniques to create
+    bivariate histograms for each feature pair in the dataset. Two histograms, stratified by the target column status,
+    are produced for every pair of features. This enables the telling apart of different target statuses through color
+    differentiation. The module also offers optional functionality for restricting the data by a specific status
+    through the target_filter parameter.
 
-    **Signs of High Risk**: High risk signs would be irregular or unexpected distributions of data among categories.
-    For instance, extremely skewed distributions, differing significantly from normal or expected distributions, or
-    large discrepancies in distribution patterns between different target states, might all be reasons for concern.
+    **Signs of High Risk**:
+    - Irregular or unexpected distributions of data across the different categories.
+    - Highly skewed data distributions.
+    - Significant deviations from the perceived 'normal' or anticipated distributions.
+    - Large discrepancies in distribution patterns between various target statuses.
 
-    **Strengths**: The key strength of this test lies in its simplicity and visualization power. It provides a quick,
-    consolidated view of data distributions across different target conditions for each variable pair, highlighting
-    potential correlations and patterns. This can be instrumental in detecting anomalies, understanding feature
-    interactions, and driving exploratory data analysis.
+    **Strengths**:
+    - Owing to its simplicity, the histogram-based approach is easy to implement and interpret which translates to
+    quick insights.
+    - The metrics provides a consolidated view of the distribution of data across different target conditions for each
+    variable pair, thereby assisting in highlighting potential correlations and patterns.
+    - It proves advantageous in spotting anomalies, comprehending interactions among features, and facilitating
+    exploratory data analysis.
 
-    **Limitations**: This metric's limitations are inherent in its simplicity. The use of histograms might not be
-    effective in identifying complex patterns or detailed intricacies in the data. There could also be an issue of
-    overplotting with larger datasets. Additionally, this test only works with categorical data and may not provide
-    useful insights for numerical or continuous variables. Also, the interpretation of the visual results depends a lot
-    on the expertise of the observer.
+    **Limitations**:
+    - Its simplicity may be a drawback when it comes to spotting intricate or complex patterns in data.
+    - Overplotting might occur when working with larger datasets.
+    - The metric is only applicable to categorical data, and offers limited insights for numerical or continuous
+    variables.
+    - The interpretation of visual results hinges heavily on the expertise of the observer, possibly leading to
+    subjective analysis.
     """
 
     name = "bivariate_histograms"

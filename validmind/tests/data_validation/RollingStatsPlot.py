@@ -8,41 +8,43 @@ from validmind.vm_models import Figure, Metric
 
 class RollingStatsPlot(Metric):
     """
-    **Purpose**: The `RollingStatsPlot` metric is used to assess the stationarity of time series data in a given
-    dataset. More specifically, the metric evaluates the rolling mean and rolling standard deviation of the dataset
-    over a defined window size. The rolling mean is a measure of the average trend in the data, while the rolling
-    standard deviation assesses the data's volatility within the window. These measures are critical for preparing time
-    series data for modeling as they provide insights into the behavior of the data over time.
+    **Purpose**: The `RollingStatsPlot` metric is employed to gauge the stationarity of time series data in a given
+    dataset. This metric specifically evaluates the rolling mean and rolling standard deviation of the dataset over a
+    pre-specified window size. The rolling mean provides an understanding of the average trend in the data, while the
+    rolling standard deviation gauges the volatility of the data within the window. It is critical in preparing time
+    series data for modeling as it reveals key insights into data behavior across time.
 
-    **Test Mechanism**: The testing mechanism is divided into two steps. Firstly, the rolling mean and standard
-    deviation for each column of the dataset are calculated over a window size, specified by the user or defaulted to
-    12 data points. Secondly, the rolling mean and standard deviation are plotted separately, thus visualizing the
-    trends and volatility in the dataset. A basic check is performed to ensure that the columns exist in the dataset
-    and that the provided dataset is indexed by date and time, which is a requirement for time series analysis.
+    **Test Mechanism**: This mechanism is comprised of two steps. Initially, the rolling mean and standard deviation
+    for each of the dataset's columns are calculated over a window size, which can be user-specified or by default set
+    to 12 data points. Then, the calculated rolling mean and standard deviation are visualized via separate plots,
+    illustrating the trends and volatility in the dataset. A straightforward check is conducted to ensure the existence
+    of columns in the dataset, and to verify that the given dataset has been indexed by its date and time—a necessary
+    prerequisites for time series analysis.
 
-    **Signs of High Risk**: Signs that could indicate high risk include:
-    1. A non-stationary pattern in either the rolling mean or the rolling standard deviation plot. This might mean that
-    the data has trends or seasonality, which could affect the performance of time series models.
-    2. Missing columns in the dataset, which would prevent the metric from running successfully.
-    3. The presence of NaN values in the dataset. These might need to be handled before the metric can proceed.
+    **Signs of High Risk**:
+    - The presence of non-stationary patterns in either the rolling mean or the rolling standard deviation plots, which
+    could indicate trends or seasonality in the data that may affect the performance of time series models.
+    - Missing columns in the dataset, which would prevent the execution of this metric correctly.
+    - The detection of NaN values in the dataset, which may need to be addressed before the metric can proceed
+    successfully.
 
-    **Strengths**: The strengths of this metric include:
-    1. Providing visualizations of the data's trending behaviour and volatility, which can aid in understanding the
-    overall characteristics of the data.
-    2. Checking the integrity of the dataset (whether all designated columns exist, and that the index is of datetime
-    type).
-    3. Adapting to various window sizes, which allows for flexibility in analysing data with different temporal
+    **Strengths**:
+    - Offers visualizations of trending behaviour and volatility within the data, facilitating a broader understanding
+    of the dataset's inherent characteristics.
+    - Checks of the dataset's integrity, such as existence of all required columns and the availability of a datetime
+    index.
+    - Adjusts to accommodate various window sizes, thus allowing accurate analysis of data with differing temporal
     granularities.
-    4. Accommodating multi-feature datasets by considering each column of the data individually.
+    - Considers each column of the data individually, thereby accommodating multi-feature datasets.
 
-    **Limitations**: Some limitations of the `RollingStatsPlot` metric include:
-    1. A fixed window size is used for all columns, which may not accurately capture the patterns in datasets where
-    different features have different optimal window sizes.
-    2. The metric requires the dataset to be indexed by date and time, hence may not be applicable to datasets without
-    a timestamp index.
-    3. The metrics primarily serve for data visualization. It does not provide any quantitative measures for
-    stationarity, such as statistical tests. Thus, interpretation is subjective and depends on the discretion of the
-    modeler.
+    **Limitations**:
+    - For all columns, a fixed-size window is utilised. This may not accurately capture patterns in datasets where
+    different features may require different optimal window sizes.
+    - Requires the dataset to be indexed by date and time, hence it may not be useable for datasets without a timestamp
+    index.
+    - Primarily serves for data visualization as it does not facilitate any quantitative measures for stationarity,
+    such as through statistical tests. Therefore, the interpretation is subjective and depends heavily on modeler
+    discretion.
     """
 
     name = "rolling_stats_plot"

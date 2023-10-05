@@ -23,22 +23,27 @@ class BivariateScatterPlots(Metric):
     - for more granified insights. Each scatterplot is then color-coded based on the category of the target variable
     for better visual differentiation. The seaborn scatterplot library is used for generating the plots.
 
-    **Signs of High Risk**: High risk indicators in this context would be related to visual patterns which might
-    suggest non-linear relationships, substantial skewness, multicollinearity, clustering, or isolated outlier points
-    in the scatter plot. Such issues could affect the assumptions and performance of some models, especially the ones
-    assuming linearity like linear regression or logistic regression.
+    **Signs of High Risk**:
+    - Visual patterns which might suggest non-linear relationships, substantial skewness, multicollinearity,
+    clustering, or isolated outlier points in the scatter plot.
+    - Such issues could affect the assumptions and performance of some models, especially the ones assuming linearity
+    like linear regression or logistic regression.
 
-    **Strengths**: Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint
-    complex relationships between two variables. It helps in outlier detection, identification of variable associations
-    and trends, including non-linear patterns which can be overlooked by other linear-focused metrics or tests. The
-    implementation also supports visualizing binary or multi-class classification datasets.
+    **Strengths**:
+    - Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint complex
+    relationships between two variables.
+    - They are useful for outlier detection, identification of variable associations and trends, including non-linear
+    patterns which can be overlooked by other linear-focused metrics or tests.
+    - The implementation also supports visualizing binary or multi-class classification datasets.
 
-    **Limitations**: Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and
-    might not reveal the full picture in higher dimensions or where interactions are present. They also are not ideal
-    for very large datasets as points will overlap and render the visualization less informative. Further, scatterplots
-    are more of an exploratory tool rather than a formal statistical test, so they don't provide any quantitative
-    measure of model quality or performance. Interpretation of scatterplots relies heavily on the domain knowledge and
-    judgment of the viewer, which can introduce subjective bias.
+    **Limitations**:
+    - Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and might not
+    reveal the full picture in higher dimensions or where interactions are present.
+    - They are not ideal for very large datasets as points will overlap and render the visualization less informative.
+    - Scatterplots are more of an exploratory tool rather than a formal statistical test, so they don't provide any
+    quantitative measure of model quality or performance.
+    - Interpretation of scatterplots relies heavily on the domain knowledge and judgment of the viewer, which can
+    introduce subjective bias.
     """
 
     name = "bivariate_scatter_plots"
