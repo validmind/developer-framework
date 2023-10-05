@@ -3,7 +3,6 @@ Unit tests for Validmind tests module
 """
 import unittest
 from unittest import TestCase
-from unittest.mock import patch
 
 from pandas.io.formats.style import Styler
 
@@ -32,7 +31,7 @@ class TestTestsModule(TestCase):
         self.assertTrue(test is not None)
         self.assertTrue(issubclass(test, Test))
 
-    def test_describe_test(self, mock_display):
+    def test_describe_test(self):
         describe_test("validmind.model_validation.ModelMetadata")
         description = describe_test(
             "validmind.model_validation.ModelMetadata", raw=True
