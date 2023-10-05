@@ -144,6 +144,7 @@ def fix_test_description(path):
 def _is_test_file(path):
     return path.endswith(".py") and path[0].isupper()
 
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, file_okay=True, dir_okay=True))
 def main(path):
