@@ -37,6 +37,8 @@ from .time_series import (
     TimeSeriesUnivariate,
 )
 
+from .summarization import SummarizationMetrics
+
 logger = get_logger(__name__)
 
 core_test_suites = {
@@ -50,6 +52,7 @@ core_test_suites = {
     NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
     RegressionModelDescription.suite_id: RegressionModelDescription,
     RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
+    SummarizationMetrics.suite_id: SummarizationMetrics,
     TabularDataset.suite_id: TabularDataset,
     TabularDatasetDescription.suite_id: TabularDatasetDescription,
     TabularDataQuality.suite_id: TabularDataQuality,
