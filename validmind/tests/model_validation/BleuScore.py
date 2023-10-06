@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 
 import evaluate
-from nltk.tokenize import word_tokenize
 
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
@@ -56,7 +55,6 @@ class BleuScore(Metric):
         bleu = bleu.compute(
             predictions=self.model.y_test_predict,
             references=self.model.y_test_true,
-            tokenizer=word_tokenize,
         )
         return self.cache_results(metric_value={"blue_score_metric": bleu})
 

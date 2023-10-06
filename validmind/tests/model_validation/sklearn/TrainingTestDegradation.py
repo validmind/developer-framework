@@ -5,7 +5,8 @@ from functools import partial
 from typing import List
 
 import pandas as pd
-from sklearn import metrics
+from numpy import unique
+from sklearn import metrics, preprocessing
 
 from validmind.vm_models import (
     ResultSummary,
@@ -14,6 +15,14 @@ from validmind.vm_models import (
     ThresholdTest,
     ThresholdTestResult,
 )
+
+
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(y_test)
+    y_test = lb.transform(y_test)
+    y_pred = lb.transform(y_pred)
+    return metrics.roc_auc_score(y_test, y_pred, average=average)
 
 
 @dataclass
@@ -88,6 +97,7 @@ class TrainingTestDegradation(ThresholdTest):
         """
         results_table = [
             {
+                "Class": result.values["class"],
                 "Metric": result.test_name.title(),
                 "Train Score": result.values["train_score"],
                 "Test Score": result.values["test_score"],
@@ -116,28 +126,39 @@ class TrainingTestDegradation(ThresholdTest):
         test_class_pred = self.model.y_test_predict
         y_test_true = y_test_true.astype(test_class_pred.dtype)
 
-        metrics_to_compare = self.params["metrics"]
+        report_train = metrics.classification_report(
+            y_train_true, train_class_pred, output_dict=True
+        )
+        report_train["roc_auc"] = multiclass_roc_auc_score(
+            y_train_true, train_class_pred
+        )
+
+        report_test = metrics.classification_report(
+            y_test_true, test_class_pred, output_dict=True
+        )
+        report_test["roc_auc"] = multiclass_roc_auc_score(y_test_true, test_class_pred)
+
+        classes = {str(i) for i in unique(y_train_true)}
+
         test_results = []
-        for metric in metrics_to_compare:
-            metric_fn = self.default_metrics[metric]
-
-            train_score = metric_fn(y_train_true, train_class_pred)
-            test_score = metric_fn(y_test_true, test_class_pred)
-            degradation = (train_score - test_score) / train_score
-
-            passed = degradation < self.params["max_threshold"]
-            test_results.append(
-                ThresholdTestResult(
-                    test_name=metric,
-                    passed=passed,
-                    values={
-                        "test_score": test_score,
-                        "train_score": train_score,
-                        "degradation": degradation,
-                    },
+        for class_name in classes:
+            for metric_name in ["precision", "recall", "f1-score"]:
+                train_score = report_train[class_name][metric_name]
+                test_score = report_test[class_name][metric_name]
+                degradation = (train_score - test_score) / train_score
+                passed = degradation < self.params["max_threshold"]
+                test_results.append(
+                    ThresholdTestResult(
+                        test_name=metric_name,
+                        passed=passed,
+                        values={
+                            "class": class_name,
+                            "test_score": test_score,
+                            "train_score": train_score,
+                            "degradation": degradation,
+                        },
+                    )
                 )
-            )
-
         return self.cache_results(
-            test_results, passed=all([r.passed for r in test_results])
+            test_results, passed=all(r.passed for r in test_results)
         )

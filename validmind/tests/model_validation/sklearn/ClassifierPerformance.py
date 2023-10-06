@@ -65,48 +65,7 @@ class ClassifierPerformance(Metric):
         ],
     }
 
-    def binary_summary(self, metric_value: dict):
-        """
-        When building a binary classification summary we take the positive class
-        metrics as the global metrics.
-        """
-        # Assume positive class is "1" and throw an error if that's not the case
-        if "1.0" not in metric_value:
-            raise ValueError(
-                "Positive class not found in the metrics. Please make sure the positive class is labeled as '1' when testing a binary classifier."
-            )
-
-        table = []
-        for metric_name in ["precision", "recall", "f1-score"]:
-            table.append(
-                {
-                    "Metric": metric_name.capitalize()
-                    if metric_name != "f1-score"
-                    else "F1",
-                    "Value": metric_value["1.0"][metric_name],
-                }
-            )
-
-        table.extend(
-            [
-                {
-                    "Metric": "Accuracy" if metric_name == "accuracy" else "ROC AUC",
-                    "Value": metric_value[metric_name],
-                }
-                for metric_name in ["accuracy", "roc_auc"]
-            ]
-        )
-
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=table,
-                    metadata=ResultTableMetadata(title="Classification Report"),
-                ),
-            ]
-        )
-
-    def multiclass_summary(self, metric_value: dict):
+    def summary(self, metric_value: dict):
         """
         When building a multi-class summary we need to calculate weighted average,
         macro average and per class metrics.
@@ -158,15 +117,6 @@ class ClassifierPerformance(Metric):
                 ),
             ]
         )
-
-    def summary(self, metric_value: list):
-        """
-        This summary varies depending if we're evaluating a binary or multi-class model
-        """
-        if len(unique(self.y_true())) > 2:
-            return self.multiclass_summary(metric_value)
-
-        return self.binary_summary(metric_value)
 
     def y_true(self):
         raise NotImplementedError

@@ -22,6 +22,7 @@ from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
 )
+from .summarization import SummarizationMetrics
 from .tabular_datasets import (
     TabularDataQuality,
     TabularDataset,
@@ -50,6 +51,7 @@ core_test_suites = {
     NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
     RegressionModelDescription.suite_id: RegressionModelDescription,
     RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
+    SummarizationMetrics.suite_id: SummarizationMetrics,
     TabularDataset.suite_id: TabularDataset,
     TabularDatasetDescription.suite_id: TabularDatasetDescription,
     TabularDataQuality.suite_id: TabularDataQuality,
