@@ -22,6 +22,7 @@ from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
 )
+from .summarization import SummarizationMetrics
 from .tabular_datasets import (
     TabularDataQuality,
     TabularDataset,
@@ -36,8 +37,6 @@ from .time_series import (
     TimeSeriesSensitivity,
     TimeSeriesUnivariate,
 )
-
-from .summarization import SummarizationMetrics
 
 logger = get_logger(__name__)
 
