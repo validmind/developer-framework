@@ -7,8 +7,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -51,7 +51,7 @@ class MissingValues(ThresholdTest):
         "tags": ["tabular_data", "data_quality"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The missing values test returns results like these:
         [{"values": {"n_missing": 0, "p_missing": 0.0}, "column": "Exited", "passed": true}]
@@ -81,7 +81,7 @@ class MissingValues(ThresholdTest):
 
         missing = self.dataset.df.isna().sum()
         results = [
-            TestResult(
+            ThresholdTestResult(
                 column=col,
                 passed=missing[col] < self.params["min_threshold"],
                 values={"n_missing": missing[col], "p_missing": missing[col] / rows},

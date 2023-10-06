@@ -7,8 +7,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -53,7 +53,7 @@ class Duplicates(ThresholdTest):
         "tags": ["tabular_data", "data_quality", "text_data"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The duplicates test returns results like these:
         [{"values": {"n_duplicates": 0, "p_duplicates": 0.0}, "passed": true}]
@@ -107,7 +107,7 @@ class Duplicates(ThresholdTest):
         passed = n_duplicates < self.params["min_threshold"]
 
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values=duplicate_results.to_dict(orient="records"),
             )
@@ -128,7 +128,7 @@ class Duplicates(ThresholdTest):
             col_p_duplicates = col_n_duplicates / rows
             col_passed = col_n_duplicates < self.params["min_threshold"]
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=col_passed,
                     values={

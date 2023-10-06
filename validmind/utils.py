@@ -4,17 +4,39 @@ import asyncio
 import difflib
 import json
 import math
+import re
 from typing import Any
 
+import matplotlib.pylab as pylab
 import nest_asyncio
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from IPython.core import getipython
+from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
+
+
+# SETUP SOME DEFAULTS FOR PLOTS #
+# Silence this warning: *c* argument looks like a single numeric RGB or
+# RGBA sequence, which should be avoided
+matplotlib_axes_logger.setLevel("ERROR")
+
+sns.set(rc={"figure.figsize": (20, 10)})
+
+params = {
+    "legend.fontsize": "x-large",
+    "axes.labelsize": "x-large",
+    "axes.titlesize": "x-large",
+    "xtick.labelsize": "x-large",
+    "ytick.labelsize": "x-large",
+}
+pylab.rcParams.update(params)
+#################################
 
 
 def is_notebook() -> bool:
@@ -309,3 +331,19 @@ def fuzzy_match(string: str, search_string: str, threshold=0.7):
     score = difflib.SequenceMatcher(None, string, search_string).ratio()
 
     return score >= threshold
+
+
+def test_id_to_name(test_id: str):
+    """Convert a test ID to a human-readable name"""
+    # Extract the last part of the ID string
+    last_part = test_id.split(".")[-1]
+
+    # Use a regular expression to find words and acronyms in the CamelCase string
+    words = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)", last_part)
+
+    # Join the words with spaces and capitalize the first letter of each word, keeping acronyms unchanged
+    title = " ".join(
+        [word.capitalize() if not word.isupper() else word for word in words]
+    )
+
+    return title

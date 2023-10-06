@@ -1,21 +1,18 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
 """
-Test plan for sklearn classifier models
-
-Ideal setup is to have the API client to read a
-custom test plan from the project's configuration
+Test suites for llm summarization models
 """
 
-from validmind.vm_models import TestPlan
+from validmind.vm_models import TestSuite
 
 
-class SummarizationMetrics(TestPlan):
+class SummarizationMetrics(TestSuite):
     """
-    Test plan for Summarization metrics
+    Test suite for Summarization metrics
     """
 
-    name = "summarization_metrics"
+    suite_id = "summarization_metrics"
     tests = [
         "validmind.model_validation.RougeMetrics",
         "validmind.model_validation.TokenDisparity",

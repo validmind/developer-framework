@@ -10,8 +10,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
@@ -58,7 +58,7 @@ class Skewness(ThresholdTest):
         "tags": ["tabular_data", "data_quality"],
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The skewness test returns results like these:
         [{"values": {"skewness": 1.0}, "column": "NumOfProducts", "passed": false}]
@@ -95,7 +95,7 @@ class Skewness(ThresholdTest):
 
             col_skewness = skewness[col]
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=abs(col_skewness) < self.params["max_threshold"],
                     values={

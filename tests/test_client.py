@@ -40,7 +40,7 @@ class MockedConfig:
                 "contents": [
                     {
                         "content_type": "test",
-                        "content_id": "class_imbalance",
+                        "content_id": "validmind.data_validation.ClassImbalance",
                     },
                 ],
             },
@@ -56,7 +56,7 @@ class MockedConfig:
                 "parent_section": "test_section_2",
                 "contents": [
                     {
-                        "content_id": "dataset_split",
+                        "content_id": "validmind.data_validation.DatasetSplit",
                         "content_type": "metric",
                     },
                 ],
@@ -106,7 +106,7 @@ class TestGetTestSuite(TestCase):
     def test_get_project_test_suite(self):
         test_suite = get_test_suite()
         self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
-        self.assertEqual(len(test_suite._test_plan_classes), 2)
+        self.assertEqual(len(test_suite.sections), 3)
 
 
 # TODO: Fix this test
@@ -142,8 +142,7 @@ class TestRunDocumentationTests(TestCase):
         )
 
         self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
-        self.assertEqual(len(test_suite._test_plan_classes), 2)
-        self.assertEqual(len(test_suite.results), 2)
+        self.assertEqual(len(test_suite.sections), 3)
 
 
 if __name__ == "__main__":

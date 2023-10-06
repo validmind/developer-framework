@@ -70,7 +70,7 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DatasetMetadata</span><wbr>(<span class="base">validmind.vm_models.test.Test</span>):
+    <span class="name">DatasetMetadata</span><wbr>(<span class="base">validmind.vm_models.test.test.Test</span>):
 
         
     </div>
@@ -85,7 +85,7 @@ underlying dataset.</p>
 
 <p><strong>Test Mechanism</strong>: This class does not include a specific test or grading scale. Instead, it collects metadata
 associated with the dataset and logs it for future reference. The metadata is attached to the dataset object during
-the post-initialization phase. The <code><a href="#DatasetMetadata.run">run</a></code> method initializes a <code>TestPlanDatasetResult</code> object with a unique result
+the post-initialization phase. The <code><a href="#DatasetMetadata.run">run</a></code> method initializes a <code>TestSuiteDatasetResult</code> object with a unique result
 ID and dataset. The dataset metadata then gets associated with this ID for future use in more targeted validation
 efforts.</p>
 
@@ -109,7 +109,7 @@ tailored specifically towards fairness and bias detection.</p>
                             <div id="DatasetMetadata.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DatasetMetadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanDatasetResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">DatasetMetadata</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteDatasetResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -128,7 +128,7 @@ tailored specifically towards fairness and bias detection.</p>
     </div>
     <a class="headerlink" href="#DatasetMetadata.run"></a>
     
-            <div class="docstring"><p>Just set the dataset to the result attribute of the test plan result
+            <div class="docstring"><p>Just set the dataset to the result attribute of the test suite result
 and it will be logged via the <code>log_dataset</code> function</p>
 </div>
 
@@ -137,7 +137,7 @@ and it will be logged via the <code>log_dataset</code> function</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.test.Test</dt>
+                                    <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="DatasetMetadata.description" class="function">description</dd>
                 <dd id="DatasetMetadata.summary" class="function">summary</dd>
                 <dd id="DatasetMetadata.cache_results" class="function">cache_results</dd>

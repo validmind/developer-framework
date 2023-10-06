@@ -8,7 +8,7 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestPlanMetricResult,
+    TestSuiteMetricResult,
 )
 
 logger = get_logger(__name__)
@@ -28,11 +28,11 @@ class __TEST_NAME__(Metric):
         "tags": [],  # time_series_data, tabular_data, forecasting, etc. Can be any string
     }
 
-    def run(self) -> TestPlanMetricResult:
+    def run(self) -> TestSuiteMetricResult:
         """Run the test and cache the results
 
         Returns:
-            TestPlanMetricResult: The results of the test.
+            TestSuiteMetricResult: The results of the test.
         """
         figure = None  # you can use plotly to create a figure here
 
@@ -50,7 +50,7 @@ class __TEST_NAME__(Metric):
             ],  # return a figure by importing from validmind.vm_models
         )
 
-    def summary(self, cached_results: TestPlanMetricResult) -> ResultSummary:
+    def summary(self, cached_results: TestSuiteMetricResult) -> ResultSummary:
         """Summarize the results of the test.
 
         Args:

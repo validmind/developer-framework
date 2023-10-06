@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from statsmodels.tsa.stattools import adfuller
 
-from validmind.vm_models import TestResult, ThresholdTest
+from validmind.vm_models import ThresholdTest, ThresholdTestResult
 
 
 @dataclass
@@ -67,7 +67,7 @@ class ADFTest(ThresholdTest):
 
             col_passed = pvalue < self.params["threshold"]
             results.append(
-                TestResult(
+                ThresholdTestResult(
                     column=col,
                     passed=col_passed,
                     values={
