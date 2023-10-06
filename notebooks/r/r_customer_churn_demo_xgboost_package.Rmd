@@ -85,8 +85,6 @@ In the "Client Integration" page of the newly created project, you will find the
 The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
 
 ```{r}
-vm <- import("validmind")
-
 vm_r <- vm(
   api_key="<your_api_key_here>",
   api_secret="<your_api_secret_here>",
