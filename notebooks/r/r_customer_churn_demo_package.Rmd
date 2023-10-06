@@ -13,7 +13,21 @@ params: null
   }
 </style>
 
-# Analysis
+# **Quickstart - Customer Churn Full Suite Model Documentation**
+
+This interactive notebook will guide you through documenting a model using the ValidMind Developer framework. We will use sample datasets provided by the library and train a simple classification model.
+
+For this simple demonstration, we will use the following bank customer churn dataset from Kaggle: <https://www.kaggle.com/code/kmalit/bank-customer-churn-prediction/data.>
+
+We will train a sample model and demonstrate the following documentation functionalities:
+
+\- Initializing the ValidMind Developer Framework
+
+\- Using a sample datasets provided by the library to train a simple classification model
+
+\- Running a test suite to quickly generate document about the data and model
+
+## **Initializing the Python environment**
 
 ```{r setup, include=FALSE}
 library(reticulate)
@@ -42,22 +56,6 @@ custom_print_hook <- function(x) {
 
 knitr::knit_hooks$set(print = custom_print_hook)
 ```
-
-# **Quickstart - Customer Churn Full Suite Model Documentation**
-
-This interactive notebook will guide you through documenting a model using the ValidMind Developer framework. We will use sample datasets provided by the library and train a simple classification model.
-
-For this simple demonstration, we will use the following bank customer churn dataset from Kaggle: <https://www.kaggle.com/code/kmalit/bank-customer-churn-prediction/data.>
-
-We will train a sample model and demonstrate the following documentation functionalities:
-
-\- Initializing the ValidMind Developer Framework
-
-\- Using a sample datasets provided by the library to train a simple classification model
-
-\- Running a test suite to quickly generate document about the data and model
-
-## **Initializing the Python environment**
 
 ## **Initializing the ValidMind Client Library**
 

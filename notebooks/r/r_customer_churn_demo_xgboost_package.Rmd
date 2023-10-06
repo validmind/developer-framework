@@ -1,3 +1,18 @@
+---
+title: "Customer Churn XGBoost Example (R)"
+author: "ValidMind"
+date: "2023-10-06"
+output:
+  pdf_document: default
+params: null
+---
+
+<style>
+  table caption {
+    color: black;
+  }
+</style>
+
 # **Quickstart - Customer Churn Full Suite Model Documentation**
 
 This interactive notebook will guide you through documenting a model using the ValidMind Developer framework. We will use sample datasets provided by the library and train a simple classification model.
