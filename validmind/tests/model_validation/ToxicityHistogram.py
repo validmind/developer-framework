@@ -14,18 +14,46 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ToxicityHistogram(Metric):
     """
-    toxicity Histogram
+    **Purpose:**
+    The ToxicityHistogram metric visualizes and analyzes the toxicity scores of various texts. Through histograms, it
+    provides insights into the distribution and nature of toxicity present in the evaluated text segments.
+
+    **Visualization:**
+    Histograms are employed to display the distribution of toxicity scores. Each histogram corresponds to a text data
+    column, offering an intuitive representation of toxicity patterns within the data.
+
+    **Test Mechanism:**
+    Texts are fetched from specified columns and their toxicity scores are computed using a preloaded `toxicity`
+    evaluation tool. Each text data column is visualized with its own histogram, culminating in a multi-panel
+    visualization.
+
+    **Signs of High Risk:**
+    High toxicity concentrations in the histogram, especially on the upper scale, signify a higher presence of toxic
+    content in the respective text segment. If predicted summaries show significantly differing patterns from input or
+    target texts, it could indicate issues with the model's output.
+
+    **Strengths:**
+    The metric offers a lucid representation of toxicity distributions, facilitating the swift identification of
+    concerning patterns. It's instrumental for gauging potential pitfalls of generated content, particularly in the
+    realm of predicted summaries.
+
+    **Limitations:**
+    The ToxicityHistogram's efficacy hinges on the accuracy of the `toxicity` tool it employs. While histograms depict
+    distribution patterns, they omit details about which specific text portions or tokens result in high toxicity
+    scores. Therefore, for a comprehensive understanding, more in-depth analysis might be requisite.
     """
 
     name = "toxicity_histogram"
-    default_params = {"text_columns": None}
+    required_inputs = ["model"]
+    metadata = {
+        "task_types": [
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["toxicity_histogram"],
+    }
 
-    def description(self):
-        return """
-        Toxicity detailed description coming soon...!
-        """
-
-    def _get_datasets_from_model(self):
+    def _get_datasets(self):
         # Check model attributes
         if not hasattr(self, "model"):
             raise AttributeError("The 'model' attribute is missing.")
@@ -93,9 +121,8 @@ class ToxicityHistogram(Metric):
         return fig
 
     def run(self):
-        input_text, y_true, y_pred = self._get_datasets_from_model()
+        input_text, y_true, y_pred = self._get_datasets()
 
-        # Create a DataFrame with results and user-friendly column names
         df = pd.DataFrame(
             {
                 "Input Text": input_text,
