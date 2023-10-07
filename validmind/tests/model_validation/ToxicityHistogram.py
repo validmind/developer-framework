@@ -1,9 +1,14 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-
+import itertools
 from dataclasses import dataclass
 
-from validmind.vm_models import Metric
+import evaluate
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.subplots as sp
+
+from validmind.vm_models import Figure, Metric
 
 
 @dataclass
@@ -20,35 +25,87 @@ class ToxicityHistogram(Metric):
         Toxicity detailed description coming soon...!
         """
 
-    def _determine_source(self):
+    def _get_datasets_from_model(self):
+        # Check model attributes
+        if not hasattr(self, "model"):
+            raise AttributeError("The 'model' attribute is missing.")
+
+        y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
+        y_pred = self.model.y_test_predict
+        input_text = self.model.test_ds.df[self.model.test_ds.text_column]
+
+        # Ensure consistency in lengths
+        if not len(y_true) == len(y_pred) == len(input_text):
+            raise ValueError(
+                "Inconsistent lengths among input text, true summaries, and predicted summaries."
+            )
+
+        return input_text, y_true, y_pred
+
+    def toxicity_histograms(self, df):
         """
-        Determine the source based on the existence of attributes.
+        Compute toxicity scores for texts and then plot histograms for all columns of df.
+
+        Parameters:
+        - df (pd.DataFrame): The dataframe containing texts.
         """
 
-        # Checking attributes if they exist
-        has_text_columns = (
-            hasattr(self, "params") and self.params.get("text_columns") is not None
+        # Extract necessary parameters
+        toxicity = evaluate.load("toxicity")
+
+        # Get all columns of df
+        text_columns = df.columns.tolist()
+
+        # Determine the number of rows required based on the number of text columns
+        num_rows = (len(text_columns) + 1) // 2  # +1 to handle odd number of columns
+
+        # Create a subplot layout
+        fig = sp.make_subplots(rows=num_rows, cols=2, subplot_titles=text_columns)
+
+        subplot_height = 350  # Height of each subplot
+        total_height = num_rows * subplot_height + 200  # 200 for padding, titles, etc.
+
+        for idx, col in enumerate(text_columns, start=1):
+            row = (idx - 1) // 2 + 1
+            col_idx = (idx - 1) % 2 + 1  # to place subplots in two columns
+
+            # Get list of texts from dataframe
+            texts = df[col].tolist()
+
+            # Compute toxicity for texts
+            toxicity_scores = toxicity.compute(predictions=texts)["toxicity"]
+
+            # Add traces to the corresponding subplot without legend
+            fig.add_trace(
+                go.Histogram(x=toxicity_scores, showlegend=False), row=row, col=col_idx
+            )
+
+            # Update xaxes and yaxes titles only for the first subplot
+            if idx == 1:
+                fig.update_xaxes(title_text="Toxicity Score", row=row, col=col_idx)
+                fig.update_yaxes(title_text="Frequency", row=row, col=col_idx)
+
+        # Update layout
+        fig.update_layout(
+            title_text="Histograms of Toxicity Scores", height=total_height
         )
-        has_dataset = hasattr(self, "dataset")
-        has_model = hasattr(self, "model.y_test_predict")
 
-        # Conditions based on comments
-        if not has_text_columns and not has_dataset and not has_model:
-            raise ValueError("Neither text_columns, dataset nor model exist!")
-
-        if not has_dataset and not has_model:
-            raise ValueError("Neither dataset nor model exist!")
-
-        # Determine the source
-        if has_text_columns:
-            return self.params["text_columns"]
-        elif has_model:
-            return (self.model.y_test_true, self.model.y_test_predict)
-        elif has_dataset:
-            return self.dataset
+        return fig
 
     def run(self):
-        source = self._determine_source()
-        # Use 'source' to compute toxicity
-        # For demonstration purposes, just printing it.
-        print(source)
+        input_text, y_true, y_pred = self._get_datasets_from_model()
+
+        # Create a DataFrame with results and user-friendly column names
+        df = pd.DataFrame(
+            {
+                "Input Text": input_text,
+                "Target Text": y_true,
+                "Predicted Summaries": y_pred,
+            }
+        )
+
+        fig = self.toxicity_histograms(df)
+
+        return self.cache_results(
+            figures=[Figure(for_object=self, key=self.key, figure=fig)]
+        )
