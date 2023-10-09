@@ -79,32 +79,50 @@
     </div>
     <a class="headerlink" href="#MissingValuesRisk"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: This metric, Missing Values Risk, is intended to evaluate and quantify the risk associated with
-missing values in the data set being used for machine learning model training. This metric determines two specific
-risk measures: 1) what percentage of total data in the dataset are missing values, and 2) what percentage of total
-variables (i.e., columns) in the dataset have at least some missing values.</p>
+            <div class="docstring"><p>Assesses and quantifies the risk related to missing values in a dataset used for training an ML model.</p>
 
-<p><strong>Test Mechanism</strong>: The metric tests the dataset by first calculating the total number of datapoints in the data
-set and the total count of missing values. Then, it examines each column(variable) to find out how many contain at
-least one missing data point. By meticulously counting missing data points across the whole dataset and then within
-each variable(column), the metric determines the percentage of missing values in the total dataset and the
-percentage of columns(variables) with missing values.</p>
+<p><strong>Purpose</strong>: The Missing Values Risk metric is specifically designed to assess and quantify the risk associated
+with missing values in the dataset used for machine learning model training. It measures two specific risks: the
+percentage of total data that are missing, and the percentage of all variables (columns) that contain some missing
+values.</p>
 
-<p><strong>Signs of High Risk</strong>: High percentages in either of the risk measures could indicate a high risk. If the dataset
-has a high percentage of missing values, then it can significantly affect the performance and reliability of the
-model. Similarly, if a lot of variables (columns) in the dataset have missing values, the model might be prone to
-bias or overfitting.</p>
+<p><strong>Test Mechanism</strong>: Initially, the metric calculates the total number of data points in the dataset and the count
+of missing values. It then inspects each variable (column) to determine how many contain at least one missing
+datapoint. By methodically counting missing datapoints across the entire dataset and each variable (column), it
+identifies the percentage of missing values in the entire dataset and the percentage of variables (columns) with
+such values.</p>
 
-<p><strong>Strengths</strong>: This metric provides invaluable insight into the dataset's readiness for model training, as missing
-values can severely impact both the model's performance and its predictions. Quantifying the risk posed by missing
-values allows for targeted methods to handle these values properly, either through deletion, imputation, or other
-strategies. The metric is flexible and can be applied to both classification and regression tasks, thereby
-maintaining its utility across a broad range of models and scenarios.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: This metric only identifies and quantifies the risk of missing values but does not offer any
-solutions to mitigate this risk. More specifically, it does not infer whether the missingness is random or linked
-to some underlying issue in data collection or preprocessing. Nonetheless, identifying the presence and extent of
-missingness is the essential first step in data-quality improvement.</p>
+<ul>
+<li>Record high percentages in either of the risk measures could suggest a high risk.</li>
+<li>If the dataset indicates a high percentage of missing values, it might significantly undermine the model's
+performance and credibility.</li>
+<li>If a significant portion of variables (columns) in the dataset are missing values, this could make the model
+susceptible to bias and overfitting.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The metric offers valuable insights into the readiness of a dataset for model training as missing values can
+heavily destabilize both the model's performance and predictive capabilities.</li>
+<li>The metric's quantification of the risks caused by missing values allows for the use of targeted methods to
+manage these values correctly- either through removal, imputation, or alternative strategies.</li>
+<li>The metric has the flexibility to be applied to both classification and regression assignments, maintaining its
+utility across a wide range of models and scenarios.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The metric primarily identifies and quantifies the risk associated with missing values without suggesting
+specific mitigation strategies.</li>
+<li>The metric does not ascertain whether the missing values are random or associated with an underlying issue in the
+stages of data collection or preprocessing.</li>
+<li>However, the identification of the presence and scale of missing data is the essential initial step towards
+improving data quality.</li>
+</ul>
 </div>
 
 
