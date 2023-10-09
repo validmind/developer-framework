@@ -16,15 +16,12 @@ class SummarizationPredictions(Metric):
     actual target texts. Intended primarily for models focusing on the text summarization task, this metric
     offers insights into the effectiveness and accuracy of generated summaries relative to their original content.
 
-    **Visualization:**
-    The primary representation is tabular, where the input text, its target summary, and the model's predicted
-    summary are juxtaposed for direct comparison. This tabulated data allows for a clear, side-by-side analysis
-    of the model's performance against ground truth summaries.
-
     **Test Mechanism:**
     The metric fetches data from specific text columns—namely input text, target text (true summary), and the
     predicted summary. After ensuring consistent lengths and data integrity among these columns, the relevant
-    segments are extracted and tabulated.
+    segments are extracted and tabulated. The primary representation is tabular, where the input text, its target summary,
+    and the model's predicted summary are juxtaposed for direct comparison. This tabulated data allows for a clear,
+    side-by-side analysis of the model's performance against ground truth summaries.
 
     **Signs of High Risk:**
     Discrepancies between target summaries and predicted summaries might indicate model inaccuracies or lack

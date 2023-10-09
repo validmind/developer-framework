@@ -15,15 +15,12 @@ class DisplayTextDataset(Metric):
     such as text summarization and text generation, this metric aims to showcase the primary contents of the dataset,
     particularly the input text and the corresponding target text.
 
-    **Visualization:**
-    The main representation of this metric is a table that juxtaposes the input text with its associated target text.
-    This visualization provides a straightforward way to observe and understand the data structure and the relationships
-    between inputs and outputs.
-
     **Test Mechanism:**
     The metric extracts data from the given dataset, specifically the input text and target text columns. It then
     verifies the consistency in the lengths of these columns to ensure accurate visualization and data integrity.
-    The extracted data is presented in a structured table format.
+    The extracted data is presented in a structured table format. The main representation of this metric is a table that juxtaposes the input text with its associated target text.
+    This visualization provides a straightforward way to observe and understand the data structure and the relationships
+    between inputs and outputs.
 
     **Signs of High Risk:**
     Mismatches or inconsistencies between the input text and target text can indicate potential issues with the dataset's

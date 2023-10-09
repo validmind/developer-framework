@@ -18,15 +18,12 @@ class ToxicityLinePlot(Metric):
     Leveraging line plots, it gives an overview of how toxicity scores evolve across the sequence of texts, highlighting
     trends and patterns.
 
-    **Visualization:**
-    Line plots serve as the primary visual tool, showing the progression of toxicity scores across text sequences. Each
-    line plot corresponds to a specific text data column, illustrating the variation in toxicity scores as one moves
-    from one text segment to the next.
-
     **Test Mechanism:**
     The mechanism involves fetching texts from specific columns, computing their toxicity scores using a preloaded
     `toxicity` evaluation tool, and then plotting these scores. A multi-panel visualization is created where each
-    panel is dedicated to a specific text data column.
+    panel is dedicated to a specific text data column. Line plots serve as the primary visual tool, showing the progression of toxicity scores across text sequences. Each
+    line plot corresponds to a specific text data column, illustrating the variation in toxicity scores as one moves
+    from one text segment to the next.
 
     **Signs of High Risk:**
     Drastic spikes in the line plots, especially those that reach high toxicity values, indicate potentially toxic

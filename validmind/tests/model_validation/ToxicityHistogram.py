@@ -18,10 +18,6 @@ class ToxicityHistogram(Metric):
     The ToxicityHistogram metric visualizes and analyzes the toxicity scores of various texts. Through histograms, it
     provides insights into the distribution and nature of toxicity present in the evaluated text segments.
 
-    **Visualization:**
-    Histograms are employed to display the distribution of toxicity scores. Each histogram corresponds to a text data
-    column, offering an intuitive representation of toxicity patterns within the data.
-
     **Test Mechanism:**
     Texts are fetched from specified columns and their toxicity scores are computed using a preloaded `toxicity`
     evaluation tool. Each text data column is visualized with its own histogram, culminating in a multi-panel
