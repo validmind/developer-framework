@@ -60,6 +60,7 @@ wget = "^3.2"
 prettytable = "^3.9.0"
 xgboost = "^1.5.2"
 traitlets = "!=5.10.0, !=5.10.1" # TODO: remove this when bug is fixed: https://github.com/microsoft/azuredatastudio/issues/24436
+unidecode = "^1.3.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"

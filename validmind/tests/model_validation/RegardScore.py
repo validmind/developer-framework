@@ -11,7 +11,6 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-@dataclass
 class RegardScore(Metric):
     """
     **Purpose:**
@@ -116,6 +115,7 @@ class RegardScore(Metric):
                         x=list(range(len(column_data))),
                         y=scores,
                         mode="lines+markers",
+                        marker=dict(size=5),
                         hoverinfo="y+name",
                         line=dict(color=category_colors[category], width=1.5),
                         showlegend=False,

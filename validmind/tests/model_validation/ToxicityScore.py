@@ -11,10 +11,10 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class ToxicityLinePlot(Metric):
+class ToxicityScore(Metric):
     """
     **Purpose:**
-    The ToxicityLinePlot metric is designed to present a sequential representation of toxicity scores for various texts.
+    The ToxicityScore metric is designed to present a sequential representation of toxicity scores for various texts.
     Leveraging line plots, it gives an overview of how toxicity scores evolve across the sequence of texts, highlighting
     trends and patterns.
 
@@ -31,7 +31,7 @@ class ToxicityLinePlot(Metric):
     texts, it could be indicative of issues in the model's generated content.
 
     **Strengths:**
-    The ToxicityLinePlot offers a dynamic view of toxicity trends, enabling users to detect patterns or irregularities
+    The ToxicityScore offers a dynamic view of toxicity trends, enabling users to detect patterns or irregularities
     across the dataset. This is particularly valuable when comparing predicted content with actual data, helping
     highlight any inconsistencies or abnormalities in model output.
 
@@ -103,7 +103,13 @@ class ToxicityLinePlot(Metric):
 
             # Add traces to the corresponding subplot
             fig.add_trace(
-                go.Scatter(y=toxicity_scores, mode="lines", showlegend=False),
+                go.Scatter(
+                    y=toxicity_scores,
+                    mode="lines+markers",
+                    marker=dict(size=5),
+                    line=dict(width=1.5),
+                    showlegend=False,
+                ),
                 row=row,
                 col=col_idx,
             )
