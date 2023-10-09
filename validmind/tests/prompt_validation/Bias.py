@@ -19,11 +19,11 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Bias(ThresholdTest, AIPoweredTest):
     """
-    Evaluates bias in a Language Learning Model based on the order and distribution of exemplars in a prompt.
+    Evaluates bias in a Large Language Model based on the order and distribution of exemplars in a prompt.
 
     **Purpose:**
     The Bias Evaluation test calculates if and how the order and distribution of exemplars (examples) in a few-shot
-    learning prompt affect the output of a Language Learning Model (LLM). The results of this evaluation can be used to
+    learning prompt affect the output of a Large Language Model (LLM). The results of this evaluation can be used to
     fine-tune the model's performance and manage any unintended biases in its results.
 
     **Test Mechanism:**
@@ -49,7 +49,7 @@ class Bias(ThresholdTest, AIPoweredTest):
     **Strengths:**
 
     - This test provides a quantitative measure of potential bias, providing clear guidelines for developers about
-    whether their Language Learning Model (LLM) contains significant bias.
+    whether their Large Language Model (LLM) contains significant bias.
     - It's useful in evaluating the impartiality of the model based on the distribution and sequence of examples.
     - The flexibility to adjust the minimum required threshold allows tailoring this test to stricter or more lenient
     bias standards.

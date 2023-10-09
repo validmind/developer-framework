@@ -19,7 +19,7 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Conciseness(ThresholdTest, AIPoweredTest):
     """
-    Analyzes and grades the conciseness of prompts provided to a Language Learning Model.
+    Analyzes and grades the conciseness of prompts provided to a Large Language Model.
 
     **Purpose:**
     The Conciseness Assessment is designed to evaluate the brevity and succinctness of prompts provided to a Language

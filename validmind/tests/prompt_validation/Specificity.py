@@ -19,7 +19,7 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Specificity(ThresholdTest, AIPoweredTest):
     """
-    Evaluates and scores the specificity of prompts provided to a Language Learning Model (LLM), based on clarity,
+    Evaluates and scores the specificity of prompts provided to a Large Language Model (LLM), based on clarity,
     detail, and relevance.
 
     **Purpose:**

@@ -19,10 +19,10 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class NegativeInstruction(ThresholdTest, AIPoweredTest):
     """
-    Evaluates and grades the use of affirmative, proactive language over negative instructions in ML model prompts.
+    Evaluates and grades the use of affirmative, proactive language over negative instructions in LLM prompts.
 
     **Purpose:**
-    The Negative Instruction test is utilized to scrutinize the prompts given to a Language Learning Model (LLM). The
+    The Negative Instruction test is utilized to scrutinize the prompts given to a Large Language Model (LLM). The
     objective is to ensure these prompts are expressed using proactive, affirmative language. The focus is on
     instructions indicating what needs to be done rather than what needs to be avoided, thereby guiding the LLM more
     efficiently towards the desired output.

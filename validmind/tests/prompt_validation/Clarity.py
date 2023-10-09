@@ -19,10 +19,10 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Clarity(ThresholdTest, AIPoweredTest):
     """
-    Evaluates and scores the clarity of prompts in a Language Learning Model based on specified guidelines.
+    Evaluates and scores the clarity of prompts in a Large Language Model based on specified guidelines.
 
     **Purpose:**
-    The Clarity evaluation metric is used to assess how clear the prompts of a Language Learning Model (LLM) are. This
+    The Clarity evaluation metric is used to assess how clear the prompts of a Large Language Model (LLM) are. This
     assessment is particularly important because clear prompts assist the LLM in more accurately interpreting and
     responding to instructions.
 
