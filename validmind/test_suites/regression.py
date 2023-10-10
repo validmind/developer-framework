@@ -1,3 +1,4 @@
+# Copyright © 2023 ValidMind Inc. All rights reserved.
 from validmind.vm_models import TestSuite
 
 
