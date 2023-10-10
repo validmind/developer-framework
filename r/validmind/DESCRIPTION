@@ -3,9 +3,11 @@ Type: Package
 Title: Interface to the ValidMind platform for R
 Version: 0.1.0
 Author: ValidMind, Inc.
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Andres Rodriquez <andres@validmind.ai>
+Description: Deploy, execute, and analyze the results of models hosted on the
+  ValidMind platform. This package interfaces with the Python client library
+  in order to allow advenced diagnostics and insight into trained models
+  all from an R environment.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
