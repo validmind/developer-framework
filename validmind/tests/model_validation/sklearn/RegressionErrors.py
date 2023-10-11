@@ -41,7 +41,7 @@ class RegressionErrors(Metric):
 
     category = "model_performance"
     name = "regression_errors"
-    required_inputs = ["model"]
+    required_inputs = ["model", "model.test_ds", "model.train_ds"]
     metadata = {
         "task_types": ["regression"],
         "tags": [
@@ -68,18 +68,10 @@ class RegressionErrors(Metric):
 
         return ResultSummary(results=[ResultTable(data=table_records)])
 
-    def run(self):
-        y_true_train = self.model.y_train_true
-        class_pred_train = self.model.y_train_predict
-        y_true_train = y_true_train.astype(class_pred_train.dtype)
-
-        y_true_test = self.model.y_test_true
-        class_pred_test = self.model.y_test_predict
-        y_true_test = y_true_test.astype(class_pred_test.dtype)
-
+    def regression_errors(self, y_true_train, class_pred_train, y_true_test, class_pred_test):
         mae_train = metrics.mean_absolute_error(y_true_train, class_pred_train)
         mae_test = metrics.mean_absolute_error(y_true_test, class_pred_test)
-
+        
         results = []
         results.append(
             {
@@ -89,7 +81,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-
+        
         mse_train = metrics.mean_squared_error(y_true_train, class_pred_train)
         mse_test = metrics.mean_squared_error(y_true_test, class_pred_test)
         results.append(
@@ -108,7 +100,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-
+        
         mape_train = (
             np.mean(np.abs((y_true_train - class_pred_train) / y_true_train)) * 100
         )
@@ -121,7 +113,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-
+        
         mbd_train = np.mean(class_pred_train - y_true_train)
         mbd_test = np.mean(class_pred_test - y_true_test)
         results.append(
@@ -132,5 +124,17 @@ class RegressionErrors(Metric):
                 }
             }
         )
+        return results
+
+    def run(self):
+        y_true_train = self.model.y_train_true
+        class_pred_train = self.model.y_train_predict
+        y_true_train = y_true_train.astype(class_pred_train.dtype)
+
+        y_true_test = self.model.y_test_true
+        class_pred_test = self.model.y_test_predict
+        y_true_test = y_true_test.astype(class_pred_test.dtype)
+
+        results = self.regression_errors(y_true_train, class_pred_train, y_true_test, class_pred_test)
 
         return self.cache_results(metric_value=results)
