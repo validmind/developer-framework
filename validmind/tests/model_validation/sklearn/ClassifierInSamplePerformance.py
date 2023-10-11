@@ -8,31 +8,41 @@ from .ClassifierPerformance import ClassifierPerformance
 @dataclass
 class ClassifierInSamplePerformance(ClassifierPerformance):
     """
+    Evaluates ML model's in-sample performance using accuracy, precision, recall, and F1 score to assess generalization
+    and overfitting.
+
     **Purpose**: The purpose of this metric is to evaluate the performance of the machine learning model on the
-    training data. It measures commonly-used metrics such as accuracy, precision, recall, and F1 score. This test is
-    typically used to gauge the model's ability to generalize its predictions to new, unseen data. It also measures the
-    model's level of overfitting on the training set.
+    training data. This test gauges the model's ability to generalize its predictions to new, unseen data and assesses
+    the level of the model's overfitting on the training set by measuring commonly-used metrics such as accuracy,
+    precision, recall, and F1 score.
 
-    **Test Mechanism**: This test uses metrics like accuracy, precision, recall, and F1 score. It applies these metrics
-    to the model's predictions on the training set, and compares them with the true values. The accuracy measures the
-    ratio of correct predictions to the total number of predictions. Precision gauges the number of true positive
-    predictions relative to the total number of positive predictions. Recall indicates the number of true positive
-    predictions relative to the total number of actual positives in the dataset. Finally, F1 score is the harmonic mean
-    of precision and recall, providing an overall measure of the model's performance.
+    **Test Mechanism**: The implementation of this test incorporates various metrics including accuracy, precision,
+    recall, and F1 score. These metrics are applied on the model's predictions of the training set and compared with
+    the true output. The accuracy evaluates the proportion of correct predictions out of the total predictions.
+    Meanwhile, precision measures the accurate positive predictions relative to the total number of positive
+    predictions. The recall metric indicates the proportion of true positive predictions in relation to the overall
+    number of actual positives in the dataset. Lastly, the F1 score represents the harmonic mean of precision and
+    recall, thus providing a comprehensive appraisal of the model's performance.
 
-    **Signs of High Risk**: If the model has near perfect performance on all metrics on the training data but performs
-    poorly on unseen data, it could be a sign of overfitting and hence, a high-risk scenario. Also, low values on any
-    of these metrics can indicate an underperforming model, which may pose risk in production-grade applications.
+    **Signs of High Risk**:
+    - A near-perfect performance on all metrics on the training data, coupled with inferior performance on unseen data,
+    may be indicative of overfitting. This constitutes a high-risk scenario.
+    - Low values on any of these metrics may signal an underperforming model, posing a potential risk for
+    production-grade applications.
 
-    **Strengths**: Analyzing the model's performance using standard metrics like accuracy, precision, recall, and F1
-    score allows for a well-rounded assessment. The output is easy-to-interpret because they are widely used and
-    understood in the machine learning community. Besides, since this test is applied to the training set, it can help
-    detect instances of overfitting early in the model's development.
+    **Strengths**:
+    - Using conventional metrics such as accuracy, precision, recall, and F1 score allows for an all-encompassing
+    evaluation of the model's performance.
+    - The results are interpretable due to the widespread use and understanding of these metrics in the machine
+    learning field.
+    - Being applied to the training set, this test can detect overfitting early in the model's development stage.
 
-    **Limitations**: While these metrics provide useful insights, they are prone to biases in the training data. The
-    model may perform well on the training set and yet perform poorly on new, unseen data. Therefore, this test should
-    be complemented with additional validation techniques, such as k-fold cross-validation or out-of-sample testing, to
-    ensure a less biased evaluation of the model's performance.
+    **Limitations**:
+    - Although these metrics yield valuable insights, they are susceptible to biases inherent in the training data.
+    - There's always a chance for disparity between the model's performance in the training set and performance with
+    new, unseen data.
+    - Therefore, this test should be supplemented with additional validation tactics, such as k-fold cross-validation
+    or out-of-sample testing, to provide a more unbiased evaluation of the model's performance.
     """
 
     name = "classifier_in_sample_performance"

@@ -10,35 +10,38 @@ from validmind.vm_models import ThresholdTest, ThresholdTestResult
 @dataclass
 class ADFTest(ThresholdTest):
     """
-    **Purpose**: The purpose of the Augmented Dickey-Fuller (ADF) metric test is to test the null hypothesis that a
-    unit root is present in a time series. In other words, the ADF test aims to check the stationarity of a given
-    time-series dataset. It plays a crucial role in the phases of time series analysis, regression tasks, and
-    forecasting, as these techniques often require the data to be stationary.
+    Assesses the stationarity of time series data using the Augmented Dickey-Fuller (ADF) test.
 
-    **Test Mechanism**: The ADF test applies the Python “statsmodels” library's function "adfuller" to each column of
-    the training dataset. By doing so, it calculates the ADF statistic, p-value, the number of lags used, and the
-    number of observations in the sample for each column. If the p-value for a column is smaller than the predefined
-    threshold (typically 0.05), then it is considered as having passed the test, thus concluding that the series is
-    stationary.
+    **Purpose**: The Augmented Dickey-Fuller (ADF) metric test is designed to evaluate the presence of a unit root in a
+    time series. This essentially translates to assessing the stationarity of a time series dataset. This is vital in
+    time series analysis, regression tasks, and forecasting, as these often need the data to be stationary.
 
-    **Signs of High Risk**: If the p-value exceeds the threshold value, the test for that column is considered as
-    failed, which indicates a high risk or potential model performance issue. A high p-value implies that the null
-    hypothesis (indicating a unit root) cannot be rejected, meaning that the series is non-stationary and may cause
-    unreliable and spurious results in the model's performance and forecast.
+    **Test Mechanism**: This test application utilizes the "adfuller" function from Python's “statsmodels” library. It
+    applies this function to each column of the training dataset, subsequently calculating the ADF statistic, p-value,
+    the number of lags used, and the number of observations in the sample for each column. If a column's p-value is
+    lower than the predetermined threshold (usually 0.05), the series is considered stationary, and the test is deemed
+    passed for that column.
 
-    **Strengths**: The ADF test holds several key advantages:
-    1. Test for stationarity: The ADF test provides a rigorous mechanism for testing the stationarity of time series
-    data, which is critical for many machine learning and statistical models.
-    2. Comprehensive output: The function provides rich output, including the number of lags used and the number of
-    observations, which can be useful for understanding the behavior of the series.
+    **Signs of High Risk**:
+    - A p-value that surpasses the threshold value indicates a high risk or potential model performance issue.
+    - A high p-value suggests that the null hypothesis (of a unit root being present) cannot be rejected. This in turn
+    suggests that the series is non-stationary which could potentially yield unreliable and falsified results for the
+    model's performance and forecast.
 
-    **Limitations**: However, the ADF test also presents some limitations:
-    1. Dependence on threshold: The result of the test is highly dependent on the threshold chosen. An inappropriate
-    threshold may lead to incorrect rejection or acceptance of the null hypothesis.
-    2. Inefficient for trending data: The ADF test assumes no deterministic trend in the data. If a deterministic trend
-    exists, the test may identify a stationary series as non-stationary.
-    3. May lead to false positive: Particularly for larger datasets, the ADF test tends to reject the null hypothesis
-    (indicating a unit root), which can lead to a high propensity for false positives.
+    **Strengths**:
+    - Archetypal Test for Stationarity: The ADF test is a comprehensive approach towards testing the stationarity of
+    time series data. Such testing is vital for many machine learning and statistical models.
+    - Detailed Output: The function generates detailed output, including the number of lags used and the number of
+    observations, which adds to understanding a series’ behaviour.
+
+    **Limitations**:
+    - Dependence on Threshold: The result of this test freights heavily on the threshold chosen. Hence, an imprudent
+    threshold value might lead to false acceptance or rejection of the null hypothesis.
+    - Not Effective for Trending Data: The test suffers when it operates under the assumption that the data does not
+    encapsulate any deterministic trend. In the presence of such a trend, it might falsely identify a series as
+    non-stationary.
+    - Potential for False Positives: The ADF test especially in the case of larger datasets, tends to reject the null
+    hypothesis, escalating the chances of false positives.
     """
 
     category = "model_performance"  # right now we support "model_performance" and "data_quality"

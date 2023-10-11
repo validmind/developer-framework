@@ -9,31 +9,41 @@ from validmind.vm_models import Figure, Metric
 
 class ACFandPACFPlot(Metric):
     """
+    Analyzes time series data using Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) plots to
+    reveal trends and correlations.
+
     **Purpose**: The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed
-    for analyzing time series data in machine learning models. These plots provide valuable insights about the data
-    correlation over a period of time. The ACF plots the correlation of the series with its own lags, while the PACF
-    plots correlations after removing the effects already explained by earlier lags. This helps in identifying the
-    nature of the trend (for example, seasonality), degree of autocorrelation, and selecting order parameters for
-    AutoRegressive Integrated Moving Average (ARIMA) models.
+    to analyze time series data in machine learning models. It illuminates the correlation of the data over time by
+    plotting the correlation of the series with its own lags (ACF), and the correlations after removing effects already
+    accounted for by earlier lags (PACF). This information can identify trends, such as seasonality, degrees of
+    autocorrelation, and inform the selection of order parameters for AutoRegressive Integrated Moving Average (ARIMA)
+    models.
 
-    **Test Mechanism**: The python class `ACFandPACFPlot` receives a dataset with a time-based index. After checking
-    that the index is of datetime type and dealing with any NaN values, it generates ACF and PACF plots for each column
-    in the dataset, creating a subplot for each. In case the dataset does not include key columns, an error is thrown.
+    **Test Mechanism**: The `ACFandPACFPlot` test accepts a dataset with a time-based index. It first confirms the
+    index is of a datetime type, then handles any NaN values. The test subsequently generates ACF and PACF plots for
+    each column in the dataset, producing a subplot for each. If the dataset doesn't include key columns, an error is
+    returned.
 
-    **Signs of High Risk**: An indication of model risk in relation to the ACF and PACF plot test includes sudden drops
-    in the correlation at a specific lag or consistent high correlation across multiple lags. Both could indicate
-    non-stationarity in the data, which might suggest that the model estimated on this data might not generalize well
-    to future data.
+    **Signs of High Risk**:
 
-    **Strengths**: The ACF and PACF plots provide clear graphical representations of the correlation in time series
-    data. This is particularly useful for identifying important characteristics such as seasonality, trends, and
-    correlation patterns within the data. This allows for better model configuration, more specifically in the
-    selection of parameters for ARIMA models.
+    - Sudden drops in the correlation at a specific lag might signal a model at high risk.
+    - Consistent high correlation across multiple lags could also indicate non-stationarity in the data, which may
+    suggest that a model estimated on this data won't generalize well to future, unknown data.
 
-    **Limitations**: ACF and PACF plots can only be used with time series data, and are thus not applicable to every ML
-    model. Additionally, they require a large and consistent dataset, as gaps can lead to misleading results. These
-    plots only show linear correlation, ignoring potential nonlinear relationships. Lastly, they may not be intuitive
-    for non-experts to interpret and are not a substitute for more advanced analyses.
+    **Strengths**:
+
+    - ACF and PACF plots offer clear graphical representations of the correlations in time series data.
+    - These plots are effective at revealing important data characteristics such as seasonality, trends, and
+    correlation patterns.
+    - The insights from these plots aid in better model configuration, particularly in the selection of ARIMA model
+    parameters.
+
+    **Limitations**:
+
+    - ACF and PACF plots are exclusively for time series data and hence, can't be applied to all ML models.
+    - These plots require large, consistent datasets as gaps could lead to misleading results.
+    - The plots can only represent linear correlations and fail to capture any non-linear relationships within the data.
+    - The plots might be difficult for non-experts to interpret and should not replace more advanced analyses.
     """
 
     name = "acf_pacf_plot"

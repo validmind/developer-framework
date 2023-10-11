@@ -82,22 +82,30 @@
     </div>
     <a class="headerlink" href="#MinimumROCAUCScore"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: This test metric, Minimum ROC AUC Score, is used to determine the model's performance by ensuring that
-the Receiver Operating Characteristic Area Under the Curve (ROC AUC) score on the validation dataset meets or
-exceeds a predefined threshold. The ROC AUC score is an indicator of how well the model is capable of
-distinguishing between different classes, making it a crucial measure in binary and multiclass classification tasks.</p>
+            <div class="docstring"><p>Validates model by checking if the ROC AUC score meets or surpasses a specified threshold.</p>
 
-<p><strong>Test Mechanism</strong>: This test implementation calculates the multiclass ROC AUC score on the true target values and
-the model's prediction. The test converts the multi-class target variables into binary format using
-<code>LabelBinarizer</code> before computing the score. If this ROC AUC score is higher than the predefined threshold
-(defaulted to 0.5), the test passes; otherwise, it fails. The results, including the ROC AUC score, the threshold,
-and whether the test passed or failed, are then stored in a <code>ThresholdTestResult</code> object.</p>
+<p><strong>Purpose</strong>:
+This test metric, Minimum ROC AUC Score, is used to determine the model's performance by ensuring that the Receiver
+Operating Characteristic Area Under the Curve (ROC AUC) score on the validation dataset meets or exceeds a
+predefined threshold. The ROC AUC score is an indicator of how well the model is capable of distinguishing between
+different classes, making it a crucial measure in binary and multiclass classification tasks.</p>
 
-<p><strong>Signs of High Risk</strong>: A high risk or failure in the model's performance as related to this metric would be
-represented by a low ROC AUC score, specifically any score lower than the predefined minimum threshold. This
-suggests that the model is struggling to distinguish between different classes effectively.</p>
+<p><strong>Test Mechanism</strong>:
+This test implementation calculates the multiclass ROC AUC score on the true target values and the model's
+prediction. The test converts the multi-class target variables into binary format using <code>LabelBinarizer</code> before
+computing the score. If this ROC AUC score is higher than the predefined threshold (defaulted to 0.5), the test
+passes; otherwise, it fails. The results, including the ROC AUC score, the threshold, and whether the test passed
+or failed, are then stored in a <code>ThresholdTestResult</code> object.</p>
 
-<p><strong>Strengths</strong>: This metric is advantageous for the following reasons:</p>
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A high risk or failure in the model's performance as related to this metric would be represented by a low ROC AUC
+score, specifically any score lower than the predefined minimum threshold. This suggests that the model is
+struggling to distinguish between different classes effectively.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
 
 <ul>
 <li>The test considers both the true positive rate and false positive rate, providing a comprehensive performance
@@ -107,7 +115,7 @@ thresholds.</li>
 <li>Works robustly with binary as well as multi-class classification problems.</li>
 </ul>
 
-<p><strong>Limitations</strong>: Despite its strengths, the metric presents certain limitations:</p>
+<p><strong>Limitations</strong>:</p>
 
 <ul>
 <li>ROC AUC may not be useful if the class distribution is highly imbalanced; it could perform well in terms of AUC

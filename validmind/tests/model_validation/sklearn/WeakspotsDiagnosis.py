@@ -22,44 +22,48 @@ from validmind.vm_models import (
 @dataclass
 class WeakspotsDiagnosis(ThresholdTest):
     """
+    Identifies and visualizes weak spots in a machine learning model's performance across various sections of the
+    feature space.
+
     **Purpose:**
-    The weak spots test is designed to evaluate the performance of a machine learning model in specific regions of the
-    feature space. This test consists of dividing the feature space into various sections or slices, evaluating the
-    model's output within each of these sections, and identifying regions where the model's performance metrics fall
-    below specified thresholds. Performance metrics include accuracy, precision, recall, and F1 scores. This diagnostic
-    test helps identify areas where the machine learning model may not perform well, potentially exposing its
-    limitations and weaknesses.
+    The weak spots test is applied to evaluate the performance of a machine learning model within specific regions of
+    its feature space. This test slices the feature space into various sections, evaluating the model's outputs within
+    each section against specific performance metrics (e.g., accuracy, precision, recall, and F1 scores). The ultimate
+    aim is to identify areas where the model's performance falls below the set thresholds, thereby exposing its
+    possible weaknesses and limitations.
 
     **Test Mechanism:**
-    The test is performed by slicing the feature space of the training data set into multiple bins. For each bin, the
-    model's performance metrics are computed for both the training and test data sets. If any of the model's
-    performance metrics fall below the predetermined threshold for a particular bin on the test dataset, it is
-    identified as a "weak spot". The results are visually represented in a bar chart for each performance metric,
-    marking the bins failing the threshold.
+    The test mechanism adopts an approach of dividing the feature space of the training dataset into numerous bins. The
+    model's performance metrics (accuracy, precision, recall, F1 scores) are then computed for each bin on both the
+    training and test datasets. A "weak spot" is identified if any of the performance metrics fall below a
+    predetermined threshold for a particular bin on the test dataset. The test results are visually plotted as bar
+    charts for each performance metric, indicating the bins which fail to meet the established threshold.
 
     **Signs of High Risk:**
-    High risk or failure in the model's performance is indicated when any of the model's performance metrics fall below
-    the set thresholds. If any bin performed significantly worse in the test dataset compared to the training dataset,
-    it might indicate overfitting in that region. Further, if a region or slice has low performance metrics, it
-    suggests that the model does not handle that type of input data well, which may lead to inaccurate predictions.
+    - Any performance metric of the model dropping below the set thresholds.
+    - Significant disparity in performance between the training and test datasets within a bin could be an indication
+    of overfitting.
+    - Regions or slices with consistently low performance metrics. Such instances could mean that the model struggles
+    to handle specific types of input data adequately, resulting in potentially inaccurate predictions.
 
     **Strengths:**
-    - The weak spots test helps identify specific regions of the feature space where the model's performance is subpar,
-    which can guide further refinement of the model.
-    - Plotting the performance metrics provides an intuitive way to understand the model's performance across different
-    regions.
-    - The test can be customizable, allowing users to specify various thresholds for multiple performance metrics based
-    on the needs of the specific application.
+    - The test helps pinpoint precise regions of the feature space where the model's performance is below par, allowing
+    for more targeted improvements to the model.
+    - The graphical presentation of the performance metrics offers an intuitive way to understand the model's
+    performance across different feature areas.
+    - The test exhibits flexibility, letting users set different thresholds for various performance metrics according
+    to the specific requirements of the application.
 
     **Limitations:**
-    - By binning the feature space, the test could potentially oversimplify the model's behavior in each region. The
-    granular control of this slicing depends on the bins parameter, and can be coincidentally arbitrary.
-    - The test's effectiveness relies upon the chosen thresholds for the performance metrics, which may not be
-    universally applicable and subject to the model's specification and the application.
-    - The test does not handle datasets with a text column, thus limiting its applicability to only numerical or
-    categorical data.
-    - The test does not directly provide suggestions for model improvement, only highlighting potentially problematic
-    regions.
+    - The binning system utilized for the feature space in the test could over-simplify the model's behavior within
+    each bin. The granularity of this slicing depends on the chosen 'bins' parameter and can sometimes be arbitrary.
+    - The effectiveness of this test largely hinges on the selection of thresholds for the performance metrics, which
+    may not hold universally applicable and could be subjected to the specifications of a particular model and
+    application.
+    - The test is unable to handle datasets with a text column, limiting its application to numerical or categorical
+    data types only.
+    - Despite its usefulness in highlighting problematic regions, the test does not offer direct suggestions for model
+    improvement.
     """
 
     category = "model_diagnosis"

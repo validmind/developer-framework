@@ -10,34 +10,36 @@ from validmind.vm_models import Metric
 @dataclass
 class PhillipsPerronArch(Metric):
     """
-    **Purpose**: The Phillips-Perron (PP) test is being used to establish the order of integration in time series data.
-    It is a method for testing a null hypothesis that a time series is unit-root non-stationary. When applied to
-    machine learning models, it helps in forecasting and understanding the stochastic behavior of data. In sense, it is
-    used to ensure the robustness of the results and make valid predictions out of regression analysis models.
+    Executes Phillips-Perron test to assess the stationarity of time series data in each ML model feature.
 
-    **Test Mechanism**: The PP test is applied to each feature present in the dataset. A data frame is acquired from
-    the dataset and for each column in this data frame, the PhillipsPerron method is used to calculate its statistic
-    value, p-value, used lags and number of observations. This method is calculating the PP metric for each feature and
-    caching the results.
+    **Purpose**: The Phillips-Perron (PP) test is used to establish the order of integration in time series data,
+    testing a null hypothesis that a time series is unit-root non-stationary. This is vital in forecasting and
+    understanding the stochastic behavior of data within machine learning models. Essentially, the PP test aids in
+    confirming the robustness of results and generating valid predictions from regression analysis models.
 
-    **Signs of High Risk**: Indicators of high risk related to this metric could include:
-    - High P-value, which might suggest that the series has a unit root and thus is non-stationary.
-    - Test statistic values that exceed the critical values, providing further evidence of non-stationarity.
-    - If the 'usedlag' value is high for a series, there may be autocorrelation issues which can further complicate
-    model performance.
+    **Test Mechanism**: The PP test is conducted for each feature in the dataset. A data frame is created from the
+    dataset, and for each column in this frame, the PhillipsPerron method calculates the statistic value, p-value, used
+    lags, and number of observations. This process computes the PP metric for each feature and stores the results for
+    future reference.
 
-    **Strengths**: The strengths of the PP test are as follows:
-    - It is robust against heteroskedasticity in the error term.
-    - It examines relatively long time series.
-    - It helps to identify if the time series is stationary or not, which affects the selection of appropriate models
-    for forecasting.
+    **Signs of High Risk**:
+    - A high P-value could imply that the series has a unit root and is therefore non-stationary.
+    - Test statistic values that surpass critical values indicate additional evidence of non-stationarity.
+    - A high 'usedlag' value for a series could point towards autocorrelation issues which could further impede the
+    model's performance.
 
-    **Limitations**: However, the PP test has some limitations:
-    - It can only be utilized in a univariate time series framework.
-    - The PP test does rely on asymptotic theory, therefore, for small sample sizes the power of the test can
-    substantially reduce.
-    - Non-stationary time series might require differencing to convert them into stationary series, which might lead to
-    loss of important data points.
+    **Strengths**:
+    - Resilience against heteroskedasticity in the error term is a significant strength of the PP test.
+    - Its capacity to handle long time series data.
+    - Its ability to determine whether the time series is stationary or not, influencing the selection of suitable
+    models for forecasting.
+
+    **Limitations**:
+    - The PP test can only be employed within a univariate time series framework.
+    - The test relies on asymptotic theory, which means the test's power can significantly diminish for small sample
+    sizes.
+    - The need to convert non-stationary time series into stationary series through differencing might lead to loss of
+    vital data points.
     """
 
     name = "phillips_perron"

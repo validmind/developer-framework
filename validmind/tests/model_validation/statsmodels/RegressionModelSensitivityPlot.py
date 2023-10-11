@@ -14,35 +14,44 @@ logger = get_logger(__name__)
 @dataclass
 class RegressionModelSensitivityPlot(Metric):
     """
-    **Purpose**: The Regression Sensitivity Plot metric is designed to facilitate sensitivity analysis for regression
-    models. It is primarily utilized for examining the outcome change of a system when alterations(shocks) are applied
-    to one variable at a time, keeping all other variables constant. Its core focus is to analyze the effect of each
-    independent variable on the dependent variable in the regression model, and thus aids in identifying critical risk
-    factors in the model that could significantly influence the output.
+    Tests the sensitivity of a regression model to variations in independent variables by applying shocks and
+    visualizing the effects.
 
-    **Test Mechanism**: This test begins by applying shocks of varying magnitudes (as per defined parameters) to each
-    feature of the model, one at a time. A new prediction is then made for each shocked dataset. Since these shocks are
-    applied while keeping all other variables constant, the resulting changes in the model's predictions can be
-    attributed to the shocks. If a transformation parameter is set to "integrate", the initial predictions and target
-    values are transformed using an integration function before being plotted. In the end, a plot of observed values
-    versus predicted values is generated for each model, with a distinct line graph illustrating predictions for each
-    shock.
+    **Purpose**: The Regression Sensitivity Plot metric is designed to perform sensitivity analysis on regression
+    models. This metric aims to measure the impact of slight changes (shocks) applied to individual variables on the
+    system's outcome while keeping all other variables constant. By doing so, it analyzes the effects of each
+    independent variable on the dependent variable within the regression model and helps identify significant risk
+    factors that could substantially influence the model's output.
 
-    **Signs of High Risk**: If the plot shows drastic changes in model predictions with small shocks to an individual
-    variable, it may be an indication of high risk. This could suggest a high sensitivity of the model to changes in
-    that variable, potentially signaling over-reliance on the variable to make predictions. Unusually high or erratic
-    shifts in the response of the model concerning shocks may also suggest potential model instability or overfitting.
+    **Test Mechanism**: This metric operates by initially applying shocks of varying magnitudes, defined by specific
+    parameters, to each of the model's features, one at a time. With all other variables held constant, a new
+    prediction is made for each dataset subjected to shocks. Any changes in the model's predictions are directly
+    attributed to the shocks applied. In the event that the transformation parameter is set to "integrate", initial
+    predictions and target values undergo transformation via an integration function before being plotted. Lastly, a
+    plot demonstrating observed values against predicted values for each model is generated, showcasing a distinct line
+    graph illustrating predictions for each shock.
 
-    **Strengths**: This metric holds the value by enabling the identification of those variables that have a major
-    effect on the model outcomes, thus paving the way towards feature importance understanding. It also generates
-    visual plots, making the results understandable, clear, and interpretable even to non-technical stakeholders. It's
-    beneficial for spotting overfitting and detecting unstable models that too responsive to small changes in variables.
+    **Signs of High Risk**:
+    - If the plot exhibits drastic alterations in model predictions consequent to minor shocks to an individual
+    variable, it may indicate high risk. This underscores potentially high model sensitivity to changes in that
+    variable, suggesting over-dependence on that variable for predictions.
+    - Unusually high or unpredictable shifts in response to shocks may also denote potential model instability or
+    overfitting.
 
-    **Limitations**: This metric assumes that all other variables remain constant when a shock is applied, which may
-    not always reflect real-world conditions where variables might have complex interdependencies. It is also best
-    suited for linear models and may not always appropriately evaluate the sensitivity of non-linear models.
-    Additionally, it does not provide a numerical measure of risk, it only provides a visual indication, which might be
-    subjective.
+    **Strengths**:
+    - The metric allows identification of variables strongly influencing the model outcomes, paving the way for
+    understanding feature importance.
+    - It generates visual plots which make the results easily interpretable even to non-technical stakeholders.
+    - Beneficial in identifying overfitting and detecting unstable models that over-react to minor changes in variables.
+
+    **Limitations**:
+    - The metric operates on the assumption that all other variables remain unchanged during the application of a
+    shock. However, real-world situations where variables may possess intricate interdependencies may not always
+    reflect this.
+    - It is best compatible with linear models and may not effectively evaluate the sensitivity of non-linear model
+    configurations.
+    - The metric does not provide a numerical risk measure. It offers only a visual representation, which may invite
+    subjectivity in interpretation.
     """
 
     name = "regression_sensitivity_plot"

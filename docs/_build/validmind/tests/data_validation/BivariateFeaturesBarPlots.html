@@ -79,46 +79,52 @@
     </div>
     <a class="headerlink" href="#BivariateFeaturesBarPlots"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The BivariateFeaturesBarPlots metric is used to conduct a visual analysis of categorical data in the
-model. The primary aim is to evaluate and comprehend the relationship between different feature pairs while
-emphasizing the model's target variable. These bivariate plots are extremely useful in revealing trends,
-correlations, patterns or anomalies that might not be immediately obvious in tabular data.</p>
+            <div class="docstring"><p>Generates visual bar plots to analyze the relationship between paired features within categorical data in the model.</p>
 
-<p><strong>Test Mechanism</strong>: The test constructs bar plots for each feature pair defined in the parameters. It groups the
-dataset by each feature pair and calculates the mean of the target variable within each pair grouping. Each group
-is represented as a bar in the plot with the height of the bar corresponding to the calculated mean. The colors of
-the bars are determined by the specific category they belong to: either taken from a colormap or generated if the
-number of categories exceeds the colormap's capacity.</p>
+<p><strong>Purpose</strong>: The BivariateFeaturesBarPlots metric is intended to perform a visual analysis of categorical data
+within the model. The goal is to assess and understand the specific relationships between various feature pairs,
+while simultaneously highlighting the model's target variable. This form of bivariate plotting is immensely
+beneficial in uncovering trends, correlations, patterns, or inconsistencies that may not be readily apparent within
+raw tabular data.</p>
 
-<p><strong>Signs of High Risk</strong>: High risk or failure may be indicated if:</p>
+<p><strong>Test Mechanism</strong>: These tests establish bar plots for each pair of features defined within the parameters. The
+dataset is grouped by each feature pair and then calculates the mean of the target variable within each specific
+grouping. Each group is represented via a bar in the plot, and the height of this bar aligns with the calculated
+mean. The colors assigned to these bars are based on the categorical section to which they pertain: these colors
+can either come from a colormap or generated anew if the total number of categories exceeds the current colormap's
+scope.</p>
 
-<ol>
-<li>Any values are missing or inconsistent in the feature pairs.</li>
-<li>Large differences or variations exist between the mean values of certain categories within the feature pairs.</li>
-<li>The parameters for feature pairs are not defined or are defined incorrectly.</li>
-</ol>
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>If any values are found missing or inconsistent within the feature pairs.</li>
+<li>If there exist large discrepancies or irregularities between the mean values of certain categories within feature
+pairs.</li>
+<li>If the parameters for feature pairs have not been specified or if they were wrongly defined.</li>
+</ul>
 
 <p><strong>Strengths</strong>:</p>
 
-<ol>
-<li>BivariateFeaturesBarPlots provides a clear, visual understanding of the relationships between feature pairs and
-the target variable.</li>
-<li>It allows for easy comparison of different categories within the feature pairs.</li>
-<li>This metric can deal with a range of categorical data, thus increasing its broad applicability.</li>
-<li>It's highly customizable, as users can define the feature pairs based on their specific requirements.</li>
-</ol>
+<ul>
+<li>The BivariateFeaturesBarPlots provides a clear, visual comprehension of the relationships between feature pairs
+and the target variable.</li>
+<li>It allows an easy comparison between different categories within feature pairs.</li>
+<li>The metric can handle a diverse array of categorical data, enhancing its universal applicability.</li>
+<li>It is highly customizable due to its allowance for users to define feature pairs based on their specific
+requirements.</li>
+</ul>
 
 <p><strong>Limitations</strong>:</p>
 
-<ol>
-<li>It can only be used with categorical data, limiting its utility with numerical or text data.</li>
-<li>It's dependent on manual input for feature pairs, which may lead to overlooking important feature pairs if not
-chosen wisely.</li>
-<li>The generated bar plots can become very cluttered and hard to interpret when dealing with feature pairs with a
-large number of categories.</li>
-<li>This metric solely provides a visual analysis and doesn't provide any numerical or statistical measures for
-quantifying the relationship between feature pairs.</li>
-</ol>
+<ul>
+<li>It can only be used with categorical data, limiting its usability with numerical or textual data.</li>
+<li>It relies on manual input for feature pairs, which could result in the overlooking of important feature pairs if
+not chosen judiciously.</li>
+<li>The generated bar plots could become overly cluttered and difficult to decipher when dealing with feature pairs
+with a large number of categories.</li>
+<li>This metric only provides a visual evaluation and fails to offer any numerical or statistical measures to
+quantify the relationship between feature pairs.</li>
+</ul>
 </div>
 
 

@@ -80,6 +80,7 @@
             <ul>
                     <li><a href="tests/data_validation.html">data_validation</a></li>
                     <li><a href="tests/model_validation.html">model_validation</a></li>
+                    <li><a href="tests/prompt_validation.html">prompt_validation</a></li>
             </ul>
 
 
@@ -153,13 +154,25 @@ formatted table. Defaults to False.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">describe_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">):</span></span>
+        <span class="name">describe_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#describe_test"></a>
     
-            <div class="docstring"><p>Returns the test by test ID</p>
+            <div class="docstring"><p>Get or show details about the test</p>
+
+<p>This function can be used to see test details including the test name, description,
+required inputs and default params. It can also be used to get a dictionary of the
+above information for programmatic use.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_id (str, optional):</strong>  The test ID. Defaults to None.</li>
+<li><strong>raw (bool, optional):</strong>  If True, returns a dictionary with the test details.
+Defaults to False.</li>
+</ul>
 </div>
 
 

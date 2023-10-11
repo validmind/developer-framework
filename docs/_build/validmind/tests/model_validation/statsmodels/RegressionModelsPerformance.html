@@ -79,31 +79,46 @@
     </div>
     <a class="headerlink" href="#RegressionModelsPerformance"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: This metric is intended to assess and compare the performance of different regression models. It
-offers an insightful look into the models' ability to predict dependent variables, both on the data used for
-training (in-sample) and new data (out-of-sample). Metrics such as R-squared, Adjusted R-squared, and Mean Squared
-Error (MSE) are employed.</p>
+            <div class="docstring"><p>Evaluates and compares regression models' performance using R-squared, Adjusted R-squared, and MSE metrics.</p>
 
-<p><strong>Test Mechanism</strong>: This test iterates over various regression models supplied as an input list. For each model, it
-evaluates their in-sample and out-of-sample performance by capturing predictions for the training and test datasets
-respectively, and comparing these predictions against actual values to calculate R-squared, Adjusted R-squared, and
-Mean Squared Error (MSE). The models are individually evaluated in this manner, with their results being stored and
-returned for comparison purposes.</p>
+<p><strong>Purpose</strong>: This metric is used to evaluate and compare the performance of various regression models. Through the
+use of key statistical measures such as R-squared, Adjusted R-squared, and Mean Squared Error (MSE), the
+performance of different models in predicting dependent variables can be assessed both on the data used for
+training (in-sample) and new, unseen data (out-of-sample).</p>
 
-<p><strong>Signs of High Risk</strong>: High risk or potential failures in the model's performance might be indicated by
-excessively large MSE values, or unreasonably low R-squared and Adjusted R-squared values. If the model's
-performance drastically declines when moving from in-sample to out-of-sample evaluations, this could also signify a
-high risk of overfitting.</p>
+<p><strong>Test Mechanism</strong>: The test evaluates a list of provided regression models. For each model, it calculates their
+in-sample and out-of-sample performance by deriving the model predictions for the training and testing datasets
+respectively, and then comparing these predictions to the actual values. In doing so, it calculates R-squared,
+Adjusted R-squared, and MSE for each model, stores the results, and returns them for comparison.</p>
 
-<p><strong>Strengths</strong>: This metric is versatile and allows for the comparison of multiple models at once, providing an
-objective means of identifying the best-performing model. It provides both in-sample and out-of-sample evaluations,
-thus informing about the model's performance on unseen data. The use of R-squared and Adjusted R-squared values in
-addition to MSE provides a comprehensive view of the model's explainability and error rate.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: This test presupposes that the regression model's residuals are normally distributed, <em>i.e.</em>, a
-key assumption of Ordinary Least Squares (OLS) regression. Thus, it may not appropriately assess models where this
-assumption is violated. Additionally, it does not account for situations where predictive performance might not
-directly correlate with higher R-squared or lower MSE values, especially in the event of excessively complex models.</p>
+<ul>
+<li>High Mean Squared Error (MSE) values.</li>
+<li>Strikingly low values of R-squared and Adjusted R-squared.</li>
+<li>A significant drop in performance when transitioning from in-sample to out-of-sample evaluations, signaling a
+potential overfitting issue.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test permits comparisons of multiple models simultaneously, providing an objective base for identifying the
+top-performing model.</li>
+<li>It delivers both in-sample and out-of-sample evaluations, presenting performance data on unseen data.</li>
+<li>The utilization of R-squared and Adjusted R-squared in conjunction with MSE allows for a detailed view of the
+model's explainability and error rate.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>This test is built around the assumption that the residuals of the regression model are normally distributed,
+which is a fundamental requirement for Ordinary Least Squares (OLS) regression; thus, it could be not suitable for
+models where this assumption is broken.</li>
+<li>The test does not consider cases where higher R-squared or lower MSE values do not necessarily correlate with
+better predictive performance, particularly in instances of excessively complex models.</li>
+</ul>
 </div>
 
 

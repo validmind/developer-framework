@@ -8,32 +8,43 @@ from .ClassifierPerformance import ClassifierPerformance
 @dataclass
 class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     """
-    **Purpose**: This test is designed to assess the performance of a Machine Learning model on out-of-sample data -
-    i.e., data not used during the training phase. This test uses a variety of metrics (e.g., accuracy, precision,
-    recall, F1 score) to evaluate how well the trained model generalizes to unseen data. It helps to ensure that the
-    model is not overfitting the training data and is capable of making accurate predictions on new, unseen data.
+    Assesses ML model's performance on out-of-sample data to measure generalization and guard against overfitting.
 
-    **Test Mechanism**: The test invokes the metrics on the model's predicted outcomes for the testing data set and
-    compares those predictions to the actual outcomes. If the testing data set is properly set aside during the model
-    training and is not used in any way in the model learning process, it should provide a fair and unbiased measure of
-    how well the model can generalize. The metrics used typically include accuracy (proportion of correct predictions),
-    precision (proportion of positive predictions that were correct), recall (proportion of actual positives that were
-    predicted correctly), and F1 score (a single statistic that balances precision and recall).
+    **Purpose**: This test is designed to assess the performance of a Machine Learning model on out-of-sample data,
+    specifically data not utilized during the training phase. The performance metrics used in the test (accuracy,
+    precision, recall, and F1 score) serve to measure the model's generalization capability towards unseen data. The
+    primary goal is to ensure that the model has not overfitted to the training data and retains the ability to make
+    accurate predictions on novel data.
 
-    **Signs of High Risk**: Indications of high risk might include a low accuracy rate, low precision and recall rates,
-    a low F1 score, or significant discrepancies between the model's performance on training data and on testing data.
-    The latter may point to overfitting, meaning the model may not generalize well to new data.
+    **Test Mechanism**: The mechanism for this test involves applying the performance metrics to the predictions made
+    by the model on the test dataset. These are then compared with the actual outcomes. It is assumed that the test
+    dataset remains unutilized during the model training phase, therefore providing an unbiased and fair evaluation of
+    the model's generalization capabilities. The various metrics used include:
+    - Accuracy: The ratio of correct predictions
+    - Precision: The ratio of correct positive predictions
+    - Recall: The ratio of actual positives that were correctly predicted
+    - F1 Score: Harmonic mean of precision and recall, effectively balancing both.
 
-    **Strengths**: The major strength of this test is its ability to measure a model's predictive performance on unseen
-    data, thereby giving a fair estimate of its generalizability. This test takes into account various performance
-    metrics to provide a comprehensive performance evaluation. It also helps detect overfitting, an important aspect to
-    consider for any machine learning model.
+    **Signs of High Risk**:
+    - Low accuracy rate.
+    - Low precision and recall rates.
+    - Low F1 score.
+    - Significant discrepancies between the model's performance on training data and testing data, indicating
+    overfitting.
 
-    **Limitations**: This test's limitations are centered around the dependability of the test dataset. If the test
-    dataset is not a good representative of the real-world data the model will be applied to, the performance metrics
-    may not accurately reflect the true performance of the model. It's also worth noting that all the metrics used
-    (accuracy, precision, recall and F1 score) assume that all errors or misclassifications are equally important,
-    which is not always the case in real-world scenarios.
+    **Strengths**:
+    - The test provides a realistic assessment of a model's predictive performance on unseen data, thereby estimating
+    its generalizability.
+    - It incorporates several performance metrics into the evaluation, offering a comprehensive look at performance.
+    - The test aids in the detection of overfitting, a crucial factor for all machine learning models.
+
+    **Limitations**:
+    - The effectiveness of this test is significantly dependent on the quality and the representativeness of the test
+    dataset. Performance metrics may not accurately reflect the true performance of the model if the test database is
+    not a good representative of the real-world data the model will be working on.
+    - The metrics used (accuracy, precision, recall and F1 score) make the assumption that all errors and
+    misclassifications bear equal importance. This, however, may not align with certain real-world scenarios where some
+    types of errors might have more significant implications than others.
     """
 
     name = "classifier_out_of_sample_performance"

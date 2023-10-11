@@ -28,6 +28,8 @@ def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
 @dataclass
 class TrainingTestDegradation(ThresholdTest):
     """
+    Tests if model performance degradation between training and test datasets exceeds a predefined threshold.
+
     **Purpose**: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
     between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to
     check the model's ability to generalize from its training data to unseen test data. It assesses key classification
@@ -39,26 +41,25 @@ class TrainingTestDegradation(ThresholdTest):
     degradation for each metric is less than the preset maximum threshold of 10%. The results are summarized in a table
     showing each metric's train score, test score, degradation percentage, and pass/fail status.
 
-    **Signs of High Risk**: High risk or failure in the model's performance related to this test can be indicated by
-    one or more of the following:
-    1. A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.
-    2. A high difference or gap between the metric scores on the training and the test datasets.
-    3. The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.
+    **Signs of High Risk**:
+    - A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.
+    - A high difference or gap between the metric scores on the training and the test datasets.
+    - The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.
 
     **Strengths**:
-    1. This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for
+    - This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for
     predicting its practical real-world performance.
-    2. By evaluating multiple metrics, it takes into account different facets of model performance and enables a more
+    - By evaluating multiple metrics, it takes into account different facets of model performance and enables a more
     holistic evaluation.
-    3. The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for
+    - The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for
     different scenarios.
 
     **Limitations**:
-    1. The test compares raw performance on training and test data, but does not factor in the nature of the data.
-    Areas with less representation in the training set, for instance, might still perform poorly on unseen data.
-    2. It requires good coverage and balance in the test and training datasets to produce reliable results, which may
+    - The test compares raw performance on training and test data, but does not factor in the nature of the data. Areas
+    with less representation in the training set, for instance, might still perform poorly on unseen data.
+    - It requires good coverage and balance in the test and training datasets to produce reliable results, which may
     not always be available.
-    3. The test is currently only designed for classification tasks.
+    - The test is currently only designed for classification tasks.
     """
 
     category = "model_performance"
