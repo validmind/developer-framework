@@ -19,32 +19,41 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class NegativeInstruction(ThresholdTest, AIPoweredTest):
     """
+    Evaluates and grades the use of affirmative, proactive language over negative instructions in LLM prompts.
+
     **Purpose:**
-    The Positive Instructional Assessment evaluates prompts provided to a Language Learning Model
-    (LLM) to ensure they are framed using affirmative and proactive language. By focusing on what
-    should be done rather than what should be avoided, prompts can guide the LLM more effectively
-    towards generating appropriate and desired outputs.
+    The Negative Instruction test is utilized to scrutinize the prompts given to a Large Language Model (LLM). The
+    objective is to ensure these prompts are expressed using proactive, affirmative language. The focus is on
+    instructions indicating what needs to be done rather than what needs to be avoided, thereby guiding the LLM more
+    efficiently towards the desired output.
 
     **Test Mechanism:**
-    Employing an LLM as an evaluator, each prompt is meticulously analyzed and graded on use of
-    positive instructions on a scale from 1 to 10. The grade indicates how well the prompt employs
-    affirmative language while avoiding negative or prohibitive instructions. Prompts that achieve a
-    grade equal to or exceeding a predetermined threshold (default set to 7) are recognized as
-    adhering to positive instruction best practices. This threshold can be adjusted via the test
-    parameters.
+    An LLM is employed to evaluate each prompt. The prompt is graded based on its use of positive instructions with
+    scores ranging between 1-10. This grade reflects how effectively the prompt leverages affirmative language while
+    shying away from negative or restrictive instructions. A prompt that attains a grade equal to or above a
+    predetermined threshold (7 by default) is regarded as adhering effectively to the best practices of positive
+    instruction. This threshold can be custom-tailored through the test parameters.
 
-    **Why Positive Instructions Matter:**
-    Prompts that are phrased in the affirmative, emphasizing what to do, tend to direct the LLM
-    more clearly than those that focus on what not to do. Negative instructions can lead to
-    ambiguities and undesired model responses. By emphasizing clarity and proactive guidance, we
-    optimize the chances of obtaining relevant and targeted responses from the LLM.
+    **Signs of High Risk:**
+    - Low score obtained from the LLM analysis, indicating heavy reliance on negative instructions in the prompts.
+    - Failure to surpass the preset minimum threshold.
+    - The LLM generates ambiguous or undesirable outputs as a consequence of the negative instructions used in the
+    prompt.
 
-    **Example:**
-    Consider a scenario involving a chatbot designed to recommend movies. An instruction framed as,
-    "Don't recommend movies that are horror or thriller" might cause the LLM to fixate on the
-    genres mentioned, inadvertently producing undesired results. On the other hand, a
-    positively-framed prompt like, "Recommend family-friendly movies or romantic comedies" provides
-    clear guidance on the desired output.
+    **Strengths:**
+    - Encourages the usage of affirmative, proactive language in prompts, aiding in more accurate and advantageous
+    model responses.
+    - The test result provides a comprehensible score, helping to understand how well a prompt follows the positive
+    instruction best practices.
+
+    **Limitations:**
+    - Despite an adequate score, a prompt could still be misleading or could lead to undesired responses due to factors
+    not covered by this test.
+    - The test necessitates an LLM for evaluation, which might not be available or feasible in certain scenarios.
+    - A numeric scoring system, while straightforward, may oversimplify complex issues related to prompt designing and
+    instruction clarity.
+    - The effectiveness of the test hinges significantly on the predetermined threshold level, which can be subjective
+    and may need to be adjusted according to specific use-cases.
     """
 
     category = "prompt_validation"

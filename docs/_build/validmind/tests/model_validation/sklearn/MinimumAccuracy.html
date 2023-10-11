@@ -79,31 +79,49 @@
     </div>
     <a class="headerlink" href="#MinimumAccuracy"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the Minimum Accuracy test is to validate that the model's prediction accuracy on a
-given dataset meets or exceeds a predefined minimum threshold. Accuracy is the fraction of predictions our model
-got right and is an essential metric to understand how well our model is performing. In the context of both binary
-and multiclass classifications, accurate labeling is crucial.</p>
+            <div class="docstring"><p>Checks if the model's prediction accuracy meets or surpasses a specified threshold.</p>
 
-<p><strong>Test Mechanism</strong>: The mechanism of this threshold test involves comparing the model's accuracy score against the
-minimum threshold value specified (default value is 0.7). The accuracy score is calculated by using the sklearn's
-<code>accuracy_score</code> method between true label <code>y_true</code> and predicted label <code>class_pred</code>. If the accuracy score exceeds
-the threshold, the test is marked as passed. The test result is returned along with the accuracy score and the
+<p><strong>Purpose</strong>: The Minimum Accuracy test’s objective is to verify whether the model's prediction accuracy on a
+specific dataset meets or surpasses a predetermined minimum threshold. Accuracy, which is simply the ratio of right
+predictions to total predictions, is a key metric for evaluating the model's performance. Considering binary as
+well as multiclass classifications, accurate labeling becomes indispensable.</p>
+
+<p><strong>Test Mechanism</strong>: The test mechanism involves contrasting the model's accuracy score with a pre-set minimum
+threshold value, default value being 0.7. The accuracy score is computed utilizing sklearn’s <code>accuracy_score</code>
+method, where the true label <code>y_true</code> and predicted label <code>class_pred</code> are compared. If the accuracy score is above
+the threshold, the test gets a passing mark. The test returns the result along with the accuracy score and
 threshold used for the test.</p>
 
-<p><strong>Signs of High Risk</strong>: Signs of high risk within this test present themselves when the model is unable to meet or
-exceed the specified score threshold. If the model's accuracy score is consistently falling below the set
-threshold, it indicates a high risk of inaccurate predictions, which can reduce the model's effectiveness and
-dependability.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Strengths</strong>: The strength of the Minimum Accuracy test lies in its simplicity. It provides a straightforward
-measure of overall model performance across all classes. It's particularly advantageous when the classes are
-balanced. The test is also versatile and can be used with both binary and multiclass classification tasks.</p>
+<ul>
+<li>The risk level for this test surges considerably when the model is unable to achieve or surpass the predefined
+score threshold.</li>
+<li>When the model persistently scores below the threshold, it suggests a high risk of inaccurate predictions, which
+in turn affects the model’s efficiency and reliability.</li>
+</ul>
 
-<p><strong>Limitations</strong>: This test's limitations surface when dealing with imbalanced datasets. If the classes in the
-dataset are highly skewed, the accuracy score could be misleading, potentially favoring the majority class and
-providing a false sense of model performance. Another limitation is it does not provide a measure of the model's
-precision, recall, or ability to manage false positives and false negatives. It primarily focuses on overall
-correctness, which might not be sufficient for all types of model analytics.</p>
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>One of the key strengths of this test is its simplicity, presenting a straightforward measure of the holistic
+model performance across all classes.</li>
+<li>This test is particularly advantageous when classes are balanced.</li>
+<li>Another advantage of this test is its versatility as it can be implemented on both binary and multiclass
+classification tasks.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>When analyzing imbalanced datasets, certain limitations of this test emerge. The accuracy score can be misleading
+when classes in the dataset are skewed considerably.</li>
+<li>This can result in favoritism towards the majority class, consequently giving an inaccurate perception of the
+model performance.</li>
+<li>Another limitation is its inability to measure the model's precision, recall, or capacity to manage false
+positives or false negatives.</li>
+<li>The test majorly focuses on overall correctness and may not be sufficient for all types of model analytics.</li>
+</ul>
 </div>
 
 

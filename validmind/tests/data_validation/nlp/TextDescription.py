@@ -16,53 +16,46 @@ from ....vm_models import Figure, Metric, VMDataset
 @dataclass
 class TextDescription(Metric):
     """
-    **Purpose**: This is an in-depth textual analysis test used to assess the lexical complexity, structure, and
-    vocabulary of a given dataset. The TextDescription metric measures various parameters such as:
+    Performs comprehensive textual analysis on a dataset using NLTK, evaluating various parameters and generating
+    visualizations.
 
-    - **Total Words**: Assess the length and complexity of the input text. Longer documents might require more
-    sophisticated summarization techniques, while shorter ones may need more concise summaries.
-    - **Total Sentences**: Understand the structural makeup of the content. Longer texts with numerous sentences might
-    require the model to generate longer summaries to capture essential information.
-    - **Avg Sentence Length**: Determine the average length of sentences in the text. This can help the model decide on
-    the appropriate length for generated summaries, ensuring they are coherent and readable.
-    - **Total Paragraphs**: Analyze how the content is organized into paragraphs. The model should be able to maintain
-    the logical structure of the content when producing summaries.
-    - **Total Unique Words**: Measure the diversity of vocabulary in the text. A higher count of unique words could
-    indicate more complex content, which the model needs to capture accurately.
-    - **Most Common Words**: Identify frequently occurring words that likely represent key themes. The model should pay
-    special attention to including these words and concepts in its summaries.
-    - **Total Punctuations**: Evaluate the usage of punctuation marks, which contribute to the tone and structure of
-    the content. The model should be able to maintain appropriate punctuation in summaries.
-    - **Lexical Diversity**: Calculate the richness of vocabulary in relation to the overall text length. A higher
-    lexical diversity suggests a broader range of ideas and concepts that the model needs to capture in its summaries.
+    **Purpose**: This test uses the TextDescription metric to conduct a comprehensive textual analysis of a given
+    dataset. Various parameters such as total words, total sentences, average sentence length, total paragraphs, total
+    unique words, most common words, total punctuations, and lexical diversity are evaluated. This metric aids in
+    comprehending the nature of the text and evaluating the potential challenges that machine learning algorithms
+    deployed for textual analysis, language processing, or summarization might face.
 
-    It is also responsible for paring down unwanted tokens, measuring the average sentence length, and calculating the
-    lexical diversity in the available text. This metric's measures help in understanding the nature of the text and
-    assessing the potential challenges of machine learning algorithms deployed for textual analysis, language
-    processing, or summarization.
+    **Test Mechanism**: The test works by parsing the given dataset and utilizes the NLTK (Natural Language Toolkit)
+    library for tokenizing the text into words, sentences, and paragraphs. Subsequently, it processes the text further
+    by eliminating stopwords declared in 'unwanted_tokens' and punctuations. Next, it determines parameters like the
+    total count of words, sentences, paragraphs, punctuations alongside the average sentence length and lexical
+    diversity. Lastly, the result from these calculations is condensed and scatter plots for certain variable
+    combinations (e.g. Total Words vs Total Sentences, Total Words vs Total Unique Words) are produced, providing a
+    visual representation of the text's structure.
 
-    **Test Mechanism**: The test operates by parsing the dataset and using the NLTK library to tokenize the text into
-    words, sentences, and paragraphs. It dissects the processed text further, removing stopwords declared in
-    'unwanted_tokens' and punctuations. It then calculates parameters such as the total number of words, sentences,
-    paragraphs, punctuations; average sentence length; and lexical diversity. The metric also condenses these results
-    and plots scatter plots for certain combinations of variables (Total Words vs Total Sentences, Total Words vs Total
-    Unique Words, etc.) to provide a visual depiction of the text structure.
+    **Signs of High Risk**:
+    - Anomalies or an increase in complexity within the lexical diversity results.
+    - Longer sentences and paragraphs.
+    - High uniqueness of words.
+    - Presence of a significant amount of unwanted tokens.
+    - Missing or erroneous visualizations.
+     These signs suggest potential risk in text processing ML models, indicating that the ability of the model to
+    absorb and process text could be compromised.
 
-    **Signs of High Risk**: Anomaly in results or increased complexity in lexical diversity, long sentences and
-    paragraphs, high uniqueness of words, or an excess of unwanted tokens can signify risk in text processing ML
-    models. It suggests that the model's text absorption and processing capability can be compromised. Additionally,
-    missing or erroneous visualizations may also indicate issues with the text description analysis.
+    **Strengths**:
+    - An essential pre-processing tool, specifically for textual analysis in machine learning model data.
+    - Provides a comprehensive breakdown of a text dataset, which aids in understanding both structural and vocabulary
+    complexity.
+    - Generates visualizations of correlations between chosen variables to further comprehend the text's structure and
+    complexity.
 
-    **Strengths**: This metric is an essential tool for ML model data pre-processing, focusing on textual analysis. It
-    provides a detailed dissection of a text dataset to understand structural and vocabulary complexity, which is
-    helpful to strategize a ML model's textual processing capability. Besides, it visualizes correlations between
-    chosen variables, helping further in grasping the text's structure and complexity.
-
-    **Limitations**: This metric relies heavily on the NLTK library, rendering it unsuitable for languages unsupported
-    by NLTK. The unwanted tokens and stop words are predefined, limiting customization by context or application. This
-    metric does not consider semantics or grammatical complexities, which can be crucial in language processing.
-    Finally, it assumes that the document is well-structured (with sentences and paragraphs); unstructured or poorly
-    formatted text may skew the results.
+    **Limitations**:
+    - Heavy reliance on the NLTK library, restricting its use to only the languages that NLTK supports.
+    - Limited customization capacity as the undesirable tokens and stop words are predefined.
+    - Lacks the ability to consider semantics or grammatical complexities, which could be crucial aspects in language
+    processing.
+    - Assumes that the document is well-structured (includes sentences and paragraphs); therefore, unstructured or
+    poorly formatted text may distort the results.
     """
 
     name = "text_description"

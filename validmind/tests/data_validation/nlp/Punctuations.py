@@ -16,30 +16,33 @@ from validmind.vm_models import Figure, Metric, VMDataset
 @dataclass
 class Punctuations(Metric):
     """
-    **1. Purpose:** The main goal of the Punctuations Metric is to analyze the frequency of punctuation usage within a
-    given text dataset. This heuristic is often used in Natural Language Processing tasks such as text classification
-    and text summarization.
+    Analyzes and visualizes the frequency distribution of punctuation usage in a given text dataset.
 
-    **2. Test Mechanism:** The test begins by checking the input's eligibility, specifying that the "dataset" must be
-    of a VMDataset type. The next step is to create a corpus of the dataset by splitting the text of the input dataset
-    on spaces. Then, it tallies the usage of each unique punctuation character in the text corpus. The distribution of
-    the frequencies of each punctuation symbol is subsequently depicted as a bar graph. Results are stored as Figures
-    and associated with the main Punctuations object.
+    **1. Purpose:** The Punctuations Metric's primary purpose is to analyze the frequency of punctuation usage within a
+    given text dataset. This is often used in Natural Language Processing tasks, such as text classification and text
+    summarization.
 
-    **3. Signs of High Risk:** Given the nature of the test, risks are typically associated with the quality of text
-    data. One sign of high risk might be an excessive or unusual frequency of certain punctuation marks, which may
-    denote dubious quality, data corruption, or skewed data.
+    **2. Test Mechanism:** The test begins by verifying that the input "dataset" is of the type VMDataset. Following
+    that, a corpus is created from the dataset by splitting its text on spaces. Each unique punctuation character in
+    the text corpus is then tallied. Then, the frequency distribution of each punctuation symbol is visualized as a bar
+    graph, with these results being stored as Figures and associated with the main Punctuations object.
 
-    **4. Strengths:** The primary strength of this metric is providing insights into the distribution of punctuation
-    use in a text dataset. This could be valuable in validating the quality, consistency, and nature of data. It could
-    also offer hints about the style or tonality of the text corpus (e.g., frequent exclamation use might signify a
-    more informal, emotional context).
+    **3. Signs of High Risk:**
+    - High risk can be indicated by the excessive or unusual frequency of specific punctuation marks, potentially
+    denoting dubious quality, data corruption, or skewed data.
 
-    **5. Limitations:** This test exclusively looks at punctuation usage and thus can overlook other crucial text
-    characteristics. Additionally, it’s crucial not to make broad cultural or tonality assumptions based solely on
-    punctuation distribution since these may vary widely across different languages and contexts. It may also be less
-    effective when dealing with languages that employ non-standard or different punctuation. Finally, the visualized
-    results may lack interpretability when there are many unique punctuation marks in the dataset.
+    **4. Strengths:**
+    - The Punctuations Metric provides valuable insights into the distribution of punctuation usage in a text dataset.
+    - This insight can be important in validating the quality, consistency, and nature of the data.
+    - It can provide hints about the style or tonality of the text corpus. For example, frequent usage of exclamation
+    marks may suggest a more informal and emotional context.
+
+    **5. Limitations:**
+    - The metric focuses solely on punctuation usage and can miss other important textual characteristics.
+    - It's important not to make general cultural or tonality assumptions based solely on punctuation distribution,
+    since these can vary greatly across different languages and contexts.
+    - The metric may be less effective with languages that use non-standard or different punctuation.
+    - The visualization may lack interpretability when there are many unique punctuation marks in the dataset.
     """
 
     name = "punctuations"

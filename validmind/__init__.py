@@ -122,7 +122,6 @@ __all__ = [  # noqa
     "run_test_plan",  # DEPRECATED
     "run_test_suite",
     "tests",
-    "test_plans",
     "test_suites",
     "vm_models",
     # Framework Logging API

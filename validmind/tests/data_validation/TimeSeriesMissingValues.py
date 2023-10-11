@@ -19,40 +19,45 @@ from validmind.vm_models import (
 @dataclass
 class TimeSeriesMissingValues(ThresholdTest):
     """
+    Validates time-series data quality by confirming the count of missing values is below a certain threshold.
+
     **Purpose**:
-    This test is designed to verify that the number of missing values in a historical time-series dataset is below a
-    specified threshold. Since time-series models rely on continuity and temporality of data points, missing values
-    could affect the model's performance. Therefore, this test intends to maintain data quality and readiness for the
-    machine learning model.
+    This test is designed to validate the quality of a historical time-series dataset by verifying that the number of
+    missing values is below a specified threshold. As time-series models greatly depend on the continuity and
+    temporality of data points, missing values could compromise the model's performance. Consequently, this test aims
+    to ensure data quality and readiness for the machine learning model, safeguarding its predictive capacity.
 
     **Test Mechanism**:
-    The test process begins by checking if the dataset has a datetime index; if not, an error is raised. Next, a lower
-    limit threshold for missing values is set and a missing values check is run on each column of the dataset, with a
-    test result object being generated whether the number of missing values is below the specified threshold. The
-    percentage of missing values is also calculated alongside the raw count.
+    The test method commences by validating if the dataset has a datetime index, if not, an error is raised. It
+    establishes a lower limit threshold for missing values and performs a missing values check on each column of the
+    dataset. An object for the test result is created stating whether the number of missing values is within the
+    specified threshold. Additionally, the test calculates the percentage of missing values alongside the raw count.
 
-    As a visualization aid, the test generates two plots (a bar plot and a heatmap) to better illustrate the
-    distribution and quantity of missing values per variable, if any exist. The test results, missing values count,
-    missing values percentage, and the pass/fail status are returned in a results table.
+    To aid in data visualization, the test generates two plots - a bar plot and a heatmap, to better illustrate the
+    distribution and quantity of missing values per variable. The test results, a count of missing values, the
+    percentage of missing values, and a pass/fail status are returned in a results table.
 
     **Signs of High Risk**:
-    If any column in the dataset contains a number of missing values exceeding the threshold, it is considered a
-    failure and a high-risk scenario. This could be due to incomplete data collection, faulty sensors, or data
-    preprocessing errors. A continuous visual 'streak' in the 'heatmap' might also indicate a systematic error during
-    data collection.
+    - The number of missing values in any column of the dataset surpasses the threshold, marking a failure and a
+    high-risk scenario. The reasons could range from incomplete data collection, faulty sensors to data preprocessing
+    errors.
+    - A continuous visual 'streak' in the heatmap may indicate a systematic error during data collection, pointing
+    towards another potential risk source.
 
     **Strengths**:
-    This test is beneficial in promptly identifying missing values which might impact the model's performance. It is
-    broadly applicable and customizable through the threshold parameter. Going beyond raw numbers to calculate the
-    percentile of missing values adds a more relative understanding of data scarcity. It also includes a robust
-    mechanism to visually represent data quality, facilitating quicker and friendlier misinterpretation.
+    - Effectively identifies missing values which could adversely affect the model's performance.
+    - Applicable and customizable through the threshold parameter across different data sets.
+    - Goes beyond raw numbers by calculating the percentage of missing values, offering a more relative understanding
+    of data scarcity.
+    - Includes a robust visualization mechanism for easy and fast understanding of data quality.
 
     **Limitations**:
-    Though the test effectively identifies missing values, it does not suggest methods to deal with them. It assumes
-    that the dataset should have datetime index, limiting its use to time series analysis only. The test is sensitive
-    to the 'min_threshold' parameter and might raise false alarms if it's set too strictly, or might miss problematic
-    data if it's set too loosely. Lastly, the test solely focuses on 'missingness' and might overlook other aspects of
-    data quality.
+    - Although it identifies missing values, the test does not provide solutions to handle them.
+    - The test demands that the dataset should have a datetime index, hence limiting its use only to time series
+    analysis.
+    - The test's sensitivity to the 'min_threshold' parameter may raise false alarms if set too strictly or may
+    overlook problematic data if set too loosely.
+    - Solely focuses on the 'missingness' of the data and might fall short in addressing other aspects of data quality.
     """
 
     category = "data_quality"
