@@ -93,7 +93,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         """
         results = []
         for m, m_v in metric_value.items():
-            result = super().multiclass_summary(m_v)
+            result = super().summary(m_v)
             results.append(
                 ResultTable(
                     data=result.results[0].data,
