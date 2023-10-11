@@ -108,8 +108,8 @@ class ModelsPerformanceComparison(ClassifierPerformance):
             acc_roc_auc_dict = {}
             acc_roc_auc_dict["Metric"] = metric_name
             for m, m_v in metric_value.items():
-                acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m][metric_name]
-                acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m][metric_name]
+                acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m]["accuracy"]
+                acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m]["roc_auc"]
             acc_roc_auc_table.append(acc_roc_auc_dict)
         results.append(
             ResultTable(
