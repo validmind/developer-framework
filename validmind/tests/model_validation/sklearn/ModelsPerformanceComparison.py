@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from numpy import unique
 from sklearn import metrics
 
 from validmind.errors import SkipTestError
@@ -72,24 +73,50 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         This summary varies depending if we're evaluating a binary or multi-class model
         """
         results = []
-        for m, m_v in metric_value.items():
-            result = super().summary(m_v)
-            results.append(
-                ResultTable(
-                    data=result.results[0].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[0].metadata.title}: {m}"
-                    ),
-                )
+        prf_table = []
+        classes = {str(i) for i in unique(self.y_true())}
+
+        for class_name in classes:
+            prf_dict = {}
+            prf_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                prf_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                prf_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                prf_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(prf_dict)
+
+        avg_metrics = ["weighted avg", "macro avg"]
+        for class_name in avg_metrics:
+            avg_dict = {}
+            avg_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                avg_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                avg_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                avg_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(avg_dict)
+        results.append(
+            ResultTable(
+                data=prf_table,
+                metadata=ResultTableMetadata(
+                    title="Precision, Recall, and F1 Comparison"
+                ),
             )
-            results.append(
-                ResultTable(
-                    data=result.results[1].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[1].metadata.title}: {m}"
-                    ),
-                )
+        )
+
+        acc_roc_auc_table = []
+        for metric_name in ["accuracy", "roc_auc"]:
+            acc_roc_auc_dict = {}
+            acc_roc_auc_dict["Metric"] = metric_name
+            for m, m_v in metric_value.items():
+                acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m][metric_name]
+                acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m][metric_name]
+            acc_roc_auc_table.append(acc_roc_auc_dict)
+        results.append(
+            ResultTable(
+                data=acc_roc_auc_table,
+                metadata=ResultTableMetadata(title="Accuracy and ROC AUC Comparison"),
             )
+        )
         return ResultSummary(results=results)
 
     def run(self):
