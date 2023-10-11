@@ -15,33 +15,38 @@ logger = get_logger(__name__)
 @dataclass
 class FeatureImportanceAndSignificance(Metric):
     """
-    **Purpose**: The 'FeatureImportanceAndSignificance' test in the given script aims to calculate the importance and
-    statistical significance of features within the model's context. It achieves this by comparing the p-values from a
-    regression model and the feature importances from a decision tree model. This test aids in feature selection during
-    the model development process by identifying the most significant variables.
+    Evaluates and visualizes the statistical significance and feature importance using regression and decision tree
+    models.
 
-    **Test Mechanism**: During this test, an initial comparison is made between the p-values from a regression model
-    and the importance of features from a decision tree model. Both the p-values and feature importances are then
-    normalized to ensure uniform comparison. The 'p_threshold' parameter is used to determine what p-value is
-    considered statistically significant. If 'significant_only' parameter is true, features with p-values below the
-    threshold will be included in the final output. The output includes interactive plots displaying Normalized
-    p-values and the corresponding Normalized Feature Importance. Errors are thrown if two models aren't provided (one
-    regression and one decision tree).
+    **Purpose**: The 'FeatureImportanceAndSignificance' test evaluates the statistical significance and the importance
+    of features in the context of the machine learning model. By comparing the p-values from a regression model and the
+    feature importances from a decision tree model, this test aids in determining the most significant variables from a
+    statistical and a machine learning perspective, assisting in feature selection during the model development process.
 
-    **Signs of High Risk**: High risk or warning signs in the context of this test might include very high or very low
-    p-values that stand out, suggesting a feature might not be meaningful. The risk may also exist if many unimportant
-    variables (with low feature importance) have significant p-values, which might indicate that the model is possibly
-    overfitted.
+    **Test Mechanism**: The test first compares the p-values from a regression model and the feature importances from a
+    decision tree model. These values are normalized to ensure a uniform comparison. The 'p_threshold' parameter is
+    used to determine what p-value is considered statistically significant and if the 'significant_only' parameter is
+    true, only features with p-values below this threshold are included in the final output. The output from this test
+    includes an interactive visualization displaying normalized p-values and the associated feature importances. The
+    test throws an error if it does not receive both a regression model and a decision tree model.
 
-    **Strengths**: It is an excellent test for feature selection mechanisms as it combines two perspectives:
-    statistical significance through p-values and feature importance using a machine learning model (decision tree).
-    Additionally, it includes an interactive visualization, facilitating comprehension of the results easily.
+    **Signs of High Risk**:
+    - Exceptionally high or low p-values, which suggest that a feature may not be significant or meaningful in the
+    context of the model.
+    - If many variables with small feature importance values have significant p-values, this could indicate that the
+    model might be overfitting.
 
-    **Limitations**: This test only accepts two models - a regression model and a decision tree. Therefore, its
-    application may be limited if other model types are used. Furthermore, the test might not account for potential
-    correlative or causative relationships between the input features, which potentially can lead to inaccurate
-    importance and significance readings. Lastly, it heavily relies on the p-value as a cut-off for feature
-    significance, which critics argue can be arbitrary and might not reflect the true significance of the feature.
+    **Strengths**:
+    - Combines two perspectives statistical significance (p-values) and feature importance (decision tree model),
+    making it a robust feature selection test.
+    - Provides an interactive visualization making it easy to interpret and understand the results.
+
+    **Limitations**:
+    - The test only works with a regression model and a decision tree model which may limit its applicability.
+    - The test does not take into account potential correlations or causative relationships between features which may
+    lead to misinterpretations of significance and importance.
+    - Over-reliance on the p-value as a cut-off for feature significance can be seen as arbitrary and may not truly
+    reflect the real-world importance of the feature.
     """
 
     name = "feature_importance_and_significance"

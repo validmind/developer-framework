@@ -32,6 +32,9 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="function" href="#multiclass_roc_auc_score">multiclass_roc_auc_score</a>
+            </li>
+            <li>
                     <a class="class" href="#TrainingTestDegradation">TrainingTestDegradation</a>
                             <ul class="memberlist">
                         <li>
@@ -68,6 +71,19 @@
                 
                 
             </section>
+                <section id="multiclass_roc_auc_score">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">multiclass_roc_auc_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">y_test</span>, </span><span class="param"><span class="n">y_pred</span>, </span><span class="param"><span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#multiclass_roc_auc_score"></a>
+    
+    
+
+                </section>
                 <section id="TrainingTestDegradation">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -79,7 +95,9 @@
     </div>
     <a class="headerlink" href="#TrainingTestDegradation"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
+            <div class="docstring"><p>Tests if model performance degradation between training and test datasets exceeds a predefined threshold.</p>
+
+<p><strong>Purpose</strong>: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
 between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to
 check the model's ability to generalize from its training data to unseen test data. It assesses key classification
 metric scores such as accuracy, precision, recall and f1 score, to verify the model's robustness and reliability.</p>
@@ -90,35 +108,34 @@ between the training score and test score divided by the training score. The tes
 degradation for each metric is less than the preset maximum threshold of 10%. The results are summarized in a table
 showing each metric's train score, test score, degradation percentage, and pass/fail status.</p>
 
-<p><strong>Signs of High Risk</strong>: High risk or failure in the model's performance related to this test can be indicated by
-one or more of the following:</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<ol>
+<ul>
 <li>A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.</li>
 <li>A high difference or gap between the metric scores on the training and the test datasets.</li>
 <li>The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.</li>
-</ol>
+</ul>
 
 <p><strong>Strengths</strong>:</p>
 
-<ol>
+<ul>
 <li>This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for
 predicting its practical real-world performance.</li>
 <li>By evaluating multiple metrics, it takes into account different facets of model performance and enables a more
 holistic evaluation.</li>
 <li>The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for
 different scenarios.</li>
-</ol>
+</ul>
 
 <p><strong>Limitations</strong>:</p>
 
-<ol>
-<li>The test compares raw performance on training and test data, but does not factor in the nature of the data.
-Areas with less representation in the training set, for instance, might still perform poorly on unseen data.</li>
+<ul>
+<li>The test compares raw performance on training and test data, but does not factor in the nature of the data. Areas
+with less representation in the training set, for instance, might still perform poorly on unseen data.</li>
 <li>It requires good coverage and balance in the test and training datasets to produce reliable results, which may
 not always be available.</li>
 <li>The test is currently only designed for classification tasks.</li>
-</ol>
+</ul>
 </div>
 
 

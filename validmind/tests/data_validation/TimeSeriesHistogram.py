@@ -9,38 +9,41 @@ from validmind.vm_models import Figure, Metric
 
 class TimeSeriesHistogram(Metric):
     """
-    **Purpose**: This test conducts a histogram analysis on time series data. The goal is to evaluate the distribution
-    of values in the dataset over a given time period, typically for regression tasks. Internet traffic, stock prices,
-    weather data etc. could be time series data. Histograms provide insights into the data’s underlying probability
-    distribution, skewness, peakness(kurtosis) etc.
+    Visualizes distribution of time-series data using histograms and Kernel Density Estimation (KDE) lines.
 
-    **Test Mechanism**: The test requires a dataset column that must have a datetime type index. It iterates over each
-    column in the provided dataset and generates a histogram using Seaborn's histplot function. If the dataset contains
-    more than one time-series (i.e., more than one column with datetime type index), a separate histogram will be
-    plotted for each. Additionally, a kernel density estimate (KDE) line is drawn for each histogram to indicate the
-    data's underlying probability distribution. The x and y-axis labels are hidden to only focus on the data
-    distribution.
+    **Purpose**: The purpose of this metric is to perform a histogram analysis on time-series data. It primarily
+    assesses the distribution of values within a dataset over a period of time, typically used for regression tasks.
+    The types of data that this metric can be applicable to are diverse, ranging from internet traffic and stock prices
+    to weather data. This analysis provides valuable insights into the probability distribution, skewness, and peakness
+    (kurtosis) underlying the data.
+
+    **Test Mechanism**: This test operates on a specific column within the dataset that is required to have a datetime
+    type index. It goes through each column in the given dataset, creating a histogram with Seaborn's histplot
+    function. In cases where the dataset includes more than one time-series (i.e., more than one column with a datetime
+    type index), a distinct histogram is plotted for each series. Additionally, a kernel density estimate (KDE) line is
+    drawn for each histogram, providing a visualization of the data's underlying probability distribution. The x and
+    y-axis labels are purposely hidden to concentrate solely on the data distribution.
 
     **Signs of High Risk**:
-    - The dataset does not contain a column with a datetime type index.
-    - The specified columns do not exist in the dataset.
-    - The distribution of data in the histogram exhibits high skewness or kurtosis, which might induce biases in the
-    model.
-    - Presence of outliers that are far from the main data distribution.
+    - The dataset lacks a column with a datetime type index.
+    - The specified columns do not exist within the dataset.
+    - The data distribution within the histogram demonstrates high degrees of skewness or kurtosis, which could bias
+    the model.
+    - Outliers that differ significantly from the primary data distribution are present.
 
     **Strengths**:
-    - Provides a visual diagnostic tool, which is a good starting point to understand the overall behavior and
-    distribution trends of the dataset.
-    - Works well for both single and multiple time series data analysis.
-    - The Kernel Density Estimation (KDE) line offers a smooth estimate of the overall trend in data distribution.
+    - It serves as a visual diagnostic tool, offering an ideal starting point for understanding the overall behavior
+    and distribution trends within the dataset.
+    - It is effective for both single and multiple time-series data analysis.
+    - The Kernel Density Estimation (KDE) line provides a smooth estimate of the overall trend in data distribution.
 
     **Limitations**:
-    - It only provides a high-level overview of data distribution and does not provide specific numeric measures of
-    skewness, kurtosis, etc.
-    - It doesn’t show the precise data values and the actual data is grouped into bins, hence some detail is inherently
-    lost (precision vs. general overview trade-off).
-    - Can't handle non-numeric data columns.
-    - The shape of the histogram can be sensitive to the number of bins used.
+    - The metric only presents a high-level view of data distribution and does not offer specific numeric measures such
+    as skewness or kurtosis.
+    - The histogram does not display precise data values; due to the data grouping into bins, some detail is inevitably
+    lost, marking a trade-off between precision and general overview.
+    - The histogram cannot handle non-numeric data columns.
+    - The histogram's shape may be sensitive to the number of bins used.
     """
 
     name = "time_series_histogram"

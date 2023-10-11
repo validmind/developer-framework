@@ -79,30 +79,48 @@
     </div>
     <a class="headerlink" href="#ModelMetadata"></a>
     
-            <div class="docstring"><p><strong>Purpose:</strong> This test is designed to collect and summarize important metadata related to a particular machine
-learning model. Such metadata includes the model's architecture (modeling technique), the version and type of
-modeling framework used, and the programming language the model is written in.</p>
+            <div class="docstring"><p>Extracts and summarizes critical metadata from a machine learning model instance for comprehensive analysis.</p>
 
-<p><strong>Test Mechanism:</strong> The mechanism of this test consists of extracting information from the model instance. It tries
-to extract the model information such as the modeling technique used, the modeling framework version, and the
-programming language. It decorates this information into a data frame and returns a summary of the results.</p>
+<p><strong>Purpose:</strong>
+This test is designed to collect and summarize important metadata related to a particular machine learning model.
+Such metadata includes the model's architecture (modeling technique), the version and type of modeling framework
+used, and the programming language the model is written in.</p>
 
-<p><strong>Signs of High Risk:</strong> High risk could be determined by a lack of documentation or inscrutable metadata for the
-model. For instance, unidentifiable language, outdated or unsupported versions of modeling frameworks, or
-undisclosed model architectures reflect risky situations, as they could hinder future reproducibility, support, and
-debugging of the model.</p>
+<p><strong>Test Mechanism:</strong>
+The mechanism of this test consists of extracting information from the model instance. It tries to extract the
+model information such as the modeling technique used, the modeling framework version, and the programming
+language. It decorates this information into a data frame and returns a summary of the results.</p>
 
-<p><strong>Strengths:</strong> The strengths of this test lie in the increased transparency and understanding it brings regarding
-the model's setup. Knowing the model's architecture, the specific modeling framework version used, and the language
-involved, provides multiple benefits: supports better error understanding and debugging, facilitates model reuse,
-aids compliance of software policies, and assists in planning for model obsolescence due to evolving or
-discontinuing software and dependencies.</p>
+<p><strong>Signs of High Risk:</strong></p>
 
-<p><strong>Limitations:</strong> Notably, this test is largely dependent on the compliance and correctness of information provided
-by the model or the model developer. If the model's built-in methods for describing its architecture, framework or
-language are incorrect or lack necessary information, this test will hold limitations. Moreover, it is not designed
-to directly evaluate the performance or accuracy of the model, rather it provides supplementary information which
-aids in comprehensive analysis.</p>
+<ul>
+<li>High risk could be determined by a lack of documentation or inscrutable metadata for the model.</li>
+<li>Unidentifiable language, outdated or unsupported versions of modeling frameworks, or undisclosed model
+architectures reflect risky situations, as they could hinder future reproducibility, support, and debugging of the
+model.</li>
+</ul>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>The strengths of this test lie in the increased transparency and understanding it brings regarding the model's
+setup.</li>
+<li>Knowing the model's architecture, the specific modeling framework version used, and the language involved,
+provides multiple benefits: supports better error understanding and debugging, facilitates model reuse, aids
+compliance of software policies, and assists in planning for model obsolescence due to evolving or discontinuing
+software and dependencies.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>Notably, this test is largely dependent on the compliance and correctness of information provided by the model or
+the model developer.</li>
+<li>If the model's built-in methods for describing its architecture, framework or language are incorrect or lack
+necessary information, this test will hold limitations.</li>
+<li>Moreover, it is not designed to directly evaluate the performance or accuracy of the model, rather it provides
+supplementary information which aids in comprehensive analysis.</li>
+</ul>
 </div>
 
 

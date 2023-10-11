@@ -79,34 +79,51 @@
     </div>
     <a class="headerlink" href="#RegressionCoeffsPlot"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The Regression Coefficients with Confidence Intervals plot and metric is used to gain an understanding
-of the impacts of predictor variables on the response variable under examination. It enables the visualization and
-analysis of the regression model by displaying the set of coefficients derived from the model and their associated
-95% confidence intervals. This provides insight into the variability and uncertainty associated with the model's
-estimates.</p>
+            <div class="docstring"><p>Visualizes regression coefficients with 95% confidence intervals to assess predictor variables' impact on response
+variable.</p>
 
-<p><strong>Test Mechanism</strong>: The test extracts the estimated coefficients and their associated standard errors from the
-regression model. Then, it calculates and draws confidence intervals using a 95% confidence level (standard
-convention in statistics), which provides an indication of the range where the true value can be expected to fall
-in 95% of the samples. For instance, if the same regression were run multiple times with samples taken from the
-same population. The process then visualizes these as a bar plot, with predictor variables on the x-axis and their
-corresponding coefficients on the y-axis, and the calculated upper and lower margins of the confidence intervals
-being illustrated as error bars.</p>
+<p><strong>Purpose</strong>: The Regression Coefficients with Confidence Intervals plot and metric aims to understand the impact of
+predictor variables on the response variable in question. This understanding is achieved via the visualization and
+analysis of the regression model by presenting the coefficients derived from the model along with their associated
+95% confidence intervals. By doing so, it offers insights into the variability and uncertainty associated with the
+model's estimates.</p>
 
-<p><strong>Signs of High Risk</strong>: If the zero value (indicating no effect) is within the calculated confidence interval, it
-suggests that that particular feature/coefficient may not significantly contribute to prediction in the model. If
-multiple coefficients demonstrate this behavior, the overall reliability of the model could be questioned.
-Additionally, very wide confidence intervals could suggest high uncertainty in the associated coefficient estimates.</p>
+<p><strong>Test Mechanism</strong>: The test begins by extracting the estimated coefficients and their related standard errors from
+the regression model under test. It then calculates and draws confidence intervals based on a 95% confidence level
+(a standard convention in statistics). These intervals provide a range wherein the true value can be expected to
+fall 95% of the time if the same regression were re-run multiple times with samples drawn from the same population.
+This information is then visualized as a bar plot, with the predictor variables and their coefficients on the
+x-axis and y-axis respectively and the confidence intervals represented as error bars.</p>
 
-<p><strong>Strengths</strong>: This metric provides a straightforward and easily understood visualization of the significance and
-impact of the individual predictor variables in a regression model. The inclusion of confidence intervals allows
-for an examination of the uncertainty around each coefficient estimate.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: This test is reliant on certain assumptions about the data: it assumes normality of the residuals
-and independence of observations, which might not be the case in all types of datasets. Additionally, it does not
-take into account multi-collinearity (correlation between predictor variables), which can distort the model and
-make interpretation of the coefficients difficult. Finally, this test is only applicable to regression tasks and
-tabular data sets, and is not suitable for other types of machine learning tasks or data structures.</p>
+<ul>
+<li>If the calculated confidence interval contains the zero value, it could mean the feature/coefficient in question
+doesn't significantly contribute to prediction in the model.</li>
+<li>If there are multiple coefficients exhibiting this behavior, it might raise concerns about overall model
+reliability.</li>
+<li>Very wide confidence intervals might indicate high uncertainty in the associated coefficient estimates.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This metric offers a simple and easily comprehendible visualization of the significance and impact of individual
+predictor variables in a regression model.</li>
+<li>By including confidence intervals, it enables an observer to evaluate the uncertainty around each coefficient
+estimate.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test is dependent on a few assumptions about the data, namely normality of residuals and independence of
+observations, which may not always be true for all types of datasets.</li>
+<li>The test does not consider multi-collinearity (correlation among predictor variables), which can potentially
+distort the model and make interpretation of coefficients challenging.</li>
+<li>The test's application is limited to regression tasks and tabular datasets and is not suitable for other types of
+machine learning assignments or data structures.</li>
+</ul>
 </div>
 
 

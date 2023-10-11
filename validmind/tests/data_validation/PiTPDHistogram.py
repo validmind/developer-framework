@@ -12,34 +12,37 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class PiTPDHistogram(Metric):
     """
-    **Purpose**: The PiTPDHistogram metric is used to compute the Probability of Default (PD) for each instance in both
-    the training and test datasets in order to evaluate the model's performance in credit risk estimation. The PD is
-    examined at a specific point in time (PiT). The resulting distributions for the actual and predicted default
-    classes are then visualized in a histogram, making it easier to understand the model's prediction accuracy.
+    Assesses credit risk prediction accuracy of a model by comparing actual and predicted defaults at a chosen point in
+    time.
 
-    **Test Mechanism**: This metric sorts instances into either observed (actual) or predicted default classes, with a
-    default being represented by '1' and non-default as '0'. Using these classes, the probability of default is
-    computed for each instance and plotted in a histogram. Two histograms are generated: one for the observed defaults
-    and another one for the predicted defaults. If the distribution of predicted defaults closely matches the
-    distribution of observed defaults, this would indicate good model performance.
+    **Purpose**: The PiTPDHistogram metric uses Probability of Default (PD) calculations for individual instances
+    within both training and test data sets in order to assess a model's proficiency in predicting credit risk. A
+    distinctive point in time (PiT) is chosen for these PD calculations, and the results for both actual and predicted
+    defaults are presented in histogram form. This visualization is aimed at simplifying the understanding of model
+    prediction accuracy.
 
-    **Signs of High Risk**: Discrepancies between the two histograms (observed and predicted defaults) would suggest
-    model risk. This may include differences in the shapes of the histograms, divergences in the spread of default
-    probabilities, or significant mismatches in the peak default probabilities. These disparities signal that the model
-    may not be accurately predicting defaults, which could pose a high risk especially in the field of credit risk
-    analysis.
+    **Test Mechanism**: Instances are categorized into two groups - those for actual defaults and those for predicted
+    defaults, with '1' indicating a default and '0' indicating non-default. PD is calculated for each instance, and
+    based on these calculations, two histograms are created, one for actual defaults and one for predicted defaults. If
+    the predicted default frequency matches that of the actual defaults, the model's performance is deemed effective.
 
-    **Strengths**: This metric excels in its visual interpretation of model performance. By comparing two histograms
-    side by side, it allows for a convenient comparison between the observed and predicted defaults. This visualization
-    can reveal model biases and illuminate areas where the model's performance may fall short, which might not be as
-    evident in purely numerical evaluations or more complex visualization measures.
+    **Signs of High Risk**:
+    - Discrepancies between the actual and predicted default histograms may suggest model inefficiency.
+    - Variations in histogram shapes or divergences in default probability distributions could be concerning.
+    - Significant mismatches in peak default probabilities could also be red flags.
 
-    **Limitations**: Despite its strengths, the PiTPDHistogram metric is largely interpretive and subjective.
-    Determining risk based on visual discrepancies requires a certain level of human judgement and may vary between
-    different analysts. If used solely, this metric might overlook other nuances in model performance that are better
-    captured by more quantitative or diversified metrics. Furthermore, the information provided is limited to a
-    specific point in time, which might not fully reflect the model's performance over different periods or under
-    changing conditions.
+    **Strengths**:
+    - Provides a visual comparison between actual and predicted defaults, aiding in the understanding of model
+    performance.
+    - Helps reveal model bias and areas where the model's performance could be improved.
+    - Easier to understand than purely numerical evaluations or other complicated visualization measures.
+
+    **Limitations**:
+    - The metric remains largely interpretive and subjective, as the extent and relevance of visual discrepancies often
+    need to be evaluated manually, leading to potentially inconsistent results across different analyses.
+    - This metric alone may not capture all the complexities and nuances of model performance.
+    - The information provided is limited to a specific point in time, potentially neglecting the model's performance
+    under various circumstances or different time periods.
     """
 
     name = "pit_pd_histogram"

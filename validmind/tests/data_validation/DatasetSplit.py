@@ -5,6 +5,9 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 class DatasetSplit(Metric):
     """
+    Evaluates and visualizes the distribution proportions among training, testing, and validation datasets of an ML
+    model.
+
     **Purpose:**
     The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
     validation datasets, if available, within a given machine learning model. The main purpose is to assess whether the
@@ -18,24 +21,23 @@ class DatasetSplit(Metric):
     proportions. Absolute size and proportion of the total dataset size are displayed for each individual dataset.
 
     **Signs of High Risk:**
-    High risk signals include:
-    1. A very small training dataset, which may result in the model not learning enough from the data.
-    2. A very large training dataset and a small test dataset, which may lead to model overfitting and poor
+    - A very small training dataset, which may result in the model not learning enough from the data.
+    - A very large training dataset and a small test dataset, which may lead to model overfitting and poor
     generalization to unseen data.
-    3. A small or non-existent validation dataset, which might complicate the model's performance assessment.
+    - A small or non-existent validation dataset, which might complicate the model's performance assessment.
 
     **Strengths:**
-    1. The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
+    - The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
     highlight any potential imbalance in dataset splits quickly.
-    2. It covers a wide range of task types including classification, regression, and text-related tasks.
-    3. The metric is not tied to any specific data type and is applicable to tabular data, time series data, or text
+    - It covers a wide range of task types including classification, regression, and text-related tasks.
+    - The metric is not tied to any specific data type and is applicable to tabular data, time series data, or text
     data.
 
     **Limitations:**
-    1. The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,
+    - The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,
     just the size and proportion.
-    2. The test does not give any recommendations or adjustments for imbalanced datasets.
-    3. Potential lack of compatibility with more complex modes of data splitting (for example, stratified or time-based
+    - The test does not give any recommendations or adjustments for imbalanced datasets.
+    - Potential lack of compatibility with more complex modes of data splitting (for example, stratified or time-based
     splits) could limit the applicability of this test.
     """
 

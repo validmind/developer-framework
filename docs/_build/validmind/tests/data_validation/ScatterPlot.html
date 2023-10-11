@@ -72,44 +72,53 @@
     </div>
     <a class="headerlink" href="#ScatterPlot"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The purpose of this metric, ScatterPlot, is to provide a visual analysis of the input dataset by
-generating a scatter plot matrix. This scatter plot matrix includes all columns (or features) in the dataset and is
-intended to reveal relationships, patterns, or outliers among different features. This visual representation can
-give both qualitative and quantitative insights into the multidimensional relationships in the dataset, which can
-be useful in understanding the suitability and effectiveness of selected features for model training.</p>
+            <div class="docstring"><p>Creates a scatter plot matrix to visually analyze feature relationships, patterns, and outliers in a dataset.</p>
 
-<p><strong>Test Mechanism</strong>: The ScatterPlot class utilizes the seaborn library to generate the scatter plot matrix. It
-first retrieves all columns from the input dataset, ensures that the specified columns exist in the dataset, and
-then creates a pairplot for these columns. It uses the kernel density estimate (kde) for a smoother, univariate
-distribution along the diagonal of the grid. The final plot is stored in an array of Figure objects, each
-encapsulating matplotlib figure instance for storage and later usage.</p>
+<p><strong>Purpose</strong>: The ScatterPlot metric is designed to offer a visual analysis of a given dataset by constructing a
+scatter plot matrix encapsulating all the dataset's features (or columns). Its primary function lies in unearthing
+relationships, patterns, or outliers across different features, thus providing both quantitative and qualitative
+insights into the multidimensional relationships within the dataset. This visual assessment aids in understanding
+the efficacy of the chosen features for model training and their overall suitability.</p>
 
-<p><strong>Signs of High Risk</strong>: Signs of potential risk could be the appearance of non-linear or random patterns across
-different feature pairs indicating complex relationships not suitable for linear assumptions. Additionally, showing
-no clear patterns or clusters might indicate weak or non-existent correlations among features, posing a challenge
-for certain model types. Visualization of outliers may also be a sign of risk as outliers can negatively impact
-model performance.</p>
+<p><strong>Test Mechanism</strong>: Using the seaborn library, the ScatterPlot class creates the scatter plot matrix. The process
+includes retrieving all columns from the dataset, verifying their existence, and subsequently generating a pairplot
+for these columns. A kernel density estimate (kde) is utilized to present a smoother, univariate distribution along
+the grid's diagonal. The final plot is housed in an array of Figure objects, each wrapping a matplotlib figure
+instance for storage and future usage.</p>
 
-<p><strong>Strengths</strong>: The utilization of a scatter plot matrix for data analysis provides various strengths:</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<ol>
-<li>It provides visual insight into the multidimensional relationships among multiple features.</li>
-<li>It helps to identify trends, correlations, and outliers that could impact model performance.</li>
-<li>As a diagnostic tool, it can suggest whether certain assumptions taken during model creation (like linearity)
-are valid.</li>
-<li>It is versatile and can be used for both classification and regression type tasks.</li>
-</ol>
+<ul>
+<li>The emergence of non-linear or random patterns across different feature pairs. This may suggest intricate
+relationships unfit for linear presumptions.</li>
+<li>A lack of clear patterns or clusters which might point to weak or non-existent correlations among features, thus
+creating a problem for certain model types.</li>
+<li>The occurrence of outliers as visual outliers in your data can adversely influence the model's performance.</li>
+</ul>
 
-<p><strong>Limitations</strong>: Scatter plot matrices, however, also present a few limitations:</p>
+<p><strong>Strengths</strong>:</p>
 
-<ol>
-<li>They can become highly cluttered and difficult to interpret as the number of features (columns) increases.</li>
-<li>They primarily reveal pairwise relationships and might not expose complex interactions involving more than two
-features.</li>
-<li>Since it is a visual tool, quantitative analysis might not be precise.</li>
-<li>Outliers, if not clearly visible, can be overlooked, affecting model performance.</li>
-<li>It assumes that the dataset fits into memory, which might not be the case for extremely large datasets.</li>
-</ol>
+<ul>
+<li>It offers insight into the multidimensional relationships among multiple features.</li>
+<li>It assists in identifying trends, correlations, and outliers which could potentially affect the model's
+performance.</li>
+<li>As a diagnostic tool, it can validate whether certain assumptions made during the model-creation process, such as
+linearity, hold true.</li>
+<li>The tool's versatility extends to its application for both regression and classification tasks.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Scatter plot matrices may become cluttered and hard to decipher as the number of features escalates, resulting in
+complexity and confusion.</li>
+<li>While extremely proficient in revealing pairwise relationships, these matrices may fail to illuminate complex
+interactions that involve three or more features.</li>
+<li>These matrices are primarily visual tools, so the precision of quantitative analysis may be compromised.</li>
+<li>If not clearly visible, outliers can be missed, which could negatively affect model performance.</li>
+<li>It assumes that the dataset can fit into the computer's memory, which might not always be valid particularly for
+extremely large datasets.</li>
+</ul>
 </div>
 
 

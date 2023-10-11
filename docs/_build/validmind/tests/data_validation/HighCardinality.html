@@ -79,36 +79,43 @@
     </div>
     <a class="headerlink" href="#HighCardinality"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The “High Cardinality” test functions to assess and evaluate the number of unique values present in
-the categorical columns of a dataset. Cardinality represents the measure of distinct elements residing in a set. In
-context of this test, high cardinality implies presence of a large quantity of unique, non-repetitive values in the
-dataset.</p>
+            <div class="docstring"><p>Assesses the number of unique values in categorical columns to detect high cardinality and potential overfitting.</p>
 
-<p><strong>Test Mechanism</strong>: This test begins by inferring the type of the dataset and initializing numeric threshold based
-on the test parameters. If the “threshold_type” is set to “percent”, it calculates the numeric threshold as the
-product of “percent_threshold” and the count of rows in the dataset. Subsequently, the test commences iteration
-through each column in the dataset. It limits the evaluation to those columns which are categorized as
-"Categorical". For each categorical column, the number of distinct values (n_distinct) and the percentage of
-distinct values (p_distinct) are computed. The test asserts success if n_distinct is less than the calculated
-numeric threshold. The summary method compiles results in tabulated form, with details for each column including
-column name, number of distinct values, percentage of distinct values, and pass/fail status.</p>
+<p><strong>Purpose</strong>: The “High Cardinality” test is used to evaluate the number of unique values present in the categorical
+columns of a dataset. In this context, high cardinality implies the presence of a large number of unique,
+non-repetitive values in the dataset.</p>
 
-<p><strong>Signs of High Risk</strong>: High risk or failure in model performance may be indicated by a large number of distinct
-values (high cardinality) in one or more categorical columns. If any column fails the test (n_distinct &gt;=
-num_threshold), it is a sign of high risk.</p>
+<p><strong>Test Mechanism</strong>: The test first infers the dataset's type and then calculates an initial numeric threshold based
+on the test parameters. It only considers columns classified as "Categorical". For each of these columns, the
+number of distinct values (n_distinct) and the percentage of distinct values (p_distinct) are calculated. The test
+will pass if n_distinct is less than the calculated numeric threshold. Lastly, the results, which include details
+such as column name, number of distinct values, and pass/fail status, are compiled into a table.</p>
 
-<p><strong>Strengths</strong>: The High Cardinality test is valuable in detecting overfitting risks and potential noise. High
-cardinality in categorical variables may trigger overfitting in machine learning models as the models can
-excessively adapt to the training data. It also helps in identifying potential outliers and inconsistencies,
-therefore aids in enhancing the data quality. It can be applied to both classification and regression task types,
-which lends versatility to the test.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: Despite its numerous benefits, the High Cardinality test has certain limitations. It is solely
-applicable to "Categorical" data types, and not suitable for numerical or continuous features, limiting its scope.
-Furthermore, the test does not inherently assert the relevance or importance of unique values in categorical
-features, thus critical data points may be overlooked. The threshold (both number and percent) used for the test is
-static and likely to be non-optimal for diverse datasets and applications, it might benefit from additional
-mechanisms to adapt and fine-tune this dynamic.</p>
+<ul>
+<li>A large number of distinct values (high cardinality) in one or more categorical columns implies a high risk.</li>
+<li>A column failing the test (n_distinct &gt;= num_threshold) is another indicator of high risk.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The High Cardinality test is effective in early detection of potential overfitting and unwanted noise.</li>
+<li>It aids in identifying potential outliers and inconsistencies, thereby improving data quality.</li>
+<li>The test can be applied to both, classification and regression task types, demonstrating its versatility.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test is restricted to only "Categorical" data types and is thus not suitable for numerical or continuous
+features, limiting its scope.</li>
+<li>The test does not consider the relevance or importance of unique values in categorical features, potentially
+causing it to overlook critical data points.</li>
+<li>The threshold (both number and percent) used for the test is static and may not be optimal for diverse datasets
+and varied applications. Further mechanisms to adjust and refine this threshold could enhance its effectiveness.</li>
+</ul>
 </div>
 
 

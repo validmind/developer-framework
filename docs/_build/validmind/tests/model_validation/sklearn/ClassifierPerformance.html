@@ -41,12 +41,6 @@
                                 <a class="function" href="#ClassifierPerformance.__init__">ClassifierPerformance</a>
                         </li>
                         <li>
-                                <a class="function" href="#ClassifierPerformance.binary_summary">binary_summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ClassifierPerformance.multiclass_summary">multiclass_summary</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ClassifierPerformance.summary">summary</a>
                         </li>
                         <li>
@@ -107,32 +101,48 @@
     </div>
     <a class="headerlink" href="#ClassifierPerformance"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The provided script assesses the performance of Machine Learning classification models. The
-performance is calculated by determining the precision, recall, F1-Score, accuracy, and the ROC AUC (Receiver
-operating characteristic - Area under the curve) scores. The test accepts both binary and multiclass models.</p>
+            <div class="docstring"><p>Evaluates performance of binary or multiclass classification models using precision, recall, F1-Score, accuracy,
+and ROC AUC scores.</p>
 
-<p><strong>Test Mechanism</strong>: The script generates a report that includes precision, recall, F1-Score, and accuracy using the
-<code>classification_report</code> method from the scikit-learn's metrics module. For multiclass models, weighted and macro
-averages for these scores are also computed. Additionally, the script calculates and includes the ROC AUC scores
-for the model using a custom method, <code><a href="#multiclass_roc_auc_score">multiclass_roc_auc_score</a></code>. The output of the test is a structured report that
-differs depending on whether the model is binary or multiclass.</p>
+<p><strong>Purpose</strong>: The supplied script is designed to evaluate the performance of Machine Learning classification models.
+It accomplishes this by computing precision, recall, F1-Score, and accuracy, as well as the ROC AUC (Receiver
+operating characteristic - Area under the curve) scores, thereby providing a comprehensive analytic view of the
+models' performance. The test is adaptable, handling binary and multiclass models equally effectively.</p>
 
-<p><strong>Signs of High Risk</strong>: Indicators of high risk or a failing model include low values for the metrics used -
-precision, recall, F1-Score, accuracy, and ROC AUC. An imbalanced precision and recall score can also indicate a
-high-risk model, as precision focuses on the correct prediction of the positive class, while recall focuses on the
-number of correctly identified actual positive cases. A low ROC AUC score, particularly when it is close to 0.5 or
-below, is a strong indicator of a failing model.</p>
+<p><strong>Test Mechanism</strong>: The script produces a report that includes precision, recall, F1-Score, and accuracy, by
+leveraging the <code>classification_report</code> from the scikit-learn's metrics module. For multiclass models, macro and
+weighted averages for these scores are also calculated. Additionally, the ROC AUC scores are calculated and
+included in the report using the script's unique <code><a href="#multiclass_roc_auc_score">multiclass_roc_auc_score</a></code> function. The outcome of the test
+(report format) differs based on whether the model is binary or multiclass.</p>
 
-<p><strong>Strengths</strong>: This metric excels in its versatility by being capable of handling both binary and multiclass
-models. It computes several commonly used performance metrics, providing a comprehensive view of the model's
-performance. Using ROC-AUC as a metric can help in identifying the best threshold for classification, especially
-when datasets are unbalanced.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: The test relies on labels being correctly identified for binary classification models, raising an
-exception if the positive class is not labeled as "1", which might not always be the case in practical
-applications. Furthermore, this script is designed only for classification models and cannot evaluate regression
-models. The calculated metrics might not be informative in situations where the test dataset is not representative
-of the data the model will encounter.</p>
+<ul>
+<li>Low values for precision, recall, F1-Score, accuracy, and ROC AUC, indicating poor performance.</li>
+<li>Imbalance in precision and recall scores. Precision highlights correct positive class predictions, while recall
+indicates the accurate identification of actual positive cases. Imbalance may indicate flawed model performance.</li>
+<li>A low ROC AUC score, especially scores close to 0.5 or lower, strongly suggests a failing model.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The script is versatile, capable of assessing both binary and multiclass models.</li>
+<li>It uses a variety of commonly employed performance metrics, offering a comprehensive view of a model's
+performance.</li>
+<li>The use of ROC-AUC as a metric aids in determining the most optimal threshold for classification, especially
+beneficial when evaluation datasets are unbalanced.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test assumes correctly identified labels for binary classification models and raises an exception if the
+positive class is not labeled as "1". However, this setup may not align with all practical applications.</li>
+<li>This script is specifically designed for classification models and is not suited to evaluate regression models.</li>
+<li>The metrics computed may provide limited insights in cases where the test dataset does not adequately represent
+the data the model will encounter in real-world scenarios.</li>
+</ul>
 </div>
 
 
@@ -148,49 +158,18 @@ of the data the model will encounter.</p>
     
 
                             </div>
-                            <div id="ClassifierPerformance.binary_summary" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">binary_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ClassifierPerformance.binary_summary"></a>
-    
-            <div class="docstring"><p>When building a binary classification summary we take the positive class
-metrics as the global metrics.</p>
-</div>
-
-
-                            </div>
-                            <div id="ClassifierPerformance.multiclass_summary" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">multiclass_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ClassifierPerformance.multiclass_summary"></a>
-    
-            <div class="docstring"><p>When building a multi-class summary we need to calculate weighted average,
-macro average and per class metrics.</p>
-</div>
-
-
-                            </div>
                             <div id="ClassifierPerformance.summary" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">list</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#ClassifierPerformance.summary"></a>
     
-            <div class="docstring"><p>This summary varies depending if we're evaluating a binary or multi-class model</p>
+            <div class="docstring"><p>When building a multi-class summary we need to calculate weighted average,
+macro average and per class metrics.</p>
 </div>
 
 

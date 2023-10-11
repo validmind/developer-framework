@@ -20,22 +20,36 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Robustness(ThresholdTest, AIPoweredTest):
     """
+    Assesses the robustness of prompts provided to a Large Language Model under varying conditions and contexts.
+
     **Purpose:**
-    The Robustness Integrity Assessment evaluates the resilience and reliability of prompts
-    provided to a Language Learning Model (LLM). The primary objective is to ensure that prompts
-    consistently produce accurate and desired outputs, even in diverse or challenging scenarios.
+    The Robustness test is meant to evaluate the resilience and reliability of prompts provided to a Language Learning
+    Model (LLM). The aim of this test is to guarantee that the prompts consistently generate accurate and the expected
+    outputs, despite being in diverse or challenging scenarios.
 
     **Test Mechanism:**
-    Prompts are subjected to various conditions, alterations, and contexts to check their stability
-    in eliciting consistent responses from the LLM. Factors such as different phrasings, inclusion
-    of potential distractors, and varied input complexities are introduced to test the robustness
-    of the prompt. By default, the test generates 10 inputs for the prompt but this can be adjusted
-    via the test parameters.
+    The Robustness test appraises prompts under various conditions, alterations, and contexts to ascertain their
+    stability in producing consistent responses from the LLM. Factors evaluated range from different phrasings,
+    inclusion of potential distracting elements, and various input complexities. By default, the test generates 10
+    inputs for a prompt but can be adjusted according to test parameters.
 
-    **Why Robustness Matters:**
-    A robust prompt ensures consistent performance and reduces the likelihood of unexpected or
-    off-tangent outputs. This consistency is vital for applications where predictability and
-    reliability of the LLM's response are paramount.
+    **Signs of High Risk:**
+    - If the output from the tests diverges extensively from the expected results, this indicates high risk.
+    - When the prompt doesn't give a consistent performance across various tests.
+    - A high risk is indicated when the prompt is susceptible to breaking, especially when the output is expected to be
+    of a specific type.
+
+    **Strengths:**
+    - The robustness test helps to ensure stable performance of the LLM prompts and lowers the chances of generating
+    unexpected or off-target outputs.
+    - This test is vital for applications where predictability and reliability of the LLM’s output are crucial.
+
+    **Limitations:**
+    - Currently, the test only supports single-variable prompts, which restricts its application to more complex models.
+    - When there are too many target classes (over 10), the test is skipped, which can leave potential vulnerabilities
+    unchecked in complex multi-class models.
+    - The test may not account for all potential conditions or alterations that could show up in practical use
+    scenarios.
     """
 
     category = "prompt_validation"

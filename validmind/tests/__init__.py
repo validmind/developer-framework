@@ -4,13 +4,18 @@
 
 import importlib
 from pathlib import Path
+from pprint import pformat
 from typing import Dict
 
 import pandas as pd
+from IPython.display import display
+from ipywidgets import HTML
+from markdown import markdown
 
 from ..errors import LoadTestError
+from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
-from ..utils import clean_docstring, format_dataframe, fuzzy_match
+from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
@@ -21,6 +26,7 @@ logger = get_logger(__name__)
 __all__ = [
     "data_validation",
     "model_validation",
+    "prompt_validation",
     "list_tests",
     "load_test",
     "describe_test",
@@ -36,17 +42,11 @@ __test_classes = None
 __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
-def _test_title(name):
-    title = f"{name[0].upper()}"
+def _test_description(test_class):
+    if len(test_class.__doc__.split("\n")) > 5:
+        return test_class.__doc__.strip().split("\n")[0] + "..."
 
-    for i in range(1, len(name)):
-        if name[i].isupper() and (
-            name[i - 1].islower() or (i + 1 < len(name) and name[i + 1].islower())
-        ):
-            title += " "
-        title += name[i]
-
-    return title
+    return test_class.__doc__
 
 
 def _load_tests(test_ids):
@@ -64,12 +64,8 @@ def _pretty_list_tests(tests):
     table = [
         {
             "Test Type": __test_classes[test_id].test_type,
-            "Name": _test_title(__test_classes[test_id].__name__),
-            "Description": clean_docstring(
-                __test_classes[test_id].description(__test_classes[test_id])
-            )
-            if hasattr(__test_classes[test_id], "description")
-            else "",
+            "Name": test_id_to_name(test_id),
+            "Description": _test_description(__test_classes[test_id]),
             "ID": test_id,
         }
         for test_id in tests
@@ -214,58 +210,46 @@ def load_test(test_id):  # noqa: C901
     return test
 
 
-def describe_test(test_name: str = None, test_id: str = None, raw: bool = False):
-    """Returns the test by test ID"""
-    matches = []
+def describe_test(test_id: str = None, raw: bool = False):
+    """Get or show details about the test
 
-    if test_name is not None:
-        # test_name can be passed as PascalCase or snake_case and test_ids are all
-        # PascalCase so we convert test_id and test_name to all lowercase without
-        # underscores to check the match.
-        test_name = test_name.lower().replace("_", "")
-        for test_id in list_tests(pretty=False):
-            test_id_lower = test_id.lower().replace("_", "")
-            if test_name == test_id_lower or test_id_lower.endswith(test_name):
-                matches.append(test_id)
-    else:
-        matches.append(test_id)
+    This function can be used to see test details including the test name, description,
+    required inputs and default params. It can also be used to get a dictionary of the
+    above information for programmatic use.
 
-    if len(matches) == 0:
-        print(f"No test found with name: {test_name}")
-        return
-    elif len(matches) > 1:
-        print(
-            f"Found multiple matches for test name: {', '.join(matches)}. Please specify a unique test name."
-        )
-        return
+    Args:
+        test_id (str, optional): The test ID. Defaults to None.
+        raw (bool, optional): If True, returns a dictionary with the test details.
+            Defaults to False.
+    """
+    test = load_test(test_id)
 
-    test_id = matches[0]
-
-    if __test_classes is None:
-        test = load_test(test_id)
-    else:
-        test = __test_classes[test_id]
-
-    test_details = {
+    details = {
         "ID": test_id,
-        "Name": _test_title(test.__name__),
-        "Description": clean_docstring(test.description(test))
-        if hasattr(test, "description")
-        else "",
+        "Name": test_id_to_name(test_id),
         "Test Type": test.test_type,
         "Required Inputs": test.required_inputs,
         "Params": test.default_params or {},
+        "Description": clean_docstring(test.__doc__),
     }
 
     if raw:
-        return test_details
+        return details
 
-    return format_dataframe(
-        pd.DataFrame(
-            {
-                "": [f"{key}:" for key in test_details.keys()],
-                " ": test_details.values(),
-            }
+    display(
+        HTML(
+            test_content_block_html.format(
+                title=f'{details["Name"]}',
+                description=markdown(details["Description"]),
+                required_inputs=", ".join(details["Required Inputs"] or ["None"]),
+                params_table="\n".join(
+                    [
+                        f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
+                        for param, value in details["Params"].items()
+                    ]
+                ),
+                table_display="table" if details["Params"] else "none",
+            )
         )
     )
 

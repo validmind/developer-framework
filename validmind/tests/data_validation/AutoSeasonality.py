@@ -12,47 +12,44 @@ logger = get_logger(__name__)
 
 class AutoSeasonality(Metric):
     """
+    Automatically identifies and quantifies optimal seasonality in time series data to improve forecasting model
+    performance.
+
     **Purpose:**
-    The AutoSeasonality metric is intended to automatically detect and determine the optimal seasonal order or period
-    for each variable in a time series dataset. The aim here is to quantify the inherent periodic pattern and
-    seasonality that recurs after fixed intervals of time in the dataset. This is especially crucial for
-    forecasting-based models, where understanding the seasonality component of the series can substantially enhance
-    prediction accuracy.
+    The AutoSeasonality metric's purpose is to automatically detect and identify the best seasonal order or period for
+    each variable in a time series dataset. This detection helps to quantify periodic patterns and seasonality that
+    reoccur at fixed intervals of time in the data. This is especially significant for forecasting-based models, where
+    understanding the seasonality component can drastically improve prediction accuracy.
 
     **Test Mechanism:**
-    The implementation uses the seasonal decomposition method from Statsmodels Python library, broken down into
-    'additive' model type for each variable within the defined range of 'min_period' and 'max_period'. The test applies
-    the seasonal decompose function to each seasonality period in the range and calculates the mean residual error for
-    each period. The seasonal period that minimizes these residual errors is selected as the 'Best Period'. The results
-    include the 'Best Period', along with the calculated residual errors and the determination of 'Seasonality' or 'No
-    Seasonality'.
+    This metric uses the seasonal decomposition method from the Statsmodels Python library. The function takes the
+    'additive' model type for each variable and applies it within the prescribed range of 'min_period' and
+    'max_period'. The function decomposes the seasonality for each period in the range and calculates the mean residual
+    error for each period. The seasonal period that results in the minimum residuals is marked as the 'Best Period'.
+    The test results include the 'Best Period', the calculated residual errors, and a determination of 'Seasonality' or
+    'No Seasonality'.
 
     **Signs of High Risk:**
-    The following factors may indicate high risk or failure in the model's performance:
-
-    - If the optimal seasonal period or 'Best Period' is consistently at the maximum or minimum limit of the provided
-    range for a majority of variables, this might signify that the specified range doesn't adequately capture the true
-    seasonality of the series.
-    - A high average 'Residual Error' for the 'Best Period' could imply issues with the performance of the model.
+    - If the optimal seasonal period (or 'Best Period') is consistently at the maximum or minimum limit of the offered
+    range for a majority of variables, it may suggest that the range set does not adequately capture the true seasonal
+    pattern in the series.
+    - A high average 'Residual Error' for the selected 'Best Period' could indicate issues with the model's performance.
 
     **Strengths:**
-    This metric offers several advantages for time series dataset analysis:
-
-    - It provides a robust, automated approach to identifying and quantifying the optimal seasonality.
-    - It is applicable to multiple variables in a dataset, offering a comprehensive assessment of each variable's
+    - The metric offers an automatic approach to identifying and quantifying the optimal seasonality, providing a
+    robust method for analyzing time series datasets.
+    - It is applicable to multiple variables in a dataset, providing a comprehensive evaluation of each variable's
     seasonality.
-    - It uses concrete and measurable statistical methods to derive seasonality, enhancing the objectivity and
-    reproducibility of the model.
+    - The use of concrete and measurable statistical methods improves the objectivity and reproducibility of the model.
 
     **Limitations:**
-    There are also a few limitations of this metric:
-
-    - Errors may arise if the time series exhibits random walk behaviour or lacks a clear seasonality, as the seasonal
-    decomposition model may not be appropriate.
-    - The defined range for the seasonal period (min_period and max_period) can influence the results. If the true
-    seasonality period lies outside this range, this approach will not be able to identify the actual seasonality.
-    - It may not fully interpret complex patterns that go beyond the simple additive model for seasonal decomposition.
-    - The tool may infer seasonality where none exists if random fluctuations in the data match the defined seasonal
+    - This AutoSeasonality metric may not be suitable if the time series data exhibits random walk behaviour or lacks
+    clear seasonality, as the seasonal decomposition model may not be appropriate.
+    - The defined range for the seasonal period (min_period and max_period) can influence the outcomes. If the actual
+    seasonality period lies outside this range, this method will not be able to identify the true seasonal order.
+    - This metric may not be able to fully interpret complex patterns that go beyond the simple additive model for
+    seasonal decomposition.
+    - The tool may incorrectly infer seasonality if random fluctuations in the data match the predefined seasonal
     period range.
     """
 

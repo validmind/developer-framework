@@ -7,30 +7,37 @@ from validmind.vm_models import Metric
 
 class ShapiroWilk(Metric):
     """
-    **Purpose**: The Shapiro-Wilk metric is used to assess if a given set of data adheres to the standard normal
-    distribution. This is integral in machine learning modeling as the normality of data can significantly affect model
-    performance. In particular, it is used on different features of the dataset in both classification and regression
-    tasks.
+    Evaluates feature-wise normality of training data using the Shapiro-Wilk test.
 
-    **Test Mechanism**: By implementing the Shapiro-Wilk test for each feature column in the training dataset, we
-    determine if the data in these columns conform to the normal distribution. The test returns a statistic and a
-    p-value, where the p-value is used to decipher whether to accept or reject the null hypothesis (the data being
-    tested is normally distributed).
+    **Purpose**: The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard
+    normal distribution. This analysis is crucial in machine learning modeling because the normality of the data can
+    profoundly impact the performance of the model. This metric is especially useful in evaluating various features of
+    the dataset in both classification and regression tasks.
 
-    **Signs of High Risk**: A lower p-value, typically below 0.05, indicates a high risk as it rejects the null
-    hypothesis, meaning that the data is not normally distributed. For ML models that assume normality of data, this
-    could lead to poor performance or inaccurate predictions.
+    **Test Mechanism**: The Shapiro-Wilk test is conducted on each feature column of the training dataset to determine
+    if the data contained fall within the normal distribution. The test presents a statistic and a p-value, with the
+    p-value serving to validate or repudiate the null hypothesis, which is that the tested data is normally distributed.
 
-    **Strengths**: The Shapiro-Wilk test is known for its precision, making it especially useful on small to
-    moderate-sized datasets. It also works on both classification and regression tasks, providing more versatility in
-    its usage. Since it tests each feature column separately, it can give an alert if any particular feature does not
-    conform to normality.
+    **Signs of High Risk**:
+    - A p-value that falls below 0.05 signifies a high risk as it discards the null hypothesis, indicating that the
+    data does not adhere to the normal distribution.
+    - For machine learning models built on the presumption of data normality, such an outcome could result in subpar
+    performance or incorrect predictions.
 
-    **Limitations**: Since Shapiro-Wilk test is quite sensitive, it often rejects the null hypothesis (i.e., data is
-    normally distributed) even for slight deviations, particularly for large datasets. This means the test can consider
-    data as non-normal even if it's approximately normally distributed, potentially leading to 'false alarms' of high
-    risk. Additionally, handling of missing data or outliers needs to be carefully managed before testing as these can
-    highly influence the results. Lastly, it is not ideally suited for data with strong skewness or kurtosis.
+    **Strengths**:
+    - The Shapiro-Wilk test is esteemed for its level of accuracy, thereby making it particularly well-suited to
+    datasets of small to moderate sizes.
+    - It proves its versatility through its efficient functioning in both classification and regression tasks.
+    - By separately testing each feature column, the Shapiro-Wilk test can raise an alarm if a specific feature does
+    not comply with the normality.
+
+    **Limitations**:
+    - The Shapiro-Wilk test's sensitivity can be a disadvantage as it often rejects the null hypothesis (i.e., data is
+    normally distributed), even for minor deviations, especially in large datasets. This may lead to unwarranted 'false
+    alarms' of high risk by deeming the data as not normally distributed even if it approximates normal distribution.
+    - Exceptional care must be taken in managing missing data or outliers prior to testing as these can greatly skew
+    the results.
+    - Lastly, the Shapiro-Wilk test is not optimally suited for processing data with pronounced skewness or kurtosis.
     """
 
     name = "shapiro_wilk"

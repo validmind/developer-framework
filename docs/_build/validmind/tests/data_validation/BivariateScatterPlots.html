@@ -79,7 +79,10 @@
     </div>
     <a class="headerlink" href="#BivariateScatterPlots"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: This metric is intended for visual inspection and monitoring of relationships between pairs of
+            <div class="docstring"><p>Generates bivariate scatterplots to visually inspect relationships between pairs of predictor variables in machine
+learning classification tasks.</p>
+
+<p><strong>Purpose</strong>: This metric is intended for visual inspection and monitoring of relationships between pairs of
 variables in a machine learning model targeting classification tasks. It is especially useful for understanding how
 predictor variables (features) behave in relation to each other and how they are distributed for different classes
 of the target variable, which could inform feature selection, model-building strategies, and even alert to possible
@@ -94,22 +97,36 @@ flexibility by allowing the user to filter on a specific target class - specifie
 for better visual differentiation. The seaborn scatterplot library is used for generating the plots.</li>
 </ul>
 
-<p><strong>Signs of High Risk</strong>: High risk indicators in this context would be related to visual patterns which might
-suggest non-linear relationships, substantial skewness, multicollinearity, clustering, or isolated outlier points
-in the scatter plot. Such issues could affect the assumptions and performance of some models, especially the ones
-assuming linearity like linear regression or logistic regression.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Strengths</strong>: Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint
-complex relationships between two variables. It helps in outlier detection, identification of variable associations
-and trends, including non-linear patterns which can be overlooked by other linear-focused metrics or tests. The
-implementation also supports visualizing binary or multi-class classification datasets.</p>
+<ul>
+<li>Visual patterns which might suggest non-linear relationships, substantial skewness, multicollinearity,
+clustering, or isolated outlier points in the scatter plot.</li>
+<li>Such issues could affect the assumptions and performance of some models, especially the ones assuming linearity
+like linear regression or logistic regression.</li>
+</ul>
 
-<p><strong>Limitations</strong>: Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and
-might not reveal the full picture in higher dimensions or where interactions are present. They also are not ideal
-for very large datasets as points will overlap and render the visualization less informative. Further, scatterplots
-are more of an exploratory tool rather than a formal statistical test, so they don't provide any quantitative
-measure of model quality or performance. Interpretation of scatterplots relies heavily on the domain knowledge and
-judgment of the viewer, which can introduce subjective bias.</p>
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint complex
+relationships between two variables.</li>
+<li>They are useful for outlier detection, identification of variable associations and trends, including non-linear
+patterns which can be overlooked by other linear-focused metrics or tests.</li>
+<li>The implementation also supports visualizing binary or multi-class classification datasets.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and might not
+reveal the full picture in higher dimensions or where interactions are present.</li>
+<li>They are not ideal for very large datasets as points will overlap and render the visualization less informative.</li>
+<li>Scatterplots are more of an exploratory tool rather than a formal statistical test, so they don't provide any
+quantitative measure of model quality or performance.</li>
+<li>Interpretation of scatterplots relies heavily on the domain knowledge and judgment of the viewer, which can
+introduce subjective bias.</li>
+</ul>
 </div>
 
 

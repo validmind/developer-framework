@@ -76,33 +76,47 @@
     </div>
     <a class="headerlink" href="#IsolationForestOutliers"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The purpose of the <code><a href="#IsolationForestOutliers">IsolationForestOutliers</a></code> test is to identify anomalies or outliers in the model's
-dataset. It assumes anomalous data points, due to their distinctive properties, can be detected more quickly by the
-isolation forest algorithm. This algorithm evaluates anomalies through the creation of isolation trees and
-identifying instances with shorter average path lengths in these trees, as these instances are expected to be
-different from the majority of the data points.</p>
+            <div class="docstring"><p>Detects outliers in a dataset using the Isolation Forest algorithm and visualizes results through scatter plots.</p>
 
-<p><strong>Test Mechanism</strong>: This test uses the isolation forest algorithm, which isolates anomalies rather than identifying
-normal data points. It runs by building an ensemble of isolation trees, utilizing binary trees created by randomly
-selecting features and splitting the data based on random thresholds. For each pair of variables, it generates a
-scatter plot distinguishing the identified outliers from the inliers. The test results are visualized in these
-scatter plots showing the distinction of outliers from inliers.</p>
+<p><strong>Purpose</strong>: The <code><a href="#IsolationForestOutliers">IsolationForestOutliers</a></code> test is designed to identify anomalies or outliers in the model's
+dataset using the isolation forest algorithm. This algorithm assumes that anomalous data points can be isolated
+more quickly due to their distinctive properties. By creating isolation trees and identifying instances with
+shorter average path lengths, the test is able to pick out data points that differ from the majority.</p>
 
-<p><strong>Signs of High Risk</strong>: Signs of high risk or failure in the model's performance might be the presence of high
-contamination which indicates a lot of anomalies, an inability to detect clusters of anomalies that are
-geographically close in the feature space, detecting normal instances as anomalies or overlooking actual anomalies.</p>
+<p><strong>Test Mechanism</strong>: The test uses the isolation forest algorithm, which builds an ensemble of isolation trees by
+randomly selecting features and splitting the data based on random thresholds. It isolates anomalies rather than
+focusing on normal data points. For each pair of variables, a scatter plot is generated which distinguishes the
+identified outliers from the inliers. The results of the test can be visualized using these scatter plots,
+illustrating the distinction between outliers and inliers.</p>
 
-<p><strong>Strengths</strong>: The strengths of the isolation forest algorithm include its ability to handle large high-dimensional
-datasets, its efficiency in isolating anomalies rather than normal instances tradition, and its insensitivity to
-the underlying distribution of data. It is able to recognize anomalies even when they are not separated from the
-data cloud by identifying distinctive properties of the anomalies. Additionally, it visualizes the test results,
-aiding understanding and interpretability.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: Among its limitations, the isolation forest test might find it hard to detect anomalies that are
-close to each other, or in datasets where anomalies are more prevalent. The results strongly rely on the
-contamination parameter, which might need fine-tuning to be effective. It may also not be effective in detecting
-collective anomalies if they behave similarly to normal data. Furthermore, it potentially lacks precision in
-identifying which features contribute most to the anomalous behavior.</p>
+<ul>
+<li>The presence of high contamination, indicating a large number of anomalies</li>
+<li>Inability to detect clusters of anomalies that are close in the feature space</li>
+<li>Misclassifying normal instances as anomalies</li>
+<li>Failure to detect actual anomalies</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Ability to handle large, high-dimensional datasets</li>
+<li>Efficiency in isolating anomalies instead of normal instances</li>
+<li>Insensitivity to the underlying distribution of data</li>
+<li>Ability to recognize anomalies even when they are not separated from the main data cloud through identifying
+distinctive properties</li>
+<li>Visually presents the test results for better understanding and interpretability</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Difficult to detect anomalies that are close to each other or prevalent in datasets</li>
+<li>Dependency on the contamination parameter which may need fine-tuning to be effective</li>
+<li>Potential failure in detecting collective anomalies if they behave similarly to normal data</li>
+<li>Potential lack of precision in identifying which features contribute most to the anomalous behavior</li>
+</ul>
 </div>
 
 

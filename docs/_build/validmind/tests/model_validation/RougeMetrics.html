@@ -76,50 +76,61 @@
     </div>
     <a class="headerlink" href="#RougeMetrics"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: ROUGE, or Recall-Oriented Understudy for Gisting Evaluation, serves as a robust metric framework aimed
-at evaluating the caliber of machine-generated text. Especially pertinent in the arena of natural language
-generation tasks, such as text summarization, machine translation, and text generation, its overarching goal is to
-ascertain how effectively the machine-rendered text mirrors key information and concepts present in reference
-human-crafted text. Owing to its efficacy, the ROUGE metrics have become staples in the NLP community for the
-assessment of text generation systems.</p>
+            <div class="docstring"><p>Evaluates the quality of machine-generated text using various ROUGE metrics, and visualizes the results.</p>
+
+<p><strong>Purpose</strong>: The ROUGE, or Recall-Oriented Understudy for Gisting Evaluation, is a metric employed to assess the
+quality of machine-generated text. This evaluation technique is mainly used in natural language processing tasks,
+such as text summarization, machine translation, and text generation. Its goal is to measure how well the
+machine-generated text reflects the key information and concepts in the human-crafted reference text.</p>
 
 <p><strong>Test Mechanism</strong>:</p>
 
 <ol>
-<li><p><strong>Comparison Basis</strong>: At its core, ROUGE operates by juxtaposing machine-generated content with a reference
+<li><p><strong>Comparison Procedure</strong>: The testing mechanism involves comparing machine-generated content with a reference
 human-constructed text.</p></li>
-<li><p><strong>Incorporated Metrics</strong>:</p></li>
-</ol>
+<li><p><strong>Integral Metrics</strong>:</p>
 
 <ul>
-<li><p><strong>ROUGE-N (N-gram Overlap)</strong>: Focuses on the alignment of n-grams (sequential sets of n words) between the
-generated and reference texts. Typical n-values include 1 (unigrams), 2 (bigrams), and 3 (trigrams). Each metric
-calculates precision, recall, and F1-score components.</p></li>
-<li><p><strong>ROUGE-L (Longest Common Subsequence)</strong>: Pinpoints the most extended shared word sequence present in both the
-machine and reference texts, assessing the generated text's ability to encapsulate pivotal phrases.</p></li>
-</ul>
-
-<ol start="3">
-<li><strong>Visual Representation</strong>: The determined precision, recall, and F1-score for each metric are plotted visually,
-ensuring streamlined comprehension of the results.</li>
+<li><p><strong>ROUGE-N (N-gram Overlap)</strong>: This evaluates the overlap of n-grams (sequences of n words) between the
+generated and reference texts. The common n-values are 1 (unigrams), 2 (bigrams), and 3 (trigrams). Each metric
+calculates precision, recall, and F1-score.</p></li>
+<li><p><strong>ROUGE-L (Longest Common Subsequence)</strong>: This identifies the longest shared word sequence in both the machine
+and reference texts, thus evaluating the capability of the generated text to mirror key phrases.</p></li>
+<li><p><strong>ROUGE-S (Skip-bigram)</strong>: This measures the concurrence of skip-bigrams — word pairings that appear within a
+predefined word window in the text. This metric maintains sensitivity to word order while allowing for sporadic
+word omissions.</p></li>
+</ul></li>
+<li><p><strong>Visual Representation</strong>: Precision, recall, and F1-score for all the metrics are visually charted, which makes
+the results easier to comprehend.</p></li>
 </ol>
 
-<p><strong>Signs of High Risk</strong>: Warning signs under this metric umbrella encompass low scores across the ROUGE suite. A
-diminished precision could insinuate the presence of redundant information in machine-produced text, while a low
-recall might denote the omission of salient data from the reference text. A decreased F1 score pinpoints a
-suboptimal harmony between precision and recall. Persistent low scores, especially across diverse test sets, may
-herald intrinsic flaws in the model's prowess.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Strengths</strong>: ROUGE's primary asset is its multifaceted view on text quality, enabled by an array of evaluation
-metrics. It graciously accommodates synonyms and rephrasing due to its n-gram-based approach, and it champions the
-retention of salient word sequences via the longest common subsequence tactic. The visual representation of
-precision, recall, and F1-scores facilitates an intuitive grasp of model efficacy.</p>
+<ul>
+<li>Low scores across the suite of ROUGE metrics</li>
+<li>Low precision might indicate redundant information in machine-produced text</li>
+<li>Low recall may suggest the omission of important information from the reference text</li>
+<li>Low F1 score could indicate an imbalanced performance between precision and recall</li>
+<li>Persistent low scores could signal inherent flaws in the model</li>
+</ul>
 
-<p><strong>Limitations</strong>: In spite of its advantages, certain constraints tether ROUGE. It might not adequately address the
-semantic coherence, fluency, or grammatical integrity of the generated narrative, leaning more towards evaluating
-isolated phrases or n-grams. The metric can be less discerning when critiquing elaborate sentences due to its
-fragmentary nature. Moreover, as it banks on comparisons with human-made references, procuring such benchmarks can
-be challenging or even impractical at times.</p>
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Offers a multifaceted perspective on text quality using various evaluation metrics</li>
+<li>Adapts to synonyms and rewording, thanks to n-gram-based evaluation</li>
+<li>Encourages the retention of key word sequences using the longest common subsequence method</li>
+<li>Visual representation of precision, recall, and F1-scores enhances understandability of model performance</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>May fail to fully address the semantic coherence, fluency, or grammatical quality of the generated text</li>
+<li>Tends to evaluate isolated phrases or n-grams rather than comprehensive sentences</li>
+<li>May prove challenging when reference texts are difficult or impractical to obtain due to its reliance on
+comparisons with human-made references.</li>
+</ul>
 </div>
 
 
