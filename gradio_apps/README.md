@@ -7,5 +7,5 @@ This directory contains example Gradio apps that can be used to test example mod
 To run an example app, simply run the following command:
 
 ```bash
-poetry run gradio run <app_name>
+poetry run gradio <app_name>
 ```
