@@ -19,4 +19,5 @@ class SummarizationMetrics(TestSuite):
         "validmind.model_validation.BleuScore",
         "validmind.model_validation.BertScore",
         "validmind.model_validation.ContextualRecall",
+        "validmind.model_validation.SummarizationPredictions",
     ]

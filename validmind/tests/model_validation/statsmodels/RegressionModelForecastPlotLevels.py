@@ -12,46 +12,47 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class RegressionModelForecastPlotLevels(Metric):
     """
+    Compares and visualizes forecasted and actual values of regression models on both raw and transformed datasets.
+
     **Purpose:**
-    The purpose of `RegressionModelForecastPlotLevels` is to visually evaluate the performance of a given list of
-    regression models. It does this by plotting the forecasts of these models against the observed data in their
-    training and test datasets. It evaluates the model's ability to produce accurate and reliable forecasts when faced
-    with certain input features. The measure of accuracy here is the proximity of the forecasted values to the actual
-    observed values. In case of any transformations specified, the metric also handles transforming the data before the
-    comparison.
+    The `RegressionModelForecastPlotLevels` metric is designed to visually assess a series of regression models'
+    performance. It achieves this by contrasting the models' forecasts with the observed data from the respective
+    training and test datasets. The gauge of accuracy here involves determining the extent of closeness between
+    forecasted and actual values. Accordingly, if any transformations are specified, the metric will handle
+    transforming the data before making this comparison.
 
     **Test Mechanism:**
-    The Python class in consideration accepts `transformation` as a parameter, which defaults to None. First, it checks
-    for the presence of model objects and raises a `ValueError` if none are provided. Next, it loops through each
-    model, generating predictive forecasts for the model's training and testing datasets. These forecasts are then
-    plotted against the actual (observed) values. If a transformation, such as "integrate", is specified, the class
-    carries out the transformation operation (i.e., it performs cumulative sums to create a new series). Finally, plots
-    are created comparing observed and forecasted values for both the original and transformed datasets.
+    The `RegressionModelForecastPlotLevels` class in Python initiates with a `transformation` parameter, which default
+    aggregates to None. Initially, the class checks for the presence of model objects and raises a `ValueError` if none
+    are found. Each model is then processed, creating predictive forecasts for both its training and testing datasets.
+    These forecasts are then contrasted with the actual values and plotted. In situations where a specified
+    transformation, like "integrate," is specified, the class navigates the transformation steps (performing cumulative
+    sums to generate a novel series, for instance). Finally, plots are produced that compare observed and forecasted
+    values for both the raw and transformed datasets.
 
     **Signs of High Risk:**
-    High risk or failure in the model's performance can be inferred from the generated plots. If the forecasted values
-    deviate significantly from the observed values in either the training or test datasets, it suggests high risk. A
-    significant deviation could be a sign of overfitting or underfitting, which would be a cause for concern. Such
-    discrepancies could limit the model's ability to produce accurate and generalizable results.
+    Indications of high risk or failure in the model's performance can be derived from checking the generated plots.
+    When the forecasted values dramatically deviate from the observed values in either the training or testing
+    datasets, it suggests a high risk situation. A significant deviation could be a symptom of either overfitting or
+    underfitting, both scenarios are worrying. Such discrepancies could inhibit the model's ability to create precise,
+    generalized results.
 
     **Strengths:**
-    - Visual evaluation: The metric provides a graphical way of evaluating the regression models, allowing easier
-    interpretation and assessment of the forecasting accuracy.
-    - Handles multiple models: The metric enables evaluation of multiple models at once, providing a comparative
-    overview of all models.
-    - Handles transformations: Ability to handle transformations such as "integrate" allows for broader scope and
-    flexibility in model evaluations.
-    - Detailed insight: The metric provides a detailed perspective by looking at the performance on both training and
-    testing datasets.
+    - Visual Evaluations: The metric provides a visual and comparative way of assessing multiple regression models at
+    once. This allows easier interpretation and evaluation of their forecasting accuracy.
+    - Transformation Handling: This metric can handle transformations like "integrate," enhancing its breadth and
+    flexibility in evaluating different models.
+    - Detailed Perspective: By looking at the performance on both datasets (training and testing), the metric may give
+    a detailed overview of the model.
 
     **Limitations:**
-    - Visual subjectivity: The metric relies heavily on visual evaluations, and interpretation can vary from person to
-    person.
-    - Limitation in transformations: Currently supports "integrate" transformation only. More complex transformation
-    might not be covered.
-    - Overhead: Plotting for large datasets might be computationally expensive and could increase runtime.
-    - Lack of numerical metrics: While visualization is useful, a corresponding numerical measure to support
-    observations would be beneficial.
+    - Subjectivity: Relying heavily on visual interpretations; assessments may differ from person to person.
+    - Limited Transformation Capability: Currently, only the "integrate" transformation is supported, implying complex
+    transformations might go unchecked or unhandled.
+    - Overhead: The plotting mechanism may become computationally costly when applying to extensive datasets,
+    increasing runtime.
+    - Numerical Measurement: Although visualization is instrumental, a corresponding numerical measure would further
+    reinforce the observations. However, this metric does not provide numerical measures.
     """
 
     name = "regression_forecast_plot_levels"

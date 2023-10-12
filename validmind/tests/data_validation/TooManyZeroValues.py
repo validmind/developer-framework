@@ -18,45 +18,50 @@ from validmind.vm_models import (
 @dataclass
 class TooManyZeroValues(ThresholdTest):
     """
+    Identifies numerical columns in a dataset that contain an excessive number of zero values, defined by a threshold
+    percentage.
+
     **Purpose**:
-    The 'TooManyZeroValues' test is used to identify numerical columns in the data that have an abundance of zero
-    values. If a column has too many zeros, it could indicate data sparsity or potential lack of variation, which may
-    limit its utility in a machine learning model. The test quantifies 'too many' as a percentage of total values, set
-    by default to 3%.
+    The 'TooManyZeroValues' test is utilized to identify numerical columns in the dataset that may present a quantity
+    of zero values considered excessive. The aim is to detect situations where these may implicate data sparsity or a
+    lack of variation, limiting their effectiveness within a machine learning model. The definition of 'too many' is
+    quantified as a percentage of total values, with a default set to 3%.
 
     **Test Mechanism**:
-    The application of this test involves iterating over each column of the dataset and determining if the column
-    corresponds to numerical data. When a numeric column is identified, the function calculates the total count of zero
-    values and their ratio to the total row number. If the proportion exceeds the preset threshold parameter (default
-    0.03 or 3%), the column fails the test. The results from each column are summarised in a report that indicates the
-    number and the percentage of zero values for each numeric column, along with whether the column passed or failed
-    the test.
+    This test is conducted by looping through each column in the dataset and categorizing those that pertain to
+    numerical data. On identifying a numerical column, the function computes the total quantity of zero values and
+    their ratio to the total row count. Should the proportion exceed a pre-set threshold parameter, set by default at
+    0.03 or 3%, the column is considered to have failed the test. The results for each column are summarised and
+    reported, indicating the count and percentage of zero values for each numerical column, alongside a status
+    indicating whether the column has passed or failed the test.
 
     **Signs of High Risk**:
-    The indicators of high risk associated with this test include:
-    1. Numeric columns with a high ratio of zero values to the total number of rows (beyond the set threshold).
-    2. Columns where all values registered are zero, implying a complete lack of data variation.
+    - Indicators evidencing a high risk connected with this test would include numerical columns showing a high ratio
+    of zero values when compared to the total count of rows (exceeding a pre-determined threshold).
+    - Columns characterized by zero values across the board suggest a complete lack of data variation, signifying high
+    risk.
 
     **Strengths**:
-    This test offers several advantages:
-    1. Helps in identifying columns with excessive zero values which otherwise might go unnoticed in a large dataset.
-    2. Offers flexibility to adjust the threshold of what counts as 'too many' zero values, accommodating the specific
-    needs of a given analysis or model.
-    3. Reports both the count and percentage of zero values, shedding more light on the distribution and proportion of
-    zeros within a column.
-    4. Focuses specifically on numerical data, preventing the misapplication to non-numerical columns and avoiding
-    false test failures.
+    - Assists in highlighting columns featuring an excess of zero values that could otherwise go unnoticed within a
+    large dataset.
+    - Provides the flexibility to alter the threshold that determines when the quantity of zero values becomes 'too
+    many', thus catering to specific needs of a particular analysis or model.
+    - Offers feedback in the form of both counts and percentages of zero values, which allows a closer inspection of
+    the distribution and proportion of zeros within a column.
+    - Targets specifically numerical data, thereby avoiding inappropriate application to non-numerical columns and
+    mitigating the risk of false test failures.
 
     **Limitations**:
-    Certain limitation of this metric include:
-    1. It merely checks for zero values and does not assess the relevance or the impact of other potentially
-    problematic values in the dataset such as extremely high or extremely low numbers, null values or outliers.
-    2. It cannot detect a pattern of zeros, which might be important in time series or longitudinal data.
-    3. Zeroes might be meaningful in certain contexts, so labelling them as 'too many' could be a misinterpretation of
-    the data.
-    4. This test does not account for the dataset’s context and disregards that for certain columns, a high presence of
-    zero values could be normal and does not necessarily indicate low data quality.
-    5. Cannot evaluate non-numerical or categorical columns, that might carry different types of concerns or issues.
+    - Is exclusively designed to check for zero values, and doesn’t assesses the potential impact of other values that
+    could affect the dataset, such as extremely high or low figures, missing values or outliers.
+    - Lacks the ability to detect a repetitive pattern of zeros, which could be significant in time-series or
+    longitudinal data.
+    - Zero values can actually be meaningful in some contexts, therefore tagging them as 'too many' could potentially
+    misinterpret the data to some extent.
+    - This test does not take into consideration the context of the dataset, and fails to recognize that within certain
+    columns, a high number of zero values could be quite normal and not necessarily an indicator of poor data quality.
+    - Cannot evaluate non-numerical or categorical columns, which might bring with them different types of concerns or
+    issues.
     """
 
     category = "data_quality"

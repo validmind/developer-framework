@@ -10,32 +10,46 @@ from validmind.vm_models import Metric
 @dataclass
 class Lilliefors(Metric):
     """
-    **Purpose**: The Lilliefors test, named after the Swedish statistician Hubert Lilliefors, is used in this context
-    to determine whether the features of the machine learning model's training dataset follow a normal distribution.
-    Normality of distribution is a critical assumption in many statistical procedures and machine learning models. If
-    the features do not follow a normal distribution, certain types of models may not function optimally, potentially
-    leading to inaccurate predictions.
+    Assesses the normality of feature distributions in an ML model's training dataset using the Lilliefors test.
 
-    **Test Mechanism**: The test is applied to every feature column in the training dataset. For each feature, the
-    Lilliefors test computes a test statistic and a p-value. The test statistic quantifies how far the distribution of
-    the feature is from a perfect normal distribution, while the p-value provides a measure of the statistical
-    significance of this deviation. The results are stored in a dictionary where keys are feature column names, and
-    values are another dictionary containing the test statistic and p-value.
+    **Purpose**: The purpose of this metric is to utilize the Lilliefors test, named in honor of the Swedish
+    statistician Hubert Lilliefors, in order to assess whether the features of the machine learning model's training
+    dataset conform to a normal distribution. This is done because the assumption of normal distribution plays a vital
+    role in numerous statistical procedures as well as numerous machine learning models. Should the features fail to
+    follow a normal distribution, some model types may not operate at optimal efficiency. This can potentially lead to
+    inaccurate predictions.
 
-    **Signs of High Risk**: If the p-value for a feature is less than a predetermined significance level (typically
-    0.05), this would indicate that the distribution of the feature significantly deviates from a normal distribution.
-    This suggests a high risk as models assuming normality may not work accurately or efficiently with such a feature.
+    **Test Mechanism**: The application of this test happens across all feature columns within the training dataset.
+    For each feature, the Lilliefors test returns a test statistic and p-value. The test statistic quantifies how far
+    the feature's distribution is from an ideal normal distribution, whereas the p-value aids in determining the
+    statistical relevance of this deviation. The final results are stored within a dictionary, the keys of which
+    correspond to the name of the feature column, and the values being another dictionary which houses the test
+    statistic and p-value.
 
-    **Strengths**: This Lilliefors test is particularly useful because it does not require the mean and variance of the
-    normal distribution to be known in advance, making it a robust choice for real-world data where these values are
-    often unknown. The test is capable of screening every feature column, providing a comprehensive view of the dataset.
+    **Signs of High Risk**:
 
-    **Limitations**: While the Lilliefors test is a practical tool to gauge normality, it has a few limitations. It can
-    only test one-dimensional data, so it is not suited for datasets with interactions between features or
-    multi-dimensional phenomena. Additionally, the test may have lower power compared to other tests (like
-    Anderson-Darling test) which means it's slightly less sensitive at detecting departures from normality. Finally,
-    like any statistical test, it can yield false positives or negatives, so relying on it alone without considering
-    other characteristics of the data could be risky.
+    - If the p-value corresponding to a specific feature sinks below a pre-established significance level, generally
+    set at 0.05, then it can be deduced that the distribution of that feature significantly deviates from a normal
+    distribution. This can present a high risk for models that assume normality, as these models may perform
+    inaccurately or inefficiently in the presence of such a feature.
+
+    **Strengths**:
+
+    - One advantage of the Lilliefors test is its utility irrespective of whether the mean and variance of the normal
+    distribution are known in advance. This makes it a more robust option in real-world situations where these values
+    might not be known.
+    - Second, the test has the ability to screen every feature column, offering a holistic view of the dataset.
+
+    **Limitations**:
+
+    - Despite the practical applications of the Lilliefors test in validating normality, it does come with some
+    limitations.
+    - Firstly, it is only capable of testing unidimensional data, thus rendering it ineffective for datasets with
+    interactions between features or multi-dimensional phenomena.
+    - Additionally, the test might not be as sensitive as some other tests (like the Anderson-Darling test) in
+    detecting deviations from a normal distribution.
+    - Lastly, like any other statistical test, Lilliefors test may also produce false positives or negatives. Hence,
+    banking solely on this test, without considering other characteristics of the data, may give rise to risks.
     """
 
     name = "lilliefors_test"

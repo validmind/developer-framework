@@ -76,31 +76,49 @@
     </div>
     <a class="headerlink" href="#KolmogorovSmirnov"></a>
     
-            <div class="docstring"><p><strong>Purpose</strong>: The Kolmogorov-Smirnov (KS) test featured in this metric is aimed at evaluating the distribution of a
-dataset's features. Particularly, it assesses whether each feature's data follows a normal distribution, which is a
-crucial assumption in many statistical methods and machine learning models.</p>
+            <div class="docstring"><p>Executes a feature-wise Kolmogorov-Smirnov test to evaluate alignment with normal distribution in datasets.</p>
 
-<p><strong>Test Mechanism</strong>: The KS test implemented here computes the KS statistic and the corresponding p-value for each
-column in a dataset. These values are determined by comparing the cumulative distribution function of the dataset's
-feature with a theoretical normal distribution. A feature-wise KS statistic and p-value are then stored in a
-dictionary. The threshold p-value, below which the null hypothesis (that the data comes from a normal distribution)
-can be rejected, is not explicitly set in this implementation and can be defined in accordance with the specific
-application.</p>
+<p><strong>Purpose</strong>: This metric employs the Kolmogorov-Smirnov (KS) test to evaluate the distribution of a dataset's
+features. It specifically gauges whether the data from each feature aligns with a normal distribution, a common
+presumption in many statistical methods and machine learning models.</p>
 
-<p><strong>Signs of High Risk</strong>: A higher KS statistic for a feature and a low p-value would suggest a significant
-discrepancy between that feature's distribution and a normal distribution. Features with substantial deviations
-might cause problems if the model in use assumes a normal distribution of data, hence pose a risk.</p>
+<p><strong>Test Mechanism</strong>: This KS test calculates the KS statistic and the corresponding p-value for each column in a
+dataset. It achieves this by contrasting the cumulative distribution function of the dataset's feature with an
+ideal normal distribution. Subsequently, a feature-by-feature KS statistic and p-value are stored in a dictionary.
+The specific threshold p-value (the value below which we reject the hypothesis that the data is drawn from a normal
+distribution) is not firmly set within this implementation, allowing for definitional flexibility depending on the
+specific application.</p>
 
-<p><strong>Strengths</strong>: The KS test is sensitive to differences in both the location and shape of the empirical cumulative
-distribution functions of two samples. It's non-parametric and doesn't assume any specific distribution for the
-data, making it versatile for various datasets. Being a feature-oriented test, it provides granular insights about
-the data distribution.</p>
+<p><strong>Signs of High Risk</strong>:</p>
 
-<p><strong>Limitations</strong>: The KS test may be overly sensitive to deviations in the tails of the data distribution,
-potentially flagging them as non-normal even in cases where these deviations are not necessarily a concern for the
-model. Moreover, the test could become less powerful with multivariate distributions since it's primarily used for
-univariate distributions. Also, as it's a goodness-of-fit test, it does not point out specific forms of
-non-normality such as skewness or kurtosis that could be relevant for model fitting.</p>
+<ul>
+<li>Elevated KS statistic for a feature combined with a low p-value. This suggests a significant divergence between
+the feature's distribution and a normal one.</li>
+<li>Features with notable deviations. These could create problems if the applicable model makes assumptions about
+normal data distribution, thereby representing a risk.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The KS test is acutely sensitive to differences in the location and shape of the empirical cumulative
+distribution functions of two samples.</li>
+<li>It is non-parametric and does not presuppose any specific data distribution, making it adaptable to a range of
+datasets.</li>
+<li>With its focus on individual features, it offers detailed insights into data distribution.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The sensitivity of the KS test to disparities in data distribution tails can be excessive. Such sensitivity might
+prompt false alarms about non-normal distributions, particularly in situations where these tail tendencies are
+irrelevant to the model.</li>
+<li>It could become less effective when applied to multivariate distributions, considering that it's primarily
+configured for univariate distributions.</li>
+<li>As a goodness-of-fit test, the KS test does not identify specific types of non-normality, such as skewness or
+kurtosis, that could directly impact model fitting.</li>
+</ul>
 </div>
 
 

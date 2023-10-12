@@ -8,38 +8,46 @@ from validmind.vm_models import Figure, Metric
 
 class SpreadPlot(Metric):
     """
+    Visualizes the spread relationship between pairs of time-series variables in a dataset, thereby aiding in
+    identification of potential correlations.
+
     **Purpose**:
-    The purpose of the SpreadPlot metric is to visually explore and understand the relationships between pairs of time
-    series variables in the given dataset. This understanding aids in identifying and assessing potential time series
-    relationships, such as cointegration, between variables.
+    The SpreadPlot metric is intended to graphically illustrate and analyse the relationships between pairs of time
+    series variables within a given dataset. This facilitated understanding helps in identifying and assessing
+    potential time series correlations, like cointegration, between the variables.
 
     **Test Mechanism**:
-    The test mechanism for this metric involves calculating and plotting the spread between each pair of time series
-    variables in the dataset. More specifically, the difference between two variables is computed and then plotted as a
-    line graph. This process is repeated for all unique pairs of variables in the dataset.
+    The SpreadPlot metric operates by computing and representing the spread between each pair of time series variables
+    in the dataset. In particular, the difference between two variables is calculated and presented as a line graph.
+    This method is iterated for each unique pair of variables in the dataset.
 
     **Signs of High Risk**:
-    Signs of high risk related to this metric include the presence of large fluctuations in the spread over time,
-    unexpected patterns, or trends that might signal a potential risk in the underlying relationships between the
-    variables. Also, the presence of significant missing data or extreme outlier values could potentially distort the
-    spread, indicating a high risk.
+    Potential indicators of high risk related to the SpreadPlot metric might include:
+
+    - Large fluctuations in the spread over a given timespan
+    - Unexpected patterns or trends that may signal a potential risk in the underlying correlations between the
+    variables
+    - Presence of significant missing data or extreme outlier values, which could potentially skew the spread and
+    indicate high risk
 
     **Strengths**:
-    The key strengths of using the SpreadPlot metric include:
-    1. Enables detailed visual inspection and interpretation of the relationships between time-series pairs.
-    2. Facilitates uncovering complex relationships like cointegration.
-    3. Enhances interpretability by visualizing the relationships, aiding in identifying outliers and trends.
-    4. Capable of handling multiple variable pairs from a dataset with a flexible and adaptable process.
+    The SpreadPlot metric provides several key advantages:
+
+    - It allows for thorough visual examination and interpretation of the correlations between time-series pairs
+    - It aids in revealing complex relationships like cointegration
+    - It enhances interpretability by visualising the relationships, thereby helping in spotting outliers and trends
+    - It is capable of handling numerous variable pairs from the dataset through a versatile and adaptable process
 
     **Limitations**:
-    Despite its strengths, the SpreadPlot metric also comes with certain limitations:
-    1. It's primarily a visualization tool and does not provide quantitative measurements or statistics to objectively
-    assess relationships.
-    2. Highly dependent on the quality and granularity of the data – missing data or outliers can significantly affect
-    the interpretation of the relationships.
-    3. Can become inefficient or challenging to interpret with a large number of variables due to the large number of
-    plots.
-    4. Might not fully capture complex non-linear relationships between variables.
+    Despite its advantages, the SpreadPlot metric does have certain drawbacks:
+
+    - It primarily serves as a visualisation tool and does not offer quantitative measurements or statistics to
+    objectively determine relationships
+    - It heavily relies on the quality and granularity of the data - missing data or outliers can notably disturb the
+    interpretation of the relationships
+    - It can become inefficient or difficult to interpret with a high number of variables due to the profuse number of
+    plots
+    - It might not completely capture intricate non-linear relationships between the variables
     """
 
     name = "spread_plot"

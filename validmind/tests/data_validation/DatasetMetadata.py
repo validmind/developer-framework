@@ -10,33 +10,36 @@ from validmind.vm_models.test_suite.result import TestSuiteDatasetResult
 @dataclass
 class DatasetMetadata(Test):
     """
-    **Purpose**: The main objective of the `DatasetMetadata` test is to gather and log crucial descriptive statistics
-    about the datasets used during model training. It serves as an important tool for monitoring relevant
-    characteristics of the dataset, such as task types (classification, regression, text_classification,
-    text_summarization) and tags (tabular_data, time_series_data, text_data). This helps ensure that model validation
-    exercises are conducted with full transparency and context by connecting different metrics and test results to the
-    underlying dataset.
+    Collects and logs essential metadata of training datasets for transparency in model validation.
 
-    **Test Mechanism**: This class does not include a specific test or grading scale. Instead, it collects metadata
-    associated with the dataset and logs it for future reference. The metadata is attached to the dataset object during
-    the post-initialization phase. The `run` method initializes a `TestSuiteDatasetResult` object with a unique result
-    ID and dataset. The dataset metadata then gets associated with this ID for future use in more targeted validation
-    efforts.
+    **Purpose**: The `DatasetMetadata` test is primarily aimed at collecting and logging essential descriptive
+    statistics related to the training datasets. This test generates essential metadata such as the types of tasks
+    (classification, regression, text_classification, text_summarization) and tags (tabular_data, time_series_data,
+    text_data) associated with the datasets. This transparency facilitates model validation by linking different
+    metrics and test results to the originating dataset.
 
-    **Signs of High Risk**: The risks associated with this process are not connected with model performance or biases.
-    However, incomplete metadata, incorrect dataset labels, or missing dataset types could lead to inaccuracies in
-    model risk assessment and may constitute signs of risk within the metadata gathering process itself.
+    **Test Mechanism**: Rather than conducting a test or implementing a grading scale, this class collects and logs
+    dataset metadata. During post-initialization, the metadata is linked to the dataset object. The `run` method
+    produces a `TestSuiteDatasetResult` object, which is assigned a unique ID and is bound to a dataset. The dataset
+    metadata is associated with this ID for use in future, more focused, validation procedures.
 
-    **Strengths**: A key strength of this class is the transparency it brings to model validation exercises by
-    providing detailed information about the dataset. This can help in diagnosing errors, identifying correlations to
-    the model's behavior, ensuring correct task and data-type associations, and enabling superior model explanations.
-    Also, it can support dataset versioning by logging each dataset's metadata, offering a trackable history of changes.
+    **Signs of High Risk**:
+    - The metadata is incomplete or incorrect which can lead to inaccuracies in model risk assessment.
+    - Dataset labels or types are missing, leading to issues in further model validation or mispresentations.
 
-    **Limitations**: The `DatasetMetadata` class could lack completeness or accuracy, particularly if metadata is not
-    adequately added or is incorrect. The process does not inherently evaluate the quality of the dataset or directly
-    validate the model's predictions, so it must be combined with other tests for a comprehensive evaluation. Lastly,
-    any potential bias in the dataset won't be recognized using this class. Bias detection would require separate tests
-    tailored specifically towards fairness and bias detection.
+    **Strengths**:
+    - The class brings transparency to model validation exercises by providing detailed information about the dataset.
+    - It assists in error diagnosis and behaviors correlation to the model.
+    - Ensures the correctness of tasks and data types associations and allows superior model explanations.
+    - Supports dataset versioning by logging each dataset's metadata, maintaining a trackable history of alterations.
+
+    **Limitations**:
+    - The `DatasetMetadata` class's completeness and accuracy might be questionable, especially if metadata isn't
+    appropriately added or is inaccurate.
+    - It doesn't involve the evaluation of the dataset's quality or the direct validation of model predictions, hence
+    it should be combined with other tests for a more comprehensive assessment.
+    - The class cannot detect potential bias in the dataset. For bias detection, separate tests specifically tailored
+    towards fairness and bias detection would be necessary.
     """
 
     # Class Variables

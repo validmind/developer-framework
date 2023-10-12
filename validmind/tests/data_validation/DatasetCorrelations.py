@@ -8,6 +8,9 @@ from validmind.vm_models import Metric
 @dataclass
 class DatasetCorrelations(Metric):
     """
+    Assesses correlation and association among features in a dataset, leveraging Pearson's R, Cramer's V, and
+    Correlation ratios.
+
     **Purpose**: The DatasetCorrelations metric is employed to examine the relationship between variables in a dataset,
     specifically designed for numerical and categorical data types. Using Pearson's R, Cramer's V, and Correlation
     ratios, it helps in understanding the linear relationship between numerical variables, association between
@@ -21,20 +24,26 @@ class DatasetCorrelations(Metric):
     generate graphical representations of these correlations. Finally, the correlation details and figures are cached
     for further study and analysis. The test does not dictate specific thresholds or grading scales.
 
-    **Signs of High Risk**: Signs of high risk might involve the presence of high correlation levels between input
-    variables (multicollinearity), which can jeopardize the interpretability of the model and lead to overfitting.
-    Additionally, the absence of any significant correlations, which suggests that the variables might not have
-    predictive power.
+    **Signs of High Risk**:
 
-    **Strengths**: The test boasts the advantage of being comprehensive; it covers the correlation study of numerical,
-    categorical, and numerical-categorical variables. Thus, it negates the need for multiple individual tests.
-    Furthermore, it not only provides numerical correlation values, but also visualization plots, aiding in a more
-    intuitive understanding of relationships between variables.
+    - High correlation levels between input variables (multicollinearity), which can jeopardize the interpretability of
+    the model and lead to overfitting.
+    - The absence of any significant correlations, suggesting the variables may not have predictive power.
 
-    **Limitations**: This metric, however, is limited by the fact that it only detects linear relationships and
-    associations; nonlinear relationships may go unnoticed. Also, given the absence of specified thresholds for
-    determining correlation significance, the interpretation of the results is dependent on the user's expertise.
-    Lastly, it doesn't handle missing values in the dataset, which need to be treated beforehand.
+    **Strengths**:
+
+    - Comprehensive coverage of the correlation study of numerical, categorical, and numerical-categorical variables,
+    negating the need for multiple individual tests.
+    - Along with numerical correlation values, it provides visualization plots for a more intuitive understanding of
+    relationships between variables.
+
+    **Limitations**:
+
+    - Limitations of this metric include detecting only linear relationships and associations; nonlinear relationships
+    may go unnoticed.
+    - The absence of specified thresholds for determining correlation significance means the interpretation of the
+    results is dependent on the user's expertise.
+    - It doesn't manage missing values in the dataset, which need to be treated beforehand.
     """
 
     name = "dataset_correlations"

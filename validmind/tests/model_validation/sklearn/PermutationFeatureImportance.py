@@ -15,34 +15,37 @@ logger = get_logger(__name__)
 @dataclass
 class PermutationFeatureImportance(Metric):
     """
-    **Purpose**: The purpose of the "Permutation Feature Importance" (PFI) metric is to quantify the importance of each
-    feature used by the ML model. This is measured depending on how much the model's performance decreases when the
-    values of each feature are permuted.
+    Assesses the significance of each feature in a model by evaluating the impact on model performance when feature
+    values are randomly rearranged.
 
-    **Test Mechanism**: The PFI metric is calculated using the `permutation_importance` method from the
-    `sklearn.inspection` module. This function randomly permutes the columns of the feature dataset fed into the ML
-    model and measures how the model's performance changes. If the model's performance worsens significantly after
-    permuting a feature's values, that feature is deemed important. If the performance remains relatively constant, the
-    feature is considered unimportant. At the end of the execution, PFI metric returns a figure displaying the feature
-    importance of each feature.
+    **Purpose**: The purpose of the Permutation Feature Importance (PFI) metric is to assess the importance of each
+    feature used by the Machine Learning model. The significance is measured by evaluating the decrease in the model's
+    performance when the feature's values are randomly arranged.
 
-    **Signs of High Risk**: An indication of risk would be if the model primarily depends on a feature whose values can
-    easily be permuted or have high variance, suggesting instability. Another risk could be if there's a feature
-    predicted as of no importance but is known to have significant influence on the expected outcome based on domain
-    knowledge.
+    **Test Mechanism**: PFI is calculated via the `permutation_importance` method from the `sklearn.inspection` module.
+    This method shuffles the columns of the feature dataset and measures the impact on the model's performance. A
+    significant decrease in performance after permutating a feature's values deems the feature as important. On the
+    other hand, if performance remains the same, the feature is likely not important. The output of the PFI metric is a
+    figure illustrating the importance of each feature.
 
-    **Strengths**: The PFI metric has several key advantages. It can provide an understanding of which features are
-    crucial for the model's predictions, potentially revealing insights about the data's structure. This can also help
-    determine if the model is overfitting on a particular feature or set of features. Moreover, PFI is model-agnostic
-    and can be used for any classifier which can provide a measure of prediction accuracy before and after permuting
-    features.
+    **Signs of High Risk**:
+    - The model heavily relies on a feature with highly variable or easily permutable values, indicating instability.
+    - A feature, deemed unimportant by the model but based on domain knowledge should have a significant effect on the
+    outcome, is not influencing the model's predictions.
 
-    **Limitations**: Although this metric is particularly helpful, there are some limitations too. The primary
-    limitation is that feature importance calculated from this method does not imply causality—it only speaks to the
-    amount of information the feature provides about the prediction task. Besides, permutation importance does not
-    consider the interaction between features. If two features are correlated, the permutation importance might
-    allocate importance to only one at the expense of the other. Finally, it cannot handle models from certain
-    libraries like statsmodels, pytorch, catboost etc., thus limiting its applicability.
+    **Strengths**:
+    - PFI provides insights into the importance of different features and may reveal underlying data structure.
+    - It can indicate overfitting if a particular feature or set of features overly impacts the model's predictions.
+    - The metric is model-agnostic and can be used with any classifier that provides a measure of prediction accuracy
+    before and after feature permutation.
+
+    **Limitations**:
+    - The feature importance calculated does not imply causality, it only presents the amount of information that a
+    feature provides for the prediction task.
+    - The metric does not account for interactions between features. If features are correlated, the permutation
+    importance may allocate importance to one and not the other.
+    - PFI cannot interact with certain libraries like statsmodels, pytorch, catboost, etc, thus limiting its
+    applicability.
     """
 
     name = "pfi"
