@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.21.5"
+version = "1.21.6"
 
 [tool.poetry.dependencies]
 matplotlib = "^3.7"
