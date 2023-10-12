@@ -25,7 +25,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     both binary and multiclass classification tasks. To compare performances, the test runs each model against the test
     dataset, then produces a comprehensive classification report. This report includes metrics such as accuracy,
     precision, recall, and the F1 score. Based on whether the task at hand is binary or multiclass classification, it
-    calculates metrics globally for the "positive" class or, alternatively, their weighted averages, macro averages,
+    calculates metrics all the classes and their weighted averages, macro averages,
     and per class metrics. The test will be skipped if no models are supplied.
 
     **Signs of High Risk**:
@@ -68,58 +68,56 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     def y_pred(self):
         return self.model.y_test_predict
 
-    def binary_summary(self, metric_value: dict):
-        """
-        When building a binary classification summary for all the models. We take the positive class
-        metrics as the global metrics.
-        """
-        results = []
-        for m, m_v in metric_value.items():
-            result = super().binary_summary(m_v)
-            results.append(
-                ResultTable(
-                    data=result.results[0].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[0].metadata.title}: {m}"
-                    ),
-                )
-            )
-        return ResultSummary(results=results)
-
-    def multiclass_summary(self, metric_value: dict):
-        """
-        The multi-class summary method that calculates weighted average,
-        macro average and per class metrics of all the models.
-        """
-        results = []
-        for m, m_v in metric_value.items():
-            result = super().multiclass_summary(m_v)
-            results.append(
-                ResultTable(
-                    data=result.results[0].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[0].metadata.title}: {m}"
-                    ),
-                )
-            )
-            results.append(
-                ResultTable(
-                    data=result.results[1].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[1].metadata.title}: {m}"
-                    ),
-                )
-            )
-        return ResultSummary(results=results)
-
     def summary(self, metric_value: dict):
         """
         This summary varies depending if we're evaluating a binary or multi-class model
         """
-        if len(unique(self.y_true())) > 2:
-            return self.multiclass_summary(metric_value)
+        results = []
+        prf_table = []
+        classes = {str(i) for i in unique(self.y_true())}
 
-        return self.binary_summary(metric_value)
+        for class_name in classes:
+            prf_dict = {}
+            prf_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                prf_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                prf_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                prf_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(prf_dict)
+
+        avg_metrics = ["weighted avg", "macro avg"]
+        for class_name in avg_metrics:
+            avg_dict = {}
+            avg_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                avg_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                avg_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                avg_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(avg_dict)
+        results.append(
+            ResultTable(
+                data=prf_table,
+                metadata=ResultTableMetadata(
+                    title="Precision, Recall, and F1 Comparison"
+                ),
+            )
+        )
+
+        acc_roc_auc_table = []
+        for metric_name in ["accuracy", "roc_auc"]:
+            acc_roc_auc_dict = {}
+            acc_roc_auc_dict["Metric"] = metric_name
+            for m, m_v in metric_value.items():
+                acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m]["accuracy"]
+                acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m]["roc_auc"]
+            acc_roc_auc_table.append(acc_roc_auc_dict)
+        results.append(
+            ResultTable(
+                data=acc_roc_auc_table,
+                metadata=ResultTableMetadata(title="Accuracy and ROC AUC Comparison"),
+            )
+        )
+        return ResultSummary(results=results)
 
     def run(self):
         # Check models list is not empty
