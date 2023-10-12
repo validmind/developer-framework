@@ -1,0 +1,32 @@
+template_id: prompt_validation
+template_name: Prompt Validation
+description: Template for Prompt Validation Demo
+version: 1.0.0
+sections:
+  - id: model_validation
+    title: Model Validation
+    index_only: true
+    order: 0
+    sections:
+  - id: prompt_validation
+    title: Prompt Validation
+    guidelines:
+      - Provide documentation of the prompt used for the model. Describe the type of prompting
+        used (e.g. few-shot, zero-shot, chain-of-thought etc.). Explain how the prompt was
+        constructed and how it was validated.
+    parent_section: model_validation
+    order: 0
+    index: "1.1"
+    contents:
+      - content_type: test
+        content_id: validmind.prompt_validation.Specificity
+      - content_type: test
+        content_id: validmind.prompt_validation.Clarity
+      - content_type: test
+        content_id: validmind.prompt_validation.Conciseness
+      - content_type: test
+        content_id: validmind.prompt_validation.NegativeInstruction
+      - content_type: test
+        content_id: validmind.prompt_validation.Delimitation
+      - content_type: test
+        content_id: validmind.prompt_validation.Robustness
