@@ -71,7 +71,7 @@ class RegressionErrors(Metric):
     def regression_errors(self, y_true_train, class_pred_train, y_true_test, class_pred_test):
         mae_train = metrics.mean_absolute_error(y_true_train, class_pred_train)
         mae_test = metrics.mean_absolute_error(y_true_test, class_pred_test)
-        
+
         results = []
         results.append(
             {
@@ -81,7 +81,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-        
+
         mse_train = metrics.mean_squared_error(y_true_train, class_pred_train)
         mse_test = metrics.mean_squared_error(y_true_test, class_pred_test)
         results.append(
@@ -100,7 +100,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-        
+
         mape_train = (
             np.mean(np.abs((y_true_train - class_pred_train) / y_true_train)) * 100
         )
@@ -113,7 +113,7 @@ class RegressionErrors(Metric):
                 }
             }
         )
-        
+
         mbd_train = np.mean(class_pred_train - y_true_train)
         mbd_test = np.mean(class_pred_test - y_true_test)
         results.append(
