@@ -3,7 +3,8 @@ title: "Customer Churn XGBoost Example (R)"
 author: "ValidMind"
 date: "2023-10-06"
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
 params: null
 ---
 
@@ -32,7 +33,7 @@ We will train a sample model and demonstrate the following documentation functio
 ```{r setup, include=FALSE}
 library(reticulate)
 
-python_version <- "/Users/erichare/.pyenv/shims/python3.10"
+python_version <- "/Users/erichare/.pyenv/versions/3.10.10/bin/python"
 use_python(python_version)
 
 library(magrittr) # needs to be run every time you start R and want to use %>%
@@ -50,12 +51,15 @@ library(htmltools)
 library(broom)
 library(huxtable)
 library(xgboost)
+library(plotly)
 
-custom_print_hook <- function(x) {
+print_table <- print
+
+custom_print_table_hook <- function(x) {
   cat(x)
 }
 
-knitr::knit_hooks$set(print = custom_print_hook)
+knitr::knit_hooks$set(print_table = custom_print_table_hook)
 ```
 
 ## **Initializing the ValidMind Client Library**
@@ -128,7 +132,7 @@ raw_summary_results <- summarize_results(tabular_suite_results)
 ```{r, echo=FALSE, results='asis'}
 pretty_summary_results <- pretty_print_tables(raw_summary_results)
 
-invisible(lapply(pretty_summary_results, print))
+invisible(lapply(pretty_summary_results, print_table))
 ```
 
 ## **Run the Model Validation Test Plan**
@@ -211,6 +215,22 @@ vm_model = vm_r$init_r_model(
 
 ```{r}
 model_validation_results = vm_r$run_test_suite("classifier_model_validation", model=vm_model)
+model_validation_plots <- build_r_plots_all(model_validation_results)
+```
+
+```{r, echo=FALSE}
+l <- htmltools::tagList()
+for (i in 1:length(model_validation_plots$plotly)) {
+  l[[i]] <- as_widget(model_validation_plots$plotly[[i]])
+}
+
+l
+```
+
+```{r, echo=FALSE, results='asis'}
+for (img_path in model_validation_plots$matplotlib) {
+  cat(paste0("![](", img_path, ")\n\n"))
+}
 ```
 
 ```{r, results='hide'}
@@ -220,5 +240,5 @@ raw_model_results <- summarize_results(model_validation_results)
 ```{r, echo=FALSE, results='asis'}
 pretty_model_results <- pretty_print_tables(raw_model_results)
 
-invisible(lapply(pretty_model_results, print))
+invisible(lapply(pretty_model_results, print_table))
 ```

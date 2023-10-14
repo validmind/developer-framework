@@ -163,3 +163,61 @@ pretty_print_tables <- function(datasets) {
       row_spec(0:nrow(.x), color = 'black')
   })
 }
+
+
+#' From
+#'
+#' @return The HTML required for nice display of multiple output tables
+#'
+#' @param plotly_figure The result returned from summarize_results()
+#'
+#' @importFrom purrr imap
+#' @importFrom plotly plotly_build
+#'
+#' @export
+build_r_plotly <- function(plotly_figure) {
+  # Grab the plotly code as a list
+  fig_list <- plotly_figure$figure$to_dict()
+
+  # Extract data and layout
+  p <- plotly_build(fig_list)
+
+  # Return the R plotly plot
+  return(p)
+}
+
+#' Provide a summarization of all results
+#'
+#' @param results A list of result objects
+#'
+#' @return A numeric vector giving number of characters (code points) in each
+#'    element of the character vector. Missing string have missing length.
+#' @export
+build_r_plots_all <- function(results) {
+  # Run the Python function
+  plotly_images <- list()
+  matplotlib_images <- list()
+
+  for (index in 1:length(results$results)) {
+    suite <- results$results[index][[1]]
+    print(glue("Test Suite Results: {results$test_plans[index]}\n"))
+    for (result in suite) {
+      if ("figures" %in% names(result)) {
+        for (figure in result$figures) {
+          if (figure$is_plotly_figure()) {
+            plotly_images[[length(plotly_images) + 1]] <- build_r_plotly(figure)
+          } else if (figure$is_matplotlib_figure()) {
+            fname <- paste0(figure$metadata$`_name`, ".png")
+            if (!(fname %in% unlist(matplotlib_images))) {
+              figure$figure$savefig(fname)
+
+              matplotlib_images[[length(matplotlib_images) + 1]] <- fname
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return(list(plotly = plotly_images, matplotlib = matplotlib_images))
+}

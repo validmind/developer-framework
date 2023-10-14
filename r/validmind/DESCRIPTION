@@ -20,4 +20,5 @@ Imports:
   dplyr,
   purrr,
   knitr,
-  kableExtra
+  kableExtra,
+  plotly
