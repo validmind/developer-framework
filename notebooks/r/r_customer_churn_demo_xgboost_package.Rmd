@@ -227,10 +227,8 @@ for (i in 1:length(model_validation_plots$plotly)) {
 l
 ```
 
-```{r, echo=FALSE, results='asis'}
-for (img_path in model_validation_plots$matplotlib) {
-  cat(paste0("![](", img_path, ")\n\n"))
-}
+```{r, echo=FALSE}
+knitr::include_graphics(unlist(model_validation_plots$matplotlib))
 ```
 
 ```{r, results='hide'}
