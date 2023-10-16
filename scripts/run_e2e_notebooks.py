@@ -4,6 +4,13 @@ import click
 import nbformat
 import papermill as pm
 
+NOTEBOOKS_TO_RUN = [
+    "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
+    "notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb",
+    "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
+    "notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb",
+]
+
 INIT_CELL_CODE = """
 import validmind as vm
 
@@ -18,20 +25,15 @@ vm.init(
 
 @click.command()
 @click.option(
-    "--notebook-dir", default="notebooks", help="Directory containing notebooks to run."
-)
-@click.option(
     "--kernel", default="python3", help="Kernel to use when executing notebooks."
 )
-def main(notebook_dir, kernel):
+def main(kernel):
     """Run notebooks from the specified directory for end-to-end testing."""
-    notebook_files = [f for f in os.listdir(notebook_dir) if f.endswith(".ipynb")]
-    if not notebook_files:
-        click.echo("No notebooks found in the specified directory.")
-        return
-    for notebook_file in notebook_files:
-        notebook_path = os.path.join(notebook_dir, notebook_file)
+    for notebook_file in NOTEBOOKS_TO_RUN:
+        notebook_path = os.path.join(os.getcwd(), notebook_file)
+
         backup_notebook(notebook_path)
+
         try:
             update_vm_init_cell(notebook_path)
             click.echo(f"Executing {notebook_file} ...")
@@ -39,6 +41,7 @@ def main(notebook_dir, kernel):
             click.echo(f"Finished executing {notebook_file}.")
         except Exception as e:
             click.echo(f"Error running {notebook_file}: {e}")
+
         restore_notebook(notebook_path)
 
 
