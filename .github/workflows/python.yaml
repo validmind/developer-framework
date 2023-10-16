@@ -45,6 +45,9 @@ jobs:
       - name: Unit Tests
         run: make test
 
+      - name: Integration Tests
+        run: make test-integration
+
       # Tests that we can build the docs
       - name: Generate Docs
         run: make docs
