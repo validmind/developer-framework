@@ -264,3 +264,61 @@ process_result <- function(results) {
 
   return(overall_result)
 }
+
+#' Provide a pretty printing of all processed results
+#'
+#' @param processed_results A list of result objects
+#'
+#' @return A numeric vector giving number of characters (code points) in each
+#'    element of the character vector. Missing string have missing length.
+#' @export
+pretty_print_all_tables <- function(processed_results) {
+  # Display kable tables
+  for (result in processed_results) {
+    pretty_summary_results <- pretty_print_tables(result$result_tables)
+
+    invisible(lapply(pretty_summary_results, print))
+  }
+}
+
+#' Provide a pretty printing of all processed results
+#'
+#' @param processed_results A list of result objects
+#'
+#' @return A numeric vector giving number of characters (code points) in each
+#'    element of the character vector. Missing string have missing length.
+#'
+#' @importFrom htmltools tagList
+#' @export
+pretty_print_all_plotly <- function(processed_results) {
+  # Loop through each list in processed_results
+  p_list <- list()
+  for (result in processed_results) {
+    for (plot in result$plotly_images) {
+      p_list[[length(p_list) + 1]] <- plot
+    }
+  }
+
+  tagList(p_list)
+}
+
+#' Provide a pretty printing of all processed results
+#'
+#' @param processed_results A list of result objects
+#'
+#' @return A numeric vector giving number of characters (code points) in each
+#'    element of the character vector. Missing string have missing length.
+#'
+#' @importFrom knitr include_graphics
+#' @export
+pretty_print_all_images <- function(processed_results) {
+  # Display matplotlib images
+  im_list <- c()
+  for (result in processed_results) {
+    im_list <- c(im_list, unlist(result$matplotlib_images))
+  }
+
+  if (!is.null(im_list)) {
+    include_graphics(im_list)
+  }
+}
