@@ -1,3 +1,11 @@
+"""Script to run notebooks for integration testing the dev framework.
+
+Usage:
+    python scripts/run_e2e_notebooks.py
+
+Note: This script is meant to be run from the root of the repo
+"""
+
 import os
 
 import click
@@ -57,6 +65,8 @@ def main(kernel):
             click.echo(f" -------- Finished executing {notebook_path} ---------- \n")
         except Exception as e:
             click.echo(f"Error running {notebook_path}: {e}")
+            os.remove(notebook_path.replace(".ipynb", ".out.ipynb"))
+            restore_notebook(notebook_path)
             raise e
 
         restore_notebook(notebook_path)
@@ -65,15 +75,18 @@ def main(kernel):
 def run_notebook(notebook_path, kernel_name):
     output_path = notebook_path.replace(".ipynb", ".out.ipynb")
 
+    is_gh_actions = os.getenv("GITHUB_ACTIONS") == "true"
+
     pm.execute_notebook(
         input_path=notebook_path,
         output_path=output_path,
         kernel_name=kernel_name,
-        log_output=True,
-        progress_bar=False,
+        log_output=is_gh_actions,
+        progress_bar=(not is_gh_actions),
+        cwd=os.path.dirname(notebook_path),
     )
 
-    # comment out the below line to see output notebook
+    # comment out the below line to see output notebook for debugging
     os.remove(output_path)
 
 
