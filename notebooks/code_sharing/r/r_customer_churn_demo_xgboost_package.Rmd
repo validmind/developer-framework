@@ -126,13 +126,19 @@ tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_datas
 ```
 
 ```{r, results='hide'}
-raw_summary_results <- summarize_results(tabular_suite_results)
+processed_tabular_results <- process_result(tabular_suite_results)
+```
+
+```{r, echo=FALSE}
+pretty_print_all_plotly(processed_tabular_results)
 ```
 
 ```{r, echo=FALSE, results='asis'}
-pretty_summary_results <- pretty_print_tables(raw_summary_results)
+pretty_print_all_images(processed_tabular_results)
+```
 
-invisible(lapply(pretty_summary_results, print_table))
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_tables(processed_tabular_results)
 ```
 
 ## **Run the Model Validation Test Plan**
@@ -218,50 +224,17 @@ model_validation_results = vm_r$run_test_suite("classifier_model_validation", mo
 ```
 
 ```{r}
-processed_results <- process_result(model_validation_results)
+processed_validation_results <- process_result(model_validation_results)
+```
+
+```{r, echo=FALSE}
+pretty_print_all_plotly(processed_validation_results)
 ```
 
 ```{r, echo=FALSE, results='asis'}
-# Every result
-display_res <- list()
-for (index in 1:length(processed_results)) {
-  result <- processed_results[[index]]
-
-  #pretty_model_results <- pretty_print_tables(result$result_tables)
-
- # lapply(pretty_model_results, print_table)
-
-  # Handle plotly images
-  if (length(result$plotly_images) > 0) {
-    # l <- htmltools::tagList()
-    # for (i in 1:length(result$plotly_images)) {
-    #   l[[i]] <- as_widget(result$plotly_images[[i]])
-    # }
-    # print(l)
-    for (i in length(result$plotly_images)) {
-      print(result$plotly_images[[i]])
-    }
-  }
-
-  #if (length(result$matplotlib_images) > 0) {
-  #    knitr::include_graphics(unlist(result$matplotlib_images))
-  #}
-}
+pretty_print_all_images(processed_validation_results)
 ```
 
-```{r echo=FALSE, results='asis'}
-library(plotly)
-
-data(mtcars)
-
-p1 <- plot_ly(data = mtcars, x = ~wt, y = ~mpg, type = 'scatter', mode = 'markers')
-p2 <- plot_ly(data = mtcars, x = ~hp, y = ~mpg, type = 'scatter', mode = 'markers')
-p3 <- plot_ly(data = mtcars, x = ~qsec, y = ~mpg, type = 'scatter', mode = 'markers')
-
-pl <- list(p1, p2, p3)
-
-for(p in pl) {
-  print(p)
-  cat("\n\n") # Add some space between plots
-}
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_tables(processed_validation_results)
 ```
