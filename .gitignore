@@ -195,7 +195,7 @@ gradio_cached_examples
 
 # R
 r/validmind/creds.txt
-r/validmind/inst/examples/*.html
+r/validmind/notebooks/code_sharing/r/*.html
 r/validmind/README.html
 r/validmind/.Rproj.user
 .Rproj.user
