@@ -14,6 +14,7 @@ target_column = "MedHouseVal"
 def load_data(full_dataset=False):
     california_housing = fetch_california_housing(as_frame=True)
     df = california_housing.data[feature_columns]
+    df = df.copy()
     df[target_column] = california_housing.target.values
 
     return df

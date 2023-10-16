@@ -68,7 +68,9 @@ class RegressionErrors(Metric):
 
         return ResultSummary(results=[ResultTable(data=table_records)])
 
-    def regression_errors(self, y_true_train, class_pred_train, y_true_test, class_pred_test):
+    def regression_errors(
+        self, y_true_train, class_pred_train, y_true_test, class_pred_test
+    ):
         mae_train = metrics.mean_absolute_error(y_true_train, class_pred_train)
         mae_test = metrics.mean_absolute_error(y_true_test, class_pred_test)
 
@@ -135,6 +137,8 @@ class RegressionErrors(Metric):
         class_pred_test = self.model.y_test_predict
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
-        results = self.regression_errors(y_true_train, class_pred_train, y_true_test, class_pred_test)
+        results = self.regression_errors(
+            y_true_train, class_pred_train, y_true_test, class_pred_test
+        )
 
         return self.cache_results(metric_value=results)
