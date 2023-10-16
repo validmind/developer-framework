@@ -66,14 +66,52 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ShapiroWilk</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ShapiroWilk</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ShapiroWilk"></a>
     
-            <div class="docstring"><p>The Shapiro-Wilk test is a statistical test used to determine
-whether a given set of data follows a normal distribution.</p>
+            <div class="docstring"><p>Evaluates feature-wise normality of training data using the Shapiro-Wilk test.</p>
+
+<p><strong>Purpose</strong>: The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard
+normal distribution. This analysis is crucial in machine learning modeling because the normality of the data can
+profoundly impact the performance of the model. This metric is especially useful in evaluating various features of
+the dataset in both classification and regression tasks.</p>
+
+<p><strong>Test Mechanism</strong>: The Shapiro-Wilk test is conducted on each feature column of the training dataset to determine
+if the data contained fall within the normal distribution. The test presents a statistic and a p-value, with the
+p-value serving to validate or repudiate the null hypothesis, which is that the tested data is normally distributed.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A p-value that falls below 0.05 signifies a high risk as it discards the null hypothesis, indicating that the
+data does not adhere to the normal distribution.</li>
+<li>For machine learning models built on the presumption of data normality, such an outcome could result in subpar
+performance or incorrect predictions.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The Shapiro-Wilk test is esteemed for its level of accuracy, thereby making it particularly well-suited to
+datasets of small to moderate sizes.</li>
+<li>It proves its versatility through its efficient functioning in both classification and regression tasks.</li>
+<li>By separately testing each feature column, the Shapiro-Wilk test can raise an alarm if a specific feature does
+not comply with the normality.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The Shapiro-Wilk test's sensitivity can be a disadvantage as it often rejects the null hypothesis (i.e., data is
+normally distributed), even for minor deviations, especially in large datasets. This may lead to unwarranted 'false
+alarms' of high risk by deeming the data as not normally distributed even if it approximates normal distribution.</li>
+<li>Exceptional care must be taken in managing missing data or outliers prior to testing as these can greatly skew
+the results.</li>
+<li>Lastly, the Shapiro-Wilk test is not optimally suited for processing data with pronounced skewness or kurtosis.</li>
+</ul>
 </div>
 
 
@@ -95,15 +133,16 @@ whether a given set of data follows a normal distribution.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ShapiroWilk.__init__" class="function">Metric</dd>
                 <dd id="ShapiroWilk.key" class="variable">key</dd>
                 <dd id="ShapiroWilk.summary" class="function">summary</dd>
                 <dd id="ShapiroWilk.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ShapiroWilk.description" class="function">description</dd>
+                <dd id="ShapiroWilk.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

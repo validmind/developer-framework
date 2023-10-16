@@ -69,13 +69,59 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AutoAR</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">AutoAR</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#AutoAR"></a>
     
-            <div class="docstring"><p>Automatically detects the AR order of a time series using both BIC and AIC.</p>
+            <div class="docstring"><p>Automatically identifies the optimal Autoregressive (AR) order for a time series using BIC and AIC criteria.</p>
+
+<p><strong>Purpose</strong>:</p>
+
+<p>The AutoAR test is intended to automatically identify the Autoregressive (AR) order of a time series by utilizing
+the Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC). AR order is crucial in forecasting
+tasks as it dictates the quantity of prior terms in the sequence to use for predicting the current term. The
+objective is to select the most fitting AR model that encapsulates the trend and seasonality in the time series
+data.</p>
+
+<p><strong>Test Mechanism</strong>:</p>
+
+<p>The test mechanism operates by iterating through a possible range of AR orders up to a defined maximum. An AR model
+is fitted for each order, and the corresponding BIC and AIC are computed. BIC and AIC statistical measures are
+designed to penalize models for complexity, preferring simpler models that fit the data proficiently. To verify the
+stationarity of the time series, the Augmented Dickey-Fuller test is executed. The AR order, BIC, and AIC findings,
+are compiled into a dataframe for effortless comparison. Then, the AR order with the smallest BIC is established as
+the desirable order for each variable.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>An augmented Dickey Fuller test p-value &gt; 0.05, indicating the time series isn't stationary, may lead to
+inaccurate results.</li>
+<li>Problems with the model fitting procedure, such as computational or convergence issues.</li>
+<li>Continuous selection of the maximum specified AR order may suggest insufficient set limit.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test independently pinpoints the optimal AR order, thereby reducing potential human bias.</li>
+<li>It strikes a balance between model simplicity and goodness-of-fit to avoid overfitting.</li>
+<li>Has the capability to account for stationarity in a time series, an essential aspect for dependable AR modelling.</li>
+<li>The results are aggregated into an comprehensive table, enabling an easy interpretation.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The tests need a stationary time series input.</li>
+<li>They presume a linear relationship between the series and its lags.</li>
+<li>The search for the best model is constrained by the maximum AR order supplied in the parameters. Therefore, a low
+max_ar_order could result in subpar outcomes.</li>
+<li>AIC and BIC may not always agree on the selection of the best model. This potentially requires the user to juggle
+interpretational choices.</li>
+</ul>
 </div>
 
 
@@ -113,14 +159,15 @@ and another for the best AR Order results</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="AutoAR.__init__" class="function">Metric</dd>
                 <dd id="AutoAR.key" class="variable">key</dd>
                 <dd id="AutoAR.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="AutoAR.description" class="function">description</dd>
+                <dd id="AutoAR.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

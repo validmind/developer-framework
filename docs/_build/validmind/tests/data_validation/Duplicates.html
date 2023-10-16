@@ -73,17 +73,55 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Duplicates</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">Duplicates</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#Duplicates"></a>
     
-            <div class="docstring"><p>The duplicates test measures the number of duplicate entries found in the dataset.</p>
+            <div class="docstring"><p>Checks for and quantifies the presence of duplicate entries in the dataset or a specified column.</p>
+
+<p><strong>Purpose</strong>: The Duplicates test is designed to assess the data quality of an ML model by identifying any duplicate
+entries in the data set. It focuses on seeking out duplication in a specified text column or among the primary keys
+of the data set, which could have serious implications for the performance and integrity of the model. Duplicate
+entries could potentially skew the data distribution and influence model training inaccurately.</p>
+
+<p><strong>Test Mechanism</strong>: This test operates by calculating the total number of duplicate entries in the data set. The
+algorithm will count duplicates within the 'text_column' if this property is specified. If primary keys are
+defined, the test will also be applied on them. The count of duplicates ('n_duplicates') is then compared to a
+predefined minimum threshold (the default 'min_threshold' is set at 1) to determine whether the test has passed or
+not. The results include the total number of duplicates as well as the percentage of duplicate rows in comparison
+to the overall dataset ('p_duplicates').</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
 
 <ul>
-<li>If the dataset has a <code>text_column</code> property then the test will check for duplicate entries in that column.</li>
-<li>If a primary key column is specified, the dataset is checked for duplicate primary keys as well.</li>
+<li>A large amount of duplicates, particularly those exceeding the predefined minimum threshold, point toward a high
+risk situation.</li>
+<li>Overrepresentation of certain data which can lead to skewed results.</li>
+<li>Indication of inefficient data collecting techniques leading to data redundancy.</li>
+<li>Models that fail this test predominantly may necessitate a closer examination of their data preprocessing methods
+or source data.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The Duplicates test is highly adaptable, being capable of being used with both text data and tabular data formats.</li>
+<li>It is able to provide results both numerically and as a percentage of the total data set, allowing for a broader
+understanding of the extent of duplication.</li>
+<li>Its utility lies in effectively flagging any data quality issues that could potentially upset model performance
+and generate erroneous predictions.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The Duplicates test solely targets exact duplication in entries, meaning it may overlook near-duplicates or
+normalized forms of entries that might also affect data distribution and model integrity.</li>
+<li>Data variations caused by errors, phrasing changes, or inconsistencies may not be detected.</li>
+<li>A substantial number of duplicates in a datasets may not always denote poor data quality, as this can be
+dependent on the nature of the data and the problem being addressed.</li>
 </ul>
 </div>
 
@@ -91,7 +129,7 @@
                             <div id="Duplicates.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Duplicates</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Duplicates</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -104,7 +142,7 @@
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -135,12 +173,13 @@ So we build a table with 1 row and show number of duplicates and percentage of d
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="Duplicates.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="Duplicates.description" class="function">description</dd>
+                <dd id="Duplicates.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

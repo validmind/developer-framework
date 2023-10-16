@@ -5,12 +5,53 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 class DatasetSplit(Metric):
     """
-    Attempts to extract information about the dataset split from the
-    provided training, test and validation datasets.
+    Evaluates and visualizes the distribution proportions among training, testing, and validation datasets of an ML
+    model.
+
+    **Purpose:**
+    The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
+    validation datasets, if available, within a given machine learning model. The main purpose is to assess whether the
+    model's datasets are split appropriately, as an imbalanced split might affect the model's ability to learn from the
+    data and generalize to unseen data.
+
+    **Test Mechanism:**
+    The DatasetSplit test first calculates the total size of all available datasets in the model. Then, for each
+    individual dataset, the methodology involves determining the size of the dataset and its proportion relative to the
+    total size. The results are then conveniently summarized in a table that shows dataset names, sizes, and
+    proportions. Absolute size and proportion of the total dataset size are displayed for each individual dataset.
+
+    **Signs of High Risk:**
+    - A very small training dataset, which may result in the model not learning enough from the data.
+    - A very large training dataset and a small test dataset, which may lead to model overfitting and poor
+    generalization to unseen data.
+    - A small or non-existent validation dataset, which might complicate the model's performance assessment.
+
+    **Strengths:**
+    - The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
+    highlight any potential imbalance in dataset splits quickly.
+    - It covers a wide range of task types including classification, regression, and text-related tasks.
+    - The metric is not tied to any specific data type and is applicable to tabular data, time series data, or text
+    data.
+
+    **Limitations:**
+    - The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,
+    just the size and proportion.
+    - The test does not give any recommendations or adjustments for imbalanced datasets.
+    - Potential lack of compatibility with more complex modes of data splitting (for example, stratified or time-based
+    splits) could limit the applicability of this test.
     """
 
     name = "dataset_split"
     required_inputs = ["model"]
+    metadata = {
+        "task_types": [
+            "classification",
+            "regression",
+            "text_classification",
+            "text_summarization",
+        ],
+        "tags": ["tabular_data", "time_series_data", "text_data"],
+    }
 
     dataset_labels = {
         "train_ds": "Training",
@@ -18,19 +59,6 @@ class DatasetSplit(Metric):
         "validation_ds": "Validation",
         "total": "Total",
     }
-
-    def description(self):
-        return """
-        This section shows the size of the dataset split into training, test (and validation) sets
-        where applicable. The size of each dataset is shown in absolute terms and as a proportion
-        of the total dataset size.
-
-        The dataset split is important to understand because it can affect the performance of
-        the model. For example, if the training set is too small, the model may not be able to
-        learn the patterns in the data and will perform poorly on the test set. On the other hand,
-        if the test set is too small, the model may not be able to generalize well to unseen data
-        and will perform poorly on the validation set.
-        """
 
     def summary(self, raw_results):
         """

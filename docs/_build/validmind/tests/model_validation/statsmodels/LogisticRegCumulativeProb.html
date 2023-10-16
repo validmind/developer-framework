@@ -38,9 +38,6 @@
                                 <a class="function" href="#LogisticRegCumulativeProb.__init__">LogisticRegCumulativeProb</a>
                         </li>
                         <li>
-                                <a class="function" href="#LogisticRegCumulativeProb.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#LogisticRegCumulativeProb.compute_probabilities">compute_probabilities</a>
                         </li>
                         <li>
@@ -79,42 +76,73 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">LogisticRegCumulativeProb</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">LogisticRegCumulativeProb</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#LogisticRegCumulativeProb"></a>
     
-            <div class="docstring"><p>Cumulative Probability Metric for Logistic Regression Models</p>
+            <div class="docstring"><p>Visualizes cumulative probabilities of positive and negative classes for both training and testing in logistic
+regression models.</p>
+
+<p><strong>Purpose</strong>: This metric is utilized to evaluate the distribution of predicted probabilities for positive and
+negative classes in a logistic regression model. It's not solely intended to measure the model's performance but
+also provides a visual assessment of the model's behavior by plotting the cumulative probabilities for positive and
+negative classes across both the training and test datasets.</p>
+
+<p><strong>Test Mechanism</strong>: The logistic regression model is evaluated by first computing the predicted probabilities for
+each instance in both the training and test datasets, which are then added as a new column in these sets. The
+cumulative probabilities for positive and negative classes are subsequently calculated and sorted in ascending
+order. Cumulative distributions of these probabilities are created for both positive and negative classes across
+both training and test datasets. These cumulative probabilities are represented visually in a plot, containing two
+subplots - one for the training data and the other for the test data, with lines representing cumulative
+distributions of positive and negative classes.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Imbalanced distribution of probabilities for either positive or negative classes.</li>
+<li>Notable discrepancies or significant differences between the cumulative probability distributions for the
+training data versus the test data.</li>
+<li>Marked discrepancies or large differences between the cumulative probability distributions for positive and
+negative classes.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>It offers not only numerical probabilities but also provides a visual illustration of data, which enhances the
+ease of understanding and interpreting the model's behavior.</li>
+<li>Allows for the comparison of model's behavior across training and testing datasets, providing insights about how
+well the model is generalized.</li>
+<li>It differentiates between positive and negative classes and their respective distribution patterns, which can aid
+in problem diagnosis.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Exclusive to classification tasks and specifically to logistic regression models.</li>
+<li>Graphical results necessitate human interpretation and may not be directly applicable for automated risk
+detection.</li>
+<li>The method does not give a solitary quantifiable measure of model risk, rather it offers a visual representation
+and broad distributional information.</li>
+<li>If the training and test datasets are not representative of the overall data distribution, the metric could
+provide misleading results.</li>
+</ul>
 </div>
 
 
                             <div id="LogisticRegCumulativeProb.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">LogisticRegCumulativeProb</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">LogisticRegCumulativeProb</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#LogisticRegCumulativeProb.__init__"></a>
     
     
-
-                            </div>
-                            <div id="LogisticRegCumulativeProb.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#LogisticRegCumulativeProb.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="LogisticRegCumulativeProb.compute_probabilities" class="classattr">
@@ -165,10 +193,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="LogisticRegCumulativeProb.key" class="variable">key</dd>
                 <dd id="LogisticRegCumulativeProb.summary" class="function">summary</dd>
                 <dd id="LogisticRegCumulativeProb.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="LogisticRegCumulativeProb.description" class="function">description</dd>
+                <dd id="LogisticRegCumulativeProb.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

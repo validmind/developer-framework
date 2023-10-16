@@ -66,13 +66,53 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ACFandPACFPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ACFandPACFPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ACFandPACFPlot"></a>
     
-            <div class="docstring"><p>Plots ACF and PACF for a given time series dataset.</p>
+            <div class="docstring"><p>Analyzes time series data using Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) plots to
+reveal trends and correlations.</p>
+
+<p><strong>Purpose</strong>: The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed
+to analyze time series data in machine learning models. It illuminates the correlation of the data over time by
+plotting the correlation of the series with its own lags (ACF), and the correlations after removing effects already
+accounted for by earlier lags (PACF). This information can identify trends, such as seasonality, degrees of
+autocorrelation, and inform the selection of order parameters for AutoRegressive Integrated Moving Average (ARIMA)
+models.</p>
+
+<p><strong>Test Mechanism</strong>: The <code><a href="#ACFandPACFPlot">ACFandPACFPlot</a></code> test accepts a dataset with a time-based index. It first confirms the
+index is of a datetime type, then handles any NaN values. The test subsequently generates ACF and PACF plots for
+each column in the dataset, producing a subplot for each. If the dataset doesn't include key columns, an error is
+returned.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Sudden drops in the correlation at a specific lag might signal a model at high risk.</li>
+<li>Consistent high correlation across multiple lags could also indicate non-stationarity in the data, which may
+suggest that a model estimated on this data won't generalize well to future, unknown data.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>ACF and PACF plots offer clear graphical representations of the correlations in time series data.</li>
+<li>These plots are effective at revealing important data characteristics such as seasonality, trends, and
+correlation patterns.</li>
+<li>The insights from these plots aid in better model configuration, particularly in the selection of ARIMA model
+parameters.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>ACF and PACF plots are exclusively for time series data and hence, can't be applied to all ML models.</li>
+<li>These plots require large, consistent datasets as gaps could lead to misleading results.</li>
+<li>The plots can only represent linear correlations and fail to capture any non-linear relationships within the data.</li>
+<li>The plots might be difficult for non-experts to interpret and should not replace more advanced analyses.</li>
+</ul>
 </div>
 
 
@@ -94,15 +134,16 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ACFandPACFPlot.__init__" class="function">Metric</dd>
                 <dd id="ACFandPACFPlot.key" class="variable">key</dd>
                 <dd id="ACFandPACFPlot.summary" class="function">summary</dd>
                 <dd id="ACFandPACFPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ACFandPACFPlot.description" class="function">description</dd>
+                <dd id="ACFandPACFPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

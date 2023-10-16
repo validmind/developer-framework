@@ -9,8 +9,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 from .ai_powered_test import AIPoweredTest
@@ -19,37 +19,45 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Conciseness(ThresholdTest, AIPoweredTest):
     """
+    Analyzes and grades the conciseness of prompts provided to a Large Language Model.
+
     **Purpose:**
-    The Conciseness Assessment is designed to evaluate the brevity and succinctness of prompts
-    provided to a Language Learning Model (LLM). A concise prompt strikes a balance between
-    offering clear instructions and eliminating redundant or unnecessary information, ensuring that
-    the LLM receives relevant input without being overwhelmed.
+    The Conciseness Assessment is designed to evaluate the brevity and succinctness of prompts provided to a Language
+    Learning Model (LLM). A concise prompt strikes a balance between offering clear instructions and eliminating
+    redundant or unnecessary information, ensuring that the LLM receives relevant input without being overwhelmed.
 
     **Test Mechanism:**
-    Using an LLM, this test puts input prompts through a conciseness analysis where it's graded
-    on a scale from 1 to 10. The grade reflects how well the prompt maintains clarity while
-    avoiding verbosity. Prompts that achieve a grade equal to or surpassing a predefined threshold
-    (default set to 7) are considered successful in being concise. This threshold can be adjusted
-    based on specific requirements.
+    Using an LLM, this test conducts a conciseness analysis on input prompts. The analysis grades the prompt on a scale
+    from 1 to 10, where the grade reflects how well the prompt delivers clear instructions without being verbose.
+    Prompts that score equal to or above a predefined threshold (default set to 7) are deemed successfully concise.
+    This threshold can be adjusted to meet specific requirements.
 
-    **Why Conciseness Matters:**
-    While detailed prompts can guide an LLM towards accurate results, excessive details can clutter
-    the instruction and potentially lead to undesired outputs. Concise prompts are straightforward,
-    reducing ambiguity and focusing the LLM's attention on the primary task. This is especially
-    important considering there are limitations to the length of prompts that can be fed to an
-    LLM.
+    **Signs of High Risk:**
+    - Prompts that consistently score below the predefined threshold.
+    - Prompts that are overly wordy or contain unnecessary information.
+    - Prompts that create confusion or ambiguity due to excess or unnecessary information.
 
-    **Example:**
-    For an LLM tasked with summarizing a document, a verbose prompt might introduce unnecessary
-    constraints or biases. A concise, effective prompt like, "Provide a brief summary highlighting
-    the main points of the document" ensures that the LLM captures the essence of the content
-    without being sidetracked.
+    **Strengths:**
+    - Ensures clarity and effectiveness of the prompts.
+    - Promotes brevity and preciseness in prompts without sacrificing essential information.
+    - Useful for models like LLMs, where input prompt length and clarity greatly influence model performance.
+    - Provides a quantifiable measure of prompt conciseness.
+
+    **Limitations:**
+    - The conciseness score is based on an AI's assessment, which might not fully capture human interpretation of
+    conciseness.
+    - The predefined threshold for conciseness could be subjective and might need adjustment based on application.
+    - The test is dependent on the LLM’s understanding of conciseness, which might vary from model to model.
     """
 
     category = "prompt_validation"
     name = "conciseness"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -83,7 +91,7 @@ Prompt:
 """
 '''.strip()
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [
             {
@@ -117,7 +125,7 @@ Prompt:
 
         passed = score > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": score,

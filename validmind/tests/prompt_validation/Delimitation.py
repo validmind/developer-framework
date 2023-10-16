@@ -9,8 +9,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 from .ai_powered_test import AIPoweredTest
@@ -19,42 +19,47 @@ from .ai_powered_test import AIPoweredTest
 @dataclass
 class Delimitation(ThresholdTest, AIPoweredTest):
     """
+    Evaluates the proper use of delimiters in prompts provided to Large Language Models.
+
     **Purpose:**
-    The Delimitation Test ensures that prompts provided to the Language Learning Model
-    (LLM) use delimiters correctly to distinctly mark sections of the input. Properly delimited
-    prompts simplify the LLM's interpretation process, ensuring accurate and precise responses.
+    This test, dubbed the "Delimitation Test", is engineered to assess whether prompts provided to the Language
+    Learning Model (LLM) correctly use delimiters to mark different sections of the input. Well-delimited prompts
+    simplify the interpretation process for LLM, ensuring responses are precise and accurate.
 
     **Test Mechanism:**
-    Using an LLM, prompts are checked for their appropriate use of delimiters such as triple
-    quotation marks, XML tags, and section titles. Each prompt receives a score from 1 to 10
-    based on its delimitation integrity. Prompts scoring at or above a set threshold (default is 7)
-    pass the check. This threshold can be modified as needed.
+    The test employs an LLM to examine prompts for appropriate use of delimiters such as triple quotation marks, XML
+    tags, and section titles. Each prompt is assigned a score from 1 to 10 based on its delimitation integrity. Those
+    with scores equal to or above the preset threshold (which is 7 by default, although it can be adjusted as
+    necessary) pass the test.
 
-    **Why Proper Delimitation Matters:**
-    Delimiters play a crucial role in segmenting and organizing prompts, especially when diverse
-    data or multiple tasks are involved. They help in clearly distinguishing between different
-    parts of the input, reducing ambiguity for the LLM. As task complexity increases, the correct
-    use of delimiters becomes even more critical to ensure the LLM understands the prompt's
-    intent.
+    **Signs of High Risk:**
+    - The test identifies prompts where a delimiter is missing, improperly placed, or incorrect, which can lead to
+    misinterpretation by the LLM.
+    - A high-risk scenario may involve complex prompts with multiple tasks or diverse data where correct delimitation
+    is integral to understanding.
+    - Low scores (below the threshold) are a clear indicator of high risk.
 
-    **Example:**
-    When given a prompt like:
+    **Strengths:**
+    - This test ensures clarity in the demarcation of different components of given prompts.
+    - It helps reduce ambiguity in understanding prompts, particularly for complex tasks.
+    - Scoring allows for quantified insight into the appropriateness of delimiter usage, aiding continuous improvement.
 
-    ```USER: Summarize the text delimited by triple quotes. '''insert text here'''```
-
-    or:
-
-    ```USER: <article> insert first article here </article>
-    <article> insert second article here </article>```
-
-    The LLM can more accurately discern sections of the text to be treated differently, thanks to
-    the clear delimitation.
+    **Limitations:**
+    - The test only checks for the presence and placement of delimiter, not whether the correct delimiter type is used
+    for the specific data or task.
+    - It may not fully reveal the impacts of poor delimitation on LLM's final performance.
+    - Depending on the complexity of the tasks and prompts, the preset score threshold may not be refined enough,
+    requiring regular manual adjustment.
     """
 
     category = "prompt_validation"
     name = "delimitation"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "zero_shot", "few_shot"],
+    }
 
     system_prompt = """
 You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different metrics. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
@@ -76,7 +81,7 @@ Prompt:
 """
 '''.strip()
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [
             {
@@ -110,7 +115,7 @@ Prompt:
 
         passed = score > self.params["min_threshold"]
         results = [
-            TestResult(
+            ThresholdTestResult(
                 passed=passed,
                 values={
                     "score": score,

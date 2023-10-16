@@ -69,13 +69,60 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RollingStatsPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RollingStatsPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RollingStatsPlot"></a>
     
-            <div class="docstring"><p>This class provides a metric to visualize the stationarity of a given time series dataset by plotting the rolling mean and rolling standard deviation. The rolling mean represents the average of the time series data over a fixed-size sliding window, which helps in identifying trends in the data. The rolling standard deviation measures the variability of the data within the sliding window, showing any changes in volatility over time. By analyzing these plots, users can gain insights into the stationarity of the time series data and determine if any transformations or differencing operations are required before applying time series models.</p>
+            <div class="docstring"><p>This test evaluates the stationarity of time series data by plotting its rolling mean and standard deviation.</p>
+
+<p><strong>Purpose</strong>: The <code><a href="#RollingStatsPlot">RollingStatsPlot</a></code> metric is employed to gauge the stationarity of time series data in a given
+dataset. This metric specifically evaluates the rolling mean and rolling standard deviation of the dataset over a
+pre-specified window size. The rolling mean provides an understanding of the average trend in the data, while the
+rolling standard deviation gauges the volatility of the data within the window. It is critical in preparing time
+series data for modeling as it reveals key insights into data behavior across time.</p>
+
+<p><strong>Test Mechanism</strong>: This mechanism is comprised of two steps. Initially, the rolling mean and standard deviation
+for each of the dataset's columns are calculated over a window size, which can be user-specified or by default set
+to 12 data points. Then, the calculated rolling mean and standard deviation are visualized via separate plots,
+illustrating the trends and volatility in the dataset. A straightforward check is conducted to ensure the existence
+of columns in the dataset, and to verify that the given dataset has been indexed by its date and time—a necessary
+prerequisites for time series analysis.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The presence of non-stationary patterns in either the rolling mean or the rolling standard deviation plots, which
+could indicate trends or seasonality in the data that may affect the performance of time series models.</li>
+<li>Missing columns in the dataset, which would prevent the execution of this metric correctly.</li>
+<li>The detection of NaN values in the dataset, which may need to be addressed before the metric can proceed
+successfully.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Offers visualizations of trending behaviour and volatility within the data, facilitating a broader understanding
+of the dataset's inherent characteristics.</li>
+<li>Checks of the dataset's integrity, such as existence of all required columns and the availability of a datetime
+index.</li>
+<li>Adjusts to accommodate various window sizes, thus allowing accurate analysis of data with differing temporal
+granularities.</li>
+<li>Considers each column of the data individually, thereby accommodating multi-feature datasets.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>For all columns, a fixed-size window is utilised. This may not accurately capture patterns in datasets where
+different features may require different optimal window sizes.</li>
+<li>Requires the dataset to be indexed by date and time, hence it may not be useable for datasets without a timestamp
+index.</li>
+<li>Primarily serves for data visualization as it does not facilitate any quantitative measures for stationarity,
+such as through statistical tests. Therefore, the interpretation is subjective and depends heavily on modeler
+discretion.</li>
+</ul>
 </div>
 
 
@@ -121,15 +168,16 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RollingStatsPlot.__init__" class="function">Metric</dd>
                 <dd id="RollingStatsPlot.key" class="variable">key</dd>
                 <dd id="RollingStatsPlot.summary" class="function">summary</dd>
                 <dd id="RollingStatsPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="RollingStatsPlot.description" class="function">description</dd>
+                <dd id="RollingStatsPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

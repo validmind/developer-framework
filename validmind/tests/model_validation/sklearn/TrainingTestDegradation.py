@@ -5,22 +5,61 @@ from functools import partial
 from typing import List
 
 import pandas as pd
-from sklearn import metrics
+from numpy import unique
+from sklearn import metrics, preprocessing
 
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
+
+
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = preprocessing.LabelBinarizer()
+    lb.fit(y_test)
+    y_test = lb.transform(y_test)
+    y_pred = lb.transform(y_pred)
+    return metrics.roc_auc_score(y_test, y_pred, average=average)
 
 
 @dataclass
 class TrainingTestDegradation(ThresholdTest):
     """
-    Test that the degradation in performance between the training and test datasets
-    does not exceed a predefined threshold.
+    Tests if model performance degradation between training and test datasets exceeds a predefined threshold.
+
+    **Purpose**: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance
+    between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to
+    check the model's ability to generalize from its training data to unseen test data. It assesses key classification
+    metric scores such as accuracy, precision, recall and f1 score, to verify the model's robustness and reliability.
+
+    **Test Mechanism**: The code applies several predefined metrics including accuracy, precision, recall and f1 scores
+    to the model's predictions for both the training and test datasets. It calculates the degradation as the difference
+    between the training score and test score divided by the training score. The test is considered successful if the
+    degradation for each metric is less than the preset maximum threshold of 10%. The results are summarized in a table
+    showing each metric's train score, test score, degradation percentage, and pass/fail status.
+
+    **Signs of High Risk**:
+    - A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.
+    - A high difference or gap between the metric scores on the training and the test datasets.
+    - The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.
+
+    **Strengths**:
+    - This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for
+    predicting its practical real-world performance.
+    - By evaluating multiple metrics, it takes into account different facets of model performance and enables a more
+    holistic evaluation.
+    - The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for
+    different scenarios.
+
+    **Limitations**:
+    - The test compares raw performance on training and test data, but does not factor in the nature of the data. Areas
+    with less representation in the training set, for instance, might still perform poorly on unseen data.
+    - It requires good coverage and balance in the test and training datasets to produce reliable results, which may
+    not always be available.
+    - The test is currently only designed for classification tasks.
     """
 
     category = "model_performance"
@@ -31,6 +70,18 @@ class TrainingTestDegradation(ThresholdTest):
         "metrics": ["accuracy", "precision", "recall", "f1"],
         "max_threshold": 0.10,  # Maximum 10% degradation
     }
+
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+            "visualization",
+        ],
+    }
+
     default_metrics = {
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
@@ -38,7 +89,7 @@ class TrainingTestDegradation(ThresholdTest):
         "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
     }
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
         The training test degradation test returns results like these:
         [{"values":
@@ -46,6 +97,7 @@ class TrainingTestDegradation(ThresholdTest):
         """
         results_table = [
             {
+                "Class": result.values["class"],
                 "Metric": result.test_name.title(),
                 "Train Score": result.values["train_score"],
                 "Test Score": result.values["test_score"],
@@ -74,28 +126,39 @@ class TrainingTestDegradation(ThresholdTest):
         test_class_pred = self.model.y_test_predict
         y_test_true = y_test_true.astype(test_class_pred.dtype)
 
-        metrics_to_compare = self.params["metrics"]
+        report_train = metrics.classification_report(
+            y_train_true, train_class_pred, output_dict=True
+        )
+        report_train["roc_auc"] = multiclass_roc_auc_score(
+            y_train_true, train_class_pred
+        )
+
+        report_test = metrics.classification_report(
+            y_test_true, test_class_pred, output_dict=True
+        )
+        report_test["roc_auc"] = multiclass_roc_auc_score(y_test_true, test_class_pred)
+
+        classes = {str(i) for i in unique(y_train_true)}
+
         test_results = []
-        for metric in metrics_to_compare:
-            metric_fn = self.default_metrics[metric]
-
-            train_score = metric_fn(y_train_true, train_class_pred)
-            test_score = metric_fn(y_test_true, test_class_pred)
-            degradation = (train_score - test_score) / train_score
-
-            passed = degradation < self.params["max_threshold"]
-            test_results.append(
-                TestResult(
-                    test_name=metric,
-                    passed=passed,
-                    values={
-                        "test_score": test_score,
-                        "train_score": train_score,
-                        "degradation": degradation,
-                    },
+        for class_name in classes:
+            for metric_name in ["precision", "recall", "f1-score"]:
+                train_score = report_train[class_name][metric_name]
+                test_score = report_test[class_name][metric_name]
+                degradation = (train_score - test_score) / train_score
+                passed = degradation < self.params["max_threshold"]
+                test_results.append(
+                    ThresholdTestResult(
+                        test_name=metric_name,
+                        passed=passed,
+                        values={
+                            "class": class_name,
+                            "test_score": test_score,
+                            "train_score": train_score,
+                            "degradation": degradation,
+                        },
+                    )
                 )
-            )
-
         return self.cache_results(
-            test_results, passed=all([r.passed for r in test_results])
+            test_results, passed=all(r.passed for r in test_results)
         )

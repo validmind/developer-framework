@@ -30,14 +30,6 @@ class APIRequestError(BaseError):
     pass
 
 
-class GetTestPlanError(BaseError):
-    """
-    When the test plan could not be found.
-    """
-
-    pass
-
-
 class GetTestSuiteError(BaseError):
     """
     When the test suite could not be found.
@@ -58,14 +50,6 @@ class MissingModelPredictFnError(BaseError):
     """
     When the pytorch model is missing a predict function or its predict
     method does not have the expected arguments.
-    """
-
-    pass
-
-
-class InitializeTestPlanError(BaseError):
-    """
-    When the test plan was found but could not be initialized.
     """
 
     pass

@@ -38,9 +38,6 @@
                                 <a class="function" href="#TabularDescriptionTables.__init__">TabularDescriptionTables</a>
                         </li>
                         <li>
-                                <a class="function" href="#TabularDescriptionTables.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#TabularDescriptionTables.get_summary_statistics_numerical">get_summary_statistics_numerical</a>
                         </li>
                         <li>
@@ -94,43 +91,76 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">TabularDescriptionTables</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">TabularDescriptionTables</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#TabularDescriptionTables"></a>
     
-            <div class="docstring"><p>Collects a set of descriptive statistics for a tabular dataset, for
-numerical, categorical and datetime variables.</p>
+            <div class="docstring"><p>Summarizes key descriptive statistics for numerical, categorical, and datetime variables in a dataset.</p>
+
+<p><strong>Purpose</strong>: The main purpose of this metric is to gather and present the descriptive statistics of numerical,
+categorical, and datetime variables present in a dataset. The attributes it measures include the count, mean,
+minimum and maximum values, percentage of missing values, data types of fields, and unique values for categorical
+fields, among others.</p>
+
+<p><strong>Test Mechanism</strong>: The test first segregates the variables in the dataset according to their data types
+(numerical, categorical, or datetime). Then, it compiles summary statistics for each type of variable. The
+specifics of these statistics vary depending on the type of variable:</p>
+
+<ul>
+<li>For numerical variables, the metric extracts descriptors like count, mean, minimum and maximum values, count of
+missing values, and data types.</li>
+<li>For categorical variables, it counts the number of unique values, displays unique values, counts missing values,
+and identifies data types.</li>
+<li>For datetime variables, it counts the number of unique values, identifies the earliest and latest dates, counts
+missing values, and identifies data types.</li>
+</ul>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Masses of missing values in the descriptive statistics results could hint at high risk or failure, indicating
+potential data collection, integrity, and quality issues.</li>
+<li>Detection of inappropriate distributions for numerical variables, like having negative values for variables that
+are always supposed to be positive.</li>
+<li>Identifying inappropriate data types, like a continuous variable being encoded as a categorical type.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides a comprehensive overview of the dataset.</li>
+<li>Gives a snapshot into the essence of the numerical, categorical, and datetime fields.</li>
+<li>Identifies potential data quality issues such as missing values or inconsistencies crucial for building credible
+machine learning models.</li>
+<li>The metadata, including the data type and missing value information, are vital for anyone including data
+scientists dealing with the dataset before the modeling process.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>It does not perform any deeper statistical analysis or tests on the data.</li>
+<li>It does not handle issues such as outliers, or relationships between variables.</li>
+<li>It offers no insights into potential correlations or possible interactions between variables.</li>
+<li>It does not investigate the potential impact of missing values on the performance of the machine learning models.</li>
+<li>It does not explore potential transformation requirements that may be necessary to enhance the performance of the
+chosen algorithm.</li>
+</ul>
 </div>
 
 
                             <div id="TabularDescriptionTables.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TabularDescriptionTables</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TabularDescriptionTables</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#TabularDescriptionTables.__init__"></a>
     
     
-
-                            </div>
-                            <div id="TabularDescriptionTables.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TabularDescriptionTables.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="TabularDescriptionTables.get_summary_statistics_numerical" class="classattr">
@@ -248,9 +278,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="TabularDescriptionTables.key" class="variable">key</dd>
                 <dd id="TabularDescriptionTables.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="TabularDescriptionTables.description" class="function">description</dd>
+                <dd id="TabularDescriptionTables.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

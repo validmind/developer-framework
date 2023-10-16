@@ -73,21 +73,65 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">BivariateFeaturesBarPlots</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">BivariateFeaturesBarPlots</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#BivariateFeaturesBarPlots"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of categorical data by plotting bivariate feautres bar plots.
-The input dataset and features_pairs are required.</p>
+            <div class="docstring"><p>Generates visual bar plots to analyze the relationship between paired features within categorical data in the model.</p>
+
+<p><strong>Purpose</strong>: The BivariateFeaturesBarPlots metric is intended to perform a visual analysis of categorical data
+within the model. The goal is to assess and understand the specific relationships between various feature pairs,
+while simultaneously highlighting the model's target variable. This form of bivariate plotting is immensely
+beneficial in uncovering trends, correlations, patterns, or inconsistencies that may not be readily apparent within
+raw tabular data.</p>
+
+<p><strong>Test Mechanism</strong>: These tests establish bar plots for each pair of features defined within the parameters. The
+dataset is grouped by each feature pair and then calculates the mean of the target variable within each specific
+grouping. Each group is represented via a bar in the plot, and the height of this bar aligns with the calculated
+mean. The colors assigned to these bars are based on the categorical section to which they pertain: these colors
+can either come from a colormap or generated anew if the total number of categories exceeds the current colormap's
+scope.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>If any values are found missing or inconsistent within the feature pairs.</li>
+<li>If there exist large discrepancies or irregularities between the mean values of certain categories within feature
+pairs.</li>
+<li>If the parameters for feature pairs have not been specified or if they were wrongly defined.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The BivariateFeaturesBarPlots provides a clear, visual comprehension of the relationships between feature pairs
+and the target variable.</li>
+<li>It allows an easy comparison between different categories within feature pairs.</li>
+<li>The metric can handle a diverse array of categorical data, enhancing its universal applicability.</li>
+<li>It is highly customizable due to its allowance for users to define feature pairs based on their specific
+requirements.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>It can only be used with categorical data, limiting its usability with numerical or textual data.</li>
+<li>It relies on manual input for feature pairs, which could result in the overlooking of important feature pairs if
+not chosen judiciously.</li>
+<li>The generated bar plots could become overly cluttered and difficult to decipher when dealing with feature pairs
+with a large number of categories.</li>
+<li>This metric only provides a visual evaluation and fails to offer any numerical or statistical measures to
+quantify the relationship between feature pairs.</li>
+</ul>
 </div>
 
 
                             <div id="BivariateFeaturesBarPlots.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">BivariateFeaturesBarPlots</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">BivariateFeaturesBarPlots</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,14 +171,15 @@ The input dataset and features_pairs are required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="BivariateFeaturesBarPlots.key" class="variable">key</dd>
                 <dd id="BivariateFeaturesBarPlots.summary" class="function">summary</dd>
                 <dd id="BivariateFeaturesBarPlots.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="BivariateFeaturesBarPlots.description" class="function">description</dd>
+                <dd id="BivariateFeaturesBarPlots.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

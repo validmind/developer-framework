@@ -69,13 +69,58 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">SpreadPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">SpreadPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#SpreadPlot"></a>
     
-            <div class="docstring"><p>This class provides a metric to visualize the spread between pairs of time series variables in a given dataset. By plotting the spread of each pair of variables in separate figures, users can assess the relationship between the variables and determine if any cointegration or other time series relationships exist between them.</p>
+            <div class="docstring"><p>Visualizes the spread relationship between pairs of time-series variables in a dataset, thereby aiding in
+identification of potential correlations.</p>
+
+<p><strong>Purpose</strong>:
+The SpreadPlot metric is intended to graphically illustrate and analyse the relationships between pairs of time
+series variables within a given dataset. This facilitated understanding helps in identifying and assessing
+potential time series correlations, like cointegration, between the variables.</p>
+
+<p><strong>Test Mechanism</strong>:
+The SpreadPlot metric operates by computing and representing the spread between each pair of time series variables
+in the dataset. In particular, the difference between two variables is calculated and presented as a line graph.
+This method is iterated for each unique pair of variables in the dataset.</p>
+
+<p><strong>Signs of High Risk</strong>:
+Potential indicators of high risk related to the SpreadPlot metric might include:</p>
+
+<ul>
+<li>Large fluctuations in the spread over a given timespan</li>
+<li>Unexpected patterns or trends that may signal a potential risk in the underlying correlations between the
+variables</li>
+<li>Presence of significant missing data or extreme outlier values, which could potentially skew the spread and
+indicate high risk</li>
+</ul>
+
+<p><strong>Strengths</strong>:
+The SpreadPlot metric provides several key advantages:</p>
+
+<ul>
+<li>It allows for thorough visual examination and interpretation of the correlations between time-series pairs</li>
+<li>It aids in revealing complex relationships like cointegration</li>
+<li>It enhances interpretability by visualising the relationships, thereby helping in spotting outliers and trends</li>
+<li>It is capable of handling numerous variable pairs from the dataset through a versatile and adaptable process</li>
+</ul>
+
+<p><strong>Limitations</strong>:
+Despite its advantages, the SpreadPlot metric does have certain drawbacks:</p>
+
+<ul>
+<li>It primarily serves as a visualisation tool and does not offer quantitative measurements or statistics to
+objectively determine relationships</li>
+<li>It heavily relies on the quality and granularity of the data - missing data or outliers can notably disturb the
+interpretation of the relationships</li>
+<li>It can become inefficient or difficult to interpret with a high number of variables due to the profuse number of
+plots</li>
+<li>It might not completely capture intricate non-linear relationships between the variables</li>
+</ul>
 </div>
 
 
@@ -121,15 +166,16 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="SpreadPlot.__init__" class="function">Metric</dd>
                 <dd id="SpreadPlot.key" class="variable">key</dd>
                 <dd id="SpreadPlot.summary" class="function">summary</dd>
                 <dd id="SpreadPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="SpreadPlot.description" class="function">description</dd>
+                <dd id="SpreadPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

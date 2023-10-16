@@ -72,15 +72,53 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">TargetRateBarPlots</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">TargetRateBarPlots</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#TargetRateBarPlots"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of target ratios by plotting bar plots.
-The input dataset can have multiple categorical variables if necessary.
-In this case, we produce a separate row of plots for each categorical variable.</p>
+            <div class="docstring"><p>Generates bar plots visualizing the default rates of categorical features for a classification machine learning
+model.</p>
+
+<p><strong>Purpose</strong>: This test, implemented as a metric, is designed to provide an intuitive, graphical summary of the
+decision-making patterns exhibited by a categorical classification machine learning model. The model's performance
+is evaluated using bar plots depicting the ratio of target rates—meaning the proportion of positive classes—for
+different categorical inputs. This allows for an easy, at-a-glance understanding of the model's accuracy.</p>
+
+<p><strong>Test Mechanism</strong>: The test involves creating a pair of bar plots for each categorical feature in the dataset. The
+first plot depicts the frequency of each category in the dataset, with each category visually distinguished by its
+unique color. The second plot shows the mean target rate of each category (sourced from the "default_column").
+Plotly, a Python library, is used to generate these plots, with distinct plots created for each feature. If no
+specific columns are selected, the test will generate plots for each categorical column in the dataset.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Inconsistent or non-binary values in the "default_column" could complicate or render impossible the calculation
+of average target rates.</li>
+<li>Particularly low or high target rates for a specific category might suggest that the model is misclassifying
+instances of that category.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This test offers a visually interpretable breakdown of the model's decisions, providing an easy way to spot
+irregularities, inconsistencies, or patterns.</li>
+<li>Its flexibility allows for the inspection of one or multiple columns, as needed.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test is less useful when dealing with numeric or continuous data, as it's designed specifically for
+categorical features.</li>
+<li>If the model in question is dealing with a multi-class problem rather than binary classification, the test's
+assumption of binary target values (0s and 1s) becomes a significant limitation.</li>
+<li>The readability of the bar plots drops as the number of distinct categories increases in the dataset, which can
+make them harder to understand and less useful.</li>
+</ul>
 </div>
 
 
@@ -128,15 +166,16 @@ In this case, we produce a separate row of plots for each categorical variable.<
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="TargetRateBarPlots.__init__" class="function">Metric</dd>
                 <dd id="TargetRateBarPlots.key" class="variable">key</dd>
                 <dd id="TargetRateBarPlots.summary" class="function">summary</dd>
                 <dd id="TargetRateBarPlots.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="TargetRateBarPlots.description" class="function">description</dd>
+                <dd id="TargetRateBarPlots.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

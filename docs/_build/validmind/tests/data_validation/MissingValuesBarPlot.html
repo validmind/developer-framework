@@ -73,21 +73,63 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">MissingValuesBarPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">MissingValuesBarPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#MissingValuesBarPlot"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of missing values by plotting horizontal bar plots with colored bars and a threshold line.
-The input dataset is required.</p>
+            <div class="docstring"><p>Creates a bar plot showcasing the percentage of missing values in each column of the dataset with risk
+categorization based on a user-defined threshold.</p>
+
+<p><strong>Purpose:</strong> The 'MissingValuesBarPlot' metric provides a color-coded visual representation of the percentage of
+missing values for each column in an ML model's dataset. The primary purpose of this metric is to easily identify
+and quantify missing data, which are essential steps in data preprocessing. The presence of missing data can
+potentially skew the model's predictions and decrease its accuracy. Additionally, this metric uses a pre-set
+threshold to categorize various columns into ones that contain missing data above the threshold (high risk) and
+below the threshold (less risky).</p>
+
+<p><strong>Test Mechanism:</strong> The test mechanism involves scanning each column in the input dataset and calculating the
+percentage of missing values. It then compares each column's missing data percentage with the predefined threshold,
+categorizing columns with missing data above the threshold as high-risk. The test generates a bar plot in which
+columns with missing data are represented on the y-axis and their corresponding missing data percentages are
+displayed on the x-axis. The color of each bar reflects the missing data percentage in relation to the threshold:
+grey for values below the threshold and light coral for those exceeding it. The user-defined threshold is
+represented by a red dashed line on the plot.</p>
+
+<p><strong>Signs of High Risk:</strong></p>
+
+<ul>
+<li>Columns with higher percentages of missing values beyond the threshold are high-risk. These are visually
+represented by light coral bars on the bar plot.</li>
+</ul>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>Helps in quickly identifying and quantifying missing data across all columns of the dataset.</li>
+<li>Facilitates pattern recognition through visual representation.</li>
+<li>Enables customization of the level of risk tolerance via a user-defined threshold.</li>
+<li>Supports both classification and regression tasks, sharing its versatility.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>It only considers the quantity of missing values, not differentiating between different types of missingness
+(Missing completely at random - MCAR, Missing at random - MAR, Not Missing at random - NMAR).</li>
+<li>It doesn't offer insights into potential approaches for handling missing entries, such as various imputation
+strategies.</li>
+<li>The metric does not consider possible impacts of the missing data on the model's accuracy or precision.</li>
+<li>Interpretation of the findings and the next steps might require an expert understanding of the field.</li>
+</ul>
 </div>
 
 
                             <div id="MissingValuesBarPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MissingValuesBarPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">MissingValuesBarPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,14 +169,15 @@ The input dataset is required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="MissingValuesBarPlot.key" class="variable">key</dd>
                 <dd id="MissingValuesBarPlot.summary" class="function">summary</dd>
                 <dd id="MissingValuesBarPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="MissingValuesBarPlot.description" class="function">description</dd>
+                <dd id="MissingValuesBarPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

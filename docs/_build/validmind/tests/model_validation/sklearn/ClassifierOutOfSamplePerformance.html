@@ -38,9 +38,6 @@
                                 <a class="function" href="#ClassifierOutOfSamplePerformance.__init__">ClassifierOutOfSamplePerformance</a>
                         </li>
                         <li>
-                                <a class="function" href="#ClassifierOutOfSamplePerformance.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ClassifierOutOfSamplePerformance.y_true">y_true</a>
                         </li>
                         <li>
@@ -82,36 +79,68 @@
     </div>
     <a class="headerlink" href="#ClassifierOutOfSamplePerformance"></a>
     
-            <div class="docstring"><p>Test that outputs the performance of the model on the test data.</p>
+            <div class="docstring"><p>Assesses ML model's performance on out-of-sample data to measure generalization and guard against overfitting.</p>
+
+<p><strong>Purpose</strong>: This test is designed to assess the performance of a Machine Learning model on out-of-sample data,
+specifically data not utilized during the training phase. The performance metrics used in the test (accuracy,
+precision, recall, and F1 score) serve to measure the model's generalization capability towards unseen data. The
+primary goal is to ensure that the model has not overfitted to the training data and retains the ability to make
+accurate predictions on novel data.</p>
+
+<p><strong>Test Mechanism</strong>: The mechanism for this test involves applying the performance metrics to the predictions made
+by the model on the test dataset. These are then compared with the actual outcomes. It is assumed that the test
+dataset remains unutilized during the model training phase, therefore providing an unbiased and fair evaluation of
+the model's generalization capabilities. The various metrics used include:</p>
+
+<ul>
+<li>Accuracy: The ratio of correct predictions</li>
+<li>Precision: The ratio of correct positive predictions</li>
+<li>Recall: The ratio of actual positives that were correctly predicted</li>
+<li>F1 Score: Harmonic mean of precision and recall, effectively balancing both.</li>
+</ul>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Low accuracy rate.</li>
+<li>Low precision and recall rates.</li>
+<li>Low F1 score.</li>
+<li>Significant discrepancies between the model's performance on training data and testing data, indicating
+overfitting.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test provides a realistic assessment of a model's predictive performance on unseen data, thereby estimating
+its generalizability.</li>
+<li>It incorporates several performance metrics into the evaluation, offering a comprehensive look at performance.</li>
+<li>The test aids in the detection of overfitting, a crucial factor for all machine learning models.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The effectiveness of this test is significantly dependent on the quality and the representativeness of the test
+dataset. Performance metrics may not accurately reflect the true performance of the model if the test database is
+not a good representative of the real-world data the model will be working on.</li>
+<li>The metrics used (accuracy, precision, recall and F1 score) make the assumption that all errors and
+misclassifications bear equal importance. This, however, may not align with certain real-world scenarios where some
+types of errors might have more significant implications than others.</li>
+</ul>
 </div>
 
 
                             <div id="ClassifierOutOfSamplePerformance.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ClassifierOutOfSamplePerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ClassifierOutOfSamplePerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ClassifierOutOfSamplePerformance.__init__"></a>
     
     
-
-                            </div>
-                            <div id="ClassifierOutOfSamplePerformance.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ClassifierOutOfSamplePerformance.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="ClassifierOutOfSamplePerformance.y_true" class="classattr">
@@ -144,15 +173,18 @@ to returning the class' docstring</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="ClassifierPerformance.html#ClassifierPerformance">validmind.tests.model_validation.sklearn.ClassifierPerformance.ClassifierPerformance</a></dt>
-                                <dd id="ClassifierOutOfSamplePerformance.binary_summary" class="function"><a href="ClassifierPerformance.html#ClassifierPerformance.binary_summary">binary_summary</a></dd>
-                <dd id="ClassifierOutOfSamplePerformance.multiclass_summary" class="function"><a href="ClassifierPerformance.html#ClassifierPerformance.multiclass_summary">multiclass_summary</a></dd>
-                <dd id="ClassifierOutOfSamplePerformance.summary" class="function"><a href="ClassifierPerformance.html#ClassifierPerformance.summary">summary</a></dd>
+                                <dd id="ClassifierOutOfSamplePerformance.summary" class="function"><a href="ClassifierPerformance.html#ClassifierPerformance.summary">summary</a></dd>
                 <dd id="ClassifierOutOfSamplePerformance.run" class="function"><a href="ClassifierPerformance.html#ClassifierPerformance.run">run</a></dd>
 
             </div>
-            <div><dt>validmind.vm_models.metric.Metric</dt>
+            <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ClassifierOutOfSamplePerformance.key" class="variable">key</dd>
                 <dd id="ClassifierOutOfSamplePerformance.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="ClassifierOutOfSamplePerformance.description" class="function">description</dd>
+                <dd id="ClassifierOutOfSamplePerformance.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

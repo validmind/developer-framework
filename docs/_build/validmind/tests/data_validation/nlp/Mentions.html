@@ -38,9 +38,6 @@
                                 <a class="function" href="#Mentions.__init__">Mentions</a>
                         </li>
                         <li>
-                                <a class="function" href="#Mentions.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Mentions.run">run</a>
                         </li>
                 </ul>
@@ -75,40 +72,66 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Mentions</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">Mentions</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#Mentions"></a>
     
-    
+            <div class="docstring"><p>Calculates and visualizes frequencies of '@' prefixed mentions in a text-based dataset for NLP model analysis.</p>
+
+<p><strong>Purpose</strong>: This test, termed "Mentions", is designed to gauge the quality of data in a Natural Language
+Processing (NLP) or text-focused Machine Learning model. The primary objective is to identify and calculate the
+frequency of 'mentions' within a chosen text column of a dataset. A 'mention' in this context refers to individual
+text elements that are prefixed by '@'. The output of this test reveals the most frequently mentioned entities or
+usernames, which can be integral for applications such as social media analyses, customer sentiment analyses, and
+so on.</p>
+
+<p><strong>Test Mechanism</strong>: The test first verifies the existence of a text column in the provided dataset. It then employs
+a regular expression pattern to extract mentions from the text. Subsequently, the frequency of each unique mention
+is calculated. The test selects the most frequent mentions based on default or user-defined parameters, the default
+being the top 25, for representation. This process of thresholding forms the core of the test. A treemap plot
+visualizes the test results, where the size of each rectangle corresponds to the frequency of a particular mention.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The lack of a valid text column in the dataset, which would result in the failure of the test execution.</li>
+<li>The absence of any mentions within the text data, indicating that there might not be any text associated with
+'@'. This situation could point towards sparse or poor-quality data, thereby hampering the model's generalization
+or learning capabilities.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test is specifically optimized for text-based datasets which gives it distinct power in the context of NLP.</li>
+<li>It enables quick identification and visually appealing representation of the predominant elements or mentions.</li>
+<li>It can provide crucial insights about the most frequently mentioned entities or usernames.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test only recognizes mentions that are prefixed by '@', hence useful textual aspects not preceded by '@'
+might be ignored.</li>
+<li>This test isn't suited for datasets devoid of textual data.</li>
+<li>It does not provide insights on less frequently occurring data or outliers, which means potentially significant
+patterns could be overlooked.</li>
+</ul>
+</div>
+
 
                             <div id="Mentions.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Mentions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Mentions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#Mentions.__init__"></a>
     
     
-
-                            </div>
-                            <div id="Mentions.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Mentions.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="Mentions.run" class="classattr">
@@ -129,9 +152,14 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="Mentions.summary" class="function">summary</dd>
                 <dd id="Mentions.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="Mentions.description" class="function">description</dd>
+                <dd id="Mentions.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

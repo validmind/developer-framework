@@ -7,9 +7,8 @@ from unittest import TestCase
 from pandas.io.formats.style import Styler
 
 from validmind.vm_models import Test
-from validmind.tests import (
-    list_tests, load_test, describe_test, register_test_provider
-)
+from validmind.vm_models.test_context import TestContext
+from validmind.tests import list_tests, load_test, describe_test, register_test_provider
 
 
 class TestTestsModule(TestCase):
@@ -22,7 +21,9 @@ class TestTestsModule(TestCase):
         self.assertTrue(len(tests) > 1)
 
     def test_list_tests_filter_2(self):
-        tests = list_tests(filter="validmind.model_validation.ModelMetadata", pretty=False)
+        tests = list_tests(
+            filter="validmind.model_validation.ModelMetadata", pretty=False
+        )
         self.assertTrue(len(tests) == 1)
 
     def test_load_test(self):
@@ -30,43 +31,11 @@ class TestTestsModule(TestCase):
         self.assertTrue(test is not None)
         self.assertTrue(issubclass(test, Test))
 
-    def test_load_test_legacy(self):
-        actual_test = load_test("validmind.model_validation.ModelMetadata")
-        test = load_test("model_metadata")
-        self.assertTrue(test is not None)
-        self.assertTrue(issubclass(test, Test))
-        self.assertEqual(test, actual_test)
-
     def test_describe_test(self):
-        description = describe_test("validmind.model_validation.ModelMetadata")
-        self.assertIsInstance(description, Styler)
-        description = describe_test("validmind.model_validation.ModelMetadata", raw=True)
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
-
-    def test_describe_test_legacy(self):
-        description = describe_test("model_metadata")
-        self.assertIsInstance(description, Styler)
-        description = describe_test("model_metadata", raw=True)
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
-
-    def test_describe_test_name(self):
-        description = describe_test("ModelMetadata")
-        self.assertIsInstance(description, Styler)
-        description = describe_test("ModelMetadata", raw=True)
+        describe_test("validmind.model_validation.ModelMetadata")
+        description = describe_test(
+            "validmind.model_validation.ModelMetadata", raw=True
+        )
         self.assertIsInstance(description, dict)
         # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
         self.assertTrue("ID" in description)
@@ -79,12 +48,15 @@ class TestTestsModule(TestCase):
     def test_test_provider_registration(self):
         class TestProvider:
             def load_test(self, test_id):
-                return "FakeTest"
+                fake_test = Test(test_context=TestContext(), result=None)
+                fake_test.test_id = test_id
+                return fake_test
 
         register_test_provider("fake", TestProvider())
 
-        test = load_test("fake.test_id")
-        self.assertEqual(test, "FakeTest")
+        test = load_test("fake.fake_test_id")
+        self.assertEqual(test.test_id, "fake.fake_test_id")
+
 
 if __name__ == "__main__":
     unittest.main()

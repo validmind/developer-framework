@@ -35,9 +35,6 @@
                     <a class="class" href="#DatasetSplit">DatasetSplit</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#DatasetSplit.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#DatasetSplit.summary">summary</a>
                         </li>
                         <li>
@@ -72,33 +69,58 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">DatasetSplit</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">DatasetSplit</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#DatasetSplit"></a>
     
-            <div class="docstring"><p>Attempts to extract information about the dataset split from the
-provided training, test and validation datasets.</p>
+            <div class="docstring"><p>Evaluates and visualizes the distribution proportions among training, testing, and validation datasets of an ML
+model.</p>
+
+<p><strong>Purpose:</strong>
+The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
+validation datasets, if available, within a given machine learning model. The main purpose is to assess whether the
+model's datasets are split appropriately, as an imbalanced split might affect the model's ability to learn from the
+data and generalize to unseen data.</p>
+
+<p><strong>Test Mechanism:</strong>
+The DatasetSplit test first calculates the total size of all available datasets in the model. Then, for each
+individual dataset, the methodology involves determining the size of the dataset and its proportion relative to the
+total size. The results are then conveniently summarized in a table that shows dataset names, sizes, and
+proportions. Absolute size and proportion of the total dataset size are displayed for each individual dataset.</p>
+
+<p><strong>Signs of High Risk:</strong></p>
+
+<ul>
+<li>A very small training dataset, which may result in the model not learning enough from the data.</li>
+<li>A very large training dataset and a small test dataset, which may lead to model overfitting and poor
+generalization to unseen data.</li>
+<li>A small or non-existent validation dataset, which might complicate the model's performance assessment.</li>
+</ul>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
+highlight any potential imbalance in dataset splits quickly.</li>
+<li>It covers a wide range of task types including classification, regression, and text-related tasks.</li>
+<li>The metric is not tied to any specific data type and is applicable to tabular data, time series data, or text
+data.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,
+just the size and proportion.</li>
+<li>The test does not give any recommendations or adjustments for imbalanced datasets.</li>
+<li>Potential lack of compatibility with more complex modes of data splitting (for example, stratified or time-based
+splits) could limit the applicability of this test.</li>
+</ul>
 </div>
 
 
-                            <div id="DatasetSplit.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#DatasetSplit.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
-
-                            </div>
                             <div id="DatasetSplit.summary" class="classattr">
                                 <div class="attr function">
             
@@ -132,10 +154,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="DatasetSplit.__init__" class="function">Metric</dd>
                 <dd id="DatasetSplit.key" class="variable">key</dd>
                 <dd id="DatasetSplit.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="DatasetSplit.description" class="function">description</dd>
+                <dd id="DatasetSplit.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -76,21 +76,67 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ANOVAOneWayTable</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ANOVAOneWayTable</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ANOVAOneWayTable"></a>
     
-            <div class="docstring"><p>Perform an ANOVA F-test for each numerical variable with the target.
-The input dataset and target column are required.</p>
+            <div class="docstring"><p>Applies one-way ANOVA (Analysis of Variance) to identify statistically significant numerical features in the
+dataset.</p>
+
+<p><strong>Purpose</strong>: The ANOVA (Analysis of Variance) One-Way Table metric is utilized to determine whether the mean of
+numerical variables differs across different groups identified by target or categorical variables. Its primary
+purpose is to scrutinize the significant impact of categorical variables on numerical ones. This method proves
+essential in identifying statistically significant features corresponding to the target variable present in the
+dataset.</p>
+
+<p><strong>Test Mechanism</strong>: The testing mechanism involves the ANOVA F-test's performance on each numerical variable
+against the target. If no specific features are mentioned, all numerical features are tested. A p-value is produced
+for each test and compared against a certain threshold (default being 0.05 if not specified). If the p-value is
+less than or equal to this threshold, the feature is marked as 'Pass', indicating significant mean difference
+across the groups. Otherwise, it's marked as 'Fail'. The test produces a DataFrame that includes variable name, F
+statistic value, p-value, threshold, and pass/fail status for every numerical variable.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A large number of 'Fail' results in the ANOVA F-test could signify high risk or underperformance in the model.
+This issue may arise when multiple numerical variables in the dataset don't exhibit any significant difference
+across the target variable groups.</li>
+<li>Features with high p-values also indicate a high risk as they imply a greater chance of obtaining observed data
+given that the null hypothesis is true.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The ANOVA One Way Table is highly efficient in identifying statistically significant features by simultaneously
+comparing group means.</li>
+<li>Its flexibility allows the testing of all numerical features in the dataset when no specific ones are mentioned.</li>
+<li>This metric provides a convenient method to measure the statistical significance of numerical variables and
+assists in selecting those variables influencing the classifier's predictions considerably.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>This metric assumes that the data is normally distributed, which may not always be the case leading to erroneous
+test results.</li>
+<li>The sensitivity of the F-test to variance changes may hinder this metric's effectiveness, especially for datasets
+with high variance.</li>
+<li>The ANOVA One Way test does not specify which group means differ statistically from others; it strictly asserts
+the existence of a difference.</li>
+<li>The metric fails to provide insights into variable interactions, and significant effects due to these
+interactions could easily be overlooked.</li>
+</ul>
 </div>
 
 
                             <div id="ANOVAOneWayTable.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ANOVAOneWayTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ANOVAOneWayTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -149,13 +195,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ANOVAOneWayTable.key" class="variable">key</dd>
                 <dd id="ANOVAOneWayTable.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ANOVAOneWayTable.description" class="function">description</dd>
+                <dd id="ANOVAOneWayTable.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

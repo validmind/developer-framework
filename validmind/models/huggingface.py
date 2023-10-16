@@ -69,7 +69,11 @@ class HFModel(VMModel):
         data = [str(datapoint) for datapoint in data]
         results = self.model(data)
         results_df = pd.DataFrame(results)
-        return results_df.label.values
+        tasks = self.model.__class__.__module__.split(".")
+        if "text2text_generation" in tasks:
+            return results_df.summary_text.values
+        elif "text_classification" in tasks:
+            return results_df.label.values
 
     def model_library(self):
         """

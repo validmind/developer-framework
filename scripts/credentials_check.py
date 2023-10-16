@@ -2,9 +2,10 @@
 Checks if any notebook in the notebooks directory contains credentials.
 """
 
-import nbformat
 import os
 import re
+
+import nbformat
 
 # Scan the notebooks directory
 notebooks_directory = os.path.join(os.getcwd(), "notebooks")

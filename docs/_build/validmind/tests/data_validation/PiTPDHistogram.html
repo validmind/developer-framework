@@ -38,9 +38,6 @@
                                 <a class="function" href="#PiTPDHistogram.__init__">PiTPDHistogram</a>
                         </li>
                         <li>
-                                <a class="function" href="#PiTPDHistogram.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#PiTPDHistogram.plot_pit_pd_histogram">plot_pit_pd_histogram</a>
                         </li>
                         <li>
@@ -76,42 +73,65 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PiTPDHistogram</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PiTPDHistogram</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PiTPDHistogram"></a>
     
-            <div class="docstring"><p>Probability of Default (PD) Histogram</p>
+            <div class="docstring"><p>Assesses credit risk prediction accuracy of a model by comparing actual and predicted defaults at a chosen point in
+time.</p>
+
+<p><strong>Purpose</strong>: The PiTPDHistogram metric uses Probability of Default (PD) calculations for individual instances
+within both training and test data sets in order to assess a model's proficiency in predicting credit risk. A
+distinctive point in time (PiT) is chosen for these PD calculations, and the results for both actual and predicted
+defaults are presented in histogram form. This visualization is aimed at simplifying the understanding of model
+prediction accuracy.</p>
+
+<p><strong>Test Mechanism</strong>: Instances are categorized into two groups - those for actual defaults and those for predicted
+defaults, with '1' indicating a default and '0' indicating non-default. PD is calculated for each instance, and
+based on these calculations, two histograms are created, one for actual defaults and one for predicted defaults. If
+the predicted default frequency matches that of the actual defaults, the model's performance is deemed effective.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Discrepancies between the actual and predicted default histograms may suggest model inefficiency.</li>
+<li>Variations in histogram shapes or divergences in default probability distributions could be concerning.</li>
+<li>Significant mismatches in peak default probabilities could also be red flags.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides a visual comparison between actual and predicted defaults, aiding in the understanding of model
+performance.</li>
+<li>Helps reveal model bias and areas where the model's performance could be improved.</li>
+<li>Easier to understand than purely numerical evaluations or other complicated visualization measures.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The metric remains largely interpretive and subjective, as the extent and relevance of visual discrepancies often
+need to be evaluated manually, leading to potentially inconsistent results across different analyses.</li>
+<li>This metric alone may not capture all the complexities and nuances of model performance.</li>
+<li>The information provided is limited to a specific point in time, potentially neglecting the model's performance
+under various circumstances or different time periods.</li>
+</ul>
 </div>
 
 
                             <div id="PiTPDHistogram.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PiTPDHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PiTPDHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#PiTPDHistogram.__init__"></a>
     
     
-
-                            </div>
-                            <div id="PiTPDHistogram.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PiTPDHistogram.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="PiTPDHistogram.plot_pit_pd_histogram" class="classattr">
@@ -146,10 +166,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PiTPDHistogram.key" class="variable">key</dd>
                 <dd id="PiTPDHistogram.summary" class="function">summary</dd>
                 <dd id="PiTPDHistogram.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="PiTPDHistogram.description" class="function">description</dd>
+                <dd id="PiTPDHistogram.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

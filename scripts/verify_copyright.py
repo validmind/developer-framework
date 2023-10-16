@@ -15,7 +15,6 @@ How to use:
 
 import os
 
-
 copyright_path = os.path.join(os.getcwd(), "scripts", "copyright.txt")
 with open(copyright_path) as f:
     copyright = f.read()

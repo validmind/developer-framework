@@ -157,9 +157,7 @@ cython_debug/
 # Pandas Profiling reports
 profile_report.html
 
-notebooks/_temp
-notebooks/datasets/_temp
-
+_temp/**
 
 # Ignore insurance mortality demo data
 notebooks/insurance_mortality/**/*.csv
@@ -189,7 +187,13 @@ lending_club_loan_data_*
 
 # Pickle files
 *.pkl
-.Rproj.user
+
+notebooks/llm/datasets/*.jsonl
+
+# Gradio
+gradio_cached_examples
+
+# R
 r/validmind/creds.txt
-notebooks/r/r_customer_churn_demo_package.html
+notebooks/r/*.html
 r/validmind/README.html

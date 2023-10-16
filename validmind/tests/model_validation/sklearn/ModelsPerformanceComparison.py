@@ -14,18 +14,53 @@ from .ClassifierPerformance import ClassifierPerformance, multiclass_roc_auc_sco
 @dataclass
 class ModelsPerformanceComparison(ClassifierPerformance):
     """
-    Test that outputs the models performance comparison on the test data.
+    Evaluates and compares the performance of multiple Machine Learning models using various metrics like accuracy,
+    precision, recall, and F1 score.
+
+    **Purpose**: This metric test aims to evaluate and compare the performance of various Machine Learning models using
+    test data. It employs multiple metrics such as accuracy, precision, recall, and the F1 score, among others, to
+    assess model performance and assist in selecting the most effective model for the designated task.
+
+    **Test Mechanism**: The test employs Scikit-learn’s performance metrics to evaluate each model's performance for
+    both binary and multiclass classification tasks. To compare performances, the test runs each model against the test
+    dataset, then produces a comprehensive classification report. This report includes metrics such as accuracy,
+    precision, recall, and the F1 score. Based on whether the task at hand is binary or multiclass classification, it
+    calculates metrics all the classes and their weighted averages, macro averages,
+    and per class metrics. The test will be skipped if no models are supplied.
+
+    **Signs of High Risk**:
+    - Low scores in accuracy, precision, recall, and F1 metrics indicate a potentially high risk.
+    - A low area under the Receiver Operating Characteristic (ROC) curve (roc_auc score) is another possible indicator
+    of high risk.
+    - If the metrics scores are significantly lower than alternative models, this might suggest a high risk of failure.
+
+    **Strengths**:
+    - The test provides a simple way to compare the performance of multiple models, accommodating both binary and
+    multiclass classification tasks.
+    - It provides a holistic view of model performance through a comprehensive report of key performance metrics.
+    - The inclusion of the ROC AUC score is advantageous, as this robust performance metric can effectively handle
+    class imbalance issues.
+
+    **Limitations**:
+    - This test may not be suitable for more complex performance evaluations that consider factors such as prediction
+    speed, computational cost, or business-specific constraints.
+    - The test's reliability depends on the provided test dataset; hence, the selected models' performance could vary
+    with unseen data or changes in the data distribution.
+    - The ROC AUC score might not be as meaningful or easily interpretable for multilabel/multiclass tasks.
     """
 
     name = "models_performance_comparison"
     required_inputs = ["model", "models", "model.test_ds"]
-
-    def description(self):
-        return """
-        This section shows the models performance comparison on the training data. Popular
-        metrics such as the accuracy, precision, recall, F1 score, etc. are
-        used to evaluate the models.
-        """
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_performance",
+            "model_comparison",
+        ],
+    }
 
     def y_true(self):
         return self.model.y_test_true
@@ -33,58 +68,56 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     def y_pred(self):
         return self.model.y_test_predict
 
-    def binary_summary(self, metric_value: dict):
-        """
-        When building a binary classification summary for all the models. We take the positive class
-        metrics as the global metrics.
-        """
-        results = []
-        for m, m_v in metric_value.items():
-            result = super().binary_summary(m_v)
-            results.append(
-                ResultTable(
-                    data=result.results[0].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[0].metadata.title}: {m}"
-                    ),
-                )
-            )
-        return ResultSummary(results=results)
-
-    def multiclass_summary(self, metric_value: dict):
-        """
-        The multi-class summary method that calculates weighted average,
-        macro average and per class metrics of all the models.
-        """
-        results = []
-        for m, m_v in metric_value.items():
-            result = super().multiclass_summary(m_v)
-            results.append(
-                ResultTable(
-                    data=result.results[0].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[0].metadata.title}: {m}"
-                    ),
-                )
-            )
-            results.append(
-                ResultTable(
-                    data=result.results[1].data,
-                    metadata=ResultTableMetadata(
-                        title=f"{result.results[1].metadata.title}: {m}"
-                    ),
-                )
-            )
-        return ResultSummary(results=results)
-
     def summary(self, metric_value: dict):
         """
         This summary varies depending if we're evaluating a binary or multi-class model
         """
-        if len(unique(self.y_true())) > 2:
-            return self.multiclass_summary(metric_value)
+        results = []
+        prf_table = []
+        classes = {str(i) for i in unique(self.y_true())}
 
-        return self.binary_summary(metric_value)
+        for class_name in classes:
+            prf_dict = {}
+            prf_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                prf_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                prf_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                prf_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(prf_dict)
+
+        avg_metrics = ["weighted avg", "macro avg"]
+        for class_name in avg_metrics:
+            avg_dict = {}
+            avg_dict["Class"] = class_name
+            for m, m_v in metric_value.items():
+                avg_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
+                avg_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
+                avg_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
+            prf_table.append(avg_dict)
+        results.append(
+            ResultTable(
+                data=prf_table,
+                metadata=ResultTableMetadata(
+                    title="Precision, Recall, and F1 Comparison"
+                ),
+            )
+        )
+
+        acc_roc_auc_table = []
+        for metric_name in ["accuracy", "roc_auc"]:
+            acc_roc_auc_dict = {}
+            acc_roc_auc_dict["Metric"] = metric_name
+            for m, m_v in metric_value.items():
+                acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m]["accuracy"]
+                acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m]["roc_auc"]
+            acc_roc_auc_table.append(acc_roc_auc_dict)
+        results.append(
+            ResultTable(
+                data=acc_roc_auc_table,
+                metadata=ResultTableMetadata(title="Accuracy and ROC AUC Comparison"),
+            )
+        )
+        return ResultSummary(results=results)
 
     def run(self):
         # Check models list is not empty

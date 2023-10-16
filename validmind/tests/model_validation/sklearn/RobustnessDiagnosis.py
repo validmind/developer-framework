@@ -15,47 +15,79 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestResult,
     ThresholdTest,
+    ThresholdTestResult,
 )
 
 
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
     """
-    Test robustness of model by perturbing the features column values by adding noise within scale
-    stardard deviation.
+    Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
+    performance.
+
+    **Purpose**:
+
+    The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a
+    model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
+    noise—added to its input data. This test is designed to help gauge how well the model can handle potential
+    real-world scenarios where the input data might be incomplete or corrupted.
+
+    **Test Mechanism**:
+
+    This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
+    input features of both the training and testing datasets. The model performance in the face of these perturbed
+    features is then evaluated using metrics (default: 'accuracy'). This process is iterated over a range of scale
+    factors. The resulting accuracy trend against the amount of noise introduced is illustrated with a line chart. A
+    predetermined threshold determines what level of accuracy decay due to perturbation is considered acceptable.
+
+    **Signs of High Risk**:
+    - Substantial decreases in accuracy when noise is introduced to feature inputs.
+    - The decay in accuracy surpasses the configured threshold, indicating that the model is not robust against input
+    noise.
+    - Instances where one or more elements provided in the features list don't match with the training dataset's
+    numerical feature columns.
+
+    **Strengths**:
+    - Provides an empirical measure of the model's performance in tackling noise or data perturbations, revealing
+    insights into the model's stability.
+    - Offers flexibility with the ability to choose specific features to perturb and control the level of noise applied.
+    - Detailed results visualization helps in interpreting the outcome of robustness testing.
+
+    **Limitations**:
+    - Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
+    analysis of robustness.
+    - The default metric used is accuracy, which might not always give the best measure of a model's success,
+    particularly for imbalanced datasets.
+    - The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
+    corruption or incompleteness in real-world scenarios.
+    - There might be a requirement to fine-tune the set decay threshold for accuracy with the help of domain knowledge
+    or specific project requisites.
+    - The robustness test might not deliver the expected results for datasets with a text column.
     """
 
     category = "model_diagnosis"
     name = "robustness"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
-
     default_params = {
         "features_columns": None,
         "scaling_factor_std_dev_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
         "accuracy_decay_threshold": 4,
     }
+    metadata = {
+        "task_types": ["classification", "text_classification"],
+        "tags": [
+            "sklearn",
+            "binary_classification",
+            "multiclass_classification",
+            "model_diagnosis",
+            "visualization",
+        ],
+    }
+
     default_metrics = {
         "accuracy": metrics.accuracy_score,
     }
-
-    def description(self):
-        return """
-        The robustness of a machine learning model refers to its ability to maintain performance
-        in the face of perturbations or changes to the input data. One way to test the robustness
-        of a model is by perturbing its input features and observing how the model's performance changes.
-
-        To perturb the input features, one can add random noise or modify the values of the features
-        within a certain range. By perturbing the input features, one can simulate different scenarios
-        in which the input data may be corrupted or incomplete, and test whether the model is able to
-        handle such scenarios.
-
-        The performance of the model can be measured in terms of its accuracy, precision, recall,
-        or any other relevant metric, both before and after perturbing the input features. A model
-        that is robust to perturbations should maintain a high level of performance even after the
-        input features have been perturbed.
-        """
 
     def run(self):
         # Validate X std deviation parameter
@@ -88,9 +120,6 @@ class RobustnessDiagnosis(ThresholdTest):
                 "The list of feature columns provided do not match with training "
                 + "dataset numerical feature columns"
             )
-
-        # Remove target column if it exist in the list
-        features_list = self.model.train_ds.get_features_columns()
 
         if self.model.train_ds.text_column in features_list:
             raise ValueError(
@@ -158,7 +187,7 @@ class RobustnessDiagnosis(ThresholdTest):
             ),
         )
         test_results.append(
-            TestResult(
+            ThresholdTestResult(
                 test_name="accuracy",
                 column=features_list,
                 passed=True,
@@ -169,7 +198,7 @@ class RobustnessDiagnosis(ThresholdTest):
             test_results, passed=df["Passed"].all(), figures=test_figures
         )
 
-    def summary(self, results: List[TestResult], all_passed: bool):
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
             record for result in results for record in result.values["records"]
         ]

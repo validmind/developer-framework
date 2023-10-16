@@ -66,14 +66,53 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">JarqueBera</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">JarqueBera</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#JarqueBera"></a>
     
-            <div class="docstring"><p>The Jarque-Bera test is a statistical test used to determine
-whether a given set of data follows a normal distribution.</p>
+            <div class="docstring"><p>Assesses normality of dataset features in an ML model using the Jarque-Bera test.</p>
+
+<p><strong>Purpose</strong>: The purpose of the Jarque-Bera test as implemented in this metric is to determine if the features in
+the dataset of a given Machine Learning model follows a normal distribution. This is crucial for understanding the
+distribution and behavior of the model's features, as numerous statistical methods assume normal distribution of
+the data.</p>
+
+<p><strong>Test Mechanism</strong>: The test mechanism involves computing the Jarque-Bera statistic, p-value, skew, and kurtosis
+for each feature in the dataset. It utilizes the 'jarque_bera' function from the 'statsmodels' library in Python,
+storing the results in a dictionary. The test evaluates the skewness and kurtosis to ascertain whether the dataset
+follows a normal distribution. A significant p-value (typically less than 0.05) implies that the data does not
+possess normal distribution.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A high Jarque-Bera statistic and a low p-value (usually less than 0.05) indicates high-risk conditions.</li>
+<li>Such results suggest the data significantly deviates from a normal distribution. If a machine learning model
+expects feature data to be normally distributed, these findings imply that it may not function as intended.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This test provides insights into the shape of the data distribution, helping determine whether a given set of
+data follows a normal distribution.</li>
+<li>This is particularly useful for risk assessment for models that assume a normal distribution of data.</li>
+<li>By measuring skewness and kurtosis, it provides additional insights into the nature and magnitude of a
+distribution's deviation.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The Jarque-Bera test only checks for normality in the data distribution. It cannot provide insights into other
+types of distributions.</li>
+<li>Datasets that aren't normally distributed but follow some other distribution might lead to inaccurate risk
+assessments.</li>
+<li>The test is highly sensitive to large sample sizes, often rejecting the null hypothesis (that data is normally
+distributed) even for minor deviations in larger datasets.</li>
+</ul>
 </div>
 
 
@@ -95,15 +134,16 @@ whether a given set of data follows a normal distribution.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="JarqueBera.__init__" class="function">Metric</dd>
                 <dd id="JarqueBera.key" class="variable">key</dd>
                 <dd id="JarqueBera.summary" class="function">summary</dd>
                 <dd id="JarqueBera.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="JarqueBera.description" class="function">description</dd>
+                <dd id="JarqueBera.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

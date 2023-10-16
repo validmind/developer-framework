@@ -8,8 +8,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestPlanTestResult,
-    TestResult,
+    TestSuiteThresholdTestResult,
+    ThresholdTestResult,
     ThresholdTest,
 )
 
@@ -25,18 +25,22 @@ class __TEST_NAME__(ThresholdTest):
 
     category = "__TEST_CATEGORY__"  # model_performance, data_quality, etc.
     name = "__TEST_ID__"
-    required_inputs = [] # model, dataset, etc. (model.train_ds, model.test_ds)
+    required_inputs = []  # model, dataset, etc. (model.train_ds, model.test_ds)
     default_params = {}
+    metadata = {
+        "task_types": [],  # classification, regression, etc. Should be one of ValidMind's task types
+        "tags": [],  # time_series_data, tabular_data, forcasting, etc. Can be any string
+    }
 
-    def run(self) -> TestPlanTestResult:
+    def run(self) -> TestSuiteThresholdTestResult:
         """Run the test and cache the results
 
         Returns:
-            TestPlanTestResult: The results of the test.
+            TestSuiteThresholdTestResult: The results of the test.
         """
         return self.cache_results(
             test_results_list=[
-                TestResult(
+                ThresholdTestResult(
                     passed=True,  # whether this test passed
                     values={
                         "hello": "world",
@@ -47,11 +51,11 @@ class __TEST_NAME__(ThresholdTest):
             figures=None,  # return a figure by importing from validmind.vm_models
         )
 
-    def summary(self, results: List[TestResult], all_passed: bool) -> ResultSummary:
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool) -> ResultSummary:
         """Summarize the results of the test.
 
         Args:
-            results (List[TestResult]): The results of the test.
+            results (List[ThresholdTestResult]): The results of the test.
             all_passed (bool): Whether all tests passed.
 
         Returns:

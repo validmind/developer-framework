@@ -73,21 +73,61 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">MinimumF1Score</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">MinimumF1Score</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#MinimumF1Score"></a>
     
-            <div class="docstring"><p>Test that the model's F1 score on the validation dataset meets or
-exceeds a predefined threshold.</p>
+            <div class="docstring"><p>Evaluates if the model's F1 score on the validation set meets a predefined minimum threshold.</p>
+
+<p><strong>Purpose:</strong>
+The main objective of this test is to ensure that the F1 score, a balanced measure of precision and recall, of the
+model meets or surpasses a predefined threshold on the validation dataset. The F1 score is highly useful for
+gauging model performance in classification tasks, especially in cases where the distribution of positive and
+negative classes is skewed.</p>
+
+<p><strong>Test Mechanism:</strong>
+The F1 score for the validation dataset is computed through the scikit-learn's metrics in Python. The scoring
+mechanism differs based on the classification problem: for multi-class problems, macro averaging is used (metrics
+are calculated separately and their unweighted mean is found), and for binary classification, the built-in f1_score
+calculation is used. The obtained F1 score is then assessed against the predefined minimum F1 score that is
+expected from the model.</p>
+
+<p><strong>Signs of High Risk:</strong></p>
+
+<ul>
+<li>If a model returns an F1 score that is less than the established threshold, it is regarded as high risk.</li>
+<li>A low F1 score might suggest that the model is not finding an optimal balance between precision and recall, see:
+it isn't successfully identifying positive classes while minimizing false positives.</li>
+</ul>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>This metric gives a balanced measure of a model's performance by accounting for both false positives and false
+negatives.</li>
+<li>It has a particular advantage in scenarios with imbalanced class distribution, where an accuracy measure can be
+misleading.</li>
+<li>The flexibility of setting the threshold value allows for tailoring the minimum acceptable performance.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>The testing method may not be suitable for all types of models and machine learning tasks.</li>
+<li>Although the F1 score gives a balanced view of a model's performance, it presupposes an equal cost for false
+positives and false negatives, which may not always be true in certain real-world scenarios. As a consequence,
+practitioners might have to rely on other metrics such as precision, recall, or the ROC-AUC score that align more
+closely with their specific requirements.</li>
+</ul>
 </div>
 
 
                             <div id="MinimumF1Score.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">MinimumF1Score</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">MinimumF1Score</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -100,7 +140,7 @@ exceeds a predefined threshold.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -130,12 +170,13 @@ exceeds a predefined threshold.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="MinimumF1Score.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="MinimumF1Score.description" class="function">description</dd>
+                <dd id="MinimumF1Score.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

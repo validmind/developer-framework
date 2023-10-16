@@ -70,22 +70,62 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PearsonCorrelationMatrix</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PearsonCorrelationMatrix</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PearsonCorrelationMatrix"></a>
     
-            <div class="docstring"><p>Extracts the Pearson correlation coefficient for all pairs of numerical variables
-in the dataset. This metric is useful to identify highly correlated variables
-that can be removed from the dataset to reduce dimensionality.</p>
+            <div class="docstring"><p>Evaluates linear dependency between numerical variables in a dataset via a Pearson Correlation coefficient heat map.</p>
+
+<p><strong>Purpose</strong>: This test is intended to evaluate the extent of linear dependency between all pairs of numerical
+variables in the given dataset. It provides the Pearson Correlation coefficient, which reveals any high
+correlations present. The purpose of doing this is to identify potential redundancy, as variables that are highly
+correlated can often be removed to reduce the dimensionality of the dataset without significantly impacting the
+model's performance.</p>
+
+<p><strong>Test Mechanism</strong>: This metric test generates a correlation matrix for all numerical variables in the dataset
+using the Pearson correlation formula. A heat map is subsequently created to visualize this matrix effectively. The
+color of each point on the heat map corresponds to the magnitude and direction (positive or negative) of the
+correlation, with a range from -1 (perfect negative correlation) to 1 (perfect positive correlation). Any
+correlation coefficients higher than 0.7 (in absolute terms) are indicated in white in the heat map, suggesting a
+high degree of correlation.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A large number of variables in the dataset showing a high degree of correlation (coefficients approaching ±1).
+This indicates redundancy within the dataset, suggesting that some variables may not be contributing new
+information to the model.</li>
+<li>This could potentially lead to overfitting.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The primary strength of this metric test is its ability to detect and quantify the linearity of relationships
+between variables. This allows for the identification of redundant variables, which in turn can help in simplifying
+models and potentially improving their performance.</li>
+<li>The visualization aspect (heatmap) is another strength as it offers an easy-to-understand overview of the
+correlations, beneficial for those not comfortable navigating numerical matrices.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The primary limitation of Pearson Correlation is its inability to detect non-linear relationships between
+variables, which can lead to missed opportunities for dimensionality reduction.</li>
+<li>It only measures the degree of linear relationship and not the strength of effect of one variable on the other.</li>
+<li>The cutoff value of 0.7 for high correlation is a somewhat arbitrary choice and some valid dependencies might be
+missed if they have a correlation coefficient less than this value.</li>
+</ul>
 </div>
 
 
                             <div id="PearsonCorrelationMatrix.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PearsonCorrelationMatrix</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PearsonCorrelationMatrix</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -112,14 +152,15 @@ that can be removed from the dataset to reduce dimensionality.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PearsonCorrelationMatrix.key" class="variable">key</dd>
                 <dd id="PearsonCorrelationMatrix.summary" class="function">summary</dd>
                 <dd id="PearsonCorrelationMatrix.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="PearsonCorrelationMatrix.description" class="function">description</dd>
+                <dd id="PearsonCorrelationMatrix.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

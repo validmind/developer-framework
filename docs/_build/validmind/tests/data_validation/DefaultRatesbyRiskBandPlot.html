@@ -38,9 +38,6 @@
                                 <a class="function" href="#DefaultRatesbyRiskBandPlot.__init__">DefaultRatesbyRiskBandPlot</a>
                         </li>
                         <li>
-                                <a class="function" href="#DefaultRatesbyRiskBandPlot.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#DefaultRatesbyRiskBandPlot.plot_band_percentages">plot_band_percentages</a>
                         </li>
                         <li>
@@ -76,42 +73,70 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DefaultRatesbyRiskBandPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">DefaultRatesbyRiskBandPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#DefaultRatesbyRiskBandPlot"></a>
     
-            <div class="docstring"><p>Default Rates per Risk Band Bar Plot</p>
+            <div class="docstring"><p>Generates a bar plot showcasing the distribution of default rates across different risk bands in a dataset.</p>
+
+<p><strong>Purpose</strong>:
+The Default Rates by Risk Band Plot metric aims to quantify and visually represent default rates across varying
+risk bands within a specific dataset. This information is essential in evaluating the functionality of credit risk
+models, by providing a comprehensive view of default rates across a range of risk categories.</p>
+
+<p><strong>Test Mechanism</strong>:
+The applied test approach involves a calculated bar plot. This plot is derived by initially determining the count
+of accounts in every risk band and then converting these count values into percentages by dividing by the total
+quantity of accounts. The percentages are then depicted as a bar plot, clearly showcasing the proportion of total
+accounts associated with each risk band. Hence, the plot delivers a summarized depiction of default risk across
+various bands. The 'Dark24' color sequence is used in the plot to ensure each risk band is easily distinguishable.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>High risk may be indicated by a significantly large percentage of accounts associated with high-risk bands.</li>
+<li>High exposure to potential default risk in the dataset indicates potential weaknesses in the model's capability
+to effectively manage or predict credit risk.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The metric's primary strengths lie in its simplicity and visual impact.</li>
+<li>The graphical display of default rates allows for a clear understanding of the spread of default risk across risk
+bands.</li>
+<li>Using a bar chart simplifies the comparison between various risk bands and can highlight potential spots of high
+risk.</li>
+<li>This approach assists in identifying any numerical imbalances or anomalies, thus facilitating the task of
+evaluating and contrasting performance across various credit risk models.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The key constraint of this metric is that it cannot provide any insights as to why certain risk bands might have
+higher default rates than others.</li>
+<li>If there is a large imbalance in the number of accounts across risk bands, the visual representation might not
+accurately depict the true distribution of risk.</li>
+<li>Other factors contributing to credit risk beyond the risk bands are not considered.</li>
+<li>The metric's reliance on a visual format might potentially lead to misinterpretation of results, as graphical
+depictions can sometimes be misleading.</li>
+</ul>
 </div>
 
 
                             <div id="DefaultRatesbyRiskBandPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DefaultRatesbyRiskBandPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">DefaultRatesbyRiskBandPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#DefaultRatesbyRiskBandPlot.__init__"></a>
     
     
-
-                            </div>
-                            <div id="DefaultRatesbyRiskBandPlot.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#DefaultRatesbyRiskBandPlot.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="DefaultRatesbyRiskBandPlot.plot_band_percentages" class="classattr">
@@ -146,10 +171,15 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="DefaultRatesbyRiskBandPlot.key" class="variable">key</dd>
                 <dd id="DefaultRatesbyRiskBandPlot.summary" class="function">summary</dd>
                 <dd id="DefaultRatesbyRiskBandPlot.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="DefaultRatesbyRiskBandPlot.description" class="function">description</dd>
+                <dd id="DefaultRatesbyRiskBandPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

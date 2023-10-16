@@ -73,20 +73,63 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">TimeSeriesFrequency</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">TimeSeriesFrequency</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#TimeSeriesFrequency"></a>
     
-            <div class="docstring"><p>Test that detects frequencies in the data</p>
+            <div class="docstring"><p>Evaluates consistency of time series data frequency and generates a frequency plot.</p>
+
+<p><strong>Purpose</strong>: The purpose of the TimeSeriesFrequency test is to evaluate the consistency in the frequency of data
+points in a time-series dataset. This test inspects the intervals or duration between each data point to determine
+if a fixed pattern (such as daily, weekly, or monthly) exists. The identification of such patterns is crucial to
+time-series analysis as any irregularities could lead to erroneous results and hinder the model's capacity for
+identifying trends and patterns.</p>
+
+<p><strong>Test Mechanism</strong>: Initially, the test checks if the dataframe index is in datetime format. Subsequently, it
+utilizes pandas' <code>infer_freq</code> method to identify the frequency of each data series within the dataframe. The
+<code>infer_freq</code> method attempts to establish the frequency of a time series and returns both the frequency string and
+a dictionary relating these strings to their respective labels. The test compares the frequencies of all datasets.
+If they share a common frequency, the test passes, but it fails if they do not. Additionally, Plotly is used to
+create a frequency plot, offering a visual depiction of the time differences between consecutive entries in the
+dataframe index.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The test fails, indicating multiple unique frequencies within the dataset. This failure could suggest irregular
+intervals between observations, potentially interrupting pattern recognition or trend analysis.</li>
+<li>The presence of missing or null frequencies could be an indication of inconsistencies in data or gaps within the
+data collection process.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This test uses a systematic approach to checking the consistency of data frequency within a time-series dataset.</li>
+<li>It increases the model's reliability by asserting the consistency of observations over time, an essential factor
+in time-series analysis.</li>
+<li>The test generates a visual plot, providing an intuitive representation of the dataset's frequency distribution,
+which caters to visual learners and aids in interpretation and explanation.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>This test is only applicable to time-series datasets and hence not suitable for other types of datasets.</li>
+<li>The <code>infer_freq</code> method might not always correctly infer frequency when faced with missing or irregular data
+points.</li>
+<li>Depending on context or the model under development, mixed frequencies might sometimes be acceptable, but this
+test considers them a failing condition.</li>
+</ul>
 </div>
 
 
                             <div id="TimeSeriesFrequency.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TimeSeriesFrequency</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TimeSeriesFrequency</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -137,12 +180,13 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="TimeSeriesFrequency.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="TimeSeriesFrequency.description" class="function">description</dd>
+                <dd id="TimeSeriesFrequency.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

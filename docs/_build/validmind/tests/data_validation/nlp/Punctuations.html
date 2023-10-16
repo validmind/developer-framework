@@ -72,18 +72,55 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Punctuations</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">Punctuations</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#Punctuations"></a>
     
-    
+            <div class="docstring"><p>Analyzes and visualizes the frequency distribution of punctuation usage in a given text dataset.</p>
+
+<p><strong>1. Purpose:</strong> The Punctuations Metric's primary purpose is to analyze the frequency of punctuation usage within a
+given text dataset. This is often used in Natural Language Processing tasks, such as text classification and text
+summarization.</p>
+
+<p><strong>2. Test Mechanism:</strong> The test begins by verifying that the input "dataset" is of the type VMDataset. Following
+that, a corpus is created from the dataset by splitting its text on spaces. Each unique punctuation character in
+the text corpus is then tallied. Then, the frequency distribution of each punctuation symbol is visualized as a bar
+graph, with these results being stored as Figures and associated with the main Punctuations object.</p>
+
+<p><strong>3. Signs of High Risk:</strong></p>
+
+<ul>
+<li>High risk can be indicated by the excessive or unusual frequency of specific punctuation marks, potentially
+denoting dubious quality, data corruption, or skewed data.</li>
+</ul>
+
+<p><strong>4. Strengths:</strong></p>
+
+<ul>
+<li>The Punctuations Metric provides valuable insights into the distribution of punctuation usage in a text dataset.</li>
+<li>This insight can be important in validating the quality, consistency, and nature of the data.</li>
+<li>It can provide hints about the style or tonality of the text corpus. For example, frequent usage of exclamation
+marks may suggest a more informal and emotional context.</li>
+</ul>
+
+<p><strong>5. Limitations:</strong></p>
+
+<ul>
+<li>The metric focuses solely on punctuation usage and can miss other important textual characteristics.</li>
+<li>It's important not to make general cultural or tonality assumptions based solely on punctuation distribution,
+since these can vary greatly across different languages and contexts.</li>
+<li>The metric may be less effective with languages that use non-standard or different punctuation.</li>
+<li>The visualization may lack interpretability when there are many unique punctuation marks in the dataset.</li>
+</ul>
+</div>
+
 
                             <div id="Punctuations.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Punctuations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Punctuations</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -110,14 +147,15 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="Punctuations.key" class="variable">key</dd>
                 <dd id="Punctuations.summary" class="function">summary</dd>
                 <dd id="Punctuations.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="Punctuations.description" class="function">description</dd>
+                <dd id="Punctuations.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

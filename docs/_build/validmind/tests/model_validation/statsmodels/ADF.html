@@ -66,14 +66,48 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ADF</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ADF</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ADF"></a>
     
-            <div class="docstring"><p>Augmented Dickey-Fuller unit root test for establishing the order of integration of
-time series</p>
+            <div class="docstring"><p>Assesses the stationarity of a time series dataset using the Augmented Dickey-Fuller (ADF) test.</p>
+
+<p><strong>Purpose</strong>: The Augmented Dickey-Fuller (ADF) test metric is used here to determine the order of integration,
+i.e., the stationarity of a given time series data. The stationary property of data is pivotal in many machine
+learning models as it impacts the reliability and effectiveness of predictions and forecasts.</p>
+
+<p><strong>Test Mechanism</strong>: The ADF test starts by executing the ADF function from the statsmodels library on every feature
+of the dataset. Multiple outputs are generated for each run, including the ADF test statistic and p-value, count of
+lags used, the number of observations factored into the test, critical values at various confidence levels, and the
+maximized information criterion. These results are stored for each feature for subsequent analysis.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>An inflated ADF statistic and high p-value (generally above 0.05) insinuate a high risk to the model's
+performance due to the presence of a unit root indicating non-stationarity.</li>
+<li>Such non-stationarity might result in untrustworthy or insufficient forecasts.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The ADF test is robust to more sophisticated correlation within the data, which empowers it to be deployed in
+settings where data might display complex stochastic behavior.</li>
+<li>The ADF test provides explicit outputs like test statistics, critical values, and information criterion, thereby
+enhancing our understanding and transparency of the model validation process.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The ADF test might demonstrate low statistical power, making it challenging to differentiate between a unit root
+and near-unit-root processes causing false negatives.</li>
+<li>The test assumes the data follows an autoregressive process, which might not be the case all the time.</li>
+<li>The ADF test finds it demanding to manage time series data with structural breaks.</li>
+</ul>
 </div>
 
 
@@ -95,15 +129,16 @@ time series</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ADF.__init__" class="function">Metric</dd>
                 <dd id="ADF.key" class="variable">key</dd>
                 <dd id="ADF.summary" class="function">summary</dd>
                 <dd id="ADF.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ADF.description" class="function">description</dd>
+                <dd id="ADF.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

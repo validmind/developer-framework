@@ -52,9 +52,6 @@
                         <li>
                                 <a class="function" href="#RegressionModelSensitivityPlot.apply_shock">apply_shock</a>
                         </li>
-                        <li>
-                                <a class="function" href="#RegressionModelSensitivityPlot.description">description</a>
-                        </li>
                 </ul>
 
             </li>
@@ -85,20 +82,66 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RegressionModelSensitivityPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RegressionModelSensitivityPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RegressionModelSensitivityPlot"></a>
     
-            <div class="docstring"><p>This metric performs sensitivity analysis applying shocks to one variable at a time.</p>
+            <div class="docstring"><p>Tests the sensitivity of a regression model to variations in independent variables by applying shocks and
+visualizing the effects.</p>
+
+<p><strong>Purpose</strong>: The Regression Sensitivity Plot metric is designed to perform sensitivity analysis on regression
+models. This metric aims to measure the impact of slight changes (shocks) applied to individual variables on the
+system's outcome while keeping all other variables constant. By doing so, it analyzes the effects of each
+independent variable on the dependent variable within the regression model and helps identify significant risk
+factors that could substantially influence the model's output.</p>
+
+<p><strong>Test Mechanism</strong>: This metric operates by initially applying shocks of varying magnitudes, defined by specific
+parameters, to each of the model's features, one at a time. With all other variables held constant, a new
+prediction is made for each dataset subjected to shocks. Any changes in the model's predictions are directly
+attributed to the shocks applied. In the event that the transformation parameter is set to "integrate", initial
+predictions and target values undergo transformation via an integration function before being plotted. Lastly, a
+plot demonstrating observed values against predicted values for each model is generated, showcasing a distinct line
+graph illustrating predictions for each shock.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>If the plot exhibits drastic alterations in model predictions consequent to minor shocks to an individual
+variable, it may indicate high risk. This underscores potentially high model sensitivity to changes in that
+variable, suggesting over-dependence on that variable for predictions.</li>
+<li>Unusually high or unpredictable shifts in response to shocks may also denote potential model instability or
+overfitting.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The metric allows identification of variables strongly influencing the model outcomes, paving the way for
+understanding feature importance.</li>
+<li>It generates visual plots which make the results easily interpretable even to non-technical stakeholders.</li>
+<li>Beneficial in identifying overfitting and detecting unstable models that over-react to minor changes in variables.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The metric operates on the assumption that all other variables remain unchanged during the application of a
+shock. However, real-world situations where variables may possess intricate interdependencies may not always
+reflect this.</li>
+<li>It is best compatible with linear models and may not effectively evaluate the sensitivity of non-linear model
+configurations.</li>
+<li>The metric does not provide a numerical risk measure. It offers only a visual representation, which may invite
+subjectivity in interpretation.</li>
+</ul>
 </div>
 
 
                             <div id="RegressionModelSensitivityPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RegressionModelSensitivityPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RegressionModelSensitivityPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -174,29 +217,18 @@
     
 
                             </div>
-                            <div id="RegressionModelSensitivityPlot.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RegressionModelSensitivityPlot.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
-
-                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RegressionModelSensitivityPlot.key" class="variable">key</dd>
                 <dd id="RegressionModelSensitivityPlot.summary" class="function">summary</dd>
                 <dd id="RegressionModelSensitivityPlot.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="RegressionModelSensitivityPlot.description" class="function">description</dd>
+                <dd id="RegressionModelSensitivityPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

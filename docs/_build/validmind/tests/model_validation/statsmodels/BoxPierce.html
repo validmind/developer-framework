@@ -66,15 +66,54 @@
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">BoxPierce</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">BoxPierce</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#BoxPierce"></a>
     
-            <div class="docstring"><p>The Box-Pierce test is a statistical test used to determine
-whether a given set of data has autocorrelations
-that are different from zero.</p>
+            <div class="docstring"><p>Detects autocorrelation in time-series data through the Box-Pierce test to validate model performance.</p>
+
+<p><strong>Purpose:</strong> The Box-Pierce test is utilized to detect the presence of autocorrelation in a time-series dataset.
+Autocorrelation, or serial correlation, refers to the degree of similarity between observations based on the
+temporal spacing between them. This test is essential for affirming the quality of a time-series model by ensuring
+that the error terms in the model are random and do not adhere to a specific pattern.</p>
+
+<p><strong>Test Mechanism:</strong> The implementation of the Box-Pierce test involves calculating a test statistic along with a
+corresponding p-value derived from the dataset features. These quantities are used to test the null hypothesis that
+posits the data to be independently distributed. This is achieved by iterating over every feature column in the
+time-series data and applying the <code>acorr_ljungbox</code> function of the statsmodels library. The function yields the
+Box-Pierce test statistic as well as the respective p-value, all of which are cached as test results.</p>
+
+<p><strong>Signs of High Risk:</strong></p>
+
+<ul>
+<li>A low p-value, typically under 0.05 as per statistical convention, throws the null hypothesis of independence
+into question. This implies that the dataset potentially houses autocorrelations, thus indicating a high-risk
+scenario concerning model performance.</li>
+<li>Large Box-Pierce test statistic values may indicate the presence of autocorrelation.</li>
+</ul>
+
+<p><strong>Strengths:</strong></p>
+
+<ul>
+<li>Detects patterns in data that are supposed to be random, thereby ensuring no underlying autocorrelation.</li>
+<li>Can be computed efficiently given its low computational complexity.</li>
+<li>Can be widely applied to most regression problems, making it very versatile.</li>
+</ul>
+
+<p><strong>Limitations:</strong></p>
+
+<ul>
+<li>Assumes homoscedasticity (constant variance) and normality of residuals, which may not always be the case in
+real-world datasets.</li>
+<li>May exhibit reduced power for detecting complex autocorrelation schemes such as higher-order or negative
+correlations.</li>
+<li>It only provides a general indication of the existence of autocorrelation, without providing specific insights
+into the nature or patterns of the detected autocorrelation.</li>
+<li>In the presence of exhibits trends or seasonal patterns, the Box-Pierce test may yield misleading results.</li>
+<li>Applicability is limited to time-series data, which limits its overall utility.</li>
+</ul>
 </div>
 
 
@@ -96,15 +135,16 @@ that are different from zero.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="BoxPierce.__init__" class="function">Metric</dd>
                 <dd id="BoxPierce.key" class="variable">key</dd>
                 <dd id="BoxPierce.summary" class="function">summary</dd>
                 <dd id="BoxPierce.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="BoxPierce.description" class="function">description</dd>
+                <dd id="BoxPierce.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

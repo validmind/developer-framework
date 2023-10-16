@@ -38,9 +38,6 @@
                                 <a class="function" href="#RobustnessDiagnosis.__init__">RobustnessDiagnosis</a>
                         </li>
                         <li>
-                                <a class="function" href="#RobustnessDiagnosis.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RobustnessDiagnosis.run">run</a>
                         </li>
                         <li>
@@ -76,43 +73,75 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RobustnessDiagnosis</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">RobustnessDiagnosis</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#RobustnessDiagnosis"></a>
     
-            <div class="docstring"><p>Test robustness of model by perturbing the features column values by adding noise within scale
-stardard deviation.</p>
+            <div class="docstring"><p>Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
+performance.</p>
+
+<p><strong>Purpose</strong>:</p>
+
+<p>The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a
+model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
+noise—added to its input data. This test is designed to help gauge how well the model can handle potential
+real-world scenarios where the input data might be incomplete or corrupted.</p>
+
+<p><strong>Test Mechanism</strong>:</p>
+
+<p>This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
+input features of both the training and testing datasets. The model performance in the face of these perturbed
+features is then evaluated using metrics (default: 'accuracy'). This process is iterated over a range of scale
+factors. The resulting accuracy trend against the amount of noise introduced is illustrated with a line chart. A
+predetermined threshold determines what level of accuracy decay due to perturbation is considered acceptable.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Substantial decreases in accuracy when noise is introduced to feature inputs.</li>
+<li>The decay in accuracy surpasses the configured threshold, indicating that the model is not robust against input
+noise.</li>
+<li>Instances where one or more elements provided in the features list don't match with the training dataset's
+numerical feature columns.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides an empirical measure of the model's performance in tackling noise or data perturbations, revealing
+insights into the model's stability.</li>
+<li>Offers flexibility with the ability to choose specific features to perturb and control the level of noise applied.</li>
+<li>Detailed results visualization helps in interpreting the outcome of robustness testing.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
+analysis of robustness.</li>
+<li>The default metric used is accuracy, which might not always give the best measure of a model's success,
+particularly for imbalanced datasets.</li>
+<li>The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
+corruption or incompleteness in real-world scenarios.</li>
+<li>There might be a requirement to fine-tune the set decay threshold for accuracy with the help of domain knowledge
+or specific project requisites.</li>
+<li>The robustness test might not deliver the expected results for datasets with a text column.</li>
+</ul>
 </div>
 
 
                             <div id="RobustnessDiagnosis.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RobustnessDiagnosis</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RobustnessDiagnosis</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#RobustnessDiagnosis.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RobustnessDiagnosis.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RobustnessDiagnosis.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RobustnessDiagnosis.run" class="classattr">
@@ -134,7 +163,7 @@ to returning the class' docstring</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -152,8 +181,13 @@ short summary of the test results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="RobustnessDiagnosis.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="RobustnessDiagnosis.description" class="function">description</dd>
+                <dd id="RobustnessDiagnosis.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

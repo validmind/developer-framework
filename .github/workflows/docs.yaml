@@ -41,6 +41,9 @@ jobs:
       - name: Install PyTorch CPU
         run: poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
 
+      - name: Install OpenAI
+        run: poetry run pip install openai
+
       - name: Generate Docs
         run: make docs
 

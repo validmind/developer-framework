@@ -70,21 +70,60 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ADFTest</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">ADFTest</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#ADFTest"></a>
     
-            <div class="docstring"><p>Augmented Dickey-Fuller Metric for establishing the order of integration of
-time series</p>
+            <div class="docstring"><p>Assesses the stationarity of time series data using the Augmented Dickey-Fuller (ADF) test.</p>
+
+<p><strong>Purpose</strong>: The Augmented Dickey-Fuller (ADF) metric test is designed to evaluate the presence of a unit root in a
+time series. This essentially translates to assessing the stationarity of a time series dataset. This is vital in
+time series analysis, regression tasks, and forecasting, as these often need the data to be stationary.</p>
+
+<p><strong>Test Mechanism</strong>: This test application utilizes the "adfuller" function from Python's “statsmodels” library. It
+applies this function to each column of the training dataset, subsequently calculating the ADF statistic, p-value,
+the number of lags used, and the number of observations in the sample for each column. If a column's p-value is
+lower than the predetermined threshold (usually 0.05), the series is considered stationary, and the test is deemed
+passed for that column.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A p-value that surpasses the threshold value indicates a high risk or potential model performance issue.</li>
+<li>A high p-value suggests that the null hypothesis (of a unit root being present) cannot be rejected. This in turn
+suggests that the series is non-stationary which could potentially yield unreliable and falsified results for the
+model's performance and forecast.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Archetypal Test for Stationarity: The ADF test is a comprehensive approach towards testing the stationarity of
+time series data. Such testing is vital for many machine learning and statistical models.</li>
+<li>Detailed Output: The function generates detailed output, including the number of lags used and the number of
+observations, which adds to understanding a series’ behaviour.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Dependence on Threshold: The result of this test freights heavily on the threshold chosen. Hence, an imprudent
+threshold value might lead to false acceptance or rejection of the null hypothesis.</li>
+<li>Not Effective for Trending Data: The test suffers when it operates under the assumption that the data does not
+encapsulate any deterministic trend. In the presence of such a trend, it might falsely identify a series as
+non-stationary.</li>
+<li>Potential for False Positives: The ADF test especially in the case of larger datasets, tends to reject the null
+hypothesis, escalating the chances of false positives.</li>
+</ul>
 </div>
 
 
                             <div id="ADFTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ADFTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ADFTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -111,13 +150,14 @@ time series</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="ADFTest.summary" class="function">summary</dd>
                 <dd id="ADFTest.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ADFTest.description" class="function">description</dd>
+                <dd id="ADFTest.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

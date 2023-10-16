@@ -76,21 +76,72 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">IQROutliersBarPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">IQROutliersBarPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#IQROutliersBarPlot"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of the outliers for numeric variables based on percentiles.
-The input dataset is required.</p>
+            <div class="docstring"><p>Visualizes outlier distribution across percentiles in numerical data using Interquartile Range (IQR) method.</p>
+
+<p><strong>Purpose</strong>: The InterQuartile Range Outliers Bar Plot (IQROutliersBarPlot) metric aims to visually analyze and
+evaluate the extent of outliers in numeric variables based on percentiles. Its primary purpose is to clarify the
+dataset's distribution, flag possible abnormalities in it and gauge potential risks associated with processing
+potentially skewed data, which can affect the machine learning model's predictive prowess.</p>
+
+<p><strong>Test Mechanism</strong>: The examination invokes a series of steps:</p>
+
+<ol>
+<li>For every numeric feature in the dataset, the 25th percentile (Q1) and 75th percentile (Q3) are calculated
+before deriving the Interquartile Range (IQR), the difference between Q1 and Q3.</li>
+<li>Subsequently, the metric calculates the lower and upper thresholds by subtracting Q1 from the <code>threshold</code> times
+IQR and adding Q3 to <code>threshold</code> times IQR, respectively. The default <code>threshold</code> is set at 1.5.</li>
+<li>Any value in the feature that falls below the lower threshold or exceeds the upper threshold is labeled as an
+outlier.</li>
+<li>The number of outliers are tallied for different percentiles, such as [0-25], [25-50], [50-75], and [75-100].</li>
+<li>These counts are employed to construct a bar plot for the feature, showcasing the distribution of outliers
+across different percentiles.</li>
+</ol>
+
+<p><strong>Signs of High Risk</strong>: High risk or a potential lapse in the model's performance could be unveiled by the
+following signs:</p>
+
+<ul>
+<li>A prevalence of outliers in the data, potentially skewing its distribution.</li>
+<li>Outliers dominating higher percentiles (75-100) which implies the presence of extreme values, capable of severely
+influencing the model's performance.</li>
+<li>Certain features harboring most of their values as outliers, which signifies that these features might not
+contribute positively to the model's forecasting ability.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Effectively identifies outliers in the data through visual means, facilitating easier comprehension and offering
+insights into the outliers' possible impact on the model.</li>
+<li>Provides flexibility by accommodating all numeric features or a chosen subset.</li>
+<li>Task-agnostic in nature; it is viable for both classification and regression tasks.</li>
+<li>Can handle large datasets as its operation does not hinge on computationally heavy operations.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Its application is limited to numerical variables and does not extend to categorical ones.</li>
+<li>Relies on a predefined threshold (default being 1.5) for outlier identification, which may not be suitable for
+all cases.</li>
+<li>Only reveals the presence and distribution of outliers and does not provide insights into how these outliers
+might affect the model's predictive performance.</li>
+<li>The assumption that data is unimodal and symmetric may not always hold true. In cases with non-normal
+distributions, the results can be misleading.</li>
+</ul>
 </div>
 
 
                             <div id="IQROutliersBarPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">IQROutliersBarPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">IQROutliersBarPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -144,14 +195,15 @@ The input dataset is required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="IQROutliersBarPlot.key" class="variable">key</dd>
                 <dd id="IQROutliersBarPlot.summary" class="function">summary</dd>
                 <dd id="IQROutliersBarPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="IQROutliersBarPlot.description" class="function">description</dd>
+                <dd id="IQROutliersBarPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

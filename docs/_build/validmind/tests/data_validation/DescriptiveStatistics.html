@@ -38,9 +38,6 @@
                                 <a class="function" href="#DescriptiveStatistics.__init__">DescriptiveStatistics</a>
                         </li>
                         <li>
-                                <a class="function" href="#DescriptiveStatistics.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#DescriptiveStatistics.get_summary_statistics_numerical">get_summary_statistics_numerical</a>
                         </li>
                         <li>
@@ -82,43 +79,70 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">DescriptiveStatistics</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">DescriptiveStatistics</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#DescriptiveStatistics"></a>
     
-            <div class="docstring"><p>Collects a set of descriptive statistics for a dataset, both for
-numerical and categorical variables</p>
+            <div class="docstring"><p>Performs a detailed descriptive statistical analysis of both numerical and categorical data within a model's
+dataset.</p>
+
+<p><strong>Purpose</strong>: The purpose of the Descriptive Statistics metric is to provide a comprehensive summary of both
+numerical and categorical data within a dataset. This involves statistics such as count, mean, standard deviation,
+minimum and maximum values for numerical data. For categorical data, it calculates the count, number of unique
+values, most common value and its frequency, and the proportion of the most frequent value relative to the total.
+The goal is to visualize the overall distribution of the variables in the dataset, aiding in understanding the
+model's behavior and predicting its performance.</p>
+
+<p><strong>Test Mechanism</strong>: The testing mechanism utilizes two in-built functions of pandas dataframes: describe() for
+numerical fields and value_counts() for categorical fields. The describe() function pulls out several summary
+statistics, while value_counts() accounts for unique values. The resulting data is formatted into two distinct
+tables, one for numerical and another for categorical variable summaries. These tables provide a clear summary of
+the main characteristics of the variables, which can be instrumental in assessing the model's performance.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Skewed data or significant outliers can represent high risk. For numerical data, this may be reflected via a
+significant difference between the mean and median (50% percentile).</li>
+<li>For categorical data, a lack of diversity (low count of unique values), or overdominance of a single category
+(high frequency of the top value) can indicate high risk.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>This metric provides a comprehensive summary of the dataset, shedding light on the distribution and
+characteristics of the variables under consideration.</li>
+<li>It is a versatile and robust method, applicable to both numerical and categorical data.</li>
+<li>It helps highlight crucial anomalies such as outliers, extreme skewness, or lack of diversity, which are vital in
+understanding model behavior during testing and validation.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>While this metric offers a high-level overview of the data, it may fail to detect subtle correlations or complex
+patterns.</li>
+<li>It does not offer any insights on the relationship between variables.</li>
+<li>Alone, descriptive statistics cannot be used to infer properties about future unseen data.</li>
+<li>It should be used in conjunction with other statistical tests to provide a comprehensive understanding of the
+model's data.</li>
+</ul>
 </div>
 
 
                             <div id="DescriptiveStatistics.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">DescriptiveStatistics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">DescriptiveStatistics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#DescriptiveStatistics.__init__"></a>
     
     
-
-                            </div>
-                            <div id="DescriptiveStatistics.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#DescriptiveStatistics.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="DescriptiveStatistics.get_summary_statistics_numerical" class="classattr">
@@ -180,9 +204,14 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="DescriptiveStatistics.key" class="variable">key</dd>
                 <dd id="DescriptiveStatistics.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="DescriptiveStatistics.description" class="function">description</dd>
+                <dd id="DescriptiveStatistics.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

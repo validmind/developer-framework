@@ -79,20 +79,69 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ScorecardBucketHistogram</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ScorecardBucketHistogram</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ScorecardBucketHistogram"></a>
     
-            <div class="docstring"><p>Scorecard Bucket Probability of Default</p>
+            <div class="docstring"><p>Evaluates and visualizes distribution of risk categories in a classification model's scores, useful in credit risk
+assessment.</p>
+
+<p><strong>Purpose</strong>: The 'Scorecard Bucket Histogram' is employed as a metric to evaluate the performance of a
+classification model, specifically in credit risk assessment. It categorizes model scores into different rating
+classes, and visualizes the distribution of scores or probabilities within each class. It essentially measures how
+different risk categories (classes) are distributed in the model scores and provides insight into the model's
+classification ability. This makes it particularly useful in credit scoring and risk modeling where understanding
+the probability of default is critical.</p>
+
+<p><strong>Test Mechanism</strong>: The test works by computing the probabilities for each record in the test and train dataset
+using the model's predict function. Subsequently, it calculates the scores using a formula incorporating target
+score, target odds, and points to double odds (PDO). The scores are then bucketed into predefined rating classes
+(such as 'A', 'B', 'C', 'D') and plotted in a histogram for both the train and test datasets. The target score,
+target odds, points to double the odds (PDO), and rating classes are customizable parameters, providing flexibility
+in test metrics based on differing model or industry norms.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Disproportionate scores within rating classes</li>
+<li>Excessive overlap between classes</li>
+<li>Inconsistent distribution of scores between the training and testing datasets</li>
+</ul>
+
+<p>If the model is accurately classifying and risk is being evenly distributed, we would anticipate smooth and
+relatively balanced histograms within classes.</p>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides a quick visual snapshot of score distribution</li>
+<li>Breaks down complex predictions into simple, understandable classes, making it easily interpretable for both
+technical and non-technical audiences</li>
+<li>Caters to customization of parameters</li>
+<li>Gives ownership of the class definitions to the user</li>
+<li>Useful in the field of credit risk, providing a clear understanding of which class or 'bucket' a potential
+borrower belongs to</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Relies on manual setting of classes and other parameters (like target score, target odds, and PDO), potentially
+leading to arbitrary classifications and potential bias if not judiciously performed</li>
+<li>Effectiveness can be limited with non-tabular data</li>
+<li>Doesn't provide a numerical value easily compared across different models or runs as the output is primarily
+visual</li>
+<li>Might not present a complete view of model performance and should be used in conjunction with other metrics</li>
+</ul>
 </div>
 
 
                             <div id="ScorecardBucketHistogram.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ScorecardBucketHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ScorecardBucketHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -163,14 +212,15 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ScorecardBucketHistogram.key" class="variable">key</dd>
                 <dd id="ScorecardBucketHistogram.summary" class="function">summary</dd>
                 <dd id="ScorecardBucketHistogram.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ScorecardBucketHistogram.description" class="function">description</dd>
+                <dd id="ScorecardBucketHistogram.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

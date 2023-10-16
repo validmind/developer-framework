@@ -11,18 +11,50 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 @dataclass
 class DescriptiveStatistics(Metric):
     """
-    Collects a set of descriptive statistics for a dataset, both for
-    numerical and categorical variables
+    Performs a detailed descriptive statistical analysis of both numerical and categorical data within a model's
+    dataset.
+
+    **Purpose**: The purpose of the Descriptive Statistics metric is to provide a comprehensive summary of both
+    numerical and categorical data within a dataset. This involves statistics such as count, mean, standard deviation,
+    minimum and maximum values for numerical data. For categorical data, it calculates the count, number of unique
+    values, most common value and its frequency, and the proportion of the most frequent value relative to the total.
+    The goal is to visualize the overall distribution of the variables in the dataset, aiding in understanding the
+    model's behavior and predicting its performance.
+
+    **Test Mechanism**: The testing mechanism utilizes two in-built functions of pandas dataframes: describe() for
+    numerical fields and value_counts() for categorical fields. The describe() function pulls out several summary
+    statistics, while value_counts() accounts for unique values. The resulting data is formatted into two distinct
+    tables, one for numerical and another for categorical variable summaries. These tables provide a clear summary of
+    the main characteristics of the variables, which can be instrumental in assessing the model's performance.
+
+    **Signs of High Risk**:
+    - Skewed data or significant outliers can represent high risk. For numerical data, this may be reflected via a
+    significant difference between the mean and median (50% percentile).
+    - For categorical data, a lack of diversity (low count of unique values), or overdominance of a single category
+    (high frequency of the top value) can indicate high risk.
+
+    **Strengths**:
+    - This metric provides a comprehensive summary of the dataset, shedding light on the distribution and
+    characteristics of the variables under consideration.
+    - It is a versatile and robust method, applicable to both numerical and categorical data.
+    - It helps highlight crucial anomalies such as outliers, extreme skewness, or lack of diversity, which are vital in
+    understanding model behavior during testing and validation.
+
+    **Limitations**:
+    - While this metric offers a high-level overview of the data, it may fail to detect subtle correlations or complex
+    patterns.
+    - It does not offer any insights on the relationship between variables.
+    - Alone, descriptive statistics cannot be used to infer properties about future unseen data.
+    - It should be used in conjunction with other statistical tests to provide a comprehensive understanding of the
+    model's data.
     """
 
     name = "descriptive_statistics"
     required_inputs = ["dataset"]
-
-    def description(self):
-        return """
-        This section provides descriptive statistics for numerical
-        and categorical variables found in the dataset.
-        """
+    metadata = {
+        "task_types": ["classification", "regression"],
+        "tags": ["tabular_data", "time_series_data"],
+    }
 
     def get_summary_statistics_numerical(self, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]

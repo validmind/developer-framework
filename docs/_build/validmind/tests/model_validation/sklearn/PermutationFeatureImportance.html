@@ -70,33 +70,59 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">PermutationFeatureImportance</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">PermutationFeatureImportance</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#PermutationFeatureImportance"></a>
     
-            <div class="docstring"><p>The Feature Importance plot below calculates a score representing the
-importance of each feature in the model. A higher score indicates
-that the specific input feature will have a larger effect on the
-predictive power of the model.</p>
+            <div class="docstring"><p>Assesses the significance of each feature in a model by evaluating the impact on model performance when feature
+values are randomly rearranged.</p>
 
-<p>The importance score is calculated using Permutation Feature
-Importance. Permutation feature importance measures the decrease of
-model performance after the feature's values have been permuted, which
-breaks the relationship between the feature and the true outcome. A
-feature is "important" if shuffling its values increases the model
-error, because in this case the model relied on the feature for the
-prediction. A feature is "unimportant" if shuffling its values leaves
-the model error unchanged, because in this case the model ignored the
-feature for the prediction.</p>
+<p><strong>Purpose</strong>: The purpose of the Permutation Feature Importance (PFI) metric is to assess the importance of each
+feature used by the Machine Learning model. The significance is measured by evaluating the decrease in the model's
+performance when the feature's values are randomly arranged.</p>
+
+<p><strong>Test Mechanism</strong>: PFI is calculated via the <code>permutation_importance</code> method from the <code>sklearn.inspection</code> module.
+This method shuffles the columns of the feature dataset and measures the impact on the model's performance. A
+significant decrease in performance after permutating a feature's values deems the feature as important. On the
+other hand, if performance remains the same, the feature is likely not important. The output of the PFI metric is a
+figure illustrating the importance of each feature.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The model heavily relies on a feature with highly variable or easily permutable values, indicating instability.</li>
+<li>A feature, deemed unimportant by the model but based on domain knowledge should have a significant effect on the
+outcome, is not influencing the model's predictions.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>PFI provides insights into the importance of different features and may reveal underlying data structure.</li>
+<li>It can indicate overfitting if a particular feature or set of features overly impacts the model's predictions.</li>
+<li>The metric is model-agnostic and can be used with any classifier that provides a measure of prediction accuracy
+before and after feature permutation.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The feature importance calculated does not imply causality, it only presents the amount of information that a
+feature provides for the prediction task.</li>
+<li>The metric does not account for interactions between features. If features are correlated, the permutation
+importance may allocate importance to one and not the other.</li>
+<li>PFI cannot interact with certain libraries like statsmodels, pytorch, catboost, etc, thus limiting its
+applicability.</li>
+</ul>
 </div>
 
 
                             <div id="PermutationFeatureImportance.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">PermutationFeatureImportance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">PermutationFeatureImportance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -123,14 +149,15 @@ feature for the prediction.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="PermutationFeatureImportance.key" class="variable">key</dd>
                 <dd id="PermutationFeatureImportance.summary" class="function">summary</dd>
                 <dd id="PermutationFeatureImportance.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="PermutationFeatureImportance.description" class="function">description</dd>
+                <dd id="PermutationFeatureImportance.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

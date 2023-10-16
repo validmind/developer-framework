@@ -75,21 +75,66 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ClassImbalance</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">ClassImbalance</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#ClassImbalance"></a>
     
-            <div class="docstring"><p>The class imbalance test measures the disparity between the majority
-class and the minority class in the target column.</p>
+            <div class="docstring"><p>Evaluates and quantifies class distribution imbalance in a dataset used by a machine learning model.</p>
+
+<p><strong>Purpose</strong>: The ClassImbalance test is designed to evaluate the distribution of target classes in a dataset that's
+utilized by a machine learning model. Specifically, it aims to ensure that the classes aren't overly skewed, which
+could lead to bias in the model's predictions. It's crucial to have a balanced training dataset to avoid creating a
+model that's biased with high accuracy for the majority class and low accuracy for the minority class.</p>
+
+<p><strong>Test Mechanism</strong>: This ClassImbalance test operates by calculating the frequency (expressed as a percentage) of
+each class in the target column of the dataset. It then checks whether each class appears in at least a set minimum
+percentage of the total records. This minimum percentage is a modifiable parameter, but the default value is set to
+10%.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Any class that represents less than the pre-set minimum percentage threshold is marked as high risk, implying a
+potential class imbalance.</li>
+<li>The function provides a pass/fail outcome for each class based on this criterion.</li>
+<li>Fundamentally, if any class fails this test, it's highly likely that the dataset possesses imbalanced class
+distribution.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test can spot under-represented classes that could affect the efficiency of a machine learning model.</li>
+<li>The calculation is straightforward and swift.</li>
+<li>The test is highly informative because it not only spots imbalance, but it also quantifies the degree of
+imbalance.</li>
+<li>The adjustable threshold enables flexibility and adaptation to differing use-cases or domain-specific needs.</li>
+<li>The test creates a visually insightful plot showing the classes and their corresponding proportions, enhancing
+interpretability and comprehension of the data.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test might struggle to perform well or provide vital insights for datasets with a high number of classes. In
+such cases, the imbalance could be inevitable due to the inherent class distribution.</li>
+<li>Sensitivity to the threshold value might result in faulty detection of imbalance if the threshold is set
+excessively high.</li>
+<li>Regardless of the percentage threshold, it doesn't account for varying costs or impacts of misclassifying
+different classes, which might fluctuate based on specific applications or domains.</li>
+<li>While it can identify imbalances in class distribution, it doesn't provide direct methods to address or correct
+these imbalances.</li>
+<li>The test is only applicable for classification opearations and unsuitable for regression or clustering tasks.</li>
+</ul>
 </div>
 
 
                             <div id="ClassImbalance.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ClassImbalance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ClassImbalance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -102,7 +147,7 @@ class and the minority class in the target column.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -135,12 +180,13 @@ short summary of the test results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="ClassImbalance.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ClassImbalance.description" class="function">description</dd>
+                <dd id="ClassImbalance.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

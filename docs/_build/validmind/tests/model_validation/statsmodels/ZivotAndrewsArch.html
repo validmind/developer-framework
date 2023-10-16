@@ -70,21 +70,58 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ZivotAndrewsArch</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ZivotAndrewsArch</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ZivotAndrewsArch"></a>
     
-            <div class="docstring"><p>Zivot-Andrews unit root test for
-establishing the order of integration of time series</p>
+            <div class="docstring"><p>Evaluates the order of integration and stationarity of time series data using Zivot-Andrews unit root test.</p>
+
+<p><strong>Purpose</strong>: The Zivot-Andrews Arch metric is used to evaluate the order of integration for a time series data in a
+machine learning model. It's designed to test for stationarity, a crucial aspect in time series analysis where data
+points are not dependent on time. Stationarity means that the statistical properties such as mean, variance and
+autocorrelation are all constant over time.</p>
+
+<p><strong>Test Mechanism</strong>: The Zivot-Andrews unit root test is performed on each feature in the dataset using the
+<code>ZivotAndrews</code> function from the <code>arch.unitroot</code> module. This function returns the Zivot-Andrews metric for each
+feature, which includes the statistical value, p-value (probability value), the number of used lags, and the number
+of observations. The p-value is later used to decide on the null hypothesis (the time series has a unit root and is
+non-stationary) based on a chosen level of significance.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A high p-value can suggest high risk. This might indicate that there's insufficient evidence to reject the null
+hypothesis, which would mean the time series has a unit root and is therefore non-stationary.</li>
+<li>Non-stationary time series data can lead to misleading statistics and unreliable machine learning models.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The Zivot-Andrews Arch metric dynamically tests for stationarity against structural breaks in time series data,
+offering robust evaluation of stationarity in features.</li>
+<li>This metric is especially beneficial with financial, economic, or other time-series data where data observations
+lack a consistent pattern and structural breaks may occur.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The Zivot-Andrews Arch metric assumes that data is derived from a single-equation, autoregressive model. It may,
+therefore, not be appropriate for multivariate time series data or data which does not align with the
+autoregressive model assumption.</li>
+<li>It might not take into account unexpected shocks or changes in the series trend which can both have a significant
+impact on the stationarity of the data.</li>
+</ul>
 </div>
 
 
                             <div id="ZivotAndrewsArch.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ZivotAndrewsArch</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ZivotAndrewsArch</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -111,14 +148,15 @@ establishing the order of integration of time series</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ZivotAndrewsArch.key" class="variable">key</dd>
                 <dd id="ZivotAndrewsArch.summary" class="function">summary</dd>
                 <dd id="ZivotAndrewsArch.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ZivotAndrewsArch.description" class="function">description</dd>
+                <dd id="ZivotAndrewsArch.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

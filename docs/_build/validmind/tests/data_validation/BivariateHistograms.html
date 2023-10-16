@@ -73,21 +73,65 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">BivariateHistograms</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">BivariateHistograms</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#BivariateHistograms"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of categorical data by plotting bivariate histograms.
-The input dataset and variable_pairs are required.</p>
+            <div class="docstring"><p>Generates bivariate histograms for paired features, aiding in visual inspection of categorical variables'
+distributions and correlations.</p>
+
+<p><strong>Purpose</strong>: This metric, dubbed BivariateHistograms, is primarily used for visual data analysis via the inspection
+of variable distribution, specifically categorical variables. Its main objective is to ascertain any potential
+correlations between these variables and distributions within each defined target class. This is achieved by
+offering an intuitive avenue into gaining insights into the characteristics of the data and any plausible patterns
+therein.</p>
+
+<p><strong>Test Mechanism</strong>: The working mechanism of the BivariateHistograms module revolves around an input dataset and a
+series of feature pairs. It uses seaborn's histogram plotting function and matplotlib techniques to create
+bivariate histograms for each feature pair in the dataset. Two histograms, stratified by the target column status,
+are produced for every pair of features. This enables the telling apart of different target statuses through color
+differentiation. The module also offers optional functionality for restricting the data by a specific status
+through the target_filter parameter.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>Irregular or unexpected distributions of data across the different categories.</li>
+<li>Highly skewed data distributions.</li>
+<li>Significant deviations from the perceived 'normal' or anticipated distributions.</li>
+<li>Large discrepancies in distribution patterns between various target statuses.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Owing to its simplicity, the histogram-based approach is easy to implement and interpret which translates to
+quick insights.</li>
+<li>The metrics provides a consolidated view of the distribution of data across different target conditions for each
+variable pair, thereby assisting in highlighting potential correlations and patterns.</li>
+<li>It proves advantageous in spotting anomalies, comprehending interactions among features, and facilitating
+exploratory data analysis.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>Its simplicity may be a drawback when it comes to spotting intricate or complex patterns in data.</li>
+<li>Overplotting might occur when working with larger datasets.</li>
+<li>The metric is only applicable to categorical data, and offers limited insights for numerical or continuous
+variables.</li>
+<li>The interpretation of visual results hinges heavily on the expertise of the observer, possibly leading to
+subjective analysis.</li>
+</ul>
 </div>
 
 
                             <div id="BivariateHistograms.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">BivariateHistograms</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">BivariateHistograms</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,14 +171,15 @@ The input dataset and variable_pairs are required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="BivariateHistograms.key" class="variable">key</dd>
                 <dd id="BivariateHistograms.summary" class="function">summary</dd>
                 <dd id="BivariateHistograms.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="BivariateHistograms.description" class="function">description</dd>
+                <dd id="BivariateHistograms.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -76,21 +76,64 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ChiSquaredFeaturesTable</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ChiSquaredFeaturesTable</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ChiSquaredFeaturesTable"></a>
     
-            <div class="docstring"><p>Perform a Chi-Squared test of independence for each categorical variable with the target.
-The input dataset and target column are required.</p>
+            <div class="docstring"><p>Executes Chi-Squared test for each categorical feature against a target column to assess significant association.</p>
+
+<p><strong>Purpose</strong>: The <code><a href="#ChiSquaredFeaturesTable">ChiSquaredFeaturesTable</a></code> metric is used to carry out a Chi-Squared test of independence for each
+categorical feature variable against a designated target column. The primary goal is to determine if a significant
+association exists between the categorical features and the target variable. This method typically finds its use in
+the context of Model Risk Management to understand feature relevance and detect potential bias in a classification
+model.</p>
+
+<p><strong>Test Mechanism</strong>: The testing process generates a contingency table for each categorical variable and the target
+variable, after which a Chi-Squared test is performed. Using this approach, the Chi-Squared statistic and the
+p-value for each feature are calculated. The p-value threshold is a modifiable parameter, and a test will qualify
+as passed if the p-value is less than or equal to this threshold. If not, the test is labeled as failed. The
+outcome for each feature - comprising the variable name, Chi-squared statistic, p-value, threshold, and pass/fail
+status - is incorporated into a final summary table.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>High p-values (greater than the set threshold) for specific variables could indicate a high risk.</li>
+<li>These high p-values allude to the absence of a statistically significant relationship between the feature and the
+target variables, resulting in a 'Fail' status.</li>
+<li>A categorical feature lacking a relevant association with the target variable could be a warning that the machine
+learning model might not be performing optimally.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test allows for a comprehensive understanding of the interaction between a model's input features and the
+target output, thus validating the relevance of categorical features.</li>
+<li>It also produces an unambiguous 'Pass/Fail' output for each categorical feature.</li>
+<li>The opportunity to adjust the p-value threshold contributes to flexibility in accommodating different statistical
+standards.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The metric presupposes that data is tabular and categorical, which may not always be the case with all datasets.</li>
+<li>It is distinctively designed for classification tasks, hence unsuitable for regression scenarios.</li>
+<li>The Chi-squared test, akin to any hypothesis testing-based test, cannot identify causal relationships, but only
+associations.</li>
+<li>Furthermore, the test hinges on an adjustable p-value threshold, and varying threshold selections might lead to
+different conclusions regarding feature relevance.</li>
+</ul>
 </div>
 
 
                             <div id="ChiSquaredFeaturesTable.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ChiSquaredFeaturesTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ChiSquaredFeaturesTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -149,13 +192,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ChiSquaredFeaturesTable.key" class="variable">key</dd>
                 <dd id="ChiSquaredFeaturesTable.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ChiSquaredFeaturesTable.description" class="function">description</dd>
+                <dd id="ChiSquaredFeaturesTable.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

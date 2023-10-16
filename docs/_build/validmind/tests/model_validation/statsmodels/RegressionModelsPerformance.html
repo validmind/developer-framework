@@ -38,9 +38,6 @@
                                 <a class="function" href="#RegressionModelsPerformance.__init__">RegressionModelsPerformance</a>
                         </li>
                         <li>
-                                <a class="function" href="#RegressionModelsPerformance.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#RegressionModelsPerformance.run">run</a>
                         </li>
                         <li>
@@ -76,42 +73,65 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">RegressionModelsPerformance</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">RegressionModelsPerformance</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#RegressionModelsPerformance"></a>
     
-            <div class="docstring"><p>Test that outputs the comparison of stats library regression models.</p>
+            <div class="docstring"><p>Evaluates and compares regression models' performance using R-squared, Adjusted R-squared, and MSE metrics.</p>
+
+<p><strong>Purpose</strong>: This metric is used to evaluate and compare the performance of various regression models. Through the
+use of key statistical measures such as R-squared, Adjusted R-squared, and Mean Squared Error (MSE), the
+performance of different models in predicting dependent variables can be assessed both on the data used for
+training (in-sample) and new, unseen data (out-of-sample).</p>
+
+<p><strong>Test Mechanism</strong>: The test evaluates a list of provided regression models. For each model, it calculates their
+in-sample and out-of-sample performance by deriving the model predictions for the training and testing datasets
+respectively, and then comparing these predictions to the actual values. In doing so, it calculates R-squared,
+Adjusted R-squared, and MSE for each model, stores the results, and returns them for comparison.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>High Mean Squared Error (MSE) values.</li>
+<li>Strikingly low values of R-squared and Adjusted R-squared.</li>
+<li>A significant drop in performance when transitioning from in-sample to out-of-sample evaluations, signaling a
+potential overfitting issue.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The test permits comparisons of multiple models simultaneously, providing an objective base for identifying the
+top-performing model.</li>
+<li>It delivers both in-sample and out-of-sample evaluations, presenting performance data on unseen data.</li>
+<li>The utilization of R-squared and Adjusted R-squared in conjunction with MSE allows for a detailed view of the
+model's explainability and error rate.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>This test is built around the assumption that the residuals of the regression model are normally distributed,
+which is a fundamental requirement for Ordinary Least Squares (OLS) regression; thus, it could be not suitable for
+models where this assumption is broken.</li>
+<li>The test does not consider cases where higher R-squared or lower MSE values do not necessarily correlate with
+better predictive performance, particularly in instances of excessively complex models.</li>
+</ul>
 </div>
 
 
                             <div id="RegressionModelsPerformance.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">RegressionModelsPerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">RegressionModelsPerformance</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#RegressionModelsPerformance.__init__"></a>
     
     
-
-                            </div>
-                            <div id="RegressionModelsPerformance.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#RegressionModelsPerformance.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="RegressionModelsPerformance.run" class="classattr">
@@ -147,9 +167,14 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="RegressionModelsPerformance.key" class="variable">key</dd>
                 <dd id="RegressionModelsPerformance.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="RegressionModelsPerformance.description" class="function">description</dd>
+                <dd id="RegressionModelsPerformance.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

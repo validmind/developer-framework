@@ -73,23 +73,62 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Skewness</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">Skewness</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#Skewness"></a>
     
-            <div class="docstring"><p>The skewness test measures the extent to which a distribution of
-values differs from a normal distribution. A positive skew describes
-a longer tail of values in the right and a negative skew describes a
-longer tail of values in the left.</p>
+            <div class="docstring"><p>Evaluates the skewness of numerical data in a machine learning model and checks if it falls below a set maximum
+threshold.</p>
+
+<p><strong>Purpose</strong>: The purpose of the Skewness test is to measure the asymmetry in the distribution of data within a
+predictive machine learning model. Specifically, it evaluates the divergence of said distribution from a normal
+distribution. In understanding the level of skewness, we can potentially identify issues with data quality, an
+essential component for optimizing the performance of traditional machine learning models in both classification
+and regression settings.</p>
+
+<p><strong>Test Mechanism</strong>: This test calculates skewness of numerical columns in a dataset, which is extracted from the
+DataFrame, specifically focusing on numerical data types. The skewness value is then contrasted against a
+predetermined maximum threshold, set by default to 1. The skewness value under review is deemed to have passed the
+test only if it is less than this maximum threshold; otherwise, the test is considered 'fail'. Subsequently, the
+test results of each column, together with the skewness value and column name, are cached.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>The presence of substantial skewness levels that significantly exceed the maximum threshold is an indication of
+skewed data distribution and subsequently high model risk.</li>
+<li>Persistent skewness in data could signify that the foundational assumptions of the machine learning model may not
+be applicable, potentially leading to subpar model performance, erroneous predictions, or biased inferences.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Fast and efficient identification of unequal data</li>
+<li>distributions within a machine learning model is enabled by the skewness test.</li>
+<li>The maximum threshold parameter can be adjusted to meet the user's specific needs, enhancing the test's
+versatility.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test only evaluates numeric columns, which means that data in non-numeric columns could still include bias or
+problematic skewness that this test does not capture.</li>
+<li>The test inherently assumes that the data should follow a normal distribution, an expectation which may not
+always be met in real-world data.</li>
+<li>The risk grading is largely dependent on a subjective threshold, which may result in excessive strictness or
+leniency depending upon selection. This factor might require expert input and recurrent iterations for refinement.</li>
+</ul>
 </div>
 
 
                             <div id="Skewness.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Skewness</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Skewness</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -102,7 +141,7 @@ longer tail of values in the left.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -132,12 +171,13 @@ longer tail of values in the left.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="Skewness.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="Skewness.description" class="function">description</dd>
+                <dd id="Skewness.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

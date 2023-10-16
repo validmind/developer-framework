@@ -73,21 +73,58 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">FeatureTargetCorrelationPlot</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">FeatureTargetCorrelationPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#FeatureTargetCorrelationPlot"></a>
     
-            <div class="docstring"><p>Generates a visual analysis of correlations between features and target by plotting a bar plot.
-The input dataset is required.</p>
+            <div class="docstring"><p>Visualizes the correlation between input features and model's target output in a color-coded horizontal bar plot.</p>
+
+<p><strong>Purpose</strong>: This test is designed to graphically illustrate the correlations between distinct input features and
+the target output of a Machine Learning model. Understanding how each feature influences the model's predictions is
+crucial - a higher correlation indicates stronger influence of the feature on the target variable. This correlation
+study is especially advantageous during feature selection and for comprehending the model's operation.</p>
+
+<p><strong>Test Mechanism</strong>: This FeatureTargetCorrelationPlot test computes and presents the correlations between the
+features and the target variable using a specific dataset. These correlations are calculated, graphically
+represented in a horizontal bar plot, and color-coded based on the strength of the correlation. A hovering template
+can also be utilized for informative tooltips. It is possible to specify the features to be analyzed and adjust the
+graph's height according to need.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>There are no strong correlations (either positive or negative) between features and the target variable. This
+could suggest high risk as the supplied features do not appear to significantly impact the prediction output.</li>
+<li>The presence of duplicated correlation values might hint at redundancy in the feature set.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>Provides visual assistance to interpreting correlations more effectively.</li>
+<li>Gives a clear and simple tour of how each feature affects the model's target variable.</li>
+<li>Beneficial for feature selection and grasping the model's prediction nature.</li>
+<li>Precise correlation values for each feature are offered by the hover template, contributing to a granular-level
+comprehension.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test only accepts numerical data, meaning variables of other types need to be prepared beforehand.</li>
+<li>The plot assumes all correlations to be linear, thus non-linear relationships might not be captured effectively.</li>
+<li>Not apt for models that employ complex feature interactions, like Decision Trees or Neural Networks, as the test
+may not accurately reflect their importance.</li>
+</ul>
 </div>
 
 
                             <div id="FeatureTargetCorrelationPlot.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">FeatureTargetCorrelationPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">FeatureTargetCorrelationPlot</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -127,14 +164,15 @@ The input dataset is required.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="FeatureTargetCorrelationPlot.key" class="variable">key</dd>
                 <dd id="FeatureTargetCorrelationPlot.summary" class="function">summary</dd>
                 <dd id="FeatureTargetCorrelationPlot.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="FeatureTargetCorrelationPlot.description" class="function">description</dd>
+                <dd id="FeatureTargetCorrelationPlot.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -79,21 +79,64 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">IQROutliersTable</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">IQROutliersTable</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#IQROutliersTable"></a>
     
-            <div class="docstring"><p>Analyzes the distribution of outliers in numerical features using the Interquartile Range (IQR) method.
-The input dataset is required.</p>
+            <div class="docstring"><p>Determines and summarizes outliers in numerical features using Interquartile Range method.</p>
+
+<p><strong>Purpose</strong>: The "Interquartile Range Outliers Table" (IQROutliersTable) metric has been designed for identifying
+and summarizing outliers within numerical features of a dataset using the Interquartile Range (IQR) method. The
+purpose of this exercise is crucial in the pre-processing of data as outliers can substantially distort the
+statistical analysis and debilitate the performance of machine learning models.</p>
+
+<p><strong>Test Mechanism</strong>: The IQR, which is the range separating the first quartile (25th percentile) from the third
+quartile (75th percentile), is calculated for each numerical feature within the dataset. An outlier is defined as a
+data point falling below the "Q1 - 1.5 * IQR" or above "Q3 + 1.5 * IQR" range. The metric then computes the number
+of outliers along with their minimum, 25th percentile, median, 75th percentile, and maximum values for each
+numerical feature. If no specific features are chosen, the metric will apply to all numerical features in the
+dataset. The default outlier threshold is set to 1.5, following the standard definition of outliers in statistical
+analysis, although it can be customized by the user.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>High risk is indicated by a large number of outliers in multiple features.</li>
+<li>Outliers that are significantly distanced from the mean value of variables could potentially signal high risk.</li>
+<li>Data entry errors or other data quality issues could be manifested through extremely high or low outlier values.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>It yields a comprehensive summary of outliers for each numerical feature within the dataset. This enables the
+user to pinpoint features with potential quality issues.</li>
+<li>The IQR method is not overly affected by extremely high or low outlier values as it is based on quartile
+calculations.</li>
+<li>The versatility of this metric grants the ability to customize the method to work on selected features and set a
+defined threshold for outliers.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The metric might cause false positives if the variable of interest veers away from a normal or near-normal
+distribution, notably in the case of skewed distributions.</li>
+<li>It does not extend to provide interpretation or recommendations for tackling outliers and relies on the user or a
+data scientist to conduct further analysis of the results.</li>
+<li>As it only functions on numerical features, it cannot be used for categorical data.</li>
+<li>For data that has undergone heavy pre-processing, was manipulated, or inherently possesses a high kurtosis (heavy
+tails), the pre-set threshold may not be optimal for outlier detection.</li>
+</ul>
 </div>
 
 
                             <div id="IQROutliersTable.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">IQROutliersTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">IQROutliersTable</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -166,13 +209,14 @@ short summary of the metric results.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="IQROutliersTable.key" class="variable">key</dd>
                 <dd id="IQROutliersTable.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="IQROutliersTable.description" class="function">description</dd>
+                <dd id="IQROutliersTable.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

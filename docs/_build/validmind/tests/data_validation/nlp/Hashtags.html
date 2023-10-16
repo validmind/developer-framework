@@ -38,9 +38,6 @@
                                 <a class="function" href="#Hashtags.__init__">Hashtags</a>
                         </li>
                         <li>
-                                <a class="function" href="#Hashtags.description">description</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#Hashtags.run">run</a>
                         </li>
                 </ul>
@@ -75,42 +72,67 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Hashtags</span><wbr>(<span class="base">validmind.vm_models.threshold_test.ThresholdTest</span>):
+    <span class="name">Hashtags</span><wbr>(<span class="base">validmind.vm_models.test.threshold_test.ThresholdTest</span>):
 
         
     </div>
     <a class="headerlink" href="#Hashtags"></a>
     
-            <div class="docstring"><p>The purpose of this test is to identify and analyze the most frequently used hashtags in a given text column of a dataset.</p>
+            <div class="docstring"><p>Assesses hashtag frequency in a text column, highlighting usage trends and potential dataset bias or spam.</p>
+
+<p><strong>Purpose</strong>: The Hashtags test is designed to measure the frequency of hashtags used within a given text column in
+a dataset. It is particularly useful for natural language processing tasks such as text classification and text
+summarization. The goal is to identify common trends and patterns in the use of hashtags, which can serve as
+critical indicators or features within a machine learning model.</p>
+
+<p><strong>Test Mechanism</strong>: The test implements a regular expression (regex) to extract all hashtags from the specified
+text column. For each hashtag found, it makes a tally of its occurrences. It then outputs a list of the top N
+hashtags (default is 25, but customizable), sorted by their counts in descending order. The results are also
+visualized in a bar plot, with frequency counts on the y-axis and the corresponding hashtags on the x-axis.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A low diversity in the usage of hashtags, as indicated by a few hashtags being used disproportionately more than
+others.</li>
+<li>Repeated usage of one or few hashtags can be indicative of spam or a biased dataset.</li>
+<li>If there are no or extremely few hashtags found in the dataset, it perhaps signifies that the text data does not
+contain structured social media data.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>It provides a concise visual representation of the frequency of hashtags, which can be critical for understanding
+trends about a particular topic in text data.</li>
+<li>It is instrumental in tasks specifically related to social media text analytics, such as opinion analysis and
+trend discovery.</li>
+<li>The test is adaptable, allowing the flexibility to determine the number of top hashtags to be analyzed.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The test assumes the presence of hashtags and therefore may not be applicable for text datasets that do not
+contain hashtags (e.g., formal documents, scientific literature).</li>
+<li>Language-specific limitations of hashtag formulations are not taken into account.</li>
+<li>It does not account for typographical errors, variations, or synonyms in hashtags.</li>
+<li>This test does not provide context or sentiment associated with the hashtags, so the information provided may
+have limited utility on its own.</li>
+</ul>
 </div>
 
 
                             <div id="Hashtags.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Hashtags</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_result</span><span class="o">.</span><span class="n">TestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Hashtags</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#Hashtags.__init__"></a>
     
     
-
-                            </div>
-                            <div id="Hashtags.description" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">description</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#Hashtags.description"></a>
-    
-            <div class="docstring"><p>Return the test description. May be overridden by subclasses. Defaults
-to returning the class' docstring</p>
-</div>
-
 
                             </div>
                             <div id="Hashtags.run" class="classattr">
@@ -131,9 +153,14 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.threshold_test.ThresholdTest</dt>
+                                    <div><dt>validmind.vm_models.test.threshold_test.ThresholdTest</dt>
                                 <dd id="Hashtags.summary" class="function">summary</dd>
                 <dd id="Hashtags.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="Hashtags.description" class="function">description</dd>
+                <dd id="Hashtags.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

@@ -82,20 +82,67 @@
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">ScorecardProbabilitiesHistogram</span><wbr>(<span class="base">validmind.vm_models.metric.Metric</span>):
+    <span class="name">ScorecardProbabilitiesHistogram</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
     <a class="headerlink" href="#ScorecardProbabilitiesHistogram"></a>
     
-            <div class="docstring"><p>Scorecard Bucket Probability of Default Histogram</p>
+            <div class="docstring"><p>Evaluates risk classification of a model by visualizing the distribution of default probability across score
+buckets.</p>
+
+<p><strong>Purpose</strong>: The Scorecard Probabilities Histogram, a specific metric used within the credit risk domain, is
+designed to evaluate and visualize risk classification of a model. It aims at examining the distribution of the
+probability of default across varied score buckets, with the score buckets being categories that entities (e.g.,
+loan applicants) are classed under based on their predicted default risks. The key idea is to ensure that the model
+accurately classifies entities into appropriate risk categories (score buckets) and aptly represents their default
+probabilities.</p>
+
+<p><strong>Test Mechanism</strong>: The mechanism behind the Scorecard Probabilities Histogram includes several steps. It starts
+with the calculation of default probabilities by the 'compute_probabilities' method, where the resulting
+probability is added as a fresh column to the input dataset. Following that, scores are computed using these
+probabilities, a target score, target odds, and a Points to Double the odds (pdo) factor by the 'compute_scores'
+method. These scores are then bucketed via the 'compute_buckets' method. A histogram is then plotted for each score
+bucket, with default probabilities as the x-axis and their frequency as the y-axis - implemented within the
+'plot_probabilities_histogram' method. This entire process is executed distinctly for both training and testing
+datasets.</p>
+
+<p><strong>Signs of High Risk</strong>:</p>
+
+<ul>
+<li>A significant overlap of different score buckets in the histogram indicates that the model is not efficiently
+distinguishing between various risk categories.</li>
+<li>If very high or low probabilities are commonplace across all buckets, the model's predictions could be skewed.</li>
+</ul>
+
+<p><strong>Strengths</strong>:</p>
+
+<ul>
+<li>The Scorecard Probabilities Histogram allows for the visualization and analysis of the predicted default risk
+distribution across different risk classes, thereby facilitating a visual inspection of the model's performance and
+calibration for various risk categories.</li>
+<li>It provides a means to visualize how these classifications are distributed on the training and testing datasets
+separately, contributing to a better comprehension of model generalization.</li>
+</ul>
+
+<p><strong>Limitations</strong>:</p>
+
+<ul>
+<li>The Scorecard Probabilities Histogram assumes linear and equally spaced risk categories, which might not always
+hold true.</li>
+<li>If there are too few or too many score buckets, the visualization may not convey sufficient information.</li>
+<li>While it effectively illustrates the distribution of probabilities, it does not provide adequate numerical
+metrics or threshold to definitively evaluate the model's performance. A more accurate evaluation necessitates its
+usage in conjunction with other metrics and tools including the confusion matrix, AUC-ROC, Precision, Recall, and
+so forth.</li>
+</ul>
 </div>
 
 
                             <div id="ScorecardProbabilitiesHistogram.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ScorecardProbabilitiesHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_plan_result</span><span class="o">.</span><span class="n">TestPlanMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ScorecardProbabilitiesHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -180,14 +227,15 @@
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.metric.Metric</dt>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="ScorecardProbabilitiesHistogram.key" class="variable">key</dd>
                 <dd id="ScorecardProbabilitiesHistogram.summary" class="function">summary</dd>
                 <dd id="ScorecardProbabilitiesHistogram.cache_results" class="function">cache_results</dd>
 
             </div>
-            <div><dt>validmind.vm_models.test.Test</dt>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
                                 <dd id="ScorecardProbabilitiesHistogram.description" class="function">description</dd>
+                <dd id="ScorecardProbabilitiesHistogram.log" class="function">log</dd>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>

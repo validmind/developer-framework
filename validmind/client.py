@@ -8,9 +8,7 @@ import pandas as pd
 
 from .client_config import client_config
 from .errors import (
-    GetTestPlanError,
     GetTestSuiteError,
-    InitializeTestPlanError,
     InitializeTestSuiteError,
     MissingDocumentationTemplate,
     MissingRExtrasError,
@@ -22,9 +20,8 @@ from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
-from .test_plans import get_by_id as get_test_plan_by_id
 from .test_suites import get_by_id as get_test_suite_by_id
-from .vm_models import TestPlan, TestSuite
+from .vm_models import TestContext, TestSuite, TestSuiteRunner
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
 
@@ -210,49 +207,20 @@ def init_r_model(
 
 
 def run_test_plan(test_plan_name, send=True, fail_fast=False, **kwargs):
-    """High Level function for running a test plan
-
-    This function provides a high level interface for running a test plan. It removes the need
-    to manually initialize a TestPlan instance and run it. This function will automatically
-    find the correct test plan class based on the test_plan_name, initialize the test plan, and
-    run it.
-
-    Args:
-        test_plan_name (str): The test plan name (e.g. 'classifier')
-        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
-        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        **kwargs: Additional keyword arguments to pass to the test plan. These will provide
-            the TestPlan instance with the necessary context to run the tests. e.g. dataset, model etc.
-            See the documentation for the specific test plan for more details.
-
-    Raises:
-        ValueError: If the test plan name is not found or if there is an error initializing the test plan
-
-    Returns:
-        dict: A dictionary of test results
-    """
-    try:
-        Plan: TestPlan = get_test_plan_by_id(test_plan_name)
-    except ValueError as exc:
-        raise GetTestPlanError(
-            "Error retrieving test plan {}. {}".format(test_plan_name, str(exc))
-        )
-
-    try:
-        kwargs["fail_fast"] = fail_fast
-        plan = Plan(**kwargs)
-    except ValueError as exc:
-        raise InitializeTestPlanError(
-            "Error initializing test plan {}. {}".format(test_plan_name, str(exc))
-        )
-
-    plan.run(send=send)
-
-    return plan
+    """DEPRECATED! Use `vm.run_test_suite` instead."""
+    logger.warning(
+        "`vm.run_test_plan` is deprecated. Please use `vm.run_test_suite` instead"
+    )
+    return run_test_suite(
+        test_suite_id=test_plan_name,
+        send=send,
+        fail_fast=fail_fast,
+        **kwargs,
+    )
 
 
 def get_test_suite(
-    test_suite_name: str = None,
+    test_suite_id: str = None,
     section: str = None,
     *args,
     **kwargs,
@@ -260,21 +228,21 @@ def get_test_suite(
     """Gets a TestSuite object for the current project or a specific test suite
 
     This function provides an interface to retrieve the TestSuite instance for the
-    current project or a specific TestSuite instance identified by test_suite_name.
-    The project Test Suite will contain Test Plans for every section in the project's
-    documentation template and these Test Plans will contain all the tests associated
-    with that section.
+    current project or a specific TestSuite instance identified by test_suite_id.
+    The project Test Suite will contain sections for every section in the project's
+    documentation template and these Test Suite Sections will contain all the tests
+    associated with that template section.
 
     Args:
-        test_suite_name (str, optional): The test suite name. If not passed, then the
+        test_suite_id (str, optional): The test suite name. If not passed, then the
             project's test suite will be returned. Defaults to None.
         section (str, optional): The section of the documentation template from which
-            to retrieve the test suite. This only applies if test_suite_name is None.
+            to retrieve the test suite. This only applies if test_suite_id is None.
             Defaults to None.
         args: Additional arguments to pass to the TestSuite
         kwargs: Additional keyword arguments to pass to the TestSuite
     """
-    if test_suite_name is None:
+    if test_suite_id is None:
         if client_config.documentation_template is None:
             raise MissingDocumentationTemplate(
                 "No documentation template found. Please run `vm.init()`"
@@ -287,23 +255,26 @@ def get_test_suite(
             **kwargs,
         )
 
-    return get_test_suite_by_id(test_suite_name)(*args, **kwargs)
+    return get_test_suite_by_id(test_suite_id)(*args, **kwargs)
 
 
-def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
+def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwargs):
     """High Level function for running a test suite
 
     This function provides a high level interface for running a test suite. A test suite is
-    a collection of test plans. This function will automatically find the correct test suite
-    class based on the test_suite_name, initialize each of the test plans, and run them.
+    a collection of tests. This function will automatically find the correct test suite
+    class based on the test_suite_id, initialize each of the tests, and run them.
 
     Args:
-        test_suite_name (str): The test suite name (e.g. 'classifier_full_suite')
-        send (bool, optional): Whether to post the test results to the API. send=False is useful for testing. Defaults to True.
+        test_suite_id (str): The test suite name (e.g. 'classifier_full_suite')
+        config (dict, optional): A dictionary of parameters to pass to the tests in the
+            test suite. Defaults to None.
+        send (bool, optional): Whether to post the test results to the API. send=False
+            is useful for testing. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
             the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-            See the documentation for the specific test plan, metric or threshold test for more details.
+            See the documentation for the specific metric or threshold test for more details.
 
     Raises:
         ValueError: If the test suite name is not found or if there is an error initializing the test suite
@@ -312,21 +283,24 @@ def run_test_suite(test_suite_name, send=True, fail_fast=False, **kwargs):
         TestSuite: the TestSuite instance
     """
     try:
-        Suite: TestSuite = get_test_suite_by_id(test_suite_name)
+        Suite: TestSuite = get_test_suite_by_id(test_suite_id)
     except ValueError as exc:
         raise GetTestSuiteError(
-            "Error retrieving test suite {}. {}".format(test_suite_name, str(exc))
+            "Error retrieving test suite {}. {}".format(test_suite_id, str(exc))
         )
 
     try:
-        kwargs["fail_fast"] = fail_fast
-        suite = Suite(**kwargs)
+        suite = Suite()
     except ValueError as exc:
         raise InitializeTestSuiteError(
-            "Error initializing test suite {}. {}".format(test_suite_name, str(exc))
+            "Error initializing test suite {}. {}".format(test_suite_id, str(exc))
         )
 
-    suite.run(send=send)
+    TestSuiteRunner(
+        suite=suite,
+        context=TestContext(**kwargs),
+        config=config or {},
+    ).run(fail_fast=fail_fast, send=send)
 
     return suite
 
@@ -348,9 +322,7 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(
-    section: str = None, send=True, fail_fast=False, *args, **kwargs
-):
+def run_documentation_tests(section: str = None, send=True, fail_fast=False, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -361,7 +333,6 @@ def run_documentation_tests(
         section (str, optional): The section to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        *args: Arguments to pass to the TestSuite
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
@@ -380,7 +351,6 @@ def run_documentation_tests(
         section=section,
         send=send,
         fail_fast=fail_fast,
-        *args,
         **kwargs,
     )
 
