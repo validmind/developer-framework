@@ -10,6 +10,17 @@ Notebooks Tested:
  - notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb
  - notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb
  - notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb
+
+To add more notebooks to the list, simply add the path to the `NOTEBOOKS_TO_RUN` list.
+This will use the default project id for the notebook. If you want to use a different
+project/template, you can specify it as a dictionary with the keys `path` and `project`
+where `path` is the path to the notebook and `project` is the project id.
+
+Note: This script requires the following environment variables to be set:
+    - NOTEBOOK_RUNNER_API_KEY (api key for the project)
+    - NOTEBOOK_RUNNER_API_SECRET (api secret for the project)
+
+This uses the dev environment for now... In the future, we may want to change this???
 """
 
 import os
