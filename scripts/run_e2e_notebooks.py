@@ -57,13 +57,18 @@ def main(kernel):
             click.echo(f"Finished executing {notebook_path}.")
         except Exception as e:
             click.echo(f"Error running {notebook_path}: {e}")
+            raise e
 
         restore_notebook(notebook_path)
 
 
 def run_notebook(notebook_path, kernel_name):
     output_path = notebook_path.replace(".ipynb", ".out.ipynb")
+
     pm.execute_notebook(notebook_path, output_path, kernel_name=kernel_name)
+
+    # comment out the below line to see output notebook
+    os.remove(output_path)
 
 
 def update_vm_init_cell(notebook_path, project_id):
