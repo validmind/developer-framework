@@ -33,7 +33,7 @@ We will train a sample model and demonstrate the following documentation functio
 ```{r setup, include=FALSE}
 library(reticulate)
 
-python_version <- "/Users/erichare/.pyenv/versions/3.10.10/bin/python"
+python_version <- "<path_to_python_version>"
 use_python(python_version)
 
 library(magrittr) # needs to be run every time you start R and want to use %>%
@@ -93,7 +93,7 @@ vm_r <- vm(
   api_key="<your_api_key_here>",
   api_secret="<your_api_secret_here>",
   project="<your_project_id_here>",
-  python_version="<path_to_your_python_version_here>",
+  python_version=python_version,
   api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
 ```
@@ -215,28 +215,53 @@ vm_model = vm_r$init_r_model(
 
 ```{r}
 model_validation_results = vm_r$run_test_suite("classifier_model_validation", model=vm_model)
-model_validation_plots <- build_r_plots_all(model_validation_results)
 ```
 
-```{r, echo=FALSE}
-l <- htmltools::tagList()
-for (i in 1:length(model_validation_plots$plotly)) {
-  l[[i]] <- as_widget(model_validation_plots$plotly[[i]])
-}
-
-l
-```
-
-```{r, echo=FALSE}
-knitr::include_graphics(unlist(model_validation_plots$matplotlib))
-```
-
-```{r, results='hide'}
-raw_model_results <- summarize_results(model_validation_results)
+```{r}
+processed_results <- process_result(model_validation_results)
 ```
 
 ```{r, echo=FALSE, results='asis'}
-pretty_model_results <- pretty_print_tables(raw_model_results)
+# Every result
+display_res <- list()
+for (index in 1:length(processed_results)) {
+  result <- processed_results[[index]]
 
-invisible(lapply(pretty_model_results, print_table))
+  #pretty_model_results <- pretty_print_tables(result$result_tables)
+
+ # lapply(pretty_model_results, print_table)
+
+  # Handle plotly images
+  if (length(result$plotly_images) > 0) {
+    # l <- htmltools::tagList()
+    # for (i in 1:length(result$plotly_images)) {
+    #   l[[i]] <- as_widget(result$plotly_images[[i]])
+    # }
+    # print(l)
+    for (i in length(result$plotly_images)) {
+      print(result$plotly_images[[i]])
+    }
+  }
+
+  #if (length(result$matplotlib_images) > 0) {
+  #    knitr::include_graphics(unlist(result$matplotlib_images))
+  #}
+}
+```
+
+```{r echo=FALSE, results='asis'}
+library(plotly)
+
+data(mtcars)
+
+p1 <- plot_ly(data = mtcars, x = ~wt, y = ~mpg, type = 'scatter', mode = 'markers')
+p2 <- plot_ly(data = mtcars, x = ~hp, y = ~mpg, type = 'scatter', mode = 'markers')
+p3 <- plot_ly(data = mtcars, x = ~qsec, y = ~mpg, type = 'scatter', mode = 'markers')
+
+pl <- list(p1, p2, p3)
+
+for(p in pl) {
+  print(p)
+  cat("\n\n") # Add some space between plots
+}
 ```

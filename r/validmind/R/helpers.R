@@ -193,31 +193,74 @@ build_r_plotly <- function(plotly_figure) {
 #' @return A numeric vector giving number of characters (code points) in each
 #'    element of the character vector. Missing string have missing length.
 #' @export
-build_r_plots_all <- function(results) {
-  # Run the Python function
-  plotly_images <- list()
-  matplotlib_images <- list()
+process_result <- function(results) {
 
+  overall_result <- list()
+
+  # Sequentially process every result in the result set
   for (index in 1:length(results$results)) {
+
+    # Grab the test suite
     suite <- results$results[index][[1]]
     print(glue("Test Suite Results: {results$test_plans[index]}\n"))
+
+    # Get path to temporary directory
+    tmp_dir <- tempdir()
+
+    # Store a list of the possible results we will display
+    plotly_images <- list()
+    matplotlib_images <- list()
+    result_tables <- list()
+
+    # Process every result in that particular suite
     for (result in suite) {
+
+      # Summarize the tables
+      table_res <- summarize_result(result)
+
+      # Process and bind together all the summarized tabular results
+      for (res in table_res$results) {
+        my_tbl <- bind_rows(res$data)
+
+        if (!is.null(my_tbl) && nrow(my_tbl) > 0) {
+          result_tables[[length(result_tables) + 1]] <- my_tbl
+          names(result_tables)[[length(result_tables)]] <- res$metadata$title
+        }
+      }
+
+      # Check if we actually have figures to process
       if ("figures" %in% names(result)) {
+
+        # Process each figure one by one
         for (figure in result$figures) {
+
+          # First check if it's a plotly figure
           if (figure$is_plotly_figure()) {
             plotly_images[[length(plotly_images) + 1]] <- build_r_plotly(figure)
+          # Otherwise, it's a matplotlib figure
           } else if (figure$is_matplotlib_figure()) {
-            fname <- paste0(figure$metadata$`_name`, ".png")
-            if (!(fname %in% unlist(matplotlib_images))) {
-              figure$figure$savefig(fname)
 
-              matplotlib_images[[length(matplotlib_images) + 1]] <- fname
+            # Original name
+            orig_name <- figure$metadata$`_name`
+            full_path <- file.path(tmp_dir, paste0(orig_name, ".png"))
+
+            # Store if we haven't yet
+            if (!(full_path %in% unlist(matplotlib_images))) {
+              figure$figure$savefig(full_path)
+
+              matplotlib_images[[length(matplotlib_images) + 1]] <- full_path
             }
           }
         }
       }
     }
+
+    final_result <- list(plotly_images = plotly_images,
+                         matplotlib_images = matplotlib_images,
+                         result_tables = result_tables)
+
+    overall_result[[index]] <- final_result
   }
 
-  return(list(plotly = plotly_images, matplotlib = matplotlib_images))
+  return(overall_result)
 }
