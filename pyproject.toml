@@ -10,9 +10,10 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.21.5"
+version = "1.21.8"
 
 [tool.poetry.dependencies]
+matplotlib = "<3.8"
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 arch = "^5.4.0"
 bert-score = "^0.3.13"

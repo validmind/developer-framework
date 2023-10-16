@@ -44,12 +44,6 @@
                                 <a class="function" href="#ModelsPerformanceComparison.y_pred">y_pred</a>
                         </li>
                         <li>
-                                <a class="function" href="#ModelsPerformanceComparison.binary_summary">binary_summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#ModelsPerformanceComparison.multiclass_summary">multiclass_summary</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#ModelsPerformanceComparison.summary">summary</a>
                         </li>
                         <li>
@@ -102,7 +96,7 @@ assess model performance and assist in selecting the most effective model for th
 both binary and multiclass classification tasks. To compare performances, the test runs each model against the test
 dataset, then produces a comprehensive classification report. This report includes metrics such as accuracy,
 precision, recall, and the F1 score. Based on whether the task at hand is binary or multiclass classification, it
-calculates metrics globally for the "positive" class or, alternatively, their weighted averages, macro averages,
+calculates metrics all the classes and their weighted averages, macro averages,
 and per class metrics. The test will be skipped if no models are supplied.</p>
 
 <p><strong>Signs of High Risk</strong>:</p>
@@ -172,38 +166,6 @@ with unseen data or changes in the data distribution.</li>
     <a class="headerlink" href="#ModelsPerformanceComparison.y_pred"></a>
     
     
-
-                            </div>
-                            <div id="ModelsPerformanceComparison.binary_summary" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">binary_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelsPerformanceComparison.binary_summary"></a>
-    
-            <div class="docstring"><p>When building a binary classification summary for all the models. We take the positive class
-metrics as the global metrics.</p>
-</div>
-
-
-                            </div>
-                            <div id="ModelsPerformanceComparison.multiclass_summary" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">multiclass_summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ModelsPerformanceComparison.multiclass_summary"></a>
-    
-            <div class="docstring"><p>The multi-class summary method that calculates weighted average,
-macro average and per class metrics of all the models.</p>
-</div>
-
 
                             </div>
                             <div id="ModelsPerformanceComparison.summary" class="classattr">
