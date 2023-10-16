@@ -301,7 +301,7 @@ def main(action, path):
     # check if path is a file or directory
     if os.path.isfile(path):
         if _is_test_file(path):
-            files.append(path)
+            tests_to_process.append(path)
         else:
             raise ValueError(f"File {path} is not a test file")
 
