@@ -4,6 +4,12 @@ Usage:
     python scripts/run_e2e_notebooks.py
 
 Note: This script is meant to be run from the root of the repo
+
+Notebooks Tested:
+ - notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb
+ - notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb
+ - notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb
+ - notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb
 """
 
 import os
