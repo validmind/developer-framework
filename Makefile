@@ -43,4 +43,7 @@ copyright:
 verify-copyright:
 	poetry run python scripts/verify_copyright.py
 
+verify-exposed-credentials:
+	poetry run python scripts/credentials_check.py
+
 .PHONY: docs
