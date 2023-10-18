@@ -36,6 +36,9 @@ jobs:
       - name: Verify Copyright Header
         run: make verify-copyright
 
+      - name: Verify Exposed Credentials
+        run: make verify-exposed-credentials
+
       - name: Code Quality
         run: make lint
 

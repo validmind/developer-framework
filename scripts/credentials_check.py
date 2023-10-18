@@ -35,7 +35,7 @@ def check_notebook(root, file):
         if "vm.init(" in cell_content and contains_actual_credentials(cell_content):
             notebook_error = True
             print(
-                f"Potential clear text credentials detected in Cell {i+1} for notebook {file}"
+                f"Potential clear text credentials detected in Cell {i+1} for notebook {root}/{file}"
             )
 
     return notebook_error
@@ -45,7 +45,7 @@ any_error = False
 
 for root, dirs, files in os.walk(notebooks_directory):
     for file in files:
-        if file.endswith(".ipynb"):
+        if file.endswith(".ipynb") and ".ipynb_checkpoints" not in root:
             notebook_error = check_notebook(root, file)
             any_error = any_error or notebook_error
 
