@@ -40,4 +40,6 @@ jobs:
       - name: Failure Notification
         if: failure()
         run: |
-          curl https://hooks.slack.com/triggers/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
+          curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+        env:
+          NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
