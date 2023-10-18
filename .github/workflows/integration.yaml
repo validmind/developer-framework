@@ -8,14 +8,12 @@ on:
     branches:
       - main
       - prod
-  pull_request:
-    branches: ["*"]
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  integration:
     runs-on: ubuntu-latest
 
     steps:
