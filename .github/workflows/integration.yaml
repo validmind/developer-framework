@@ -5,7 +5,9 @@ name: Integration Tests
 
 on:
   push:
-    branches: [main, prod]
+    branches:
+      - main
+      - prod
 
 permissions:
   contents: read
