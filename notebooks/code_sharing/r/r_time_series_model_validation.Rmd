@@ -14,11 +14,12 @@ Finally, define and **configure** the specific use case we are working on by set
 
 ## Initializing the Python environment
 
-```{r}
-# install.packages("magrittr") # package installations are only needed the first time you use it
-# install.packages("dplyr")    # alternative installation of the %>%
-# install.packages("xgboost")  # for training XGBoost models
-# install.packages("zoo")
+```{r setup, include=FALSE}
+library(reticulate)
+
+python_version <- "<path_to_python_version>"
+use_python(python_version)
+
 library(magrittr) # needs to be run every time you start R and want to use %>%
 library(dplyr)    # alternatively, this also loads %>%
 library(glue)
@@ -26,15 +27,24 @@ library(dplyr)
 library(caTools)
 library(glmnet)
 library(zoo)
+library(knitr)
+library(kableExtra)
+library(purrr)
+library(validmind)
+library(rmarkdown)
+library(htmltools)
+library(broom)
+library(huxtable)
+library(xgboost)
+library(plotly)
 
-# Python support
-library(reticulate)
-use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
-reticulate::py_config()
-```
+print_table <- print
 
-```{r}
-source("../../r/helpers.R")
+custom_print_table_hook <- function(x) {
+  cat(x)
+}
+
+knitr::knit_hooks$set(print_table = custom_print_table_hook)
 ```
 
 ## Initializing the ValidMind Client Library
@@ -64,13 +74,12 @@ In the "Client Integration" page of the newly created project, you will find the
 The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
 
 ```{r}
-vm <- import("validmind")
-
-vm$init(
-  api_host="http://localhost:3000/api/v1/tracking",
-  api_key="...",
-  api_secret="...",
-  project="..."
+vm_r <- vm(
+  api_key="<your_api_key_here>",
+  api_secret="<your_api_secret_here>",
+  project="<your_project_id_here>",
+  python_version=python_version,
+  api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
 ```
 
@@ -112,21 +121,21 @@ summary(model_B)
 
 ```{r}
 # Initialize training and testing datasets for model A
-vm_train_ds_A <- vm$init_dataset(
+vm_train_ds_A <- vm_r$init_dataset(
   dataset=train_df_A,
   target_column=fred$target_column
 )
-vm_test_ds_A <- vm$init_dataset(
+vm_test_ds_A <- vm_r$init_dataset(
   dataset=test_df_A,
   target_column=fred$target_column
 )
 
 # Initialize training and testing datasets for model B
-vm_train_ds_B <- vm$init_dataset(
+vm_train_ds_B <- vm_r$init_dataset(
   dataset=train_df_B,
   target_column=fred$target_column
 )
-vm_test_ds_B <- vm$init_dataset(
+vm_test_ds_B <- vm_r$init_dataset(
   dataset=test_df_B,
   target_column=fred$target_column
 )
@@ -141,14 +150,14 @@ model_B_path = save_model(model_B)
 
 ```{r}
 # Initialize model A
-vm_model_A <- vm$init_r_model(
+vm_model_A <- vm_r$init_r_model(
     model_path=model_A_path,
     train_ds=vm_train_ds_A,
     test_ds=vm_test_ds_A
 )
 
 # Initialize model B
-vm_model_B <- vm$init_r_model(
+vm_model_B <- vm_r$init_r_model(
     model_path=model_B_path,
     train_ds=vm_train_ds_B,
     test_ds=vm_test_ds_B
@@ -176,7 +185,7 @@ config <- list(
 ```
 
 ```{r}
-suite_results <- vm$run_test_suite(
+suite_results <- vm_r$run_test_suite(
     "time_series_model_validation",
     model = vm_model_B,
     models = list_of_models,
@@ -185,5 +194,13 @@ suite_results <- vm$run_test_suite(
 ```
 
 ```{r}
-summarize_results(suite_results)
+processed_validation_results <- process_result(suite_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_images(processed_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_tables(processed_validation_results)
 ```
