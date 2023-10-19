@@ -274,7 +274,7 @@ suite_results <- vm_r$run_test_suite(
 ```
 
 ```{r}
-processed_validation_results <- process_result(model_validation_results)
+processed_validation_results <- process_result(suite_results)
 ```
 
 ```{r, echo=FALSE}
