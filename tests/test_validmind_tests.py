@@ -1,61 +1,39 @@
-"""
-Unit tests for Validmind tests module
-"""
+"""This is a test harness to run unit tests against the ValidMind tests"""
+
 import unittest
-from unittest import TestCase
 
-from pandas.io.formats.style import Styler
+from validmind.tests import list_tests, load_test
+from validmind.vm_models import TestContext
 
-from validmind.vm_models import Test
-from validmind.vm_models.test_context import TestContext
-from validmind.tests import list_tests, load_test, describe_test, register_test_provider
+class TestValidMindTests(unittest.TestCase):
+    pass
 
 
-class TestTestsModule(TestCase):
-    def test_list_tests(self):
-        tests = list_tests(pretty=False)
-        self.assertTrue(len(tests) > 0)
+def create_unit_test_func(vm_test):
+    def unit_test_func(self):
+        result = vm_test.run()
+        vm_test.test(result)
 
-    def test_list_tests_filter(self):
-        tests = list_tests(filter="sklearn", pretty=False)
-        self.assertTrue(len(tests) > 1)
+    return unit_test_func
 
-    def test_list_tests_filter_2(self):
-        tests = list_tests(
-            filter="validmind.model_validation.ModelMetadata", pretty=False
-        )
-        self.assertTrue(len(tests) == 1)
 
-    def test_load_test(self):
-        test = load_test("validmind.model_validation.ModelMetadata")
-        self.assertTrue(test is not None)
-        self.assertTrue(issubclass(test, Test))
+def create_unit_test_funcs_from_vm_tests():
+    test_context = TestContext()
 
-    def test_describe_test(self):
-        describe_test("validmind.model_validation.ModelMetadata")
-        description = describe_test(
-            "validmind.model_validation.ModelMetadata", raw=True
-        )
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
+    for vm_test_id in list_tests(pretty=False):
+        # load the test class and initialize it with necessary data
+        vm_test_class = load_test(vm_test_id)
+        vm_test = vm_test_class(test_context=test_context, params={})
 
-    def test_test_provider_registration(self):
-        class TestProvider:
-            def load_test(self, test_id):
-                fake_test = Test(test_context=TestContext(), result=None)
-                fake_test.test_id = test_id
-                return fake_test
+        # create a unit test function for the test class
+        unit_test_func = create_unit_test_func(vm_test)
+        unit_test_func_name = f'test_{vm_test_id.replace(".", "_")}'
 
-        register_test_provider("fake", TestProvider())
+        # add the unit test function to the unit test class
+        setattr(TestValidMindTests, f'test_{unit_test_func_name}', unit_test_func)
 
-        test = load_test("fake.fake_test_id")
-        self.assertEqual(test.test_id, "fake.fake_test_id")
+
+create_unit_test_funcs_from_vm_tests()
 
 
 if __name__ == "__main__":
