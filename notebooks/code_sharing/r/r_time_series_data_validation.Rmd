@@ -14,11 +14,12 @@ Finally, define and **configure** the specific use case we are working on by set
 
 ## **Initializing the Python environment**
 
-```{r}
-# install.packages("magrittr") # package installations are only needed the first time you use it
-# install.packages("dplyr")    # alternative installation of the %>%
-# install.packages("xgboost")  # for training XGBoost models
-# install.packages("zoo")
+```{r setup, include=FALSE}
+library(reticulate)
+
+python_version <- "<path_to_python_version>"
+use_python(python_version)
+
 library(magrittr) # needs to be run every time you start R and want to use %>%
 library(dplyr)    # alternatively, this also loads %>%
 library(glue)
@@ -26,15 +27,24 @@ library(dplyr)
 library(caTools)
 library(glmnet)
 library(zoo)
+library(knitr)
+library(kableExtra)
+library(purrr)
+library(validmind)
+library(rmarkdown)
+library(htmltools)
+library(broom)
+library(huxtable)
+library(xgboost)
+library(plotly)
 
-# Python support
-library(reticulate)
-use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
-reticulate::py_config()
-```
+print_table <- print
 
-```{r}
-source("../../r/helpers.R")
+custom_print_table_hook <- function(x) {
+  cat(x)
+}
+
+knitr::knit_hooks$set(print_table = custom_print_table_hook)
 ```
 
 ## **Initializing the ValidMind Client Library**
@@ -64,13 +74,12 @@ In the "Client Integration" page of the newly created project, you will find the
 The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
 
 ```{r}
-vm <- import("validmind")
-
-vm$init(
-  api_host="http://localhost:3000/api/v1/tracking",
-  api_key="e7841dd9cffc67f268addd3ee9cc58f2",
-  api_secret="7a8ab498d183d7a4907e82fac21827f30082d7acbff3dcdfcbb25d6728784e61",
-  project="clm6z6tzo02l97y8h5jwanckx"
+vm_r <- vm(
+  api_key="<your_api_key_here>",
+  api_secret="<your_api_secret_here>",
+  project="<your_project_id_here>",
+  python_version=python_version,
+  api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
 ```
 
@@ -89,6 +98,7 @@ df = fred$load_data()
 ```{r}
 summary(df)
 ```
+
 ## 5. Data Validation
 
 ### User Configuration of Test Suite
@@ -166,7 +176,7 @@ config <- list(
 #### Run the Time Series Dataset Test Suite
 
 ```{r}
-vm_dataset <- vm$init_dataset(
+vm_dataset <- vm_r$init_dataset(
     dataset=df,
     target_column=fred$target_column,
     date_time_index=TRUE
@@ -175,7 +185,7 @@ vm_dataset <- vm$init_dataset(
 
 
 ```{r}
-suite_results <- vm$run_test_suite(
+suite_results <- vm_r$run_test_suite(
     "time_series_dataset",
     dataset=vm_dataset,
     config=config,
@@ -184,7 +194,19 @@ suite_results <- vm$run_test_suite(
 ```
 
 ```{r}
-summarize_results(suite_results)
+processed_validation_results <- process_result(suite_results)
+```
+
+```{r, echo=FALSE}
+# pretty_print_all_plotly(processed_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_images(processed_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_tables(processed_validation_results)
 ```
 
 ### Handle Dataset Frequencies
@@ -192,18 +214,18 @@ summarize_results(suite_results)
 Show the frequencies of each variable in the raw dataset.
 
 ```{r}
-frequencies <- vm$datasets$regression$identify_frequencies(df)
+frequencies <- vm_r$datasets$regression$identify_frequencies(df)
 frequencies
 ```
 
 Handle frequencies by resampling all variables to a common frequency.
 
 ```{r}
-preprocessed_df <- vm$datasets$regression$resample_to_common_frequency(
+preprocessed_df <- vm_r$datasets$regression$resample_to_common_frequency(
   df,
   common_frequency=fred$frequency
 )
-frequencies <- vm$datasets$regression$identify_frequencies(preprocessed_df)
+frequencies <- vm_r$datasets$regression$identify_frequencies(preprocessed_df)
 frequencies
 ```
 
@@ -232,7 +254,7 @@ preprocessed_df <- as.data.frame(lapply(preprocessed_df, function(col) {
 We can re-run the dataset test suite after cleaning up the data.
 
 ```{r}
-vm_dataset <- vm$init_dataset(
+vm_dataset <- vm_r$init_dataset(
     dataset=preprocessed_df,
     target_column=fred$target_column,
     date_time_index=TRUE
@@ -243,7 +265,7 @@ vm_dataset <- vm$init_dataset(
 # Error in py_call_impl(callable, call_args$unnamed, call_args$named) :
 # numpy.core._exceptions._ArrayMemoryError: Unable to allocate 15.9 PiB for an array with shape (2236713889723964,) and data type float64
 
-suite_results <- vm$run_test_suite(
+suite_results <- vm_r$run_test_suite(
     "time_series_dataset",
     dataset=vm_dataset,
     config=config,
@@ -252,5 +274,17 @@ suite_results <- vm$run_test_suite(
 ```
 
 ```{r}
-summarize_results(suite_results)
+processed_validation_results <- process_result(model_validation_results)
+```
+
+```{r, echo=FALSE}
+pretty_print_all_plotly(processed_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_images(processed_validation_results)
+```
+
+```{r, echo=FALSE, results='asis'}
+pretty_print_all_tables(processed_validation_results)
 ```
