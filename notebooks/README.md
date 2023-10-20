@@ -1,8 +1,19 @@
 # ValidMind Sample Notebooks
 
-This directory contains sample notebooks for the ValidMind Developer Framework. The notebooks are organized into the following folders:
+Our code samples, based on Jupyter notebooks, are designed to showcase the capabilities and features of the ValidMind Developer Framework and ValidMind Platform, while also providing you with useful examples that you can build on and adapt for your own use cases.
+
+Sample notebooks are organized into the following folders:
 
 * `notebooks/code_samples` — showcase end-to-end functionality for documenting models
 * `notebooks/how_to` — learn how to use specific ValidMind features, e.g. how to list all test suites
 * `notebooks/tutorials` — get step-by-step instructions and learn about ValidMind concepts in depth
 * `notebooks/code_sharing` — share your own notebooks or document code internally
+
+## Getting started 
+
+If you are new to ValidMind, our platform enables organizations to identify, document, and manage model risks for all types of models, including AI/ML models, LLMs, and statistical models. As a model developer, you use the ValidMind Developer Framework to automate documentation and validation tests, and then use the ValidMind AI Risk Platform UI to collaborate on documentation projects. Together, these products simplify model risk management, facilitate compliance with regulations and institutional standards, and enhance collaboration between yourself and model validators.
+
+If this is your first time trying out ValidMind, you can make use of the following resources alongside our sample notebooks:
+
+- [Get started](https://docs.validmind.ai/guide/get-started.html) — The basics, including key concepts, and how our products work
+- [Get started with the ValidMind Developer Framework](https://docs.validmind.ai/guide/get-started-developer-framework.html) —  The path for developers, more code samples, and our developer reference
