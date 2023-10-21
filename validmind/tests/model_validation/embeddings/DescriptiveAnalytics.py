@@ -1,6 +1,5 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import pandas as pd
 import plotly.express as px
 
 from validmind.vm_models import Figure, Metric
