@@ -2,11 +2,78 @@
 
 import unittest
 
+import pandas as pd
+import xgboost as xgb
+from tqdm import tqdm
+
+import validmind as vm
+from validmind.datasets.classification import customer_churn as demo_dataset
+from validmind.datasets.classification import taiwan_credit as demo_dataset
+from validmind.models import FoundationModel, Prompt
 from validmind.tests import list_tests, load_test
 from validmind.vm_models import TestContext
 
 class TestValidMindTests(unittest.TestCase):
     pass
+
+test_contexts = {}
+
+def _setup_test_context():
+    df = demo_dataset.load_data()
+
+    train_df, validation_df, test_df = demo_dataset.preprocess(df)
+    x_train = train_df.drop(demo_dataset.target_column, axis=1)
+    y_train = train_df[demo_dataset.target_column]
+    x_val = validation_df.drop(demo_dataset.target_column, axis=1)
+    y_val = validation_df[demo_dataset.target_column]
+
+    classifier = xgb.XGBClassifier(early_stopping_rounds=10)
+    classifier.set_params(eval_metric=["error", "logloss", "auc"])
+    classifier.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=False)
+
+    vm_dataset = vm.init_dataset(
+        dataset=df,
+        target_column=demo_dataset.target_column,
+        class_labels=demo_dataset.class_labels,
+    )
+    vm_train_ds = vm.init_dataset(
+        dataset=train_df,
+        target_column=demo_dataset.target_column,
+    )
+    vm_test_ds = vm.init_dataset(
+        dataset=test_df,
+        target_column=demo_dataset.target_column,
+    )
+    vm_classifier_model = vm.init_model(
+        classifier,
+        train_ds=vm_train_ds,
+        test_ds=vm_test_ds,
+    )
+    test_contexts["classification"] = TestContext(dataset=vm_dataset, model=vm_classifier_model)
+
+    vm_text_dataset = vm.init_dataset(
+        dataset=pd.DataFrame(
+            {
+                "text": [
+                    "hello world",
+                    "goodbye world",
+                ],
+                "label": [0, 1],
+            }
+        ),
+        target_column=demo_dataset.target_column,
+        class_labels=demo_dataset.class_labels,
+        text_column=demo_dataset.text_column,
+    )
+    vm_foundation_model = FoundationModel(
+        predict_fn=lambda x: x,
+        prompt=Prompt(
+            template="hello, {name}",
+            variables=["name"],
+        ),
+        test_ds=vm_test_ds,
+    )
+    test_contexts["llm"] = TestContext(model=vm_foundation_model)
 
 
 def create_unit_test_func(vm_test):
@@ -18,11 +85,18 @@ def create_unit_test_func(vm_test):
 
 
 def create_unit_test_funcs_from_vm_tests():
-    test_context = TestContext()
+    _setup_test_context()
 
-    for vm_test_id in list_tests(pretty=False):
-        # load the test class and initialize it with necessary data
+    for vm_test_id in tqdm(list_tests(pretty=False)):
+        # load the test class
         vm_test_class = load_test(vm_test_id)
+
+        # initialize with the right test context
+        if vm_test_class.category == "prompt_validation":
+            test_context = test_contexts["llm"]
+        else:
+            test_context = test_contexts["classification"]
+
         vm_test = vm_test_class(test_context=test_context, params={})
 
         # create a unit test function for the test class

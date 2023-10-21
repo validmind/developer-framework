@@ -84,3 +84,9 @@ class Test(TestContextUtils):
         Log the test results to ValidMind
         """
         run_async(self.result.log)
+
+    def test(self, *args, **kwargs):
+        """
+        Test the results of the calculation (should be overridden by subclasses)
+        """
+        assert self.result is not None
