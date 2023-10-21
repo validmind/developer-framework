@@ -1,6 +1,7 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 from dataclasses import dataclass
 
+import numpy as np
 import pandas as pd
 
 from validmind.errors import MissingModelPredictFnError
@@ -66,14 +67,19 @@ class HFModel(VMModel):
         """
         Predict method for the model. This is a wrapper around the HF model's pipeline function
         """
-        data = [str(datapoint) for datapoint in data]
-        results = self.model(data)
-        results_df = pd.DataFrame(results)
+        results = self.model([str(datapoint) for datapoint in data])
+
         tasks = self.model.__class__.__module__.split(".")
+
         if "text2text_generation" in tasks:
-            return results_df.summary_text.values
+            return pd.DataFrame(results).summary_text.values
         elif "text_classification" in tasks:
-            return results_df.label.values
+            return pd.DataFrame(results).label.values
+        elif tasks[-1] == "feature_extraction":
+            # extract [CLS] token embedding for each input and wrap in dataframe
+            return pd.DataFrame([embedding[0][0] for embedding in results])
+        else:
+            return results
 
     def model_library(self):
         """
