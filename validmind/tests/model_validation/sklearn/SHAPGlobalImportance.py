@@ -49,13 +49,8 @@ class SHAPGlobalImportance(Metric):
     - SHAP does more than just illustrating global feature significance, it offers a detailed perspective on how
     different features shape the model's decision-making logic for each instance.
     - It provides clear insights into model behavior.
-    - It demonstrates flexibility by supporting a wide array of model types, thereby promising uniform interpretations
-    across different models.
 
     **Limitations:**
-    - SHAP might demand considerable time and resources for large datasets or intricate models.
-    - Its compatibility doesn't cover all model classes. Models from libraries like "statsmodels", "pytorch",
-    "catboost", "transformers", "FoundationModel", and "R" can't be handled.
     - High-dimensional data can convolute interpretations.
     - Associating importance with tangible real-world impact still involves a certain degree of subjectivity.
     """
