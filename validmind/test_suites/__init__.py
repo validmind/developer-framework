@@ -16,6 +16,7 @@ from .classifier import (
     ClassifierModelValidation,
     ClassifierPerformance,
 )
+from .cluster import ClusterMetrics
 from .llm import LLMClassifierFullSuite, PromptValidation
 from .nlp import NLPClassifierFullSuite
 from .regression import (
@@ -52,6 +53,7 @@ core_test_suites = {
     ClassifierMetrics.suite_id: ClassifierMetrics,
     ClassifierModelValidation.suite_id: ClassifierModelValidation,
     ClassifierPerformance.suite_id: ClassifierPerformance,
+    ClusterMetrics.suite_id: ClusterMetrics,
     LLMClassifierFullSuite.suite_id: LLMClassifierFullSuite,
     PromptValidation.suite_id: PromptValidation,
     NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
