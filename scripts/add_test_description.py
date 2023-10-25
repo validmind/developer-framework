@@ -208,10 +208,13 @@ def add_summary_to_test(path):
 
     insert_line_num = None
     lines = file_contents.split("\n")
+    past_class_def = False
     for i, line in enumerate(lines):
-        if line.startswith('    """'):
+        if line.startswith('    """') and past_class_def:
             insert_line_num = i + 1
             break
+        elif line.startswith("class"):
+            past_class_def = True
 
     if insert_line_num is None:
         raise ValueError("Could not find line number")

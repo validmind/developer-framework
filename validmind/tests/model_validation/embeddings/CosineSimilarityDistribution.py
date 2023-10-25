@@ -23,18 +23,21 @@ class CosineSimilarityDistribution(Metric):
     of the scores. The x-axis of the histogram represents the computed Cosine Similarity.
 
     **Signs of High Risk:**
+
     - If the cosine similarity scores cluster close to 1 or -1, it may indicate overfitting, as the model's predictions
     are almost perfectly aligned. This could suggest that the model is not generalizable.
     - A broad spread of cosine similarity scores across the histogram may indicate a potential issue with the model's
     ability to generate consistent embeddings.
 
     **Strengths:**
+
     - Provides a visual representation of the model's performance which is easily interpretable.
     - Can help identify patterns, trends, and outliers in the model's alignment of predicted text embeddings.
     - Useful in measuring the similarity between vectors in multi-dimensional space, important in the case of text
     embeddings.
 
     **Limitations:**
+
     - Only evaluates the similarity between outputs. It does not provide insight into the model's ability to correctly
     classify or predict.
     - Cosine similarity only considers the angle between vectors and does not consider their magnitude. This can lead

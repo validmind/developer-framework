@@ -3,6 +3,7 @@
 """All Tests for ValidMind"""
 
 import importlib
+import sys
 from pathlib import Path
 from pprint import pformat
 from typing import Dict
@@ -166,7 +167,7 @@ def list_tests(filter=None, task=None, tags=None, pretty=True):
     return tests
 
 
-def load_test(test_id):  # noqa: C901
+def load_test(test_id, reload=False):  # noqa: C901
     parts = test_id.split(".")
 
     error = None
@@ -183,9 +184,13 @@ def load_test(test_id):  # noqa: C901
         test_class = parts[-1]
 
         try:
-            module = importlib.import_module(
-                f"validmind.tests.{test_module}.{test_class}"
-            )
+            full_path = f"validmind.tests.{test_module}.{test_class}"
+
+            if reload and full_path in sys.modules:
+                module = importlib.reload(sys.modules[full_path])
+            else:
+                module = importlib.import_module(full_path)
+
             test = getattr(module, test_class)
         except ModuleNotFoundError as e:
             error = f"Unable to load test {test_id}. {e}"
@@ -259,7 +264,7 @@ def run_test(test_id, *args, **kwargs):
     Run a test by test ID. Any extra arguments will be passed to the test's run method.
     The only special argument is `params` which can be used to override the test's default params.
     """
-    TestClass = load_test(test_id)
+    TestClass = load_test(test_id, reload=True)
 
     test_params = kwargs.pop("params", None)
     test_context = TestContext(*args, **kwargs)

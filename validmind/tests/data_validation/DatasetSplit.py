@@ -21,12 +21,14 @@ class DatasetSplit(Metric):
     proportions. Absolute size and proportion of the total dataset size are displayed for each individual dataset.
 
     **Signs of High Risk:**
+
     - A very small training dataset, which may result in the model not learning enough from the data.
     - A very large training dataset and a small test dataset, which may lead to model overfitting and poor
     generalization to unseen data.
     - A small or non-existent validation dataset, which might complicate the model's performance assessment.
 
     **Strengths:**
+
     - The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
     highlight any potential imbalance in dataset splits quickly.
     - It covers a wide range of task types including classification, regression, and text-related tasks.
@@ -34,6 +36,7 @@ class DatasetSplit(Metric):
     data.
 
     **Limitations:**
+
     - The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,
     just the size and proportion.
     - The test does not give any recommendations or adjustments for imbalanced datasets.

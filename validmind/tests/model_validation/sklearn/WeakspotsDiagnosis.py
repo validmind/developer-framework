@@ -40,6 +40,7 @@ class WeakspotsDiagnosis(ThresholdTest):
     charts for each performance metric, indicating the bins which fail to meet the established threshold.
 
     **Signs of High Risk:**
+
     - Any performance metric of the model dropping below the set thresholds.
     - Significant disparity in performance between the training and test datasets within a bin could be an indication
     of overfitting.
@@ -47,6 +48,7 @@ class WeakspotsDiagnosis(ThresholdTest):
     to handle specific types of input data adequately, resulting in potentially inaccurate predictions.
 
     **Strengths:**
+
     - The test helps pinpoint precise regions of the feature space where the model's performance is below par, allowing
     for more targeted improvements to the model.
     - The graphical presentation of the performance metrics offers an intuitive way to understand the model's
@@ -55,6 +57,7 @@ class WeakspotsDiagnosis(ThresholdTest):
     to the specific requirements of the application.
 
     **Limitations:**
+
     - The binning system utilized for the feature space in the test could over-simplify the model's behavior within
     each bin. The granularity of this slicing depends on the chosen 'bins' parameter and can sometimes be arbitrary.
     - The effectiveness of this test largely hinges on the selection of thresholds for the performance metrics, which

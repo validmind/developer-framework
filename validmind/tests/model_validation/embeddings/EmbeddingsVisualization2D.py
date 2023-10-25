@@ -21,12 +21,14 @@ class EmbeddingsVisualization2D(Metric):
     dimensionality, a scatter plot is produced depicting each embedding as a data point in the visualized 2D plane.
 
     **3. Signs of High Risk:**
+
     - If the embeddings are highly concentrated in a specific region of the plane, it might indicate that the model is
     not learning diverse representations of the text.
     - Wide gaps or partitions in the visualization could suggest that the model is over-segmenting in the embedding
     space and may lead to poor generalization.
 
     **4. Strengths:**
+
     - Offers a powerful visual tool that can assist in understanding and interpreting high-dimensional embeddings,
     which could otherwise be difficult to visualize.
     - It is model-agnostic and can be used with any machine learning model that produces text embeddings.
@@ -34,6 +36,7 @@ class EmbeddingsVisualization2D(Metric):
     together in the original high-dimensional space.
 
     **5. Limitations:**
+
     - The reduction of high-dimensional data to 2D can result in loss of some information, which may lead to
     misinterpretation.
     - Due to its stochastic nature, t-SNE can produce different results when run multiple times with the same
