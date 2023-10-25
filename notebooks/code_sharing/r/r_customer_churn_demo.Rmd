@@ -1,7 +1,7 @@
 ---
 title: "Customer Churn Example (R)"
 author: "ValidMind"
-date: "2023-10-16"
+date: "2023-10-25"
 output:
   html_document:
     df_print: paged
@@ -126,23 +126,36 @@ tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_datas
 ```
 
 ```{r, results='hide'}
-processed_tabular_results <- process_result(tabular_suite_results)
+processed_results <- process_result(tabular_suite_results)
+```
+```{r, results='hide'}
+out = NULL
+for (section in names(processed_results)) {
+  test_suites <- processed_results[[section]]
+  for (suite in names(test_suites)) {
+
+    for (p in processed_results[[section]][[suite]]$plotly_images) {
+      print(p)
+    }
+
+    res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
+
+    if (!is.null(res)) {
+      print(knitr::include_graphics(res))
+    }
+
+    for (t1 in processed_results[[section]][[suite]]$result_tables) {
+      print(t1 %>% kable %>% kable_styling())
+    }
+
+    out = c(out, knit_expand("child.Rmd"))
+  }
+}
 ```
 
-```{r, echo=FALSE}
-pretty_print_all_plotly(processed_tabular_results)
-```
+`r paste(knit(text = out), collapse = '\n')`
 
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_images(processed_tabular_results)
-```
-
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_tables(processed_tabular_results)
-```
-
-
-## **Run the Model Validation Test Plan**
+## Modeling Results
 
 We will need to preprocess the dataset and produce the training, test and validation splits first.
 
@@ -166,16 +179,7 @@ test_data <- subset(data, split == FALSE)
 ```
 
 ```{r}
-# Run a logistic regression model
 model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
-```
-
-```{r, echo=FALSE, results='asis'}
-model_summary <- tidy(model)
-
-pretty_model_results <- pretty_print_tables(list("Model Summary Results" = model_summary))
-
-invisible(lapply(pretty_model_results, print))
 ```
 
 ```{r}
@@ -207,18 +211,33 @@ model_validation_results = vm_r$run_test_suite("classifier_model_validation", mo
                                                fail_fast = TRUE)
 ```
 
-```{r}
-processed_validation_results <- process_result(model_validation_results)
+```{r, include=FALSE}
+processed_results <- process_result(model_validation_results)
 ```
 
-```{r, echo=FALSE}
-pretty_print_all_plotly(processed_validation_results)
+```{r, results='hide'}
+out = NULL
+for (section in names(processed_results)) {
+  test_suites <- processed_results[[section]]
+  for (suite in names(test_suites)) {
+
+    for (p in processed_results[[section]][[suite]]$plotly_images) {
+      print(p)
+    }
+
+    res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
+
+    if (!is.null(res)) {
+      print(knitr::include_graphics(res))
+    }
+
+    for (t1 in processed_results[[section]][[suite]]$result_tables) {
+      print(t1 %>% kable %>% kable_styling())
+    }
+
+    out = c(out, knit_expand("child.Rmd"))
+  }
+}
 ```
 
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_images(processed_validation_results)
-```
-
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_tables(processed_validation_results)
-```
+`r paste(knit(text = out), collapse = '\n')`

@@ -76,53 +76,14 @@ summarize_test_result <- function(result) {
 summarize_result <- function(result) {
   result_class <- class(result)[[1]]
 
-  if (isTRUE(grepl("TestPlanDatasetResult", result_class))) {
+  if (isTRUE(grepl("TestSuiteDatasetResult", result_class))) {
     # Ignore for now
     # print("TestPlanDatasetResult")
-  } else if (isTRUE(grepl("TestPlanMetricResult", result_class))) {
+  } else if (isTRUE(grepl("TestSuiteMetricResult", result_class))) {
     summarize_metric_result(result)
-  } else if (isTRUE(grepl("TestPlanTestResult", result_class))) {
+  } else if (isTRUE(grepl("TestSuiteTestResult", result_class))) {
     summarize_test_result(result)
   }
-}
-
-#' Provide a summarization of all results
-#'
-#' @param results A list of result objects
-#'
-#' @importFrom dplyr bind_rows
-#'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
-#' @export
-summarize_results <- function(results) {
-  # Run the Python function
-  result_list <- list()
-
-  for (index in 1:length(results$results)) {
-    suite <- results$results[index][[1]]
-    print(glue("Test Suite Results: {results$test_plans[index]}\n"))
-    for (result in suite) {
-      result_list[[length(result_list) + 1]] <- summarize_result(result)
-    }
-    cat("\n\n")
-  }
-
-  i = 0
-  my_chunks <- list()
-  my_datasets <- list()
-  for (result in result_list) {
-    for (res in result$results) {
-      test <- bind_rows(res$data)
-
-      if (!is.null(test) && nrow(test) > 0) {
-        my_datasets[[length(my_datasets) + 1]] <- test
-        names(my_datasets)[[length(my_datasets)]] <- res$metadata$title
-      }
-    }
-  }
-
-  return(my_datasets)
 }
 
 #' Save a model to a given file path
@@ -145,31 +106,12 @@ save_model <- function(model) {
     return(file_path)
 }
 
-#' Pretty print a list of tables
-#'
-#' @return The HTML required for nice display of multiple output tables
-#'
-#' @param datasets The result returned from summarize_results()
-#'
-#' @importFrom purrr imap
-#' @importFrom knitr kable
-#' @importFrom kableExtra kable_styling row_spec
-#'
-#' @export
-pretty_print_tables <- function(datasets) {
-  imap(datasets, ~{
-    kable(.x, caption = .y) %>%
-      kable_styling("striped") %>%
-      row_spec(0:nrow(.x), color = 'black')
-  })
-}
-
 
 #' From
 #'
 #' @return The HTML required for nice display of multiple output tables
 #'
-#' @param plotly_figure The result returned from summarize_results()
+#' @param plotly_figure The result returned from summarize_result()
 #'
 #' @importFrom purrr imap
 #' @importFrom plotly plotly_build
@@ -190,6 +132,8 @@ build_r_plotly <- function(plotly_figure) {
 #'
 #' @param results A list of result objects
 #'
+#' @importFrom dplyr bind_rows
+#'
 #' @return A numeric vector giving number of characters (code points) in each
 #'    element of the character vector. Missing string have missing length.
 #' @export
@@ -198,33 +142,62 @@ process_result <- function(results) {
   overall_result <- list()
 
   # Sequentially process every result in the result set
-  for (index in 1:length(results$results)) {
-
+  for (index in 1:length(results$sections)) {
     # Grab the test suite
-    suite <- results$results[index][[1]]
-    print(glue("Test Suite Results: {results$test_plans[index]}\n"))
+    suite <- results$sections[[index]]
+    overall_result[[suite$section_id]] <- list()
+
+    # Grab the individual test
+    print(glue("Test Suite Results: {suite$section_id}\n"))
 
     # Get path to temporary directory
     tmp_dir <- tempdir()
 
-    # Store a list of the possible results we will display
-    plotly_images <- list()
-    matplotlib_images <- list()
-    result_tables <- list()
-
     # Process every result in that particular suite
-    for (result in suite) {
+    for (full_result in suite$tests) {
+      if (!("title" %in% names(full_result))) full_result$title <- full_result$name
+      print(full_result$title)
+
+      overall_result[[suite$section_id]][[full_result$title]] <- list()
+
+      # Store a list of the possible results we will display
+      plotly_images <- list()
+      matplotlib_images <- list()
+      result_tables <- list()
+
+      result <- full_result$result
 
       # Summarize the tables
-      table_res <- summarize_result(result)
+      if ("metric" %in% names(result)) {
+        if (!is.null(result$metric$summary)) {
+          table_res <- result$metric$summary$results
+          for (tbl in table_res) {
+            result_tables[[length(result_tables) + 1]] <- bind_rows(tbl$data)
+          }
+        }
+      }
 
       # Process and bind together all the summarized tabular results
-      for (res in table_res$results) {
-        my_tbl <- bind_rows(res$data)
+      if ("test_results" %in% names(result)) {
+        table_res <- result$test_results$results
 
-        if (!is.null(my_tbl) && nrow(my_tbl) > 0) {
-          result_tables[[length(result_tables) + 1]] <- my_tbl
-          names(result_tables)[[length(result_tables)]] <- res$metadata$title
+        full_table <- list()
+        for (res in table_res) {
+          my_tbl <- try({
+            bind_rows(c(list("Column" = res$column), res$values))
+          })
+
+          if (inherits(my_tbl, "try-error")) {
+            my_tbl <- bind_rows(res$values)
+          }
+
+          full_table[[length(full_table) + 1]] <- my_tbl
+        }
+
+        full_table <- bind_rows(full_table)
+
+        if (!is.null(full_table) && nrow(full_table) > 0) {
+          result_tables[[length(result_tables) + 1]] <- full_table
         }
       }
 
@@ -253,72 +226,14 @@ process_result <- function(results) {
           }
         }
       }
+
+      final_result <- list(plotly_images = plotly_images,
+                           matplotlib_images = matplotlib_images,
+                           result_tables = result_tables)
+
+      overall_result[[suite$section_id]][[full_result$title]] <- final_result
     }
-
-    final_result <- list(plotly_images = plotly_images,
-                         matplotlib_images = matplotlib_images,
-                         result_tables = result_tables)
-
-    overall_result[[index]] <- final_result
   }
 
   return(overall_result)
-}
-
-#' Provide a pretty printing of all processed results
-#'
-#' @param processed_results A list of result objects
-#'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
-#' @export
-pretty_print_all_tables <- function(processed_results) {
-  # Display kable tables
-  for (result in processed_results) {
-    pretty_summary_results <- pretty_print_tables(result$result_tables)
-
-    invisible(lapply(pretty_summary_results, print))
-  }
-}
-
-#' Provide a pretty printing of all processed results
-#'
-#' @param processed_results A list of result objects
-#'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
-#'
-#' @importFrom htmltools tagList
-#' @export
-pretty_print_all_plotly <- function(processed_results) {
-  # Loop through each list in processed_results
-  p_list <- list()
-  for (result in processed_results) {
-    for (plot in result$plotly_images) {
-      p_list[[length(p_list) + 1]] <- plot
-    }
-  }
-
-  tagList(p_list)
-}
-
-#' Provide a pretty printing of all processed results
-#'
-#' @param processed_results A list of result objects
-#'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
-#'
-#' @importFrom knitr include_graphics
-#' @export
-pretty_print_all_images <- function(processed_results) {
-  # Display matplotlib images
-  im_list <- c()
-  for (result in processed_results) {
-    im_list <- c(im_list, unlist(result$matplotlib_images))
-  }
-
-  if (!is.null(im_list)) {
-    include_graphics(im_list)
-  }
 }
