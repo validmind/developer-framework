@@ -19,4 +19,8 @@ Imports:
   reticulate,
   dplyr,
   purrr,
-  plotly
+  plotly,
+  knitr,
+  kableExtra,
+  htmltools,
+  rmarkdown

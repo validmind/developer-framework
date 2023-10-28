@@ -237,3 +237,64 @@ process_result <- function(results) {
 
   return(overall_result)
 }
+
+#' @importFrom htmltools browsable HTML htmlDependencies
+#' @importFrom rmarkdown html_dependency_bootstrap
+#' @importFrom kableExtra html_dependency_kePrint html_dependency_lightable
+print_test <- function (x, suite, section, ...)
+{
+  view_html <- getOption("kableExtra_view_html", TRUE)
+  if (view_html & interactive()) {
+    dep <- list(rmarkdown::html_dependency_jquery(), rmarkdown::html_dependency_bootstrap(theme = "cosmo"),
+                html_dependency_kePrint(), html_dependency_lightable())
+    html_kable <- htmltools::browsable(htmltools::HTML(as.character(x),
+                                                       "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({tex2jax: {inlineMath: [[\"$\",\"$\"]]}})</script><script async src=\"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"))
+    htmlDependencies(html_kable) <- dep
+    class(html_kable) <- c(suite, section, "shiny.tag.list")
+    print(html_kable)
+  }
+  else {
+    cat(as.character(x))
+  }
+}
+
+#' Produce RMarkdown-compatible output of all results
+#'
+#' @param processed_results A list of processed result objects
+#'
+#' @importFrom knitr kable include_graphics knit_expand
+#' @importFrom kableExtra kable_styling
+#' @importFrom dplyr %>%
+#'
+#' @return A formatted rmarkdown
+#' @export
+display_report <- function(processed_results) {
+  out = NULL
+  for (section in names(processed_results)) {
+    test_suites <- processed_results[[section]]
+    for (suite in names(test_suites)) {
+      child_path <- system.file("extdata", "child.Rmd", package="validmind")
+      out = c(out, knit_expand(child_path))
+
+      for (t1 in processed_results[[section]][[suite]]$result_tables) {
+        res <- t1 %>%
+          kable(format = "html", table.attr = 'style="color: black;"') %>%
+          kable_styling()
+        # print_method_hw <- getS3method("print", "kableExtra")
+        print_test(res, suite, section)
+      }
+
+      for (p in processed_results[[section]][[suite]]$plotly_images) {
+        print(p)
+      }
+
+      res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
+
+      if (!is.null(res)) {
+        print(include_graphics(res))
+      }
+    }
+  }
+
+  return(out)
+}

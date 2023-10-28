@@ -7,7 +7,7 @@
 build_r_plotly(plotly_figure)
 }
 \arguments{
-\item{plotly_figure}{The result returned from summarize_results()}
+\item{plotly_figure}{The result returned from summarize_result()}
 }
 \value{
 The HTML required for nice display of multiple output tables
