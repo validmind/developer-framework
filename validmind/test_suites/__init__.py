@@ -16,8 +16,15 @@ from .classifier import (
     ClassifierModelValidation,
     ClassifierPerformance,
 )
+from .cluster import ClusterMetrics
 from .llm import LLMClassifierFullSuite, PromptValidation
 from .nlp import NLPClassifierFullSuite
+from .regression import (
+    RegressionFullSuite,
+    RegressionMetrics,
+    RegressionModelsComparison,
+    RegressionPerformance,
+)
 from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
@@ -46,11 +53,16 @@ core_test_suites = {
     ClassifierMetrics.suite_id: ClassifierMetrics,
     ClassifierModelValidation.suite_id: ClassifierModelValidation,
     ClassifierPerformance.suite_id: ClassifierPerformance,
+    ClusterMetrics.suite_id: ClusterMetrics,
     LLMClassifierFullSuite.suite_id: LLMClassifierFullSuite,
     PromptValidation.suite_id: PromptValidation,
     NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,
+    RegressionMetrics.suite_id: RegressionMetrics,
     RegressionModelDescription.suite_id: RegressionModelDescription,
     RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
+    RegressionModelsComparison.suite_id: RegressionModelsComparison,
+    RegressionFullSuite.suite_id: RegressionFullSuite,
+    RegressionPerformance.suite_id: RegressionPerformance,
     SummarizationMetrics.suite_id: SummarizationMetrics,
     TabularDataset.suite_id: TabularDataset,
     TabularDatasetDescription.suite_id: TabularDatasetDescription,
