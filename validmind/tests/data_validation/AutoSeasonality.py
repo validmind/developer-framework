@@ -30,12 +30,14 @@ class AutoSeasonality(Metric):
     'No Seasonality'.
 
     **Signs of High Risk:**
+
     - If the optimal seasonal period (or 'Best Period') is consistently at the maximum or minimum limit of the offered
     range for a majority of variables, it may suggest that the range set does not adequately capture the true seasonal
     pattern in the series.
     - A high average 'Residual Error' for the selected 'Best Period' could indicate issues with the model's performance.
 
     **Strengths:**
+
     - The metric offers an automatic approach to identifying and quantifying the optimal seasonality, providing a
     robust method for analyzing time series datasets.
     - It is applicable to multiple variables in a dataset, providing a comprehensive evaluation of each variable's
@@ -43,6 +45,7 @@ class AutoSeasonality(Metric):
     - The use of concrete and measurable statistical methods improves the objectivity and reproducibility of the model.
 
     **Limitations:**
+
     - This AutoSeasonality metric may not be suitable if the time series data exhibits random walk behaviour or lacks
     clear seasonality, as the seasonal decomposition model may not be appropriate.
     - The defined range for the seasonal period (min_period and max_period) can influence the outcomes. If the actual

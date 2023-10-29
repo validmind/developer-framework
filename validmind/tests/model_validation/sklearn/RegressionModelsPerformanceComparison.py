@@ -30,6 +30,7 @@ class RegressionModelsPerformanceComparison(Metric):
     comparative summary.
 
     **3. Signs of High Risk:**
+
     - High values of MAE, MSE, RMSE, and MAPE, which indicate a high error rate and imply a larger departure of the
     model's predictions from the true values.
     - A large value of MBD, which shows a consistent bias in the model’s predictions.
@@ -37,11 +38,13 @@ class RegressionModelsPerformanceComparison(Metric):
     evaluation process itself.
 
     **4. Strengths:**
+
     - The metric evaluates models on five different metrics offering a comprehensive analysis of model performance.
     - It compares multiple models simultaneously, aiding in the selection of the best-performing models.
     - It is designed to handle regression tasks and can be seamlessly integrated with libraries like sklearn.
 
     **5. Limitations:**
+
     - The metric only evaluates regression models and does not evaluate classification models.
     - The test assumes that the models have been trained and tested appropriately prior to evaluation. It does not
     handle pre-processing, feature selection, or other stages in the model lifecycle.
