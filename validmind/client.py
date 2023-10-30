@@ -75,7 +75,6 @@ def init_dataset(
     # Instantiate supported dataset types here
     if dataset_class == "DataFrame":
         logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
-        print("Importing client.py from:", os.path.abspath(__file__))
         vm_dataset = DataFrameDataset(
             raw_dataset=dataset,
             target_column=target_column,
