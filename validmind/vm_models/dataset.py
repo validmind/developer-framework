@@ -39,6 +39,7 @@ class NumpyDataset(VMDataset):
     _index_name: str = None
     _column_names: list = None
     _target_column: str = None
+    _feature_columns: list = (None,)
     _text_column: str = None
     _type: str = "generic"
     _target_class_labels: dict = None
@@ -56,6 +57,7 @@ class NumpyDataset(VMDataset):
         date_time_index=False,
         column_names=None,
         target_column: str = None,
+        feature_columns: list = None,
         text_column=None,
         target_class_labels: dict = None,
         options: dict = None,
@@ -70,6 +72,7 @@ class NumpyDataset(VMDataset):
             date_time_index (bool): Whether the index is a datetime index.
             column_names (List[str], optional): The column names of the dataset. Defaults to None.
             target_column (str, optional): The target column name of the dataset. Defaults to None.
+            feature_columns (str, optional): The feature column names of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
             options (Dict, optional): Additional options for the dataset. Defaults to None.
@@ -93,6 +96,7 @@ class NumpyDataset(VMDataset):
         self._column_names = column_names
 
         self._target_column = target_column
+        self._feature_columns = feature_columns
         self._text_column = text_column
         self._target_class_labels = target_class_labels
         self.options = options
@@ -173,6 +177,19 @@ class NumpyDataset(VMDataset):
         return self._target_column
 
     @property
+    def feature_columns(self) -> list:
+        """
+        Returns the feature columns of the dataset. If _feature_columns is None,
+        it returns all columns except the target column.
+
+        Returns:
+            list: The list of feature column names.
+        """
+        if self._feature_columns is None:
+            return self.get_features_columns()
+        return self._feature_columns
+
+    @property
     def text_column(self) -> str:
         """
         Returns the text column of the dataset.
@@ -197,6 +214,23 @@ class NumpyDataset(VMDataset):
                 for name in self.column_names
                 if name != self.target_column
             ],
+        ]
+
+    @property
+    def x_features(self) -> np.ndarray:
+        """
+        Returns the input features (X) of the dataset as selected in feature_columns,
+        if feature_columns is empty returns all features except the target column.
+
+        Returns:
+            np.ndarray: The input features.
+        """
+        if not self.feature_columns:
+            return self.x
+
+        return self.raw_dataset[
+            :,
+            [self.column_names.index(name) for name in self.feature_columns],
         ]
 
     @property
@@ -348,6 +382,7 @@ class DataFrameDataset(NumpyDataset):
         self,
         raw_dataset: pd.DataFrame,
         target_column: str = None,
+        feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
         options: dict = None,
@@ -359,6 +394,7 @@ class DataFrameDataset(NumpyDataset):
         Args:
             raw_dataset (pd.DataFrame): The raw dataset as a pandas DataFrame.
             target_column (str, optional): The target column of the dataset. Defaults to None.
+            feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
@@ -372,6 +408,7 @@ class DataFrameDataset(NumpyDataset):
             index=index,
             column_names=raw_dataset.columns.to_list(),
             target_column=target_column,
+            feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
             options=options,
@@ -392,6 +429,7 @@ class TorchDataset(NumpyDataset):
         index=None,
         column_names=None,
         target_column: str = None,
+        feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
         options: dict = None,
@@ -405,6 +443,7 @@ class TorchDataset(NumpyDataset):
             index (np.ndarray): The raw dataset index as a NumPy array.
             column_names (List[str]): The column names of the dataset.
             target_column (str, optional): The target column of the dataset. Defaults to None.
+            feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
@@ -427,12 +466,16 @@ class TorchDataset(NumpyDataset):
             n_cols = merged_tensors.shape[1] - 1
             target_column = str(n_cols)
 
+        if feature_columns is None:
+            feature_columns = [col for col in column_names if col != target_column]
+
         super().__init__(
             raw_dataset=merged_tensors,
             index_name=index_name,
             index=index,
             column_names=column_names,
             target_column=target_column,
+            feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
             options=options,
