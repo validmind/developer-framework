@@ -46,6 +46,7 @@ class ClusterSizeDistribution(Metric):
     * The metric might not fully capture other important aspects of clustering such as cluster density, distances
     between clusters, and the shape of clusters.
     """
+
     name = "cluster_size_distribution"
     required_inputs = ["model", "model.train_ds"]
     metadata = {
