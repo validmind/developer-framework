@@ -29,8 +29,6 @@ pd.option_context("format.precision", 2)
 
 logger = get_logger(__name__)
 
-import os
-
 
 def init_dataset(
     dataset,
