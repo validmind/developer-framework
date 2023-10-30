@@ -28,16 +28,19 @@ class Punctuations(Metric):
     graph, with these results being stored as Figures and associated with the main Punctuations object.
 
     **3. Signs of High Risk:**
+
     - High risk can be indicated by the excessive or unusual frequency of specific punctuation marks, potentially
     denoting dubious quality, data corruption, or skewed data.
 
     **4. Strengths:**
+
     - The Punctuations Metric provides valuable insights into the distribution of punctuation usage in a text dataset.
     - This insight can be important in validating the quality, consistency, and nature of the data.
     - It can provide hints about the style or tonality of the text corpus. For example, frequent usage of exclamation
     marks may suggest a more informal and emotional context.
 
     **5. Limitations:**
+
     - The metric focuses solely on punctuation usage and can miss other important textual characteristics.
     - It's important not to make general cultural or tonality assumptions based solely on punctuation distribution,
     since these can vary greatly across different languages and contexts.

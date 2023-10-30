@@ -35,18 +35,21 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     instruction. This threshold can be custom-tailored through the test parameters.
 
     **Signs of High Risk:**
+
     - Low score obtained from the LLM analysis, indicating heavy reliance on negative instructions in the prompts.
     - Failure to surpass the preset minimum threshold.
     - The LLM generates ambiguous or undesirable outputs as a consequence of the negative instructions used in the
     prompt.
 
     **Strengths:**
+
     - Encourages the usage of affirmative, proactive language in prompts, aiding in more accurate and advantageous
     model responses.
     - The test result provides a comprehensible score, helping to understand how well a prompt follows the positive
     instruction best practices.
 
     **Limitations:**
+
     - Despite an adequate score, a prompt could still be misleading or could lead to undesired responses due to factors
     not covered by this test.
     - The test necessitates an LLM for evaluation, which might not be available or feasible in certain scenarios.

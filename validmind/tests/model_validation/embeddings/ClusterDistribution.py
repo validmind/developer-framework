@@ -21,17 +21,20 @@ class ClusterDistribution(Metric):
     distribution of embeddings across these clusters.
 
     **Signs of High Risk:**
+
     - If the embeddings are skewed towards one or two clusters, that would indicate that the model is not effectively
     differentiating the various categories in the text data.
     - Uniform distribution of the embeddings across the clusters might show a lack of proper categorization.
 
     **Strengths:**
+
     - Great tool to visualize the text data categorization by the model. It provides a way to assess if the model is
     distinguishing the categories effectively or not.
     - It is flexible with the number of clusters (classes), so can be used on various types of data regardless of the
     number of categories.
 
     **Limitations:**
+
     - The success or failure of this test is based on visual interpretation, which might not be enough for making solid
     conclusions or determining the exact points of failure.
     - It assumes that the division of text embeddings across clusters should ideally be homogeneous, which might not

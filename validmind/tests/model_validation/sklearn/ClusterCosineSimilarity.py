@@ -27,6 +27,7 @@ class ClusterCosineSimilarity(Metric):
     highlighting how similar, on average, data points in a cluster are to the cluster's centroid.
 
     **3. Signs of High Risk:**
+
     - Low mean cosine similarity for one or more clusters: If the mean cosine similarity is low, the data points within
     the respective cluster have high variance in their directions. This can be indicative of poor clustering,
     suggesting that the model might not be suitably separating the data into distinct patterns.
@@ -34,6 +35,7 @@ class ClusterCosineSimilarity(Metric):
     cosine similarity across different clusters, this could indicate imbalance in how the model forms clusters.
 
     **4. Strengths:**
+
     - Cosine similarity operates in a multi-dimensional space, making it effective for measuring similarity in high
     dimensional datasets, typical for many machine learning problems.
     - It provides an agnostic view of the cluster performance by only considering the direction (and not the magnitude)
@@ -41,6 +43,7 @@ class ClusterCosineSimilarity(Metric):
     - This metric is not dependent on the scale of the variables, making it equally effective on different scales.
 
     **5. Limitations:**
+
     - Cosine similarity does not consider magnitudes (i.e. lengths) of vectors, only their direction. This means it may
     overlook instances where clusters have been adequately separated in terms of magnitude.
     - This method summarily assumes that centroids represent the average behavior of data points in each cluster. This

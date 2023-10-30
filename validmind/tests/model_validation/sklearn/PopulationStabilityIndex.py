@@ -41,12 +41,14 @@ class PopulationStabilityIndex(Metric):
     displayed in a summary table, a grouped bar chart, and a scatter plot.
 
     **Signs of High Risk:**
+
     - A high PSI value is a clear indicator of high risk. Such a value suggests a significant shift in the model
     predictions or severe changes in the characteristics of the underlying population.
     - This ultimately suggests that the model may not be performing as well as expected and that it may be less
     reliable for making future predictions.
 
     **Strengths:**
+
     - The PSI provides a quantitative measure of the stability of a model over time or across different samples, making
     it an invaluable tool for evaluating changes in a model's performance.
     - It allows for direct comparisons across different features based on the PSI value.
@@ -55,6 +57,7 @@ class PopulationStabilityIndex(Metric):
     PSI.
 
     **Limitations:**
+
     - The PSI test does not account for the interdependence between features: features that are dependent on one
     another may show similar shifts in their distributions, which in turn may result in similar PSI values.
     - The PSI test does not inherently provide insights into why there are differences in distributions or why the PSI
