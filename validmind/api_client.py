@@ -91,6 +91,15 @@ def init(
     """
     global _api_key, _api_secret, _api_host, _run_cuid, _project
 
+    if api_host == "...":
+        # special case to detect when running a notebook with the standard init snippet
+        # will override with environment variables so we don't have to keep updating
+        # the notebook
+        api_host = None
+        api_key = None
+        api_secret = None
+        project = None
+
     _project = project or os.environ.get("VM_API_PROJECT")
 
     if _project is None:

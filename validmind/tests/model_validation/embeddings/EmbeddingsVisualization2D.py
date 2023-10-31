@@ -21,12 +21,14 @@ class EmbeddingsVisualization2D(Metric):
     dimensionality, a scatter plot is produced depicting each embedding as a data point in the visualized 2D plane.
 
     **3. Signs of High Risk:**
+
     - If the embeddings are highly concentrated in a specific region of the plane, it might indicate that the model is
     not learning diverse representations of the text.
     - Wide gaps or partitions in the visualization could suggest that the model is over-segmenting in the embedding
     space and may lead to poor generalization.
 
     **4. Strengths:**
+
     - Offers a powerful visual tool that can assist in understanding and interpreting high-dimensional embeddings,
     which could otherwise be difficult to visualize.
     - It is model-agnostic and can be used with any machine learning model that produces text embeddings.
@@ -34,6 +36,7 @@ class EmbeddingsVisualization2D(Metric):
     together in the original high-dimensional space.
 
     **5. Limitations:**
+
     - The reduction of high-dimensional data to 2D can result in loss of some information, which may lead to
     misinterpretation.
     - Due to its stochastic nature, t-SNE can produce different results when run multiple times with the same
@@ -45,6 +48,7 @@ class EmbeddingsVisualization2D(Metric):
     name = "2D Visualization of Text Embeddings"
     required_inputs = ["model", "model.test_ds"]
     default_params = {
+        "cluster_column": None,
         "perplexity": 30,
     }
     metadata = {
@@ -53,6 +57,13 @@ class EmbeddingsVisualization2D(Metric):
     }
 
     def run(self):
+        cluster_column = self.params.get("cluster_column")
+
+        if cluster_column is None:
+            raise ValueError(
+                "The `cluster_column` parameter must be provided to the EmbeddingsVisualization2D test."
+            )
+
         # use TSNE to reduce dimensionality of embeddings
         num_samples = len(self.model.y_test_predict.values)
 
@@ -70,8 +81,10 @@ class EmbeddingsVisualization2D(Metric):
         fig = px.scatter(
             x=reduced_embeddings[:, 0],
             y=reduced_embeddings[:, 1],
+            color=self.model.test_ds.df[cluster_column],
             title="2D Visualization of Text Embeddings",
         )
+        fig.update_layout(width=500, height=500)
 
         return self.cache_results(
             figures=[
