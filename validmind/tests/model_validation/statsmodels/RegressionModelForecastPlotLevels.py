@@ -38,6 +38,7 @@ class RegressionModelForecastPlotLevels(Metric):
     generalized results.
 
     **Strengths:**
+
     - Visual Evaluations: The metric provides a visual and comparative way of assessing multiple regression models at
     once. This allows easier interpretation and evaluation of their forecasting accuracy.
     - Transformation Handling: This metric can handle transformations like "integrate," enhancing its breadth and
@@ -46,6 +47,7 @@ class RegressionModelForecastPlotLevels(Metric):
     a detailed overview of the model.
 
     **Limitations:**
+
     - Subjectivity: Relying heavily on visual interpretations; assessments may differ from person to person.
     - Limited Transformation Capability: Currently, only the "integrate" transformation is supported, implying complex
     transformations might go unchecked or unhandled.

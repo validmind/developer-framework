@@ -27,6 +27,7 @@ class HeatmapFeatureCorrelations(Metric):
     coefficients can be controlled through 'fontsize' parameters.
 
     **Signs of High Risk:**
+
     - Indicators of potential risk include features with high absolute correlation values.
     - A significant degree of multicollinearity might lead to instabilities in the trained model and can also result in
     overfitting.
@@ -34,12 +35,14 @@ class HeatmapFeatureCorrelations(Metric):
     indicate redundant or irrelevant features included within the dataset.
 
     **Strengths:**
+
     - The strength of this metric lies in its ability to visually represent the extent and direction of correlation
     between any two numeric features, which aids in the interpretation and understanding of complex data relationships.
     - The heatmap provides an immediate and intuitively understandable representation, hence, it is extremely useful
     for high-dimensional datasets where extracting meaningful relationships might be challenging.
 
     **Limitations:**
+
     - The central limitation might be that it can only calculate correlation between numeric features, making it
     unsuitable for categorical variables unless they are already numerically encoded in a meaningful manner.
     - It uses Pearson's correlation, which only measures linear relationships between features. It may perform poorly

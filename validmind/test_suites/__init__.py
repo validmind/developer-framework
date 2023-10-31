@@ -16,9 +16,11 @@ from .classifier import (
     ClassifierModelValidation,
     ClassifierPerformance,
 )
-from .cluster import ClusterMetrics
+from .cluster import ClusterFullSuite, ClusterMetrics, ClusterPerformance
+from .embeddings import EmbeddingsFullSuite, EmbeddingsMetrics, EmbeddingsPerformance
 from .llm import LLMClassifierFullSuite, PromptValidation
 from .nlp import NLPClassifierFullSuite
+from .parameters_optimization import KmeansParametersOptimization
 from .regression import (
     RegressionFullSuite,
     RegressionMetrics,
@@ -53,7 +55,13 @@ core_test_suites = {
     ClassifierMetrics.suite_id: ClassifierMetrics,
     ClassifierModelValidation.suite_id: ClassifierModelValidation,
     ClassifierPerformance.suite_id: ClassifierPerformance,
+    ClusterFullSuite.suite_id: ClusterFullSuite,
     ClusterMetrics.suite_id: ClusterMetrics,
+    ClusterPerformance.suite_id: ClusterPerformance,
+    EmbeddingsFullSuite.suite_id: EmbeddingsFullSuite,
+    EmbeddingsMetrics.suite_id: EmbeddingsMetrics,
+    EmbeddingsPerformance.suite_id: EmbeddingsPerformance,
+    KmeansParametersOptimization.suite_id: KmeansParametersOptimization,
     LLMClassifierFullSuite.suite_id: LLMClassifierFullSuite,
     PromptValidation.suite_id: PromptValidation,
     NLPClassifierFullSuite.suite_id: NLPClassifierFullSuite,

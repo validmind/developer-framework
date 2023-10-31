@@ -23,12 +23,14 @@ class DescriptiveAnalytics(Metric):
     does not utilize a grading scale or threshold; it is fundamentally a visual exploration and data exploration tool.
 
     **3. Signs of High Risk:**
+
     - Abnormal patterns or values in the distributions of the statistical measures. This may include skewed
     distributions or a significant amount of outliers.
     - Very high standard deviation values which indicate a high degree of variability in the data.
     - The mean and median values are vastly different, suggesting skewed data.
 
     **4. Strengths:**
+
     - Provides a visual and quantifiable understanding of the embeddings' statistical characteristics, allowing for a
     comprehensive evaluation.
     - Facilitates the identification of irregular patterns and anomalous values that might indicate issues with the
@@ -37,6 +39,7 @@ class DescriptiveAnalytics(Metric):
     understanding of the data.
 
     **5. Limitations:**
+
     - The method does not offer an explicit measure of model performance or accuracy, as it mainly focuses on
     understanding data properties.
     - It relies heavily on the visual interpretation of histograms. This could be subjective, and important patterns
