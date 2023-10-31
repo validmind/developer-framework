@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from validmind.vm_models import (
+    Figure,
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
@@ -19,9 +20,10 @@ class StabilityAnalysis(ThresholdTest):
     """Base class for embeddings stability analysis tests"""
 
     category = "model_diagnosis"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     default_params = {
-        "mean_distance_threshold": 0.1,
+        "text_column": None,
+        "mean_similarity_threshold": 0.7,
     }
     metadata = {
         "task_types": ["feature_extraction"],
@@ -36,7 +38,11 @@ class StabilityAnalysis(ThresholdTest):
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
             {
-                "Mean Distance": result.values["mean_distance"],
+                "Mean Similarity": result.values["mean_similarity"],
+                "Min Similarity": result.values["min_similarity"],
+                "Max Similarity": result.values["max_similarity"],
+                "Median Similarity": result.values["median_similarity"],
+                "Std Similarity": result.values["std_similarity"],
                 "Pass/Fail": "Pass" if result.passed else "Fail",
             }
             for result in results
@@ -54,22 +60,45 @@ class StabilityAnalysis(ThresholdTest):
 
     def run(self):
         # Perturb the test dataset
-        col = self.model.test_ds.text_column
-        perturbed_data_df = self.model.test_ds.df.copy()
-        perturbed_data_df[col] = perturbed_data_df[col].apply(self.perturb_data)
+        col = self.params.get("text_column")
 
-        # Compute embeddings for the perturbed dataset
+        if col is None:
+            raise ValueError(
+                "The `text_column` parameter must be provided to the StabilityAnalysis test."
+            )
+
+        original_data_df = self.dataset.df[col]
+        perturbed_data_df = original_data_df.copy()
+        perturbed_data_df = perturbed_data_df.apply(self.perturb_data)
+
+        # Compute embeddings for the original and perturbed dataset
+        original_embeddings = self.model.predict(original_data_df)
         perturbed_embeddings = self.model.predict(perturbed_data_df)
 
         # Compute cosine similarities between original and perturbed embeddings
         similarities = cosine_similarity(
-            self.model.y_test_predict.values,
+            original_embeddings,
             perturbed_embeddings,
-        ).diagonal()
+        )
 
-        # Determine if the test passed based on the mean distance and threshold
-        mean_distance = np.mean(1 - similarities)
-        passed = mean_distance < self.params["mean_distance_threshold"]
+        mean = np.mean(similarities)
+        min = np.min(similarities)
+        max = np.max(similarities)
+        median = np.median(similarities)
+        std = np.std(similarities)
+
+        # Determine if the test passed based on the mean similarity and threshold
+        passed = mean > self.params["mean_similarity_threshold"]
+
+        # Plot the distribution of cosine similarities using plotly
+        import plotly.express as px
+
+        fig = px.histogram(
+            x=similarities.flatten(),
+            nbins=100,
+            title="Cosine Similarity Distribution",
+            labels={"x": "Cosine Similarity"},
+        )
 
         # For this example, we are not caching the results as done in the reference `run` method
         return self.cache_results(
@@ -77,8 +106,19 @@ class StabilityAnalysis(ThresholdTest):
                 ThresholdTestResult(
                     passed=passed,
                     values={
-                        "mean_distance": mean_distance,
+                        "mean_similarity": mean,
+                        "min_similarity": min,
+                        "max_similarity": max,
+                        "median_similarity": median,
+                        "std_similarity": std,
                     },
+                )
+            ],
+            figures=[
+                Figure(
+                    for_object=self,
+                    key=self.name,
+                    figure=fig,
                 )
             ],
             passed=passed,

@@ -111,7 +111,6 @@ class StabilityAnalysisRandomNoise(StabilityAnalysis):
 
     name = "Text Embeddings Stability Analysis to Random Noise"
     default_params = {
-        "keyword_dict": None,  # set to none by default... this must be overridden
         **StabilityAnalysis.default_params,
     }
 
