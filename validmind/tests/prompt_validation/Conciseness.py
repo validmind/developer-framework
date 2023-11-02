@@ -33,17 +33,20 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     This threshold can be adjusted to meet specific requirements.
 
     **Signs of High Risk:**
+
     - Prompts that consistently score below the predefined threshold.
     - Prompts that are overly wordy or contain unnecessary information.
     - Prompts that create confusion or ambiguity due to excess or unnecessary information.
 
     **Strengths:**
+
     - Ensures clarity and effectiveness of the prompts.
     - Promotes brevity and preciseness in prompts without sacrificing essential information.
     - Useful for models like LLMs, where input prompt length and clarity greatly influence model performance.
     - Provides a quantifiable measure of prompt conciseness.
 
     **Limitations:**
+
     - The conciseness score is based on an AI's assessment, which might not fully capture human interpretation of
     conciseness.
     - The predefined threshold for conciseness could be subjective and might need adjustment based on application.

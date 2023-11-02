@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.21.12"
+version = "1.22.4"
 
 [tool.poetry.dependencies]
 matplotlib = "<3.8"
@@ -56,7 +56,6 @@ textstat = "^0.7.3"
 torch = {version = ">=1.10.0", optional = true}
 torchmetrics = {version = "^1.1.1", optional = true}
 tqdm = "^4.64.0"
-traitlets = "!=5.10.0, !=5.10.1" # TODO: remove this when bug is fixed: https://github.com/microsoft/azuredatastudio/issues/24436
 transformers = "^4.32.0"
 wget = "^3.2"
 xgboost = "^1.5.2"

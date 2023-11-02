@@ -21,17 +21,20 @@ class BoxPierce(Metric):
     Box-Pierce test statistic as well as the respective p-value, all of which are cached as test results.
 
     **Signs of High Risk:**
+
     - A low p-value, typically under 0.05 as per statistical convention, throws the null hypothesis of independence
     into question. This implies that the dataset potentially houses autocorrelations, thus indicating a high-risk
     scenario concerning model performance.
     - Large Box-Pierce test statistic values may indicate the presence of autocorrelation.
 
     **Strengths:**
+
     - Detects patterns in data that are supposed to be random, thereby ensuring no underlying autocorrelation.
     - Can be computed efficiently given its low computational complexity.
     - Can be widely applied to most regression problems, making it very versatile.
 
     **Limitations:**
+
     - Assumes homoscedasticity (constant variance) and normality of residuals, which may not always be the case in
     real-world datasets.
     - May exhibit reduced power for detecting complex autocorrelation schemes such as higher-order or negative

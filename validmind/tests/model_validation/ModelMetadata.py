@@ -51,12 +51,14 @@ class ModelMetadata(Metric):
     language. It decorates this information into a data frame and returns a summary of the results.
 
     **Signs of High Risk:**
+
     - High risk could be determined by a lack of documentation or inscrutable metadata for the model.
     - Unidentifiable language, outdated or unsupported versions of modeling frameworks, or undisclosed model
     architectures reflect risky situations, as they could hinder future reproducibility, support, and debugging of the
     model.
 
     **Strengths:**
+
     - The strengths of this test lie in the increased transparency and understanding it brings regarding the model's
     setup.
     - Knowing the model's architecture, the specific modeling framework version used, and the language involved,
@@ -65,6 +67,7 @@ class ModelMetadata(Metric):
     software and dependencies.
 
     **Limitations:**
+
     - Notably, this test is largely dependent on the compliance and correctness of information provided by the model or
     the model developer.
     - If the model's built-in methods for describing its architecture, framework or language are incorrect or lack

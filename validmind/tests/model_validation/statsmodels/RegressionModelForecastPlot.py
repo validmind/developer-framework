@@ -30,12 +30,14 @@ class RegressionModelForecastPlot(Metric):
     within the limits of the available data.
 
     **Signs of High Risk:**
+
     - High risk or failure signs could be deduced visually from the plots if the forecasted line significantly deviates
     from the observed line, indicating the model's predicted values are not matching actual outcomes.
     - A model that struggles to handle the edge conditions like maximum and minimum data points could also be
     considered a sign of risk.
 
     **Strengths:**
+
     - Visualization: The plot provides an intuitive and clear illustration of how well the forecast matches the actual
     values, making it straightforward even for non-technical stakeholders to interpret.
     - Flexibility: It allows comparison for multiple models and for specified time periods.
@@ -43,6 +45,7 @@ class RegressionModelForecastPlot(Metric):
     as discrepancies between the forecasted and observed values.
 
     **Limitations:**
+
     - Interpretation Bias: Interpretation of the plot is subjective and can lead to different conclusions by different
     evaluators.
     - Lack of Precision: Visual representation might not provide precise values of the deviation.
