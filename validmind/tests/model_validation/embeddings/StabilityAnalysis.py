@@ -79,7 +79,7 @@ class StabilityAnalysis(ThresholdTest):
         similarities = cosine_similarity(
             original_embeddings,
             perturbed_embeddings,
-        )
+        ).diagonal()
 
         mean = np.mean(similarities)
         min = np.min(similarities)

@@ -27,6 +27,7 @@ class ClusterMetrics(TestSuite):
         "validmind.model_validation.sklearn.AdjustedRandIndex",
         "validmind.model_validation.sklearn.AdjustedMutualInformation",
         "validmind.model_validation.sklearn.FowlkesMallowsScore",
+        "validmind.model_validation.sklearn.ClusterPerformanceMetrics",
         "validmind.model_validation.sklearn.ClusterCosineSimilarity",
         "validmind.model_validation.sklearn.SilhouettePlot",
     ]
@@ -39,7 +40,6 @@ class ClusterPerformance(TestSuite):
 
     suite_id = "cluster_performance"
     tests = [
-        "validmind.model_validation.sklearn.LocalOutlierFactorPlot",
         "validmind.model_validation.ClusterSizeDistribution",
     ]
 
