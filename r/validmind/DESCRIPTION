@@ -1,7 +1,7 @@
 Package: validmind
 Type: Package
 Title: Interface to the ValidMind platform for R
-Version: 0.1.0
+Version: 0.1.1
 Author: ValidMind, Inc.
 Maintainer: Andres Rodriquez <andres@validmind.ai>
 Description: Deploy, execute, and analyze the results of models hosted on the
@@ -18,9 +18,8 @@ Imports:
   glue,
   reticulate,
   dplyr,
-  purrr,
   plotly,
-  knitr,
-  kableExtra,
   htmltools,
-  rmarkdown
+  rmarkdown,
+  DT,
+  base64enc

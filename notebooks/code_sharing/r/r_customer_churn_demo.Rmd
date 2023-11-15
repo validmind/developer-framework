@@ -1,19 +1,9 @@
 ---
 title: "Customer Churn Example (R)"
 author: "ValidMind"
-date: "2023-10-25"
-output:
-  html_document:
-    df_print: paged
-editor_options:
-  chunk_output_type: inline
+date: "2023-11-15"
+output: html_document
 ---
-
-<style>
-  table caption {
-    color: black;
-  }
-</style>
 
 # **Quickstart - Customer Churn Full Suite Model Documentation**
 
@@ -37,22 +27,11 @@ library(reticulate)
 python_version <- "<path_to_python_version>"
 use_python(python_version)
 
-library(magrittr) # needs to be run every time you start R and want to use %>%
-library(dplyr)    # alternatively, this also loads %>%
-library(glue)
-library(dplyr)
+library(validmind)
 library(caTools)
 library(glmnet)
 library(knitr)
-library(kableExtra)
-library(purrr)
-library(validmind)
-library(rmarkdown)
-library(htmltools)
-library(broom)
-library(huxtable)
-library(xgboost)
-library(plotly)
+library(dplyr)
 
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
@@ -125,10 +104,13 @@ processed_results <- process_result(tabular_suite_results)
 ```
 
 ```{r, echo=FALSE, results='hide'}
-out <- display_report(processed_results)
+all_widgets <- display_report(processed_results)
+for (widget in all_widgets) {
+  print(widget)
+}
 ```
 
-`r paste(knit(text = out), collapse = '\n')`
+`r do.call(htmltools::tagList, all_widgets)`
 
 ## Modeling Results
 
@@ -191,7 +173,10 @@ processed_results <- process_result(model_validation_results)
 ```
 
 ```{r, echo=FALSE, results='hide'}
-out <- display_report(processed_results)
+all_widgets <- display_report(processed_results)
+for (widget in all_widgets) {
+  print(widget)
+}
 ```
 
-`r paste(knit(text = out), collapse = '\n')`
+`r do.call(htmltools::tagList, all_widgets)`

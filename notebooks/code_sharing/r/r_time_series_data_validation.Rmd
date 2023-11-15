@@ -20,31 +20,14 @@ library(reticulate)
 python_version <- "<path_to_python_version>"
 use_python(python_version)
 
-library(magrittr) # needs to be run every time you start R and want to use %>%
-library(dplyr)    # alternatively, this also loads %>%
-library(glue)
-library(dplyr)
+library(validmind)
 library(caTools)
 library(glmnet)
-library(zoo)
 library(knitr)
-library(kableExtra)
-library(purrr)
-library(validmind)
-library(rmarkdown)
-library(htmltools)
-library(broom)
-library(huxtable)
-library(xgboost)
-library(plotly)
+library(dplyr)
+library(zoo)
 
-print_table <- print
-
-custom_print_table_hook <- function(x) {
-  cat(x)
-}
-
-knitr::knit_hooks$set(print_table = custom_print_table_hook)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 ## **Initializing the ValidMind Client Library**
@@ -183,7 +166,6 @@ vm_dataset <- vm_r$init_dataset(
 )
 ```
 
-
 ```{r}
 suite_results <- vm_r$run_test_suite(
     "time_series_dataset",
@@ -197,17 +179,14 @@ suite_results <- vm_r$run_test_suite(
 processed_validation_results <- process_result(suite_results)
 ```
 
-```{r, echo=FALSE}
-# pretty_print_all_plotly(processed_validation_results)
+```{r, echo=FALSE, results='hide'}
+all_widgets <- display_report(processed_validation_results)
+for (widget in all_widgets) {
+  print(widget)
+}
 ```
 
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_images(processed_validation_results)
-```
-
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_tables(processed_validation_results)
-```
+`r do.call(htmltools::tagList, all_widgets)`
 
 ### Handle Dataset Frequencies
 
@@ -277,14 +256,11 @@ suite_results <- vm_r$run_test_suite(
 processed_validation_results <- process_result(suite_results)
 ```
 
-```{r, echo=FALSE}
-pretty_print_all_plotly(processed_validation_results)
+```{r, echo=FALSE, results='hide'}
+all_widgets <- display_report(processed_validation_results)
+for (widget in all_widgets) {
+  print(widget)
+}
 ```
 
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_images(processed_validation_results)
-```
-
-```{r, echo=FALSE, results='asis'}
-pretty_print_all_tables(processed_validation_results)
-```
+`r do.call(htmltools::tagList, all_widgets)`

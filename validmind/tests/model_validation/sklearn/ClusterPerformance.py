@@ -79,7 +79,6 @@ class ClusterPerformance(Metric):
 
         results = []
         for metric_name, metric_fcn in self.clustering_metrics.items():
-
             for sample in samples:
                 if metric_name == "Silhouette Coefficient":
                     train_value = metric_fcn(

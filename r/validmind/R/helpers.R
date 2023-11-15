@@ -113,7 +113,6 @@ save_model <- function(model) {
 #'
 #' @param plotly_figure The result returned from summarize_result()
 #'
-#' @importFrom purrr imap
 #' @importFrom plotly plotly_build
 #'
 #' @export
@@ -148,7 +147,7 @@ process_result <- function(results) {
     overall_result[[suite$section_id]] <- list()
 
     # Grab the individual test
-    print(glue("Test Suite Results: {suite$section_id}\n"))
+    # print(glue("Test Suite Results: {suite$section_id}\n"))
 
     # Get path to temporary directory
     tmp_dir <- tempdir()
@@ -156,7 +155,7 @@ process_result <- function(results) {
     # Process every result in that particular suite
     for (full_result in suite$tests) {
       if (!("title" %in% names(full_result))) full_result$title <- full_result$name
-      print(full_result$title)
+      # print(full_result$title)
 
       overall_result[[suite$section_id]][[full_result$title]] <- list()
 
@@ -166,39 +165,44 @@ process_result <- function(results) {
       result_tables <- list()
 
       result <- full_result$result
+      description <- result$result_metadata[[1]]$text
 
       # Summarize the tables
       if ("metric" %in% names(result)) {
         if (!is.null(result$metric$summary)) {
           table_res <- result$metric$summary$results
           for (tbl in table_res) {
-            result_tables[[length(result_tables) + 1]] <- bind_rows(tbl$data)
+            try({
+              result_tables[[length(result_tables) + 1]] <- bind_rows(tbl$data)
+            }, silent = TRUE)
           }
         }
       }
 
       # Process and bind together all the summarized tabular results
       if ("test_results" %in% names(result)) {
-        table_res <- result$test_results$results
+        try({
+          table_res <- result$test_results$results
 
-        full_table <- list()
-        for (res in table_res) {
-          my_tbl <- try({
-            bind_rows(c(list("Column" = res$column), res$values))
-          })
+          full_table <- list()
+          for (res in table_res) {
+              my_tbl <- try({
+                bind_rows(c(list("Column" = res$column), res$values))
+              }, silent = TRUE)
 
-          if (inherits(my_tbl, "try-error")) {
-            my_tbl <- bind_rows(res$values)
+              if (inherits(my_tbl, "try-error")) {
+                my_tbl <- bind_rows(res$values)
+              }
+
+              full_table[[length(full_table) + 1]] <- my_tbl
           }
 
-          full_table[[length(full_table) + 1]] <- my_tbl
-        }
+          full_table <- bind_rows(full_table)
 
-        full_table <- bind_rows(full_table)
-
-        if (!is.null(full_table) && nrow(full_table) > 0) {
-          result_tables[[length(result_tables) + 1]] <- full_table
-        }
+          if (!is.null(full_table) && nrow(full_table) > 0) {
+            result_tables[[length(result_tables) + 1]] <- full_table
+          }
+        }, silent = TRUE)
       }
 
       # Check if we actually have figures to process
@@ -227,7 +231,8 @@ process_result <- function(results) {
         }
       }
 
-      final_result <- list(plotly_images = plotly_images,
+      final_result <- list(description = description,
+                           plotly_images = plotly_images,
                            matplotlib_images = matplotlib_images,
                            result_tables = result_tables)
 
@@ -238,63 +243,80 @@ process_result <- function(results) {
   return(overall_result)
 }
 
-#' @importFrom htmltools browsable HTML htmlDependencies
-#' @importFrom rmarkdown html_dependency_bootstrap
-#' @importFrom kableExtra html_dependency_kePrint html_dependency_lightable
-print_test <- function (x, suite, section, ...)
-{
-  view_html <- getOption("kableExtra_view_html", TRUE)
-  if (view_html & interactive()) {
-    dep <- list(rmarkdown::html_dependency_jquery(), rmarkdown::html_dependency_bootstrap(theme = "cosmo"),
-                html_dependency_kePrint(), html_dependency_lightable())
-    html_kable <- htmltools::browsable(htmltools::HTML(as.character(x),
-                                                       "<script type=\"text/x-mathjax-config\">MathJax.Hub.Config({tex2jax: {inlineMath: [[\"$\",\"$\"]]}})</script><script async src=\"https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>"))
-    htmlDependencies(html_kable) <- dep
-    class(html_kable) <- c(suite, section, "shiny.tag.list")
-    print(html_kable)
-  }
-  else {
-    cat(as.character(x))
-  }
-}
-
 #' Produce RMarkdown-compatible output of all results
 #'
 #' @param processed_results A list of processed result objects
 #'
-#' @importFrom knitr kable include_graphics knit_expand
-#' @importFrom kableExtra kable_styling
 #' @importFrom dplyr %>%
+#' @importFrom base64enc dataURI
+#' @importFrom htmltools div HTML tags
+#' @importFrom DT datatable
 #'
 #' @return A formatted rmarkdown
 #' @export
 display_report <- function(processed_results) {
-  out = NULL
+  all_widgets <- list()
+
   for (section in names(processed_results)) {
     test_suites <- processed_results[[section]]
     for (suite in names(test_suites)) {
-      child_path <- system.file("extdata", "child.Rmd", package="validmind")
-      out = c(out, knit_expand(child_path))
+      # Create a temporary file for the markdown content
+      temp_markdown_file <- tempfile(fileext = ".md")
+      orig_text <- processed_results[[section]][[suite]]$description
+      text_to_write <- glue(paste0("### {suite}\n\n", orig_text), "\n\n")
+      widget_list <- list()
+
+      if (is.character(orig_text)) {
+        # Write the markdown string to the temporary file
+        writeLines(text_to_write, temp_markdown_file)
+
+        # Convert markdown to HTML
+        temp_html_file <- tempfile(fileext = ".html")
+        rmarkdown::pandoc_convert(
+          input = temp_markdown_file,
+          to = "html",
+          output = temp_html_file
+        )
+
+        # Read the HTML content
+        html_content <- readLines(temp_html_file, warn = FALSE)
+        html_content <- paste(html_content, collapse = "\n")
+
+        # Create a single widget
+        widget_list <- list(description = div(style="color: black;", HTML(html_content)))
+      }
 
       for (t1 in processed_results[[section]][[suite]]$result_tables) {
-        res <- t1 %>%
-          kable(format = "html", table.attr = 'style="color: black;"') %>%
-          kable_styling()
-        # print_method_hw <- getS3method("print", "kableExtra")
-        print_test(res, suite, section)
+        widget_list[[length(widget_list) + 1]] <- datatable(t1)
       }
 
       for (p in processed_results[[section]][[suite]]$plotly_images) {
-        print(p)
+        widget_list[[length(widget_list) + 1]] <- p
       }
 
       res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
 
       if (!is.null(res)) {
-        print(include_graphics(res))
+        for (im in res) {
+          img_data <- dataURI(file = im, mime = "image/png")
+
+          img_tag <- tags$img(src = img_data,
+                              alt = "Description of image",
+                              width = "100%", height = "auto")
+
+          widget_list[[length(widget_list) + 1]] <- img_tag
+        }
+      }
+
+      if (length(widget_list) > 0) {
+        combined_widget <- do.call(htmltools::tagList, widget_list)
+        class(combined_widget) <- c(suite, section, "shiny.tag.list")
+
+        # print(combined_widget)
+        all_widgets[[length(all_widgets) + 1]] <- combined_widget
       }
     }
   }
 
-  return(out)
+  return(all_widgets)
 }
