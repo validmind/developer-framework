@@ -291,7 +291,7 @@ display_report <- function(processed_results) {
       }
 
       for (p in processed_results[[section]][[suite]]$plotly_images) {
-        res <- try(capture.output(print(p)), silent = TRUE)
+        res <- try(p, silent = TRUE)
 
         if (!inherits(res, "try-error")) {
           widget_list[[length(widget_list) + 1]] <- p
