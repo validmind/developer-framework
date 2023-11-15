@@ -291,7 +291,11 @@ display_report <- function(processed_results) {
       }
 
       for (p in processed_results[[section]][[suite]]$plotly_images) {
-        widget_list[[length(widget_list) + 1]] <- p
+        res <- try(capture.output(print(p)), silent = TRUE)
+
+        if (!inherits(res, "try-error")) {
+          widget_list[[length(widget_list) + 1]] <- p
+        }
       }
 
       res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
