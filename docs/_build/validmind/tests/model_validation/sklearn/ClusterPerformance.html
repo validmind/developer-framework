@@ -44,6 +44,9 @@
                                 <a class="function" href="#ClusterPerformance.summary">summary</a>
                         </li>
                         <li>
+                                <a class="function" href="#ClusterPerformance.metric_info">metric_info</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#ClusterPerformance.run">run</a>
                         </li>
                 </ul>
@@ -82,54 +85,51 @@
     </div>
     <a class="headerlink" href="#ClusterPerformance"></a>
     
-            <div class="docstring"><p>Evaluates clustering performance of an ML model using various metrics such as homogeneity, completeness, and
-silhouette coefficient.</p>
+            <div class="docstring"><p>Evaluates and compares a clustering model's performance on training and testing datasets using multiple defined
+metrics.</p>
 
-<p><strong>Purpose</strong>: The ClusterPerformance class measures various aspects of clustering performance for the provided model
-and dataset. These aspects include homogeneity, completeness, variance (V measure), adjusted rand index, adjusted
-mutual information, Fowlkes-Mallows scores, and silhouette coefficient. The primary motive of such measurements is
-to gauge the performance and the accuracy of a clustering-based machine learning model.</p>
+<p><strong>Purpose:</strong> This metric, ClusterPerformance, evaluates the performance of a clustering model on both the training
+and testing datasets. It assesses how well the model defines, forms, and distinguishes clusters of data.</p>
 
-<p><strong>Test Mechanism</strong>: The class accesses the model and training, testing datasets. It converts all the true and
-predicted values for training and testing to a similar data type. The measurements for the aforementioned
-performance aspects are then calculated for both the training and testing datasets using the respective
-scikit-learn metrics functions. If the metric is 'Silhouette Coefficient', the method metric is set as 'euclidean'.
-Eventually, a summary of all calculated values for each metric is returned.</p>
+<p><strong>Test Mechanism:</strong> The metric is applied by first predicting the clusters of the training and testing datasets
+using the clustering model. Next, performance metrics, defined in the method <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code>, are calculated
+against the true labels of the datasets. The results for each metric for both datasets are then collated and
+returned in a summarized table form listing each metric along with its corresponding train and test values.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<p><strong>Signs of High Risk:</strong></p>
 
 <ul>
-<li>Significant discrepancy between the performance metrics on the train and test sets, implying overfitting.</li>
-<li>Low value for Homogeneity Score indicating that all of the clusters contain only data points which are members of
-a single class.</li>
-<li>Low value for Completeness Score which implies all data points that are members of a given class are elements of
-the same cluster.</li>
-<li>Low value for V Measure, Adjusted Rand Index, Adjusted Mutual Information, which suggests poor-quality clustering.</li>
-<li>Fowlkes-Mallows scores close to 0 imply randomly labeled data.</li>
-<li>Negative Silhouette Coefficient indicates incorrect clustering.</li>
+<li>High discrepancy between the performance metric values on the training and testing datasets. This could signify
+problems such as overfitting or underfitting.</li>
+<li>Low performance metric values on the training and testing datasets. There might be a problem with the model
+itself or the chosen hyperparameters.</li>
+<li>If the model's performance deteriorates consistently across different sets of metrics, this may suggest a broader
+issue with the model or the dataset.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<p><strong>Strengths:</strong></p>
 
 <ul>
-<li>Provides multiple performance measurements for cluster-based models, offering comprehensive insight into the
-model.</li>
-<li>Utilizes the Scikit-learn metrics library which is reliable and robust.</li>
-<li>Metrics applied are independent of the absolute values of the labels: a permutation of the class or cluster label
-values won't change the score value in any way.</li>
+<li>Tests the model's performance on both the training and testing datasets, which helps to identify issues such as
+overfitting or underfitting.</li>
+<li>Allows for a broad range of performance metrics to be used, thus providing a comprehensive evaluation of the
+model's clustering capabilities.</li>
+<li>Returns a summarized table, which makes it easy to compare the model's performance across different metrics and
+datasets.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<p><strong>Limitations:</strong></p>
 
 <ul>
-<li>Some metrics (for example, Silhouette Coefficient) assume the clusters being measured are convex and isotropic,
-which is not always the case.</li>
-<li>Dependencies on external libraries leave the class vulnerable to any limitations in the external library (in this
-case, Scikit-learn).</li>
-<li>Cluster_perfomance_metrics method results are sensitive to the number of clusters and do not correct for chance.
-Hence, a model with more clusters might get a higher score.</li>
-<li>Certain metrics require the true labels to be known, which can be a problem since clustering is often used in the
-context of unsupervised learning where we don't have pre-defined labels.</li>
+<li>The method <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code> needs to be properly overridden in a subclass for this class to be used, and the
+metrics to be used must be manually defined.</li>
+<li>The performance metrics are calculated on predicted cluster labels, so the metric may not capture the model's
+performance well if the clusters are not well separated or if the model has difficulties with certain kinds of
+clusters.</li>
+<li>Doesn't consider the computational and time complexity of the model. While the model may perform well in terms of
+the performance metrics, it might be time or resource-intensive. This metric does not account for such scenarios.</li>
+<li>Because the comparison is binary (train and test), it might not capture scenarios where the performance changes
+drastically under different circumstances or categories within the dataset.</li>
 </ul>
 </div>
 
@@ -150,7 +150,7 @@ context of unsupervised learning where we don't have pre-defined labels.</li>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">cluser_performance_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">y_true_train</span>, </span><span class="param"><span class="n">y_pred_train</span>, </span><span class="param"><span class="n">y_true_test</span>, </span><span class="param"><span class="n">y_pred_test</span>, </span><span class="param"><span class="n">samples</span></span><span class="return-annotation">):</span></span>
+        <span class="name">cluser_performance_metrics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">y_true_train</span>,</span><span class="param">	<span class="n">y_pred_train</span>,</span><span class="param">	<span class="n">y_true_test</span>,</span><span class="param">	<span class="n">y_pred_test</span>,</span><span class="param">	<span class="n">samples</span>,</span><span class="param">	<span class="n">metric_info</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -172,6 +172,19 @@ context of unsupervised learning where we don't have pre-defined labels.</li>
             <div class="docstring"><p>Returns a summarized representation of the dataset split information</p>
 </div>
 
+
+                            </div>
+                            <div id="ClusterPerformance.metric_info" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">metric_info</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ClusterPerformance.metric_info"></a>
+    
+    
 
                             </div>
                             <div id="ClusterPerformance.run" class="classattr">
