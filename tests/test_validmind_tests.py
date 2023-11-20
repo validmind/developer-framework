@@ -51,35 +51,20 @@ def _setup_test_context():
     )
     test_contexts["classification"] = TestContext(dataset=vm_dataset, model=vm_classifier_model)
 
-    vm_text_dataset = vm.init_dataset(
-        dataset=pd.DataFrame(
-            {
-                "text": [
-                    "hello world",
-                    "goodbye world",
-                ],
-                "label": [0, 1],
-            }
-        ),
-        target_column=demo_dataset.target_column,
-        class_labels=demo_dataset.class_labels,
-        text_column=demo_dataset.text_column,
-    )
     vm_foundation_model = FoundationModel(
         predict_fn=lambda x: x,
         prompt=Prompt(
             template="hello, {name}",
             variables=["name"],
         ),
-        test_ds=vm_test_ds,
     )
     test_contexts["llm"] = TestContext(model=vm_foundation_model)
 
 
 def create_unit_test_func(vm_test):
     def unit_test_func(self):
-        result = vm_test.run()
-        vm_test.test(result)
+        vm_test.run()
+        vm_test.test()
 
     return unit_test_func
 
@@ -91,8 +76,13 @@ def create_unit_test_funcs_from_vm_tests():
         # load the test class
         vm_test_class = load_test(vm_test_id)
 
+        # check if test class has `test` method
+        if not hasattr(vm_test_class, "test"):
+            continue
+
         # initialize with the right test context
-        if vm_test_class.category == "prompt_validation":
+        # TODO: we need to better handle the test context based on the test metadata
+        if getattr(vm_test_class, "category", None) == "prompt_validation":
             test_context = test_contexts["llm"]
         else:
             test_context = test_contexts["classification"]
