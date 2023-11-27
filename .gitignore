@@ -192,3 +192,6 @@ notebooks/llm/datasets/*.jsonl
 
 # Gradio
 gradio_cached_examples
+
+# scratch notebooks
+notebooks/scratch/
