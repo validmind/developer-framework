@@ -1,4 +1,4 @@
-#' Retrieve a validmind (vm) object using reticulate
+#' Retrieve a validmind (vm) connection object using reticulate
 #'
 #' @param api_key The ValidMind API key
 #' @param api_secret The ValidMind API secret
@@ -16,33 +16,27 @@ vm <- function(api_key, api_secret, project, python_version,
   vm <- import("validmind")
 
   vm$init(
-    api_host=api_host,
-    api_key=api_key,
-    api_secret=api_secret,
-    project=project
+    api_host = api_host,
+    api_key = api_key,
+    api_secret = api_secret,
+    project = project
   )
 
   return(vm)
 }
 
-#' Print a summary table
-#'
-#' @importFrom glue glue
+#' Print a summary table of the ValidMind results
 #'
 #' @param result_summary A summary of the results
 #'
 #' @importFrom glue glue
-#'
-#' @export
 print_summary_tables <- function(result_summary) {
-  return(result_summary$serialize(as_df=TRUE))
+  return(result_summary$serialize(as_df = TRUE))
 }
 
 #' Provide a summarization of a single metric result
 #'
-#' @param result The result object
-#'
-#' @export
+#' @param result The ValidMind result object
 summarize_metric_result <- function(result) {
   if (result$result_id == "dataset_description") {
     return(NULL)
@@ -55,9 +49,7 @@ summarize_metric_result <- function(result) {
 
 #' Provide a summarization of a single test result
 #'
-#' @param result The result object
-#'
-#' @export
+#' @param result The ValidMind result object
 summarize_test_result <- function(result) {
   if (result$result_id == "dataset_description") {
     return(NULL)
@@ -68,11 +60,9 @@ summarize_test_result <- function(result) {
   return(metric$summary)
 }
 
-#' Provide a summarization of a single result
+#' Provide a summarization of a single result (test or metric)
 #'
-#' @param result The result object
-#'
-#' @export
+#' @param result The ValidMind result object
 summarize_result <- function(result) {
   result_class <- class(result)[[1]]
 
@@ -88,10 +78,9 @@ summarize_result <- function(result) {
 
 #' Save a model to a given file path
 #'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
+#' @return The file path of the saved model
 #'
-#' @param model The model object
+#' @param model The R model object
 #'
 #' @export
 #'
@@ -99,19 +88,19 @@ summarize_result <- function(result) {
 #' my_model <- lm(Sepal.Width ~ Sepal.Length, data = iris)
 #' save_model(my_model)
 save_model <- function(model) {
-    random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
-    file_path <- paste0("/tmp/", random_name, ".RData")
-    save(model, file = file_path)
+  random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
+  file_path <- paste0("/tmp/", random_name, ".RData")
+  save(model, file = file_path)
 
-    return(file_path)
+  return(file_path)
 }
 
 
-#' From
+#' Build an R Plotly figure from a JSON representation
 #'
-#' @return The HTML required for nice display of multiple output tables
+#' @return An R Plotly object
 #'
-#' @param plotly_figure The result returned from summarize_result()
+#' @param plotly_figure A nested list containing plotly elements
 #'
 #' @importFrom plotly plotly_build
 #'
@@ -127,9 +116,9 @@ build_r_plotly <- function(plotly_figure) {
   return(p)
 }
 
-#' Provide a summarization of all results
+#' Process a set of ValidMind results into parseable data
 #'
-#' @param results A list of result objects
+#' @param results A list of ValidMind result objects
 #'
 #' @importFrom dplyr bind_rows
 #'
@@ -137,7 +126,6 @@ build_r_plotly <- function(plotly_figure) {
 #'    element of the character vector. Missing string have missing length.
 #' @export
 process_result <- function(results) {
-
   overall_result <- list()
 
   # Sequentially process every result in the result set
@@ -172,51 +160,57 @@ process_result <- function(results) {
         if (!is.null(result$metric$summary)) {
           table_res <- result$metric$summary$results
           for (tbl in table_res) {
-            try({
-              result_tables[[length(result_tables) + 1]] <- bind_rows(tbl$data)
-            }, silent = TRUE)
+            try(
+              {
+                result_tables[[length(result_tables) + 1]] <- bind_rows(tbl$data)
+              },
+              silent = TRUE
+            )
           }
         }
       }
 
       # Process and bind together all the summarized tabular results
       if ("test_results" %in% names(result)) {
-        try({
-          table_res <- result$test_results$results
+        try(
+          {
+            table_res <- result$test_results$results
 
-          full_table <- list()
-          for (res in table_res) {
-              my_tbl <- try({
-                bind_rows(c(list("Column" = res$column), res$values))
-              }, silent = TRUE)
+            full_table <- list()
+            for (res in table_res) {
+              my_tbl <- try(
+                {
+                  bind_rows(c(list("Column" = res$column), res$values))
+                },
+                silent = TRUE
+              )
 
               if (inherits(my_tbl, "try-error")) {
                 my_tbl <- bind_rows(res$values)
               }
 
               full_table[[length(full_table) + 1]] <- my_tbl
-          }
+            }
 
-          full_table <- bind_rows(full_table)
+            full_table <- bind_rows(full_table)
 
-          if (!is.null(full_table) && nrow(full_table) > 0) {
-            result_tables[[length(result_tables) + 1]] <- full_table
-          }
-        }, silent = TRUE)
+            if (!is.null(full_table) && nrow(full_table) > 0) {
+              result_tables[[length(result_tables) + 1]] <- full_table
+            }
+          },
+          silent = TRUE
+        )
       }
 
       # Check if we actually have figures to process
       if ("figures" %in% names(result)) {
-
         # Process each figure one by one
         for (figure in result$figures) {
-
           # First check if it's a plotly figure
           if (figure$is_plotly_figure()) {
             plotly_images[[length(plotly_images) + 1]] <- build_r_plotly(figure)
-          # Otherwise, it's a matplotlib figure
+            # Otherwise, it's a matplotlib figure
           } else if (figure$is_matplotlib_figure()) {
-
             # Original name
             orig_name <- figure$metadata$`_name`
             full_path <- file.path(tmp_dir, paste0(orig_name, ".png"))
@@ -231,10 +225,12 @@ process_result <- function(results) {
         }
       }
 
-      final_result <- list(description = description,
-                           plotly_images = plotly_images,
-                           matplotlib_images = matplotlib_images,
-                           result_tables = result_tables)
+      final_result <- list(
+        description = description,
+        plotly_images = plotly_images,
+        matplotlib_images = matplotlib_images,
+        result_tables = result_tables
+      )
 
       overall_result[[suite$section_id]][[full_result$title]] <- final_result
     }
@@ -252,7 +248,7 @@ process_result <- function(results) {
 #' @importFrom htmltools div HTML tags
 #' @importFrom DT datatable
 #'
-#' @return A formatted rmarkdown
+#' @return A formatted list of RMarkdown widgets
 #' @export
 display_report <- function(processed_results) {
   all_widgets <- list()
@@ -283,7 +279,7 @@ display_report <- function(processed_results) {
         html_content <- paste(html_content, collapse = "\n")
 
         # Create a single widget
-        widget_list <- list(description = div(style="color: black;", HTML(html_content)))
+        widget_list <- list(description = div(style = "color: black;", HTML(html_content)))
       }
 
       for (t1 in processed_results[[section]][[suite]]$result_tables) {
@@ -298,15 +294,17 @@ display_report <- function(processed_results) {
         }
       }
 
-      res = unlist(processed_results[[section]][[suite]]$matplotlib_images)
+      res <- unlist(processed_results[[section]][[suite]]$matplotlib_images)
 
       if (!is.null(res)) {
         for (im in res) {
           img_data <- dataURI(file = im, mime = "image/png")
 
-          img_tag <- tags$img(src = img_data,
-                              alt = "Description of image",
-                              width = "100%", height = "auto")
+          img_tag <- tags$img(
+            src = img_data,
+            alt = "Description of image",
+            width = "100%", height = "auto"
+          )
 
           widget_list[[length(widget_list) + 1]] <- img_tag
         }

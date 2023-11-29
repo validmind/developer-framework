@@ -2,17 +2,17 @@
 % Please edit documentation in R/helpers.R
 \name{process_result}
 \alias{process_result}
-\title{Provide a summarization of all results}
+\title{Process a set of ValidMind results into parseable data}
 \usage{
 process_result(results)
 }
 \arguments{
-\item{results}{A list of result objects}
+\item{results}{A list of ValidMind result objects}
 }
 \value{
 A numeric vector giving number of characters (code points) in each
    element of the character vector. Missing string have missing length.
 }
 \description{
-Provide a summarization of all results
+Process a set of ValidMind results into parseable data
 }

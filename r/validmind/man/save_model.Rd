@@ -7,11 +7,10 @@
 save_model(model)
 }
 \arguments{
-\item{model}{The model object}
+\item{model}{The R model object}
 }
 \value{
-A numeric vector giving number of characters (code points) in each
-   element of the character vector. Missing string have missing length.
+The file path of the saved model
 }
 \description{
 Save a model to a given file path

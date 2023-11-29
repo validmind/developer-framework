@@ -7,7 +7,7 @@
 summarize_metric_result(result)
 }
 \arguments{
-\item{result}{The result object}
+\item{result}{The ValidMind result object}
 }
 \description{
 Provide a summarization of a single metric result

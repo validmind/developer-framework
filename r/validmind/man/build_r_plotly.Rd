@@ -2,16 +2,16 @@
 % Please edit documentation in R/helpers.R
 \name{build_r_plotly}
 \alias{build_r_plotly}
-\title{From}
+\title{Build an R Plotly figure from a JSON representation}
 \usage{
 build_r_plotly(plotly_figure)
 }
 \arguments{
-\item{plotly_figure}{The result returned from summarize_result()}
+\item{plotly_figure}{A nested list containing plotly elements}
 }
 \value{
-The HTML required for nice display of multiple output tables
+An R Plotly object
 }
 \description{
-From
+Build an R Plotly figure from a JSON representation
 }

@@ -10,7 +10,7 @@ display_report(processed_results)
 \item{processed_results}{A list of processed result objects}
 }
 \value{
-A formatted rmarkdown
+A formatted list of RMarkdown widgets
 }
 \description{
 Produce RMarkdown-compatible output of all results

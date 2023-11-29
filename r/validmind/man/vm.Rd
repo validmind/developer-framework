@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{vm}
 \alias{vm}
-\title{Retrieve a validmind (vm) object using reticulate}
+\title{Retrieve a validmind (vm) connection object using reticulate}
 \usage{
 vm(
   api_key,
@@ -24,5 +24,5 @@ vm(
 \item{api_host}{The ValidMind host, defaulting to local}
 }
 \description{
-Retrieve a validmind (vm) object using reticulate
+Retrieve a validmind (vm) connection object using reticulate
 }

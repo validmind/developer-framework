@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{print_summary_tables}
 \alias{print_summary_tables}
-\title{Print a summary table}
+\title{Print a summary table of the ValidMind results}
 \usage{
 print_summary_tables(result_summary)
 }
@@ -10,5 +10,5 @@ print_summary_tables(result_summary)
 \item{result_summary}{A summary of the results}
 }
 \description{
-Print a summary table
+Print a summary table of the ValidMind results
 }

@@ -2,13 +2,13 @@
 % Please edit documentation in R/helpers.R
 \name{summarize_result}
 \alias{summarize_result}
-\title{Provide a summarization of a single result}
+\title{Provide a summarization of a single result (test or metric)}
 \usage{
 summarize_result(result)
 }
 \arguments{
-\item{result}{The result object}
+\item{result}{The ValidMind result object}
 }
 \description{
-Provide a summarization of a single result
+Provide a summarization of a single result (test or metric)
 }
