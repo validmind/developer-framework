@@ -223,7 +223,7 @@ class LocalTestProvider:
 
             parent_folder = os.path.dirname(file_path)
             if parent_folder not in sys.path:
-                sys.path.insert(0, os.path.dirname(parent_folder))
+                sys.path.append(os.path.dirname(parent_folder))
 
             try:
                 module = importlib.import_module(
