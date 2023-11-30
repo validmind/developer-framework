@@ -227,7 +227,7 @@ class LocalTestProvider:
 
             try:
                 module = importlib.import_module(
-                    f"{os.path.basename(parent_folder)}.{test_id}"
+                    f"{os.path.basename(parent_folder)}.{test_id.split('.')[-1]}"
                 )
             except Exception as e:
                 # error will be handled/re-raised by `load_test` func
