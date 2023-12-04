@@ -65,7 +65,10 @@ def get_logger(name="validmind", log_level=None):
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level or _get_log_level())
-    logger.addHandler(handler)
+
+    # Check if the handler is already added
+    if not any(isinstance(h, type(handler)) for h in logger.handlers):
+        logger.addHandler(handler)
 
     return logger
 
