@@ -147,3 +147,23 @@ class Duplicates(ThresholdTest):
             )
 
         return self.cache_results(results, passed=all([r.passed for r in results]))
+
+    def test(self):
+        # Check that result object is not None
+        assert self.result is not None
+        # Check that we have a list of test results
+        assert isinstance(self.result.test_results.results, list)
+        # Check if the 'passed' variable in results reflects the test correctly
+        for result in self.result.test_results.results[1:]:
+            assert result.passed == (
+                result.values["n_duplicates"] < self.params["min_threshold"]
+            )
+
+        # Check that the number of results is equal to the number of primary keys tested, plus one for dataset duplicates
+        primary_keys_count = sum(
+            "primary_key" in field.get("type_options", {})
+            and field["type_options"]["primary_key"]
+            for field in self.dataset.fields
+        )
+        expected_results_count = 1 + primary_keys_count
+        assert len(self.result.test_results.results) == expected_results_count

@@ -163,3 +163,12 @@ class ClassImbalance(ThresholdTest):
                 )
             ],
         )
+
+    def test(self):
+        """Unit test for ClassImbalance"""
+        assert self.result is not None
+
+        assert self.result.test_results is not None
+        assert self.result.test_results.passed
+
+        assert self.result.figures is not None

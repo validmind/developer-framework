@@ -112,3 +112,17 @@ class MinimumAccuracy(ThresholdTest):
         ]
 
         return self.cache_results(results, passed=all([r.passed for r in results]))
+
+    def test(self):
+        # Test that there is a result and it's not None
+        assert self.result is not None
+        # Test that results are contained in a list
+        assert isinstance(self.result.test_results.results, list)
+        # Verify that there is exactly one result
+        assert len(self.result.test_results.results) == 1
+        # Extract the single result for clarity
+        test_result = self.result.test_results.results[0]
+        # Check the 'passed' condition logic against the test outcome
+        assert test_result.passed == (
+            test_result.values["score"] >= test_result.values["threshold"]
+        )

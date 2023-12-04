@@ -43,8 +43,8 @@ __test_classes = None
 __test_providers: Dict[str, ExternalTestProvider] = {}
 
 
-def _test_description(test_class):
-    if len(test_class.__doc__.split("\n")) > 5:
+def _test_description(test_class, truncate=True):
+    if truncate and len(test_class.__doc__.split("\n")) > 5:
         return test_class.__doc__.strip().split("\n")[0] + "..."
 
     return test_class.__doc__
@@ -59,14 +59,14 @@ def _load_tests(test_ids):
             __test_classes[test_id] = load_test(test_id)
 
 
-def _pretty_list_tests(tests):
+def _pretty_list_tests(tests, truncate=True):
     _load_tests(tests)
 
     table = [
         {
             "Test Type": __test_classes[test_id].test_type,
             "Name": test_id_to_name(test_id),
-            "Description": _test_description(__test_classes[test_id]),
+            "Description": _test_description(__test_classes[test_id], truncate),
             "ID": test_id,
         }
         for test_id in tests
@@ -75,7 +75,7 @@ def _pretty_list_tests(tests):
     return format_dataframe(pd.DataFrame(table))
 
 
-def list_tests(filter=None, task=None, tags=None, pretty=True):
+def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
     """List all tests in the tests directory.
 
     Args:
@@ -87,6 +87,8 @@ def list_tests(filter=None, task=None, tags=None, pretty=True):
             narrow down matches from the filter string. Defaults to None.
         pretty (bool, optional): If True, returns a pandas DataFrame with a
             formatted table. Defaults to False.
+        truncate (bool, optional): If True, truncates the test description to the first
+            line. Defaults to True. (only used if pretty=True)
 
     Returns:
         list or pandas.DataFrame: A list of all tests or a formatted table.
@@ -162,7 +164,7 @@ def list_tests(filter=None, task=None, tags=None, pretty=True):
         ]
 
     if pretty:
-        return _pretty_list_tests(tests)
+        return _pretty_list_tests(tests, truncate=truncate)
 
     return tests
 
