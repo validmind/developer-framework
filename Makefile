@@ -14,7 +14,7 @@ lint:
 	poetry run flake8 validmind
 
 install:
-	poetry install
+	poetry install --all-extras
 	poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
 
 # Quick target to run all checks
