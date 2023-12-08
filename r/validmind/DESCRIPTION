@@ -8,7 +8,7 @@ Description: Deploy, execute, and analyze the results of models hosted on the
   ValidMind platform. This package interfaces with the Python client library
   in order to allow advenced diagnostics and insight into trained models
   all from an R environment.
-License: MIT + file LICENSE
+License: AGPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/validmind/developer-framework
