@@ -51,7 +51,6 @@ class RegressionErrors(Metric):
     }
 
     def summary(self, raw_results):
-
         """
         Returns a summarized representation of the dataset split information
         """

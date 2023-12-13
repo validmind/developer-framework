@@ -61,7 +61,6 @@ class IsolationForestOutliers(Metric):
     required_inputs = ["dataset"]
 
     def run(self):
-
         if self.params["features_columns"] is None:
             features_list = self.dataset.get_features_columns()
         else:

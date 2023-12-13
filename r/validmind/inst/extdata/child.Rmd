@@ -1,0 +1,16 @@
+{{suite}}
+
+```{r {{suite}}1, echo=FALSE}
+tagList(processed_results[['{{section}}']][['{{suite}}']]$plotly_images)
+```
+
+```{r {{suite}}2, echo=FALSE, results='asis'}
+for (m1 in processed_results[['{{section}}']][['{{suite}}']]$matplotlib_images) {
+  cat(sprintf("![](%s)\n\n", m1))
+  cat("\n")
+}
+
+for (t1 in processed_results[['{{section}}']][['{{suite}}']]$result_tables) {
+  cat(t1 %>% kable %>% kable_styling())
+}
+```

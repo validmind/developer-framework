@@ -25,7 +25,6 @@ def id_to_name(id: str) -> str:
 
 @dataclass
 class TestSuiteSectionSummary:
-
     tests: List[TestSuiteTest]
     description: Optional[str] = None
 
@@ -68,7 +67,6 @@ class TestSuiteSectionSummary:
 
 @dataclass
 class TestSuiteSummary:
-
     title: str
     description: str
     sections: List[TestSuiteSection]

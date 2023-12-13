@@ -77,7 +77,6 @@ class StopWords(ThresholdTest):
     }
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
-
         # Create a DataFrame from the data
         df = pd.DataFrame(results[0].values, columns=["Word", "Percentage"])
 
