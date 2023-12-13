@@ -1,26 +1,17 @@
-# Validmind R Package
-
-This package is under **heavy development** and should not be relied on for production use at this point!
+# ValidMind R Package
 
 ## Installation
 
-1. Set your working directory to the root folder of the r package
-2. Install the `devtools` package with the following command:
+You can install ValidMind from CRAN:
 
 ```r
-install.packages("devtools")
+install.packages("validmind")
 ```
 
-3. Now install `validmind` with the following command:
+You can also install the package from GitHub using the `devtools` package:
 
 ```r
-devtools::install()
-```
-
-4. Confirm the installation was successful with:
-
-```r
-library(validmind)
+devtools::install_github("validmind/developer-framework", subdir="r/validmind")
 ```
 
 ## Quick Start
@@ -39,4 +30,4 @@ vm_r <- vm(
 
 ## Fleshed out Example
 
-Coming soon...
+Please see the `notebooks/code-sharing/r` folder for examples of how to use!
