@@ -309,3 +309,25 @@ class RobustnessDiagnosis(ThresholdTest):
 
         # fig, ax = plt.subplots()
         return fig, df
+
+    def test(self):
+        """Unit Test for Robustness Diagnosis Threshold Test"""
+        # Verify the result object is present
+        assert self.result is not None
+
+        # Verify test results and their type
+        assert isinstance(self.result.test_results.results, list)
+
+        # Check for presence and validity of 'values' dict and 'passed' flag in each result
+        for test_result in self.result.test_results.results:
+            assert "values" in test_result.__dict__
+            assert "passed" in test_result.__dict__
+            assert isinstance(test_result.values, dict)
+            assert "records" in test_result.values
+
+            # For unperturbed training dataset, accuracy should be present
+            if (
+                test_result.column == self.params["features_columns"]
+                and 0.0 in test_result.values["records"][0]["Perturbation Size"]
+            ):
+                assert "accuracy" in test_result.values["records"][0]

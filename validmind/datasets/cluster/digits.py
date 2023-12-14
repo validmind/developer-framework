@@ -89,7 +89,6 @@ cluster_labels = {
 
 
 def load_data(full_dataset=False):
-
     digits_data = load_digits(as_frame=True)
     df = digits_data.frame
     return df

@@ -114,3 +114,12 @@ class DatasetSplit(Metric):
         results["total_size"] = total_size
 
         return self.cache_results(results)
+
+    def test(self):
+        """Unit Test for DatasetSplit Metric"""
+        assert self.result is not None
+
+        assert self.result.metric is not None
+        assert type(self.result.metric.value) == dict
+
+        assert self.result.figures is None

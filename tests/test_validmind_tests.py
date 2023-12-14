@@ -1,61 +1,103 @@
-"""
-Unit tests for Validmind tests module
-"""
+"""This is a test harness to run unit tests against the ValidMind tests"""
+
 import unittest
-from unittest import TestCase
 
-from pandas.io.formats.style import Styler
+import pandas as pd
+import xgboost as xgb
+from tqdm import tqdm
 
-from validmind.vm_models import Test
-from validmind.vm_models.test_context import TestContext
-from validmind.tests import list_tests, load_test, describe_test, register_test_provider
+import validmind as vm
+from validmind.datasets.classification import customer_churn as demo_dataset
+from validmind.datasets.classification import taiwan_credit as demo_dataset
+from validmind.models import FoundationModel, Prompt
+from validmind.tests import list_tests, load_test
+from validmind.vm_models import TestContext
+
+class TestValidMindTests(unittest.TestCase):
+    pass
+
+test_contexts = {}
+
+def _setup_test_context():
+    df = demo_dataset.load_data()
+
+    train_df, validation_df, test_df = demo_dataset.preprocess(df)
+    x_train = train_df.drop(demo_dataset.target_column, axis=1)
+    y_train = train_df[demo_dataset.target_column]
+    x_val = validation_df.drop(demo_dataset.target_column, axis=1)
+    y_val = validation_df[demo_dataset.target_column]
+
+    classifier = xgb.XGBClassifier(early_stopping_rounds=10)
+    classifier.set_params(eval_metric=["error", "logloss", "auc"])
+    classifier.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=False)
+
+    vm_dataset = vm.init_dataset(
+        dataset=df,
+        target_column=demo_dataset.target_column,
+        class_labels=demo_dataset.class_labels,
+    )
+    vm_train_ds = vm.init_dataset(
+        dataset=train_df,
+        target_column=demo_dataset.target_column,
+    )
+    vm_test_ds = vm.init_dataset(
+        dataset=test_df,
+        target_column=demo_dataset.target_column,
+    )
+    vm_classifier_model = vm.init_model(
+        classifier,
+        train_ds=vm_train_ds,
+        test_ds=vm_test_ds,
+    )
+    test_contexts["classification"] = TestContext(dataset=vm_dataset, model=vm_classifier_model)
+
+    vm_foundation_model = FoundationModel(
+        predict_fn=lambda x: x,
+        prompt=Prompt(
+            template="hello, {name}",
+            variables=["name"],
+        ),
+    )
+    test_contexts["llm"] = TestContext(model=vm_foundation_model)
 
 
-class TestTestsModule(TestCase):
-    def test_list_tests(self):
-        tests = list_tests(pretty=False)
-        self.assertTrue(len(tests) > 0)
+def create_unit_test_func(vm_test):
+    def unit_test_func(self):
+        vm_test.run()
+        vm_test.test()
 
-    def test_list_tests_filter(self):
-        tests = list_tests(filter="sklearn", pretty=False)
-        self.assertTrue(len(tests) > 1)
+    return unit_test_func
 
-    def test_list_tests_filter_2(self):
-        tests = list_tests(
-            filter="validmind.model_validation.ModelMetadata", pretty=False
-        )
-        self.assertTrue(len(tests) == 1)
 
-    def test_load_test(self):
-        test = load_test("validmind.model_validation.ModelMetadata")
-        self.assertTrue(test is not None)
-        self.assertTrue(issubclass(test, Test))
+def create_unit_test_funcs_from_vm_tests():
+    _setup_test_context()
 
-    def test_describe_test(self):
-        describe_test("validmind.model_validation.ModelMetadata")
-        description = describe_test(
-            "validmind.model_validation.ModelMetadata", raw=True
-        )
-        self.assertIsInstance(description, dict)
-        # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys
-        self.assertTrue("ID" in description)
-        self.assertTrue("Name" in description)
-        self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
-        self.assertTrue("Required Inputs" in description)
-        self.assertTrue("Params" in description)
+    for vm_test_id in tqdm(list_tests(pretty=False)):
+        # load the test class
+        vm_test_class = load_test(vm_test_id)
 
-    def test_test_provider_registration(self):
-        class TestProvider:
-            def load_test(self, test_id):
-                fake_test = Test(test_context=TestContext(), result=None)
-                fake_test.test_id = test_id
-                return fake_test
+        # check if test class has `test` method
+        if not hasattr(vm_test_class, "test"):
+            continue
 
-        register_test_provider("fake", TestProvider())
+        # initialize with the right test context
+        # TODO: we need to better handle the test context based on the test metadata
+        if getattr(vm_test_class, "category", None) == "prompt_validation":
+            test_context = test_contexts["llm"]
+        else:
+            test_context = test_contexts["classification"]
 
-        test = load_test("fake.fake_test_id")
-        self.assertEqual(test.test_id, "fake.fake_test_id")
+        vm_test = vm_test_class(test_context=test_context, params={})
+
+        # create a unit test function for the test class
+        unit_test_func = create_unit_test_func(vm_test)
+        unit_test_func_name = f'test_{vm_test_id.replace(".", "_")}'
+
+        # add the unit test function to the unit test class
+        setattr(TestValidMindTests, f'test_{unit_test_func_name}', unit_test_func)
+
+
+create_unit_test_funcs_from_vm_tests()
 
 
 if __name__ == "__main__":

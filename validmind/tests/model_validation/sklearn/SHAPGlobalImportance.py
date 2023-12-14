@@ -147,3 +147,16 @@ class SHAPGlobalImportance(Metric):
         warnings.filterwarnings("default", category=UserWarning)
 
         return self.cache_results(figures=figures)
+
+    def test(self):
+        """Unit Test for SHAP Global Importance Metric"""
+        # Verify that the result object is not None
+        assert self.result is not None
+
+        # Verify that there are exactly two figures in the figures list
+        assert len(self.result.figures) == 2
+
+        # Verify that each figure is an instance of Figure and has the correct metadata type
+        for fig_num, type_ in enumerate(["mean", "summary"], start=1):
+            assert isinstance(self.result.figures[fig_num - 1], Figure)
+            assert self.result.figures[fig_num - 1].metadata["type"] == type_

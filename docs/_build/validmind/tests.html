@@ -107,7 +107,7 @@
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">tags</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">tags</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">truncate</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -126,6 +126,8 @@ narrow down matches from the filter string. Defaults to None.</li>
 narrow down matches from the filter string. Defaults to None.</li>
 <li><strong>pretty (bool, optional):</strong>  If True, returns a pandas DataFrame with a
 formatted table. Defaults to False.</li>
+<li><strong>truncate (bool, optional):</strong>  If True, truncates the test description to the first
+line. Defaults to True. (only used if pretty=True)</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -310,7 +312,33 @@ dynamically load and execute the tests from those files.</p>
     </div>
     <a class="headerlink" href="#LocalTestProvider"></a>
     
-            <div class="docstring"><p>A class used to load and execute tests from local Python files.</p>
+            <div class="docstring"><p>Test providers in ValidMind are responsible for loading tests from different sources,
+such as local files, databases, or remote services. The LocalTestProvider specifically
+loads tests from the local file system.</p>
+
+<p>To use the LocalTestProvider, you need to provide the root_folder, which is the
+root directory for local tests. The test_id is a combination of the namespace (set
+when registering the test provider) and the path to the test class module, where
+slashes are replaced by dots and the .py extension is left out.</p>
+
+<p>Example usage:</p>
+
+<pre><code># Create an instance of LocalTestProvider with the root folder
+test_provider = LocalTestProvider("/path/to/tests/folder")
+
+# Register the test provider with a namespace
+register_test_provider("my_namespace", test_provider)
+
+# Load a test using the test_id (namespace + path to test class module)
+test = test_provider.load_test("my_namespace.my_test_class")
+# full path to the test class module is /path/to/tests/folder/my_test_class.py
+</code></pre>
+
+<h6 id="attributes">Attributes:</h6>
+
+<ul>
+<li><strong>root_folder (str):</strong>  The root directory for local tests.</li>
+</ul>
 </div>
 
 
@@ -323,7 +351,8 @@ dynamically load and execute the tests from those files.</p>
     </div>
     <a class="headerlink" href="#LocalTestProvider.__init__"></a>
     
-            <div class="docstring"><p>Initialize the LocalTestProvider with the given root_folder.</p>
+            <div class="docstring"><p>Initialize the LocalTestProvider with the given root_folder
+(see class docstring for details)</p>
 
 <h6 id="arguments">Arguments:</h6>
 
@@ -349,8 +378,8 @@ dynamically load and execute the tests from those files.</p>
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>test_id (str):</strong>  The identifier of the test. This corresponds to the</li>
-<li>relative path of the python file from the root folder, with slashes replaced by dots.</li>
+<li><strong>test_id (str):</strong>  The identifier of the test. This corresponds to the relative</li>
+<li>path of the python file from the root folder, with slashes replaced by dots</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>

@@ -2,10 +2,8 @@ from validmind.test_suites import register_test_suite
 from validmind.vm_models import TestSuite
 
 from validmind.test_suites import (
-    RegressionModelDescription,
-    RegressionModelsEvaluation,
     TabularDatasetDescription,
-    TabularDataQuality,
+    RegressionMetrics
 )
 
 
@@ -36,19 +34,13 @@ class CustomTabularDataset(TestSuite):
             "section_id": TabularDataQualityExtra.suite_id,
             "section_description": TabularDataQualityExtra.__doc__,
             "section_tests": TabularDataQualityExtra.tests,
-        }
+        },
         {
             "section_id": TabularDatasetDescription.suite_id,
             "section_description": TabularDatasetDescription.__doc__,
             "section_tests": TabularDatasetDescription.tests,
         }
-        {
-            "section_id": TabularDataQualityExtra.suite_id,
-            "section_description": TabularDataQualityExtra.__doc__,
-            "section_tests": TabularDataQualityExtra.tests,
-        }
     ]
-
 
 class RegressionTestsExtra(TestSuite):
     """
@@ -69,20 +61,15 @@ class RegressionSuite(TestSuite):
     suite_id = "custom_regression_suite"
     tests = [
         {
-            "section_id": RegressionTestsExtra.suite_id,
-            "section_description": RegressionTestsExtra.__doc__,
-            "section_tests": RegressionTestsExtra.tests,
+            "section_id": RegressionMetrics.suite_id,
+            "section_description": RegressionMetrics.__doc__,
+            "section_tests": RegressionMetrics.tests,
         },
         {
-            "section_id": RegressionModelDescription.suite_id,
-            "section_description": RegressionModelDescription.__doc__,
-            "section_tests": RegressionModelDescription.tests,
-        },
-        {
-            "section_id": RegressionModelsEvaluation.suite_id,
-            "section_description": RegressionModelsEvaluation.__doc__,
-            "section_tests": RegressionModelsEvaluation.tests,
-        },
+            "section_id": TabularDatasetDescription.suite_id,
+            "section_description": TabularDatasetDescription.__doc__,
+            "section_tests": TabularDatasetDescription.tests,
+        }
     ]
 
 

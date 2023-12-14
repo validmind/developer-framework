@@ -188,7 +188,18 @@ lending_club_loan_data_*
 
 # Pickle files
 *.pkl
+
 notebooks/llm/datasets/*.jsonl
 
 # Gradio
 gradio_cached_examples
+
+# R
+r/validmind/creds.txt
+r/validmind/notebooks/code_sharing/r/*.html
+r/validmind/README.html
+r/validmind/.Rproj.user
+.Rproj.user
+
+# scratch notebooks
+notebooks/scratch/

@@ -182,7 +182,6 @@ class TextDescription(Metric):
 
     # Function to plot scatter plots for specified combinations using Plotly
     def text_description_scatter_plot(self, df, params):
-
         combinations_to_plot = params["combinations_to_plot"]
         figures = []
         # Create hist plots for each column
