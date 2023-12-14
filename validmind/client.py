@@ -39,6 +39,7 @@ def init_dataset(
     options: dict = None,
     text_column: str = None,
     target_column: str = None,
+    feature_columns: list = None,
     class_labels: dict = None,
     type: str = None,
 ) -> VMDataset:
@@ -53,6 +54,7 @@ def init_dataset(
         options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
+        feature_columns (list): A list of names of feature columns in the dataset
         class_labels (dict): A list of class labels for classification problems
 
     Raises:
@@ -74,6 +76,7 @@ def init_dataset(
         vm_dataset = DataFrameDataset(
             raw_dataset=dataset,
             target_column=target_column,
+            feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=class_labels,
             date_time_index=date_time_index,
@@ -86,6 +89,7 @@ def init_dataset(
             index_name=index_name,
             column_names=column_names,
             target_column=target_column,
+            feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=class_labels,
             date_time_index=date_time_index,
@@ -98,6 +102,7 @@ def init_dataset(
             index_name=index_name,
             column_names=column_names,
             target_column=target_column,
+            feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=class_labels,
         )
