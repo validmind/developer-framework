@@ -112,34 +112,18 @@ class DescriptiveStatistics(Metric):
 
         return ResultSummary(results=results)
 
-    def select_feature_fields(self, fields, feature_columns):
-        """
-        Selects and returns only those fields that are present in the feature columns.
-
-        :param fields: List of fields to filter.
-        :param feature_columns: Set of valid feature column names.
-        :return: List of filtered fields.
-        """
-        return [field for field in fields if field in feature_columns]
-
     def run(self):
         feature_columns = self.dataset.feature_columns
-
-        numerical_fields = self.dataset.get_numeric_features_columns()
-        categorical_fields = self.dataset.get_categorical_features_columns()
-
-        numerical_fields = self.select_feature_fields(numerical_fields, feature_columns)
-        categorical_fields = self.select_feature_fields(
-            categorical_fields, feature_columns
-        )
+        numerical_feature_columns = self.dataset.get_numeric_features_columns()
+        categorical_feature_columns = self.dataset.get_categorical_features_columns()
 
         df = self.dataset.df[feature_columns]
 
         summary_stats_numerical = self.get_summary_statistics_numerical(
-            df, numerical_fields
+            df, numerical_feature_columns
         )
         summary_stats_categorical = self.get_summary_statistics_categorical(
-            df, categorical_fields
+            df, categorical_feature_columns
         )
         return self.cache_results(
             {

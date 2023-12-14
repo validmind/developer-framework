@@ -344,7 +344,11 @@ class NumpyDataset(VMDataset):
         Returns:
             List[str]: The column names of the numeric feature variables.
         """
-        numerical_columns = self.df.select_dtypes(include=[np.number]).columns.tolist()
+        numerical_columns = (
+            self.df[self.feature_columns]
+            .select_dtypes(include=[np.number])
+            .columns.tolist()
+        )
 
         return [column for column in numerical_columns if column != self.target_column]
 
@@ -357,9 +361,11 @@ class NumpyDataset(VMDataset):
         """
 
         # Extract categorical columns from the dataset
-        categorical_columns = self.df.select_dtypes(
-            include=[np.object, pd.Categorical]
-        ).columns.tolist()
+        categorical_columns = (
+            self.df[self.feature_columns]
+            .select_dtypes(include=[np.object, pd.Categorical])
+            .columns.tolist()
+        )
 
         return [
             column for column in categorical_columns if column != self.target_column
