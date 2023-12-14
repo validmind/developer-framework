@@ -225,8 +225,6 @@ class NumpyDataset(VMDataset):
         Returns:
             np.ndarray: The input features.
         """
-        if not self.feature_columns:
-            return self.x
 
         return self.raw_dataset[
             :,
