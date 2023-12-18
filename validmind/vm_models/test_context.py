@@ -34,15 +34,6 @@ class TestContext:
     across different tests/metrics such as shared dataset metrics, etc.
     """
 
-    # Single dataset for dataset-only tests
-    dataset: VMDataset = None
-
-    # Model and corresponding datasets for model related tests
-    model: VMModel = None
-
-    # Multiple models for model comparison tests
-    models: List[VMModel] = None
-
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
 
@@ -60,16 +51,30 @@ class TestContext:
 
 
 @dataclass
+class TestInput:
+    """Holds models, datasets and other custom inputs for test(s)"""
+
+    # Single dataset for dataset-only tests
+    dataset: VMDataset = None
+
+    # Model and corresponding datasets for model related tests
+    model: VMModel = None
+
+    # Multiple models for model comparison tests
+    models: List[VMModel] = None
+
+    # Custom inputs that can store datasets, models etc.
+    inputs: dict = None
+
+
+@dataclass
 class TestContextUtils:
-    """
-    Utility methods for classes that receive a TestContext
+    """Utility methods for classes that receive a TestContext"""
 
-    TODO: more validation
-    """
-
-    # Test Context
-    test_context: TestContext
     required_inputs: ClassVar[List[str]]
+
+    test_context: TestContext
+    test_input: TestInput
 
     @property
     def dataset(self):
@@ -82,6 +87,10 @@ class TestContextUtils:
     @property
     def models(self):
         return self.test_context.models
+
+    @property
+    def inputs(self):
+        return self.test_context.inputs
 
     @property
     def df(self):
