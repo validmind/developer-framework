@@ -88,6 +88,8 @@ class TestContextUtils:
 
         This method does a check for test_input and if its not present, it will
         look inside the test_context for the legacy input and return that
+
+        TODO: remove this method once we remove the legacy inputs
         """
         if self.test_input is not None:
             return getattr(self.test_input, key)
