@@ -6,7 +6,7 @@ from IPython.display import display
 
 from ...logging import get_logger
 from ...utils import is_notebook, run_async, run_async_check
-from ..test_context import TestContext
+from ..test_context import TestContext, TestInput
 from .summary import TestSuiteSummary
 from .test_suite import TestSuite
 
@@ -20,6 +20,7 @@ class TestSuiteRunner:
 
     suite: TestSuite = None
     context: TestContext = None
+    input: TestInput = None
     config: dict = None
 
     _global_config: dict = None
@@ -29,10 +30,12 @@ class TestSuiteRunner:
     pbar_description: widgets.Label = None
     pbar_box: widgets.HBox = None
 
-    def __init__(self, suite: TestSuite, context: TestContext, config: dict = None):
+    def __init__(self, suite: TestSuite, input: TestInput, config: dict = None):
         self.suite = suite
-        self.context = context
+        self.input = input
         self.config = config or {}
+
+        self.context = TestContext()
 
         self._split_configs()
         self._init_tests()
@@ -58,6 +61,7 @@ class TestSuiteRunner:
             for test in section.tests:
                 test.load(
                     test_context=self.context,
+                    test_input=self.input,
                     test_config={
                         **self._global_config,
                         **self._test_configs.get(test.test_id, {}),

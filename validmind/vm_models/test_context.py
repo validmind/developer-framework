@@ -37,6 +37,11 @@ class TestContext:
     # Custom context data that can be set by metrics or tests using this context
     context_data: dict = None
 
+    # TODO: here for backwards compatibility, remove this soon
+    dataset: VMDataset = None
+    model: VMModel = None
+    models: List[VMModel] = None
+
     def set_context_data(self, key, value):
         if self.context_data is None:
             self.context_data = {}
@@ -78,21 +83,32 @@ class TestContextUtils:
     test_context: TestContext
     test_input: TestInput
 
+    def _get_legacy_input(self, key):
+        """Test inputs have been removed from the test context and moved to TestInput
+
+        This method does a check for test_input and if its not present, it will
+        look inside the test_context for the legacy input and return that
+        """
+        if self.test_input is not None:
+            return getattr(self.test_input, key)
+
+        return getattr(self.test_context, key)
+
     @property
     def dataset(self):
-        return self.test_context.dataset
+        return self._get_legacy_input("dataset")
 
     @property
     def model(self):
-        return self.test_context.model
+        return self._get_legacy_input("model")
 
     @property
     def models(self):
-        return self.test_context.models
+        return self._get_legacy_input("models")
 
     @property
     def inputs(self):
-        return self.test_context.inputs
+        return self._get_legacy_input("inputs")
 
     @property
     def df(self):
