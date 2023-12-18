@@ -4,7 +4,7 @@
 TestContext
 """
 from dataclasses import dataclass
-from typing import ClassVar, List
+from typing import ClassVar, List, Optional
 
 import pandas as pd
 
@@ -81,7 +81,7 @@ class TestContextUtils:
     required_inputs: ClassVar[List[str]]
 
     test_context: TestContext
-    test_input: TestInput
+    test_input: Optional[TestInput] = None
 
     def _get_legacy_input(self, key):
         """Test inputs have been removed from the test context and moved to TestInput
