@@ -54,6 +54,8 @@ class TestContext:
 class TestInput:
     """Holds models, datasets and other custom inputs for test(s)"""
 
+    # TODO: we need to look into adding metadata for test inputs and logging that
+
     # Single dataset for dataset-only tests
     dataset: VMDataset = None
 
@@ -114,9 +116,22 @@ class TestContextUtils:
         """
         Validates that the context elements are present
         in the instance so that the test suite can be run
+
+        Raises:
+            MissingRequiredTestContextError: If a required context element is missing.
         """
 
         def recursive_attr_check(obj, attr_chain):
+            """
+            Recursively checks if the given object has the specified attribute chain.
+
+            Args:
+                obj: The object to check.
+                attr_chain: A string representing the attribute chain, separated by dots.
+
+            Returns:
+                True if the object has the attribute chain, False otherwise.
+            """
             attrs = attr_chain.split(".")
             if not hasattr(obj, attrs[0]) or getattr(obj, attrs[0]) is None:
                 return False
