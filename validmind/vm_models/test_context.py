@@ -35,7 +35,7 @@ class TestContext:
     """
 
     # Custom context data that can be set by metrics or tests using this context
-    context_data: dict = None
+    context_data: Optional[dict] = None
 
     # TODO: here for backwards compatibility, remove this soon
     dataset: VMDataset = None
@@ -75,7 +75,7 @@ class TestInput:
 
 
 @dataclass
-class TestContextUtils:
+class TestUtils:
     """Utility methods for classes that receive a TestContext"""
 
     required_inputs: ClassVar[List[str]]

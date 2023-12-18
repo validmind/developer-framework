@@ -7,7 +7,7 @@ from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
 from ...utils import run_async
-from ..test_context import TestContextUtils
+from ..test_context import TestUtils
 
 
 class TestMetadata(TypedDict):
@@ -20,7 +20,7 @@ class TestMetadata(TypedDict):
 
 
 @dataclass
-class Test(TestContextUtils):
+class Test(TestUtils):
     # Class Variables
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes
