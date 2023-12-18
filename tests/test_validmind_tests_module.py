@@ -48,7 +48,7 @@ class TestTestsModule(TestCase):
     def test_test_provider_registration(self):
         class TestProvider:
             def load_test(self, test_id):
-                fake_test = Test(test_context=TestContext(), result=None)
+                fake_test = Test(test_context=TestContext())
                 fake_test.test_id = test_id
                 return fake_test
 

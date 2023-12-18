@@ -14,7 +14,7 @@ from .html_templates.content_blocks import (
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
 from .utils import is_notebook
-from .vm_models import TestContext, TestSuite, TestSuiteRunner
+from .vm_models import TestInput, TestSuite, TestSuiteRunner
 
 logger = get_logger(__name__)
 
@@ -267,7 +267,7 @@ def run_template(template, section, send=True, fail_fast=False, config=None, **k
         send: Whether to send the results to the ValidMind API
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         config: A dictionary of test parameters to override the defaults
-        **kwargs: variables to pass into the TestContext i.e. model, dataset etc.
+        **kwargs: variables to pass into the TestInput i.e. model, dataset etc.
 
     Returns:
         The completed TestSuite instance
@@ -276,7 +276,7 @@ def run_template(template, section, send=True, fail_fast=False, config=None, **k
 
     TestSuiteRunner(
         suite=test_suite,
-        context=TestContext(**kwargs),
+        input=TestInput(**kwargs),
         config=config,
     ).run(send=send, fail_fast=fail_fast)
 
