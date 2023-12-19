@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.22.6"
+version = "1.22.7"
 
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
