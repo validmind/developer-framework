@@ -1,3 +1,10 @@
+---
+title: "Customer Churn Example (R)"
+author: "ValidMind"
+date: "2023-11-15"
+output: html_document
+---
+
 # **Quickstart - Customer Churn Full Suite Model Documentation**
 
 This interactive notebook will guide you through documenting a model using the ValidMind Developer framework. We will use sample datasets provided by the library and train a simple classification model.
@@ -14,25 +21,19 @@ We will train a sample model and demonstrate the following documentation functio
 
 ## **Initializing the Python environment**
 
-```{r}
-# install.packages("magrittr") # package installations are only needed the first time you use it
-# install.packages("dplyr")    # alternative installation of the %>%
-# install.packages("xgboost")  # for training XGBoost models
-library(magrittr) # needs to be run every time you start R and want to use %>%
-library(dplyr)    # alternatively, this also loads %>%
-library(glue)
-library(dplyr)
+```{r setup, include=FALSE}
+library(reticulate)
+
+python_version <- "<path_to_python_version>"
+use_python(python_version)
+
+library(validmind)
 library(caTools)
 library(glmnet)
+library(knitr)
+library(dplyr)
 
-# Python support
-library(reticulate)
-use_python("/Users/andres/Library/Caches/pypoetry/virtualenvs/validmind-Jp3s24zK-py3.9/bin/python")
-reticulate::py_config()
-```
-
-```{r}
-source("../../r/helpers.R")
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 ## **Initializing the ValidMind Client Library**
@@ -62,13 +63,12 @@ In the "Client Integration" page of the newly created project, you will find the
 The code snippet can be copied and pasted directly in the cell below to initialize the ValidMind Developer Framework when run:
 
 ```{r}
-vm <- import("validmind")
-
-vm$init(
-  api_host="http://localhost:3000/api/v1/tracking",
-  api_key="...",
-  api_secret="...",
-  project="..."
+vm_r <- vm(
+  api_key="<your_api_key_here>",
+  api_secret="<your_api_secret_here>",
+  project="<your_project_id_here>",
+  python_version=python_version,
+  api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
 ```
 
@@ -86,7 +86,7 @@ data <- read.csv('../datasets/bank_customer_churn.csv')
 Before running the test plan, we must first initialize a ValidMind dataset object using the `init_dataset` function from the `vm` module. This function takes in arguments: `dataset` which is the dataset that we want to analyze; `target_column` which is used to identify the target variable; `class_labels` which is used to identify the labels used for classification model training.
 
 ```{r}
-vm_dataset = vm$init_dataset(
+vm_dataset = vm_r$init_dataset(
     dataset=data,
     target_column="Exited",
     class_labels=list("0" = "Did not exit", "1" = "Exited")
@@ -96,14 +96,23 @@ vm_dataset = vm$init_dataset(
 ## **Run the Data Validation Test Plan**
 
 ```{r}
-tabular_suite_results <- vm$run_test_suite("tabular_dataset", dataset=vm_dataset)
+tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
 ```
 
-```{r}
-summarize_results(tabular_suite_results)
+```{r, results='hide'}
+processed_results <- process_result(tabular_suite_results)
 ```
 
-## **Run the Model Validation Test Plan**
+```{r, echo=FALSE, results='hide'}
+all_widgets <- display_report(processed_results)
+for (widget in all_widgets) {
+  print(widget)
+}
+```
+
+`r do.call(htmltools::tagList, all_widgets)`
+
+## Modeling Results
 
 We will need to preprocess the dataset and produce the training, test and validation splits first.
 
@@ -127,12 +136,7 @@ test_data <- subset(data, split == FALSE)
 ```
 
 ```{r}
-# Run a logistic regression model
 model <- glm(Exited ~ ., family = binomial(link = 'logit'), data = train_data)
-```
-
-```{r}
-model
 ```
 
 ```{r}
@@ -140,29 +144,39 @@ model_path = save_model(model)
 ```
 
 ```{r}
-vm_train_ds = vm$init_dataset(
-    dataset=train_data,
-    target_column="Exited"
+vm_train_ds = vm_r$init_dataset(
+  dataset=train_data,
+  target_column="Exited"
 )
 
-vm_test_ds = vm$init_dataset(
-    dataset=test_data,
-    target_column="Exited"
+vm_test_ds = vm_r$init_dataset(
+  dataset=test_data,
+  target_column="Exited"
 )
 
-vm_model = vm$init_r_model(
-    model_path=model_path,
-    train_ds=vm_train_ds,
-    test_ds=vm_test_ds,
+vm_model = vm_r$init_r_model(
+  model_path=model_path,
+  train_ds=vm_train_ds,
+  test_ds=vm_test_ds,
 )
 ```
 
 ### **Run the Binary Classification Test Plan**
 
 ```{r}
-model_validation_results = vm$run_test_suite("classifier_model_validation", model=vm_model, fail_fast = TRUE)
+model_validation_results = vm_r$run_test_suite("classifier_model_validation", model=vm_model,
+                                               fail_fast = TRUE)
 ```
 
-```{r}
-summarize_results(model_validation_results)
+```{r, include=FALSE}
+processed_results <- process_result(model_validation_results)
 ```
+
+```{r, echo=FALSE, results='hide'}
+all_widgets <- display_report(processed_results)
+for (widget in all_widgets) {
+  print(widget)
+}
+```
+
+`r do.call(htmltools::tagList, all_widgets)`

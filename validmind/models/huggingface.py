@@ -43,11 +43,14 @@ class HFModel(VMModel):
             attributes=attributes,
         )
         if self.model and self.train_ds:
-            self._y_train_predict = self.predict(self.test_ds.x)
+            x_train_features_only = self.train_ds.x_features
+            self._y_train_predict = self.predict(x_train_features_only)
         if self.model and self.test_ds:
-            self._y_test_predict = self.predict(self.test_ds.x)
+            x_test_features_only = self.test_ds.x_features
+            self._y_test_predict = self.predict(x_test_features_only)
         if self.model and self.validation_ds:
-            self._y_validation_predict = self.predict(self.validation_ds.x)
+            x_val_features_only = self.validation_ds.x_features
+            self._y_validation_predict = self.predict(x_val_features_only)
 
     def predict_proba(self, *args, **kwargs):
         """
