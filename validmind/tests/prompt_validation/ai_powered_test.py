@@ -3,7 +3,7 @@
 import os
 import re
 
-import openai
+from openai import AzureOpenAI, Client
 
 
 class AIPoweredTest:
@@ -11,32 +11,54 @@ class AIPoweredTest:
     Base class for tests powered by an LLM
     """
 
-    model_name = "gpt-3.5-turbo"
+    api_key = None
+    client = None
+    endpoint = None
+    model_name = None
 
     def __init__(self, *args, **kwargs):
-        if not os.environ.get("OPENAI_API_KEY"):
-            raise ValueError("OPENAI_API_KEY must be set to run AI-powered tests")
+        if "OPENAI_API_KEY" in os.environ:
+            self.client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
+            self.model_name = os.environ.get("VM_OPENAI_MODEL", "gpt-3.5-turbo")
 
-        # this should be set already but just set it again in case user loaded dotenv
-        # after the module was initialized
-        openai.api_key = os.environ.get("OPENAI_API_KEY")
+        elif "AZURE_OPENAI_KEY" in os.environ:
+            if "AZURE_OPENAI_ENDPOINT" not in os.environ:
+                raise ValueError(
+                    "AZURE_OPENAI_ENDPOINT must be set to run LLM tests with Azure"
+                )
 
-        # allow overriding the model name (if user has access to and wants to use GPT4)
-        if os.environ.get("VM_OPENAI_MODEL"):
-            self.model_name = os.environ.get("VM_OPENAI_MODEL")
+            if "AZURE_OPENAI_MODEL" not in os.environ:
+                raise ValueError(
+                    "AZURE_OPENAI_MODEL must be set to run LLM tests with Azure"
+                )
+
+            self.client = AzureOpenAI(
+                azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+                api_key=os.environ.get("AZURE_OPENAI_KEY"),
+                api_version=os.environ.get("AZURE_OPENAI_VERSION", "2023-05-15"),
+            )
+            self.model_name = os.environ.get("AZURE_OPENAI_MODEL")
+
+        else:
+            raise ValueError(
+                "OPENAI_API_KEY or AZURE_OPENAI_KEY must be set to run LLM tests"
+            )
 
     def call_model(self, user_prompt: str, system_prompt: str = None):
         """
         Call an LLM with the passed prompts and return the response. We're using GPT4 for now.
         """
-        response = openai.ChatCompletion.create(
-            model=self.model_name,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
+        return (
+            self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+            )
+            .choices[0]
+            .message.content
         )
-        return response.choices[0].message["content"]
 
     def get_score(self, response: str):
         """
