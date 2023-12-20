@@ -21,7 +21,7 @@ from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .template import run_template as _run_template
 from .test_suites import get_by_id as get_test_suite_by_id
-from .vm_models import TestContext, TestSuite, TestSuiteRunner
+from .vm_models import TestInput, TestSuite, TestSuiteRunner
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
 
@@ -303,7 +303,7 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
 
     TestSuiteRunner(
         suite=suite,
-        context=TestContext(**kwargs),
+        input=TestInput(**kwargs),
         config=config or {},
     ).run(fail_fast=fail_fast, send=send)
 

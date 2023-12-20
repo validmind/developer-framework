@@ -6,7 +6,7 @@ from ...logging import get_logger, log_performance
 from ...tests import LoadTestError, load_test
 from ...utils import test_id_to_name
 from ..test.test import Test
-from ..test_context import TestContext
+from ..test_context import TestContext, TestInput
 from .result import TestSuiteFailedResult, TestSuiteResult
 
 logger = get_logger(__name__)
@@ -58,13 +58,16 @@ class TestSuiteTest:
 
         return self._test_class.default_params
 
-    def load(self, test_context: TestContext, test_config: dict = None):
+    def load(
+        self, test_input: TestInput, test_context: TestContext, test_config: dict = None
+    ):
         """Load an instance of the test class"""
         if not self._test_class:
             return
 
         try:
             self._test_instance = self._test_class(
+                test_input=test_input,
                 test_context=test_context,
                 params=test_config,
             )
