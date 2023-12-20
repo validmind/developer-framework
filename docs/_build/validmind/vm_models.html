@@ -266,6 +266,15 @@
 
             </li>
             <li>
+                    <a class="class" href="#TestInput">TestInput</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TestInput.__init__">TestInput</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#TestSuite">TestSuite</a>
                             <ul class="memberlist">
                         <li>
@@ -857,7 +866,7 @@ if we're returning the data to R.</p>
                     <div class="decorator">@dataclass</div>
 
     <span class="def">class</span>
-    <span class="name">Test</span><wbr>(<span class="base">validmind.vm_models.test_context.TestContextUtils</span>):
+    <span class="name">Test</span><wbr>(<span class="base">validmind.vm_models.test_context.TestUtils</span>):
 
         
     </div>
@@ -868,7 +877,7 @@ if we're returning the data to R.</p>
                             <div id="Test.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Test</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Test</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">test_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#TestInput">validmind.vm_models.TestInput</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -959,7 +968,7 @@ to returning the class' docstring</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+                                    <div><dt>validmind.vm_models.test_context.TestUtils</dt>
                                 <dd id="Test.df" class="variable">df</dd>
                 <dd id="Test.validate_context" class="function">validate_context</dd>
 
@@ -985,7 +994,7 @@ to returning the class' docstring</p>
                             <div id="Metric.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">Metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">test_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#TestInput">validmind.vm_models.TestInput</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_suite</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">TestSuiteMetricResult</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1064,7 +1073,7 @@ short summary of the metric results.</p>
                 <dd id="Metric.log" class="function"><a href="#Test.log">log</a></dd>
 
             </div>
-            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
                                 <dd id="Metric.df" class="variable">df</dd>
                 <dd id="Metric.validate_context" class="function">validate_context</dd>
 
@@ -1137,7 +1146,7 @@ us to determine whether the metric/plot passes or fails.</p>
                             <div id="ThresholdTest.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#ThresholdTestResults">validmind.vm_models.ThresholdTestResults</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ThresholdTest</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">test_input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#TestInput">validmind.vm_models.TestInput</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#ThresholdTestResults">validmind.vm_models.ThresholdTestResults</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1202,7 +1211,7 @@ short summary of the test results.</p>
                 <dd id="ThresholdTest.log" class="function"><a href="#Test.log">log</a></dd>
 
             </div>
-            <div><dt>validmind.vm_models.test_context.TestContextUtils</dt>
+            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
                                 <dd id="ThresholdTest.df" class="variable">df</dd>
                 <dd id="ThresholdTest.validate_context" class="function">validate_context</dd>
 
@@ -1316,7 +1325,7 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
                             <div id="TestContext.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestContext</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -1347,6 +1356,34 @@ across different tests/metrics such as shared dataset metrics, etc.</p>
         
     </div>
     <a class="headerlink" href="#TestContext.get_context_data"></a>
+    
+    
+
+                            </div>
+                </section>
+                <section id="TestInput">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">TestInput</span>:
+
+        
+    </div>
+    <a class="headerlink" href="#TestInput"></a>
+    
+            <div class="docstring"><p>Holds models, datasets and other custom inputs for test(s)</p>
+</div>
+
+
+                            <div id="TestInput.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">TestInput</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n"><a href="#VMDataset">validmind.vm_models.VMDataset</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">models</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#VMModel">validmind.vm_models.VMModel</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestInput.__init__"></a>
     
     
 
@@ -1474,7 +1511,7 @@ and set values</p>
                             <div id="TestSuiteRunner.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">TestSuiteRunner</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">suite</span><span class="p">:</span> <span class="n"><a href="#TestSuite">validmind.vm_models.TestSuite</a></span>,</span><span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span>,</span><span class="param">	<span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">TestSuiteRunner</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">suite</span><span class="p">:</span> <span class="n"><a href="#TestSuite">validmind.vm_models.TestSuite</a></span>,</span><span class="param">	<span class="nb">input</span><span class="p">:</span> <span class="n"><a href="#TestInput">validmind.vm_models.TestInput</a></span>,</span><span class="param">	<span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
