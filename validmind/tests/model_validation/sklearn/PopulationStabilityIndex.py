@@ -80,6 +80,10 @@ class PopulationStabilityIndex(Metric):
             "model_performance",
         ],
     }
+    default_params = {
+        "num_bins": 10,
+        "mode": "fixed",
+    }
 
     def summary(self, metric_value):
         # Add a table with the PSI values for each feature
@@ -183,9 +187,14 @@ class PopulationStabilityIndex(Metric):
             logger.info(f"Skiping PSI for {model_library} models")
             return
 
+        num_bins = self.params["num_bins"]
+        mode = self.params["mode"]
+
         psi_results = self._get_psi(
             self.model.predict_proba(self.model.train_ds.x).copy(),
             self.model.predict_proba(self.model.test_ds.x).copy(),
+            num_bins=num_bins,
+            mode=mode,
         )
 
         trace1 = go.Bar(
