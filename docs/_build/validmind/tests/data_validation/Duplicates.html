@@ -82,49 +82,45 @@
     </div>
     <a class="headerlink" href="#Duplicates"></a>
     
-            <div class="docstring"><p>Checks for and quantifies the presence of duplicate entries in the dataset or a specified column.</p>
+            <div class="docstring"><p>Tests dataset for duplicate entries, ensuring model reliability via data quality verification.</p>
 
-<p><strong>Purpose</strong>: The Duplicates test is designed to assess the data quality of an ML model by identifying any duplicate
-entries in the data set. It focuses on seeking out duplication in a specified text column or among the primary keys
-of the data set, which could have serious implications for the performance and integrity of the model. Duplicate
-entries could potentially skew the data distribution and influence model training inaccurately.</p>
+<p><strong>Purpose</strong>: The 'Duplicates' metric is designed to check for duplicate rows within the dataset provided to the
+model. It serves as a measure of data quality, ensuring that the model isn't merely memorizing duplicate entries or
+being swayed by redundant information. This is an important step in the pre-processing of data for both
+classification and regression tasks.</p>
 
-<p><strong>Test Mechanism</strong>: This test operates by calculating the total number of duplicate entries in the data set. The
-algorithm will count duplicates within the 'text_column' if this property is specified. If primary keys are
-defined, the test will also be applied on them. The count of duplicates ('n_duplicates') is then compared to a
-predefined minimum threshold (the default 'min_threshold' is set at 1) to determine whether the test has passed or
-not. The results include the total number of duplicates as well as the percentage of duplicate rows in comparison
-to the overall dataset ('p_duplicates').</p>
+<p><strong>Test Mechanism</strong>: This metric operates by checking each row for duplicates in the dataset. If a text column is
+specified in the dataset, the test is conducted on this column; if not, the test is run on all feature columns. The
+number and percentage of duplicates are calculated and returned in a DataFrame. Additionally, a test is passed if
+the total count of duplicates falls below a specified minimum threshold.</p>
 
 <p><strong>Signs of High Risk</strong>:</p>
 
 <ul>
-<li>A large amount of duplicates, particularly those exceeding the predefined minimum threshold, point toward a high
-risk situation.</li>
-<li>Overrepresentation of certain data which can lead to skewed results.</li>
-<li>Indication of inefficient data collecting techniques leading to data redundancy.</li>
-<li>Models that fail this test predominantly may necessitate a closer examination of their data preprocessing methods
-or source data.</li>
+<li>A high number of duplicate rows in the dataset. This can lead to overfitting where the model performs well on the
+training data but poorly on unseen data.</li>
+<li>A high percentage of duplicate rows in the dataset. A large proportion of duplicate values could indicate that
+there's a problem with data collection or processing.</li>
 </ul>
 
 <p><strong>Strengths</strong>:</p>
 
 <ul>
-<li>The Duplicates test is highly adaptable, being capable of being used with both text data and tabular data formats.</li>
-<li>It is able to provide results both numerically and as a percentage of the total data set, allowing for a broader
-understanding of the extent of duplication.</li>
-<li>Its utility lies in effectively flagging any data quality issues that could potentially upset model performance
-and generate erroneous predictions.</li>
+<li>Assists in improving the reliability of the model's training process by ensuring the training data is not
+contaminated with duplicate entries which can distort statistical analyses.</li>
+<li>Provides both absolute number and percentage value of duplicate rows, giving a thorough overview of data quality</li>
+<li>Highly customizable as it allows for setting a user-defined minimum threshold to determine if the test has been
+passed.</li>
 </ul>
 
 <p><strong>Limitations</strong>:</p>
 
 <ul>
-<li>The Duplicates test solely targets exact duplication in entries, meaning it may overlook near-duplicates or
-normalized forms of entries that might also affect data distribution and model integrity.</li>
-<li>Data variations caused by errors, phrasing changes, or inconsistencies may not be detected.</li>
-<li>A substantial number of duplicates in a datasets may not always denote poor data quality, as this can be
-dependent on the nature of the data and the problem being addressed.</li>
+<li>This test does not distinguish between benign duplicates (i.e., coincidental identical entries in different rows)
+and problematic duplicates originating from data collection or processing errors.</li>
+<li>Since the test becomes more computationally intensive as the size of the dataset increases, it might not be
+suitable for very large datasets.</li>
+<li>It can only check for exact duplicates and may miss semantically similar information packaged differently.</li>
 </ul>
 </div>
 

@@ -38,6 +38,9 @@
                                 <a class="function" href="#KolmogorovSmirnov.__init__">KolmogorovSmirnov</a>
                         </li>
                         <li>
+                                <a class="function" href="#KolmogorovSmirnov.summary">summary</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#KolmogorovSmirnov.run">run</a>
                         </li>
                 </ul>
@@ -134,6 +137,25 @@ kurtosis, that could directly impact model fitting.</li>
     
 
                             </div>
+                            <div id="KolmogorovSmirnov.summary" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#KolmogorovSmirnov.summary"></a>
+    
+            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
+The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the metric results.</p>
+
+<p>We return None here because the metric summary is optional.</p>
+</div>
+
+
+                            </div>
                             <div id="KolmogorovSmirnov.run" class="classattr">
                                 <div class="attr function">
             
@@ -154,7 +176,6 @@ kurtosis, that could directly impact model fitting.</li>
                                 <dl>
                                     <div><dt>validmind.vm_models.test.metric.Metric</dt>
                                 <dd id="KolmogorovSmirnov.key" class="variable">key</dd>
-                <dd id="KolmogorovSmirnov.summary" class="function">summary</dd>
                 <dd id="KolmogorovSmirnov.cache_results" class="function">cache_results</dd>
 
             </div>
