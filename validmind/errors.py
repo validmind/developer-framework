@@ -117,6 +117,14 @@ class InvalidTestResultsError(APIRequestError):
     pass
 
 
+class InvalidTestParametersError(BaseError):
+    """
+    When an invalid parameters for the test.
+    """
+
+    pass
+
+
 class InvalidTextObjectError(APIRequestError):
     """
     When an invalid Metadat (Text) object is sent to the API.

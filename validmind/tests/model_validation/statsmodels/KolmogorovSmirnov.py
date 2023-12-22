@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 from statsmodels.stats.diagnostic import kstest_normal
 
-from validmind.vm_models import Metric
+from validmind.errors import InvalidTestParametersError
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 @dataclass
@@ -47,6 +48,8 @@ class KolmogorovSmirnov(Metric):
     """
 
     name = "kolmogorov_smirnov"
+    required_inputs = ["dataset"]
+    default_params = {"dist": "norm"}
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": [
@@ -57,16 +60,36 @@ class KolmogorovSmirnov(Metric):
         ],
     }
 
+    def summary(self, metric_value):
+        results_table = metric_value["metrics_summary"]
+
+        results_table = [
+            {"Column": k, "stat": result["stat"], "pvalue": result["pvalue"]}
+            for k, result in results_table.items()
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=results_table,
+                    metadata=ResultTableMetadata(title="KS Test results"),
+                )
+            ]
+        )
+
     def run(self):
         """
         Calculates KS for each of the dataset features
         """
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
+        data_distribution = self.params["dist"]
+        if data_distribution not in ["norm" or "exp"]:
+            InvalidTestParametersError("Dist parameter must be either 'norm' or 'exp'")
 
+        x_train = self.dataset.df
         ks_values = {}
         for col in x_train.columns:
-            ks_stat, p_value = kstest_normal(x_train[col].values, "norm")
+            ks_stat, p_value = kstest_normal(x_train[col].values, data_distribution)
             ks_values[col] = {"stat": ks_stat, "pvalue": p_value}
 
-        return self.cache_results(ks_values)
+        print(ks_values)
+        return self.cache_results({"metrics_summary": ks_values})
