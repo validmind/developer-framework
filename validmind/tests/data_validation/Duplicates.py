@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import List
 
+import pandas as pd
+
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -15,41 +17,37 @@ from validmind.vm_models import (
 @dataclass
 class Duplicates(ThresholdTest):
     """
-    Checks for and quantifies the presence of duplicate entries in the dataset or a specified column.
+    Tests dataset for duplicate entries, ensuring model reliability via data quality verification.
 
-    **Purpose**: The Duplicates test is designed to assess the data quality of an ML model by identifying any duplicate
-    entries in the data set. It focuses on seeking out duplication in a specified text column or among the primary keys
-    of the data set, which could have serious implications for the performance and integrity of the model. Duplicate
-    entries could potentially skew the data distribution and influence model training inaccurately.
+    **Purpose**: The 'Duplicates' metric is designed to check for duplicate rows within the dataset provided to the
+    model. It serves as a measure of data quality, ensuring that the model isn't merely memorizing duplicate entries or
+    being swayed by redundant information. This is an important step in the pre-processing of data for both
+    classification and regression tasks.
 
-    **Test Mechanism**: This test operates by calculating the total number of duplicate entries in the data set. The
-    algorithm will count duplicates within the 'text_column' if this property is specified. If primary keys are
-    defined, the test will also be applied on them. The count of duplicates ('n_duplicates') is then compared to a
-    predefined minimum threshold (the default 'min_threshold' is set at 1) to determine whether the test has passed or
-    not. The results include the total number of duplicates as well as the percentage of duplicate rows in comparison
-    to the overall dataset ('p_duplicates').
+    **Test Mechanism**: This metric operates by checking each row for duplicates in the dataset. If a text column is
+    specified in the dataset, the test is conducted on this column; if not, the test is run on all feature columns. The
+    number and percentage of duplicates are calculated and returned in a DataFrame. Additionally, a test is passed if
+    the total count of duplicates falls below a specified minimum threshold.
 
     **Signs of High Risk**:
-    - A large amount of duplicates, particularly those exceeding the predefined minimum threshold, point toward a high
-    risk situation.
-    - Overrepresentation of certain data which can lead to skewed results.
-    - Indication of inefficient data collecting techniques leading to data redundancy.
-    - Models that fail this test predominantly may necessitate a closer examination of their data preprocessing methods
-    or source data.
+    - A high number of duplicate rows in the dataset. This can lead to overfitting where the model performs well on the
+    training data but poorly on unseen data.
+    - A high percentage of duplicate rows in the dataset. A large proportion of duplicate values could indicate that
+    there's a problem with data collection or processing.
 
     **Strengths**:
-    - The Duplicates test is highly adaptable, being capable of being used with both text data and tabular data formats.
-    - It is able to provide results both numerically and as a percentage of the total data set, allowing for a broader
-    understanding of the extent of duplication.
-    - Its utility lies in effectively flagging any data quality issues that could potentially upset model performance
-    and generate erroneous predictions.
+    - Assists in improving the reliability of the model's training process by ensuring the training data is not
+    contaminated with duplicate entries which can distort statistical analyses.
+    - Provides both absolute number and percentage value of duplicate rows, giving a thorough overview of data quality
+    - Highly customizable as it allows for setting a user-defined minimum threshold to determine if the test has been
+    passed.
 
     **Limitations**:
-    - The Duplicates test solely targets exact duplication in entries, meaning it may overlook near-duplicates or
-    normalized forms of entries that might also affect data distribution and model integrity.
-    - Data variations caused by errors, phrasing changes, or inconsistencies may not be detected.
-    - A substantial number of duplicates in a datasets may not always denote poor data quality, as this can be
-    dependent on the nature of the data and the problem being addressed.
+    - This test does not distinguish between benign duplicates (i.e., coincidental identical entries in different rows)
+    and problematic duplicates originating from data collection or processing errors.
+    - Since the test becomes more computationally intensive as the size of the dataset increases, it might not be
+    suitable for very large datasets.
+    - It can only check for exact duplicates and may miss semantically similar information packaged differently.
     """
 
     category = "data_quality"
@@ -82,69 +80,43 @@ class Duplicates(ThresholdTest):
         )
 
     def run(self):
-        rows = self.dataset.df.shape[0]
 
-        duplicate_rows_query = {"keep": False}
         if self.dataset.text_column:
-            duplicate_rows_query["subset"] = [self.dataset.text_column]
+            columns = self.dataset.text_column
+        else:
+            columns = self.dataset.get_features_columns()
 
-        duplicate_rows = self.dataset.df[
-            self.dataset.df.duplicated(**duplicate_rows_query)
-        ]
+        df = self.dataset.df[columns]
+        # Find duplicate rows
+        duplicate_rows = df.duplicated()
 
-        duplicate_rows_group_by = (
-            self.dataset.text_column
-            if self.dataset.text_column
-            else self.dataset.df.columns.tolist()
-        )
+        # Calculate number of duplicate rows
+        duplicate_rows_count = duplicate_rows.sum()
 
-        percentage_colummn_assign = {
-            "Percentage of Rows (%)": lambda x: x["Number of Duplicates"] / rows * 100
-        }
+        # Calculate total number of rows
+        total_rows = len(df)
 
-        duplicate_results = (
-            duplicate_rows.groupby(duplicate_rows_group_by)
-            .size()
-            .reset_index(name="Number of Duplicates")
-            .sort_values(by=["Number of Duplicates"], ascending=False)
-            .assign(**percentage_colummn_assign)
+        # Calculate percentage of duplicate rows
+        percentage_duplicate_rows = (duplicate_rows_count / total_rows) * 100
+
+        # Create a DataFrame with results
+        result_df = pd.DataFrame(
+            {
+                "Number of Duplicates": [duplicate_rows_count],
+                "Percentage of Rows (%)": [percentage_duplicate_rows],
+            }
         )
 
         # test has passed if the total sum of duplicates is less than the threshold
-        n_duplicates = duplicate_results["Number of Duplicates"].sum()
+        n_duplicates = result_df["Number of Duplicates"].sum()
         passed = n_duplicates < self.params["min_threshold"]
 
         results = [
             ThresholdTestResult(
                 passed=passed,
-                values=duplicate_results.to_dict(orient="records"),
+                values=result_df.to_dict(orient="records"),
             )
         ]
-
-        # Additionally, run duplicates test on fields that are primary keys
-        primary_keys = []
-        for field in self.dataset.fields:
-            if field.get("type_options", None) and field.get("type_options").get(
-                "primary_key", False
-            ):
-                primary_keys.append(field["id"])
-
-        for col in primary_keys:
-            col_n_duplicates = len(
-                self.dataset.df[self.dataset.df[col].duplicated(keep=False)]
-            )
-            col_p_duplicates = col_n_duplicates / rows
-            col_passed = col_n_duplicates < self.params["min_threshold"]
-            results.append(
-                ThresholdTestResult(
-                    column=col,
-                    passed=col_passed,
-                    values={
-                        "n_duplicates": col_n_duplicates,
-                        "p_duplicates": col_p_duplicates,
-                    },
-                )
-            )
 
         return self.cache_results(results, passed=all([r.passed for r in results]))
 
@@ -158,12 +130,5 @@ class Duplicates(ThresholdTest):
             assert result.passed == (
                 result.values["n_duplicates"] < self.params["min_threshold"]
             )
-
-        # Check that the number of results is equal to the number of primary keys tested, plus one for dataset duplicates
-        primary_keys_count = sum(
-            "primary_key" in field.get("type_options", {})
-            and field["type_options"]["primary_key"]
-            for field in self.dataset.fields
-        )
-        expected_results_count = 1 + primary_keys_count
+        expected_results_count = 1
         assert len(self.result.test_results.results) == expected_results_count

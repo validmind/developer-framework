@@ -10,8 +10,6 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from .dataset_utils import parse_dataset_variables
-
 
 @dataclass
 class VMDataset(ABC):
@@ -43,10 +41,6 @@ class NumpyDataset(VMDataset):
     _text_column: str = None
     _type: str = "generic"
     _target_class_labels: dict = None
-    # This is list of metadata objects for each field in the dataset. It does
-    # not contain the actual data for each field, just metadata about it
-    fields: list = None
-    _options: dict = None
     _df: pd.DataFrame = None
 
     def __init__(
@@ -90,13 +84,21 @@ class NumpyDataset(VMDataset):
             not isinstance(column_names, list)
             or not all(isinstance(element, str) for element in column_names)
         ):
-            raise ValueError(
-                "feature_column_names does not contain an array of strings"
-            )
+            raise ValueError("column_names does not contain an array of strings")
         self._column_names = column_names
-
         self._target_column = target_column
+
         self._feature_columns = feature_columns
+
+        if self._feature_columns is None:
+            if isinstance(self._column_names, list):
+                if self._target_column is not None:
+                    self._feature_columns = [
+                        col for col in self._column_names if col != self._target_column
+                    ]
+                else:
+                    self._feature_columns = self._column_names
+
         self._text_column = text_column
         self._target_class_labels = target_class_labels
         self.options = options
@@ -111,7 +113,6 @@ class NumpyDataset(VMDataset):
             df = self.__attempt_convert_index_to_datetime(df)
 
         self._df = df
-        self.fields = parse_dataset_variables(self._df, self.options)
 
     def __attempt_convert_index_to_datetime(self, df):
         """
@@ -329,11 +330,7 @@ class NumpyDataset(VMDataset):
         Returns:
             List[str]: The column names of the feature variables.
         """
-        return [
-            field_dic["id"]
-            for field_dic in self.fields
-            if (field_dic["id"] != self.target_column)
-        ]
+        return self._feature_columns
 
     def get_numeric_features_columns(self):
         """
