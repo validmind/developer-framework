@@ -37,6 +37,7 @@ class NumpyDataset(VMDataset):
     _index_name: str = None
     _column_names: list = None
     _target_column: str = None
+    _prediction_column: str = None
     _feature_columns: list = (None,)
     _text_column: str = None
     _type: str = "generic"
@@ -51,6 +52,7 @@ class NumpyDataset(VMDataset):
         date_time_index=False,
         column_names=None,
         target_column: str = None,
+        prediction_column: str = None,
         feature_columns: list = None,
         text_column=None,
         target_class_labels: dict = None,
@@ -87,9 +89,9 @@ class NumpyDataset(VMDataset):
             raise ValueError("column_names does not contain an array of strings")
         self._column_names = column_names
         self._target_column = target_column
+        self._prediction_column = prediction_column
 
         self._feature_columns = feature_columns
-
         if self._feature_columns is None:
             if isinstance(self._column_names, list):
                 if self._target_column is not None:
@@ -170,12 +172,22 @@ class NumpyDataset(VMDataset):
     @property
     def target_column(self) -> str:
         """
-        Returns the target column of the dataset.
+        Returns the target column name of the dataset.
 
         Returns:
             str: The target column name.
         """
         return self._target_column
+
+    @property
+    def prediction_column(self) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        return self._prediction_column
 
     @property
     def feature_columns(self) -> list:
@@ -250,6 +262,23 @@ class NumpyDataset(VMDataset):
         ]
 
     @property
+    def y_pred(self) -> np.ndarray:
+        """
+        Returns the prediction variable (y_pred) of the dataset.
+
+        Returns:
+            np.ndarray: The prediction variables.
+        """
+        return self.raw_dataset[
+            :,
+            [
+                self.column_names.index(name)
+                for name in self.column_names
+                if name == self.prediction_column
+            ],
+        ]
+
+    @property
     def type(self) -> str:
         """
         Returns the type of the dataset.
@@ -293,6 +322,15 @@ class NumpyDataset(VMDataset):
             pd.DataFrame: The target columns.
         """
         return self._df[self.target_column]
+
+    def y_pred_df(self):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        return self._df[self.prediction_column]
 
     def serialize(self):
         """
@@ -372,6 +410,12 @@ class NumpyDataset(VMDataset):
         """
         return [str(i) for i in np.unique(self.y)]
 
+    def predition_classes(self):
+        """
+        Returns the unique number of target classes for the target (Y) variable.
+        """
+        return [str(i) for i in np.unique(self.y_pred)]
+
 
 @dataclass
 class DataFrameDataset(NumpyDataset):
@@ -383,6 +427,7 @@ class DataFrameDataset(NumpyDataset):
         self,
         raw_dataset: pd.DataFrame,
         target_column: str = None,
+        prediction_column: str = None,
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
@@ -409,6 +454,7 @@ class DataFrameDataset(NumpyDataset):
             index=index,
             column_names=raw_dataset.columns.to_list(),
             target_column=target_column,
+            prediction_column=prediction_column,
             feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
@@ -430,6 +476,7 @@ class TorchDataset(NumpyDataset):
         index=None,
         column_names=None,
         target_column: str = None,
+        prediction_column: str = None,
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
@@ -448,27 +495,25 @@ class TorchDataset(NumpyDataset):
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        # Merge tensors along the column axis
-        if raw_dataset.tensors[1].ndim == 1:
-            tensor2 = np.expand_dims(
-                raw_dataset.tensors[1], axis=1
-            )  # Convert tensor to a column vector
-            merged_tensors = np.concatenate((raw_dataset.tensors[0], tensor2), axis=1)
-        else:
-            merged_tensors = np.concatenate(
-                (raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1
-            )
-        if column_names is None:
-            n_cols = merged_tensors.shape[1]
-            column_names = list(
-                np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str)
-            )
-        if target_column is None:
-            n_cols = merged_tensors.shape[1] - 1
-            target_column = str(n_cols)
+        # if we can't import torch, then it's not a PyTorch model
+        try:
+            import torch
+        except ImportError:
+            return False
+        column_names = []
+        for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
+            if id == 0 and feature_columns is None:
+                n_cols = tens.shape[1]
+                feature_columns = ["x" + feature_id for feature_id in np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str)]
+                column_names.append(feature_columns)
+            elif id == 1 and target_column is None:
+                target_column = "y"
+                column_names.append(target_column)
+            elif id == 2 and prediction_column is None:
+                prediction_column = "y_pred"
+                column_names.append(prediction_column)
 
-        if feature_columns is None:
-            feature_columns = [col for col in column_names if col != target_column]
+        merged_tensors = torch.cat(raw_dataset.tensors, dim=1).numpy()
 
         super().__init__(
             raw_dataset=merged_tensors,
