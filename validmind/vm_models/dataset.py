@@ -504,7 +504,12 @@ class TorchDataset(NumpyDataset):
         for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
             if id == 0 and feature_columns is None:
                 n_cols = tens.shape[1]
-                feature_columns = ["x" + feature_id for feature_id in np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str)]
+                feature_columns = [
+                    "x" + feature_id
+                    for feature_id in np.linspace(
+                        0, n_cols - 1, num=n_cols, dtype=int
+                    ).astype(str)
+                ]
                 column_names.append(feature_columns)
             elif id == 1 and target_column is None:
                 target_column = "y"

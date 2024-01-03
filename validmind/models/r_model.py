@@ -2,8 +2,11 @@
 import numpy as np
 import pandas as pd
 
+from validmind.logging import get_logger
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
+
+logger = get_logger(__name__)
 
 
 def get_full_class_name(obj):
@@ -47,7 +50,9 @@ class RModel(VMModel):
         )
 
         self._is_classification_model = self.__is_classification_model()
-        self.__load_model_predictions()
+        self.__load_model_predictions(self.train_ds, "_y_train_predict")
+        self.__load_model_predictions(self.test_ds, "_y_test_predict")
+        self.__load_model_predictions(self.validation_ds, "_y_validation_predict")
 
     def __get_predict_data_as_df(self, new_data):
         """
@@ -61,19 +66,17 @@ class RModel(VMModel):
 
         return new_data.df
 
-    def __load_model_predictions(self):
-        if self.model and self.train_ds:
-            self._y_train_predict = self.predict(
-                self.__get_predict_data_as_df(self.train_ds)
-            )
-        if self.model and self.test_ds:
-            self._y_test_predict = self.predict(
-                self.__get_predict_data_as_df(self.test_ds)
-            )
-        if self.model and self.validation_ds:
-            self._y_validation_predict = self.predict(
-                self.__get_predict_data_as_df(self.validation_ds)
-            )
+    def __load_model_predictions(self, dataset, attr_name):
+        if self.model and dataset:
+            if dataset.prediction_column:
+                setattr(self, attr_name, dataset.y_pred)
+            else:
+                logger.info("Running predict()...This may take a while")
+                setattr(
+                    self,
+                    attr_name,
+                    self.predict(self.__get_predict_data_as_df(dataset)),
+                )
 
     def __model_class(self):
         """

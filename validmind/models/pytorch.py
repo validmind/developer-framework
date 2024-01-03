@@ -2,12 +2,15 @@
 import numpy as np
 
 from validmind.errors import MissingModelPredictFnError
+from validmind.logging import get_logger
 from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import (
     ModelAttributes,
     VMModel,
     has_method_with_arguments,
 )
+
+logger = get_logger(__name__)
 
 
 class PyTorchModel(VMModel):
@@ -41,15 +44,18 @@ class PyTorchModel(VMModel):
             validation_ds=validation_ds,
             attributes=attributes,
         )
-        if self.model and self.train_ds:
-            x_train_features_only = self.train_ds.x_features
-            self._y_train_predict = np.array(self.predict(x_train_features_only))
-        if self.model and self.test_ds:
-            x_test_features_only = self.test_ds.x_features
-            self._y_test_predict = np.array(self.predict(x_test_features_only))
-        if self.model and self.validation_ds:
-            x_val_features_only = self.validation_ds.x_features
-            self._y_validation_predict = np.array(self.predict(x_val_features_only))
+
+        def predict_and_assign(ds, attr_name):
+            if self.model and ds:
+                if ds.prediction_column:
+                    setattr(self, attr_name, ds.y_pred)
+                else:
+                    logger.info("Running predict()... This may take a while")
+                    setattr(self, attr_name, np.array(self.predict(ds.x_features)))
+
+        predict_and_assign(self.train_ds, "_y_train_predict")
+        predict_and_assign(self.test_ds, "_y_test_predict")
+        predict_and_assign(self.validation_ds, "_y_validation_predict")
 
         self._device_type = next(self.model.parameters()).device
 
