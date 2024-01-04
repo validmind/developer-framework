@@ -126,10 +126,10 @@ class RobustnessDiagnosis(ThresholdTest):
                 "Skiping Robustness Diagnosis test for the dataset with text column"
             )
 
-        train_df = self.model.train_ds.x_df().copy()
+        train_df = self.model.train_ds.x_features_df().copy()
         train_y_true = self.model.train_ds.y
 
-        test_df = self.model.test_ds.x_df().copy()
+        test_df = self.model.test_ds.x_features_df().copy()
         test_y_true = self.model.test_ds.y
 
         test_results = []

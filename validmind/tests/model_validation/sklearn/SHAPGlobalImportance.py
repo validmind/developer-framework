@@ -132,15 +132,21 @@ class SHAPGlobalImportance(Metric):
             or model_class == "XGBRegressor"
             or model_class == "LinearRegression"
         ):
-            explainer = shap.LinearExplainer(trained_model, self.model.test_ds.x_features)
+            explainer = shap.LinearExplainer(
+                trained_model, self.model.test_ds.x_features
+            )
         else:
             raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
         shap_values = explainer.shap_values(self.model.test_ds.x_features)
 
         figures = [
-            self._generate_shap_plot("mean", shap_values, self.model.test_ds.x_features),
-            self._generate_shap_plot("summary", shap_values, self.model.test_ds.x_features),
+            self._generate_shap_plot(
+                "mean", shap_values, self.model.test_ds.x_features
+            ),
+            self._generate_shap_plot(
+                "summary", shap_values, self.model.test_ds.x_features
+            ),
         ]
 
         # restore warnings

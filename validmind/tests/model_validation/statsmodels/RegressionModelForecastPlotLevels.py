@@ -98,8 +98,8 @@ class RegressionModelForecastPlotLevels(Metric):
             train_ds = fitted_model.train_ds
             test_ds = fitted_model.test_ds
 
-            y_pred = fitted_model.predict(fitted_model.train_ds.x)
-            y_pred_test = fitted_model.predict(fitted_model.test_ds.x)
+            y_pred = fitted_model.predict(fitted_model.train_ds.x_features)
+            y_pred_test = fitted_model.predict(fitted_model.test_ds.x_features)
 
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
 

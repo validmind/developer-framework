@@ -69,7 +69,7 @@ class HyperParametersTuning(Metric):
         estimators = GridSearchCV(
             model, param_grid=param_grid, scoring=self.params["scoring"]
         )
-        estimators.fit(self.model.train_ds.x, self.model.train_ds.y)
+        estimators.fit(self.model.train_ds.x_features, self.model.train_ds.y)
 
         results = [
             {

@@ -71,7 +71,7 @@ class LogRegressionConfusionMatrix(Metric):
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        y_pred_prob = model.predict(model.test_ds.x)
+        y_pred_prob = model.predict(model.test_ds.x_features)
         y_pred = np.where(y_pred_prob > cut_off_threshold, 1, 0)
         y_true = y_true.astype(y_pred.dtype)
 

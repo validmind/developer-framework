@@ -65,10 +65,10 @@ class GINITable(Metric):
     def run(self):
         model = self.model[0] if isinstance(self.model, list) else self.model
 
-        X_train = model.train_ds.x
+        X_train = model.train_ds.x_features
         y_train = model.train_ds.y
 
-        X_test = model.test_ds.x
+        X_test = model.test_ds.x_features
         y_test = model.test_ds.y
 
         summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)

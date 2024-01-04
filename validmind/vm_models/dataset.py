@@ -96,7 +96,8 @@ class NumpyDataset(VMDataset):
             if isinstance(self._column_names, list):
                 if self._target_column is not None:
                     self._feature_columns = [
-                        col for col in self._column_names
+                        col
+                        for col in self._column_names
                         if col != self._target_column and col != self._prediction_column
                     ]
                 else:
@@ -308,7 +309,22 @@ class NumpyDataset(VMDataset):
 
     def x_df(self):
         """
-        Returns the input features (X) of the dataset.
+        Returns the non target and prediction columns.
+
+        Returns:
+            pd.DataFrame: The non target and prediction columns .
+        """
+        return self._df[
+            [
+                name
+                for name in self.column_names
+                if name != self.target_column and name != self._prediction_column
+            ]
+        ]
+
+    def x_features_df(self):
+        """
+        Returns the input features of the dataset.
 
         Returns:
             pd.DataFrame: The input features.
