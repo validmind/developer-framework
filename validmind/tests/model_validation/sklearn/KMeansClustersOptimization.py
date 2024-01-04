@@ -95,7 +95,8 @@ class KMeansClustersOptimization(Metric):
                         axis=1,
                     )
                 )
-                / self.model.train_ds.x_features
+                / self.model.train_ds.x_features.shape[0]
+            )
         fig = make_subplots(
             rows=1,
             cols=2,
