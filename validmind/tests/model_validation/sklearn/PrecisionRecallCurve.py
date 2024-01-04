@@ -64,7 +64,7 @@ class PrecisionRecallCurve(Metric):
             raise SkipTestError("Skipping PrecisionRecallCurve for Foundation models")
 
         y_true = self.model.test_ds.y
-        y_pred = self.model.predict_proba(self.model.test_ds.x)
+        y_pred = self.model.predict_proba(self.model.test_ds.x_features)
 
         # PR curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

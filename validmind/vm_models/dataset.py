@@ -96,7 +96,8 @@ class NumpyDataset(VMDataset):
             if isinstance(self._column_names, list):
                 if self._target_column is not None:
                     self._feature_columns = [
-                        col for col in self._column_names if col != self._target_column
+                        col for col in self._column_names
+                        if col != self._target_column and col != self._prediction_column
                     ]
                 else:
                     self._feature_columns = self._column_names
@@ -225,7 +226,7 @@ class NumpyDataset(VMDataset):
             [
                 self.column_names.index(name)
                 for name in self.column_names
-                if name != self.target_column
+                if name != self.target_column and name != self._prediction_column
             ],
         ]
 
