@@ -81,7 +81,8 @@ class KMeansClustersOptimization(Metric):
             kmeanModel = kmeanModel.fit(self.model.train_ds.x_features)
             # Calculate silhouette coefficients for each data point
             silhouette_avg[k] = silhouette_score(
-                self.model.train_ds.x_features, kmeanModel.predict(self.model.train_ds.x_features)
+                self.model.train_ds.x_features,
+                kmeanModel.predict(self.model.train_ds.x_features),
             )
 
             distortions[k] = (
