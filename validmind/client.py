@@ -369,7 +369,11 @@ def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
         )
         test_suites[_section] = test_suite
 
-    return test_suites
+    if len(test_suites) == 1:
+        return next(iter(test_suites.values()))  # Return the only TestSuite
+
+    else:
+        return test_suites  # If there are multiple entries, return the dictionary of TestSuites
 
 
 def run_template(*args, **kwargs):
