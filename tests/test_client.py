@@ -145,5 +145,28 @@ class TestRunDocumentationTests(TestCase):
         self.assertEqual(len(test_suite.sections), 3)
 
 
+class TestRunDocumentationTestsSection(TestCase):
+    @mock.patch(
+        "validmind.client_config.client_config.documentation_template",
+        MockedConfig.documentation_template,
+    )
+    def test_run_documentation_tests(self):
+        # create a very simple logistic regression model
+        model = sklearn.linear_model.LogisticRegression()
+        dataset = pd.DataFrame([[1, 1], [1, 0], [0, 1], [0, 0]], columns=["x", "y"])
+        model.fit(dataset[["x"]], dataset["y"])
+        vm_dataset = init_dataset(dataset, target_column="y")
+        vm_model = init_model(model, train_ds=vm_dataset, test_ds=vm_dataset)
+
+        test_suite = run_documentation_tests(
+            model=vm_model,
+            dataset=vm_dataset,
+            section=["test_subsection_1", "test_subsection_2"],
+            send=False
+        )
+
+        self.assertIsInstance(test_suite, validmind.vm_models.TestSuite)
+        self.assertEqual(len(test_suite.sections), 3)
+
 if __name__ == "__main__":
     unittest.main()

@@ -327,21 +327,21 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: None, send=True, fail_fast=False, **kwargs):
+def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
     all the tests associated with it into a test suite. It will then run the test
-    suite, log the results to the ValidMind API and display them to the user.
+    suite, log the results to the ValidMind API, and display them to the user.
 
     Args:
-        section (str, optional): The section to preview. Defaults to None.
+        section (str or list, optional): The section(s) to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
-        TestSuite: The completed TestSuite instance
+        TestSuite or dict: The completed TestSuite instance or a dictionary of TestSuites if section is a list.
 
     Raises:
         ValueError: If the project has not been initialized
@@ -350,6 +350,9 @@ def run_documentation_tests(section: None, send=True, fail_fast=False, **kwargs)
         raise MissingDocumentationTemplate(
             "No documentation template found. Please run `vm.init()`"
         )
+
+    if section is None:
+        section = [None]  # Convert None to a list containing None for consistency
 
     if isinstance(section, str):
         section = [section]  # Convert a single section string to a list
