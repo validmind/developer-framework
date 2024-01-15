@@ -370,7 +370,7 @@ def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
         test_suites[_section] = test_suite
 
     if len(test_suites) == 1:
-        return next(iter(test_suites.values()))  # Return the only TestSuite
+        return list(test_suites.values())[0]  # Return the only TestSuite
 
     else:
         return test_suites  # If there are multiple entries, return the dictionary of TestSuites
