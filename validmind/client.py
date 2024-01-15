@@ -327,7 +327,7 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, send=True, fail_fast=False, **kwargs):
+def run_documentation_tests(section: None, send=True, fail_fast=False, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -351,13 +351,22 @@ def run_documentation_tests(section: str = None, send=True, fail_fast=False, **k
             "No documentation template found. Please run `vm.init()`"
         )
 
-    return _run_template(
-        template=client_config.documentation_template,
-        section=section,
-        send=send,
-        fail_fast=fail_fast,
-        **kwargs,
-    )
+    if isinstance(section, str):
+        section = [section]  # Convert a single section string to a list
+
+    test_suites = {}
+
+    for _section in section:
+        test_suite = _run_template(
+            template=client_config.documentation_template,
+            section=_section,
+            send=send,
+            fail_fast=fail_fast,
+            **kwargs,
+        )
+        test_suites[_section] = test_suite
+
+    return test_suites
 
 
 def run_template(*args, **kwargs):
