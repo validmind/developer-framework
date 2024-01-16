@@ -86,7 +86,7 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
         tags (list, optional): Find tests that match list of tags. Can be used to
             narrow down matches from the filter string. Defaults to None.
         pretty (bool, optional): If True, returns a pandas DataFrame with a
-            formatted table. Defaults to False.
+            formatted table. Defaults to True.
         truncate (bool, optional): If True, truncates the test description to the first
             line. Defaults to True. (only used if pretty=True)
 
