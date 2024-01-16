@@ -331,21 +331,21 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section: str = None, send=True, fail_fast=False, **kwargs):
+def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
     all the tests associated with it into a test suite. It will then run the test
-    suite, log the results to the ValidMind API and display them to the user.
+    suite, log the results to the ValidMind API, and display them to the user.
 
     Args:
-        section (str, optional): The section to preview. Defaults to None.
+        section (str or list, optional): The section(s) to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Keyword arguments to pass to the TestSuite
 
     Returns:
-        TestSuite: The completed TestSuite instance
+        TestSuite or dict: The completed TestSuite instance or a dictionary of TestSuites if section is a list.
 
     Raises:
         ValueError: If the project has not been initialized
@@ -355,13 +355,29 @@ def run_documentation_tests(section: str = None, send=True, fail_fast=False, **k
             "No documentation template found. Please run `vm.init()`"
         )
 
-    return _run_template(
-        template=client_config.documentation_template,
-        section=section,
-        send=send,
-        fail_fast=fail_fast,
-        **kwargs,
-    )
+    if section is None:
+        section = [None]  # Convert None to a list containing None for consistency
+
+    if isinstance(section, str):
+        section = [section]  # Convert a single section string to a list
+
+    test_suites = {}
+
+    for _section in section:
+        test_suite = _run_template(
+            template=client_config.documentation_template,
+            section=_section,
+            send=send,
+            fail_fast=fail_fast,
+            **kwargs,
+        )
+        test_suites[_section] = test_suite
+
+    if len(test_suites) == 1:
+        return list(test_suites.values())[0]  # Return the only TestSuite
+
+    else:
+        return test_suites  # If there are multiple entries, return the dictionary of TestSuites
 
 
 def run_template(*args, **kwargs):

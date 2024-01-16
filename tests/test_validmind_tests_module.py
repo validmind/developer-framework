@@ -4,10 +4,7 @@ Unit tests for Validmind tests module
 import unittest
 from unittest import TestCase
 
-from pandas.io.formats.style import Styler
-
 from validmind.vm_models import Test
-from validmind.vm_models.test_context import TestContext
 from validmind.tests import list_tests, load_test, describe_test, register_test_provider
 
 
@@ -48,7 +45,7 @@ class TestTestsModule(TestCase):
     def test_test_provider_registration(self):
         class TestProvider:
             def load_test(self, test_id):
-                fake_test = Test(test_context=TestContext())
+                fake_test = Test()
                 fake_test.test_id = test_id
                 return fake_test
 
