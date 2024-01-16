@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union
 
 from ...logging import get_logger
-from ..test_context import TestContext
 from .test import TestSuiteTest
 
 logger = get_logger(__name__)
@@ -90,8 +89,6 @@ class TestSuite:
     tests: ClassVar[List[Union[str, dict]]]
 
     sections: List[TestSuiteSection] = None
-
-    test_context: TestContext = None
 
     def __post_init__(self):
         """

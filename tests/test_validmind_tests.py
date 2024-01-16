@@ -2,7 +2,6 @@
 
 import unittest
 
-import pandas as pd
 import xgboost as xgb
 from tqdm import tqdm
 
@@ -11,14 +10,14 @@ from validmind.datasets.classification import customer_churn as demo_dataset
 from validmind.datasets.classification import taiwan_credit as demo_dataset
 from validmind.models import FoundationModel, Prompt
 from validmind.tests import list_tests, load_test
-from validmind.vm_models import TestContext
+from validmind.vm_models import TestContext, TestInput
 
 class TestValidMindTests(unittest.TestCase):
     pass
 
-test_contexts = {}
+test_inputs = {}
 
-def _setup_test_context():
+def _setup_test_inputs():
     df = demo_dataset.load_data()
 
     train_df, validation_df, test_df = demo_dataset.preprocess(df)
@@ -49,7 +48,7 @@ def _setup_test_context():
         train_ds=vm_train_ds,
         test_ds=vm_test_ds,
     )
-    test_contexts["classification"] = TestContext(dataset=vm_dataset, model=vm_classifier_model)
+    test_inputs["classification"] = TestInput(dataset=vm_dataset, model=vm_classifier_model)
 
     vm_foundation_model = FoundationModel(
         predict_fn=lambda x: x,
@@ -58,7 +57,7 @@ def _setup_test_context():
             variables=["name"],
         ),
     )
-    test_contexts["llm"] = TestContext(model=vm_foundation_model)
+    test_inputs["llm"] = TestInput(model=vm_foundation_model)
 
 
 def create_unit_test_func(vm_test):
@@ -70,7 +69,7 @@ def create_unit_test_func(vm_test):
 
 
 def create_unit_test_funcs_from_vm_tests():
-    _setup_test_context()
+    _setup_test_inputs()
 
     for vm_test_id in tqdm(list_tests(pretty=False)):
         # load the test class
@@ -83,11 +82,15 @@ def create_unit_test_funcs_from_vm_tests():
         # initialize with the right test context
         # TODO: we need to better handle the test context based on the test metadata
         if getattr(vm_test_class, "category", None) == "prompt_validation":
-            test_context = test_contexts["llm"]
+            test_input = test_inputs["llm"]
         else:
-            test_context = test_contexts["classification"]
+            test_input = test_inputs["classification"]
 
-        vm_test = vm_test_class(test_context=test_context, params={})
+        vm_test = vm_test_class(
+            test_input=test_input,
+            test_context=TestContext(),
+            params={},
+        )
 
         # create a unit test function for the test class
         unit_test_func = create_unit_test_func(vm_test)

@@ -3,12 +3,20 @@
 """
 TestContext
 """
+
+# TODO: lets think about refactoring this file since it deals with both the `TestContext` and the `TestInput`.
+# TestInput was previously used for both storing a global "context" for running tests to be able to
+# share data, as well as for storing the inputs to those tests.
+# We've since split this into two separate concepts.
+# https://app.shortcut.com/validmind/story/2468/allow-arbitrary-test-context
+# There is more changes to come around how we handle test inputs, so once we iron out that, we can refactor
+
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
 import pandas as pd
 
-from ..errors import MissingRequiredTestContextError, TestContextInvalidDatasetError
+from ..errors import MissingRequiredTestInputError, TestInputInvalidDatasetError
 from .dataset import VMDataset
 from .model import VMModel
 
@@ -37,7 +45,7 @@ class TestContext:
     # Custom context data that can be set by metrics or tests using this context
     context_data: Optional[dict] = None
 
-    # TODO: here for backwards compatibility, remove this soon
+    # TODO: here for backwards compatibility, remove this when appropriate
     dataset: VMDataset = None
     model: VMModel = None
     models: List[VMModel] = None
@@ -80,37 +88,37 @@ class TestUtils:
 
     required_inputs: ClassVar[List[str]]
 
-    test_context: TestContext
+    test_context: Optional[TestContext] = None
     test_input: Optional[TestInput] = None
 
-    def _get_legacy_input(self, key):
-        """Test inputs have been removed from the test context and moved to TestInput
+    def _get_input(self, key):
+        """Retrieve an input from the Test Input or, for backwards compatibility,
+        the Test Context.
 
-        This method does a check for test_input and if its not present, it will
-        look inside the test_context for the legacy input and return that
-
-        TODO: remove this method once we remove the legacy inputs
+        TODO: remove this backwards compatibility when appropriate
         """
-        if self.test_input is not None:
-            return getattr(self.test_input, key)
+        try:
+            _input = getattr(self.test_input, key)
+        except AttributeError:
+            _input = getattr(self.test_context, key)
 
-        return getattr(self.test_context, key)
+        return _input
 
     @property
     def dataset(self):
-        return self._get_legacy_input("dataset")
+        return self._get_input("dataset")
 
     @property
     def model(self):
-        return self._get_legacy_input("model")
+        return self._get_input("model")
 
     @property
     def models(self):
-        return self._get_legacy_input("models")
+        return self._get_input("models")
 
     @property
     def inputs(self):
-        return self._get_legacy_input("inputs")
+        return self._get_input("inputs")
 
     @property
     def df(self):
@@ -119,14 +127,14 @@ class TestUtils:
         we passed in a Dataset or a DataFrame
         """
         if self.dataset is None:
-            raise TestContextInvalidDatasetError("dataset must be set")
+            raise TestInputInvalidDatasetError("dataset must be set")
 
         if isinstance(self.dataset, VMDataset):
             return self.dataset.raw_dataset
         elif isinstance(self.dataset, pd.DataFrame):
             return self.dataset
 
-        raise TestContextInvalidDatasetError(
+        raise TestInputInvalidDatasetError(
             "dataset must be a Pandas DataFrame or a validmind Dataset object"
         )
 
@@ -162,7 +170,7 @@ class TestUtils:
         for element in required_inputs:
             if not recursive_attr_check(self, element):
                 context_name = CONTEXT_NAMES.get(element, element)
-                raise MissingRequiredTestContextError(
+                raise MissingRequiredTestInputError(
                     f"{context_name} '{element}' is a required input and must be passed "
                     "as a keyword argument to the test suite"
                 )

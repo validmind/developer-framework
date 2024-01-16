@@ -189,7 +189,7 @@ class MissingDocumentationTemplate(BaseError):
     pass
 
 
-class MissingRequiredTestContextError(BaseError):
+class MissingRequiredTestInputError(BaseError):
     """
     When a required test context variable is missing.
     """
@@ -257,7 +257,7 @@ class TestRunNotFoundError(APIRequestError):
     pass
 
 
-class TestContextInvalidDatasetError(BaseError):
+class TestInputInvalidDatasetError(BaseError):
     """
     When an invalid dataset is used in a test context.
     """
@@ -351,6 +351,6 @@ def should_raise_on_fail_fast(error) -> bool:
     """
     error_class = error.__class__.__name__
     return error_class not in [
-        "MissingRequiredTestContextError",
+        "MissingRequiredTestInputError",
         "SkipTestError",
     ]
