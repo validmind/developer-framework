@@ -88,7 +88,7 @@ class TestUtils:
 
     required_inputs: ClassVar[List[str]]
 
-    test_context: TestContext
+    test_context: Optional[TestContext] = None
     test_input: Optional[TestInput] = None
 
     def _get_input(self, key):
