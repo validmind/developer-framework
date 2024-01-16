@@ -17,7 +17,7 @@ from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
-from ..vm_models import TestContext
+from ..vm_models import TestContext, TestInput
 from .__types__ import ExternalTestProvider
 from .test_providers import GithubTestProvider, LocalTestProvider
 
@@ -261,17 +261,26 @@ def describe_test(test_id: str = None, raw: bool = False):
     )
 
 
-def run_test(test_id, *args, **kwargs):
-    """
-    Run a test by test ID. Any extra arguments will be passed to the test's run method.
-    The only special argument is `params` which can be used to override the test's default params.
+def run_test(test_id, params: dict = None, **kwargs):
+    """Run a test by test ID
+
+    Args:
+        test_id (str): The test ID
+        params (dict, optional): A dictionary of params to override the default params
+        **kwargs: Any extra arguments will be passed in via the TestInput object. i.e.:
+            - dataset: A validmind Dataset object or a Pandas DataFrame
+            - model: A model to use for the test
+            - models: A list of models to use for the test
+            other inputs can be accessed inside the test via `self.inputs["input_name"]`
     """
     TestClass = load_test(test_id, reload=True)
 
-    test_params = kwargs.pop("params", None)
-    test_context = TestContext(*args, **kwargs)
+    test = TestClass(
+        test_input=TestInput(**kwargs),
+        test_context=TestContext(),
+        params=params,
+    )
 
-    test = TestClass(test_context=test_context, params=test_params)
     test.run()
     test.result.show()
 
