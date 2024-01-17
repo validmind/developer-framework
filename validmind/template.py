@@ -253,31 +253,3 @@ def get_template_test_suite(template, section=None):
         The TestSuite instance
     """
     return _create_template_test_suite(template, section)()
-
-
-def run_template(template, section, send=True, fail_fast=False, config=None, **kwargs):
-    """Run all tests in a template
-
-    This function will collect all tests used in a template into a TestSuite and then
-    run the TestSuite as usual.
-
-    Args:
-        template: A valid flat template
-        section: The section of the template to run (if not provided, run all sections)
-        send: Whether to send the results to the ValidMind API
-        fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        config: A dictionary of test parameters to override the defaults
-        **kwargs: variables to pass into the TestInput i.e. model, dataset etc.
-
-    Returns:
-        The completed TestSuite instance
-    """
-    test_suite = get_template_test_suite(template, section)
-
-    TestSuiteRunner(
-        suite=test_suite,
-        input=TestInput(**kwargs),
-        config=config,
-    ).run(send=send, fail_fast=fail_fast)
-
-    return test_suite

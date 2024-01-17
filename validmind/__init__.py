@@ -50,7 +50,6 @@ from .api_client import log_dataset as _log_dataset_async  # noqa: E402
 from .api_client import log_figure as _log_figure_async
 from .api_client import log_metrics as _log_metrics_async
 from .api_client import log_test_results
-from .client import run_test_plan  # DEPRECATED
 from .client import (  # noqa: E402
     get_test_suite,
     init_dataset,
@@ -58,7 +57,6 @@ from .client import (  # noqa: E402
     init_r_model,
     preview_template,
     run_documentation_tests,
-    run_template,
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
@@ -118,8 +116,6 @@ __all__ = [  # noqa
     "init_r_model",
     "preview_template",
     "run_documentation_tests",
-    "run_template",
-    "run_test_plan",  # DEPRECATED
     "run_test_suite",
     "tests",
     "test_suites",
