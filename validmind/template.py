@@ -14,7 +14,7 @@ from .html_templates.content_blocks import (
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
 from .utils import is_notebook
-from .vm_models import TestInput, TestSuite, TestSuiteRunner
+from .vm_models import TestSuite
 
 logger = get_logger(__name__)
 
