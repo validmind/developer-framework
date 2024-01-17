@@ -51,12 +51,6 @@
                     <a class="function" href="#run_documentation_tests">run_documentation_tests</a>
             </li>
             <li>
-                    <a class="function" href="#run_template">run_template</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_test_plan">run_test_plan</a>
-            </li>
-            <li>
                     <a class="function" href="#run_test_suite">run_test_suite</a>
             </li>
             <li>
@@ -143,7 +137,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.24.5&#39;</span>
+<span class="default_value">&#39;1.24.6&#39;</span>
 
         
     </div>
@@ -397,62 +391,6 @@ suite, log the results to the ValidMind API, and display them to the user.</p>
 <ul>
 <li><strong>ValueError:</strong>  If the project has not been initialized</li>
 </ul>
-</div>
-
-
-                </section>
-                <section id="run_template">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_template"></a>
-    
-            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_documentation_tests</code> instead.</p>
-
-<p>_run_template(
-    template=client_config.documentation_template,
-    section=section,
-    <em>args,
-    *</em>kwargs,
-)</p>
-
-<p>Collect and run all the tests associated with a template</p>
-
-<p>This function will analyze the current project's documentation template and collect
-all the tests associated with it into a test suite. It will then run the test
-suite, log the results to the ValidMind API and display them to the user.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the project has not been initialized</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="run_test_plan">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_test_plan"></a>
-    
-            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_test_suite</code> instead.</p>
 </div>
 
 
