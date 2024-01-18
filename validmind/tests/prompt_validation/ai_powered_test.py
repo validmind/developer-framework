@@ -3,7 +3,7 @@
 import os
 import re
 
-from openai import AzureOpenAI, Client
+from openai import AzureOpenAI, OpenAI
 
 
 class AIPoweredTest:
@@ -18,7 +18,7 @@ class AIPoweredTest:
 
     def __init__(self, *args, **kwargs):
         if "OPENAI_API_KEY" in os.environ:
-            self.client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
+            self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
             self.model_name = os.environ.get("VM_OPENAI_MODEL", "gpt-3.5-turbo")
 
         elif "AZURE_OPENAI_KEY" in os.environ:
