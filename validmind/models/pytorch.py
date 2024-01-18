@@ -51,7 +51,7 @@ class PyTorchModel(VMModel):
                     setattr(self, attr_name, ds.y_pred)
                 else:
                     logger.info("Running predict()... This may take a while")
-                    setattr(self, attr_name, np.array(self.predict(ds.x_features)))
+                    setattr(self, attr_name, np.array(self.predict(ds.x)))
 
         predict_and_assign(self.train_ds, "_y_train_predict")
         predict_and_assign(self.test_ds, "_y_test_predict")

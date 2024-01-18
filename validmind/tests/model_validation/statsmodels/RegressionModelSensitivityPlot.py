@@ -79,7 +79,7 @@ class RegressionModelSensitivityPlot(Metric):
 
         figures = []
         for i, model in enumerate(all_models):
-            features_df = model.test_ds.x_features_df()
+            features_df = model.test_ds.x_df()
             target_df = model.test_ds.y_df()  # series
 
             shocked_datasets = self.apply_shock(features_df, shocks)

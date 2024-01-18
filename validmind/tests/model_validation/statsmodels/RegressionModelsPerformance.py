@@ -76,7 +76,7 @@ class RegressionModelsPerformance(Metric):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.train_ds.y
             # R models will not predict the same number of rows as the test dataset
-            y_pred = model.predict(model.train_ds.x_features)[0 : len(y_true)]
+            y_pred = model.predict(model.train_ds.x)[0 : len(y_true)]
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
@@ -105,7 +105,7 @@ class RegressionModelsPerformance(Metric):
             X_columns = model.train_ds.get_features_columns()
             y_true = model.test_ds.y
             # R models will not predict the same number of rows as the test dataset
-            y_pred = model.predict(model.test_ds.x_features)[0 : len(y_true)]
+            y_pred = model.predict(model.test_ds.x)[0 : len(y_true)]
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

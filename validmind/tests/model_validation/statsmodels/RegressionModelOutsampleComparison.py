@@ -98,7 +98,7 @@ class RegressionModelOutsampleComparison(Metric):
             independent_vars = fitted_model.train_ds.get_features_columns()
 
             # Separate the target variable and features in the test dataset
-            X_test = fitted_model.test_ds.x_features
+            X_test = fitted_model.test_ds.x
             y_test = fitted_model.test_ds.y
 
             # Predict the test data

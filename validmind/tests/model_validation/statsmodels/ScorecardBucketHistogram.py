@@ -131,8 +131,8 @@ class ScorecardBucketHistogram(Metric):
         pdo = self.params["pdo"]
         rating_classes = self.params["rating_classes"]
 
-        X_train = self.model.train_ds.x_features.copy()
-        X_test = self.model.test_ds.x_features.copy()
+        X_train = self.model.train_ds.x.copy()
+        X_test = self.model.test_ds.x.copy()
 
         X_train_probs = self.compute_probabilities(self.model, X_train)
         X_test_probs = self.compute_probabilities(self.model, X_test)

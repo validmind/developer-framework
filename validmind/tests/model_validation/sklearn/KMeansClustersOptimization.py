@@ -78,25 +78,25 @@ class KMeansClustersOptimization(Metric):
         for k in n_clusters:
             # Building and fitting the model
             kmeanModel = model.set_params(n_clusters=k)
-            kmeanModel = kmeanModel.fit(self.model.train_ds.x_features)
+            kmeanModel = kmeanModel.fit(self.model.train_ds.x)
             # Calculate silhouette coefficients for each data point
             silhouette_avg[k] = silhouette_score(
-                self.model.train_ds.x_features,
-                kmeanModel.predict(self.model.train_ds.x_features),
+                self.model.train_ds.x,
+                kmeanModel.predict(self.model.train_ds.x),
             )
 
             distortions[k] = (
                 sum(
                     np.min(
                         cdist(
-                            self.model.train_ds.x_features,
+                            self.model.train_ds.x,
                             kmeanModel.cluster_centers_,
                             "euclidean",
                         ),
                         axis=1,
                     )
                 )
-                / self.model.train_ds.x_features.shape[0]
+                / self.model.train_ds.x.shape[0]
             )
         fig = make_subplots(
             rows=1,

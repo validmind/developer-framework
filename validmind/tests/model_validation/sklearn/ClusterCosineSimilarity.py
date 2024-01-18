@@ -72,7 +72,7 @@ class ClusterCosineSimilarity(Metric):
         results = []
         for cluster_id in range(num_clusters):
             cluster_mask = y_pred_train == cluster_id
-            cluster_data = self.model.train_ds.x_features[cluster_mask]
+            cluster_data = self.model.train_ds.x[cluster_mask]
             if cluster_data.size != 0:
                 # Compute the centroid of the cluster
                 cluster_centroid = np.mean(cluster_data, axis=0)

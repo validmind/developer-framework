@@ -75,7 +75,7 @@ class ROCCurve(Metric):
         model = self.model[0] if isinstance(self.model, list) else self.model
 
         y_true = model.test_ds.y
-        y_pred = model.predict_proba(self.model.test_ds.x_features)
+        y_pred = model.predict_proba(self.model.test_ds.x)
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

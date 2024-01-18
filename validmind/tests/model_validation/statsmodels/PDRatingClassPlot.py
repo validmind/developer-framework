@@ -100,9 +100,9 @@ class PDRatingClassPlot(Metric):
         title = self.params["title"]
         rating_classes = self.params["rating_classes"]
 
-        X_train = self.model.train_ds.x_features.copy()
+        X_train = self.model.train_ds.x.copy()
         y_train = self.model.train_ds.y.copy()
-        X_test = self.model.test_ds.x_features.copy()
+        X_test = self.model.test_ds.x.copy()
         y_test = self.model.test_ds.y.copy()
 
         # Compute probabilities

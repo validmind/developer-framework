@@ -102,7 +102,7 @@ class RegressionModelInsampleComparison(Metric):
 
         for i, model in enumerate(models):
             X_columns = model.train_ds.get_features_columns()
-            X = model.train_ds.x_features
+            X = model.train_ds.x
             y_true = model.train_ds.y
             y_pred = model.predict(X)
 

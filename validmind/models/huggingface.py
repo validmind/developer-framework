@@ -53,8 +53,8 @@ class HFModel(VMModel):
                     setattr(self, attr_name, ds.y_pred)
                 else:
                     logger.info("Running predict()...This may take a while")
-                    x_features_only = ds.x_features
-                    setattr(self, attr_name, np.array(self.predict(x_features_only)))
+                    x_only = ds.x
+                    setattr(self, attr_name, np.array(self.predict(x_only)))
 
         predict_and_assign(self.train_ds, "_y_train_predict")
         predict_and_assign(self.test_ds, "_y_test_predict")

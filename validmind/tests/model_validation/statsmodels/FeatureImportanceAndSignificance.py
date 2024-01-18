@@ -73,7 +73,7 @@ class FeatureImportanceAndSignificance(Metric):
         p_values = regression_model.model.pvalues
         feature_importances = permutation_importance(
             decision_tree_model.model,
-            decision_tree_model.train_ds.x_features,
+            decision_tree_model.train_ds.x,
             decision_tree_model.train_ds.y,
             random_state=0,
             n_jobs=-2,
@@ -97,7 +97,7 @@ class FeatureImportanceAndSignificance(Metric):
                 "Normalized p-value": p_values,
                 "Normalized Feature Importance": feature_importances,
             },
-            index=regression_model.train_ds.x_features_df().columns,
+            index=regression_model.train_ds.x_df().columns,
         )
 
         if significant_only:
