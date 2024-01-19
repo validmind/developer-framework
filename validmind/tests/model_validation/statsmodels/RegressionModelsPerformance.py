@@ -51,13 +51,13 @@ class RegressionModelsPerformance(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.models:
+        if not self.inputs.models:
             raise ValueError("List of models must be provided in the models parameter")
 
         all_models = []
 
-        if self.models is not None:
-            all_models.extend(self.models)
+        if self.inputs.models is not None:
+            all_models.extend(self.inputs.models)
 
         in_sample_results = self._in_sample_performance_ols(all_models)
         out_of_sample_results = self._out_sample_performance_ols(all_models)

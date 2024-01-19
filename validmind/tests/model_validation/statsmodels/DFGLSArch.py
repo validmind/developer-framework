@@ -54,7 +54,7 @@ class DFGLSArch(Metric):
         """
         Calculates Dickey-Fuller GLS metric for each of the dataset features
         """
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         dfgls_values = {}
         for col in dataset.columns:

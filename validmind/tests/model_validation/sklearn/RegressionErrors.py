@@ -128,12 +128,12 @@ class RegressionErrors(Metric):
         return results
 
     def run(self):
-        y_true_train = self.model.y_train_true
-        class_pred_train = self.model.y_train_predict
+        y_true_train = self.inputs.model.y_train_true
+        class_pred_train = self.inputs.model.y_train_predict
         y_true_train = y_true_train.astype(class_pred_train.dtype)
 
-        y_true_test = self.model.y_test_true
-        class_pred_test = self.model.y_test_predict
+        y_true_test = self.inputs.model.y_test_true
+        class_pred_test = self.inputs.model.y_test_predict
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
         results = self.regression_errors(

@@ -85,7 +85,7 @@ class StopWords(ThresholdTest):
                 ResultTable(
                     data=df,
                     metadata=ResultTableMetadata(
-                        title=f"Class Imbalance Results for Column {self.dataset.target_column}"
+                        title=f"Class Imbalance Results for Column {self.inputs.dataset.target_column}"
                     ),
                 )
             ]
@@ -93,10 +93,10 @@ class StopWords(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
-        text_column = self.dataset.text_column
+        text_column = self.inputs.dataset.text_column
 
         def create_corpus(df, text_column):
             corpus = []
@@ -105,7 +105,7 @@ class StopWords(ThresholdTest):
                     corpus.append(i)
             return corpus
 
-        corpus = create_corpus(self.dataset.df, text_column=text_column)
+        corpus = create_corpus(self.inputs.dataset.df, text_column=text_column)
 
         nltk.download("stopwords")
         stop = set(stopwords.words("english"))

@@ -53,7 +53,7 @@ class ADF(Metric):
         """
         Calculates ADF metric for each of the dataset features
         """
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         adf_values = {}
         for col in dataset.columns:

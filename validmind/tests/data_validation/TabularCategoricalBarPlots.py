@@ -48,7 +48,7 @@ class TabularCategoricalBarPlots(Metric):
     }
 
     def run(self):
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Extract categorical columns from the dataset
         categorical_columns = df.select_dtypes(

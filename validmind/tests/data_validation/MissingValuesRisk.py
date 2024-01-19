@@ -56,10 +56,10 @@ class MissingValuesRisk(Metric):
     }
 
     def run(self):
-        total_cells = self.dataset.df.size
-        total_missing = self.dataset.df.isnull().sum().sum()
-        total_columns = self.dataset.df.shape[1]
-        columns_with_missing = self.dataset.df.isnull().any().sum()
+        total_cells = self.inputs.dataset.df.size
+        total_missing = self.inputs.dataset.df.isnull().sum().sum()
+        total_columns = self.inputs.dataset.df.shape[1]
+        columns_with_missing = self.inputs.dataset.df.isnull().any().sum()
 
         risk_measures = {
             "Missing Values in the Dataset": round(

@@ -70,7 +70,7 @@ class AutoAR(Metric):
 
         max_ar_order = int(self.params["max_ar_order"])
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Create empty DataFrames to store the results
         summary_ar_analysis = pd.DataFrame()

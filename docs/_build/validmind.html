@@ -137,7 +137,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.24.6&#39;</span>
+<span class="default_value">&#39;1.25.1&#39;</span>
 
         
     </div>
@@ -359,7 +359,7 @@ the project has not been initialized, then an error will be raised.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -377,7 +377,8 @@ suite, log the results to the ValidMind API, and display them to the user.</p>
 <li><strong>section (str or list, optional):</strong>  The section(s) to preview. Defaults to None.</li>
 <li><strong>send (bool, optional):</strong>  Whether to send the results to the ValidMind API. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
+<li><strong>inputs (dict, optional):</strong>  A dictionary of test inputs to pass to the TestSuite</li>
+<li><strong>**kwargs:</strong>  backwards compatibility for passing in test inputs using keyword arguments</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -399,7 +400,7 @@ suite, log the results to the ValidMind API, and display them to the user.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="n">config</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_id</span>,</span><span class="param">	<span class="n">send</span><span class="o">=</span><span class="kc">True</span>,</span><span class="param">	<span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">config</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -420,9 +421,10 @@ test suite. Defaults to None.</li>
 <li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False
 is useful for testing. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test suite. These will provide
-the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific metric or threshold test for more details.</li>
+<li><strong>inputs (dict, optional):</strong>  A dictionary of test inputs to pass to the TestSuite e.g. <code>model</code>, <code>dataset</code>
+<code>models</code> etc. These inputs will be accessible by any test in the test suite. See the test
+documentation or <code>vm.describe_test()</code> for more details on the inputs required for each.</li>
+<li><strong>**kwargs:</strong>  backwards compatibility for passing in test inputs using keyword arguments</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>

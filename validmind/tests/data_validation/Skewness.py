@@ -90,9 +90,9 @@ class Skewness(ThresholdTest):
 
     def run(self):
         typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(self.dataset.df)
+        dataset_types = typeset.infer_type(self.inputs.dataset.df)
 
-        skewness = self.dataset.df.skew(numeric_only=True)
+        skewness = self.inputs.dataset.df.skew(numeric_only=True)
         passed = all(abs(skewness) < self.params["max_threshold"])
         results = []
 

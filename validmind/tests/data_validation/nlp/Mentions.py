@@ -61,23 +61,23 @@ class Mentions(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("Mentions requires a validmind Dataset object")
 
-        text_column = self.dataset.text_column
+        text_column = self.inputs.dataset.text_column
 
         def mentions(text):
             line = re.findall(r"(?<=@)\w+", text)
             return " ".join(line)
 
         b = (
-            self.dataset.df[text_column]
+            self.inputs.dataset.df[text_column]
             .apply(lambda x: mentions(x))
             .value_counts()[:][1 : self.params["top_mentions"]]
             .index.tolist()
         )
         a = (
-            self.dataset.df[text_column]
+            self.inputs.dataset.df[text_column]
             .apply(lambda x: mentions(x))
             .value_counts()[:][1 : self.params["top_mentions"]]
             .tolist()

@@ -66,9 +66,9 @@ class HeatmapFeatureCorrelations(Metric):
 
         # Filter DataFrame based on num_features
         if features is None:
-            df = self.dataset.df
+            df = self.inputs.dataset.df
         else:
-            df = self.dataset.df[features]
+            df = self.inputs.dataset.df[features]
 
         figure = self.visualize_correlations(df, declutter, fontsize)
 

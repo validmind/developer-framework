@@ -116,7 +116,7 @@ class TimeSeriesOutliers(ThresholdTest):
 
     def run(self):
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.inputs.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
@@ -125,7 +125,7 @@ class TimeSeriesOutliers(ThresholdTest):
             raise ValueError("zscore_threshold must be provided in params")
         zscore_threshold = self.params["zscore_threshold"]
 
-        temp_df = self.dataset.df.copy()
+        temp_df = self.inputs.dataset.df.copy()
         # temp_df = temp_df.dropna()
         typeset = ProfilingTypeSet(Settings())
         dataset_types = typeset.infer_type(temp_df)
@@ -198,7 +198,7 @@ class TimeSeriesOutliers(ThresholdTest):
             matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
         """
         sns.set(style="darkgrid")
-        columns = list(self.dataset.df.columns)
+        columns = list(self.inputs.dataset.df.columns)
         figures = []
 
         for col in columns:

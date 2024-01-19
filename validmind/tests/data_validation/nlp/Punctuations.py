@@ -57,7 +57,7 @@ class Punctuations(Metric):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("Punctuations requires a validmind Dataset object")
 
         def create_corpus(df, text_column):
@@ -67,8 +67,8 @@ class Punctuations(Metric):
                     corpus.append(i)
             return corpus
 
-        text_column = self.dataset.text_column
-        corpus = create_corpus(self.dataset.df, text_column=text_column)
+        text_column = self.inputs.dataset.text_column
+        corpus = create_corpus(self.inputs.dataset.df, text_column=text_column)
 
         dic = defaultdict(int)
         special = string.punctuation

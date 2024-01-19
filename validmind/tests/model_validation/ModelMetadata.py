@@ -111,6 +111,6 @@ class ModelMetadata(Metric):
         """
         Extracts model metadata from a model object instance
         """
-        model_info = _get_info_from_model_instance(self.model)
+        model_info = _get_info_from_model_instance(self.inputs.model)
 
         return self.cache_results(model_info)

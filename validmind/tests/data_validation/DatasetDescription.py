@@ -114,8 +114,8 @@ class DatasetDescription(Metric):
 
     def run(self):
         results = []
-        for ds_field in self.infer_datatype(self.dataset.df):
-            self.describe_dataset_field(self.dataset.df, ds_field)
+        for ds_field in self.infer_datatype(self.inputs.dataset.df):
+            self.describe_dataset_field(self.inputs.dataset.df, ds_field)
             results.append(ds_field)
         return self.cache_results(results)
 
