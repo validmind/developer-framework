@@ -66,16 +66,16 @@ class RegressionModelsCoeffs(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.models or len(self.models) == 0:
+        if not self.inputs.models or len(self.inputs.models) == 0:
             raise ValueError("List of models must be provided in the models parameter")
 
-        for model in self.models:
+        for model in self.inputs.models:
             if model.model_class() != "statsmodels" and model.model_class() != "R":
                 raise SkipTestError(
                     "Only statsmodels and R models are supported for this metric"
                 )
 
-        coefficients = [m.regression_coefficients() for m in self.models]
+        coefficients = [m.regression_coefficients() for m in self.inputs.models]
         all_models_summary = self._build_model_summaries(coefficients)
 
         return self.cache_results(

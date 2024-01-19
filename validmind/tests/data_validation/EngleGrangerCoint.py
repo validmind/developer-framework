@@ -56,7 +56,7 @@ class EngleGrangerCoint(Metric):
 
     def run(self):
         threshold = self.params["threshold"]
-        df = self.dataset.df.dropna()
+        df = self.inputs.dataset.df.dropna()
 
         # Create an empty DataFrame to store the results
         summary_cointegration = pd.DataFrame()

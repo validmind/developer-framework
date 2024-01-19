@@ -65,10 +65,10 @@ class RegressionModelForecastPlot(Metric):
         end_date = self.params["end_date"]
 
         # Check models list is not empty
-        if not self.models:
+        if not self.inputs.models:
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
-        for model in self.models:
+        for model in self.inputs.models:
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, start_date, end_date)

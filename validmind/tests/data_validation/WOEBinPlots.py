@@ -63,8 +63,8 @@ class WOEBinPlots(Metric):
     }
 
     def run(self):
-        df = self.dataset.df
-        target_column = self.dataset.target_column
+        df = self.inputs.dataset.df
+        target_column = self.inputs.dataset.target_column
         fig_height = self.params["fig_height"]
         fig_width = self.params["fig_width"]
         breaks_adj = self.params["breaks_adj"]

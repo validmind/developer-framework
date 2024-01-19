@@ -102,15 +102,15 @@ class RegressionCoeffsPlot(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.models:
+        if not self.inputs.models:
             raise ValueError("List of models must be provided in the models parameter")
 
         all_models = []
         all_figures = []
         all_metric_values = []
 
-        if self.models is not None:
-            all_models.extend(self.models)
+        if self.inputs.models is not None:
+            all_models.extend(self.inputs.models)
 
         for i, model in enumerate(all_models):
             model_name = f"Model {i+1}"

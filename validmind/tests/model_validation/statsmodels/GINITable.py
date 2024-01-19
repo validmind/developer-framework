@@ -63,7 +63,11 @@ class GINITable(Metric):
     }
 
     def run(self):
-        model = self.model[0] if isinstance(self.model, list) else self.model
+        model = (
+            self.inputs.model[0]
+            if isinstance(self.inputs.model, list)
+            else self.inputs.model
+        )
 
         X_train = model.train_ds.x
         y_train = model.train_ds.y

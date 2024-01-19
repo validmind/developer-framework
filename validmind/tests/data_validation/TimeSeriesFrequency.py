@@ -95,11 +95,11 @@ class TimeSeriesFrequency(ThresholdTest):
 
     def run(self):
         # Check if the index of dataframe is datetime
-        is_datetime = pd.api.types.is_datetime64_any_dtype(self.dataset.df.index)
+        is_datetime = pd.api.types.is_datetime64_any_dtype(self.inputs.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
-        freq_df = self._identify_frequencies(self.dataset.df)
+        freq_df = self._identify_frequencies(self.inputs.dataset.df)
         n_frequencies = len(freq_df["Frequency"].unique())
         test_results = [
             ThresholdTestResult(
@@ -107,7 +107,7 @@ class TimeSeriesFrequency(ThresholdTest):
                 values=freq_df.to_dict(orient="list"),
             )
         ]
-        fig_frequency = self._frequency_plot(self.dataset.df)
+        fig_frequency = self._frequency_plot(self.inputs.dataset.df)
         test_figures = []
         test_figures.append(
             Figure(

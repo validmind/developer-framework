@@ -57,7 +57,7 @@ class PhillipsPerronArch(Metric):
         """
         Calculates PP metric for each of the dataset features
         """
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         pp_values = {}
         for col in dataset.columns:

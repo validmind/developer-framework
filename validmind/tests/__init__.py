@@ -261,12 +261,13 @@ def describe_test(test_id: str = None, raw: bool = False):
     )
 
 
-def run_test(test_id, params: dict = None, **kwargs):
+def run_test(test_id, params: dict = None, inputs=None, **kwargs):
     """Run a test by test ID
 
     Args:
         test_id (str): The test ID
         params (dict, optional): A dictionary of params to override the default params
+        inputs: A dictionary of test inputs to pass to the Test
         **kwargs: Any extra arguments will be passed in via the TestInput object. i.e.:
             - dataset: A validmind Dataset object or a Pandas DataFrame
             - model: A model to use for the test
@@ -276,8 +277,8 @@ def run_test(test_id, params: dict = None, **kwargs):
     TestClass = load_test(test_id, reload=True)
 
     test = TestClass(
-        test_input=TestInput(**kwargs),
-        test_context=TestContext(),
+        context=TestContext(),
+        inputs=TestInput({**kwargs, **(inputs or {})}),
         params=params,
     )
 

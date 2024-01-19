@@ -94,8 +94,8 @@ class MinimumAccuracy(ThresholdTest):
         )
 
     def run(self):
-        y_true = self.model.y_test_true
-        class_pred = self.model.y_test_predict
+        y_true = self.inputs.model.y_test_true
+        class_pred = self.inputs.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
 
         accuracy_score = metrics.accuracy_score(y_true, class_pred)

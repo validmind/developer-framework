@@ -67,17 +67,17 @@ class SilhouettePlot(Metric):
     }
 
     def run(self):
-        y_pred_train = self.model.y_train_predict
+        y_pred_train = self.inputs.model.y_train_predict
         # Calculate the silhouette score
         silhouette_avg = silhouette_score(
-            self.model.train_ds.x,
+            self.inputs.model.train_ds.x,
             y_pred_train,
             metric="euclidean",
         )
         num_clusters = len(np.unique(y_pred_train))
         # Calculate silhouette coefficients for each data point
         sample_silhouette_values = silhouette_samples(
-            self.model.train_ds.x, y_pred_train
+            self.inputs.model.train_ds.x, y_pred_train
         )
         # Create a silhouette plot
         fig, ax = plt.subplots()

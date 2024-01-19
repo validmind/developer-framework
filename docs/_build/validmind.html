@@ -51,12 +51,6 @@
                     <a class="function" href="#run_documentation_tests">run_documentation_tests</a>
             </li>
             <li>
-                    <a class="function" href="#run_template">run_template</a>
-            </li>
-            <li>
-                    <a class="function" href="#run_test_plan">run_test_plan</a>
-            </li>
-            <li>
                     <a class="function" href="#run_test_suite">run_test_suite</a>
             </li>
             <li>
@@ -143,7 +137,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.24.4&#39;</span>
+<span class="default_value">&#39;1.25.0&#39;</span>
 
         
     </div>
@@ -365,7 +359,7 @@ the project has not been initialized, then an error will be raised.</p>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_documentation_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">section</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -383,7 +377,8 @@ suite, log the results to the ValidMind API, and display them to the user.</p>
 <li><strong>section (str or list, optional):</strong>  The section(s) to preview. Defaults to None.</li>
 <li><strong>send (bool, optional):</strong>  Whether to send the results to the ValidMind API. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
+<li><strong>inputs (dict, optional):</strong>  A dictionary of test inputs to pass to the TestSuite</li>
+<li><strong>**kwargs:</strong>  backwards compatibility for passing in test inputs using keyword arguments</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -401,67 +396,11 @@ suite, log the results to the ValidMind API, and display them to the user.</p>
 
 
                 </section>
-                <section id="run_template">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_template</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_template"></a>
-    
-            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_documentation_tests</code> instead.</p>
-
-<p>_run_template(
-    template=client_config.documentation_template,
-    section=section,
-    <em>args,
-    *</em>kwargs,
-)</p>
-
-<p>Collect and run all the tests associated with a template</p>
-
-<p>This function will analyze the current project's documentation template and collect
-all the tests associated with it into a test suite. It will then run the test
-suite, log the results to the ValidMind API and display them to the user.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>*args:</strong>  Arguments to pass to the TestSuite</li>
-<li><strong>**kwargs:</strong>  Keyword arguments to pass to the TestSuite</li>
-</ul>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>ValueError:</strong>  If the project has not been initialized</li>
-</ul>
-</div>
-
-
-                </section>
-                <section id="run_test_plan">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run_test_plan</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_plan_name</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#run_test_plan"></a>
-    
-            <div class="docstring"><p>DEPRECATED! Use <code>vm.run_test_suite</code> instead.</p>
-</div>
-
-
-                </section>
                 <section id="run_test_suite">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_test_suite</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_suite_id</span>, </span><span class="param"><span class="n">send</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>, </span><span class="param"><span class="n">config</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_test_suite</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_suite_id</span>,</span><span class="param">	<span class="n">send</span><span class="o">=</span><span class="kc">True</span>,</span><span class="param">	<span class="n">fail_fast</span><span class="o">=</span><span class="kc">False</span>,</span><span class="param">	<span class="n">config</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -482,9 +421,10 @@ test suite. Defaults to None.</li>
 <li><strong>send (bool, optional):</strong>  Whether to post the test results to the API. send=False
 is useful for testing. Defaults to True.</li>
 <li><strong>fail_fast (bool, optional):</strong>  Whether to stop running tests after the first failure. Defaults to False.</li>
-<li><strong>**kwargs:</strong>  Additional keyword arguments to pass to the test suite. These will provide
-the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
-See the documentation for the specific metric or threshold test for more details.</li>
+<li><strong>inputs (dict, optional):</strong>  A dictionary of test inputs to pass to the TestSuite e.g. <code>model</code>, <code>dataset</code>
+<code>models</code> etc. These inputs will be accessible by any test in the test suite. See the test
+documentation or <code>vm.describe_test()</code> for more details on the inputs required for each.</li>
+<li><strong>**kwargs:</strong>  backwards compatibility for passing in test inputs using keyword arguments</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>

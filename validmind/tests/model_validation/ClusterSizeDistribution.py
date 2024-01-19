@@ -58,8 +58,8 @@ class ClusterSizeDistribution(Metric):
     }
 
     def run(self):
-        y_true_train = self.model.y_train_true
-        y_pred_train = self.model.y_train_predict
+        y_true_train = self.inputs.model.y_train_true
+        y_pred_train = self.inputs.model.y_train_predict
         y_true_train = y_true_train.astype(y_pred_train.dtype)
         df = pd.DataFrame(
             {"Actual": y_true_train.ravel(), "Prediction": y_pred_train.ravel()}

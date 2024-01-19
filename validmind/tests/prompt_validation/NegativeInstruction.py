@@ -121,7 +121,7 @@ Prompt:
         response = self.call_model(
             system_prompt=self.system_prompt,
             user_prompt=self.user_prompt.format(
-                prompt_to_test=self.model.prompt.template
+                prompt_to_test=self.inputs.model.prompt.template
             ),
         )
         score = self.get_score(response)

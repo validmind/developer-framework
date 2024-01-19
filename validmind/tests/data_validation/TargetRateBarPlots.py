@@ -51,11 +51,11 @@ class TargetRateBarPlots(Metric):
     }
 
     def plot_loan_default_ratio(self, default_column, columns=None):
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Use all categorical features if columns is not specified, else use selected columns
         if columns is None:
-            features = self.dataset.get_categorical_features_columns()
+            features = self.inputs.dataset.get_categorical_features_columns()
         else:
             features = columns
 
@@ -118,7 +118,7 @@ class TargetRateBarPlots(Metric):
         if default_column is None:
             raise ValueError("The default_column parameter needs to be specified.")
 
-        unique_values = self.dataset.df[default_column].unique()
+        unique_values = self.inputs.dataset.df[default_column].unique()
         binary_values = [0, 1]
 
         if sorted(unique_values) != binary_values:

@@ -59,7 +59,7 @@ class KPSS(Metric):
         """
         Calculates KPSS for each of the dataset features
         """
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         kpss_values = {}
         for col in dataset.columns:

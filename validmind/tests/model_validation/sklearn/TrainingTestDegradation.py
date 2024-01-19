@@ -119,11 +119,11 @@ class TrainingTestDegradation(ThresholdTest):
         )
 
     def run(self):
-        y_test_true = self.model.y_test_true
-        y_train_true = self.model.y_train_true
-        train_class_pred = self.model.y_train_predict
+        y_test_true = self.inputs.model.y_test_true
+        y_train_true = self.inputs.model.y_train_true
+        train_class_pred = self.inputs.model.y_train_predict
         y_train_true = y_train_true.astype(train_class_pred.dtype)
-        test_class_pred = self.model.y_test_predict
+        test_class_pred = self.inputs.model.y_test_predict
         y_test_true = y_test_true.astype(test_class_pred.dtype)
 
         report_train = metrics.classification_report(

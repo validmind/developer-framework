@@ -122,7 +122,11 @@ class LogisticRegCumulativeProb(Metric):
         return fig
 
     def run(self):
-        model = self.model[0] if isinstance(self.model, list) else self.model
+        model = (
+            self.inputs.model[0]
+            if isinstance(self.inputs.model, list)
+            else self.inputs.model
+        )
 
         target_column = model.train_ds.target_column
         title = self.params["title"]

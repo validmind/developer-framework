@@ -157,14 +157,14 @@ class FeatureImportanceAndSignificance(Metric):
 
         all_models = []
 
-        if self.models is not None:
-            all_models.extend(self.models)
+        if self.inputs.models is not None:
+            all_models.extend(self.inputs.models)
 
-        if len(self.models) != 2:
+        if len(self.inputs.models) != 2:
             raise ValueError("Two models must be provided")
 
-        regression_model = self.models[0]
-        decision_tree_model = self.models[1]
+        regression_model = self.inputs.models[0]
+        decision_tree_model = self.inputs.models[1]
 
         p_values, feature_importances = self.compute_p_values_and_feature_importances(
             regression_model, decision_tree_model

@@ -72,7 +72,7 @@ class AutoStationarity(Metric):
             raise ValueError("threshold must be provided in params")
         threshold = self.params["threshold"]
 
-        df = self.dataset.df.dropna()
+        df = self.inputs.dataset.df.dropna()
 
         # Create an empty DataFrame to store the results
         summary_stationarity = pd.DataFrame()

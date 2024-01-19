@@ -57,7 +57,7 @@ class ClusterDistribution(Metric):
     def run(self):
         # run kmeans clustering on embeddings
         kmeans = KMeans(n_clusters=self.params["num_clusters"]).fit(
-            self.model.y_test_predict.values
+            self.inputs.model.y_test_predict.values
         )
 
         # plot the distribution

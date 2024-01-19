@@ -67,13 +67,13 @@ class StabilityAnalysis(ThresholdTest):
                 "The `text_column` parameter must be provided to the StabilityAnalysis test."
             )
 
-        original_data_df = self.dataset.df[col]
+        original_data_df = self.inputs.dataset.df[col]
         perturbed_data_df = original_data_df.copy()
         perturbed_data_df = perturbed_data_df.apply(self.perturb_data)
 
         # Compute embeddings for the original and perturbed dataset
-        original_embeddings = self.model.predict(original_data_df)
-        perturbed_embeddings = self.model.predict(perturbed_data_df)
+        original_embeddings = self.inputs.model.predict(original_data_df)
+        perturbed_embeddings = self.inputs.model.predict(perturbed_data_df)
 
         # Compute cosine similarities between original and perturbed embeddings
         similarities = cosine_similarity(

@@ -67,7 +67,7 @@ class IQROutliersBarPlot(Metric):
     }
 
     def run(self):
-        df = self.dataset.df
+        df = self.inputs.dataset.df
         num_features = self.params["num_features"]
         threshold = self.params["threshold"]
         fig_width = self.params["fig_width"]

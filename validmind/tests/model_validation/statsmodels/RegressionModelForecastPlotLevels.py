@@ -69,11 +69,11 @@ class RegressionModelForecastPlotLevels(Metric):
     def run(self):
         transformation = self.params["transformation"]
 
-        if not self.models:
+        if not self.inputs.models:
             raise ValueError("List of models must be provided in the models parameter")
 
         all_models = []
-        for model in self.models:
+        for model in self.inputs.models:
             all_models.append(model)
 
         figures = self._plot_forecast(all_models, transformation)

@@ -53,8 +53,8 @@ class BleuScore(Metric):
 
         # Compute the BLEU score
         bleu = bleu.compute(
-            predictions=self.model.y_test_predict,
-            references=self.model.y_test_true,
+            predictions=self.inputs.model.y_test_predict,
+            references=self.inputs.model.y_test_true,
         )
         return self.cache_results(metric_value={"blue_score_metric": bleu})
 

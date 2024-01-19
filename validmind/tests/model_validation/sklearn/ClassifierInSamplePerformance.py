@@ -58,7 +58,7 @@ class ClassifierInSamplePerformance(ClassifierPerformance):
     }
 
     def y_true(self):
-        return self.model.y_train_true
+        return self.inputs.model.y_train_true
 
     def y_pred(self):
-        return self.model.y_train_predict
+        return self.inputs.model.y_train_predict

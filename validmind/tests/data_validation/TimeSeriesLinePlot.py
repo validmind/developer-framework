@@ -52,11 +52,11 @@ class TimeSeriesLinePlot(Metric):
 
     def run(self):
         # Check if index is datetime
-        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+        if not pd.api.types.is_datetime64_any_dtype(self.inputs.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
-        columns = list(self.dataset.df.columns)
-        df = self.dataset.df
+        columns = list(self.inputs.dataset.df.columns)
+        df = self.inputs.dataset.df
 
         if not set(columns).issubset(set(df.columns)):
             raise ValueError("Provided 'columns' must exist in the dataset")

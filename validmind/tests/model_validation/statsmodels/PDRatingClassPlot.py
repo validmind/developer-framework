@@ -96,18 +96,18 @@ class PDRatingClassPlot(Metric):
         return fig
 
     def run(self):
-        target_column = self.model.train_ds.target_column
+        target_column = self.inputs.model.train_ds.target_column
         title = self.params["title"]
         rating_classes = self.params["rating_classes"]
 
-        X_train = self.model.train_ds.x.copy()
-        y_train = self.model.train_ds.y.copy()
-        X_test = self.model.test_ds.x.copy()
-        y_test = self.model.test_ds.y.copy()
+        X_train = self.inputs.model.train_ds.x.copy()
+        y_train = self.inputs.model.train_ds.y.copy()
+        X_test = self.inputs.model.test_ds.x.copy()
+        y_test = self.inputs.model.test_ds.y.copy()
 
         # Compute probabilities
-        X_train["probability"] = self.model.predict(X_train)
-        X_test["probability"] = self.model.predict(X_test)
+        X_train["probability"] = self.inputs.model.predict(X_train)
+        X_test["probability"] = self.inputs.model.predict(X_test)
 
         df_train = pd.concat([X_train, y_train], axis=1)
         df_test = pd.concat([X_test, y_test], axis=1)

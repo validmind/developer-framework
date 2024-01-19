@@ -68,12 +68,12 @@ class RegressionR2Square(Metric):
         return ResultSummary(results=[ResultTable(data=table_records)])
 
     def run(self):
-        y_true_train = self.model.y_train_true
-        class_pred_train = self.model.y_train_predict
+        y_true_train = self.inputs.model.y_train_true
+        class_pred_train = self.inputs.model.y_train_predict
         y_true_train = y_true_train.astype(class_pred_train.dtype)
 
-        y_true_test = self.model.y_test_true
-        class_pred_test = self.model.y_test_predict
+        y_true_test = self.inputs.model.y_test_true
+        class_pred_test = self.inputs.model.y_test_predict
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
         r2s_train = metrics.r2_score(y_true_train, class_pred_train)
@@ -89,7 +89,7 @@ class RegressionR2Square(Metric):
             }
         )
 
-        X_columns = self.model.train_ds.get_features_columns()
+        X_columns = self.inputs.model.train_ds.get_features_columns()
         adj_r2_train = adj_r2_score(
             y_true_train, class_pred_train, len(y_true_train), len(X_columns)
         )
