@@ -91,7 +91,7 @@ class TestInput:
     def __repr__(self):
         """Human-readable string representation of the object."""
         attrs = ",\n    ".join(
-            f"{key}={value!r}" for key, value in self._attributes.items()
+            f"{key}={value!r}" for key, value in self.__dict__.items()
         )
         return f"{self.__class__.__name__}(\n    {attrs}\n)"
 
