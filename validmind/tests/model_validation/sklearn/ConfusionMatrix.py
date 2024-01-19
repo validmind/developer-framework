@@ -65,12 +65,12 @@ class ConfusionMatrix(Metric):
     }
 
     def run(self):
-        y_true = self.model.y_test_true
+        y_true = self.inputs.model.y_test_true
         labels = np.unique(y_true)
         labels.sort()
         labels = np.array(labels).T.tolist()
 
-        class_pred = self.model.y_test_predict
+        class_pred = self.inputs.model.y_test_predict
         y_true = y_true.astype(class_pred.dtype)
         cm = metrics.confusion_matrix(y_true, class_pred, labels=labels)
 

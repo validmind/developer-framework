@@ -96,7 +96,7 @@ class AutoSeasonality(Metric):
             raise ValueError("max_period must be provided in params")
         max_period = int(self.params["max_period"])
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Create an empty DataFrame to store the results
         summary_auto_seasonality = pd.DataFrame()

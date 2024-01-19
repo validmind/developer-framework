@@ -56,9 +56,9 @@ class ScatterPlot(Metric):
     }
 
     def run(self):
-        columns = list(self.dataset.df.columns)
+        columns = list(self.inputs.dataset.df.columns)
 
-        df = self.dataset.df[columns]
+        df = self.inputs.dataset.df[columns]
 
         if not set(columns).issubset(set(df.columns)):
             raise ValueError("Provided 'columns' must exist in the dataset")

@@ -65,8 +65,10 @@ class RollingStatsPlot(Metric):
         :param ax1: Axis object for the rolling mean plot
         :param ax2: Axis object for the rolling standard deviation plot
         """
-        rolling_mean = self.dataset.df[col].rolling(window=int(window_size)).mean()
-        rolling_std = self.dataset.df[col].rolling(window=int(window_size)).std()
+        rolling_mean = (
+            self.inputs.dataset.df[col].rolling(window=int(window_size)).mean()
+        )
+        rolling_std = self.inputs.dataset.df[col].rolling(window=int(window_size)).std()
 
         # Create a new figure and axis objects
         fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
@@ -100,11 +102,11 @@ class RollingStatsPlot(Metric):
             raise ValueError("Window size must be provided in params")
 
         # Check if index is datetime
-        if not pd.api.types.is_datetime64_any_dtype(self.dataset.df.index):
+        if not pd.api.types.is_datetime64_any_dtype(self.inputs.dataset.df.index):
             raise ValueError("Index must be a datetime type")
 
         window_size = self.params["window_size"]
-        df = self.dataset.df.dropna()
+        df = self.inputs.dataset.df.dropna()
 
         if not set(df.columns).issubset(set(df.columns)):
             raise ValueError("Provided 'columns' must exist in the dataset")

@@ -61,7 +61,7 @@ class IQROutliersTable(Metric):
         features = self.params["features"]
         threshold = self.params["threshold"]
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         outliers_summary_table = self.detect_and_analyze_outliers(
             df, features, threshold

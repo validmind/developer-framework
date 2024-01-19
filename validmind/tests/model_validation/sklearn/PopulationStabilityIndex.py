@@ -172,7 +172,7 @@ class PopulationStabilityIndex(Metric):
         return psi_df.to_dict(orient="records")
 
     def run(self):
-        model_library = self.model.model_library()
+        model_library = self.inputs.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
@@ -182,8 +182,8 @@ class PopulationStabilityIndex(Metric):
             return
 
         psi_results = self._get_psi(
-            self.model.predict_proba(self.model.train_ds.x).copy(),
-            self.model.predict_proba(self.model.test_ds.x).copy(),
+            self.inputs.model.predict_proba(self.inputs.model.train_ds.x).copy(),
+            self.inputs.model.predict_proba(self.inputs.model.test_ds.x).copy(),
         )
 
         trace1 = go.Bar(

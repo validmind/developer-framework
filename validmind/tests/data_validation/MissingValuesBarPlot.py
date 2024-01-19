@@ -69,7 +69,7 @@ class MissingValuesBarPlot(Metric):
     def visualize_missing_values(self, threshold, fig_height):
         # Calculate the percentage of missing values in each column
         missing_percentages = (
-            self.dataset.df.isnull().sum() / len(self.dataset.df)
+            self.inputs.dataset.df.isnull().sum() / len(self.inputs.dataset.df)
         ) * 100
 
         # Only keep entries where missing_percentage > 0

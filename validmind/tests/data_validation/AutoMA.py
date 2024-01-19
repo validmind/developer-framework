@@ -66,7 +66,7 @@ class AutoMA(Metric):
 
         max_ma_order = int(self.params["max_ma_order"])
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Create empty DataFrames to store the results
         summary_ma_analysis = pd.DataFrame()

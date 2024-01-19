@@ -73,7 +73,7 @@ class DatasetMetadata(Test):
         and it will be logged via the `log_dataset` function
         """
         self.result = TestSuiteDatasetResult(
-            result_id="dataset_metadata", dataset=self.dataset
+            result_id="dataset_metadata", dataset=self.inputs.dataset
         )
 
         return self.result

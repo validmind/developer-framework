@@ -108,7 +108,7 @@ class PiTPDHistogram(Metric):
         return fig
 
     def run(self):
-        df = self.dataset
+        df = self.inputs.dataset
         default_column = self.params["default_column"]
         predicted_default_column = self.params["predicted_default_column"]
         default_probabilities_column = self.params["default_probabilities_column"]

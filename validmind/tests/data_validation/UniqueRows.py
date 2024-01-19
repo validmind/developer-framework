@@ -87,9 +87,9 @@ class UniqueRows(ThresholdTest):
         )
 
     def run(self):
-        rows = self.dataset.df.shape[0]
+        rows = self.inputs.dataset.df.shape[0]
 
-        unique_rows = self.dataset.df.nunique()
+        unique_rows = self.inputs.dataset.df.nunique()
         results = [
             ThresholdTestResult(
                 column=col,

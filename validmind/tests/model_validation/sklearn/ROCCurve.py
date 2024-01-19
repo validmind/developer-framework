@@ -68,14 +68,18 @@ class ROCCurve(Metric):
     }
 
     def run(self):
-        if self.model.model_library() == "FoundationModel":
+        if self.inputs.model.model_library() == "FoundationModel":
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
         # Extract the actual model
-        model = self.model[0] if isinstance(self.model, list) else self.model
+        model = (
+            self.inputs.model[0]
+            if isinstance(self.inputs.model, list)
+            else self.inputs.model
+        )
 
         y_true = model.test_ds.y
-        y_pred = model.predict_proba(self.model.test_ds.x)
+        y_pred = model.predict_proba(self.inputs.model.test_ds.x)
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

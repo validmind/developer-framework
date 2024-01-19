@@ -66,10 +66,10 @@ class PermutationFeatureImportance(Metric):
     }
 
     def run(self):
-        x = self.model.train_ds.x_df()
-        y = self.model.train_ds.y_df()
+        x = self.inputs.model.train_ds.x_df()
+        y = self.inputs.model.train_ds.y_df()
 
-        model_library = self.model.model_library()
+        model_library = self.inputs.model.model_library()
         if (
             model_library == "statsmodels"
             or model_library == "pytorch"
@@ -80,7 +80,7 @@ class PermutationFeatureImportance(Metric):
             raise SkipTestError(f"Skipping PFI for {model_library} models")
 
         pfi_values = permutation_importance(
-            self.model.model,
+            self.inputs.model.model,
             x,
             y,
             random_state=0,

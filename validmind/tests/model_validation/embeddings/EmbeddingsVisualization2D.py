@@ -65,7 +65,7 @@ class EmbeddingsVisualization2D(Metric):
             )
 
         # use TSNE to reduce dimensionality of embeddings
-        num_samples = len(self.model.y_test_predict.values)
+        num_samples = len(self.inputs.model.y_test_predict.values)
 
         if self.params["perplexity"] >= num_samples:
             perplexity = num_samples - 1
@@ -75,13 +75,13 @@ class EmbeddingsVisualization2D(Metric):
         reduced_embeddings = TSNE(
             n_components=2,
             perplexity=perplexity,
-        ).fit_transform(self.model.y_test_predict.values)
+        ).fit_transform(self.inputs.model.y_test_predict.values)
 
         # create a scatter plot from the reduced embeddings
         fig = px.scatter(
             x=reduced_embeddings[:, 0],
             y=reduced_embeddings[:, 1],
-            color=self.model.test_ds.df[cluster_column],
+            color=self.inputs.model.test_ds.df[cluster_column],
             title="2D Visualization of Text Embeddings",
         )
         fig.update_layout(width=500, height=500)

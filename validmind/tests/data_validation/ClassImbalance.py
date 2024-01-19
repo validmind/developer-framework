@@ -83,7 +83,7 @@ class ClassImbalance(ThresholdTest):
                 ResultTable(
                     data=results[0].values,
                     metadata=ResultTableMetadata(
-                        title=f"Class Imbalance Results for Column {self.dataset.target_column}"
+                        title=f"Class Imbalance Results for Column {self.inputs.dataset.target_column}"
                     ),
                 )
             ]
@@ -91,15 +91,15 @@ class ClassImbalance(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("ClassImbalance requires a validmind Dataset object")
 
-        if self.dataset.target_column is None:
+        if self.inputs.dataset.target_column is None:
             print("Skipping class_imbalance test because no target column is defined")
             return
 
-        target_column = self.dataset.target_column
-        imbalance_percentages = self.dataset.df[target_column].value_counts(
+        target_column = self.inputs.dataset.target_column
+        imbalance_percentages = self.inputs.dataset.df[target_column].value_counts(
             normalize=True
         )
         if len(imbalance_percentages) > 10:
@@ -144,7 +144,7 @@ class ClassImbalance(ThresholdTest):
 
         # Create a layout for the chart
         layout = go.Layout(
-            title=f"Class Imbalance Results for Target Column {self.dataset.target_column}",
+            title=f"Class Imbalance Results for Target Column {self.inputs.dataset.target_column}",
             xaxis=dict(title="Class"),
             yaxis=dict(title="Percentage"),
         )

@@ -19,7 +19,7 @@ class AIPoweredTest:
     def __init__(self, *args, **kwargs):
         if "OPENAI_API_KEY" in os.environ:
             self.client = Client(api_key=os.environ.get("OPENAI_API_KEY"))
-            self.model_name = os.environ.get("VM_OPENAI_MODEL", "gpt-3.5-turbo")
+            self.inputs.model_name = os.environ.get("VM_OPENAI_MODEL", "gpt-3.5-turbo")
 
         elif "AZURE_OPENAI_KEY" in os.environ:
             if "AZURE_OPENAI_ENDPOINT" not in os.environ:
@@ -37,7 +37,7 @@ class AIPoweredTest:
                 api_key=os.environ.get("AZURE_OPENAI_KEY"),
                 api_version=os.environ.get("AZURE_OPENAI_VERSION", "2023-05-15"),
             )
-            self.model_name = os.environ.get("AZURE_OPENAI_MODEL")
+            self.inputs.model_name = os.environ.get("AZURE_OPENAI_MODEL")
 
         else:
             raise ValueError(
@@ -50,7 +50,7 @@ class AIPoweredTest:
         """
         return (
             self.client.chat.completions.create(
-                model=self.model_name,
+                model=self.inputs.model_name,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},

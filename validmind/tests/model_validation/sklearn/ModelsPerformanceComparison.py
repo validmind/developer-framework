@@ -63,10 +63,10 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     }
 
     def y_true(self):
-        return self.model.y_test_true
+        return self.inputs.model.y_test_true
 
     def y_pred(self):
-        return self.model.y_test_predict
+        return self.inputs.model.y_test_predict
 
     def summary(self, metric_value: dict):
         """
@@ -121,15 +121,15 @@ class ModelsPerformanceComparison(ClassifierPerformance):
 
     def run(self):
         # Check models list is not empty
-        if not self.models:
+        if not self.inputs.models:
             raise SkipTestError(
                 "List of models must be provided as a `models` parameter to compare perforance"
             )
 
-        all_models = [self.model]
+        all_models = [self.inputs.model]
 
-        if self.models is not None:
-            all_models.extend(self.models)
+        if self.inputs.models is not None:
+            all_models.extend(self.inputs.models)
         results = {}
         for idx, model in enumerate(all_models):
             y_true = model.y_test_true

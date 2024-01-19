@@ -56,14 +56,14 @@ class FeatureTargetCorrelationPlot(Metric):
         fig_height = self.params["fig_height"]
 
         if features is None:
-            features = self.dataset.df.columns.to_list()
+            features = self.inputs.dataset.df.columns.to_list()
         else:
             features = self.params["features"]
 
-        target_column = self.dataset.target_column
+        target_column = self.inputs.dataset.target_column
 
         # Filter DataFrame based on features and target_column
-        df = self.dataset.df[features + [target_column]]
+        df = self.inputs.dataset.df[features + [target_column]]
 
         figure = self.visualize_feature_target_correlation(
             df, target_column, fig_height

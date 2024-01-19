@@ -54,14 +54,14 @@ class RegressionModelOutsampleComparison(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.models:
+        if not self.inputs.models:
             raise ValueError("List of models must be provided in the models parameter")
         all_models = []
-        if self.model is not None:
-            all_models.append(self.model)
+        if self.inputs.model is not None:
+            all_models.append(self.inputs.model)
 
-        if self.models is not None:
-            all_models.extend(self.models)
+        if self.inputs.models is not None:
+            all_models.extend(self.inputs.models)
 
         for model in all_models:
             if model.test_ds is None:

@@ -124,11 +124,11 @@ class ScorecardProbabilitiesHistogram(Metric):
         pdo = self.params["pdo"]
         score_buckets = self.params["score_buckets"]
 
-        X_train = self.model.train_ds.x.copy()
-        X_test = self.model.test_ds.x.copy()
+        X_train = self.inputs.model.train_ds.x.copy()
+        X_test = self.inputs.model.test_ds.x.copy()
 
-        X_train_probs = self.compute_probabilities(self.model, X_train)
-        X_test_probs = self.compute_probabilities(self.model, X_test)
+        X_train_probs = self.compute_probabilities(self.inputs.model, X_train)
+        X_test_probs = self.compute_probabilities(self.inputs.model, X_test)
 
         df_train_scores = self.compute_scores(
             X_train_probs, target_score, target_odds, pdo

@@ -99,7 +99,7 @@ class RobustnessDiagnosis(ThresholdTest):
             raise ValueError("accuracy_decay_threshold must be provided in params")
         accuracy_threshold = self.params["accuracy_decay_threshold"]
 
-        if self.model is None:
+        if self.inputs.model is None:
             raise ValueError("model must of provided to run this test")
 
         # Validate list of features columns need to be perterubed
@@ -108,11 +108,11 @@ class RobustnessDiagnosis(ThresholdTest):
 
         features_list = self.params["features_columns"]
         if features_list is None:
-            features_list = self.model.train_ds.get_numeric_features_columns()
+            features_list = self.inputs.model.train_ds.get_numeric_features_columns()
 
         # Check if all elements from features_list are present in the numerical feature columns
         all_present = all(
-            elem in self.model.train_ds.get_numeric_features_columns()
+            elem in self.inputs.model.train_ds.get_numeric_features_columns()
             for elem in features_list
         )
         if not all_present:
@@ -121,16 +121,16 @@ class RobustnessDiagnosis(ThresholdTest):
                 + "dataset numerical feature columns"
             )
 
-        if self.model.train_ds.text_column in features_list:
+        if self.inputs.model.train_ds.text_column in features_list:
             raise ValueError(
                 "Skiping Robustness Diagnosis test for the dataset with text column"
             )
 
-        train_df = self.model.train_ds.x_df().copy()
-        train_y_true = self.model.train_ds.y
+        train_df = self.inputs.model.train_ds.x_df().copy()
+        train_y_true = self.inputs.model.train_ds.y
 
-        test_df = self.model.test_ds.x_df().copy()
-        test_y_true = self.model.test_ds.y
+        test_df = self.inputs.model.test_ds.x_df().copy()
+        test_y_true = self.inputs.model.test_ds.y
 
         test_results = []
         test_figures = []
@@ -233,7 +233,7 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Dataset Type"].append(dataset_type)
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
-        y_prediction = self.model.predict(df)
+        y_prediction = self.inputs.model.predict(df)
         for metric, metric_fn in self.default_metrics.items():
             results[metric].append(metric_fn(y_true, y_prediction) * 100)
 

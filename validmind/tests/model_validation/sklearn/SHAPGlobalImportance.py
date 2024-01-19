@@ -102,7 +102,7 @@ class SHAPGlobalImportance(Metric):
         )
 
     def run(self):
-        model_library = self.model.model_library()
+        model_library = self.inputs.model.model_library()
         if model_library in [
             "statsmodels",
             "pytorch",
@@ -114,8 +114,8 @@ class SHAPGlobalImportance(Metric):
             logger.info(f"Skiping SHAP for {model_library} models")
             return
 
-        trained_model = self.model.model
-        model_class = self.model.model_class()
+        trained_model = self.inputs.model.model
+        model_class = self.inputs.model.model_class()
 
         # the shap library generates a bunch of annoying warnings that we don't care about
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -132,15 +132,17 @@ class SHAPGlobalImportance(Metric):
             or model_class == "XGBRegressor"
             or model_class == "LinearRegression"
         ):
-            explainer = shap.LinearExplainer(trained_model, self.model.test_ds.x)
+            explainer = shap.LinearExplainer(trained_model, self.inputs.model.test_ds.x)
         else:
             raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
-        shap_values = explainer.shap_values(self.model.test_ds.x)
+        shap_values = explainer.shap_values(self.inputs.model.test_ds.x)
 
         figures = [
-            self._generate_shap_plot("mean", shap_values, self.model.test_ds.x),
-            self._generate_shap_plot("summary", shap_values, self.model.test_ds.x),
+            self._generate_shap_plot("mean", shap_values, self.inputs.model.test_ds.x),
+            self._generate_shap_plot(
+                "summary", shap_values, self.inputs.model.test_ds.x
+            ),
         ]
 
         # restore warnings

@@ -52,7 +52,7 @@ class ZivotAndrewsArch(Metric):
         """
         Calculates Zivot-Andrews metric for each of the dataset features
         """
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         za_values = {}
         for col in dataset.columns:
