@@ -97,7 +97,7 @@ class FeatureImportanceAndSignificance(Metric):
                 "Normalized p-value": p_values,
                 "Normalized Feature Importance": feature_importances,
             },
-            index=regression_model.train_ds.x.columns,
+            index=regression_model.train_ds.x_df().columns,
         )
 
         if significant_only:

@@ -81,6 +81,7 @@ class KMeansClustersOptimization(Metric):
             kmeanModel = kmeanModel.fit(self.inputs.model.train_ds.x)
             # Calculate silhouette coefficients for each data point
             silhouette_avg[k] = silhouette_score(
+
                 self.inputs.model.train_ds.x,
                 kmeanModel.predict(self.inputs.model.train_ds.x),
             )

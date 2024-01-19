@@ -10,6 +10,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
+EXTRA_COLUMNS = {
+    "prediction_column": None,
+    "group_by_column": None,
+}
+
 
 @dataclass
 class VMDataset(ABC):
@@ -35,13 +40,14 @@ class NumpyDataset(VMDataset):
     _raw_dataset: np.ndarray = None
     _index: np.ndarray = None
     _index_name: str = None
-    _column_names: list = None
+    _columns: list = None
     _target_column: str = None
     _feature_columns: list = (None,)
     _text_column: str = None
     _type: str = "generic"
     _target_class_labels: dict = None
     _df: pd.DataFrame = None
+    _extra_columns: dict = None
 
     def __init__(
         self,
@@ -49,10 +55,11 @@ class NumpyDataset(VMDataset):
         index=None,
         index_name=None,
         date_time_index=False,
-        column_names=None,
+        columns=None,
         target_column: str = None,
         feature_columns: list = None,
         text_column=None,
+        extra_columns: dict = EXTRA_COLUMNS.copy(),
         target_class_labels: dict = None,
         options: dict = None,
     ):
@@ -64,7 +71,7 @@ class NumpyDataset(VMDataset):
             index (np.ndarray): The raw dataset index as a NumPy array.
             index_name (str): The raw dataset index name as a NumPy array.
             date_time_index (bool): Whether the index is a datetime index.
-            column_names (List[str], optional): The column names of the dataset. Defaults to None.
+            columns (List[str], optional): The column names of the dataset. Defaults to None.
             target_column (str, optional): The target column name of the dataset. Defaults to None.
             feature_columns (str, optional): The feature column names of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
@@ -80,30 +87,25 @@ class NumpyDataset(VMDataset):
         self._index = index
         self._index_name = index_name
 
-        if (column_names is not None) and (
-            not isinstance(column_names, list)
-            or not all(isinstance(element, str) for element in column_names)
-        ):
-            raise ValueError("column_names does not contain an array of strings")
-        self._column_names = column_names
+        self._columns = columns or []
+        if not self._columns:
+            df = pd.DataFrame(self._raw_dataset).infer_objects()
+            self._columns = df.columns.to_list()
+        else:
+            df = pd.DataFrame(self._raw_dataset, columns=self._columns).infer_objects()
+
         self._target_column = target_column
 
-        self._feature_columns = feature_columns
+        if extra_columns is None:
+            self._extra_columns = EXTRA_COLUMNS.copy()
+        else:
+            self._extra_columns = extra_columns
 
-        if self._feature_columns is None:
-            if isinstance(self._column_names, list):
-                if self._target_column is not None:
-                    self._feature_columns = [
-                        col for col in self._column_names if col != self._target_column
-                    ]
-                else:
-                    self._feature_columns = self._column_names
+        self.__set_feature_columns(feature_columns)
 
         self._text_column = text_column
         self._target_class_labels = target_class_labels
         self.options = options
-
-        df = pd.DataFrame(self._raw_dataset, columns=self._column_names).infer_objects()
 
         if index is not None:
             df.set_index(pd.Index(index), inplace=True)
@@ -113,6 +115,14 @@ class NumpyDataset(VMDataset):
             df = self.__attempt_convert_index_to_datetime(df)
 
         self._df = df
+
+    def __set_feature_columns(self, feature_columns):
+        extra_columns_list = list(self._extra_columns.values())
+        self._feature_columns = [
+            col
+            for col in self._columns
+            if col != self._target_column and col not in extra_columns_list
+        ]
 
     def __attempt_convert_index_to_datetime(self, df):
         """
@@ -158,24 +168,54 @@ class NumpyDataset(VMDataset):
         return self._df.index.name
 
     @property
-    def column_names(self) -> list:
+    def columns(self) -> list:
         """
-        Returns the column names of the dataset.
+        Returns the the list of columns in the dataset.
 
         Returns:
-            List[str]: The column names.
+            List[str]: The columns list.
         """
-        return self._column_names
+        return self._columns
 
     @property
     def target_column(self) -> str:
         """
-        Returns the target column of the dataset.
+        Returns the target column name of the dataset.
 
         Returns:
             str: The target column name.
         """
         return self._target_column
+
+    @property
+    def extra_columns(self) -> list:
+        """
+        Returns the list of extra columns of the dataset.
+
+        Returns:
+            str: The extra columns list.
+        """
+        return self._extra_columns
+
+    @property
+    def prediction_column(self) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        return self._extra_columns["prediction_column"]
+
+    @property
+    def group_by_column(self) -> str:
+        """
+        Returns the group by column name of the dataset.
+
+        Returns:
+            str: The group by column name.
+        """
+        return self._extra_columns["group_by_column"]
 
     @property
     def feature_columns(self) -> list:
@@ -211,25 +251,10 @@ class NumpyDataset(VMDataset):
         return self.raw_dataset[
             :,
             [
-                self.column_names.index(name)
-                for name in self.column_names
-                if name != self.target_column
+                self.columns.index(name)
+                for name in self.columns
+                if name in self.feature_columns
             ],
-        ]
-
-    @property
-    def x_features(self) -> np.ndarray:
-        """
-        Returns the input features (X) of the dataset as selected in feature_columns,
-        if feature_columns is empty returns all features except the target column.
-
-        Returns:
-            np.ndarray: The input features.
-        """
-
-        return self.raw_dataset[
-            :,
-            [self.column_names.index(name) for name in self.feature_columns],
         ]
 
     @property
@@ -243,9 +268,26 @@ class NumpyDataset(VMDataset):
         return self.raw_dataset[
             :,
             [
-                self.column_names.index(name)
-                for name in self.column_names
+                self.columns.index(name)
+                for name in self.columns
                 if name == self.target_column
+            ],
+        ]
+
+    @property
+    def y_pred(self) -> np.ndarray:
+        """
+        Returns the prediction variable (y_pred) of the dataset.
+
+        Returns:
+            np.ndarray: The prediction variables.
+        """
+        return self.raw_dataset[
+            :,
+            [
+                self.columns.index(name)
+                for name in self.columns
+                if name == self.prediction_column
             ],
         ]
 
@@ -278,12 +320,12 @@ class NumpyDataset(VMDataset):
 
     def x_df(self):
         """
-        Returns the input features (X) of the dataset.
+        Returns the non target and prediction columns.
 
         Returns:
-            pd.DataFrame: The input features.
+            pd.DataFrame: The non target and prediction columns .
         """
-        return self._df[self.get_features_columns()]
+        return self._df[[name for name in self.columns if name in self.feature_columns]]
 
     def y_df(self):
         """
@@ -293,6 +335,15 @@ class NumpyDataset(VMDataset):
             pd.DataFrame: The target columns.
         """
         return self._df[self.target_column]
+
+    def y_pred_df(self):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        return self._df[self.prediction_column]
 
     def serialize(self):
         """
@@ -372,6 +423,12 @@ class NumpyDataset(VMDataset):
         """
         return [str(i) for i in np.unique(self.y)]
 
+    def prediction_classes(self):
+        """
+        Returns the unique number of target classes for the target (Y) variable.
+        """
+        return [str(i) for i in np.unique(self.y_pred)]
+
 
 @dataclass
 class DataFrameDataset(NumpyDataset):
@@ -383,6 +440,7 @@ class DataFrameDataset(NumpyDataset):
         self,
         raw_dataset: pd.DataFrame,
         target_column: str = None,
+        extra_columns: dict = None,
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
@@ -407,8 +465,9 @@ class DataFrameDataset(NumpyDataset):
             raw_dataset=raw_dataset.values,
             index_name=raw_dataset.index.name,
             index=index,
-            column_names=raw_dataset.columns.to_list(),
+            columns=raw_dataset.columns.to_list(),
             target_column=target_column,
+            extra_columns=extra_columns,
             feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
@@ -428,8 +487,9 @@ class TorchDataset(NumpyDataset):
         raw_dataset,
         index_name=None,
         index=None,
-        column_names=None,
+        columns=None,
         target_column: str = None,
+        extra_columns: dict = None,
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
@@ -442,42 +502,46 @@ class TorchDataset(NumpyDataset):
             raw_dataset (torch.utils.data.Dataset): The raw dataset as a PyTorch Dataset.
             index_name (str): The raw dataset index name.
             index (np.ndarray): The raw dataset index as a NumPy array.
-            column_names (List[str]): The column names of the dataset.
+            columns (List[str]): The column names of the dataset.
             target_column (str, optional): The target column of the dataset. Defaults to None.
             feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        # Merge tensors along the column axis
-        if raw_dataset.tensors[1].ndim == 1:
-            tensor2 = np.expand_dims(
-                raw_dataset.tensors[1], axis=1
-            )  # Convert tensor to a column vector
-            merged_tensors = np.concatenate((raw_dataset.tensors[0], tensor2), axis=1)
-        else:
-            merged_tensors = np.concatenate(
-                (raw_dataset.tensors[0], raw_dataset.tensors[1]), axis=1
-            )
-        if column_names is None:
-            n_cols = merged_tensors.shape[1]
-            column_names = list(
-                np.linspace(0, n_cols - 1, num=n_cols, dtype=int).astype(str)
-            )
-        if target_column is None:
-            n_cols = merged_tensors.shape[1] - 1
-            target_column = str(n_cols)
+        # if we can't import torch, then it's not a PyTorch model
+        try:
+            import torch
+        except ImportError:
+            return False
+        columns = []
+        for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
+            if id == 0 and feature_columns is None:
+                n_cols = tens.shape[1]
+                feature_columns = [
+                    "x" + feature_id
+                    for feature_id in np.linspace(
+                        0, n_cols - 1, num=n_cols, dtype=int
+                    ).astype(str)
+                ]
+                columns.append(feature_columns)
+            elif id == 1 and target_column is None:
+                target_column = "y"
+                columns.append(target_column)
+            elif id == 2 and extra_columns is None:
+                extra_columns.prediction_column = "y_pred"
+                columns.append(extra_columns.prediction_column)
 
-        if feature_columns is None:
-            feature_columns = [col for col in column_names if col != target_column]
+        merged_tensors = torch.cat(raw_dataset.tensors, dim=1).numpy()
 
         super().__init__(
             raw_dataset=merged_tensors,
             index_name=index_name,
             index=index,
-            column_names=column_names,
+            columns=columns,
             target_column=target_column,
             feature_columns=feature_columns,
             text_column=text_column,
+            extra_columns=extra_columns,
             target_class_labels=target_class_labels,
             options=options,
         )
