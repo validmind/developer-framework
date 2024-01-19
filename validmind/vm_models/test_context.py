@@ -17,6 +17,7 @@ from typing import ClassVar, List, Optional
 import pandas as pd
 
 from ..errors import MissingRequiredTestInputError, TestInputInvalidDatasetError
+from ..logging import get_logger
 from .dataset import VMDataset
 from .model import VMModel
 
@@ -32,6 +33,8 @@ CONTEXT_NAMES = {
     "test_ds": "Testing Dataset",
     "validation_ds": "Validation Dataset",
 }
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -63,23 +66,34 @@ class TestContext:
         return self.context_data.get(key)
 
 
-@dataclass
 class TestInput:
-    """Holds models, datasets and other custom inputs for test(s)"""
+    """Holds models, datasets and other arbitrary inputs for test(s)
+
+    Attributes:
+        dataset (VMDataset): Single dataset for dataset-only tests
+        model (VMModel): Single model for model-related tests
+        models (List[VMModel]): Multiple models for model comparison tests
+        ... (any): Any other arbitrary inputs that can be used by tests
+    """
 
     # TODO: we need to look into adding metadata for test inputs and logging that
 
-    # Single dataset for dataset-only tests
-    dataset: VMDataset = None
+    def __init__(self, inputs):
+        """Initialize with either a dictionary of inputs"""
 
-    # Model and corresponding datasets for model related tests
-    model: VMModel = None
+        for key, value in inputs.items():
+            setattr(self, key, value)
 
-    # Multiple models for model comparison tests
-    models: List[VMModel] = None
+    def __getitem__(self, key):
+        """Allow accessing inputs via `self.inputs["input_name"]`"""
+        return getattr(self, key)
 
-    # Custom inputs that can store datasets, models etc.
-    inputs: dict = None
+    def __repr__(self):
+        """Human-readable string representation of the object."""
+        attrs = ",\n    ".join(
+            f"{key}={value!r}" for key, value in self._attributes.items()
+        )
+        return f"{self.__class__.__name__}(\n    {attrs}\n)"
 
 
 @dataclass
@@ -88,63 +102,58 @@ class TestUtils:
 
     required_inputs: ClassVar[List[str]]
 
-    test_context: Optional[TestContext] = None
-    test_input: Optional[TestInput] = None
+    context: Optional[TestContext] = None
+    inputs: Optional[TestInput] = None
 
-    def _get_input(self, key):
+    def _get_legacy_input(self, key):
         """Retrieve an input from the Test Input or, for backwards compatibility,
-        the Test Context.
+        the Test Context
 
-        TODO: remove this backwards compatibility when appropriate
+        We should remove this once we all tests (including customer tests) are
+        using `self.inputs.<input_name>` instead of `self.<input_name>`.
         """
         try:
-            _input = getattr(self.test_input, key)
+            _input = getattr(self.inputs, key)
         except AttributeError:
-            _input = getattr(self.test_context, key)
+            # in case any code is still manually creating a TestContext instead of
+            # a TestInput, we'll still support that for now by checking there
+            _input = getattr(self.context, key)
 
         return _input
 
     @property
     def dataset(self):
-        return self._get_input("dataset")
+        """[DEPRECATED] Returns the input dataset for the test"""
+        logger.warning(
+            "Accesing the input dataset using `self.dataset` is deprecated. "
+            "Use `self.inputs.dataset` instead."
+        )
+        return self._get_legacy_input("dataset")
 
     @property
     def model(self):
-        return self._get_input("model")
+        """[DEPRECATED] Returns the input model for the test"""
+        logger.warning(
+            "Accesing the input model using `self.model` is deprecated. "
+            "Use `self.inputs.model` instead."
+        )
+        return self._get_legacy_input("model")
 
     @property
     def models(self):
-        return self._get_input("models")
-
-    @property
-    def inputs(self):
-        return self._get_input("inputs")
-
-    @property
-    def df(self):
-        """
-        Returns a Pandas DataFrame for the dataset, first checking if
-        we passed in a Dataset or a DataFrame
-        """
-        if self.dataset is None:
-            raise TestInputInvalidDatasetError("dataset must be set")
-
-        if isinstance(self.dataset, VMDataset):
-            return self.dataset.raw_dataset
-        elif isinstance(self.dataset, pd.DataFrame):
-            return self.dataset
-
-        raise TestInputInvalidDatasetError(
-            "dataset must be a Pandas DataFrame or a validmind Dataset object"
+        """[DEPRECATED] Returns the input models for the test"""
+        logger.warning(
+            "Accesing the input models using `self.models` is deprecated. "
+            "Use `self.inputs.models` instead."
         )
+        return self._get_legacy_input("models")
 
-    def validate_context(self):
+    def validate_inputs(self):
         """
-        Validates that the context elements are present
-        in the instance so that the test suite can be run
+        Validates that the required inputs are present in the test input object.
 
         Raises:
-            MissingRequiredTestContextError: If a required context element is missing.
+            MissingRequiredTestInputError: If a required context element is missing.
         """
 
         def recursive_attr_check(obj, attr_chain):
@@ -168,9 +177,9 @@ class TestUtils:
 
         required_inputs = self.required_inputs or []
         for element in required_inputs:
-            if not recursive_attr_check(self, element):
+            if not recursive_attr_check(self.inputs, element):
                 context_name = CONTEXT_NAMES.get(element, element)
                 raise MissingRequiredTestInputError(
-                    f"{context_name} '{element}' is a required input and must be passed "
-                    "as a keyword argument to the test suite"
+                    f"{context_name} '{element}' is a required input and must be "
+                    "passed as part of the test inputs dictionary."
                 )
