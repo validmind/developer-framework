@@ -58,18 +58,16 @@ class TestSuiteTest:
 
         return self._test_class.default_params
 
-    def load(
-        self, test_input: TestInput, test_context: TestContext, test_config: dict = None
-    ):
+    def load(self, inputs: TestInput, context: TestContext, config: dict = None):
         """Load an instance of the test class"""
         if not self._test_class:
             return
 
         try:
             self._test_instance = self._test_class(
-                test_input=test_input,
-                test_context=test_context,
-                params=test_config,
+                context=context,
+                inputs=inputs,
+                params=config,
             )
         except Exception as e:
             self.result = TestSuiteFailedResult(
@@ -84,7 +82,7 @@ class TestSuiteTest:
             return
 
         try:
-            self._test_instance.validate_context()
+            self._test_instance.validate_inputs()
 
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
             log_performance(

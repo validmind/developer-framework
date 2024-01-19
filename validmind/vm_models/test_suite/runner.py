@@ -60,9 +60,9 @@ class TestSuiteRunner:
         for section in self.suite.sections:
             for test in section.tests:
                 test.load(
-                    test_context=self.context,
-                    test_input=self.input,
-                    test_config={
+                    inputs=self.input,
+                    context=self.context,
+                    config={
                         **self._global_config,
                         **self._test_configs.get(test.test_id, {}),
                     },

@@ -276,8 +276,8 @@ def run_test(test_id, params: dict = None, **kwargs):
     TestClass = load_test(test_id, reload=True)
 
     test = TestClass(
-        test_input=TestInput(**kwargs),
-        test_context=TestContext(),
+        context=TestContext(),
+        inputs=TestInput(kwargs),
         params=params,
     )
 

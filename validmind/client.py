@@ -264,7 +264,7 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
             is useful for testing. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         **kwargs: Additional keyword arguments to pass to the test suite. These will provide
-            the TestSuite instance with the necessary context to run the tests. e.g. dataset, model etc.
+            the TestSuite instance with the necessary inputs to run the tests. e.g. dataset, model etc.
             See the documentation for the specific metric or threshold test for more details.
 
     Raises:
@@ -289,7 +289,7 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
 
     TestSuiteRunner(
         suite=suite,
-        input=TestInput(**kwargs),
+        input=TestInput(kwargs),
         config=config or {},
     ).run(fail_fast=fail_fast, send=send)
 
@@ -385,7 +385,7 @@ def _run_documentation_section(
 
     TestSuiteRunner(
         suite=test_suite,
-        input=TestInput(**kwargs),
+        input=TestInput(kwargs),
         config=config,
     ).run(send=send, fail_fast=fail_fast)
 
