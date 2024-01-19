@@ -249,7 +249,9 @@ def get_test_suite(
     return get_test_suite_by_id(test_suite_id)(*args, **kwargs)
 
 
-def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwargs):
+def run_test_suite(
+    test_suite_id, send=True, fail_fast=False, config=None, inputs=None, **kwargs
+):
     """High Level function for running a test suite
 
     This function provides a high level interface for running a test suite. A test suite is
@@ -263,9 +265,10 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
         send (bool, optional): Whether to post the test results to the API. send=False
             is useful for testing. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        **kwargs: Additional keyword arguments to pass to the test suite. These will provide
-            the TestSuite instance with the necessary inputs to run the tests. e.g. dataset, model etc.
-            See the documentation for the specific metric or threshold test for more details.
+        inputs (dict, optional): A dictionary of test inputs to pass to the TestSuite e.g. `model`, `dataset`
+            `models` etc. These inputs will be accessible by any test in the test suite. See the test
+            documentation or `vm.describe_test()` for more details on the inputs required for each.
+        **kwargs: backwards compatibility for passing in test inputs using keyword arguments
 
     Raises:
         ValueError: If the test suite name is not found or if there is an error initializing the test suite
@@ -289,7 +292,7 @@ def run_test_suite(test_suite_id, send=True, fail_fast=False, config=None, **kwa
 
     TestSuiteRunner(
         suite=suite,
-        input=TestInput(kwargs),
+        input=TestInput({**kwargs, **(inputs or {})}),
         config=config or {},
     ).run(fail_fast=fail_fast, send=send)
 
@@ -313,7 +316,9 @@ def preview_template():
     _preview_template(client_config.documentation_template)
 
 
-def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
+def run_documentation_tests(
+    section=None, send=True, fail_fast=False, inputs=None, **kwargs
+):
     """Collect and run all the tests associated with a template
 
     This function will analyze the current project's documentation template and collect
@@ -324,7 +329,8 @@ def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
         section (str or list, optional): The section(s) to preview. Defaults to None.
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
-        **kwargs: Keyword arguments to pass to the TestSuite
+        inputs (dict, optional): A dictionary of test inputs to pass to the TestSuite
+        **kwargs: backwards compatibility for passing in test inputs using keyword arguments
 
     Returns:
         TestSuite or dict: The completed TestSuite instance or a dictionary of TestSuites if section is a list.
@@ -351,6 +357,7 @@ def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
             section=_section,
             send=send,
             fail_fast=fail_fast,
+            inputs=inputs,
             **kwargs,
         )
         test_suites[_section] = test_suite
@@ -363,7 +370,7 @@ def run_documentation_tests(section=None, send=True, fail_fast=False, **kwargs):
 
 
 def _run_documentation_section(
-    template, section, send=True, fail_fast=False, config=None, **kwargs
+    template, section, send=True, fail_fast=False, config=None, inputs=None, **kwargs
 ):
     """Run all tests in a template section
 
@@ -376,7 +383,8 @@ def _run_documentation_section(
         send: Whether to send the results to the ValidMind API
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         config: A dictionary of test parameters to override the defaults
-        **kwargs: variables to pass into the TestInput i.e. model, dataset etc.
+        inputs: A dictionary of test inputs to pass to the TestSuite
+        **kwargs: backwards compatibility for passing in test inputs using keyword arguments
 
     Returns:
         The completed TestSuite instance
@@ -385,7 +393,7 @@ def _run_documentation_section(
 
     TestSuiteRunner(
         suite=test_suite,
-        input=TestInput(kwargs),
+        input=TestInput({**kwargs, **(inputs or {})}),
         config=config,
     ).run(send=send, fail_fast=fail_fast)
 
