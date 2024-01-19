@@ -113,11 +113,13 @@ class DescriptiveStatistics(Metric):
         return ResultSummary(results=results)
 
     def run(self):
-        feature_columns = self.dataset.feature_columns
-        numerical_feature_columns = self.dataset.get_numeric_features_columns()
-        categorical_feature_columns = self.dataset.get_categorical_features_columns()
+        feature_columns = self.inputs.dataset.feature_columns
+        numerical_feature_columns = self.inputs.dataset.get_numeric_features_columns()
+        categorical_feature_columns = (
+            self.inputs.dataset.get_categorical_features_columns()
+        )
 
-        df = self.dataset.df[feature_columns]
+        df = self.inputs.dataset.df[feature_columns]
 
         summary_stats_numerical = self.get_summary_statistics_numerical(
             df, numerical_feature_columns

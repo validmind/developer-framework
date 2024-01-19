@@ -64,15 +64,15 @@ class ChiSquaredFeaturesTable(Metric):
     }
 
     def run(self):
-        target_column = self.dataset.target_column
+        target_column = self.inputs.dataset.target_column
         cat_features = self.params["cat_features"]
         p_threshold = self.params["p_threshold"]
 
         # Ensure cat_features is provided
         if not cat_features:
-            cat_features = self.dataset.get_categorical_features_columns()
+            cat_features = self.inputs.dataset.get_categorical_features_columns()
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         chi_squared_results = self.chi_squared_categorical_feature_selection(
             df, cat_features, target_column, p_threshold

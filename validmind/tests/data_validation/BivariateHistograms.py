@@ -65,12 +65,12 @@ class BivariateHistograms(Metric):
     }
 
     def plot_bivariate_histogram(self, features_pairs, target_filter):
-        status_var = self.dataset.target_column
+        status_var = self.inputs.dataset.target_column
         figures = []
         palette = {0: (0.5, 0.5, 0.5, 0.8), 1: "tab:red"}
 
         for x, y in features_pairs.items():
-            df = self.dataset.df
+            df = self.inputs.dataset.df
             if target_filter is not None:
                 df = df[df[status_var] == target_filter]
 

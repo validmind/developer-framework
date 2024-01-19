@@ -75,7 +75,7 @@ class SpreadPlot(Metric):
         return ax
 
     def run(self):
-        df = self.dataset.df.dropna()
+        df = self.inputs.dataset.df.dropna()
 
         figures = []
         columns = df.columns

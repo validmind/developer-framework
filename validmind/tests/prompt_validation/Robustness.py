@@ -116,12 +116,12 @@ Input:
 
     def run(self):
         # TODO: add support for multi-variable prompts
-        if len(self.model.prompt.variables) > 1:
+        if len(self.inputs.model.prompt.variables) > 1:
             raise SkipTestError(
                 "Robustness only supports single-variable prompts for now"
             )
 
-        target_class_labels = self.model.test_ds.target_classes()
+        target_class_labels = self.inputs.model.test_ds.target_classes()
         # Guard against too many classes (maybe not a classification model)
         if len(target_class_labels) > 10:
             raise SkipTestError(
@@ -134,16 +134,16 @@ Input:
             response = self.call_model(
                 system_prompt=self.system_prompt,
                 user_prompt=self.user_prompt.format(
-                    variables="\n".join(self.model.prompt.variables),
-                    prompt_to_test=self.model.prompt.template,
+                    variables="\n".join(self.inputs.model.prompt.variables),
+                    prompt_to_test=self.inputs.model.prompt.template,
                 ),
             )
 
             test_input_df = pd.DataFrame(
                 [response],
-                columns=self.model.prompt.variables,
+                columns=self.inputs.model.prompt.variables,
             )
-            result = self.model.predict(test_input_df)[0]
+            result = self.inputs.model.predict(test_input_df)[0]
 
             fail = False
             if result not in target_class_labels:

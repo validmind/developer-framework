@@ -52,7 +52,7 @@ class TabularDateTimeHistograms(Metric):
     }
 
     def run(self):
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Extract datetime columns from the dataset
         datetime_columns = df.select_dtypes(include=["datetime64"]).columns.tolist()

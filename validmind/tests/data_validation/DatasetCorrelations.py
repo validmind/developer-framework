@@ -55,10 +55,12 @@ class DatasetCorrelations(Metric):
 
     # TODO: allow more metric metadata to be set, not just scope
     def __post_init__(self):
-        self.scope = self.dataset.type
+        self.scope = self.inputs.dataset.type
 
     def run(self):
         # This will populate the "correlations" attribute in the dataset object
-        self.dataset.get_correlations()
-        correlation_plots = self.dataset.get_correlation_plots()
-        return self.cache_results(self.dataset.correlations, figures=correlation_plots)
+        self.inputs.dataset.get_correlations()
+        correlation_plots = self.inputs.dataset.get_correlation_plots()
+        return self.cache_results(
+            self.inputs.dataset.correlations, figures=correlation_plots
+        )

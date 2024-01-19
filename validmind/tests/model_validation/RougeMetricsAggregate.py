@@ -78,8 +78,8 @@ class RougeMetricsAggregate(Metric):
                 f"Invalid metrics from {self.default_params.get('rouge_metrics')}"
             )
 
-        y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
-        y_pred = self.model.y_test_predict
+        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
+        y_pred = self.inputs.model.y_test_predict
 
         rouge = Rouge(metrics=r_metrics)
 

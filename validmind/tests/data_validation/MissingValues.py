@@ -82,9 +82,9 @@ class MissingValues(ThresholdTest):
         )
 
     def run(self):
-        rows = self.dataset.df.shape[0]
+        rows = self.inputs.dataset.df.shape[0]
 
-        missing = self.dataset.df.isna().sum()
+        missing = self.inputs.dataset.df.isna().sum()
         results = [
             ThresholdTestResult(
                 column=col,

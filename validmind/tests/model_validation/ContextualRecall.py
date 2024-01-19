@@ -63,8 +63,8 @@ class ContextualRecall(Metric):
     required_inputs = ["model", "model.test_ds"]
 
     def run(self):
-        y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
-        y_pred = self.model.y_test_predict
+        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
+        y_pred = self.inputs.model.y_test_predict
 
         score_list = []
         for y_t, y_p in zip(y_true, y_pred):

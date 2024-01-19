@@ -60,7 +60,7 @@ class ClassifierOutOfSamplePerformance(ClassifierPerformance):
     }
 
     def y_true(self):
-        return self.model.y_test_true
+        return self.inputs.model.y_test_true
 
     def y_pred(self):
-        return self.model.y_test_predict
+        return self.inputs.model.y_test_predict

@@ -56,9 +56,9 @@ class DescriptiveAnalytics(Metric):
     }
 
     def run(self):
-        mean = self.model.y_test_predict.mean(axis=1)
-        median = self.model.y_test_predict.median(axis=1)
-        std = self.model.y_test_predict.std(axis=1)
+        mean = self.inputs.model.y_test_predict.mean(axis=1)
+        median = self.inputs.model.y_test_predict.median(axis=1)
+        std = self.inputs.model.y_test_predict.std(axis=1)
 
         return self.cache_results(
             figures=[

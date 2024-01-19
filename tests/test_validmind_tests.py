@@ -48,7 +48,10 @@ def _setup_test_inputs():
         train_ds=vm_train_ds,
         test_ds=vm_test_ds,
     )
-    test_inputs["classification"] = TestInput(dataset=vm_dataset, model=vm_classifier_model)
+    test_inputs["classification"] = TestInput({
+        "dataset": vm_dataset,
+        "model": vm_classifier_model,
+    })
 
     vm_foundation_model = FoundationModel(
         predict_fn=lambda x: x,
@@ -57,7 +60,7 @@ def _setup_test_inputs():
             variables=["name"],
         ),
     )
-    test_inputs["llm"] = TestInput(model=vm_foundation_model)
+    test_inputs["llm"] = TestInput({"model": vm_foundation_model})
 
 
 def create_unit_test_func(vm_test):
@@ -87,8 +90,8 @@ def create_unit_test_funcs_from_vm_tests():
             test_input = test_inputs["classification"]
 
         vm_test = vm_test_class(
-            test_input=test_input,
-            test_context=TestContext(),
+            context=TestContext(),
+            inputs=test_input,
             params={},
         )
 

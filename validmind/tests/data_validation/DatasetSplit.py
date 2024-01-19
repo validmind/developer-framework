@@ -100,13 +100,13 @@ class DatasetSplit(Metric):
 
         # First calculate the total size of the dataset
         for dataset_name in available_datasets:
-            dataset = getattr(self.model, dataset_name, None)
+            dataset = getattr(self.inputs.model, dataset_name, None)
             if dataset is not None:
                 total_size += len(dataset.df)
 
         # Then calculate the proportion of each dataset
         for dataset_name in available_datasets:
-            dataset = getattr(self.model, dataset_name, None)
+            dataset = getattr(self.inputs.model, dataset_name, None)
             if dataset is not None:
                 results[f"{dataset_name}_size"] = len(dataset.df)
                 results[f"{dataset_name}_proportion"] = len(dataset.df) / total_size

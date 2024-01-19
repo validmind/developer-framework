@@ -64,15 +64,15 @@ class ClusterCosineSimilarity(Metric):
     }
 
     def run(self):
-        y_true_train = self.model.y_train_true
-        y_pred_train = self.model.y_train_predict
+        y_true_train = self.inputs.model.y_train_true
+        y_pred_train = self.inputs.model.y_train_predict
         y_true_train = y_true_train.astype(y_pred_train.dtype).flatten()
         num_clusters = len(np.unique(y_pred_train))
         # Calculate cosine similarity for each cluster
         results = []
         for cluster_id in range(num_clusters):
             cluster_mask = y_pred_train == cluster_id
-            cluster_data = self.model.train_ds.x[cluster_mask]
+            cluster_data = self.inputs.model.train_ds.x[cluster_mask]
             if cluster_data.size != 0:
                 # Compute the centroid of the cluster
                 cluster_centroid = np.mean(cluster_data, axis=0)

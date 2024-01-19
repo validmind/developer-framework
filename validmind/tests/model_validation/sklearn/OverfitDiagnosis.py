@@ -89,18 +89,19 @@ class OverfitDiagnosis(ThresholdTest):
             raise ValueError("features_columns must be provided in params")
 
         if self.params["features_columns"] is None:
-            features_list = self.model.train_ds.get_features_columns()
+            features_list = self.inputs.model.train_ds.get_features_columns()
         else:
             features_list = self.params["features_columns"]
 
-        if self.model.train_ds.text_column in features_list:
+        if self.inputs.model.train_ds.text_column in features_list:
             raise ValueError(
                 "Skiping Overfit Diagnosis test for the dataset with text column"
             )
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(
-            elem in self.model.train_ds.get_features_columns() for elem in features_list
+            elem in self.inputs.model.train_ds.get_features_columns()
+            for elem in features_list
         )
         if not all_present:
             raise ValueError(
@@ -112,17 +113,17 @@ class OverfitDiagnosis(ThresholdTest):
                 "features_columns must be a list of features you would like to test"
             )
 
-        target_column = self.model.train_ds.target_column
+        target_column = self.inputs.model.train_ds.target_column
         prediction_column = f"{target_column}_pred"
 
         # Add prediction column in the training dataset
-        train_df = self.model.train_ds.df.copy()
-        train_class_pred = self.model.y_train_predict
+        train_df = self.inputs.model.train_ds.df.copy()
+        train_class_pred = self.inputs.model.y_train_predict
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
-        test_df = self.model.test_ds.df.copy()
-        test_class_pred = self.model.y_test_predict
+        test_df = self.inputs.model.test_ds.df.copy()
+        test_class_pred = self.inputs.model.y_test_predict
         test_df[prediction_column] = test_class_pred
 
         test_results = []
@@ -132,7 +133,10 @@ class OverfitDiagnosis(ThresholdTest):
 
         for feature_column in features_list:
             bins = 10
-            if feature_column in self.model.train_ds.get_categorical_features_columns():
+            if (
+                feature_column
+                in self.inputs.model.train_ds.get_categorical_features_columns()
+            ):
                 bins = len(train_df[feature_column].unique())
             train_df["bin"] = pd.cut(train_df[feature_column], bins=bins)
 

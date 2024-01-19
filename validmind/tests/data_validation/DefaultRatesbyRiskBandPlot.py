@@ -90,7 +90,7 @@ class DefaultRatesbyRiskBandPlot(Metric):
         return fig, risk_band_percentages
 
     def run(self):
-        df = self.dataset
+        df = self.inputs.dataset
         risk_band_column = self.params["risk_band_column"]
         title = self.params["title"]
 

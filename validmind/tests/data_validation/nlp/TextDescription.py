@@ -146,7 +146,7 @@ class TextDescription(Metric):
 
     # Wrapper function that combines the outputs
     def text_description_table(self, df, params):
-        text_column = self.dataset.text_column
+        text_column = self.inputs.dataset.text_column
         unwanted_tokens = params["unwanted_tokens"]
         num_top_words = params["num_top_words"]
         lang = params["lang"]
@@ -161,10 +161,12 @@ class TextDescription(Metric):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("TextDescretion requires a validmind Dataset object")
 
-        df_text_description = self.text_description_table(self.dataset.df, self.params)
+        df_text_description = self.text_description_table(
+            self.inputs.dataset.df, self.params
+        )
 
         # Define the combinations you want to plot
         combinations_to_plot = [

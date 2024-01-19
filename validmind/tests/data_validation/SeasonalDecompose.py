@@ -116,7 +116,7 @@ class SeasonalDecompose(Metric):
             raise ValueError("seasonal_model must be provided in params")
         seasonal_model = self.params["seasonal_model"]
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         results = {}
         figures = []

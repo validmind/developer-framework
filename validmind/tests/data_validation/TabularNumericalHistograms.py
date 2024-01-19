@@ -56,7 +56,7 @@ class TabularNumericalHistograms(Metric):
     }
 
     def run(self):
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         # Extract numerical columns from the dataset
         numerical_columns = df.select_dtypes(include=[np.number]).columns.tolist()

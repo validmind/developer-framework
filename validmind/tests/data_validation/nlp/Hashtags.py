@@ -62,17 +62,17 @@ class Hashtags(ThresholdTest):
 
     def run(self):
         # Can only run this test if we have a Dataset object
-        if not isinstance(self.dataset, VMDataset):
+        if not isinstance(self.inputs.dataset, VMDataset):
             raise ValueError("Hashtags requires a validmind Dataset object")
 
-        text_column = self.dataset.text_column
+        text_column = self.inputs.dataset.text_column
 
         def find_hash(text):
             line = re.findall(r"(?<=#)\w+", text)
             return " ".join(line)
 
         temp = (
-            self.dataset.df[text_column]
+            self.inputs.dataset.df[text_column]
             .apply(lambda x: find_hash(x))
             .value_counts()[:][1 : self.params["top_hashtags"]]
         )

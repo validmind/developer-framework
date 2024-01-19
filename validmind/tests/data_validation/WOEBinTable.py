@@ -51,10 +51,10 @@ class WOEBinTable(Metric):
     }
 
     def run(self):
-        target_column = self.dataset.target_column
+        target_column = self.inputs.dataset.target_column
         breaks_adj = self.params["breaks_adj"]
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
         print(
             f"Running with breaks_adj: {breaks_adj}"
         )  # print the breaks_adj being used

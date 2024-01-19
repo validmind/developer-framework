@@ -54,10 +54,10 @@ class RegressionModelSummary(Metric):
     }
 
     def run(self):
-        X_columns = self.model.train_ds.get_features_columns()
+        X_columns = self.inputs.model.train_ds.get_features_columns()
 
-        y_true = self.model.train_ds.y
-        y_pred = self.model.predict(self.model.train_ds.x)
+        y_true = self.inputs.model.train_ds.y
+        y_pred = self.inputs.model.predict(self.inputs.model.train_ds.x)
 
         r2 = r2_score(y_true, y_pred)
         adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(X_columns))

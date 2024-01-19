@@ -62,13 +62,13 @@ class IsolationForestOutliers(Metric):
 
     def run(self):
         if self.params["features_columns"] is None:
-            features_list = self.dataset.get_features_columns()
+            features_list = self.inputs.dataset.get_features_columns()
         else:
             features_list = self.params["features_columns"]
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(
-            elem in self.dataset.get_features_columns() for elem in features_list
+            elem in self.inputs.dataset.get_features_columns() for elem in features_list
         )
         if not all_present:
             raise ValueError(
@@ -76,7 +76,7 @@ class IsolationForestOutliers(Metric):
                 + "training dataset feature columns"
             )
 
-        dataset = self.dataset.df
+        dataset = self.inputs.dataset.df
 
         # Training with isolation forest algorithm
         clf = IsolationForest(

@@ -106,14 +106,14 @@ class LaggedCorrelationHeatmap(Metric):
         return fig
 
     def run(self):
-        if isinstance(self.dataset.target_column, list):
-            target_col = self.dataset.target_column[
+        if isinstance(self.inputs.dataset.target_column, list):
+            target_col = self.inputs.dataset.target_column[
                 0
             ]  # take the first item from the list
         else:
-            target_col = self.dataset.target_column
+            target_col = self.inputs.dataset.target_column
 
-        independent_vars = list(self.dataset.get_features_columns())
+        independent_vars = list(self.inputs.dataset.get_features_columns())
         num_lags = self.params.get("num_lags", 10)
 
         if isinstance(target_col, list) and len(target_col) == 1:
@@ -124,7 +124,7 @@ class LaggedCorrelationHeatmap(Metric):
                 "The 'target_col' must be a single string or a list containing a single string"
             )
 
-        df = self.dataset.df
+        df = self.inputs.dataset.df
 
         correlations = self._compute_correlations(
             df, target_col, independent_vars, num_lags

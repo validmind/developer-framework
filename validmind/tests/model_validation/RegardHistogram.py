@@ -53,9 +53,9 @@ class RegardHistogram(Metric):
         if not hasattr(self, "model"):
             raise AttributeError("The 'model' attribute is missing.")
 
-        y_true = list(itertools.chain.from_iterable(self.model.y_test_true))
-        y_pred = self.model.y_test_predict
-        input_text = self.model.test_ds.df[self.model.test_ds.text_column]
+        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
+        y_pred = self.inputs.model.y_test_predict
+        input_text = self.inputs.model.test_ds.df[self.inputs.model.test_ds.text_column]
 
         if not len(y_true) == len(y_pred) == len(input_text):
             raise ValueError(

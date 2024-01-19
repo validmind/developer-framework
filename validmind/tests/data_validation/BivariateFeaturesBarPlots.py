@@ -78,10 +78,10 @@ class BivariateFeaturesBarPlots(Metric):
         return self.cache_results(figures=figures)
 
     def plot_bivariate_bar(self, features_pairs):
-        status_var = self.dataset.target_column
+        status_var = self.inputs.dataset.target_column
         figures = []
         for x, hue in features_pairs.items():
-            df = self.dataset.df
+            df = self.inputs.dataset.df
 
             means = df.groupby([x, hue])[status_var].mean().unstack().reset_index()
             hue_categories = means.columns[1:]

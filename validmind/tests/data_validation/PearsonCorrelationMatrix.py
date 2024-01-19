@@ -54,9 +54,9 @@ class PearsonCorrelationMatrix(Metric):
     }
 
     def run(self):
-        columns = self.params.get("columns", list(self.dataset.df.columns))
+        columns = self.params.get("columns", list(self.inputs.dataset.df.columns))
 
-        corr_matrix = self.dataset.df[columns].corr(numeric_only=True)
+        corr_matrix = self.inputs.dataset.df[columns].corr(numeric_only=True)
         heatmap = go.Heatmap(
             z=corr_matrix.values,
             x=list(corr_matrix.columns),
