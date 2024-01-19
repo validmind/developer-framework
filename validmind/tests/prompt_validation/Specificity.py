@@ -90,6 +90,12 @@ Prompt:
 """
 '''.strip()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)  # Call ThresholdTest.__init__
+        AIPoweredTest.__init__(
+            self, *args, **kwargs
+        )  # Explicitly call AIPoweredTest.__init__
+
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [

@@ -10,10 +10,9 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "1.25.1"
+version = "1.25.2"
 
 [tool.poetry.dependencies]
-matplotlib = "<3.8"
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 arch = "^5.4.0"
 bert-score = "^0.3.13"
@@ -28,6 +27,7 @@ kaleido = "0.2.1"
 langdetect = "^1.0.9"
 levenshtein = {version = "^0.21.1", optional = true}
 markdown = "^3.4.3"
+matplotlib = "<3.8"
 nltk = "^3.8.1"
 numpy = "1.22.3"
 openai = {version = "^1.3.7", optional = true}
@@ -71,13 +71,13 @@ isort = "^5.12.0"
 jupyter = "^1.0.0"
 jupyterlab = "^3.6.3"
 openai = "^1.3.7"
+papermill = "^2.4.0"
 pre-commit = "^3.3.3"
 pytest = "^5.2"
 sphinx = "^6.1.3"
 sphinx-markdown-builder = "^0.5.5"
 sphinx-rtd-theme = "^1.2.0"
 twine = "^4.0.2"
-papermill = "^2.4.0"
 
 [tool.poetry.extras]
 all = [
