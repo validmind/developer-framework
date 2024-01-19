@@ -87,12 +87,12 @@ class NumpyDataset(VMDataset):
         self._index = index
         self._index_name = index_name
 
-        if (columns is not None) and (
-            not isinstance(columns, list)
-            or not all(isinstance(element, str) for element in columns)
-        ):
-            raise ValueError("columns does not contain an array of strings")
         self._columns = columns or []
+        if not self._columns:
+            df = pd.DataFrame(self._raw_dataset).infer_objects()
+            self._columns = df.columns.to_list()
+        else:
+            df = pd.DataFrame(self._raw_dataset, columns=self._columns).infer_objects()
 
         self._target_column = target_column
 
@@ -107,8 +107,6 @@ class NumpyDataset(VMDataset):
         self._target_class_labels = target_class_labels
         self.options = options
 
-        df = pd.DataFrame(self._raw_dataset, columns=self._columns).infer_objects()
-
         if index is not None:
             df.set_index(pd.Index(index), inplace=True)
             df.index.name = index_name
@@ -119,8 +117,6 @@ class NumpyDataset(VMDataset):
         self._df = df
 
     def __set_feature_columns(self, feature_columns):
-        self._feature_columns = feature_columns
-
         extra_columns_list = list(self._extra_columns.values())
         self._feature_columns = [
             col
