@@ -92,8 +92,10 @@ class NumpyDataset(VMDataset):
             or not all(isinstance(element, str) for element in columns)
         ):
             raise ValueError("columns does not contain an array of strings")
-        self._columns = columns
+        self._columns = columns or []
+
         self._target_column = target_column
+
         if extra_columns is None:
             self._extra_columns = EXTRA_COLUMNS.copy()
         else:
@@ -119,19 +121,12 @@ class NumpyDataset(VMDataset):
     def __set_feature_columns(self, feature_columns):
         self._feature_columns = feature_columns
 
-        if self._feature_columns is None:
-            if isinstance(self._columns, list):
-                if self._target_column is not None:
-                    extra_columns_list = []
-                    if self.extra_columns is not None:
-                        extra_columns_list = list(self._extra_columns.values())
-                    self._feature_columns = [
-                        col
-                        for col in self._columns
-                        if col != self._target_column and col not in extra_columns_list
-                    ]
-                else:
-                    self._feature_columns = self._columns
+        extra_columns_list = list(self._extra_columns.values())
+        self._feature_columns = [
+            col
+            for col in self._columns
+            if col != self._target_column and col not in extra_columns_list
+        ]
 
     def __attempt_convert_index_to_datetime(self, df):
         """
@@ -432,7 +427,7 @@ class NumpyDataset(VMDataset):
         """
         return [str(i) for i in np.unique(self.y)]
 
-    def predition_classes(self):
+    def prediction_classes(self):
         """
         Returns the unique number of target classes for the target (Y) variable.
         """
