@@ -14,9 +14,7 @@ TestContext
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
-import pandas as pd
-
-from ..errors import MissingRequiredTestInputError, TestInputInvalidDatasetError
+from ..errors import MissingRequiredTestInputError
 from ..logging import get_logger
 from .dataset import VMDataset
 from .model import VMModel
