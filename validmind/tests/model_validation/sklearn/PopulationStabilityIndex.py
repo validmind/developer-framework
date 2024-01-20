@@ -80,13 +80,19 @@ class PopulationStabilityIndex(Metric):
             "model_performance",
         ],
     }
+    default_params = {
+        "num_bins": 10,
+        "mode": "fixed",
+    }
 
     def summary(self, metric_value):
         # Add a table with the PSI values for each feature
         # The data looks like this: [{"initial": 2652, "percent_initial": 0.5525, "new": 830, "percent_new": 0.5188, "psi": 0.0021},...
         psi_table = [
             {
-                "Bin": i,
+                "Bin": i
+                if i < (len(metric_value) - 1)
+                else "Total",  # The last bin is the "Total" bin
                 "Count Initial": values["initial"],
                 "Percent Initial (%)": values["percent_initial"] * 100,
                 "Count New": values["new"],
@@ -181,9 +187,14 @@ class PopulationStabilityIndex(Metric):
             logger.info(f"Skiping PSI for {model_library} models")
             return
 
+        num_bins = self.params["num_bins"]
+        mode = self.params["mode"]
+
         psi_results = self._get_psi(
             self.inputs.model.predict_proba(self.inputs.model.train_ds.x).copy(),
             self.inputs.model.predict_proba(self.inputs.model.test_ds.x).copy(),
+            num_bins=num_bins,
+            mode=mode,
         )
 
         trace1 = go.Bar(
@@ -229,5 +240,15 @@ class PopulationStabilityIndex(Metric):
             key=self.key,
             figure=fig,
         )
+
+        # Calculate the sum of each numeric column
+        total_psi = {
+            key: sum(d.get(key, 0) for d in psi_results)
+            for key in psi_results[0].keys()
+            if isinstance(psi_results[0][key], (int, float))
+        }
+
+        # Add the total PSI dictionary to the list
+        psi_results.append(total_psi)
 
         return self.cache_results(metric_value=psi_results, figures=[figure])
