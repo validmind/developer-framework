@@ -75,6 +75,55 @@ def _pretty_list_tests(tests, truncate=True):
     return format_dataframe(pd.DataFrame(table))
 
 
+def _initialize_test_classes():
+    """
+    Initialize and populate the __test_classes global variable.
+    """
+    global __test_classes
+
+    if __test_classes is None:
+        __test_classes = {}
+        for path in Path(__file__).parent.glob("**/*.py"):
+            if path.name.startswith("__") or not path.name[0].isupper():
+                continue  # skip special files and non-class files
+            test_id = path.stem  # or any other way to define test_id
+            __test_classes[test_id] = load_test(
+                test_id
+            )  # Assuming a function load_test exists
+
+
+def list_tags():
+    """
+    List unique tags from all test classes.
+    """
+    _initialize_test_classes()
+
+    unique_tags = set()
+
+    for test_class in __test_classes.values():
+        if hasattr(test_class, "metadata") and "tags" in test_class.metadata:
+            for tag in test_class.metadata["tags"]:
+                unique_tags.add(tag)
+
+    return unique_tags
+
+
+def list_task_types():
+    """
+    List unique task types from all test classes.
+    """
+    _initialize_test_classes()
+
+    unique_task_types = set()
+
+    for test_class in __test_classes.values():
+        if hasattr(test_class, "metadata") and "task_types" in test_class.metadata:
+            for task_type in test_class.metadata["task_types"]:
+                unique_task_types.add(task_type)
+
+    return unique_task_types
+
+
 def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
     """List all tests in the tests directory.
 
