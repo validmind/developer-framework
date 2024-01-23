@@ -75,6 +75,84 @@ def _pretty_list_tests(tests, truncate=True):
     return format_dataframe(pd.DataFrame(table))
 
 
+def _initialize_test_classes():
+    """
+    Initialize and populate the __test_classes global variable.
+    """
+    global __test_classes
+
+    if __test_classes is None:
+        __test_classes = {}
+        for path in Path(__file__).parent.glob("**/*.py"):
+            if path.name.startswith("__") or not path.name[0].isupper():
+                continue  # skip special files and non-class files
+            test_id = path.stem  # or any other way to define test_id
+            __test_classes[test_id] = load_test(
+                test_id
+            )  # Assuming a function load_test exists
+
+
+def list_tags():
+    """
+    List unique tags from all test classes.
+    """
+    _initialize_test_classes()
+
+    unique_tags = set()
+
+    for test_class in __test_classes.values():
+        if hasattr(test_class, "metadata") and "tags" in test_class.metadata:
+            for tag in test_class.metadata["tags"]:
+                unique_tags.add(tag)
+
+    return list(unique_tags)
+
+
+def list_tasks_and_tags():
+    """
+    List all task types and their associated tags, with one row per task type and
+    all tags for a task type in one row.
+
+    Returns:
+        pandas.DataFrame: A DataFrame with 'Task Type' and concatenated 'Tags'.
+    """
+    _initialize_test_classes()
+    task_tags_dict = {}
+
+    for test_class in __test_classes.values():
+        if hasattr(test_class, "metadata"):
+            task_types = test_class.metadata.get("task_types", [])
+            tags = test_class.metadata.get("tags", [])
+
+            for task_type in task_types:
+                if task_type not in task_tags_dict:
+                    task_tags_dict[task_type] = set()
+                task_tags_dict[task_type].update(tags)
+
+    # Convert the dictionary into a DataFrame
+    task_tags_data = [
+        {"Task Type": task_type, "Tags": ", ".join(tags)}
+        for task_type, tags in task_tags_dict.items()
+    ]
+    return format_dataframe(pd.DataFrame(task_tags_data))
+
+
+def list_task_types():
+    """
+    List unique task types from all test classes.
+    """
+    _initialize_test_classes()
+
+    unique_task_types = set()
+
+    for test_class in __test_classes.values():
+        if hasattr(test_class, "metadata") and "task_types" in test_class.metadata:
+            for task_type in test_class.metadata["task_types"]:
+                unique_task_types.add(task_type)
+
+    return list(unique_task_types)
+
+
 def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
     """List all tests in the tests directory.
 
