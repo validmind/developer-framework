@@ -105,7 +105,7 @@ def list_tags():
             for tag in test_class.metadata["tags"]:
                 unique_tags.add(tag)
 
-    return unique_tags
+    return list(unique_tags)
 
 
 def list_tasks_and_tags():
@@ -150,7 +150,7 @@ def list_task_types():
             for task_type in test_class.metadata["task_types"]:
                 unique_task_types.add(task_type)
 
-    return unique_task_types
+    return list(unique_task_types)
 
 
 def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
