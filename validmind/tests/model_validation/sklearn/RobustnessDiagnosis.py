@@ -66,7 +66,6 @@ class RobustnessDiagnosis(ThresholdTest):
     - The robustness test might not deliver the expected results for datasets with a text column.
     """
 
-    category = "model_diagnosis"
     name = "robustness"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
     default_params = {

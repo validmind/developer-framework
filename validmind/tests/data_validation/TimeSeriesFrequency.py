@@ -55,7 +55,6 @@ class TimeSeriesFrequency(ThresholdTest):
     test considers them a failing condition.
     """
 
-    category = "data_quality"
     name = "time_series_frequency"
     required_inputs = ["dataset"]
     metadata = {

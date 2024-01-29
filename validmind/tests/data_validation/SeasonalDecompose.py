@@ -54,7 +54,6 @@ class SeasonalDecompose(Metric):
     present in the dataset.
     """
 
-    category = "univariate_analysis"
     name = "seasonal_decompose"
     required_inputs = ["dataset"]
     default_params = {"seasonal_model": "additive"}

@@ -64,7 +64,6 @@ class TooManyZeroValues(ThresholdTest):
     issues.
     """
 
-    category = "data_quality"
     name = "zeros"
     required_inputs = ["dataset"]
     default_params = {"max_percent_threshold": 0.03}

@@ -55,7 +55,6 @@ class Specificity(ThresholdTest, AIPoweredTest):
     or mislead the model.
     """
 
-    category = "prompt_validation"
     name = "specificity"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

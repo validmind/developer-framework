@@ -53,7 +53,6 @@ class Clarity(ThresholdTest, AIPoweredTest):
     - The evaluation may not be as effective if used on non-textual models.
     """
 
-    category = "prompt_validation"
     name = "clarity"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

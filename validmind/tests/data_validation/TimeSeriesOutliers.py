@@ -60,7 +60,6 @@ class TimeSeriesOutliers(ThresholdTest):
     - The necessity for a datetime index could limit the extent of its application.
     """
 
-    category = "data_quality"
     name = "time_series_outliers"
     required_inputs = ["dataset"]
     default_params = {"zscore_threshold": 3}

@@ -155,21 +155,6 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(response, res_json)
 
     @patch("aiohttp.ClientSession.post")
-    def test_log_dataset(self, mock_post: MagicMock):
-        dataset = vm.init_dataset(pd.DataFrame({"col1": [1, 2, 3]}))
-        dataset_serial = json.dumps(
-            dataset.serialize(), cls=NumpyEncoder, allow_nan=False
-        )
-
-        mock_response = MockResponse(200, json={"cuid": "1234"})
-        mock_post.return_value = mock_response
-
-        self.run_async(api_client.log_dataset, dataset)
-
-        url = f"{os.environ['VM_API_HOST']}/log_dataset?run_cuid={os.environ['VM_RUN_CUID']}"
-        mock_post.assert_called_with(url, data=dataset_serial)
-
-    @patch("aiohttp.ClientSession.post")
     def test_log_figure_matplot(self, mock_post: MagicMock):
         mock_response = MockResponse(200, json={"cuid": "1234"})
         mock_post.return_value = mock_response

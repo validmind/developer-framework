@@ -64,7 +64,6 @@ class Bias(ThresholdTest, AIPoweredTest):
     difference between threshold and score is narrow.
     """
 
-    category = "prompt_validation"
     name = "bias"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

@@ -48,7 +48,6 @@ class HighCardinality(ThresholdTest):
     and varied applications. Further mechanisms to adjust and refine this threshold could enhance its effectiveness.
     """
 
-    category = "data_quality"
     name = "cardinality"
     required_inputs = ["dataset"]
     default_params = {

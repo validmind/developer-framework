@@ -54,7 +54,6 @@ class HighPearsonCorrelation(ThresholdTest):
     retained results could be helpful.
     """
 
-    category = "data_quality"
     name = "pearson_correlation"
     required_inputs = ["dataset"]
     default_params = {"max_threshold": 0.3}

@@ -54,7 +54,6 @@ class MinimumROCAUCScore(ThresholdTest):
     appropriate if the classes are imbalanced.
     """
 
-    category = "model_performance"
     name = "roc_auc_score"
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}

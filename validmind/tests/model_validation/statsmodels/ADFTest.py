@@ -44,7 +44,6 @@ class ADFTest(ThresholdTest):
     hypothesis, escalating the chances of false positives.
     """
 
-    category = "model_performance"  # right now we support "model_performance" and "data_quality"
     name = "adf_test"
     default_params = {"threshold": 0.05}
     metadata = {

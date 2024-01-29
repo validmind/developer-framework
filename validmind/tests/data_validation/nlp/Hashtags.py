@@ -51,7 +51,6 @@ class Hashtags(ThresholdTest):
     have limited utility on its own.
     """
 
-    category = "data_quality"
     name = "hashtags"
     required_inputs = ["dataset", "dataset.text_column"]
     default_params = {"top_hashtags": 25}

@@ -50,7 +50,6 @@ class Duplicates(ThresholdTest):
     - It can only check for exact duplicates and may miss semantically similar information packaged differently.
     """
 
-    category = "data_quality"
     name = "duplicates"
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
@@ -80,7 +79,6 @@ class Duplicates(ThresholdTest):
         )
 
     def run(self):
-
         if self.inputs.dataset.text_column:
             columns = self.inputs.dataset.text_column
         else:

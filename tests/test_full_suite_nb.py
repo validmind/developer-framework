@@ -35,7 +35,6 @@ class TestFullTestSuiteNB(unittest.TestCase):
     @patch("validmind.utils.is_notebook")
     @patch.multiple(
         "validmind.api_client",
-        log_dataset=unittest.mock.DEFAULT,
         log_figure=unittest.mock.DEFAULT,
         log_metadata=unittest.mock.DEFAULT,
         log_metrics=unittest.mock.DEFAULT,

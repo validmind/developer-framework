@@ -62,7 +62,6 @@ class TrainingTestDegradation(ThresholdTest):
     - The test is currently only designed for classification tasks.
     """
 
-    category = "model_performance"
     name = "training_test_degradation"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
 

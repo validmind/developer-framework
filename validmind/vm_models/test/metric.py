@@ -91,8 +91,6 @@ class Metric(Test):
         metric_result_value = metric_value if metric_value is not None else {}
 
         test_suite_result.metric = MetricResult(
-            type=self.type,
-            scope=self.scope,
             # key=self.key,
             # Now using the fully qualified test ID as `key`.
             # Ideally the backend is updated to use `test_id` instead of `key`.

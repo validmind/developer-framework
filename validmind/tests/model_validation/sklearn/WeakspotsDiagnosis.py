@@ -69,7 +69,6 @@ class WeakspotsDiagnosis(ThresholdTest):
     improvement.
     """
 
-    category = "model_diagnosis"
     name = "weak_spots"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
 

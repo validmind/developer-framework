@@ -54,7 +54,7 @@ class RegressionModelsPerformanceComparison(Metric):
     """
 
     name = "models_performance_comparison"
-    category = "model_performance"
+
     name = "regression_errors"
     required_inputs = ["model", "model.test_ds"]
 

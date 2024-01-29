@@ -67,7 +67,6 @@ class StopWords(ThresholdTest):
     or predictive accuracy.
     """
 
-    category = "data_quality"
     name = "stop_words"
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 0.5, "num_words": 25}
