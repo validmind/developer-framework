@@ -6,6 +6,7 @@ Client interface for all data and model validation functions
 
 import pandas as pd
 
+from .api_client import _log_input as log_input
 from .client_config import client_config
 from .errors import (
     GetTestSuiteError,
@@ -20,6 +21,7 @@ from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
+from .utils import get_info_from_model_instance
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
@@ -42,6 +44,7 @@ def init_dataset(
     extra_columns: dict = None,
     class_labels: dict = None,
     type: str = None,
+    input_id: str = None,
 ) -> VMDataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
@@ -58,6 +61,11 @@ def init_dataset(
         extra_columns (dictionary):  A dictionary containing the names of the
         prediction_column and group_by_columns in the dataset
         class_labels (dict): A list of class labels for classification problems
+        type (str): The type of dataset (one of DATASET_TYPES)
+        input_id (str): The input ID for the dataset (e.g. "my_dataset"). By default,
+            this will be set to `dataset` but if you are passing this dataset as a
+            test input using some other key than `dataset`, then you should set
+            this to the same key.
 
     Raises:
         ValueError: If the dataset type is not supported
@@ -116,6 +124,12 @@ def init_dataset(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
 
+    log_input(
+        name=input_id or "dataset",
+        type="dataset",
+        metadata=vm_dataset.serialize(),
+    )
+
     return vm_dataset
 
 
@@ -124,6 +138,7 @@ def init_model(
     train_ds: VMDataset = None,
     test_ds: VMDataset = None,
     validation_ds: VMDataset = None,
+    input_id: str = None,
 ) -> VMModel:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -132,6 +147,13 @@ def init_model(
 
     Args:
         model: A trained model
+        train_ds (vm.vm.Dataset): A training dataset (optional)
+        test_ds (vm.vm.Dataset): A testing dataset (optional)
+        validation_ds (vm.vm.Dataset): A validation dataset (optional)
+        input_id (str): The input ID for the model (e.g. "my_model"). By default,
+            this will be set to `model` but if you are passing this model as a
+            test input using some other key than `model`, then you should set
+            this to the same key.
 
     Raises:
         ValueError: If the model type is not supported
@@ -152,6 +174,13 @@ def init_model(
         validation_ds=validation_ds,
         attributes=None,
     )
+
+    log_input(
+        name=input_id or "model",
+        type="model",
+        metadata=get_info_from_model_instance(vm_model),
+    )
+
     return vm_model
 
 

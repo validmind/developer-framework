@@ -1,38 +1,11 @@
 # Copyright © 2023 ValidMind Inc. All rights reserved.
 
-import sys
 from dataclasses import dataclass
-from platform import python_version
 
 import pandas as pd
 
+from validmind.utils import get_info_from_model_instance
 from validmind.vm_models import Metric, ResultSummary, ResultTable
-
-
-def _get_info_from_model_instance(  # noqa C901 '_get_info_from_model_instance' is too complex
-    model,
-):
-    """Attempts to extract all model info from a model object instance"""
-    architecture = model.model_name()
-    framework = model.model_library()
-    framework_version = model.model_library_version()
-    language = model.model_language()
-
-    if language is None:
-        language = f"Python {python_version()}"
-
-    if framework_version is None:
-        try:
-            framework_version = sys.modules[framework].__version__
-        except (KeyError, AttributeError):
-            framework_version = "N/A"
-
-    return {
-        "architecture": architecture,
-        "framework": framework,
-        "framework_version": framework_version,
-        "language": language,
-    }
 
 
 @dataclass
@@ -111,6 +84,6 @@ class ModelMetadata(Metric):
         """
         Extracts model metadata from a model object instance
         """
-        model_info = _get_info_from_model_instance(self.inputs.model)
+        model_info = get_info_from_model_instance(self.inputs.model)
 
         return self.cache_results(model_info)

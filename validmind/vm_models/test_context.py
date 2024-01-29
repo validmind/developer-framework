@@ -11,7 +11,8 @@ TestContext
 # https://app.shortcut.com/validmind/story/2468/allow-arbitrary-test-context
 # There is more changes to come around how we handle test inputs, so once we iron out that, we can refactor
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from types import SimpleNamespace
 from typing import ClassVar, List, Optional
 
 from ..errors import MissingRequiredTestInputError
@@ -76,11 +77,23 @@ class TestInput:
 
     # TODO: we need to look into adding metadata for test inputs and logging that
 
+    __accessed: set = None  # keep track of which inputs are accessed
+
     def __init__(self, inputs):
         """Initialize with either a dictionary of inputs"""
+        self.__accessed = set()
 
         for key, value in inputs.items():
             setattr(self, key, value)
+
+    def __getattribute__(self, key):
+        """Keep track of which inputs are accessed so we can log"""
+        if not key.startswith("_TestInput"):
+            # don't track internal attributes
+            accessed = super().__getattribute__("_TestInput__accessed")
+            accessed.add(key)
+
+        return super().__getattribute__(key)
 
     def __getitem__(self, key):
         """Allow accessing inputs via `self.inputs["input_name"]`"""
@@ -93,6 +106,10 @@ class TestInput:
         )
         return f"{self.__class__.__name__}(\n    {attrs}\n)"
 
+    def get_accessed_inputs(self):
+        """Return a list of inputs that were accessed"""
+        return list(self.__accessed)
+
 
 @dataclass
 class TestUtils:
@@ -102,6 +119,27 @@ class TestUtils:
 
     context: Optional[TestContext] = None
     inputs: Optional[TestInput] = None
+
+    # track accessed inputs for each test
+    _accessed_inputs: set = field(default_factory=set, init=False)
+
+    def __getattribute__(self, name):
+        # Intercept attribute access
+        if name == "inputs":
+            inputs = super().__getattribute__(name)
+
+            # Track attribute access
+            def access_tracker(item):
+                self._accessed_inputs.add(item)
+                return getattr(inputs, item)
+
+            return SimpleNamespace(**{k: access_tracker(k) for k in vars(inputs)})
+
+        return super().__getattribute__(name)
+
+    def get_accessed_inputs(self):
+        """Return a list of inputs that were accessed for this test"""
+        return list(self._accessed_inputs)
 
     def _get_legacy_input(self, key):
         """Retrieve an input from the Test Input or, for backwards compatibility,

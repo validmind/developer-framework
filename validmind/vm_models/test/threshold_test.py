@@ -88,6 +88,7 @@ class ThresholdTest(Test):
         self.result = TestSuiteThresholdTestResult(
             result_id=self.test_id,
             result_metadata=result_metadata,
+            inputs=self.get_accessed_inputs(),
             test_results=ThresholdTestResults(
                 category=self.category,
                 # test_name=self.name,

@@ -361,11 +361,12 @@ async def log_metadata(
         raise e
 
 
-async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
+async def log_metrics(metrics: List[Metric], inputs: List[str]) -> Dict[str, Any]:
     """Logs metrics to ValidMind API.
 
     Args:
         metrics (list): A list of Metric objects
+        inputs (list): A list of input keys (names) that were used to run the test
 
     Raises:
         Exception: If the API call fails
@@ -377,7 +378,15 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
         return await _post(
             "log_metrics",
             data=json.dumps(
-                [m.serialize() for m in metrics], cls=NumpyEncoder, allow_nan=False
+                [
+                    {
+                        **m.serialize(),
+                        "inputs": inputs,
+                    }
+                    for m in metrics
+                ],
+                cls=NumpyEncoder,
+                allow_nan=False,
             ),
         )
     except Exception as e:
@@ -386,7 +395,7 @@ async def log_metrics(metrics: List[Metric]) -> Dict[str, Any]:
 
 
 async def log_test_result(
-    result: ThresholdTestResults, dataset_type: str = "training"
+    result: ThresholdTestResults, inputs: List[str], dataset_type: str = "training"
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -395,6 +404,7 @@ async def log_test_result(
 
     Args:
         result (validmind.ThresholdTestResults): A ThresholdTestResults object
+        inputs (list): A list of input keys (names) that were used to run the test
         dataset_type (str, optional): The type of dataset. Can be one of
             "training", "test", or "validation". Defaults to "training".
 
@@ -408,7 +418,14 @@ async def log_test_result(
         return await _post(
             "log_test_results",
             params={"dataset_type": dataset_type},
-            data=json.dumps(result.serialize(), cls=NumpyEncoder, allow_nan=False),
+            data=json.dumps(
+                {
+                    **result.serialize(),
+                    "inputs": inputs,
+                },
+                cls=NumpyEncoder,
+                allow_nan=False,
+            ),
         )
     except Exception as e:
         logger.error("Error logging test results to ValidMind API")
@@ -416,7 +433,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[ThresholdTestResults], dataset_type: str = "training"
+    results: List[ThresholdTestResults], inputs, dataset_type: str = "training"
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
@@ -425,6 +442,7 @@ def log_test_results(
 
     Args:
         results (list): A list of ThresholdTestResults objects
+        inputs (list): A list of input keys (names) that were used to run the test
         dataset_type (str, optional): The type of dataset. Can be one of "training",
           "test", or "validation". Defaults to "training".
 
@@ -437,12 +455,43 @@ def log_test_results(
     try:
         responses = []  # TODO: use asyncio.gather
         for result in results:
-            responses.append(run_async(log_test_result, result, dataset_type))
+            responses.append(run_async(log_test_result, result, inputs, dataset_type))
     except Exception as e:
         logger.error("Error logging test results to ValidMind API")
         raise e
 
     return responses
+
+
+def _log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    """Logs input information - internal use for now (don't expose via public API)
+
+    Args:
+        name (str): The name of the input
+        type (str): The type of the input
+        metadata (dict): The metadata of the input
+
+    Raises:
+        Exception: If the API call fails
+
+    Returns:
+        dict: The response from the API
+    """
+    try:
+        return run_async(
+            _post,
+            "log_input",
+            data=json.dumps(
+                {
+                    "name": name,
+                    "type": type,
+                    "metadata": metadata,
+                }
+            ),
+        )
+    except Exception as e:
+        logger.error("Error logging input to ValidMind API")
+        raise e
 
 
 def start_run() -> str:

@@ -82,9 +82,11 @@ class Metric(Test):
 
         result_summary = self.summary(metric_value)
 
+        print(self.test_id, self.get_accessed_inputs())
         test_suite_result = TestSuiteMetricResult(
             result_id=self.test_id,
             result_metadata=result_metadata,
+            inputs=self.get_accessed_inputs(),
         )
 
         # We can send an empty result to push an empty metric with a summary and plots
