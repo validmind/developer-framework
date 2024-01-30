@@ -39,7 +39,6 @@ class RegressionR2Square(Metric):
     used, or whether certain key assumptions have been fulfilled.
     """
 
-    category = "model_performance"
     name = "regression_errors"
     required_inputs = ["model"]
     metadata = {

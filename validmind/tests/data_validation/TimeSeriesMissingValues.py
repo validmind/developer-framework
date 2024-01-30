@@ -60,7 +60,6 @@ class TimeSeriesMissingValues(ThresholdTest):
     - Solely focuses on the 'missingness' of the data and might fall short in addressing other aspects of data quality.
     """
 
-    category = "data_quality"
     name = "time_series_missing_values"
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}

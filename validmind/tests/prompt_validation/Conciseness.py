@@ -53,7 +53,6 @@ class Conciseness(ThresholdTest, AIPoweredTest):
     - The test is dependent on the LLM’s understanding of conciseness, which might vary from model to model.
     """
 
-    category = "prompt_validation"
     name = "conciseness"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

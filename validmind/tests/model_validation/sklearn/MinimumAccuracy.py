@@ -54,7 +54,6 @@ class MinimumAccuracy(ThresholdTest):
     - The test majorly focuses on overall correctness and may not be sufficient for all types of model analytics.
     """
 
-    category = "model_performance"
     name = "accuracy_score"
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.7}

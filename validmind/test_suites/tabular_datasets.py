@@ -15,7 +15,6 @@ class TabularDatasetDescription(TestSuite):
 
     suite_id = "tabular_dataset_description"
     tests = [
-        "validmind.data_validation.DatasetMetadata",
         "validmind.data_validation.DatasetDescription",
         "validmind.data_validation.DescriptiveStatistics",
         "validmind.data_validation.PearsonCorrelationMatrix",

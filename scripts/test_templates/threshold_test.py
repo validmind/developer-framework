@@ -23,7 +23,6 @@ class __TEST_NAME__(ThresholdTest):
     exceeds a predefined threshold.
     """
 
-    category = "__TEST_CATEGORY__"  # model_performance, data_quality, etc.
     name = "__TEST_ID__"
     required_inputs = []  # model, dataset, etc. (model.train_ds, model.test_ds)
     default_params = {}
@@ -51,7 +50,9 @@ class __TEST_NAME__(ThresholdTest):
             figures=None,  # return a figure by importing from validmind.vm_models
         )
 
-    def summary(self, results: List[ThresholdTestResult], all_passed: bool) -> ResultSummary:
+    def summary(
+        self, results: List[ThresholdTestResult], all_passed: bool
+    ) -> ResultSummary:
         """Summarize the results of the test.
 
         Args:

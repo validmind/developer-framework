@@ -21,7 +21,7 @@ from .client_config import client_config
 from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
-from .vm_models import Figure, Metric, ThresholdTestResults, VMDataset
+from .vm_models import Figure, Metric, ThresholdTestResults
 
 # TODO: can't import types from vm_models because of circular dependency
 
@@ -243,25 +243,6 @@ async def get_metadata(content_id: str) -> Dict[str, Any]:
     """
     # TODO: add a more accurate type hint/documentation
     return await _get(f"get_metadata/{content_id}")
-
-
-async def log_dataset(vm_dataset: VMDataset) -> Dict[str, Any]:
-    """Logs metadata and statistics about a dataset to ValidMind API.
-
-    Args:
-        vm_dataset (validmind.VMDataset): A VM dataset object
-
-    Returns:
-        dict: The response from the API
-    """
-    try:
-        return await _post(
-            "log_dataset",
-            data=json.dumps(vm_dataset.serialize(), cls=NumpyEncoder, allow_nan=False),
-        )
-    except Exception as e:
-        logger.error("Error logging dataset to ValidMind API")
-        raise e
 
 
 async def log_figure(figure: Figure) -> Dict[str, Any]:

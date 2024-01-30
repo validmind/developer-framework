@@ -47,7 +47,6 @@ class MissingValues(ThresholdTest):
     classify as missing but could bear similar implications.
     """
 
-    category = "data_quality"
     name = "missing"
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}

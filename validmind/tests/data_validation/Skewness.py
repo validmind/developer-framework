@@ -57,7 +57,6 @@ class Skewness(ThresholdTest):
     leniency depending upon selection. This factor might require expert input and recurrent iterations for refinement.
     """
 
-    category = "data_quality"
     name = "skewness"
     required_inputs = ["dataset"]
     default_params = {"max_threshold": 1}

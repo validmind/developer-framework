@@ -51,7 +51,6 @@ class UniqueRows(ThresholdTest):
     inherently limited.
     """
 
-    category = "data_quality"
     name = "unique"
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 1}

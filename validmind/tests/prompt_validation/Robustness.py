@@ -55,7 +55,6 @@ class Robustness(ThresholdTest, AIPoweredTest):
     scenarios.
     """
 
-    category = "prompt_validation"
     name = "robustness"
     required_inputs = ["model"]
     default_params = {"num_tests": 10}

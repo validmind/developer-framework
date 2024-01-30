@@ -62,7 +62,6 @@ class OverfitDiagnosis(ThresholdTest):
     for imbalanced datasets.
     """
 
-    category = "model_diagnosis"
     name = "overfit_regions"
     required_inputs = ["model", "model.train_ds", "model.test_ds"]
     default_params = {"features_columns": None, "cut_off_percentage": 4}
