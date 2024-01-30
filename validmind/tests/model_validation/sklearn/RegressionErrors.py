@@ -39,7 +39,6 @@ class RegressionErrors(Metric):
     nuances, and they should be used with contextual understanding of the problem at hand.
     """
 
-    category = "model_performance"
     name = "regression_errors"
     required_inputs = ["model", "model.test_ds", "model.train_ds"]
     metadata = {

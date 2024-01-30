@@ -17,7 +17,6 @@ from IPython.display import display
 
 from ... import api_client
 from ...utils import NumpyEncoder, test_id_to_name
-from ..dataset import VMDataset
 from ..figure import Figure
 from ..test.metric_result import MetricResult
 from ..test.result_summary import ResultSummary
@@ -163,26 +162,6 @@ class TestSuiteFailedResult(TestSuiteResult):
 
     async def log(self):
         pass
-
-
-@dataclass
-class TestSuiteDatasetResult(TestSuiteResult):
-    """
-    Result wrapper for datasets that run as part of a test suite
-    """
-
-    name: str = "Metric"
-    result_id: str = None
-    dataset: VMDataset = None
-
-    def __repr__(self) -> str:
-        return f'TestSuiteDatasetResult(result_id="{self.result_id}")'
-
-    def _to_widget(self):
-        return widgets.HTML(value=self.dataset.df.describe().to_html())
-
-    async def log(self):
-        await api_client.log_dataset(self.dataset)
 
 
 @dataclass

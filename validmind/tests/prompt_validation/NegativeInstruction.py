@@ -59,7 +59,6 @@ class NegativeInstruction(ThresholdTest, AIPoweredTest):
     and may need to be adjusted according to specific use-cases.
     """
 
-    category = "prompt_validation"
     name = "negative_instruction"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

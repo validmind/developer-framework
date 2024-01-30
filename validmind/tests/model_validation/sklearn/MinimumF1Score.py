@@ -57,7 +57,6 @@ class MinimumF1Score(ThresholdTest):
     closely with their specific requirements.
     """
 
-    category = "model_performance"
     name = "f1_score"
     required_inputs = ["model"]
     default_params = {"min_threshold": 0.5}

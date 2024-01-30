@@ -23,8 +23,6 @@ class MetricResult:
     objects that can be sent to the API and 2) and plots and metadata for display purposes
     """
 
-    type: str
-    scope: str
     key: dict
     ref_id: str
     value: Union[dict, list, pd.DataFrame]
@@ -54,8 +52,6 @@ class MetricResult:
             )
 
         return {
-            "type": self.type,
-            "scope": self.scope,
             "key": self.key,
             "ref_id": self.ref_id,
             "value": value,

@@ -19,7 +19,6 @@ from validmind.vm_models import (
 class StabilityAnalysis(ThresholdTest):
     """Base class for embeddings stability analysis tests"""
 
-    category = "model_diagnosis"
     required_inputs = ["model", "dataset"]
     default_params = {
         "text_column": None,

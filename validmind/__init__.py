@@ -46,7 +46,6 @@ warnings.simplefilter("ignore", category=NumbaPendingDeprecationWarning)
 
 from .__version__ import __version__  # noqa: E402
 from .api_client import init
-from .api_client import log_dataset as _log_dataset_async  # noqa: E402
 from .api_client import log_figure as _log_figure_async
 from .api_client import log_metrics as _log_metrics_async
 from .api_client import log_test_results
@@ -60,18 +59,6 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
-
-
-def log_dataset(dataset):
-    """Logs metadata and statistics about a dataset to ValidMind API.
-
-    Args:
-        vm_dataset (validmind.VMDataset): A VM dataset object
-
-    Returns:
-        validmind.VMDataset: The VMDataset object
-    """
-    run_async(_log_dataset_async, dataset)
 
 
 def log_metrics(metrics):
@@ -121,7 +108,6 @@ __all__ = [  # noqa
     "test_suites",
     "vm_models",
     # Framework Logging API
-    "log_dataset",
     "log_figure",
     "log_metrics",
     "log_test_results",

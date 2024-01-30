@@ -55,7 +55,6 @@ class Delimitation(ThresholdTest, AIPoweredTest):
     requiring regular manual adjustment.
     """
 
-    category = "prompt_validation"
     name = "delimitation"
     required_inputs = ["model.prompt"]
     default_params = {"min_threshold": 7}

@@ -67,7 +67,6 @@ class ClassImbalance(ThresholdTest):
     - The test is only applicable for classification opearations and unsuitable for regression or clustering tasks.
     """
 
-    category = "data_quality"
     # Changing the name test to avoid a name clash
     name = "class_imbalance"
     required_inputs = ["dataset"]

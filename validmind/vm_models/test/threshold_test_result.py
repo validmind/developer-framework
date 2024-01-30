@@ -48,7 +48,6 @@ class ThresholdTestResults:
     ThresholdTestResults model
     """
 
-    category: str
     test_name: str
     ref_id: str
     params: dict
@@ -61,7 +60,6 @@ class ThresholdTestResults:
         Serializes the ThresholdTestResults to a dictionary so it can be sent to the API
         """
         test_results = {
-            "category": self.category,
             "test_name": self.test_name,
             "ref_id": self.ref_id,
             "params": self.params,

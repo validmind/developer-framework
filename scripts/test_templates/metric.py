@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from validmind.logging import get_logger
 from validmind.vm_models import (
+    Figure,
     Metric,
     ResultSummary,
     ResultTable,

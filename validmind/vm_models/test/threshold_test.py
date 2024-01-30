@@ -90,7 +90,6 @@ class ThresholdTest(Test):
             result_metadata=result_metadata,
             inputs=self.get_accessed_inputs(),
             test_results=ThresholdTestResults(
-                category=self.category,
                 # test_name=self.name,
                 # Now using the fully qualified test ID as `test_name`.
                 # Ideally the backend is updated to use `test_id` instead of `test_name`.
