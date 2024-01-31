@@ -36,20 +36,46 @@ def copyright_python_file(root, file):
 
     # Read the contents of the file
     with open(os.path.join(root, file), "r") as f:
-        contents = f.read()
+        lines = f.readlines()
 
-    # Replace the existing copyright text with the new one
-    if "Copyright © 2023 ValidMind Inc." in contents:
-        start_index = contents.index("# Copyright © 2023 ValidMind Inc.")
-        end_index = contents.index("All rights reserved.") + len("All rights reserved.")
-        contents = contents[:start_index] + copyright.strip() + contents[end_index:]
-    else:
-        # Add the copyright block to a file that doesn't have it
+    # Identify the start and end lines
+    start_index = None
+    end_index = None
+    for i, line in enumerate(lines):
+        if line.strip().startswith("# Copyright"):
+            start_index = i
+        elif line.strip().startswith("# SPDX-License-Identifier:"):
+            end_index = i
+            if "AGPL-3.0 AND ValidMind Commercial" not in line:
+                file_path = os.path.join(root, file)
+                raise Exception(f"Unexpected SPDX identifier in {file_path}. Remove the copyright header manually and rerun the command.")
+            break
+
+    # Check for additional comment lines after end_index
+    if end_index is not None and end_index + 1 < len(lines) and lines[end_index + 1].strip().startswith("#"):
+        file_path = os.path.join(root, file)
+        print(f"Warning: Additional lines found after copyright header. Check {file_path}, remove the extra lines if necessary, and rerun the command.")
+
+    # Replace the specified lines if both start and end are found
+    if start_index is not None and end_index is not None:
+        # Remove lines from start_index to end_index
+        del lines[start_index:end_index + 1]
+        # Insert the new copyright at start_index
+        lines.insert(start_index, copyright)
+    
+        # Write the modified contents back to the file
+        with open(os.path.join(root, file), "w") as f:
+            f.writelines(lines)
+    elif start_index is None and end_index is None:
+        # Copyright header not found; add it
+        contents = "".join(lines)
         contents = f"{copyright}\n{contents}"
-
-    # Write the modified contents back to the file
-    with open(os.path.join(root, file), "w") as f:
-        f.write(contents)
+        with open(os.path.join(root, file), "w") as f:
+            f.write(contents)
+    else:
+        # Error condition when one of the indices is None but not the other
+        file_path = os.path.join(root, file)
+        raise Exception(f"Non-standard copyright header found in {file_path}. Remove the header manually and rerun the command.")
 
 
 def copyright_notebook_file(root, file):
