@@ -66,6 +66,7 @@ class TestSuiteTest:
 
         try:
             self._test_instance = self._test_class(
+                test_id=self.test_id,
                 context=context,
                 inputs=inputs,
                 params=config,

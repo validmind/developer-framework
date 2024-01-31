@@ -92,8 +92,9 @@ class Skewness(ThresholdTest):
         dataset_types = typeset.infer_type(self.inputs.dataset.df)
 
         skewness = self.inputs.dataset.df.skew(numeric_only=True)
-        passed = all(abs(skewness) < self.params["max_threshold"])
+
         results = []
+        passed = []
 
         for col in skewness.index:
             # Only calculate skewness for numerical columns
@@ -101,14 +102,16 @@ class Skewness(ThresholdTest):
                 continue
 
             col_skewness = skewness[col]
+            col_pass = abs(col_skewness) < self.params["max_threshold"]
+            passed.append(col_pass)
             results.append(
                 ThresholdTestResult(
                     column=col,
-                    passed=abs(col_skewness) < self.params["max_threshold"],
+                    passed=col_pass,
                     values={
                         "skewness": col_skewness,
                     },
                 )
             )
 
-        return self.cache_results(results, passed=passed)
+        return self.cache_results(results, passed=all(passed))
