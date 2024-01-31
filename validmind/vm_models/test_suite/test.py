@@ -36,8 +36,9 @@ class TestSuiteTest:
                 result_id=self.test_id,
             )
         except Exception as e:
+            # The test suite runner will appropriately ignore this error
+            # since _test_class is None
             logger.error(f"Failed to load test '{self.test_id}': {e}")
-            raise e
 
     @property
     def title(self):

@@ -146,6 +146,10 @@ class TestSuiteRunner:
 
         for section in self.suite.sections:
             for test in section.tests:
+                if test._test_class is None:
+                    self.pbar.value += 1
+                    continue
+
                 self.pbar_description.value = f"Running {test.test_type}: {test.name}"
                 test.run(fail_fast=fail_fast)
                 self.pbar.value += 1
