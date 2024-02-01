@@ -47,6 +47,7 @@ def init_dataset(
     class_labels: dict = None,
     type: str = None,
     input_id: str = None,
+    __log=True,
 ) -> VMDataset:
     """
     Initializes a VM Dataset, which can then be passed to other functions
@@ -126,11 +127,12 @@ def init_dataset(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
 
-    log_input(
-        name=input_id or "dataset",
-        type="dataset",
-        metadata=get_dataset_info(vm_dataset),
-    )
+    if __log:
+        log_input(
+            name=input_id or "dataset",
+            type="dataset",
+            metadata=get_dataset_info(vm_dataset),
+        )
 
     return vm_dataset
 
@@ -141,6 +143,7 @@ def init_model(
     test_ds: VMDataset = None,
     validation_ds: VMDataset = None,
     input_id: str = None,
+    __log=True,
 ) -> VMModel:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -177,11 +180,12 @@ def init_model(
         attributes=None,
     )
 
-    log_input(
-        name=input_id or "model",
-        type="model",
-        metadata=get_model_info(vm_model),
-    )
+    if __log:
+        log_input(
+            name=input_id or "model",
+            type="model",
+            metadata=get_model_info(vm_model),
+        )
 
     return vm_model
 
