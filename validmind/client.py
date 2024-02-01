@@ -21,7 +21,7 @@ from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
-from .utils import get_info_from_model_instance
+from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
@@ -127,7 +127,7 @@ def init_dataset(
     log_input(
         name=input_id or "dataset",
         type="dataset",
-        metadata=vm_dataset.serialize(),
+        metadata=get_dataset_info(vm_dataset),
     )
 
     return vm_dataset
@@ -178,7 +178,7 @@ def init_model(
     log_input(
         name=input_id or "model",
         type="model",
-        metadata=get_info_from_model_instance(vm_model),
+        metadata=get_model_info(vm_model),
     )
 
     return vm_model

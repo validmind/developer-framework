@@ -467,7 +467,9 @@ def _log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]
                     "name": name,
                     "type": type,
                     "metadata": metadata,
-                }
+                },
+                cls=NumpyEncoder,
+                allow_nan=False,
             ),
         )
     except Exception as e:

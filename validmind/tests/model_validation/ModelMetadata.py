@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from validmind.utils import get_info_from_model_instance
+from validmind.utils import get_model_info
 from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 
@@ -84,6 +84,6 @@ class ModelMetadata(Metric):
         """
         Extracts model metadata from a model object instance
         """
-        model_info = get_info_from_model_instance(self.inputs.model)
+        model_info = get_model_info(self.inputs.model)
 
         return self.cache_results(model_info)

@@ -351,7 +351,7 @@ def test_id_to_name(test_id: str):
     return title
 
 
-def get_info_from_model_instance(model):
+def get_model_info(model):
     """Attempts to extract all model info from a model object instance"""
     architecture = model.model_name()
     framework = model.model_library()
@@ -372,4 +372,20 @@ def get_info_from_model_instance(model):
         "framework": framework,
         "framework_version": framework_version,
         "language": language,
+    }
+
+
+def get_dataset_info(dataset):
+    """Attempts to extract all dataset info from a dataset object instance"""
+    num_rows, num_cols = dataset.df.shape
+    schema = dataset.df.dtypes.apply(lambda x: x.name).to_dict()
+    description = (
+        dataset.df.describe(include="all").reset_index().to_dict(orient="records")
+    )
+
+    return {
+        "num_rows": num_rows,
+        "num_columns": num_cols,
+        "schema": schema,
+        "description": description,
     }
