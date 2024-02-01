@@ -62,20 +62,20 @@ class TestAPIClient(unittest.TestCase):
         mock_response = MockResponse(200, json={"cuid": "abc1234"})
         mock_post.return_value = mock_response
 
-        vm.log_metrics(metrics)
+        vm.log_metrics(metrics, inputs=["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_metrics?run_cuid={os.environ['VM_RUN_CUID']}"
-        mock_post.assert_called_with(url, data=json.dumps([{"key": "value"}]))
+        mock_post.assert_called_with(url, data=json.dumps([{"key": "value", "inputs": ["input1"]}]))
 
     @patch("validmind.api_client.log_test_result")
     def test_log_test_results(self, mock_log_test_result: MagicMock):
         results = [Mock(), Mock()]
-        vm.log_test_results(results)
+        vm.log_test_results(results, inputs=["input1"])
 
         mock_log_test_result.assert_has_calls(
             [
-                call(results[0], "training"),
-                call(results[1], "training"),
+                call(results[0], ["input1"], "training"),
+                call(results[1], ["input1"], "training"),
             ]
         )
 
