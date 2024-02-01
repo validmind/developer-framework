@@ -1,4 +1,7 @@
-# Copyright © 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
 non_test_content_block_html = """
 <div
   class="lm-Widget p-Widget jupyter-widget-Collapse-header"

@@ -1,4 +1,6 @@
-# Copyright © 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 """All Tests for ValidMind"""
 
@@ -248,7 +250,12 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
 
 
 def load_test(test_id, reload=False):  # noqa: C901
-    parts = test_id.split(".")
+    # Extract the test ID extension from the actual test ID when loading
+    # the test class. This enables us to generate multiple results for
+    # the same tests within the document. For instance, consider the
+    # test ID "validmind.data_validation.ClassImbalance:data_id_1,"
+    # where the test ID extension is "data_id_1".
+    parts = test_id.split(":")[0].split(".")
 
     error = None
     namespace = parts[0]
@@ -353,8 +360,8 @@ def run_test(test_id, params: dict = None, inputs=None, **kwargs):
             other inputs can be accessed inside the test via `self.inputs["input_name"]`
     """
     TestClass = load_test(test_id, reload=True)
-
     test = TestClass(
+        test_id=test_id,
         context=TestContext(),
         inputs=TestInput({**kwargs, **(inputs or {})}),
         params=params,

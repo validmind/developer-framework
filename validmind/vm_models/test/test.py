@@ -1,4 +1,7 @@
-# Copyright © 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
 """Base Class for Metric, ThresholdTest and any other test type"""
 
 from abc import abstractmethod
@@ -30,10 +33,10 @@ class Test(TestUtils):
     default_params: ClassVar[dict] = None  # should be overridden by leaf classes
 
     # Instance Variables
-    _ref_id: ClassVar[str]  # unique identifier (populated at init)
-    _section_id: ClassVar[str]  # which section of template this test belongs to
-    test_id: ClassVar[str] = None  # populated when loading tests from suites
-    result: ClassVar[object]  # type should be overridden by parent classes
+    _ref_id: str = None  # unique identifier (populated at init)
+    _section_id: str = None  # which section of template this test belongs to
+    test_id: str = None  # populated when loading tests from suites
+    result: object = None  # type should be overridden by parent classes
 
     params: dict = None  # populated by test suite from user-passed config
 
@@ -41,6 +44,10 @@ class Test(TestUtils):
         """
         Set default params if not provided
         """
+        if not self.test_id:
+            raise Exception(
+                "test_id is missing. It must be passed when initializing the test"
+            )
         self._ref_id = str(uuid4())
 
         # TODO: add validation for required inputs

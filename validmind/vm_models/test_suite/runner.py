@@ -1,4 +1,7 @@
-# Copyright © 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
 import asyncio
 
 import ipywidgets as widgets
@@ -146,6 +149,10 @@ class TestSuiteRunner:
 
         for section in self.suite.sections:
             for test in section.tests:
+                if test._test_class is None:
+                    self.pbar.value += 1
+                    continue
+
                 self.pbar_description.value = f"Running {test.test_type}: {test.name}"
                 test.run(fail_fast=fail_fast)
                 self.pbar.value += 1

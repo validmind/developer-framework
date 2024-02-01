@@ -90,6 +90,7 @@ def create_unit_test_funcs_from_vm_tests():
             test_input = test_inputs["classification"]
 
         vm_test = vm_test_class(
+            test_id=vm_test_id,
             context=TestContext(),
             inputs=test_input,
             params={},

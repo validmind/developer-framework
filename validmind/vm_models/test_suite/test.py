@@ -1,4 +1,7 @@
-# Copyright © 2023 ValidMind Inc. All rights reserved.
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
 from dataclasses import dataclass
 
 from ...errors import should_raise_on_fail_fast
@@ -36,8 +39,9 @@ class TestSuiteTest:
                 result_id=self.test_id,
             )
         except Exception as e:
+            # The test suite runner will appropriately ignore this error
+            # since _test_class is None
             logger.error(f"Failed to load test '{self.test_id}': {e}")
-            raise e
 
     @property
     def title(self):
@@ -65,6 +69,7 @@ class TestSuiteTest:
 
         try:
             self._test_instance = self._test_class(
+                test_id=self.test_id,
                 context=context,
                 inputs=inputs,
                 params=config,
