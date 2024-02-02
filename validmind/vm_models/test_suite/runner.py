@@ -62,14 +62,30 @@ class TestSuiteRunner:
         """
         for section in self.suite.sections:
             for test in section.tests:
-                test.load(
-                    inputs=self.input,
-                    context=self.context,
-                    config={
-                        **self._global_config,
-                        **self._test_configs.get(test.test_id, {}),
-                    },
-                )
+                # use local inputs from config if provided
+                test_configs = self._test_configs.get(test.test_id, {})
+                inputs = self.input
+                if (
+                    test.test_id in self.config
+                    and "inputs" in self.config[test.test_id]
+                ):
+                    inputs = TestInput(self.config[test.test_id]["inputs"])
+                    test_configs = {
+                        key: value
+                        for key, value in test_configs.items()
+                        if key != "inputs"
+                    }
+                    test_configs = test_configs.get("params", {})
+                else:
+                    if (test_configs) and ("params" not in test_configs):
+                        """[DEPRECATED] Deprecated method for setting test parameters directly in the 'config' parameter"""
+                        logger.info(
+                            "Setting test parameters directly in the 'config' parameter of the run_documentation_tests() method is deprecated. "
+                            'Instead, use the new format of the config: config = {"test_id": {"params": {...}, "inputs": {...}}}'
+                        )
+                config = {**self._global_config, **test_configs}
+
+                test.load(inputs=inputs, context=self.context, config=config)
 
     def _start_progress_bar(self, send: bool = True):
         """
