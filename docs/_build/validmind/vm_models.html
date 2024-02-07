@@ -37,6 +37,9 @@
                         <li>
                                 <a class="variable" href="#VMDataset.raw_dataset">raw_dataset</a>
                         </li>
+                        <li>
+                                <a class="function" href="#VMDataset.serialize">serialize</a>
+                        </li>
                 </ul>
 
             </li>
@@ -361,6 +364,22 @@
     <a class="headerlink" href="#VMDataset.raw_dataset"></a>
     
             <div class="docstring"><p>Returns the raw dataset.</p>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.serialize" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">serialize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.serialize"></a>
+    
+            <div class="docstring"><p>Serializes the dataset to a dictionary.</p>
 </div>
 
 
@@ -969,7 +988,8 @@ to returning the class' docstring</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="Test.dataset" class="variable">dataset</dd>
+                                <dd id="Test.get_accessed_inputs" class="function">get_accessed_inputs</dd>
+                <dd id="Test.dataset" class="variable">dataset</dd>
                 <dd id="Test.model" class="variable">model</dd>
                 <dd id="Test.models" class="variable">models</dd>
                 <dd id="Test.validate_inputs" class="function">validate_inputs</dd>
@@ -1076,7 +1096,8 @@ short summary of the metric results.</p>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="Metric.dataset" class="variable">dataset</dd>
+                                <dd id="Metric.get_accessed_inputs" class="function">get_accessed_inputs</dd>
+                <dd id="Metric.dataset" class="variable">dataset</dd>
                 <dd id="Metric.model" class="variable">model</dd>
                 <dd id="Metric.models" class="variable">models</dd>
                 <dd id="Metric.validate_inputs" class="function">validate_inputs</dd>
@@ -1216,7 +1237,8 @@ short summary of the test results.</p>
 
             </div>
             <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="ThresholdTest.dataset" class="variable">dataset</dd>
+                                <dd id="ThresholdTest.get_accessed_inputs" class="function">get_accessed_inputs</dd>
+                <dd id="ThresholdTest.dataset" class="variable">dataset</dd>
                 <dd id="ThresholdTest.model" class="variable">model</dd>
                 <dd id="ThresholdTest.models" class="variable">models</dd>
                 <dd id="ThresholdTest.validate_inputs" class="function">validate_inputs</dd>
