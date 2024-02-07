@@ -175,6 +175,7 @@ class TestSuiteMetricResult(TestSuiteResult):
     name: str = "Metric"
     figures: Optional[List[Figure]] = None
     metric: Optional[MetricResult] = None
+    inputs: List[str] = None
 
     def __repr__(self) -> str:
         if self.metric:
@@ -267,7 +268,7 @@ class TestSuiteMetricResult(TestSuiteResult):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
-            tasks.append(api_client.log_metrics([self.metric]))
+            tasks.append(api_client.log_metrics([self.metric], inputs=self.inputs))
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
@@ -286,6 +287,7 @@ class TestSuiteThresholdTestResult(TestSuiteResult):
     name: str = "Threshold Test"
     figures: Optional[List[Figure]] = None
     test_results: ThresholdTestResults = None
+    inputs: List[str] = None
 
     def __repr__(self) -> str:
         if self.test_results:
@@ -343,7 +345,7 @@ class TestSuiteThresholdTestResult(TestSuiteResult):
         return widgets.VBox(vbox_children)
 
     async def log(self):
-        tasks = [api_client.log_test_result(self.test_results)]
+        tasks = [api_client.log_test_result(self.test_results, self.inputs)]
 
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))

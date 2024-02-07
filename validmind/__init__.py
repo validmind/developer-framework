@@ -63,11 +63,12 @@ from .client import (  # noqa: E402
 from .utils import run_async  # noqa: E402
 
 
-def log_metrics(metrics):
+def log_metrics(metrics, inputs=None):
     """Logs metrics to ValidMind API.
 
     Args:
         metrics (list): A list of Metric objects
+        inputs (list): A list of input names to associate with the metrics
 
     Raises:
         Exception: If the API call fails
@@ -75,7 +76,7 @@ def log_metrics(metrics):
     Returns:
         dict: The response from the API
     """
-    run_async(_log_metrics_async, metrics)
+    run_async(_log_metrics_async, metrics, inputs)
 
 
 def log_figure(figure):

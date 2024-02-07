@@ -7,6 +7,8 @@ import difflib
 import json
 import math
 import re
+import sys
+from platform import python_version
 from typing import Any
 
 import matplotlib.pylab as pylab
@@ -349,3 +351,43 @@ def test_id_to_name(test_id: str):
     )
 
     return title
+
+
+def get_model_info(model):
+    """Attempts to extract all model info from a model object instance"""
+    architecture = model.model_name()
+    framework = model.model_library()
+    framework_version = model.model_library_version()
+    language = model.model_language()
+
+    if language is None:
+        language = f"Python {python_version()}"
+
+    if framework_version is None:
+        try:
+            framework_version = sys.modules[framework].__version__
+        except (KeyError, AttributeError):
+            framework_version = "N/A"
+
+    return {
+        "architecture": architecture,
+        "framework": framework,
+        "framework_version": framework_version,
+        "language": language,
+    }
+
+
+def get_dataset_info(dataset):
+    """Attempts to extract all dataset info from a dataset object instance"""
+    num_rows, num_cols = dataset.df.shape
+    schema = dataset.df.dtypes.apply(lambda x: x.name).to_dict()
+    description = (
+        dataset.df.describe(include="all").reset_index().to_dict(orient="records")
+    )
+
+    return {
+        "num_rows": num_rows,
+        "num_columns": num_cols,
+        "schema": schema,
+        "description": description,
+    }

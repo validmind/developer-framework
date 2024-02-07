@@ -32,6 +32,13 @@ class VMDataset(ABC):
         """
         pass
 
+    @abstractmethod
+    def serialize(self):
+        """
+        Serializes the dataset to a dictionary.
+        """
+        pass
+
 
 @dataclass
 class NumpyDataset(VMDataset):

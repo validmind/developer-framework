@@ -80,7 +80,6 @@ class TestInput:
 
     def __init__(self, inputs):
         """Initialize with either a dictionary of inputs"""
-
         for key, value in inputs.items():
             setattr(self, key, value)
 
@@ -96,6 +95,28 @@ class TestInput:
         return f"{self.__class__.__name__}(\n    {attrs}\n)"
 
 
+class InputAccessTrackerProxy:
+    """Proxy object to track TestInput attribute access on a per-test basis"""
+
+    def __init__(self, inputs):
+        self._inputs = inputs
+        self._accessed = set()
+
+    def __getattr__(self, name):
+        # Track access only if the attribute actually exists in the inputs
+        if hasattr(self._inputs, name):
+            self._accessed.add(name)
+            return getattr(self._inputs, name)
+
+        raise AttributeError(
+            f"'{type(self._inputs).__name__}' object has no attribute '{name}'"
+        )
+
+    def get_accessed(self):
+        # Provide the list of accessed input names
+        return list(self._accessed)
+
+
 @dataclass
 class TestUtils:
     """Utility methods for classes that receive a TestContext"""
@@ -103,7 +124,28 @@ class TestUtils:
     required_inputs: ClassVar[List[str]]
 
     context: Optional[TestContext] = None
-    inputs: Optional[TestInput] = None
+    inputs: Optional[TestInput] = None  # gets overwritten to be a proxy when accessed
+
+    def __getattribute__(self, name):
+        # Intercept attribute access
+        if name == "inputs":
+            inputs = super().__getattribute__(name)
+
+            # when accessing inputs for the first time, wrap them in tracker proxy
+            if inputs is not None and not isinstance(inputs, InputAccessTrackerProxy):
+                inputs = InputAccessTrackerProxy(inputs)
+                super().__setattr__(name, inputs)  # overwrite to avoid re-wrapping
+
+            return inputs
+
+        return super().__getattribute__(name)
+
+    def get_accessed_inputs(self):
+        """Return a list of inputs that were accessed for this test"""
+        if isinstance(self.inputs, InputAccessTrackerProxy):
+            return self.inputs.get_accessed()
+
+        return []
 
     def _get_legacy_input(self, key):
         """Retrieve an input from the Test Input or, for backwards compatibility,
