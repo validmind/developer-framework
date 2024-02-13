@@ -57,7 +57,7 @@ class FoundationModel(VMModel):
         self.prompt = prompt
 
         def predict_and_assign(ds, attr_name):
-            if self.model and ds:
+            if ds:
                 if ds.prediction_column:
                     setattr(self, attr_name, ds.y_pred)
                 else:
