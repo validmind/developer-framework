@@ -1,0 +1,53 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python application
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: ["*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.8"
+          cache: "poetry"
+
+      - name: Install Dependencies
+        run: poetry install
+
+      - name: Install PyTorch CPU
+        run: poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu
+
+      - name: Ensure notebooks have no printed outputs
+        run: make ensure-clean-notebooks
+
+      - name: Verify Copyright Header
+        run: make verify-copyright
+
+      - name: Verify Exposed Credentials
+        run: make verify-exposed-credentials
+
+      - name: Code Quality
+        run: make lint
+
+      - name: Unit Tests
+        run: make test
+
+      # Tests that we can build the docs
+      - name: Generate Docs
+        run: make docs

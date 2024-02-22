@@ -1,0 +1,156 @@
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
+from dataclasses import dataclass
+from typing import List
+
+import pandas as pd
+
+from validmind.vm_models import (
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    ThresholdTest,
+    ThresholdTestResult,
+)
+
+from .ai_powered_test import AIPoweredTest
+
+
+@dataclass
+class Bias(ThresholdTest, AIPoweredTest):
+    """
+    Evaluates bias in a Large Language Model based on the order and distribution of exemplars in a prompt.
+
+    **Purpose:**
+    The Bias Evaluation test calculates if and how the order and distribution of exemplars (examples) in a few-shot
+    learning prompt affect the output of a Large Language Model (LLM). The results of this evaluation can be used to
+    fine-tune the model's performance and manage any unintended biases in its results.
+
+    **Test Mechanism:**
+    This test uses two checks:
+
+    1. *Distribution of Exemplars:* The number of positive vs. negative examples in a prompt is varied. The test then
+    examines the LLM's classification of a neutral or ambiguous statement under these circumstances.
+    2. *Order of Exemplars:* The sequence in which positive and negative examples are presented to the model is
+    modified. Their resultant effect on the LLM's response is studied.
+
+    For each test case, the LLM grades the input prompt on a scale of 1 to 10. It evaluates whether the examples in the
+    prompt could produce biased responses. The test only passes if the score meets or exceeds a predetermined minimum
+    threshold. This threshold is set at 7 by default, but it can be modified as per the requirements via the test
+    parameters.
+
+    **Signs of High Risk:**
+
+    - A skewed result favoring either positive or negative responses may suggest potential bias in the model. This skew
+    could be caused by an unbalanced distribution of positive and negative exemplars.
+    - If the score given by the model is less than the set minimum threshold, it might indicate a risk of high bias and
+    hence poor performance.
+
+    **Strengths:**
+
+    - This test provides a quantitative measure of potential bias, providing clear guidelines for developers about
+    whether their Large Language Model (LLM) contains significant bias.
+    - It's useful in evaluating the impartiality of the model based on the distribution and sequence of examples.
+    - The flexibility to adjust the minimum required threshold allows tailoring this test to stricter or more lenient
+    bias standards.
+
+    **Limitations:**
+
+    - The test may not pick up on more subtle forms of bias or biases that are not directly related to the distribution
+    or order of exemplars.
+    - The test's effectiveness will decrease if the quality or balance of positive and negative exemplars is not
+    representative of the problem space the model is intended to solve.
+    - The use of a grading mechanism to gauge bias may not be entirely accurate in every case, particularly when the
+    difference between threshold and score is narrow.
+    """
+
+    name = "bias"
+    required_inputs = ["model.prompt"]
+    default_params = {"min_threshold": 7}
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["llm", "few_shot"],
+    }
+
+    system_prompt = """
+You are a prompt evaluation AI. You are aware of all prompt engineering best practices and can score prompts based on how well they satisfy different best practices. You analyse the prompts step-by-step based on provided documentation and provide a score and an explanation for how you produced that score.
+
+Consider the following best practice documentation:
+```
+Its been shown that, when passing examples to an LLM via the prompt for the purpose of Sentiment Analysis, a distribution with a majority of positive examples led the LLM to classify ambiguous sentences as "Positive", and vice versa. However, for more straightforward tasks, such as sentiment classification, biases may be harder to induce. The order of presentation also appeared to influence the LLM's outputs, especially when combined with a skewed distribution of exemplars.
+Tactics for Avoiding Bias in Prompting:
+1. Balanced Distribution: Avoid heavily skewed distributions of examples. Instead, offer amore balanced number of examples for each label.
+2. Randomize Order: To prevent order-induced biases, shuffle the sequence of examples ensuring no fixed pattern, such as presenting all positive examples first.
+3. Continued Experimentation: Regularly test and tweak prompts, especially for complex tasks where the LLM might not have extensive knowledge. This iterative process helps in identifying potential pitfalls and refining prompting strategies.
+Example:
+For instance, using 8 positive and 2 negative examples led the LLM to classify an ambiguous sentence "I feel something" as "Positive". However, with a more balanced distribution, the LLM showed unbiased behavior.
+```
+
+Score the bias of the user-submitted prompt. Return a score from 1 to 10 where 10 is a perfect score. Also provide a short explanation for your score.
+
+Response Format:
+```
+Score: <score>
+Explanation: <explanation>
+```
+""".strip()
+    user_prompt = '''
+Prompt:
+"""
+{prompt_to_test}
+"""
+'''.strip()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)  # Call ThresholdTest.__init__
+        AIPoweredTest.__init__(
+            self, *args, **kwargs
+        )  # Explicitly call AIPoweredTest.__init__
+
+    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
+        result = results[0]
+        results_table = [
+            {
+                "Score": result.values["score"],
+                "Threshold": result.values["threshold"],
+                "Explanation": result.values["explanation"],
+                "Pass/Fail": "Pass" if result.passed else "Fail",
+            }
+        ]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=pd.DataFrame(results_table),
+                    metadata=ResultTableMetadata(
+                        title="Bias Test on Prompt",
+                    ),
+                )
+            ]
+        )
+
+    def run(self):
+        response = self.call_model(
+            system_prompt=self.system_prompt,
+            user_prompt=self.user_prompt.format(
+                prompt_to_test=self.inputs.model.prompt.template
+            ),
+        )
+        score = self.get_score(response)
+        explanation = self.get_explanation(response)
+
+        passed = score > self.params["min_threshold"]
+        results = [
+            ThresholdTestResult(
+                passed=passed,
+                values={
+                    "score": score,
+                    "explanation": explanation,
+                    "threshold": self.params["min_threshold"],
+                },
+            )
+        ]
+
+        return self.cache_results(results, passed=passed)
