@@ -8,6 +8,20 @@
 #'
 #' @importFrom reticulate import use_python py_config
 #'
+#' @return A validmind connection object, obtained from `reticulate`,
+#' which orchestrates the connection to the ValidMind API
+#'
+#' @examples
+#'\dontrun{
+#' vm_r <- vm(
+#'    api_key="<your_api_key_here>",
+#'    api_secret="<your_api_secret_here>",
+#'    project="<your_project_id_here>",
+#'    python_version=python_version,
+#'    api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
+#'  )
+#'}
+#'
 #' @export
 vm <- function(api_key, api_secret, project, python_version,
                api_host = "http://localhost:3000/api/v1/tracking") {
@@ -29,12 +43,16 @@ vm <- function(api_key, api_secret, project, python_version,
 #'
 #' @param result_summary A summary of the results
 #'
+#' @return A data frame containing the summary of the ValidMind results
+#'
 #' @importFrom glue glue
 print_summary_tables <- function(result_summary) {
   return(result_summary$serialize(as_df = TRUE))
 }
 
 #' Provide a summarization of a single metric result
+#'
+#' @return A list containing the summary of the ValidMind results
 #'
 #' @param result The ValidMind result object
 summarize_metric_result <- function(result) {
@@ -49,6 +67,8 @@ summarize_metric_result <- function(result) {
 
 #' Provide a summarization of a single test result
 #'
+#' @return A list containing the summary of the ValidMind test results
+#'
 #' @param result The ValidMind result object
 summarize_test_result <- function(result) {
   if (result$result_id == "dataset_description") {
@@ -61,6 +81,10 @@ summarize_test_result <- function(result) {
 }
 
 #' Provide a summarization of a single result (test or metric)
+#'
+#' @return Based on the type of `result`, either A list containing the summary
+#' of the ValidMind results, or a list containing the summary of the ValidMind
+#' results
 #'
 #' @param result The ValidMind result object
 summarize_result <- function(result) {
@@ -76,35 +100,13 @@ summarize_result <- function(result) {
   }
 }
 
-#' Save a model to a given file path
-#'
-#' @return The file path of the saved model
-#'
-#' @param model The R model object
-#'
-#' @export
-#'
-#' @examples
-#' my_model <- lm(Sepal.Width ~ Sepal.Length, data = iris)
-#' save_model(my_model)
-save_model <- function(model) {
-  random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
-  file_path <- paste0("/tmp/", random_name, ".RData")
-  save(model, file = file_path)
-
-  return(file_path)
-}
-
-
 #' Build an R Plotly figure from a JSON representation
 #'
-#' @return An R Plotly object
+#' @return An R Plotly object derived from the JSON representation
 #'
 #' @param plotly_figure A nested list containing plotly elements
 #'
 #' @importFrom plotly plotly_build
-#'
-#' @export
 build_r_plotly <- function(plotly_figure) {
   # Grab the plotly code as a list
   fig_list <- plotly_figure$figure$to_dict()
@@ -122,9 +124,24 @@ build_r_plotly <- function(plotly_figure) {
 #'
 #' @importFrom dplyr bind_rows
 #'
-#' @return A numeric vector giving number of characters (code points) in each
-#'    element of the character vector. Missing string have missing length.
+#' @return A nested list of ValidMind results (dataframes, plotly plots, and
+#' matplotlib plots)
 #' @export
+#'
+#' @examples
+#'\dontrun{
+#' vm_dataset = vm_r$init_dataset(
+#'   dataset=data,
+#'   target_column="Exited",
+#'   class_labels=list("0" = "Did not exit", "1" = "Exited")
+#' )
+#'
+#' tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
+#'
+#' processed_results <- process_result(tabular_suite_results)
+#' processed_results
+#' }
+#'
 process_result <- function(results) {
   overall_result <- list()
 
@@ -250,6 +267,24 @@ process_result <- function(results) {
 #'
 #' @return A formatted list of RMarkdown widgets
 #' @export
+#'
+#' @examples
+#'\dontrun{
+#' vm_dataset = vm_r$init_dataset(
+#'   dataset=data,
+#'   target_column="Exited",
+#'   class_labels=list("0" = "Did not exit", "1" = "Exited")
+#' )
+#'
+#' tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
+#'
+#' processed_results <- process_result(tabular_suite_results)
+#' all_widgets <- display_report(processed_results)
+#' for (widget in all_widgets) {
+#'   print(widget)
+#' }
+#'}
+#'
 display_report <- function(processed_results) {
   all_widgets <- list()
 

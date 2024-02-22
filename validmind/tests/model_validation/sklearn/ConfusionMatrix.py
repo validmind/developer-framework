@@ -113,7 +113,7 @@ class ConfusionMatrix(Metric):
         assert self.result is not None
 
         assert self.result.metric is not None
-        assert type(self.result.metric.value) == dict
+        assert isinstance(self.result.metric.value, dict)
         assert "confusion_matrix" in self.result.metric.value
 
         assert len(self.result.figures) == 1

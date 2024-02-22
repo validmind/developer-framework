@@ -23,6 +23,22 @@ vm(
 
 \item{api_host}{The ValidMind host, defaulting to local}
 }
+\value{
+A validmind connection object, obtained from `reticulate`,
+which orchestrates the connection to the ValidMind API
+}
 \description{
 Retrieve a validmind (vm) connection object using reticulate
+}
+\examples{
+\dontrun{
+vm_r <- vm(
+   api_key="<your_api_key_here>",
+   api_secret="<your_api_secret_here>",
+   project="<your_project_id_here>",
+   python_version=python_version,
+   api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
+ )
+}
+
 }

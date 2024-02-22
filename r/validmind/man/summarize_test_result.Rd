@@ -9,6 +9,9 @@ summarize_test_result(result)
 \arguments{
 \item{result}{The ValidMind result object}
 }
+\value{
+A list containing the summary of the ValidMind test results
+}
 \description{
 Provide a summarization of a single test result
 }

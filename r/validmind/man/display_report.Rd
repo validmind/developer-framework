@@ -15,3 +15,21 @@ A formatted list of RMarkdown widgets
 \description{
 Produce RMarkdown-compatible output of all results
 }
+\examples{
+\dontrun{
+vm_dataset = vm_r$init_dataset(
+  dataset=data,
+  target_column="Exited",
+  class_labels=list("0" = "Did not exit", "1" = "Exited")
+)
+
+tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
+
+processed_results <- process_result(tabular_suite_results)
+all_widgets <- display_report(processed_results)
+for (widget in all_widgets) {
+  print(widget)
+}
+}
+
+}

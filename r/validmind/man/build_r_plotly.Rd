@@ -10,7 +10,7 @@ build_r_plotly(plotly_figure)
 \item{plotly_figure}{A nested list containing plotly elements}
 }
 \value{
-An R Plotly object
+An R Plotly object derived from the JSON representation
 }
 \description{
 Build an R Plotly figure from a JSON representation

@@ -9,6 +9,11 @@ summarize_result(result)
 \arguments{
 \item{result}{The ValidMind result object}
 }
+\value{
+Based on the type of `result`, either A list containing the summary
+of the ValidMind results, or a list containing the summary of the ValidMind
+results
+}
 \description{
 Provide a summarization of a single result (test or metric)
 }

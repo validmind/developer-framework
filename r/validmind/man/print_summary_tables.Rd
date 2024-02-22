@@ -9,6 +9,9 @@ print_summary_tables(result_summary)
 \arguments{
 \item{result_summary}{A summary of the results}
 }
+\value{
+A data frame containing the summary of the ValidMind results
+}
 \description{
 Print a summary table of the ValidMind results
 }

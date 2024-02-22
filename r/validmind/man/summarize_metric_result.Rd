@@ -9,6 +9,9 @@ summarize_metric_result(result)
 \arguments{
 \item{result}{The ValidMind result object}
 }
+\value{
+A list containing the summary of the ValidMind results
+}
 \description{
 Provide a summarization of a single metric result
 }

@@ -10,9 +10,24 @@ process_result(results)
 \item{results}{A list of ValidMind result objects}
 }
 \value{
-A numeric vector giving number of characters (code points) in each
-   element of the character vector. Missing string have missing length.
+A nested list of ValidMind results (dataframes, plotly plots, and
+matplotlib plots)
 }
 \description{
 Process a set of ValidMind results into parseable data
+}
+\examples{
+\dontrun{
+vm_dataset = vm_r$init_dataset(
+  dataset=data,
+  target_column="Exited",
+  class_labels=list("0" = "Did not exit", "1" = "Exited")
+)
+
+tabular_suite_results <- vm_r$run_test_suite("tabular_dataset", dataset=vm_dataset)
+
+processed_results <- process_result(tabular_suite_results)
+processed_results
+}
+
 }
