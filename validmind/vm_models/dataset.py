@@ -110,7 +110,10 @@ class NumpyDataset(VMDataset):
         else:
             self._extra_columns = extra_columns
 
-        self.__set_feature_columns(feature_columns)
+        if feature_columns is None:
+            self.__set_feature_columns()
+        else:
+            self._feature_columns = feature_columns
 
         self._text_column = text_column
         self._target_class_labels = target_class_labels
@@ -125,7 +128,7 @@ class NumpyDataset(VMDataset):
 
         self._df = df
 
-    def __set_feature_columns(self, feature_columns):
+    def __set_feature_columns(self):
         extra_columns_list = list(self._extra_columns.values())
         self._feature_columns = [
             col

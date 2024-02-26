@@ -52,12 +52,14 @@ from .api_client import log_figure as _log_figure_async
 from .api_client import log_metrics as _log_metrics_async
 from .api_client import log_test_results
 from .client import (  # noqa: E402
+    get_metric_value,
     get_test_suite,
     init_dataset,
     init_model,
     init_r_model,
     preview_template,
     run_documentation_tests,
+    run_metric,
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
@@ -114,4 +116,6 @@ __all__ = [  # noqa
     "log_figure",
     "log_metrics",
     "log_test_results",
+    "get_metric_value",
+    "run_metric",
 ]

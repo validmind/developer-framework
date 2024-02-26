@@ -30,6 +30,12 @@ class MetricResult:
     value: Union[dict, list, pd.DataFrame]
     summary: Optional[ResultSummary] = None
     value_formatter: Optional[str] = None
+    risk_thresholds: Optional[dict] = None
+    metric_ranges: Optional[dict] = None
+    metric_status: Optional[str] = None
+    metric_inputs: Optional[dict] = None
+    required_inputs: Optional[list] = None
+    other_results: Optional[dict] = None
 
     def serialize(self):
         """
@@ -58,4 +64,9 @@ class MetricResult:
             "ref_id": self.ref_id,
             "value": value,
             "summary": self.summary.serialize() if self.summary else None,
+            "risk_thresholds": self.risk_thresholds,
+            "metric_ranges": self.metric_ranges,
+            "metric_status": self.metric_status,
+            "required_inputs": self.required_inputs,
+            "other_results": self.other_results,
         }
