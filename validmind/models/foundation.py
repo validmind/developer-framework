@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
 
 logger = get_logger(__name__)
@@ -31,9 +30,6 @@ class FoundationModel(VMModel):
           and return the result from the model
         prompt (Prompt): The prompt object that defines the prompt template and the
           variables (if any)
-        train_ds: (VMDataset, optional): The training dataset. Defaults to None.
-        test_ds: (VMDataset, optional): The test dataset. Defaults to None.
-        validation_ds: (VMDataset, optional): The validation dataset. Defaults to None.
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
     """
 
@@ -41,32 +37,15 @@ class FoundationModel(VMModel):
         self,
         predict_fn: callable,
         prompt: Prompt,  # prompt used for model (for now just a string)
-        train_ds: VMDataset = None,
-        test_ds: VMDataset = None,
-        validation_ds: VMDataset = None,
         attributes: ModelAttributes = None,
+        input_id: str = None,
     ):
         super().__init__(
-            train_ds=train_ds,
-            test_ds=test_ds,
-            validation_ds=validation_ds,
             attributes=attributes,
+            input_id=input_id,
         )
-
         self.predict_fn = predict_fn
         self.prompt = prompt
-
-        def predict_and_assign(ds, attr_name):
-            if ds:
-                if ds.prediction_column:
-                    setattr(self, attr_name, ds.y_pred)
-                else:
-                    logger.info("Running predict()...This may take a while")
-                    setattr(self, attr_name, np.array(self.predict(ds.x_df())))
-
-        predict_and_assign(self.train_ds, "_y_train_predict")
-        predict_and_assign(self.test_ds, "_y_test_predict")
-        predict_and_assign(self.validation_ds, "_y_validation_predict")
 
     def _build_prompt(self, x: pd.DataFrame):
         """

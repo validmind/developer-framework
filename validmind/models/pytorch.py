@@ -2,11 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import numpy as np
-
 from validmind.errors import MissingModelPredictFnError
 from validmind.logging import get_logger
-from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import (
     ModelAttributes,
     VMModel,
@@ -23,43 +20,20 @@ class PyTorchModel(VMModel):
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         model (object, optional): The trained model instance. Defaults to None.
-        train_ds (Dataset, optional): The training dataset. Defaults to None.
-        test_ds (Dataset, optional): The test dataset. Defaults to None.
-        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
-        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
-        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
-        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
         device_type(str, optional) The device where model is trained
     """
 
     def __init__(
         self,
         model: object = None,  # Trained model instance
-        train_ds: VMDataset = None,
-        test_ds: VMDataset = None,
-        validation_ds: VMDataset = None,
+        input_id: str = None,
         attributes: ModelAttributes = None,
     ):
         super().__init__(
             model=model,
-            train_ds=train_ds,
-            test_ds=test_ds,
-            validation_ds=validation_ds,
+            input_id=input_id,
             attributes=attributes,
         )
-
-        def predict_and_assign(ds, attr_name):
-            if self.model and ds:
-                if ds.prediction_column:
-                    setattr(self, attr_name, ds.y_pred)
-                else:
-                    logger.info("Running predict()... This may take a while")
-                    setattr(self, attr_name, np.array(self.predict(ds.x)))
-
-        predict_and_assign(self.train_ds, "_y_train_predict")
-        predict_and_assign(self.test_ds, "_y_test_predict")
-        predict_and_assign(self.validation_ds, "_y_validation_predict")
-
         self._device_type = next(self.model.parameters()).device
 
     def predict_proba(self, *args, **kwargs):

@@ -2,7 +2,6 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes
 
 from .sklearn import SKlearnModel
@@ -15,30 +14,20 @@ class CatBoostModel(SKlearnModel):
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         model (object, optional): The trained model instance. Defaults to None.
-        train_ds (Dataset, optional): The training dataset. Defaults to None.
-        test_ds (Dataset, optional): The test dataset. Defaults to None.
-        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
-        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
-        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
-        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
         device_type(str, optional) The device where model is trained
     """
 
     def __init__(
         self,
+        input_id: str = None,
         model: object = None,  # Trained model instance
-        train_ds: VMDataset = None,
-        test_ds: VMDataset = None,
-        validation_ds: VMDataset = None,
         attributes: ModelAttributes = None,
     ):
         """
         Initialize CatBoostModel
         """
         super().__init__(
+            input_id=input_id,
             model=model,
-            train_ds=train_ds,
-            test_ds=test_ds,
-            validation_ds=validation_ds,
             attributes=attributes,
         )

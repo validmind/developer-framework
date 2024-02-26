@@ -57,6 +57,7 @@ class ClassifierPerformance(Metric):
     """
 
     name = "classifier_performance"
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -121,10 +122,10 @@ class ClassifierPerformance(Metric):
         )
 
     def y_true(self):
-        raise NotImplementedError
+        return self.inputs.dataset.y
 
     def y_pred(self):
-        raise NotImplementedError
+        return self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
 
     def run(self):
         y_true = self.y_true()

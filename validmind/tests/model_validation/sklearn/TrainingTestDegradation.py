@@ -65,7 +65,7 @@ class TrainingTestDegradation(ThresholdTest):
     """
 
     name = "training_test_degradation"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
 
     default_params = {
         "metrics": ["accuracy", "precision", "recall", "f1"],
@@ -120,24 +120,23 @@ class TrainingTestDegradation(ThresholdTest):
         )
 
     def run(self):
-        y_test_true = self.inputs.model.y_test_true
-        y_train_true = self.inputs.model.y_train_true
-        train_class_pred = self.inputs.model.y_train_predict
-        y_train_true = y_train_true.astype(train_class_pred.dtype)
-        test_class_pred = self.inputs.model.y_test_predict
-        y_test_true = y_test_true.astype(test_class_pred.dtype)
+        y_train_true = self.inputs.datasets[0].y
+        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_train_true = y_train_true.astype(y_train_pred.dtype)
+
+        y_test_true = self.inputs.datasets[1].y
+        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        y_test_true = y_test_true.astype(y_test_pred.dtype)
 
         report_train = metrics.classification_report(
-            y_train_true, train_class_pred, output_dict=True
+            y_train_true, y_train_pred, output_dict=True
         )
-        report_train["roc_auc"] = multiclass_roc_auc_score(
-            y_train_true, train_class_pred
-        )
+        report_train["roc_auc"] = multiclass_roc_auc_score(y_train_true, y_train_pred)
 
         report_test = metrics.classification_report(
-            y_test_true, test_class_pred, output_dict=True
+            y_test_true, y_test_pred, output_dict=True
         )
-        report_test["roc_auc"] = multiclass_roc_auc_score(y_test_true, test_class_pred)
+        report_test["roc_auc"] = multiclass_roc_auc_score(y_test_true, y_test_pred)
 
         classes = {str(i) for i in unique(y_train_true)}
 
