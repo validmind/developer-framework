@@ -47,29 +47,25 @@ class Precision(UnitMetric):  # Renamed class to Precision
         return y_pred, y_true
 
     def _get_y_pred(self):
-
         dataset = self.metric_inputs.get("dataset")
-
-        # Check if model has been passed as input
         if self.metric_inputs.get("model") is not None:
             model = self.metric_inputs.get("model")
             if hasattr(model, "predict"):
-                print("y_pred obtained from model predictions")
+                print(f"y_pred computed directly from model '{model.input_id}'")
                 y_pred = model.predict(dataset._df[dataset.feature_columns])
             else:
                 raise ValueError("Model must have a predict method.")
-
         else:
-            print(f"y_pred obtained from column: {dataset.prediction_column}")
-            y_pred = dataset._df[dataset.prediction_column]
-
+            model_id, prediction_column = self.get_prediction_column_and_model_id(dataset)
+            print(f"y_pred obtained from pre-computed predictions in dataset column '{prediction_column}' from '{model_id}'")
+            y_pred = dataset.y_pred(model_id=model_id)
         return y_pred
 
     def _get_y_true(self):
         dataset = self.metric_inputs.get("dataset")
-        print(f"y_true obtained from column: {dataset.target_column}")
-        values = dataset._df[dataset.target_column]
-        return values
+        print(f"y_true obtained from column '{dataset.target_column}'")
+        y_true = dataset.y
+        return y_true
 
     def summary(self, metric_value: Optional[dict] = None):
 

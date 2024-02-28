@@ -59,6 +59,23 @@ class UnitMetric(Test):
         """
         return None
 
+    
+    def get_prediction_column_and_model_id(self, vm_dataset):
+        """
+        Directly extracts the model ID and prediction column from a dataset's _extra_columns attribute.
+        
+        Args:
+        - vm_dataset: An instance of a dataset class with an _extra_columns attribute.
+        
+        Returns:
+        - A tuple containing the model ID and the prediction column name.
+        """
+        # Directly access the model ID and prediction column name
+        model_id = list(vm_dataset._extra_columns['prediction_columns'].keys())[0]
+        prediction_column = vm_dataset._extra_columns['prediction_columns'][model_id]
+        return model_id, prediction_column        
+        
+        
     def cache_results(
         self,
         metric_value: Optional[Union[dict, list, pd.DataFrame]] = None,
