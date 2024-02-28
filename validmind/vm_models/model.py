@@ -53,6 +53,8 @@ class VMModel:
         device_type(str, optional) The device where model is trained
     """
 
+    input_id: str = None
+
     def __init__(
         self,
         input_id: str = None,

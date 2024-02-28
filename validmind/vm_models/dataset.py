@@ -24,6 +24,8 @@ class VMDataset(ABC):
     Abstract base class for VM datasets.
     """
 
+    input_id: str = None
+
     @property
     @abstractmethod
     def raw_dataset(self):
