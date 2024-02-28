@@ -68,7 +68,8 @@ def _serialize_dataset(dataset):
     """
     if isinstance(dataset._df, pd.DataFrame):
         # Get the description of the DataFrame
-        description = dataset._df.describe()
+        columns = [dataset.target_column] + dataset.feature_columns
+        description = dataset._df[columns].describe()
         # Convert the description DataFrame to a JSON string
         description_json = json.dumps(
             description.to_dict(orient="records"), sort_keys=True
