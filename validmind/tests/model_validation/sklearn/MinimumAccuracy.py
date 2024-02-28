@@ -57,7 +57,7 @@ class MinimumAccuracy(ThresholdTest):
     """
 
     name = "accuracy_score"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     default_params = {"min_threshold": 0.7}
     metadata = {
         "task_types": ["classification", "text_classification"],
@@ -95,8 +95,8 @@ class MinimumAccuracy(ThresholdTest):
         )
 
     def run(self):
-        y_true = self.inputs.model.y_test_true
-        class_pred = self.inputs.model.y_test_predict
+        y_true = self.inputs.dataset.y
+        class_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
         y_true = y_true.astype(class_pred.dtype)
 
         accuracy_score = metrics.accuracy_score(y_true, class_pred)

@@ -7,15 +7,15 @@ Dataset class wrapper
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
 
-EXTRA_COLUMNS = {
-    "prediction_column": None,
-    "group_by_column": None,
-}
+from validmind.logging import get_logger
+from validmind.vm_models.model import VMModel
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -46,21 +46,29 @@ class NumpyDataset(VMDataset):
     VM dataset implementation for NumPy arrays.
     """
 
+    _input_id: str = (None,)
     _raw_dataset: np.ndarray = None
     _index: np.ndarray = None
     _index_name: str = None
-    _columns: list = None
-    _target_column: str = None
-    _feature_columns: list = (None,)
-    _text_column: str = None
+    _columns: list = field(init=True, default=None)
+    _target_column: str = field(init=True, default=None)
+    _feature_columns: list = field(init=True, default=None)
+    _text_column: str = field(init=True, default=None)
     _type: str = "generic"
-    _target_class_labels: dict = None
-    _df: pd.DataFrame = None
-    _extra_columns: dict = None
+    _target_class_labels: dict = field(init=True, default=None)
+    _df: pd.DataFrame = field(init=True, default=None)
+    _extra_columns: dict = field(
+        default_factory=lambda: {
+            "prediction_columns": {},
+            "group_by_column": None,
+        }
+    )
 
     def __init__(
         self,
         raw_dataset,
+        input_id: str = None,
+        model: VMModel = None,
         index=None,
         index_name=None,
         date_time_index=False,
@@ -68,7 +76,7 @@ class NumpyDataset(VMDataset):
         target_column: str = None,
         feature_columns: list = None,
         text_column=None,
-        extra_columns: dict = EXTRA_COLUMNS.copy(),
+        extra_columns: dict = None,
         target_class_labels: dict = None,
         options: dict = None,
     ):
@@ -87,15 +95,21 @@ class NumpyDataset(VMDataset):
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
             options (Dict, optional): Additional options for the dataset. Defaults to None.
         """
+        # initialize input_id
+        self._input_id = input_id
 
+        # initialize raw dataset
         if not isinstance(raw_dataset, np.ndarray):
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self._raw_dataset = raw_dataset
+
+        # initialize index and index name
         if index is not None and not isinstance(index, np.ndarray):
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self._index = index
         self._index_name = index_name
 
+        # initialize columns and df
         self._columns = columns or []
         if not self._columns:
             df = pd.DataFrame(self._raw_dataset).infer_objects()
@@ -123,18 +137,55 @@ class NumpyDataset(VMDataset):
             df.set_index(pd.Index(index), inplace=True)
             df.index.name = index_name
 
+        # attempt to convert index to datatime
         if date_time_index:
             df = self.__attempt_convert_index_to_datetime(df)
 
+        # initialize dataframe
         self._df = df
 
-    def __set_feature_columns(self):
-        extra_columns_list = list(self._extra_columns.values())
-        self._feature_columns = [
-            col
-            for col in self._columns
-            if col != self._target_column and col not in extra_columns_list
-        ]
+        # initialize target column
+        self._target_column = target_column
+        # initialize extra columns
+        self.__set_extra_columns(extra_columns, model)
+        # initialize feature columns
+        self.__set_feature_columns(feature_columns)
+        # initialize text column, target class labels and options
+        self._text_column = text_column
+        self._target_class_labels = target_class_labels
+        self.options = options
+        if model:
+            self.assign_predictions(model)
+
+    def __set_extra_columns(self, extra_columns, model):
+        if extra_columns is None:
+            extra_columns = {
+                "prediction_columns": {},
+                "group_by_column": None,
+            }
+        self._extra_columns = extra_columns
+
+    def __set_feature_columns(self, feature_columns):
+        ex_columns = []
+
+        if self._extra_columns.get("prediction_columns"):
+            ex_columns.extend(self._extra_columns["prediction_columns"].values())
+
+        if self._extra_columns.get("group_by_column"):
+            ex_columns.extend(self._extra_columns["group_by_column"])
+
+        extra_columns_list = ex_columns if not feature_columns else []
+
+        if not feature_columns:
+            self._feature_columns = [
+                col
+                for col in self._columns
+                if col != self._target_column and col not in extra_columns_list
+            ]
+        else:
+            if not isinstance(feature_columns, list):
+                raise ValueError("Expected list for attribute feature_columns")
+            self._feature_columns = feature_columns
 
     def __attempt_convert_index_to_datetime(self, df):
         """
@@ -149,6 +200,77 @@ class NumpyDataset(VMDataset):
 
         return df
 
+    def __model_id_in_prediction_columns(self, model, prediction_column):
+        return model.input_id in self._extra_columns.get("prediction_columns", {})
+
+    def __assign_prediction_values(self, model, pred_column, prediction_values):
+        self._extra_columns.setdefault("prediction_columns", {})[
+            model.input_id
+        ] = pred_column
+        self._raw_dataset = np.hstack(
+            (self._raw_dataset, np.array(prediction_values).reshape(-1, 1))
+        )
+        self._columns.append(pred_column)
+        self._df[pred_column] = prediction_values
+
+    def assign_predictions(
+        self, model, prediction_values: list = None, prediction_column=None
+    ):
+        if not model:
+            raise ValueError(
+                "Model must be provided to link prediction column with the dataset"
+            )
+
+        if prediction_column:
+            if prediction_column not in self.columns:
+                raise ValueError(
+                    f"Prediction column {prediction_column} doesn't exist in the dataset"
+                )
+            if self.__model_id_in_prediction_columns(
+                model=model, prediction_column=prediction_column
+            ):
+                raise ValueError(
+                    f"Prediction column {prediction_column} already linked to the VM model"
+                )
+            self._extra_columns.setdefault("prediction_columns", {})[
+                model.input_id
+            ] = prediction_column
+        elif prediction_values is not None:
+            if len(prediction_values) != self.df.shape[0]:
+                raise ValueError(
+                    "Length of prediction values doesn't match number of rows of the dataset"
+                )
+            pred_column = f"{model.input_id}_prediction"
+            if pred_column in self.columns:
+                raise ValueError(
+                    f"Prediction column {pred_column} already exists in the dataset"
+                )
+            self.__assign_prediction_values(model, pred_column, prediction_values)
+        elif not self.__model_id_in_prediction_columns(
+            model=model, prediction_column=prediction_column
+        ):
+            pred_column = f"{model.input_id}_prediction"
+            if pred_column in self.columns:
+                logger.info(
+                    f"Prediction column {pred_column} already exist in the dataset. Linking the model with the {pred_column} column"
+                )
+            else:
+                logger.info("Running predict()... This may take a while")
+                x_only = self._raw_dataset[
+                    :,
+                    [
+                        self._columns.index(name)
+                        for name in self._columns
+                        if name in self._feature_columns
+                    ],
+                ]
+                prediction_values = np.array(model.predict(x_only))
+                self.__assign_prediction_values(model, pred_column, prediction_values)
+        else:
+            logger.info(
+                f"Prediction column {self._extra_columns['prediction_columns'][model.input_id]} already linked to the {model.input_id}"
+            )
+
     @property
     def raw_dataset(self) -> np.ndarray:
         """
@@ -158,6 +280,16 @@ class NumpyDataset(VMDataset):
             np.ndarray: The raw dataset.
         """
         return self._raw_dataset
+
+    @property
+    def input_id(self) -> str:
+        """
+        Returns input id of dataset.
+
+        Returns:
+            str: input_id.
+        """
+        return self._input_id
 
     @property
     def index(self) -> np.ndarray:
@@ -208,16 +340,6 @@ class NumpyDataset(VMDataset):
             str: The extra columns list.
         """
         return self._extra_columns
-
-    @property
-    def prediction_column(self) -> str:
-        """
-        Returns the prediction column name of the dataset.
-
-        Returns:
-            str: The prediction column name.
-        """
-        return self._extra_columns["prediction_column"]
 
     @property
     def group_by_column(self) -> str:
@@ -286,8 +408,7 @@ class NumpyDataset(VMDataset):
             ],
         ]
 
-    @property
-    def y_pred(self) -> np.ndarray:
+    def y_pred(self, model_id) -> np.ndarray:
         """
         Returns the prediction variable (y_pred) of the dataset.
 
@@ -299,7 +420,7 @@ class NumpyDataset(VMDataset):
             [
                 self.columns.index(name)
                 for name in self.columns
-                if name == self.prediction_column
+                if name == self.prediction_column(model_id=model_id)
             ],
         ]
 
@@ -348,14 +469,28 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.target_column]
 
-    def y_pred_df(self):
+    def y_pred_df(self, model_id):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column]
+        return self._df[self.prediction_column(model_id=model_id)]
+
+    def prediction_column(self, model_id) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        pred_column = self._extra_columns.get("prediction_columns", {}).get(model_id)
+        if pred_column is None:
+            raise ValueError(
+                f"Prediction column is not linked with the given {model_id}"
+            )
+        return pred_column
 
     def serialize(self):
         """
@@ -441,6 +576,24 @@ class NumpyDataset(VMDataset):
         """
         return [str(i) for i in np.unique(self.y_pred)]
 
+    def __str__(self):
+        return (
+            f"=================\n"
+            f"VMDataset object: \n"
+            f"=================\n"
+            f"Input ID: {self._input_id}\n"
+            f"Target Column: {self._target_column}\n"
+            f"Feature Columns: {self._feature_columns}\n"
+            f"Text Column: {self._text_column}\n"
+            f"Extra Columns: {self._extra_columns}\n"
+            f"Type: {self._type}\n"
+            f"Target Class Labels: {self._target_class_labels}\n"
+            f"Columns: {self._columns}\n"
+            f"Index Name: {self._index_name}\n"
+            f"Index: {self._index}\n"
+            f"=================\n"
+        )
+
 
 @dataclass
 class DataFrameDataset(NumpyDataset):
@@ -451,6 +604,8 @@ class DataFrameDataset(NumpyDataset):
     def __init__(
         self,
         raw_dataset: pd.DataFrame,
+        input_id: str = None,
+        model: VMModel = None,
         target_column: str = None,
         extra_columns: dict = None,
         feature_columns: list = None,
@@ -475,6 +630,8 @@ class DataFrameDataset(NumpyDataset):
 
         super().__init__(
             raw_dataset=raw_dataset.values,
+            input_id=input_id,
+            model=model,
             index_name=raw_dataset.index.name,
             index=index,
             columns=raw_dataset.columns.to_list(),
@@ -497,6 +654,8 @@ class TorchDataset(NumpyDataset):
     def __init__(
         self,
         raw_dataset,
+        input_id: str = None,
+        model: VMModel = None,
         index_name=None,
         index=None,
         columns=None,
@@ -546,7 +705,9 @@ class TorchDataset(NumpyDataset):
         merged_tensors = torch.cat(raw_dataset.tensors, dim=1).numpy()
 
         super().__init__(
+            input_id=input_id,
             raw_dataset=merged_tensors,
+            model=model,
             index_name=index_name,
             index=index,
             columns=columns,

@@ -54,7 +54,7 @@ class ConfusionMatrix(Metric):
     """
 
     name = "confusion_matrix"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -67,12 +67,12 @@ class ConfusionMatrix(Metric):
     }
 
     def run(self):
-        y_true = self.inputs.model.y_test_true
+        y_true = self.inputs.dataset.y
         labels = np.unique(y_true)
         labels.sort()
         labels = np.array(labels).T.tolist()
 
-        class_pred = self.inputs.model.y_test_predict
+        class_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
         y_true = y_true.astype(class_pred.dtype)
         cm = metrics.confusion_matrix(y_true, class_pred, labels=labels)
 

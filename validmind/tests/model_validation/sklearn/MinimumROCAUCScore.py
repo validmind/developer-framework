@@ -57,7 +57,7 @@ class MinimumROCAUCScore(ThresholdTest):
     """
 
     name = "roc_auc_score"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     default_params = {"min_threshold": 0.5}
     metadata = {
         "task_types": ["classification", "text_classification"],
@@ -100,8 +100,8 @@ class MinimumROCAUCScore(ThresholdTest):
         return metrics.roc_auc_score(y_test, y_pred, average=average)
 
     def run(self):
-        y_true = self.inputs.model.y_test_true
-        class_pred = self.inputs.model.y_test_predict
+        y_true = self.inputs.dataset.y
+        class_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
         y_true = y_true.astype(class_pred.dtype)
         roc_auc = self.multiclass_roc_auc_score(y_true, class_pred)
 

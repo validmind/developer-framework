@@ -80,8 +80,8 @@ class ROCCurve(Metric):
             else self.inputs.model
         )
 
-        y_true = model.test_ds.y
-        y_pred = model.predict_proba(self.inputs.model.test_ds.x)
+        y_true = self.inputs.dataset.y
+        y_pred = model.predict_proba(self.inputs.dataset.x)
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

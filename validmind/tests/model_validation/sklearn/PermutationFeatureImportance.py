@@ -51,7 +51,7 @@ class PermutationFeatureImportance(Metric):
     """
 
     name = "pfi"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     default_params = {
         "fontsize": None,
         "figure_height": 1000,
@@ -68,8 +68,8 @@ class PermutationFeatureImportance(Metric):
     }
 
     def run(self):
-        x = self.inputs.model.train_ds.x_df()
-        y = self.inputs.model.train_ds.y_df()
+        x = self.inputs.dataset.x_df()
+        y = self.inputs.dataset.y_df()
 
         model_library = self.inputs.model.model_library()
         if (

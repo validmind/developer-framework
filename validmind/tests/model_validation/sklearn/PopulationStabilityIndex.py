@@ -72,7 +72,7 @@ class PopulationStabilityIndex(Metric):
     """
 
     name = "psi"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -193,8 +193,8 @@ class PopulationStabilityIndex(Metric):
         mode = self.params["mode"]
 
         psi_results = self._get_psi(
-            self.inputs.model.predict_proba(self.inputs.model.train_ds.x).copy(),
-            self.inputs.model.predict_proba(self.inputs.model.test_ds.x).copy(),
+            self.inputs.model.predict_proba(self.inputs.datasets[0].x).copy(),
+            self.inputs.model.predict_proba(self.inputs.datasets[1].x).copy(),
             num_bins=num_bins,
             mode=mode,
         )

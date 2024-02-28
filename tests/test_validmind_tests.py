@@ -36,24 +36,25 @@ def _setup_test_inputs():
         class_labels=demo_dataset.class_labels,
         __log=False,
     )
+    vm_classifier_model = vm.init_model(
+        classifier,
+        __log=False,
+    )
     vm_train_ds = vm.init_dataset(
+        model=vm_classifier_model,
         dataset=train_df,
         target_column=demo_dataset.target_column,
         __log=False,
     )
     vm_test_ds = vm.init_dataset(
+        model=vm_classifier_model,
         dataset=test_df,
         target_column=demo_dataset.target_column,
         __log=False,
     )
-    vm_classifier_model = vm.init_model(
-        classifier,
-        train_ds=vm_train_ds,
-        test_ds=vm_test_ds,
-        __log=False,
-    )
     test_inputs["classification"] = TestInput({
-        "dataset": vm_dataset,
+        "dataset": vm_train_ds,
+        "datasets": (vm_train_ds, vm_train_ds),
         "model": vm_classifier_model,
     })
 

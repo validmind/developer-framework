@@ -65,11 +65,7 @@ class TestFullTestSuite(unittest.TestCase):
         )
         self.assertIsInstance(self.vm_test_ds, VMDataset)
 
-        self.vm_model = vm.init_model(
-            self.model,
-            train_ds=vm_train_ds,
-            test_ds=self.vm_test_ds,
-        )
+        self.vm_model = vm.init_model(self.model)
         self.assertIsInstance(self.vm_model, VMModel)
 
         suite = vm.run_test_suite(
