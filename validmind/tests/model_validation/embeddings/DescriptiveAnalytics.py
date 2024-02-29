@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import numpy as np
 import plotly.express as px
 
 from validmind.vm_models import Figure, Metric
@@ -51,16 +52,16 @@ class DescriptiveAnalytics(Metric):
     """
 
     name = "Descriptive Analytics for Text Embeddings Models"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["feature_extraction"],
         "tags": ["llm", "text_data", "text_embeddings", "visualization"],
     }
 
     def run(self):
-        mean = self.inputs.model.y_test_predict.mean(axis=1)
-        median = self.inputs.model.y_test_predict.median(axis=1)
-        std = self.inputs.model.y_test_predict.std(axis=1)
+        mean = np.mean(self.inputs.dataset.y_pred(self.inputs.model.input_id))
+        median = np.median(self.inputs.dataset.y_pred(self.inputs.model.input_id))
+        std = np.std(self.inputs.dataset.y_pred(self.inputs.model.input_id))
 
         return self.cache_results(
             figures=[

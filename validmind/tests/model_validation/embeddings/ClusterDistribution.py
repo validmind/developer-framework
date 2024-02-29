@@ -47,7 +47,7 @@ class ClusterDistribution(Metric):
     """
 
     name = "Text Embeddings Cluster Distribution"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     default_params = {
         "num_clusters": 5,
     }
@@ -59,7 +59,7 @@ class ClusterDistribution(Metric):
     def run(self):
         # run kmeans clustering on embeddings
         kmeans = KMeans(n_clusters=self.params["num_clusters"]).fit(
-            self.inputs.model.y_test_predict.values
+            self.inputs.dataset.y_pred(self.inputs.model.input_id)
         )
 
         # plot the distribution
