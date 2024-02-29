@@ -56,9 +56,9 @@ class ToxicityHistogram(Metric):
         if not hasattr(self, "model"):
             raise AttributeError("The 'model' attribute is missing.")
 
-        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
-        y_pred = self.inputs.model.y_test_predict
-        input_text = self.inputs.model.test_ds.df[self.inputs.model.test_ds.text_column]
+        y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        input_text = self.inputs.dataset.df[self.inputs.dataset.text_column]
 
         # Ensure consistency in lengths
         if not len(y_true) == len(y_pred) == len(input_text):
