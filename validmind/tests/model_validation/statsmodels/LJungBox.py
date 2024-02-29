@@ -44,6 +44,7 @@ class LJungBox(Metric):
     """
 
     name = "ljung_box"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
@@ -53,7 +54,6 @@ class LJungBox(Metric):
         """
         Calculates Ljung-Box test for each of the dataset features
         """
-        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         ljung_box_values = {}

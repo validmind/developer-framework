@@ -49,6 +49,7 @@ class RegressionModelOutsampleComparison(Metric):
     """
 
     name = "regression_outsample_performance"
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_comparison"],
@@ -71,16 +72,14 @@ class RegressionModelOutsampleComparison(Metric):
                     "Test dataset is missing in the ValidMind Model object"
                 )
 
-        results = self._out_sample_performance_ols(
-            all_models,
-        )
+        results = self._out_sample_performance_ols(all_models, self.inputs.dataset)
         return self.cache_results(
             {
                 "out_sample_performance": results.to_dict(orient="records"),
             }
         )
 
-    def _out_sample_performance_ols(self, model_list):
+    def _out_sample_performance_ols(self, model_list, dataset):
         """
         Returns the out-of-sample performance evaluation metrics of a list of OLS regression models.
         Args:
@@ -97,14 +96,13 @@ class RegressionModelOutsampleComparison(Metric):
 
         for fitted_model in model_list:
             # Extract the column names of the independent variables from the model
-            independent_vars = fitted_model.train_ds.get_features_columns()
+            independent_vars = dataset.get_features_columns()
 
             # Separate the target variable and features in the test dataset
-            X_test = fitted_model.test_ds.x
-            y_test = fitted_model.test_ds.y
+            y_test = dataset.y
 
             # Predict the test data
-            y_pred = fitted_model.predict(X_test)
+            y_pred = dataset.y_pred(fitted_model.input_id)
 
             # Calculate the residuals
             residuals = y_test - y_pred

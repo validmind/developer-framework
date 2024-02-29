@@ -46,6 +46,7 @@ class RegressionModelsPerformance(Metric):
     """
 
     name = "regression_models_performance"
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_performance", "model_comparison"],
@@ -61,8 +62,10 @@ class RegressionModelsPerformance(Metric):
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
 
-        in_sample_results = self._in_sample_performance_ols(all_models)
-        out_of_sample_results = self._out_sample_performance_ols(all_models)
+        in_sample_results = self.sample_performance_ols(all_models, self.datasets[0])
+        out_of_sample_results = self.sample_performance_ols(
+            all_models, self.datasets[1]
+        )
 
         return self.cache_results(
             {
@@ -71,43 +74,14 @@ class RegressionModelsPerformance(Metric):
             }
         )
 
-    def _in_sample_performance_ols(self, models):
+    def sample_performance_ols(self, models, dataset):
         evaluation_results = []
 
         for i, model in enumerate(models):
-            X_columns = model.train_ds.get_features_columns()
-            y_true = model.train_ds.y
+            X_columns = dataset.get_features_columns()
+            y_true = dataset.y
             # R models will not predict the same number of rows as the test dataset
-            y_pred = model.predict(model.train_ds.x)[0 : len(y_true)]
-
-            # Extract R-squared and Adjusted R-squared
-            r2 = r2_score(y_true, y_pred)
-            mse = mean_squared_error(y_true, y_pred)
-            adj_r2 = 1 - ((1 - r2) * (len(y_true) - 1)) / (
-                len(y_true) - len(X_columns) - 1
-            )
-
-            # Append the results to the evaluation_results list
-            evaluation_results.append(
-                {
-                    "Model": f"Model {i + 1}",
-                    "Independent Variables": X_columns,
-                    "R-Squared": r2,
-                    "Adjusted R-Squared": adj_r2,
-                    "MSE": mse,
-                }
-            )
-
-        return evaluation_results
-
-    def _out_sample_performance_ols(self, models):
-        evaluation_results = []
-
-        for i, model in enumerate(models):
-            X_columns = model.train_ds.get_features_columns()
-            y_true = model.test_ds.y
-            # R models will not predict the same number of rows as the test dataset
-            y_pred = model.predict(model.test_ds.x)[0 : len(y_true)]
+            y_pred = model.predict(dataset.x)[0 : len(y_true)]
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

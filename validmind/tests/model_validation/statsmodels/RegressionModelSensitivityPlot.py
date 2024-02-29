@@ -57,6 +57,7 @@ class RegressionModelSensitivityPlot(Metric):
     """
 
     name = "regression_sensitivity_plot"
+    required_inputs = ["model", "datasets"]
     default_params = {
         "transformation": None,
         "shocks": [0.1],
@@ -81,8 +82,8 @@ class RegressionModelSensitivityPlot(Metric):
 
         figures = []
         for i, model in enumerate(all_models):
-            features_df = model.test_ds.x_df()
-            target_df = model.test_ds.y_df()  # series
+            features_df = self.inputs.datasets[1].x_df()
+            target_df = self.inputs.datasets[1].y_df()  # series
 
             shocked_datasets = self.apply_shock(features_df, shocks)
 
@@ -90,9 +91,9 @@ class RegressionModelSensitivityPlot(Metric):
 
             if transformation == "integrate":
                 transformed_predictions = []
-                start_value = model.train_ds.y[0]
+                start_value = self.inputs.datasets[0].y[0]
                 transformed_target = self.integrate_diff(
-                    model.test_ds.y_df().values, start_value
+                    self.inputs.datasets[1].y_df().values, start_value
                 )
 
                 predictions = self.predict_shocked_datasets(shocked_datasets, model)

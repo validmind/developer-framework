@@ -54,7 +54,7 @@ class PDRatingClassPlot(Metric):
     """
 
     name = "pd_rating_class_plot"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
 
     metadata = {
         "task_types": ["classification"],
@@ -102,14 +102,14 @@ class PDRatingClassPlot(Metric):
         title = self.params["title"]
         rating_classes = self.params["rating_classes"]
 
-        X_train = self.inputs.model.train_ds.x.copy()
-        y_train = self.inputs.model.train_ds.y.copy()
-        X_test = self.inputs.model.test_ds.x.copy()
-        y_test = self.inputs.model.test_ds.y.copy()
+        X_train = self.inputs.datasets[0].x.copy()
+        y_train = self.inputs.datasets[0].y.copy()
+        X_test = self.inputs.datasets[1].x.copy()
+        y_test = self.inputs.datasets[1].y.copy()
 
         # Compute probabilities
-        X_train["probability"] = self.inputs.model.predict(X_train)
-        X_test["probability"] = self.inputs.model.predict(X_test)
+        X_train["probability"] = self.inputs.model.predict_proba(X_train)
+        X_test["probability"] = self.inputs.model.predict_proba(X_test)
 
         df_train = pd.concat([X_train, y_train], axis=1)
         df_test = pd.concat([X_test, y_test], axis=1)

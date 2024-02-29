@@ -59,7 +59,7 @@ class LogisticRegPredictionHistogram(Metric):
     """
 
     name = "logistic_reg_prediction_histogram"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk", "logistic_regression"],
@@ -124,8 +124,8 @@ class LogisticRegPredictionHistogram(Metric):
         title = self.params["title"]
 
         # Create a copy of training and testing dataframes
-        df_train = model.train_ds._df.copy()
-        df_test = model.test_ds._df.copy()
+        df_train = self.datasets[0].df.copy()
+        df_test = self.datasets[1].df.copy()
 
         # Drop target_column to create feature dataframes
         X_train = df_train.drop(columns=[target_column])

@@ -67,6 +67,7 @@ class ResidualsVisualInspection(Metric):
     """
 
     name = "residuals_visual_inspection"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["statsmodels", "visualization"],
@@ -109,8 +110,7 @@ class ResidualsVisualInspection(Metric):
         axes[1, 1].set_title(f"ACF Plot of Residuals ({variable_name})")
 
     def run(self):
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
         figures = []
 
         # TODO: specify which columns to plot via params
