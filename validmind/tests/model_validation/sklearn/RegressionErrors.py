@@ -42,7 +42,7 @@ class RegressionErrors(Metric):
     """
 
     name = "regression_errors"
-    required_inputs = ["model", "model.test_ds", "model.train_ds"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["regression"],
         "tags": [
@@ -129,16 +129,16 @@ class RegressionErrors(Metric):
         return results
 
     def run(self):
-        y_true_train = self.inputs.model.y_train_true
-        class_pred_train = self.inputs.model.y_train_predict
-        y_true_train = y_true_train.astype(class_pred_train.dtype)
+        y_train_true = self.inputs.datasets[0].y
+        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_train_true = y_train_true.astype(y_train_pred.dtype)
 
-        y_true_test = self.inputs.model.y_test_true
-        class_pred_test = self.inputs.model.y_test_predict
-        y_true_test = y_true_test.astype(class_pred_test.dtype)
+        y_test_true = self.inputs.datasets[1].y
+        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        y_test_true = y_test_true.astype(y_test_pred.dtype)
 
         results = self.regression_errors(
-            y_true_train, class_pred_train, y_true_test, class_pred_test
+            y_train_true, y_train_pred, y_test_true, y_test_pred
         )
 
         return self.cache_results(metric_value=results)
