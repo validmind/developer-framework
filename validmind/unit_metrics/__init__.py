@@ -137,44 +137,6 @@ def get_prediction_column(vm_dataset, model_id):
     return prediction_column
 
 
-def get_metric_value(metric_id, inputs=None):
-    """
-    Get the metric value, either by loading it from a global variable or by computing it,
-    ensuring that the inputs are the same.
-
-    Args:
-        metric_id (str): The metric name (e.g., 'F1').
-        inputs (dict, optional): Inputs necessary to compute the metric.
-
-    Returns:
-        The metric value.
-    """
-
-    dataset = inputs.get("dataset")
-    model = inputs.get("model")
-    model_id = model.input_id
-
-    prediction_column = get_prediction_column(dataset, model_id)
-
-    # Serialize the inputs to ensure we can compare them
-    serialized_dataset = _serialize_dataset(dataset, prediction_column)
-
-    # Use a tuple of the metric_id and the serialized inputs as the cache key
-    cache_key = (metric_id, serialized_dataset)
-
-    # Check if the metric value already exists in the global variable
-    if cache_key in global_metric_values:
-        print(f"Loading last computed value value from '{metric_id}'")
-        return global_metric_values[cache_key]
-    else:
-        # Compute the metric value
-        print(f"Computing metric value for '{metric_id}'")
-        result = run_metric(metric_id, inputs=inputs)
-        # Store the computed value in the global variable
-        global_metric_values[cache_key] = result
-        return result
-
-
 def run_metric(metric_id, inputs=None, params=None):
     """Run a single metric
 
