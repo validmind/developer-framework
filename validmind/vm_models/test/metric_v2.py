@@ -59,23 +59,32 @@ class UnitMetric(Test):
         """
         return None
 
-    
-    def get_prediction_column_and_model_id(self, vm_dataset):
+    def get_prediction_column(self, vm_dataset, model_id):
         """
-        Directly extracts the model ID and prediction column from a dataset's _extra_columns attribute.
-        
+        Extracts the prediction column from a dataset's _extra_columns attribute, if available, based on the provided model_id.
+
         Args:
         - vm_dataset: An instance of a dataset class with an _extra_columns attribute.
-        
+        - model_id: The ID of the model for which predictions are being sought.
+
         Returns:
-        - A tuple containing the model ID and the prediction column name.
+        - The prediction column name. If no prediction columns are found for the given model ID or if the prediction columns dictionary is empty,
+        returns None.
         """
-        # Directly access the model ID and prediction column name
-        model_id = list(vm_dataset._extra_columns['prediction_columns'].keys())[0]
-        prediction_column = vm_dataset._extra_columns['prediction_columns'][model_id]
-        return model_id, prediction_column        
-        
-        
+        # Initialize prediction_column to None
+        prediction_column = None
+
+        # Check if prediction_columns dictionary is not empty and contains the model_id
+        if (
+            vm_dataset._extra_columns["prediction_columns"]
+            and model_id in vm_dataset._extra_columns["prediction_columns"]
+        ):
+            prediction_column = vm_dataset._extra_columns["prediction_columns"][
+                model_id
+            ]
+
+        return prediction_column
+
     def cache_results(
         self,
         metric_value: Optional[Union[dict, list, pd.DataFrame]] = None,

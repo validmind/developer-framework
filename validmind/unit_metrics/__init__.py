@@ -8,6 +8,7 @@ from ..utils import get_model_info
 
 global_metric_values = {}
 
+
 def _serialize_params(params):
     """
     Serialize the parameters to a unique hash.
@@ -28,6 +29,7 @@ def _serialize_params(params):
     # Create a SHA-256 hash of the JSON string
     hash_object = hashlib.sha256(params_json.encode())
     return hash_object.hexdigest()
+
 
 def _serialize_model(model):
     """
@@ -52,7 +54,8 @@ def _serialize_model(model):
     hash_object = hashlib.sha256(model_json.encode())
     return hash_object.hexdigest()
 
-def _serialize_dataset(dataset):
+
+def _serialize_dataset(dataset, prediction_column):
     """
     Serialize the description of the dataset input to a unique hash.
 
@@ -67,8 +70,13 @@ def _serialize_dataset(dataset):
         str: A SHA-256 hash of the JSON string representation of the dataset's description.
     """
     if isinstance(dataset._df, pd.DataFrame):
-        # Get the description of the DataFrame
+        # Start with target and feature columns
         columns = [dataset.target_column] + dataset.feature_columns
+
+        # Append prediction_column only if it is not None
+        if prediction_column is not None:
+            columns.append(prediction_column)
+
         description = dataset._df[columns].describe()
         # Convert the description DataFrame to a JSON string
         description_json = json.dumps(
@@ -80,6 +88,7 @@ def _serialize_dataset(dataset):
     else:
         # If it's not a DataFrame, we cannot get a description
         raise TypeError("The dataset provided is not a pandas DataFrame.")
+
 
 def _get_metric_class(metric_id):
     """Get the metric class by metric_id
@@ -102,6 +111,32 @@ def _get_metric_class(metric_id):
 
     return metric_class
 
+
+def get_prediction_column(vm_dataset, model_id):
+    """
+    Extracts the prediction column from a dataset's _extra_columns attribute, if available, based on the provided model_id.
+
+    Args:
+    - vm_dataset: An instance of a dataset class with an _extra_columns attribute.
+    - model_id: The ID of the model for which predictions are being sought.
+
+    Returns:
+    - The prediction column name. If no prediction columns are found for the given model ID or if the prediction columns dictionary is empty,
+    returns None.
+    """
+    # Initialize prediction_column to None
+    prediction_column = None
+
+    # Check if prediction_columns dictionary is not empty and contains the model_id
+    if (
+        vm_dataset._extra_columns["prediction_columns"]
+        and model_id in vm_dataset._extra_columns["prediction_columns"]
+    ):
+        prediction_column = vm_dataset._extra_columns["prediction_columns"][model_id]
+
+    return prediction_column
+
+
 def get_metric_value(metric_id, inputs=None):
     """
     Get the metric value, either by loading it from a global variable or by computing it,
@@ -114,8 +149,15 @@ def get_metric_value(metric_id, inputs=None):
     Returns:
         The metric value.
     """
+
+    dataset = inputs.get("dataset")
+    model = inputs.get("model")
+    model_id = model.input_id
+
+    prediction_column = get_prediction_column(dataset, model_id)
+
     # Serialize the inputs to ensure we can compare them
-    serialized_dataset = _serialize_dataset(inputs.get("dataset"))
+    serialized_dataset = _serialize_dataset(dataset, prediction_column)
 
     # Use a tuple of the metric_id and the serialized inputs as the cache key
     cache_key = (metric_id, serialized_dataset)
@@ -131,7 +173,8 @@ def get_metric_value(metric_id, inputs=None):
         # Store the computed value in the global variable
         global_metric_values[cache_key] = result
         return result
-    
+
+
 def run_metric(metric_id, inputs=None, params=None):
     """Run a single metric
 
@@ -146,13 +189,19 @@ def run_metric(metric_id, inputs=None, params=None):
         MetricResult: The metric result object
     """
 
+    dataset = inputs.get("dataset")
+    model = inputs.get("model")
+    model_id = model.input_id
+
+    prediction_column = get_prediction_column(dataset, model_id)
+
     # Serialize the inputs to ensure we can compare them
-    serialized_dataset = _serialize_dataset(inputs.get("dataset"))
+    serialized_dataset = _serialize_dataset(dataset, prediction_column)
 
     # Serialize the params to ensure we can compare them
     serialized_params = _serialize_params(params)
 
-    serialized_model = _serialize_model(inputs.get("model"))
+    serialized_model = _serialize_model(model)
 
     # Use a tuple of the metric_id and the serialized inputs as the cache key
     cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
@@ -176,17 +225,17 @@ def run_metric(metric_id, inputs=None, params=None):
         result = metric.run()
 
         # Serialize the inputs to ensure we can compare them
-        serialized_dataset = _serialize_dataset(inputs.get("dataset"))
+        serialized_dataset = _serialize_dataset(dataset, prediction_column)
 
         # Serialize the params to ensure we can compare them
         serialized_params = _serialize_params(params)
 
         # Serialize the model to ensure we can compare them
-        serialized_model = _serialize_model(inputs.get("model"))
+        serialized_model = _serialize_model(model)
 
         # Use a tuple of the metric_id and the serialized inputs as the cache key
         cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
 
         global_metric_values[cache_key] = result
 
-        return result
+    return result
