@@ -27,9 +27,6 @@ class UnitMetric(Test):
     test_type: ClassVar[str] = "UnitMetric"
     name: ClassVar[str] = ""  # name of the metric
 
-    type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
-    scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
-
     # Instance Variables
     result: MetricResult = None  # populated by cache_results() method
 
