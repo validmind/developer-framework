@@ -31,23 +31,15 @@ class UnitMetric(Test):
 
     type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
-    value_formatter: ClassVar[Optional[str]] = None  # "records" or "key_values"
 
     # Instance Variables
-    result: MetricResultWrapper = None  # populated by cache_results() method
+    result: MetricResult = None  # populated by cache_results() method
 
     def run(self):
         """
         Run the metric
         """
         raise NotImplementedError("Metric must implement run()")
-
-    @property
-    def key(self):
-        """
-        Keep the key for compatibility reasons
-        """
-        return self._key if hasattr(self, "_key") else self.name
 
     def _metric_name(self) -> str:
         # get metric name from metric_id, for example if metric_id i:
@@ -110,19 +102,10 @@ class UnitMetric(Test):
             TestSuiteResult: The test suite result object
         """
 
-        # At a minimum, send the metric description
-        result_metadata = [
-            {
-                "content_id": f"metric_name:{self.name}",
-                "text": clean_docstring(self.description()),
-            }
-        ]
-
         result_summary = self.summary(metric_value)
 
         test_suite_result = MetricResultWrapper(
             result_id=self.test_id,
-            result_metadata=result_metadata,
             inputs=self.get_accessed_inputs(),
         )
 

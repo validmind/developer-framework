@@ -63,5 +63,3 @@ class Accuracy(UnitMetric):
             )
 
         return y_pred
-
-    # Optionally, redefine the summary method if needed to customize the output for accuracy scores
