@@ -17,11 +17,6 @@ from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
 
-DEFAULT_EXTRA_COLUMNS = {
-    "prediction_columns": {},
-    "group_by_column": None,
-}
-
 
 @dataclass
 class VMDataset(ABC):
@@ -122,22 +117,7 @@ class NumpyDataset(VMDataset):
         else:
             df = pd.DataFrame(self._raw_dataset, columns=self._columns).infer_objects()
 
-        self._target_column = target_column
-
-        if extra_columns is None:
-            self._extra_columns = DEFAULT_EXTRA_COLUMNS.copy()
-        else:
-            self._extra_columns = extra_columns
-
-        if feature_columns is None:
-            self.__set_feature_columns()
-        else:
-            self._feature_columns = feature_columns
-
-        self._text_column = text_column
-        self._target_class_labels = target_class_labels
-        self.options = options
-
+        # set index to dataframe
         if index is not None:
             df.set_index(pd.Index(index), inplace=True)
             df.index.name = index_name
@@ -633,7 +613,6 @@ class DataFrameDataset(NumpyDataset):
         if isinstance(raw_dataset.index, pd.Index):
             index = raw_dataset.index.values
 
-
         super().__init__(
             raw_dataset=raw_dataset.values,
             input_id=input_id,
@@ -649,11 +628,6 @@ class DataFrameDataset(NumpyDataset):
             options=options,
             date_time_index=date_time_index,
         )
-
-        if model:
-            self.assign_predictions(model)
-
-   
 
 
 @dataclass
