@@ -14,8 +14,6 @@ import pandas as pd
 
 from validmind.vm_models import MetricResult
 
-from ...utils import clean_docstring
-from .result_wrapper import MetricResultWrapper
 from .test import Test
 
 
@@ -104,20 +102,13 @@ class UnitMetric(Test):
 
         result_summary = self.summary(metric_value)
 
-        test_suite_result = MetricResultWrapper(
-            result_id=self.test_id,
-            inputs=self.get_accessed_inputs(),
-        )
-
-        test_suite_result.metric = MetricResult(
+        metric_result = MetricResult(
             key=self.test_id,
             ref_id=self._ref_id,
             value=metric_value,
             summary=result_summary,
-            metric_inputs=self.metric_inputs,
-            required_inputs=self.required_inputs,
         )
 
-        self.result = test_suite_result
+        self.result = metric_result
 
         return self.result
