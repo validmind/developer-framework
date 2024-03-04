@@ -11,27 +11,27 @@ from validmind.vm_models import UnitMetric
 
 
 @dataclass
-class Precision(UnitMetric):  # Renamed class to Precision
+class Precision(UnitMetric):
     def __init__(
         self,
         inputs=None,
+        metric_id=None,
         params=None,
-        test_id="Precision Score",
+        test_id="Precision Test",
     ):
         # Pass test_id and any other necessary parameters to the superclass
         super().__init__(
             test_id=test_id,
         )
+
+        self.metric_id = metric_id
         self.metric_inputs = inputs
         self.params = params if params is not None else {}
 
-        # Initialize any additional properties specific to Precision
-        self.type = "evaluation"
-        self.scope = "model_accuracy"
-
     def run(self):
 
-        y_pred, y_true = self.get_required_inputs()
+        y_true = self.metric_inputs["dataset"].y
+        y_pred = self._y_pred()
 
         value = precision_score(y_true, y_pred, **self.params)
 
@@ -39,14 +39,7 @@ class Precision(UnitMetric):  # Renamed class to Precision
             metric_value=value,
         )
 
-    def get_required_inputs(self):
-
-        y_pred = self._get_y_pred()
-        y_true = self._get_y_true()
-
-        return y_pred, y_true
-
-    def _get_y_pred(self):
+    def _y_pred(self):
         # Access the dataset and model directly, as their existence is guaranteed
         dataset = self.metric_inputs["dataset"]
         model = self.metric_inputs["model"]
@@ -68,21 +61,8 @@ class Precision(UnitMetric):  # Renamed class to Precision
             y_pred = model.predict(dataset._df[dataset.feature_columns])
         else:
             # If the model does not have a 'predict' method, raise an error
-            raise ValueError("Model must have a predict method to compute predictions.")
+            raise ValueError(
+                "Model must have a 'predict' method to compute predictions."
+            )
 
         return y_pred
-
-    def _get_y_true(self):
-        dataset = self.metric_inputs.get("dataset")
-        print(f"y_true obtained from column '{dataset.target_column}'")
-        y_true = dataset.y
-        return y_true
-
-    def summary(self, metric_value: Optional[dict] = None):
-
-        if metric_value is None:
-            return {"Error": "No metric calculated."}
-
-        return {
-            "Precision": f"{metric_value:.2f}",
-        }

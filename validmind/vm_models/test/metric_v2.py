@@ -8,7 +8,7 @@ data for display and reporting purposes
 """
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Union
+from typing import ClassVar, Optional, Union, Dict
 
 import pandas as pd
 
@@ -27,6 +27,7 @@ class UnitMetric(Test):
 
     # Class Variables
     test_type: ClassVar[str] = "UnitMetric"
+    name: ClassVar[str] = ""  # name of the metric
 
     type: ClassVar[str] = ""  # type of metric: "training", "evaluation", etc.
     scope: ClassVar[str] = ""  # scope of metric: "training_dataset"
@@ -48,16 +49,26 @@ class UnitMetric(Test):
         """
         return self._key if hasattr(self, "_key") else self.name
 
-    @abstractmethod
-    def summary(self, metric_value: Optional[Union[dict, list, pd.DataFrame]] = None):
-        """
-        Return the metric summary. Should be overridden by subclasses. Defaults to None.
-        The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
-        short summary of the metric results.
+    def _metric_name(self) -> str:
+        # get metric name from metric_id, for example if metric_id i:
+        # 'validmind.unit_metrics.sklearn.classification.F1' then the metric name is 'f1'
+        print(f"metric_id: {self.metric_id}")
+        return self.metric_id.split(".")[-1].lower()
 
-        We return None here because the metric summary is optional.
+    @abstractmethod
+    def summary(
+        self, metric_value: Optional[Union[str, float]] = None
+    ) -> Dict[str, float]:
         """
-        return None
+        Raise an error if metric_value is None.
+        Else, return an object like this: {<metric-name>: <value>}
+        Metric name can be calculated from a property, similar to how you defined test_id above.
+        The metric name should ideally be a single lowercase word such as accuracy.
+        """
+        if metric_value is None:
+            raise ValueError("metric_value cannot be None")
+
+        return {self._metric_name(): metric_value}
 
     def get_prediction_column(self, vm_dataset, model_id):
         """
@@ -102,7 +113,7 @@ class UnitMetric(Test):
         # At a minimum, send the metric description
         result_metadata = [
             {
-                "content_id": f"metric_description:{self.test_id}",
+                "content_id": f"metric_name:{self.name}",
                 "text": clean_docstring(self.description()),
             }
         ]

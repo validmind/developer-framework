@@ -3,6 +3,8 @@ import json
 import hashlib
 import importlib
 
+from ..vm_models import TestInput
+
 from ..utils import get_model_info
 
 
@@ -145,27 +147,39 @@ def run_metric(metric_id, inputs=None, params=None):
 
     Args:
         metric_id (str): The metric name (e.g. 'F1')
-        metric_value (dict): A dictionary of the metric value
+        params (dict): A dictionary of the metric parameters
 
     Returns:
         MetricResult: The metric result object
     """
 
-    dataset = inputs.get("dataset")
-    model = inputs.get("model")
+    metric_inputs = TestInput(inputs=inputs or {})
+    dataset = metric_inputs.dataset
+    model = metric_inputs.model
+
     model_id = model.input_id
 
     prediction_column = get_prediction_column(dataset, model_id)
 
-    # Serialize the inputs to ensure we can compare them
-    serialized_dataset = _serialize_dataset(dataset, prediction_column)
+    # Initialize as None to indicate that the input may not be provided
+    serialized_dataset = None
+    serialized_params = None
+    serialized_model = None
 
-    # Serialize the params to ensure we can compare them
-    serialized_params = _serialize_params(params)
+    # Only serialize the dataset if it's provided
+    if dataset is not None:
+        serialized_dataset = _serialize_dataset(dataset, prediction_column)
 
-    serialized_model = _serialize_model(model)
+    # Only serialize the params if they're provided
+    if params is not None:
+        serialized_params = _serialize_params(params)
+
+    # Only serialize the model if it's provided
+    if model is not None:
+        serialized_model = _serialize_model(model)
 
     # Use a tuple of the metric_id and the serialized inputs as the cache key
+    # This tuple will include None values for any input that wasn't provided
     cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
 
     # Check if the metric value already exists in the global variable
@@ -181,21 +195,23 @@ def run_metric(metric_id, inputs=None, params=None):
         metric_class = _get_metric_class(metric_id)
 
         # Initialize the metric
-        metric = metric_class(inputs=inputs, params=params)
+        metric = metric_class(metric_id=metric_id, inputs=inputs, params=params)
 
         # Run the metric
         result = metric.run()
 
-        # Serialize the inputs to ensure we can compare them
-        serialized_dataset = _serialize_dataset(dataset, prediction_column)
+        # Only serialize the dataset if it's provided
+        if dataset is not None:
+            serialized_dataset = _serialize_dataset(dataset, prediction_column)
 
-        # Serialize the params to ensure we can compare them
-        serialized_params = _serialize_params(params)
+        # Only serialize the params if they're provided
+        if params is not None:
+            serialized_params = _serialize_params(params)
 
-        # Serialize the model to ensure we can compare them
-        serialized_model = _serialize_model(model)
+        # Only serialize the model if it's provided
+        if model is not None:
+            serialized_model = _serialize_model(model)
 
-        # Use a tuple of the metric_id and the serialized inputs as the cache key
         cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
 
         global_metric_values[cache_key] = result

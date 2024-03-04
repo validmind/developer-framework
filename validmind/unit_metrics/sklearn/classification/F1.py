@@ -15,24 +15,25 @@ class F1(UnitMetric):
     def __init__(
         self,
         inputs=None,
+        metric_id=None,
         params=None,
-        test_id="F1 Score",
+        test_id="F1 Test",
     ):
         # Pass test_id and any other necessary parameters to the superclass
         super().__init__(
             test_id=test_id,
         )
 
+        self.metric_id = metric_id
         self.metric_inputs = inputs
         self.params = params if params is not None else {}
 
-        # Initialize any additional properties specific to F1
-        self.type = "evaluation"
-        self.scope = "model_accuracy"
-
     def run(self):
 
-        y_pred, y_true = self.get_required_inputs()
+        # y_pred, y_true = self.get_required_inputs()
+
+        y_true = self.metric_inputs["dataset"].y
+        y_pred = self._y_pred()
 
         value = f1_score(y_true, y_pred, **self.params)
 
@@ -40,22 +41,15 @@ class F1(UnitMetric):
             metric_value=value,
         )
 
-    def get_required_inputs(self):
-
-        y_pred = self._get_y_pred()
-        y_true = self._get_y_true()
-
-        return y_pred, y_true
-
-    def _get_y_pred(self):
+    def _y_pred(self):
         # Access the dataset and model directly, as their existence is guaranteed
         dataset = self.metric_inputs["dataset"]
         model = self.metric_inputs["model"]
         model_id = model.input_id
 
         # Attempt to obtain the pre-computed prediction column and model ID from the dataset
-        print(f"model_id: {model_id}, prediction_column: {prediction_column}")
         prediction_column = self.get_prediction_column(dataset, model_id)
+        print(f"model_id: {model_id}, prediction_column: {prediction_column}")
 
         # If a prediction column specific to the model is found in the dataset, use those predictions
         if prediction_column:
@@ -72,17 +66,3 @@ class F1(UnitMetric):
             raise ValueError("Model must have a predict method to compute predictions.")
 
         return y_pred
-
-    def _get_y_true(self):
-        dataset = self.metric_inputs.get("dataset")
-        print(f"y_true obtained from column '{dataset.target_column}'")
-        y_true = dataset.y
-        return y_true
-
-    def summary(self, metric_value: Optional[dict] = None):
-        if metric_value is None:
-            return {"Error": "No metric calculated."}
-
-        return {
-            "F1": f"{metric_value:.2f}",
-        }
