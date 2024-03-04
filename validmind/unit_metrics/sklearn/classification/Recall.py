@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-from typing import Optional
 
 from sklearn.metrics import recall_score
 
