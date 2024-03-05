@@ -112,7 +112,7 @@ class InputAccessTrackerProxy:
         if hasattr(self._inputs, name):
             input = getattr(self._inputs, name)
             # if the input is a list of inputs, track each input individually
-            if isinstance(input, list):
+            if isinstance(input, list) or isinstance(input, tuple):
                 for i in input:
                     self._accessed.add(i.input_id)
             else:

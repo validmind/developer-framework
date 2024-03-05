@@ -30,12 +30,6 @@ def _setup_test_inputs():
     classifier.set_params(eval_metric=["error", "logloss", "auc"])
     classifier.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=False)
 
-    vm_dataset = vm.init_dataset(
-        dataset=df,
-        target_column=demo_dataset.target_column,
-        class_labels=demo_dataset.class_labels,
-        __log=False,
-    )
     vm_classifier_model = vm.init_model(
         classifier,
         __log=False,
@@ -43,12 +37,6 @@ def _setup_test_inputs():
     vm_train_ds = vm.init_dataset(
         model=vm_classifier_model,
         dataset=train_df,
-        target_column=demo_dataset.target_column,
-        __log=False,
-    )
-    vm_test_ds = vm.init_dataset(
-        model=vm_classifier_model,
-        dataset=test_df,
         target_column=demo_dataset.target_column,
         __log=False,
     )

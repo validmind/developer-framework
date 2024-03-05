@@ -145,7 +145,6 @@ def init_dataset(
         )
 
     input_registry.add(key=input_id, obj=vm_dataset)
-    vm_dataset.input_id = input_id
 
     return vm_dataset
 
