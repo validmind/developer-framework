@@ -17,7 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # TODO figure out why dev-framework requires so much disk space and fix that
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@main
