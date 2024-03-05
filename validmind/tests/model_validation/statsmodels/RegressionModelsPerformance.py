@@ -46,7 +46,7 @@ class RegressionModelsPerformance(Metric):
     """
 
     name = "regression_models_performance"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["models", "in_sample_datasets", "out_of_sample_datasets"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_performance", "model_comparison"],
@@ -62,9 +62,11 @@ class RegressionModelsPerformance(Metric):
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
 
-        in_sample_results = self.sample_performance_ols(all_models, self.inputs.datasets[0])
+        in_sample_results = self.sample_performance_ols(
+            self.inputs.models, self.inputs.in_sample_datasets
+        )
         out_of_sample_results = self.sample_performance_ols(
-            all_models, self.inputs.datasets[1]
+            self.inputs.models, self.inputs.out_of_sample_datasets
         )
 
         return self.cache_results(
@@ -74,14 +76,13 @@ class RegressionModelsPerformance(Metric):
             }
         )
 
-    def sample_performance_ols(self, models, dataset):
+    def sample_performance_ols(self, models, datasets):
         evaluation_results = []
 
-        for i, model in enumerate(models):
+        for (model, dataset) in zip(models, datasets):
             X_columns = dataset.get_features_columns()
             y_true = dataset.y
-            # R models will not predict the same number of rows as the test dataset
-            y_pred = model.predict(dataset.x)[0 : len(y_true)]
+            y_pred = dataset.y_pred(model.input_id)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)
@@ -93,7 +94,7 @@ class RegressionModelsPerformance(Metric):
             # Append the results to the evaluation_results list
             evaluation_results.append(
                 {
-                    "Model": f"Model {i + 1}",
+                    "Model": model.input_id,
                     "Independent Variables": X_columns,
                     "R-Squared": r2,
                     "Adjusted R-Squared": adj_r2,

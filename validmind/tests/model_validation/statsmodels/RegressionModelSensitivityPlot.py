@@ -57,7 +57,7 @@ class RegressionModelSensitivityPlot(Metric):
     """
 
     name = "regression_sensitivity_plot"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["models", "datasets"]
     default_params = {
         "transformation": None,
         "shocks": [0.1],
