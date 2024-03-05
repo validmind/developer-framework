@@ -71,10 +71,10 @@ class SeasonalDecompose(Metric):
         column in the dataset.
         """
         sd_all_columns = (
-            self.test_context.get_context_data("seasonal_decompose") or dict()
+            self.context.get_context_data("seasonal_decompose") or dict()
         )
         sd_all_columns[column] = sd_one_column
-        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
+        self.context.set_context_data("seasonal_decompose", sd_all_columns)
 
     def serialize_seasonal_decompose(self, sd):
         """
