@@ -62,9 +62,9 @@ class RegressionModelsPerformance(Metric):
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
 
-        in_sample_results = self.sample_performance_ols(all_models, self.datasets[0])
+        in_sample_results = self.sample_performance_ols(all_models, self.inputs.datasets[0])
         out_of_sample_results = self.sample_performance_ols(
-            all_models, self.datasets[1]
+            all_models, self.inputs.datasets[1]
         )
 
         return self.cache_results(
