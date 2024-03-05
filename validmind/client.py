@@ -194,7 +194,6 @@ def init_model(
         )
 
     input_registry.add(key=input_id, obj=vm_model)
-    vm_model.input_id = input_id
 
     return vm_model
 
