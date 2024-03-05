@@ -55,9 +55,7 @@ class RegressionModelsPerformanceComparison(Metric):
     - The test could exhibit performance limitations if a large number of models is input for comparison.
     """
 
-    name = "models_performance_comparison"
-
-    name = "regression_errors"
+    name = "regression_errors_comparison"
     required_inputs = ["model", "dataset"]
 
     metadata = {
