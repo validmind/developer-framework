@@ -111,7 +111,12 @@ class InputAccessTrackerProxy:
         # Track access only if the attribute actually exists in the inputs
         if hasattr(self._inputs, name):
             input = getattr(self._inputs, name)
-            self._accessed.add(input.input_id)
+            # if the input is a list of inputs, track each input individually
+            if isinstance(input, list):
+                for i in input:
+                    self._accessed.add(i.input_id)
+            else:
+                self._accessed.add(input.input_id)
             return getattr(self._inputs, name)
 
         raise AttributeError(

@@ -129,11 +129,17 @@ class NumpyDataset(VMDataset):
 
     def __set_feature_columns(self, feature_columns):
         extra_columns_list = list(self._extra_columns.values())
-        self._feature_columns = [
-            col
-            for col in self._columns
-            if col != self._target_column and col not in extra_columns_list
-        ]
+
+        if not feature_columns:
+            self._feature_columns = [
+                col
+                for col in self._columns
+                if col != self._target_column and col not in extra_columns_list
+            ]
+        else:
+            if not isinstance(feature_columns, list):
+                raise ValueError("Expected list for attribute feature_columns")
+            self._feature_columns = feature_columns
 
     def __attempt_convert_index_to_datetime(self, df):
         """

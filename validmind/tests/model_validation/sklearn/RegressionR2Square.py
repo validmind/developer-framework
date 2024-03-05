@@ -41,7 +41,7 @@ class RegressionR2Square(Metric):
     used, or whether certain key assumptions have been fulfilled.
     """
 
-    name = "regression_errors"
+    name = "regression_errors_r2_square"
     required_inputs = ["model"]
     metadata = {
         "task_types": ["regression"],
