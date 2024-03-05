@@ -1,34 +1,35 @@
-import pandas as pd
+import numpy as np
 import json
 import hashlib
 import importlib
 
-from ..vm_models import TestInput
 
 from ..utils import get_model_info
 
 
-global_metric_values = {}
+unit_metric_results_cache = {}
 
 
 def _serialize_params(params):
     """
-    Serialize the parameters to a unique hash.
-
+    Serialize the parameters to a unique hash, handling None values.
     This function serializes the parameters dictionary to a JSON string,
     then creates a SHA-256 hash of the string to ensure a unique identifier
-    for the parameters.
+    for the parameters. If params is None, a default hash is returned.
 
     Args:
-        params (dict): The parameters to be serialized.
+        params (dict or None): The parameters to be serialized.
 
     Returns:
-        str: A SHA-256 hash of the JSON string representation of the params.
+        str: A SHA-256 hash of the JSON string representation of the params,
+             or a default hash if params is None.
     """
-    # Convert the params to a JSON string, ensuring consistent ordering
-    params_json = json.dumps(params, sort_keys=True)
+    if params is None:
+        # Handle None by returning a hash of an empty dictionary or a predefined value
+        params_json = json.dumps({})
+    else:
+        params_json = json.dumps(params, sort_keys=True)
 
-    # Create a SHA-256 hash of the JSON string
     hash_object = hashlib.sha256(params_json.encode())
     return hash_object.hexdigest()
 
@@ -44,11 +45,7 @@ def _serialize_model(model):
         str: A SHA-256 hash of the model's description.
     """
 
-    if model is None:
-        # You can return a predefined hash, or handle it in another appropriate way
-        model_info = "none_model_hash"
-    else:
-        model_info = get_model_info(model)
+    model_info = get_model_info(model)
 
     model_json = json.dumps(model_info, sort_keys=True)
 
@@ -57,39 +54,79 @@ def _serialize_model(model):
     return hash_object.hexdigest()
 
 
-def _serialize_dataset(dataset, prediction_column):
+def _serialize_dataset(dataset, model_id):
     """
     Serialize the description of the dataset input to a unique hash.
 
-    This function generates descriptive statistics of the dataset, converts
-    the description to a JSON string, and then creates a SHA-256 hash of the string
-    to ensure a unique identifier for the dataset's description.
+    This function generates a hash based on the dataset's structure, including
+    the target and feature columns, the prediction column associated with a specific model ID,
+    and directly incorporates the model ID and prediction column name to ensure uniqueness.
 
     Args:
-        dataset (pd.DataFrame): The dataset whose description is to be serialized.
+        dataset: The dataset object, which should have properties like _df (pandas DataFrame),
+                 target_column (string), feature_columns (list of strings), and _extra_columns (dict).
+        model_id (str): The ID of the model associated with the prediction column.
 
     Returns:
-        str: A SHA-256 hash of the JSON string representation of the dataset's description.
+        str: A SHA-256 hash representing the dataset.
+
+    Note:
+        Including the model ID and prediction column name in the hash calculation ensures uniqueness,
+        especially in cases where the predictions are sparse or the dataset has not significantly changed.
+        This approach guarantees that the hash will distinguish between model-generated predictions
+        and pre-computed prediction columns, addressing potential hash collisions.
     """
-    if isinstance(dataset._df, pd.DataFrame):
-        # Start with target and feature columns
-        columns = [dataset.target_column] + dataset.feature_columns
 
-        # Append prediction_column only if it is not None
-        if prediction_column is not None:
-            columns.append(prediction_column)
+    # Access the prediction column for the given model ID from the dataset's extra columns
+    prediction_column_name = dataset._extra_columns["prediction_columns"][model_id]
 
-        description = dataset._df[columns].describe()
-        # Convert the description DataFrame to a JSON string
-        description_json = json.dumps(
-            description.to_dict(orient="records"), sort_keys=True
-        )
-        # Create a SHA-256 hash of the JSON string
-        hash_object = hashlib.sha256(description_json.encode())
-        return hash_object.hexdigest()
+    # Include model ID and prediction column name directly in the hash calculation
+    model_and_prediction_info = f"{model_id}_{prediction_column_name}".encode()
+
+    # Start with target and feature columns, and include the prediction column
+    columns = (
+        [dataset._target_column] + dataset._feature_columns + [prediction_column_name]
+    )
+
+    # Use _fast_hash function and include model_and_prediction_info in the hash calculation
+    hash_digest = _fast_hash(
+        dataset._df[columns], model_and_prediction_info=model_and_prediction_info
+    )
+
+    return hash_digest
+
+
+def _fast_hash(df, sample_size=1000, model_and_prediction_info=None):
+    """
+    Generates a hash for a DataFrame by sampling and combining its size, content,
+    and optionally model and prediction information.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to hash.
+        sample_size (int): The maximum number of rows to include in the sample.
+        model_and_prediction_info (bytes, optional): Additional information to include in the hash.
+
+    Returns:
+        str: A SHA-256 hash of the DataFrame's sample and additional information.
+    """
+    # Convert the number of rows to bytes and include it in the hash calculation
+    rows_bytes = str(len(df)).encode()
+
+    # Sample rows if DataFrame is larger than sample_size, ensuring reproducibility
+    if len(df) > sample_size:
+        df_sample = df.sample(n=sample_size, random_state=42)
     else:
-        # If it's not a DataFrame, we cannot get a description
-        raise TypeError("The dataset provided is not a pandas DataFrame.")
+        df_sample = df
+
+    # Convert the sampled DataFrame to a byte array. np.asarray ensures compatibility with various DataFrame contents.
+    byte_array = np.asarray(df_sample).data.tobytes()
+
+    # Initialize the hash object and update it with the row count, data bytes, and additional info
+    hash_obj = hashlib.sha256(
+        rows_bytes + byte_array + (model_and_prediction_info or b"")
+    )
+
+    return hash_obj.hexdigest()
 
 
 def _get_metric_class(metric_id):
@@ -114,29 +151,57 @@ def _get_metric_class(metric_id):
     return metric_class
 
 
-def get_prediction_column(vm_dataset, model_id):
+def get_input_type(input_obj):
     """
-    Extracts the prediction column from a dataset's _extra_columns attribute, if available, based on the provided model_id.
+    Determines whether the input object is a 'dataset' or 'model' based on its class module path.
 
     Args:
-    - vm_dataset: An instance of a dataset class with an _extra_columns attribute.
-    - model_id: The ID of the model for which predictions are being sought.
+        input_obj: The object to type check.
 
     Returns:
-    - The prediction column name. If no prediction columns are found for the given model ID or if the prediction columns dictionary is empty,
-    returns None.
+        str: 'dataset' or 'model' depending on the object's module, or raises ValueError.
     """
-    # Initialize prediction_column to None
-    prediction_column = None
+    # Obtain the class object of input_obj (for clarity and debugging)
+    class_obj = input_obj.__class__
 
-    # Check if prediction_columns dictionary is not empty and contains the model_id
-    if (
-        vm_dataset._extra_columns["prediction_columns"]
-        and model_id in vm_dataset._extra_columns["prediction_columns"]
-    ):
-        prediction_column = vm_dataset._extra_columns["prediction_columns"][model_id]
+    # Obtain the module name as a string from the class object
+    class_module = class_obj.__module__
 
-    return prediction_column
+    if "validmind.vm_models.dataset" in class_module:
+        return "dataset"
+    elif "validmind.models" in class_module:
+        return "model"
+    else:
+        raise ValueError("Input must be of type validmind Dataset or Model")
+
+
+def get_metric_cache_key(metric_id, params, inputs):
+    cache_elements = [metric_id]
+
+    # Serialize params if not None
+    serialized_params = _serialize_params(params) if params else "None"
+    cache_elements.append(serialized_params)
+
+    # Check if 'inputs' is a dictionary
+    if not isinstance(inputs, dict):
+        raise TypeError("Expected 'inputs' to be a dictionary.")
+
+    # Check for 'model' and 'dataset' keys in 'inputs'
+    if "model" not in inputs or "dataset" not in inputs:
+        raise ValueError("Missing 'model' or 'dataset' in 'inputs'.")
+
+    dataset = inputs["dataset"]
+    model = inputs["model"]
+    model_id = model.input_id
+
+    cache_elements.append(_serialize_dataset(dataset, model_id))
+
+    cache_elements.append(_serialize_model(model))
+
+    # Combine elements to form the cache key
+    combined_elements = "_".join(cache_elements)
+    key = hashlib.sha256(combined_elements.encode()).hexdigest()
+    return key
 
 
 def run_metric(metric_id, inputs=None, params=None):
@@ -152,40 +217,12 @@ def run_metric(metric_id, inputs=None, params=None):
     Returns:
         MetricResult: The metric result object
     """
-
-    metric_inputs = TestInput(inputs=inputs or {})
-    dataset = metric_inputs.dataset
-    model = metric_inputs.model
-
-    model_id = model.input_id
-
-    prediction_column = get_prediction_column(dataset, model_id)
-
-    # Initialize as None to indicate that the input may not be provided
-    serialized_dataset = None
-    serialized_params = None
-    serialized_model = None
-
-    # Only serialize the dataset if it's provided
-    if dataset is not None:
-        serialized_dataset = _serialize_dataset(dataset, prediction_column)
-
-    # Only serialize the params if they're provided
-    if params is not None:
-        serialized_params = _serialize_params(params)
-
-    # Only serialize the model if it's provided
-    if model is not None:
-        serialized_model = _serialize_model(model)
-
-    # Use a tuple of the metric_id and the serialized inputs as the cache key
-    # This tuple will include None values for any input that wasn't provided
-    cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
+    cache_key = get_metric_cache_key(metric_id, params, inputs)
 
     # Check if the metric value already exists in the global variable
-    if cache_key in global_metric_values:
+    if cache_key in unit_metric_results_cache:
         print(f"Loading last computed value value from '{metric_id}'")
-        return global_metric_values[cache_key]
+        return unit_metric_results_cache[cache_key]
 
     else:
         # Compute the metric value
@@ -200,20 +237,8 @@ def run_metric(metric_id, inputs=None, params=None):
         # Run the metric
         result = metric.run()
 
-        # Only serialize the dataset if it's provided
-        if dataset is not None:
-            serialized_dataset = _serialize_dataset(dataset, prediction_column)
+        cache_key = get_metric_cache_key(metric_id, params, inputs)
 
-        # Only serialize the params if they're provided
-        if params is not None:
-            serialized_params = _serialize_params(params)
-
-        # Only serialize the model if it's provided
-        if model is not None:
-            serialized_model = _serialize_model(model)
-
-        cache_key = (metric_id, serialized_dataset, serialized_params, serialized_model)
-
-        global_metric_values[cache_key] = result
+        unit_metric_results_cache[cache_key] = result
 
     return result
