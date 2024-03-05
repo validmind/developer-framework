@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - prod
+      - release-v1
 
 permissions:
   contents: read
@@ -29,7 +30,7 @@ jobs:
 
       - name: Install Dependencies
         run: poetry install
-  
+
       - name: Integration Tests
         run: make test-integration
         env:
