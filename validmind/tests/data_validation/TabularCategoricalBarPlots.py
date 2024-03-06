@@ -54,7 +54,7 @@ class TabularCategoricalBarPlots(Metric):
 
         # Extract categorical columns from the dataset
         categorical_columns = df.select_dtypes(
-            include=[np.object, pd.Categorical]
+            include=[object, pd.Categorical]
         ).columns.tolist()
 
         if len(categorical_columns) == 0:
