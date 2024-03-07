@@ -26,7 +26,6 @@ class TestSuiteRunner:
     input: TestInput = None
     config: dict = None
 
-    _global_config: dict = None
     _test_configs: dict = None
 
     pbar: widgets.IntProgress = None
@@ -40,21 +39,27 @@ class TestSuiteRunner:
 
         self.context = TestContext()
 
-        self._split_configs()
+        self._load_config()
         self._init_tests()
 
-    def _split_configs(self):
+    def _load_config(self):
         """Splits the config into a global config and test configs"""
-        self._global_config = {}
         self._test_configs = {}
 
         for key, value in self.config.items():
             test_ids = [test.test_id for test in self.suite.get_tests()]
 
-            if key in test_ids:
-                self._test_configs[key] = value
+            # If the key does not exist in the test suite, we need to
+            # inform the user the config is probably wrong but we will
+            # keep running all tests
+            if key not in test_ids:
+                logger.warning(
+                    f"Config key '{key}' does not match a test_id in the template."
+                    "\n\tEnsure you registered a content block with the correct content_id in the template"
+                    "\n\tThe configuration for this test will be ignored."
+                )
             else:
-                self._global_config[key] = value
+                self._test_configs[key] = value
 
     def _init_tests(self):
         """
@@ -83,9 +88,8 @@ class TestSuiteRunner:
                             "Setting test parameters directly in the 'config' parameter of the run_documentation_tests() method is deprecated. "
                             'Instead, use the new format of the config: config = {"test_id": {"params": {...}, "inputs": {...}}}'
                         )
-                config = {**self._global_config, **test_configs}
 
-                test.load(inputs=inputs, context=self.context, config=config)
+                test.load(inputs=inputs, context=self.context, config=test_configs)
 
     def _start_progress_bar(self, send: bool = True):
         """

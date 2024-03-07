@@ -144,7 +144,9 @@ def init_dataset(
             type="dataset",
             metadata=get_dataset_info(vm_dataset),
         )
+
     input_registry.add(key=input_id, obj=vm_dataset)
+
     return vm_dataset
 
 
@@ -191,6 +193,7 @@ def init_model(
             type="model",
             metadata=get_model_info(vm_model),
         )
+
     input_registry.add(key=input_id, obj=vm_model)
 
     return vm_model
