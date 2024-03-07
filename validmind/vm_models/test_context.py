@@ -83,7 +83,7 @@ class TestInput:
     def __init__(self, inputs):
         """Initialize with either a dictionary of inputs"""
         for key, value in inputs.items():
-            # retrieve input object from input registry if input_id is provide
+            # retrieve input object from input registry if input_id is provided
             if isinstance(value, str):
                 value = input_registry.get(key=value)
             setattr(self, key, value)
@@ -110,7 +110,13 @@ class InputAccessTrackerProxy:
     def __getattr__(self, name):
         # Track access only if the attribute actually exists in the inputs
         if hasattr(self._inputs, name):
-            self._accessed.add(name)
+            input = getattr(self._inputs, name)
+            # if the input is a list of inputs, track each input individually
+            if isinstance(input, list) or isinstance(input, tuple):
+                for i in input:
+                    self._accessed.add(i.input_id)
+            else:
+                self._accessed.add(input.input_id)
             return getattr(self._inputs, name)
 
         raise AttributeError(
