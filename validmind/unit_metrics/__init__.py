@@ -3,6 +3,7 @@ import json
 import hashlib
 import importlib
 
+from validmind.vm_models import TestInput
 
 from ..utils import get_model_info
 
@@ -204,7 +205,7 @@ def get_metric_cache_key(metric_id, params, inputs):
     return key
 
 
-def run_metric(metric_id, inputs=None, params=None):
+def run_metric(metric_id=None, inputs=None, params=None):
     """Run a single metric
 
     This function provides a high level interface for running a single metric. A metric
@@ -221,24 +222,19 @@ def run_metric(metric_id, inputs=None, params=None):
 
     # Check if the metric value already exists in the global variable
     if cache_key in unit_metric_results_cache:
-        print(f"Loading last computed value value from '{metric_id}'")
         return unit_metric_results_cache[cache_key]
 
-    else:
-        # Compute the metric value
-        print(f"Computing metric value for '{metric_id}'")
+    # Load the metric class by metric_id
+    metric_class = _get_metric_class(metric_id)
 
-        # Load the metric class by metric_id
-        metric_class = _get_metric_class(metric_id)
+    # Initialize the metric
+    metric = metric_class(test_id=metric_id, inputs=TestInput(inputs), params=params)
 
-        # Initialize the metric
-        metric = metric_class(metric_id=metric_id, inputs=inputs, params=params)
+    # Run the metric
+    result = metric.run()
 
-        # Run the metric
-        result = metric.run()
+    cache_key = get_metric_cache_key(metric_id, params, inputs)
 
-        cache_key = get_metric_cache_key(metric_id, params, inputs)
-
-        unit_metric_results_cache[cache_key] = result
+    unit_metric_results_cache[cache_key] = result
 
     return result

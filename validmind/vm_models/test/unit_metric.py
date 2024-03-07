@@ -8,7 +8,7 @@ data for display and reporting purposes
 """
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Union, Dict
+from typing import Optional, Union, Dict
 
 import pandas as pd
 
@@ -23,10 +23,6 @@ class UnitMetric(Test):
     Metric objects track the schema supported by the ValidMind API
     """
 
-    # Class Variables
-    test_type: ClassVar[str] = "UnitMetric"
-    name: ClassVar[str] = ""  # name of the metric
-
     # Instance Variables
     result: MetricResult = None  # populated by cache_results() method
 
@@ -36,10 +32,17 @@ class UnitMetric(Test):
         """
         raise NotImplementedError("Metric must implement run()")
 
-    def _metric_name(self) -> str:
+    @property
+    def metric_id(self) -> str:
+        """
+        Return the metric id by using the automatically generated test_id
+        """
+        return self.test_id
+
+    @property
+    def name(self) -> str:
         # get metric name from metric_id, for example if metric_id i:
         # 'validmind.unit_metrics.sklearn.classification.F1' then the metric name is 'f1'
-        print(f"metric_id: {self.metric_id}")
         return self.metric_id.split(".")[-1].lower()
 
     @abstractmethod
@@ -55,7 +58,7 @@ class UnitMetric(Test):
         if metric_value is None:
             raise ValueError("metric_value cannot be None")
 
-        return {self._metric_name(): metric_value}
+        return {self.name: metric_value}
 
     def cache_results(
         self,

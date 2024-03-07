@@ -11,28 +11,10 @@ from validmind.vm_models import UnitMetric
 
 @dataclass
 class Precision(UnitMetric):
-    def __init__(
-        self,
-        inputs=None,
-        metric_id=None,
-        params=None,
-        test_id="Precision Test",
-    ):
-        # Pass test_id and any other necessary parameters to the superclass
-        super().__init__(
-            test_id=test_id,
-        )
-
-        self.metric_id = metric_id
-        self.metric_inputs = inputs
-        self.params = params if params is not None else {}
 
     def run(self):
-
-        y_true = self.metric_inputs["dataset"].y
-        y_pred = self.metric_inputs["dataset"].y_pred(
-            model_id=self.metric_inputs["model"].input_id
-        )
+        y_true = self.inputs.dataset.y
+        y_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
 
         value = precision_score(y_true, y_pred, **self.params)
 
