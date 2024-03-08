@@ -58,9 +58,4 @@ class MetricResult:
             "ref_id": self.ref_id,
             "value": value,
             "summary": self.summary.serialize() if self.summary else None,
-            "risk_thresholds": self.risk_thresholds,
-            "metric_ranges": self.metric_ranges,
-            "metric_status": self.metric_status,
-            "required_inputs": self.required_inputs,
-            "other_results": self.other_results,
         }
