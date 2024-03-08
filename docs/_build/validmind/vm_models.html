@@ -176,6 +176,30 @@
 
             </li>
             <li>
+                    <a class="class" href="#UnitMetric">UnitMetric</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#UnitMetric.__init__">UnitMetric</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#UnitMetric.run">run</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#UnitMetric.metric_id">metric_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#UnitMetric.name">name</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#UnitMetric.summary">summary</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#UnitMetric.cache_results">cache_results</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#Metric">Metric</a>
                             <ul class="memberlist">
                         <li>
@@ -940,6 +964,148 @@ to returning the class' docstring</p>
                 <dd id="Test.model" class="variable">model</dd>
                 <dd id="Test.models" class="variable">models</dd>
                 <dd id="Test.validate_inputs" class="function">validate_inputs</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="UnitMetric">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">UnitMetric</span><wbr>(<span class="base"><a href="#Test">validmind.vm_models.Test</a></span>):
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric"></a>
+    
+            <div class="docstring"><p>Metric objects track the schema supported by the ValidMind API</p>
+</div>
+
+
+                            <div id="UnitMetric.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">UnitMetric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#TestContext">validmind.vm_models.TestContext</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#TestInput">validmind.vm_models.TestInput</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_ref_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_section_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n"><a href="#MetricResult">validmind.vm_models.MetricResult</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="UnitMetric.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.run"></a>
+    
+            <div class="docstring"><p>Run the metric</p>
+</div>
+
+
+                            </div>
+                            <div id="UnitMetric.metric_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">metric_id</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.metric_id"></a>
+    
+            <div class="docstring"><p>Return the metric id by using the automatically generated test_id</p>
+</div>
+
+
+                            </div>
+                            <div id="UnitMetric.name" class="classattr">
+                                <div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.name"></a>
+    
+            <div class="docstring"><p>str(object='') -> str
+str(bytes_or_buffer[, encoding[, errors]]) -> str</p>
+
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.__str__() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p>
+</div>
+
+
+                            </div>
+                            <div id="UnitMetric.summary" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.summary"></a>
+    
+            <div class="docstring"><p>Raise an error if metric_value is None.
+Else, return an object like this: {<metric-name>: <value>}
+Metric name can be calculated from a property, similar to how you defined test_id above.
+The metric name should ideally be a single lowercase word such as accuracy.</p>
+</div>
+
+
+                            </div>
+                            <div id="UnitMetric.cache_results" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">cache_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">metric_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnitMetric.cache_results"></a>
+    
+            <div class="docstring"><p>Cache the results of the metric calculation and do any post-processing if needed</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>metric_value (Union[dict, list, pd.DataFrame]):</strong>  The value of the metric</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>TestSuiteResult: The test suite result object</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#Test">Test</a></dt>
+                                <dd id="UnitMetric.description" class="function"><a href="#Test.description">description</a></dd>
+                <dd id="UnitMetric.log" class="function"><a href="#Test.log">log</a></dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
+                                <dd id="UnitMetric.get_accessed_inputs" class="function">get_accessed_inputs</dd>
+                <dd id="UnitMetric.dataset" class="variable">dataset</dd>
+                <dd id="UnitMetric.model" class="variable">model</dd>
+                <dd id="UnitMetric.models" class="variable">models</dd>
+                <dd id="UnitMetric.validate_inputs" class="function">validate_inputs</dd>
 
             </div>
                                 </dl>
