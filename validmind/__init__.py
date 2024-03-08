@@ -61,6 +61,7 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 from .utils import run_async  # noqa: E402
+from .unit_metrics import run_metric
 
 
 def log_metrics(metrics, inputs=None):
@@ -110,8 +111,10 @@ __all__ = [  # noqa
     "tests",
     "test_suites",
     "vm_models",
+    "unit_metrics",
     # Framework Logging API
     "log_figure",
     "log_metrics",
     "log_test_results",
+    "run_metric",
 ]
