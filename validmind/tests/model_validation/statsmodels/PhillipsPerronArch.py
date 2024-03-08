@@ -45,6 +45,7 @@ class PhillipsPerronArch(Metric):
     """
 
     name = "phillips_perron"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": [

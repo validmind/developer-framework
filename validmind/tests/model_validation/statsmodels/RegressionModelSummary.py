@@ -50,16 +50,17 @@ class RegressionModelSummary(Metric):
     """
 
     name = "regression_model_summary"
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_metadata", "model_comparison"],
     }
 
     def run(self):
-        X_columns = self.inputs.model.train_ds.get_features_columns()
+        X_columns = self.inputs.dataset.get_features_columns()
 
-        y_true = self.inputs.model.train_ds.y
-        y_pred = self.inputs.model.predict(self.inputs.model.train_ds.x)
+        y_true = self.inputs.dataset.y
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
 
         r2 = r2_score(y_true, y_pred)
         adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(X_columns))

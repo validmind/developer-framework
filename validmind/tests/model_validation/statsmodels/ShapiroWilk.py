@@ -43,6 +43,7 @@ class ShapiroWilk(Metric):
     """
 
     name = "shapiro_wilk"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": ["tabular_data", "data_distribution", "statistical_test"],
@@ -52,9 +53,7 @@ class ShapiroWilk(Metric):
         """
         Calculates Shapiro-Wilk test for each of the dataset features.
         """
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
-
+        x_train = self.inputs.dataset.df
         sw_values = {}
         for col in x_train.columns:
             sw_stat, sw_pvalue = stats.shapiro(x_train[col].values)

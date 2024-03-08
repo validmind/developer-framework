@@ -46,7 +46,7 @@ class AdjustedRandIndex(ClusterPerformance):
     """
 
     name = "adjusted_rand_index"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["clustering"],
         "tags": [

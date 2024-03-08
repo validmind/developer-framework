@@ -107,7 +107,7 @@ class PiTCreditScoresHistogram(Metric):
         return fig
 
     def run(self):
-        df = self.inputs.dataset
+        df = self.inputs.dataset.df
         default_column = self.params["default_column"]
         predicted_default_column = self.params["predicted_default_column"]
         scores_column = self.params["scores_column"]

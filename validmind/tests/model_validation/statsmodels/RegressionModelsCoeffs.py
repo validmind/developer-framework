@@ -45,6 +45,7 @@ class RegressionModelsCoeffs(Metric):
     """
 
     name = "regression_models_coefficients"
+    required_inputs = ["models"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_comparison"],

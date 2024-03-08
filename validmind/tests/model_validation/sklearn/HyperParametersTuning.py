@@ -51,7 +51,7 @@ class HyperParametersTuning(Metric):
     """
 
     name = "hyper_parameters_tuning"
-    required_inputs = ["model", "model.train_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "clustering"],
         "tags": [
@@ -71,7 +71,7 @@ class HyperParametersTuning(Metric):
         estimators = GridSearchCV(
             model, param_grid=param_grid, scoring=self.params["scoring"]
         )
-        estimators.fit(self.inputs.model.train_ds.x, self.inputs.model.train_ds.y)
+        estimators.fit(self.inputs.dataset.x, self.inputs.dataset.y)
 
         results = [
             {

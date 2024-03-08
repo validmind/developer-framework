@@ -56,8 +56,7 @@ class RegressionModelsPerformanceComparison(Metric):
     """
 
     name = "models_performance_comparison"
-
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
 
     metadata = {
         "task_types": ["regression"],
@@ -66,12 +65,6 @@ class RegressionModelsPerformanceComparison(Metric):
             "model_performance",
         ],
     }
-
-    def y_true(self):
-        return self.inputs.model.y_test_true
-
-    def y_pred(self):
-        return self.inputs.model.y_test_predict
 
     def regression_errors(self, y_true_test, y_pred_test):
         mae_test = metrics.mean_absolute_error(y_true_test, y_pred_test)
@@ -121,7 +114,7 @@ class RegressionModelsPerformanceComparison(Metric):
         # Check models list is not empty
         if not self.inputs.models:
             raise SkipTestError(
-                "List of models must be provided as a `models` parameter to compare perforance"
+                "List of models must be provided as a `models` parameter to compare performance"
             )
 
         all_models = [self.inputs.model]
@@ -132,7 +125,8 @@ class RegressionModelsPerformanceComparison(Metric):
 
         for idx, model in enumerate(all_models):
             result = self.regression_errors(
-                y_true_test=model.y_test_true, y_pred_test=model.y_test_predict
+                y_true_test=self.inputs.dataset.y,
+                y_pred_test=self.inputs.dataset.y_pred(model.input_id),
             )
             results["model_" + str(idx)] = result
         return self.cache_results(results)

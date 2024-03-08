@@ -347,9 +347,7 @@ class NumpyDataset(VMDataset):
         Returns:
             list: The list of feature column names.
         """
-        if self._feature_columns is None:
-            return self.get_features_columns()
-        return self._feature_columns
+        return self._feature_columns or []
 
     @property
     def text_column(self) -> str:
@@ -515,7 +513,7 @@ class NumpyDataset(VMDataset):
         Returns:
             List[str]: The column names of the feature variables.
         """
-        return self._feature_columns
+        return self.feature_columns
 
     def get_numeric_features_columns(self):
         """

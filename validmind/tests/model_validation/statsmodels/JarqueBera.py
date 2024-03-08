@@ -44,6 +44,7 @@ class JarqueBera(Metric):
     """
 
     name = "jarque_bera"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": [
@@ -58,8 +59,7 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
 
         jb_values = {}
         for col in x_train.columns:
