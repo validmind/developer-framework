@@ -7,6 +7,8 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+import validmind as vm
+
 from . import (
     simple_preprocess_booleans,
     simple_preprocess_categoricals,
@@ -58,7 +60,7 @@ def preprocess(df):
     return train_df, validation_df, test_df
 
 
-def get_test_config(vm, input_mapping):
+def get_test_config(input_mapping):
     """
     Returns input configuration for the default documentation
     template assigned to this demo model
@@ -80,6 +82,7 @@ def get_test_config(vm, input_mapping):
         with the train_dataset (in sample) and once with the test_dataset (out of sample)
     """
     default_config = vm.get_test_suite().get_default_config()
+
     for _, test_config in default_config.items():
         if "model" in test_config["inputs"]:
             test_config["inputs"]["model"] = input_mapping["model"]
