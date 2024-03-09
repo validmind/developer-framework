@@ -58,7 +58,7 @@ def preprocess(df):
     return train_df, validation_df, test_df
 
 
-def get_input_config(vm):
+def get_test_config(vm, input_mapping):
     """
     Returns input configuration for the default documentation
     template assigned to this demo model
@@ -71,6 +71,7 @@ def get_input_config(vm):
 
     We assign the following inputs depending on the input config expected
     by each test:
+
     - When a test expects a "dataset" we use the raw_dataset
     - When a tets expects "datasets" we use the train_dataset and test_dataset
     - When a test expects a "model" we use the model
@@ -81,13 +82,16 @@ def get_input_config(vm):
     default_config = vm.get_test_suite().get_default_config()
     for _, test_config in default_config.items():
         if "model" in test_config["inputs"]:
-            test_config["inputs"]["model"] = "model"
+            test_config["inputs"]["model"] = input_mapping["model"]
         if "datasets" in test_config["inputs"]:
-            test_config["inputs"]["datasets"] = ["train_dataset", "test_dataset"]
+            test_config["inputs"]["datasets"] = [
+                input_mapping["train_dataset"],
+                input_mapping["test_dataset"],
+            ]
         if "dataset" in test_config["inputs"]:
             if "model" in test_config["inputs"]:
-                test_config["inputs"]["dataset"] = "test_dataset"
+                test_config["inputs"]["dataset"] = input_mapping["test_dataset"]
             else:
-                test_config["inputs"]["dataset"] = "raw_dataset"
+                test_config["inputs"]["dataset"] = input_mapping["raw_dataset"]
 
     return default_config
