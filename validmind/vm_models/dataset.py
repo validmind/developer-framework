@@ -251,10 +251,9 @@ class NumpyDataset(VMDataset):
             # If the model is a FoundationModel, we need to pass the DataFrame to
             # the predict method since it requires column names in order to format
             # the input prompt with its template variables
-            if model.model_library() == "FoundationModel":
-                x_only = self.x_df()
-            else:
-                x_only = self.x
+            x_only = (
+                self.x_df() if model.model_library() == "FoundationModel" else self.x
+            )
 
             prediction_values = np.array(model.predict(x_only))
             self.__assign_prediction_values(model, pred_column, prediction_values)
