@@ -200,8 +200,11 @@ class NumpyDataset(VMDataset):
         self._columns.append(pred_column)
         self._df[pred_column] = prediction_values
 
-    def assign_predictions(
-        self, model, prediction_values: list = None, prediction_column=None
+    def assign_predictions(  # noqa: C901 - we need to simplify this method
+        self,
+        model,
+        prediction_values: list = None,
+        prediction_column=None,
     ):
         if not model:
             raise ValueError(

@@ -4,7 +4,6 @@
 
 from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
 
 from validmind.logging import get_logger
