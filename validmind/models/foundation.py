@@ -59,9 +59,7 @@ class FoundationModel(VMModel):
         """
         Predict method for the model. This is a wrapper around the model's
         """
-        return np.array(
-            [self.predict_fn(self._build_prompt(x[1])) for x in X.iterrows()]
-        )
+        return [self.predict_fn(self._build_prompt(x[1])) for x in X.iterrows()]
 
     def model_library(self):
         """
