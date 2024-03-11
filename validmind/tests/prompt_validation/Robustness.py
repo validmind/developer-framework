@@ -128,7 +128,7 @@ Input:
                 "Robustness only supports single-variable prompts for now"
             )
 
-        target_class_labels = self.inputs.model.test_ds.target_classes()
+        target_class_labels = self.inputs.dataset.target_classes()
         # Guard against too many classes (maybe not a classification model)
         if len(target_class_labels) > 10:
             raise SkipTestError(

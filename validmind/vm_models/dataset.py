@@ -200,8 +200,11 @@ class NumpyDataset(VMDataset):
         self._columns.append(pred_column)
         self._df[pred_column] = prediction_values
 
-    def assign_predictions(
-        self, model, prediction_values: list = None, prediction_column=None
+    def assign_predictions(  # noqa: C901 - we need to simplify this method
+        self,
+        model,
+        prediction_values: list = None,
+        prediction_column=None,
     ):
         if not model:
             raise ValueError(
@@ -241,18 +244,19 @@ class NumpyDataset(VMDataset):
                 logger.info(
                     f"Prediction column {pred_column} already exist in the dataset. Linking the model with the {pred_column} column"
                 )
-            else:
-                logger.info("Running predict()... This may take a while")
-                x_only = self._raw_dataset[
-                    :,
-                    [
-                        self._columns.index(name)
-                        for name in self._columns
-                        if name in self._feature_columns
-                    ],
-                ]
-                prediction_values = np.array(model.predict(x_only))
-                self.__assign_prediction_values(model, pred_column, prediction_values)
+                return
+
+            logger.info("Running predict()... This may take a while")
+
+            # If the model is a FoundationModel, we need to pass the DataFrame to
+            # the predict method since it requires column names in order to format
+            # the input prompt with its template variables
+            x_only = (
+                self.x_df() if model.model_library() == "FoundationModel" else self.x
+            )
+
+            prediction_values = np.array(model.predict(x_only))
+            self.__assign_prediction_values(model, pred_column, prediction_values)
         else:
             logger.info(
                 f"Prediction column {self._extra_columns['prediction_columns'][model.input_id]} already linked to the {model.input_id}"
@@ -407,7 +411,7 @@ class NumpyDataset(VMDataset):
                 for name in self.columns
                 if name == self.prediction_column(model_id=model_id)
             ],
-        ]
+        ].flatten()
 
     @property
     def type(self) -> str:

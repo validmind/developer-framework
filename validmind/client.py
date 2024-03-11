@@ -29,7 +29,6 @@ from .vm_models import TestInput, TestSuite, TestSuiteRunner
 from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
 from .vm_models.model import VMModel, get_model_class
 
-
 pd.option_context("format.precision", 2)
 
 logger = get_logger(__name__)
