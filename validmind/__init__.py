@@ -60,8 +60,8 @@ from .client import (  # noqa: E402
     run_documentation_tests,
     run_test_suite,
 )
-from .utils import run_async  # noqa: E402
 from .unit_metrics import run_metric
+from .utils import run_async  # noqa: E402
 
 
 def log_metrics(metrics, inputs=None):
