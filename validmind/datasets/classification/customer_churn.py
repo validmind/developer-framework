@@ -97,4 +97,23 @@ def get_test_config(input_mapping):
             else:
                 test_config["inputs"]["dataset"] = input_mapping["raw_dataset"]
 
+    # ClassifierPerformance is a special case since we run an in-sample and out-of-sample
+    # test with two different datasets: train_dataset and test_dataset
+    default_config[
+        "validmind.model_validation.sklearn.ClassifierPerformance:in_sample"
+    ] = {
+        "inputs": {
+            "model": input_mapping["model"],
+            "dataset": input_mapping["train_dataset"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.ClassifierPerformance:out_of_sample"
+    ] = {
+        "inputs": {
+            "model": input_mapping["model"],
+            "dataset": input_mapping["test_dataset"],
+        }
+    }
+
     return default_config
