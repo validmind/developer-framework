@@ -8,7 +8,7 @@ data for display and reporting purposes
 """
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Optional, Union, Dict
+from typing import Dict, Optional, Union
 
 import pandas as pd
 
