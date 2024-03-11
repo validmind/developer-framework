@@ -11,6 +11,7 @@ from .figure import Figure
 from .model import R_MODEL_TYPES, ModelAttributes, VMModel
 from .test.metric import Metric
 from .test.metric_result import MetricResult
+from .test.unit_metric import UnitMetric
 from .test.result_summary import ResultSummary, ResultTable, ResultTableMetadata
 from .test.test import Test
 from .test.threshold_test import ThresholdTest
@@ -29,6 +30,7 @@ __all__ = [
     "ResultTable",
     "ResultTableMetadata",
     "Test",
+    "UnitMetric",
     "Metric",
     "MetricResult",
     "ThresholdTest",
