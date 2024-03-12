@@ -9,9 +9,6 @@ on:
       - main
       - prod
       - release-v1
-  # Debugging
-  pull_request:
-    branches: ["*"]
 
 permissions:
   contents: read
