@@ -189,7 +189,7 @@ class TestAPIClient(unittest.TestCase):
             api_client.log_metadata,
             "1234",
             text="Some Text",
-            json={"key": "value"},
+            _json={"key": "value"},
         )
 
         url = f"{os.environ['VM_API_HOST']}/log_metadata?run_cuid={os.environ['VM_RUN_CUID']}"
