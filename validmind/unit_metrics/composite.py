@@ -5,7 +5,6 @@
 from dataclasses import dataclass
 from typing import Protocol
 
-from ..utils import run_async
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
