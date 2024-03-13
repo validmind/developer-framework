@@ -18,7 +18,7 @@ import pandas as pd
 from IPython.display import display
 
 from ... import api_client
-from ...utils import NumpyEncoder, test_id_to_name
+from ...utils import NumpyEncoder, run_async, test_id_to_name
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
@@ -26,7 +26,7 @@ from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
 
 
-async def update_metadata(content_id: str, text: str) -> None:
+async def update_metadata(content_id: str, text: str, json: dict | list = None):
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
@@ -43,7 +43,7 @@ async def update_metadata(content_id: str, text: str) -> None:
         or VM_OVERRIDE_METADATA == "True"
         or VM_OVERRIDE_METADATA is True
     ):
-        await api_client.log_metadata(content_id, text)
+        await api_client.log_metadata(content_id, text, json)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -149,9 +149,13 @@ class ResultWrapper(ABC):
         display(self.to_widget())
 
     @abstractmethod
-    async def log(self):
+    async def log_async(self):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+    def log(self):
+        """Log the result... May be overridden by subclasses"""
+        run_async(self.log_async)
 
 
 @dataclass
@@ -172,7 +176,7 @@ class FailedResultWrapper(ResultWrapper):
             value=f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
         )
 
-    async def log(self):
+    async def log_async(self):
         pass
 
 
@@ -279,7 +283,7 @@ class MetricResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    async def log(self):
+    async def log_async(self):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
@@ -294,7 +298,13 @@ class MetricResultWrapper(ResultWrapper):
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
-                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
+                tasks.append(
+                    update_metadata(
+                        content_id=metadata["content_id"],
+                        text=metadata.get("text", ""),
+                        json=metadata.get("json"),
+                    )
+                )
 
         await asyncio.gather(*tasks)
 
@@ -365,7 +375,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    async def log(self):
+    async def log_async(self):
         tasks = [api_client.log_test_result(self.test_results, self.inputs)]
 
         if self.figures:
