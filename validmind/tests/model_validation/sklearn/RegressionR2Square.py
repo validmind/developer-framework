@@ -42,7 +42,7 @@ class RegressionR2Square(Metric):
     """
 
     name = "regression_errors_r2_square"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["regression"],
         "tags": [
@@ -69,16 +69,16 @@ class RegressionR2Square(Metric):
         return ResultSummary(results=[ResultTable(data=table_records)])
 
     def run(self):
-        y_true_train = self.inputs.model.y_train_true
-        class_pred_train = self.inputs.model.y_train_predict
-        y_true_train = y_true_train.astype(class_pred_train.dtype)
+        y_train_true = self.inputs.datasets[0].y
+        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_train_true = y_train_true.astype(y_train_pred.dtype)
 
-        y_true_test = self.inputs.model.y_test_true
-        class_pred_test = self.inputs.model.y_test_predict
-        y_true_test = y_true_test.astype(class_pred_test.dtype)
+        y_test_true = self.inputs.datasets[1].y
+        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        y_test_true = y_test_true.astype(y_test_pred.dtype)
 
-        r2s_train = metrics.r2_score(y_true_train, class_pred_train)
-        r2s_test = metrics.r2_score(y_true_test, class_pred_test)
+        r2s_train = metrics.r2_score(y_train_true, y_train_pred)
+        r2s_test = metrics.r2_score(y_test_true, y_test_pred)
 
         results = []
         results.append(
@@ -90,12 +90,12 @@ class RegressionR2Square(Metric):
             }
         )
 
-        X_columns = self.inputs.model.train_ds.get_features_columns()
+        X_columns = self.inputs.datasets[0].get_features_columns()
         adj_r2_train = adj_r2_score(
-            y_true_train, class_pred_train, len(y_true_train), len(X_columns)
+            y_train_true, y_train_pred, len(y_train_true), len(X_columns)
         )
         adj_r2_test = adj_r2_score(
-            y_true_test, class_pred_test, len(y_true_test), len(X_columns)
+            y_test_true, y_test_pred, len(y_test_true), len(X_columns)
         )
         results.append(
             {

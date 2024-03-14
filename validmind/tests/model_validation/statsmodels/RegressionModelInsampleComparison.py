@@ -60,6 +60,7 @@ class RegressionModelInsampleComparison(Metric):
     """
 
     name = "regression_insample_performance"
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["model_comparison"],
@@ -74,7 +75,9 @@ class RegressionModelInsampleComparison(Metric):
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
 
-        in_sample_performance = self._in_sample_performance_ols(all_models)
+        in_sample_performance = self._in_sample_performance_ols(
+            all_models, self.inputs.dataset
+        )
         in_sample_performance_df = pd.DataFrame(in_sample_performance)
 
         return self.cache_results(
@@ -85,7 +88,7 @@ class RegressionModelInsampleComparison(Metric):
             }
         )
 
-    def _in_sample_performance_ols(self, models):
+    def _in_sample_performance_ols(self, models, dataset):
         """
         Computes the in-sample performance evaluation metrics for a list of OLS models.
         Args:
@@ -103,10 +106,9 @@ class RegressionModelInsampleComparison(Metric):
         evaluation_results = []
 
         for i, model in enumerate(models):
-            X_columns = model.train_ds.get_features_columns()
-            X = model.train_ds.x
-            y_true = model.train_ds.y
-            y_pred = model.predict(X)
+            X_columns = dataset.get_features_columns()
+            y_true = dataset.y
+            y_pred = dataset.y_pred(model.model_id)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

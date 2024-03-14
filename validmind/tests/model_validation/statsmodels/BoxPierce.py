@@ -48,6 +48,7 @@ class BoxPierce(Metric):
     """
 
     name = "box_pierce"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["time_series_data", "forecasting", "statistical_test", "statsmodels"],
@@ -57,8 +58,7 @@ class BoxPierce(Metric):
         """
         Calculates Box-Pierce test for each of the dataset features
         """
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
 
         box_pierce_values = {}
         for col in x_train.columns:

@@ -57,7 +57,7 @@ class ROCCurve(Metric):
     """
 
     name = "roc_curve"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [

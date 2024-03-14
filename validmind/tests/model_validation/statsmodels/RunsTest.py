@@ -49,6 +49,7 @@ class RunsTest(Metric):
     """
 
     name = "runs_test"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": ["tabular_data", "statistical_test", "statsmodels"],
@@ -58,8 +59,7 @@ class RunsTest(Metric):
         """
         Calculates the run test for each of the dataset features
         """
-        x_train = self.train_ds.df
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
 
         runs_test_values = {}
         for col in x_train.columns:

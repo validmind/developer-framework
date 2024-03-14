@@ -2,15 +2,15 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import numpy as np
-import json
 import hashlib
 import importlib
+import json
+
+import numpy as np
 
 from validmind.vm_models import TestInput
 
 from ..utils import get_model_info
-
 
 unit_metric_results_cache = {}
 

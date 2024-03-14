@@ -59,7 +59,7 @@ class KMeansClustersOptimization(Metric):
     """
 
     name = "clusters_optimize_elbow_method"
-    required_inputs = ["model", "model.train_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["clustering"],
         "tags": ["sklearn", "model_performance", "kmeans"],
@@ -80,25 +80,25 @@ class KMeansClustersOptimization(Metric):
         for k in n_clusters:
             # Building and fitting the model
             kmeanModel = model.set_params(n_clusters=k)
-            kmeanModel = kmeanModel.fit(self.inputs.model.train_ds.x)
+            kmeanModel = kmeanModel.fit(self.inputs.dataset.x)
             # Calculate silhouette coefficients for each data point
             silhouette_avg[k] = silhouette_score(
-                self.inputs.model.train_ds.x,
-                kmeanModel.predict(self.inputs.model.train_ds.x),
+                self.inputs.dataset.x,
+                kmeanModel.predict(self.inputs.dataset.x),
             )
 
             distortions[k] = (
                 sum(
                     np.min(
                         cdist(
-                            self.inputs.model.train_ds.x,
+                            self.inputs.dataset.x,
                             kmeanModel.cluster_centers_,
                             "euclidean",
                         ),
                         axis=1,
                     )
                 )
-                / self.inputs.model.train_ds.x.shape[0]
+                / self.inputs.dataset.x.shape[0]
             )
         fig = make_subplots(
             rows=1,
