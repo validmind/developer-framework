@@ -158,6 +158,13 @@ class TestUtils:
 
         return []
 
+    def _get_input_dict(self):
+        """Return a dictionary of all inputs"""
+        if isinstance(self.inputs, InputAccessTrackerProxy):
+            return self.inputs._inputs.__dict__
+
+        return self.inputs.__dict__
+
     def _get_legacy_input(self, key):
         """Retrieve an input from the Test Input or, for backwards compatibility,
         the Test Context

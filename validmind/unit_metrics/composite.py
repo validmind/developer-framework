@@ -4,7 +4,9 @@
 
 from dataclasses import dataclass
 from typing import Protocol
+from uuid import uuid4
 
+from ..utils import run_async
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
@@ -19,9 +21,76 @@ class MetricProtocol(Protocol):
         pass
 
 
+@dataclass
+class CompositeMetric(Metric):
+
+    unit_metrics: list[str] = None
+
+    def __post_init__(self):
+        if self._unit_metrics:
+            self.unit_metrics = self._unit_metrics
+        elif self.unit_metrics is None:
+            raise ValueError("unit_metrics must be provided")
+
+        if self._output_template:
+            self.output_template = self._output_template
+
+    def run(self):
+        self.result = run_metrics(
+            key=self.test_id,
+            metric_ids=self.unit_metrics,
+            inputs=self._get_input_dict(),
+            params=self.params,
+            output_template=self.output_template,
+            show=False,
+        )
+
+        return self.result
+
+    def summary(self, result: dict):
+        return ResultSummary(results=[ResultTable(data=[result])])
+
+
+def load_composite_metric(metric_key: str):
+    # TODO: figure out this circular import thing:
+    from ..api_client import get_metadata
+
+    # get the unit metric ids from the metadata
+    unit_metrics = run_async(
+        get_metadata, f"composite_metric_def:{metric_key}:unit_metrics"
+    )
+    output_template = run_async(
+        get_metadata, f"composite_metric_def:{metric_key}:output_template"
+    )
+
+    class_def = type(
+        metric_key.split(".")[-1],
+        (CompositeMetric, Metric),
+        {
+            "__doc__": "Composite Metric built from multiple unit metrics",
+            "_unit_metrics": unit_metrics["json"],
+            "_output_template": output_template["json"]["output_template"],
+        },
+    )
+
+    return class_def
+
+
 def run_metrics(
-    metric_ids: list[str], inputs=None, params=None, output_template=None
+    name: str = None,
+    metric_ids: list[str] = None,
+    output_template=None,
+    inputs=None,
+    params=None,
+    key: str = None,
+    show=True,
 ) -> MetricResultWrapper:
+    if not metric_ids:
+        raise ValueError("metric_ids must be provided")
+
+    if not name and not key:
+        raise ValueError("name or key must be provided")
+
     results = {}
 
     for metric_id in metric_ids:
@@ -32,29 +101,32 @@ def run_metrics(
         )
         results[list(result.summary.keys())[0]] = result.value
 
+    metric_key = f"validmind.composite_metric.{name}" if not key else key
+
     result_wrapper = MetricResultWrapper(
-        result_id="composite_metric",
+        result_id=metric_key,
         result_metadata=[
             {
-                "content_id": "unit_metrics:composite_metric",
+                "content_id": f"composite_metric_def:{metric_key}:unit_metrics",
                 "json": metric_ids,
             },
             {
-                "content_id": "output_template:composite_metric",
+                "content_id": f"composite_metric_def:{metric_key}:output_template",
                 "json": {"output_template": output_template},
             },
         ],
         inputs=list(inputs.keys()),
         output_template=output_template,
         metric=MetricResult(
-            key="composite_metric",
-            ref_id="composite_metric",
+            key=metric_key,
+            ref_id=str(uuid4()),
             value=results,
             summary=ResultSummary(results=[ResultTable(data=[results])]),
         ),
     )
 
-    result_wrapper.show()
+    if show:
+        result_wrapper.show()
 
     return result_wrapper
 
@@ -68,25 +140,3 @@ def metric(cls: MetricProtocol):
     cls.run = run
 
     return cls
-
-
-@dataclass
-class CompositeMetric(Metric):
-
-    unit_metrics: list[str] = None
-
-    def __post_init__(self):
-        if self.unit_metrics is None:
-            raise ValueError("unit_metrics must be provided")
-
-    def run(self):
-        return self.cache_results(
-            run_metrics(
-                self.unit_metrics,
-                inputs=self.inputs,
-                params=self.params,
-            )
-        )
-
-    def summary(self, result: dict):
-        return ResultSummary(results=[ResultTable(data=[result])])

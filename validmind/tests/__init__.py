@@ -18,6 +18,7 @@ from markdown import markdown
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
+from ..unit_metrics.composite import load_composite_metric
 from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .__types__ import ExternalTestProvider
@@ -260,13 +261,10 @@ def load_test(test_id, reload=False):  # noqa: C901
     error = None
     namespace = parts[0]
 
-    if namespace != "validmind" and namespace not in __test_providers:
-        error = (
-            f"Unable to load test {test_id}. "
-            f"No Test Provider found for the namespace: {namespace}."
-        )
+    if test_id.startswith("validmind.composite_metric"):
+        test = load_composite_metric(test_id)
 
-    if namespace == "validmind":
+    elif namespace == "validmind":
         test_module = ".".join(parts[1:-1])
         test_class = parts[-1]
 
@@ -283,6 +281,12 @@ def load_test(test_id, reload=False):  # noqa: C901
             error = f"Unable to load test {test_id}. {e}"
         except AttributeError:
             error = f"Unable to load test {test_id}. Class not in module: {test_class}"
+
+    elif namespace != "validmind" and namespace not in __test_providers:
+        error = (
+            f"Unable to load test {test_id}. "
+            f"No Test Provider found for the namespace: {namespace}."
+        )
 
     elif namespace in __test_providers:
         try:
