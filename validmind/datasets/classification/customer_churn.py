@@ -2,9 +2,11 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import json
 import os
 
 import pandas as pd
+from IPython.display import HTML, display
 from sklearn.model_selection import train_test_split
 
 import validmind as vm
@@ -60,7 +62,29 @@ def preprocess(df):
     return train_df, validation_df, test_df
 
 
-def get_test_config(input_mapping):
+def preview_test_config(config):
+    formatted_json = json.dumps(config, indent=4)
+
+    # JavaScript + HTML for the collapsible section
+    collapsible_html = f"""
+    <script>
+    function toggleOutput() {{
+        var content = document.getElementById("collapsibleContent");
+        if (content.style.display === "none") {{
+            content.style.display = "block";
+        }} else {{
+            content.style.display = "none";
+        }}
+    }}
+    </script>
+    <button onclick="toggleOutput()">Preview Config</button>
+    <div id="collapsibleContent" style="display:none;"><pre>{formatted_json}</pre></div>
+    """
+
+    display(HTML(collapsible_html))
+
+
+def get_demo_test_config():
     """
     Returns input configuration for the default documentation
     template assigned to this demo model
@@ -85,17 +109,17 @@ def get_test_config(input_mapping):
 
     for _, test_config in default_config.items():
         if "model" in test_config["inputs"]:
-            test_config["inputs"]["model"] = input_mapping["model"]
+            test_config["inputs"]["model"] = "model"
         if "datasets" in test_config["inputs"]:
             test_config["inputs"]["datasets"] = [
-                input_mapping["train_dataset"],
-                input_mapping["test_dataset"],
+                "train_dataset",
+                "test_dataset",
             ]
         if "dataset" in test_config["inputs"]:
             if "model" in test_config["inputs"]:
-                test_config["inputs"]["dataset"] = input_mapping["test_dataset"]
+                test_config["inputs"]["dataset"] = "test_dataset"
             else:
-                test_config["inputs"]["dataset"] = input_mapping["raw_dataset"]
+                test_config["inputs"]["dataset"] = "raw_dataset"
 
     # ClassifierPerformance is a special case since we run an in-sample and out-of-sample
     # test with two different datasets: train_dataset and test_dataset
@@ -103,16 +127,16 @@ def get_test_config(input_mapping):
         "validmind.model_validation.sklearn.ClassifierPerformance:in_sample"
     ] = {
         "inputs": {
-            "model": input_mapping["model"],
-            "dataset": input_mapping["train_dataset"],
+            "model": "model",
+            "dataset": "train_dataset",
         }
     }
     default_config[
         "validmind.model_validation.sklearn.ClassifierPerformance:out_of_sample"
     ] = {
         "inputs": {
-            "model": input_mapping["model"],
-            "dataset": input_mapping["test_dataset"],
+            "model": "model",
+            "dataset": "test_dataset",
         }
     }
 
