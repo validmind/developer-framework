@@ -545,7 +545,7 @@ class NumpyDataset(VMDataset):
         # Extract categorical columns from the dataset
         categorical_columns = (
             self.df[self.feature_columns]
-            .select_dtypes(include=[np.object, pd.Categorical])
+            .select_dtypes(include=[object, pd.Categorical])
             .columns.tolist()
         )
 
