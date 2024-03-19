@@ -2,7 +2,6 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 
@@ -54,7 +53,7 @@ class TabularCategoricalBarPlots(Metric):
 
         # Extract categorical columns from the dataset
         categorical_columns = df.select_dtypes(
-            include=[np.object, pd.Categorical]
+            include=[object, pd.Categorical]
         ).columns.tolist()
 
         if len(categorical_columns) == 0:
