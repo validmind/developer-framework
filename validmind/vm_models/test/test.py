@@ -93,4 +93,4 @@ class Test(TestUtils):
         """
         Log the test results to ValidMind
         """
-        run_async(self.result.log)
+        return self.result.log()
