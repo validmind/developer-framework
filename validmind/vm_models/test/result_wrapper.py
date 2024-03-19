@@ -26,7 +26,7 @@ from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
 
 
-async def update_metadata(content_id: str, text: str, json: dict | list = None):
+async def update_metadata(content_id: str, text: str, _json: dict | list = None):
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
@@ -43,7 +43,7 @@ async def update_metadata(content_id: str, text: str, json: dict | list = None):
         or VM_OVERRIDE_METADATA == "True"
         or VM_OVERRIDE_METADATA is True
     ):
-        await api_client.log_metadata(content_id, text, json)
+        await api_client.log_metadata(content_id, text, _json)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -302,11 +302,11 @@ class MetricResultWrapper(ResultWrapper):
                     update_metadata(
                         content_id=metadata["content_id"],
                         text=metadata.get("text", ""),
-                        json=metadata.get("json"),
+                        _json=metadata.get("json"),
                     )
                 )
 
-        await asyncio.gather(*tasks)
+        return asyncio.gather(*tasks)
 
 
 @dataclass
