@@ -156,4 +156,4 @@ class TestSuiteTest:
         if not self.result:
             raise ValueError("Cannot log test result before running the test")
 
-        await self.result.log()
+        await self.result.log_async()
