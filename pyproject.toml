@@ -60,7 +60,6 @@ tqdm = "^4.64.0"
 transformers = "^4.32.0"
 wget = "^3.2"
 xgboost = "^1.5.2"
-jupyter = "^1.0.0"
 polars = "^0.20.15"
 
 [tool.poetry.group.dev.dependencies]
