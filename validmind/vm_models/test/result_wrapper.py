@@ -18,7 +18,7 @@ import pandas as pd
 from IPython.display import display
 
 from ... import api_client
-from ...utils import NumpyEncoder, test_id_to_name
+from ...utils import NumpyEncoder, run_async, test_id_to_name
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
@@ -149,9 +149,13 @@ class ResultWrapper(ABC):
         display(self.to_widget())
 
     @abstractmethod
-    async def log(self):
+    async def log_async(self):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
+
+    def log(self):
+        """Log the result... May be overridden by subclasses"""
+        return run_async(self.log_async)
 
 
 @dataclass
@@ -172,7 +176,7 @@ class FailedResultWrapper(ResultWrapper):
             value=f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
         )
 
-    async def log(self):
+    async def log_async(self):
         pass
 
 
@@ -279,7 +283,7 @@ class MetricResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    async def log(self):
+    async def log_async(self):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
@@ -365,7 +369,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    async def log(self):
+    async def log_async(self):
         tasks = [api_client.log_test_result(self.test_results, self.inputs)]
 
         if self.figures:
