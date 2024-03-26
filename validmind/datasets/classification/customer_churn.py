@@ -2,11 +2,9 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import json
 import os
 
 import pandas as pd
-from IPython.display import HTML, display
 from sklearn.model_selection import train_test_split
 
 import validmind as vm
@@ -60,28 +58,6 @@ def preprocess(df):
     train_df, validation_df = train_test_split(train_val_df, test_size=0.25)
 
     return train_df, validation_df, test_df
-
-
-def preview_test_config(config):
-    formatted_json = json.dumps(config, indent=4)
-
-    # JavaScript + HTML for the collapsible section
-    collapsible_html = f"""
-    <script>
-    function toggleOutput() {{
-        var content = document.getElementById("collapsibleContent");
-        if (content.style.display === "none") {{
-            content.style.display = "block";
-        }} else {{
-            content.style.display = "none";
-        }}
-    }}
-    </script>
-    <button onclick="toggleOutput()">Preview Config</button>
-    <div id="collapsibleContent" style="display:none;"><pre>{formatted_json}</pre></div>
-    """
-
-    display(HTML(collapsible_html))
 
 
 def get_demo_test_config():
