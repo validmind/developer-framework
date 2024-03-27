@@ -83,9 +83,16 @@ class TestInput:
     def __init__(self, inputs):
         """Initialize with either a dictionary of inputs"""
         for key, value in inputs.items():
-            # retrieve input object from input registry if input_id is provided
+            # 1) retrieve input object from input registry if an input_id string is provided
+            # 2) check the input_id type if a list of inputs (mix of strings and objects) is provided
             if isinstance(value, str):
                 value = input_registry.get(key=value)
+            elif isinstance(value, list) or isinstance(value, tuple):
+                value = [
+                    input_registry.get(key=v) if isinstance(v, str) else v
+                    for v in value
+                ]
+
             setattr(self, key, value)
 
     def __getitem__(self, key):
@@ -112,7 +119,7 @@ class InputAccessTrackerProxy:
         if hasattr(self._inputs, name):
             input = getattr(self._inputs, name)
             # if the input is a list of inputs, track each input individually
-            if isinstance(input, list):
+            if isinstance(input, list) or isinstance(input, tuple):
                 for i in input:
                     self._accessed.add(i.input_id)
             else:

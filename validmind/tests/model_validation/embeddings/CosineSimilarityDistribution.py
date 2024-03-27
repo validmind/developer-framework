@@ -49,7 +49,7 @@ class CosineSimilarityDistribution(Metric):
     """
 
     name = "Text Embeddings Cosine Similarity Distribution"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["feature_extraction"],
         "tags": ["llm", "text_data", "text_embeddings", "visualization"],
@@ -57,7 +57,9 @@ class CosineSimilarityDistribution(Metric):
 
     def run(self):
         # Compute cosine similarity
-        similarities = cosine_similarity(self.inputs.model.y_test_predict.values)
+        similarities = cosine_similarity(
+            self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        )
 
         # plot the distribution
         fig = px.histogram(

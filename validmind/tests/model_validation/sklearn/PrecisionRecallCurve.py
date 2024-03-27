@@ -49,7 +49,7 @@ class PrecisionRecallCurve(Metric):
     """
 
     name = "pr_curve"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -65,8 +65,8 @@ class PrecisionRecallCurve(Metric):
         if self.inputs.model.model_library() == "FoundationModel":
             raise SkipTestError("Skipping PrecisionRecallCurve for Foundation models")
 
-        y_true = self.inputs.model.test_ds.y
-        y_pred = self.inputs.model.predict_proba(self.inputs.model.test_ds.x)
+        y_true = self.inputs.dataset.y
+        y_pred = self.inputs.model.predict_proba(self.inputs.dataset.x)
 
         # PR curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:

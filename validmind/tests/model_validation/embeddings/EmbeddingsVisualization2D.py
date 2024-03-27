@@ -48,7 +48,7 @@ class EmbeddingsVisualization2D(Metric):
     """
 
     name = "2D Visualization of Text Embeddings"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     default_params = {
         "cluster_column": None,
         "perplexity": 30,
@@ -67,7 +67,7 @@ class EmbeddingsVisualization2D(Metric):
             )
 
         # use TSNE to reduce dimensionality of embeddings
-        num_samples = len(self.inputs.model.y_test_predict.values)
+        num_samples = len(self.inputs.dataset.y_pred(self.inputs.model.input_id))
 
         if self.params["perplexity"] >= num_samples:
             perplexity = num_samples - 1
@@ -83,7 +83,7 @@ class EmbeddingsVisualization2D(Metric):
         fig = px.scatter(
             x=reduced_embeddings[:, 0],
             y=reduced_embeddings[:, 1],
-            color=self.inputs.model.test_ds.df[cluster_column],
+            color=self.inputs.dataset.df[cluster_column],
             title="2D Visualization of Text Embeddings",
         )
         fig.update_layout(width=500, height=500)

@@ -62,6 +62,9 @@
             <li>
                     <a class="function" href="#log_test_results">log_test_results</a>
             </li>
+            <li>
+                    <a class="function" href="#run_metric">run_metric</a>
+            </li>
     </ul>
 
 
@@ -73,6 +76,7 @@
                     <li><a href="validmind/tests.html">tests</a></li>
                     <li><a href="validmind/test_suites.html">test_suites</a></li>
                     <li><a href="validmind/vm_models.html">vm_models</a></li>
+                    <li><a href="validmind/unit_metrics.html">unit_metrics</a></li>
             </ul>
 
 
@@ -134,7 +138,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;1.27.4&#39;</span>
+<span class="default_value">&#39;2.0.0&#39;</span>
 
         
     </div>
@@ -214,7 +218,7 @@ retrieve them from the environment variables <code>VM_API_KEY</code> and <code>V
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span>,</span><span class="param">	<span class="n">index</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">date_time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">feature_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extra_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span>:</span></span>
+        <span class="name">init_dataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">dataset</span>,</span><span class="param">	<span class="n">model</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">index</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">date_time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">feature_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extra_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span>:</span></span>
 
         
     </div>
@@ -229,6 +233,7 @@ DataFrames at the moment.</p>
 
 <ul>
 <li><strong>dataset (pd.DataFrame):</strong>  We only support Pandas DataFrames at the moment</li>
+<li><strong>model (VMModel):</strong>  ValidMind model object</li>
 <li><strong>options (dict):</strong>  A dictionary of options for the dataset</li>
 <li><strong>targets (vm.vm.DatasetTargets):</strong>  A list of target variables</li>
 <li><strong>target_column (str):</strong>  The name of the target column in the dataset</li>
@@ -262,7 +267,7 @@ this to the same key.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
+        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
         
     </div>
@@ -304,7 +309,7 @@ this to the same key.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_r_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">train_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">validation_ds</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
+        <span class="name">init_r_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">model_path</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
         
     </div>
@@ -554,6 +559,37 @@ running tests but can also be called directly if the user wants to run tests on 
 
 <blockquote>
   <p>list: list of responses from the API</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="run_metric">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run_metric</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metric_id</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">params</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#run_metric"></a>
+    
+            <div class="docstring"><p>Run a single metric</p>
+
+<p>This function provides a high level interface for running a single metric. A metric
+is a single test that calculates a value based on the input data.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>metric_id (str):</strong>  The metric name (e.g. 'F1')</li>
+<li><strong>params (dict):</strong>  A dictionary of the metric parameters</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>MetricResult: The metric result object</p>
 </blockquote>
 </div>
 

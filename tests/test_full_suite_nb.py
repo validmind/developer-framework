@@ -71,8 +71,6 @@ class TestFullTestSuiteNB(unittest.TestCase):
 
         self.vm_model = vm.init_model(
             self.model,
-            train_ds=vm_train_ds,
-            test_ds=self.vm_test_ds,
         )
         self.assertIsInstance(self.vm_model, VMModel)
 

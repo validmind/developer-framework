@@ -37,6 +37,9 @@
             <li>
                     <a class="function" href="#preprocess">preprocess</a>
             </li>
+            <li>
+                    <a class="function" href="#get_demo_test_config">get_demo_test_config</a>
+            </li>
     </ul>
 
 
@@ -83,6 +86,43 @@
     <a class="headerlink" href="#preprocess"></a>
     
     
+
+                </section>
+                <section id="get_demo_test_config">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_demo_test_config</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#get_demo_test_config"></a>
+    
+            <div class="docstring"><p>Returns input configuration for the default documentation
+template assigned to this demo model</p>
+
+<p>The default documentation template uses the following inputs:</p>
+
+<ul>
+<li>raw_dataset</li>
+<li>train_dataset</li>
+<li>test_dataset</li>
+<li>model</li>
+</ul>
+
+<p>We assign the following inputs depending on the input config expected
+by each test:</p>
+
+<ul>
+<li>When a test expects a "dataset" we use the raw_dataset</li>
+<li>When a tets expects "datasets" we use the train_dataset and test_dataset</li>
+<li>When a test expects a "model" we use the model</li>
+<li>When a test expects "model" and "dataset" we use the model and test_dataset</li>
+<li>The only exception is ClassifierPerformance since that runs twice: once
+with the train_dataset (in sample) and once with the test_dataset (out of sample)</li>
+</ul>
+</div>
+
 
                 </section>
     </main>

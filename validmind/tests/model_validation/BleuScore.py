@@ -47,7 +47,7 @@ class BleuScore(Metric):
     """
 
     name = "bleu_score"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
 
     def run(self):
         # Load the BLEU evaluation metric
@@ -55,8 +55,8 @@ class BleuScore(Metric):
 
         # Compute the BLEU score
         bleu = bleu.compute(
-            predictions=self.inputs.model.y_test_predict,
-            references=self.inputs.model.y_test_true,
+            predictions=self.inputs.dataset.y_pred(self.inputs.model.input_id),
+            references=self.inputs.dataset.y,
         )
         return self.cache_results(metric_value={"blue_score_metric": bleu})
 

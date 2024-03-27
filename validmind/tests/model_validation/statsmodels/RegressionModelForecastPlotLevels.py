@@ -60,6 +60,7 @@ class RegressionModelForecastPlotLevels(Metric):
     """
 
     name = "regression_forecast_plot_levels"
+    required_inputs = ["models", "datasets"]
     default_params = {
         "transformation": None,
     }
@@ -78,7 +79,7 @@ class RegressionModelForecastPlotLevels(Metric):
         for model in self.inputs.models:
             all_models.append(model)
 
-        figures = self._plot_forecast(all_models, transformation)
+        figures = self._plot_forecast(all_models, self.inputs.datasets, transformation)
 
         return self.cache_results(figures=figures)
 
@@ -91,17 +92,19 @@ class RegressionModelForecastPlotLevels(Metric):
     def _plot_forecast(
         self,
         model_list,
+        datasets,
         transformation=None,
     ):
         figures = []
 
         for i, fitted_model in enumerate(model_list):
-            feature_columns = fitted_model.train_ds.get_features_columns()
-            train_ds = fitted_model.train_ds
-            test_ds = fitted_model.test_ds
+            feature_columns = datasets[0].get_features_columns()
 
-            y_pred = fitted_model.predict(fitted_model.train_ds.x)
-            y_pred_test = fitted_model.predict(fitted_model.test_ds.x)
+            train_ds = datasets[0]
+            test_ds = datasets[1]
+
+            y_pred = train_ds.y_pred(fitted_model.input_id)
+            y_pred_test = test_ds.y_pred(fitted_model.input_id)
 
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])
 

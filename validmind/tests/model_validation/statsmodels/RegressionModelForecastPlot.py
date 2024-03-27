@@ -56,6 +56,7 @@ class RegressionModelForecastPlot(Metric):
     """
 
     name = "regression_forecast_plot"
+    required_inputs = ["models", "datasets"]
     default_params = {"start_date": None, "end_date": None}
     metadata = {
         "task_types": ["regression"],
@@ -73,11 +74,13 @@ class RegressionModelForecastPlot(Metric):
         for model in self.inputs.models:
             all_models.append(model)
 
-        figures = self._plot_forecast(all_models, start_date, end_date)
+        figures = self._plot_forecast(
+            all_models, self.inputs.datasets, start_date, end_date
+        )
 
         return self.cache_results(figures=figures)
 
-    def _plot_forecast(self, model_list, start_date=None, end_date=None):
+    def _plot_forecast(self, model_list, datasets, start_date=None, end_date=None):
         # Convert start_date and end_date to pandas Timestamp for comparison
         start_date = pd.Timestamp(start_date)
         end_date = pd.Timestamp(end_date)
@@ -86,13 +89,13 @@ class RegressionModelForecastPlot(Metric):
         figures = []
 
         for i, fitted_model in enumerate(model_list):
-            feature_columns = fitted_model.train_ds.get_features_columns()
+            feature_columns = datasets[0].get_features_columns()
 
-            train_ds = fitted_model.train_ds
-            test_ds = fitted_model.test_ds
+            train_ds = datasets[0]
+            test_ds = datasets[1]
 
-            y_pred = fitted_model.y_train_predict
-            y_pred_test = fitted_model.y_test_predict
+            y_pred = train_ds.y_pred(fitted_model.input_id)
+            y_pred_test = test_ds.y_pred(fitted_model.input_id)
 
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])

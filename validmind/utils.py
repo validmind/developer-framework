@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.core import getipython
+from IPython.display import HTML, display
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
@@ -391,3 +392,25 @@ def get_dataset_info(dataset):
         "schema": schema,
         "description": description,
     }
+
+
+def preview_test_config(config):
+    formatted_json = json.dumps(config, indent=4)
+
+    # JavaScript + HTML for the collapsible section
+    collapsible_html = f"""
+    <script>
+    function toggleOutput() {{
+        var content = document.getElementById("collapsibleContent");
+        if (content.style.display === "none") {{
+            content.style.display = "block";
+        }} else {{
+            content.style.display = "none";
+        }}
+    }}
+    </script>
+    <button onclick="toggleOutput()">Preview Config</button>
+    <div id="collapsibleContent" style="display:none;"><pre>{formatted_json}</pre></div>
+    """
+
+    display(HTML(collapsible_html))

@@ -59,7 +59,7 @@ class SilhouettePlot(Metric):
     """
 
     name = "silhouette_plot"
-    required_inputs = ["model", "model.train_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["clustering"],
         "tags": [
@@ -69,17 +69,17 @@ class SilhouettePlot(Metric):
     }
 
     def run(self):
-        y_pred_train = self.inputs.model.y_train_predict
+        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model.input_id)
         # Calculate the silhouette score
         silhouette_avg = silhouette_score(
-            self.inputs.model.train_ds.x,
+            self.inputs.dataset.x,
             y_pred_train,
             metric="euclidean",
         )
         num_clusters = len(np.unique(y_pred_train))
         # Calculate silhouette coefficients for each data point
         sample_silhouette_values = silhouette_samples(
-            self.inputs.model.train_ds.x, y_pred_train
+            self.inputs.dataset.x, y_pred_train
         )
         # Create a silhouette plot
         fig, ax = plt.subplots()

@@ -165,7 +165,7 @@ class TestRunDocumentationTests(TestCase):
         dataset = pd.DataFrame([[1, 1], [1, 0], [0, 1], [0, 0]], columns=["x", "y"])
         model.fit(dataset[["x"]], dataset["y"])
         vm_dataset = init_dataset(dataset, target_column="y")
-        vm_model = init_model(model, train_ds=vm_dataset, test_ds=vm_dataset)
+        vm_model = init_model(model)
 
         test_suite = run_documentation_tests(
             model=vm_model, dataset=vm_dataset, send=False
