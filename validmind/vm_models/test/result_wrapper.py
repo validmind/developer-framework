@@ -155,7 +155,7 @@ class ResultWrapper(ABC):
 
     def log(self):
         """Log the result... May be overridden by subclasses"""
-        run_async(self.log_async)
+        return run_async(self.log_async)
 
 
 @dataclass

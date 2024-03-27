@@ -6,12 +6,9 @@
 Central class to register inputs
 """
 
-from dataclasses import dataclass
-
 from .errors import InvalidInputError
 
 
-@dataclass
 class InputRegistry:
     def __init__(self):
         self.registry = {}
@@ -23,7 +20,7 @@ class InputRegistry:
         input_obj = self.registry.get(key)
         if not input_obj:
             raise InvalidInputError(
-                f"There's no such input with given ID {key}. "
+                f"There's no such input with given ID '{key}'. "
                 "Please pass valid input ID"
             )
         return input_obj

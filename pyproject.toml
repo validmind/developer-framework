@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "2.0.0a2"
+version = "2.0.0"
 
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
@@ -23,6 +23,7 @@ dython = "^0.7.1"
 evaluate = "^0.4.0"
 ipython = "7.34.0"
 ipywidgets = "^8.0.6"
+jupyter = "^1.0.0"
 kaleido = "0.2.1"
 langdetect = "^1.0.9"
 levenshtein = {version = "^0.21.1", optional = true}
@@ -59,7 +60,7 @@ tqdm = "^4.64.0"
 transformers = "^4.32.0"
 wget = "^3.2"
 xgboost = "^1.5.2"
-jupyter = "^1.0.0"
+polars = "^0.20.15"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
