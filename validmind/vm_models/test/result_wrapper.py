@@ -306,7 +306,7 @@ class MetricResultWrapper(ResultWrapper):
                     )
                 )
 
-        return asyncio.gather(*tasks)
+        await asyncio.gather(*tasks)
 
 
 @dataclass
