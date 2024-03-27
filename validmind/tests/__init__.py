@@ -346,7 +346,9 @@ def describe_test(test_id: str = None, raw: bool = False):
     )
 
 
-def run_test(test_id, params: dict = None, inputs=None, output_template=None, **kwargs):
+def run_test(
+    test_id, params: dict = None, inputs=None, output_template=None, show=True, **kwargs
+):
     """Run a test by test ID
 
     Args:
@@ -370,7 +372,9 @@ def run_test(test_id, params: dict = None, inputs=None, output_template=None, **
     )
 
     test.run()
-    test.result.show()
+
+    if show:
+        test.result.show()
 
     return test.result
 

@@ -119,6 +119,23 @@ class Figure:
                 f"Figure type {type(self.figure)} not supported for plotting"
             )
 
+    def to_html(self):
+        """
+        Returns the HTML representation of the figure
+        """
+        if self.is_matplotlib_figure():
+            tmpfile = BytesIO()
+            self.figure.savefig(tmpfile, format="png")
+            encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+            return f'<img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>'
+
+        elif self.is_plotly_figure():
+            return self.figure.to_html()
+        else:
+            raise UnsupportedFigureError(
+                f"Figure type {type(self.figure)} not supported for plotting"
+            )
+
     def serialize(self):
         """
         Serializes the Figure to a dictionary so it can be sent to the API
