@@ -24,7 +24,12 @@ build:
 	poetry build
 
 test:
+ifdef ONLY
+	# make test ONLY="tests.test_template tests.test_metadata"
+	poetry run python -m unittest $(ONLY)
+else
 	poetry run python -m unittest discover tests
+endif
 
 test-integration:
 	poetry run python scripts/run_e2e_notebooks.py

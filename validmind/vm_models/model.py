@@ -10,8 +10,6 @@ import inspect
 from abc import abstractmethod
 from dataclasses import dataclass
 
-from .dataset import VMDataset
-
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
     "xgboost": "XGBoostModel",
@@ -52,12 +50,6 @@ class VMModel:
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         model (object, optional): The trained model instance. Defaults to None.
-        train_ds (Dataset, optional): The training dataset. Defaults to None.
-        test_ds (Dataset, optional): The test dataset. Defaults to None.
-        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
-        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
-        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
-        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
         device_type(str, optional) The device where model is trained
     """
 
@@ -65,22 +57,13 @@ class VMModel:
 
     def __init__(
         self,
+        input_id: str = None,
         model: object = None,
-        train_ds: VMDataset = None,
-        test_ds: VMDataset = None,
-        validation_ds: VMDataset = None,
         attributes: ModelAttributes = None,
     ):
         self._model = model
-        self._train_ds = train_ds
-        self._test_ds = test_ds
-        self._validation_ds = validation_ds
+        self._input_id = input_id
         self._attributes = attributes
-
-        # These variables can be generated dynamically if not passed
-        self._y_train_predict = None
-        self._y_test_predict = None
-        self._y_validation_predict = None
 
         # The device where model is trained
         self._device_type = None
@@ -90,48 +73,12 @@ class VMModel:
         return self._attributes
 
     @property
+    def input_id(self):
+        return self._input_id
+
+    @property
     def model(self):
         return self._model
-
-    @property
-    def train_ds(self):
-        return self._train_ds
-
-    @property
-    def test_ds(self):
-        return self._test_ds
-
-    @property
-    def validation_ds(self):
-        return
-
-    @property
-    def y_train_true(self):
-        """
-        This variable can be generated dynamically
-        """
-        return self.train_ds.y
-
-    @property
-    def y_test_true(self):
-        """
-        This variable can be generated dynamically
-        """
-        return self.test_ds.y
-
-    @property
-    def y_train_predict(self):
-        """
-        This variable can be generated dynamically
-        """
-        return self._y_train_predict
-
-    @property
-    def y_test_predict(self):
-        """
-        This variable can be generated dynamically
-        """
-        return self._y_test_predict
 
     @property
     def device_type(self):

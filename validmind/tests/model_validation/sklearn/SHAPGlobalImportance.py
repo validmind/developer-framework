@@ -61,7 +61,7 @@ class SHAPGlobalImportance(Metric):
     """
 
     name = "shap"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -134,17 +134,15 @@ class SHAPGlobalImportance(Metric):
             or model_class == "XGBRegressor"
             or model_class == "LinearRegression"
         ):
-            explainer = shap.LinearExplainer(trained_model, self.inputs.model.test_ds.x)
+            explainer = shap.LinearExplainer(trained_model, self.inputs.dataset.x)
         else:
             raise ValueError(f"Model {model_class} not supported for SHAP importance.")
 
-        shap_values = explainer.shap_values(self.inputs.model.test_ds.x)
+        shap_values = explainer.shap_values(self.inputs.dataset.x)
 
         figures = [
-            self._generate_shap_plot("mean", shap_values, self.inputs.model.test_ds.x),
-            self._generate_shap_plot(
-                "summary", shap_values, self.inputs.model.test_ds.x
-            ),
+            self._generate_shap_plot("mean", shap_values, self.inputs.dataset.x),
+            self._generate_shap_plot("summary", shap_values, self.inputs.dataset.x),
         ]
 
         # restore warnings

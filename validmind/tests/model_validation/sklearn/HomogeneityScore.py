@@ -45,7 +45,7 @@ class HomogeneityScore(ClusterPerformance):
     """
 
     name = "homogeneity_score"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["clustering"],
         "tags": [

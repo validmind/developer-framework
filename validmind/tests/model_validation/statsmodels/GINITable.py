@@ -58,7 +58,7 @@ class GINITable(Metric):
     """
 
     name = "gini_table"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["visualization", "model_performance"],
@@ -71,11 +71,11 @@ class GINITable(Metric):
             else self.inputs.model
         )
 
-        X_train = model.train_ds.x
-        y_train = model.train_ds.y
+        X_train = self.datasets[0].x
+        y_train = self.datasets[0].y
 
-        X_test = model.test_ds.x
-        y_test = model.test_ds.y
+        X_test = self.datasets[1].x
+        y_test = self.datasets[1].y
 
         summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)
 

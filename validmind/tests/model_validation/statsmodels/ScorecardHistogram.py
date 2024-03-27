@@ -53,7 +53,7 @@ class ScorecardHistogram(Metric):
     """
 
     name = "scorecard_histogram"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk"],
@@ -130,8 +130,8 @@ class ScorecardHistogram(Metric):
         pdo = self.params["pdo"]
 
         # Create a copy of training and testing dataframes
-        df_train = model.train_ds._df.copy()
-        df_test = model.test_ds._df.copy()
+        df_train = self.inputs.datasets[0].df.copy()
+        df_test = self.inputs.datasets[1].df.copy()
 
         # Drop target_column to create feature dataframes
         X_train = df_train.drop(columns=[target_column])

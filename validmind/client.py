@@ -7,6 +7,7 @@ Client interface for all data and model validation functions
 """
 
 import pandas as pd
+import polars as pl
 
 from .api_client import _log_input as log_input
 from .client_config import client_config
@@ -26,7 +27,13 @@ from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
 from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
-from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
+from .vm_models.dataset import (
+    DataFrameDataset,
+    NumpyDataset,
+    PolarsDataset,
+    TorchDataset,
+    VMDataset,
+)
 from .vm_models.model import VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
@@ -36,6 +43,7 @@ logger = get_logger(__name__)
 
 def init_dataset(
     dataset,
+    model=None,
     index=None,
     index_name: str = None,
     date_time_index: bool = False,
@@ -57,7 +65,8 @@ def init_dataset(
     DataFrames at the moment.
 
     Args:
-        dataset (pd.DataFrame): We only support Pandas DataFrames at the moment
+        dataset : dataset from various python libraries
+        model (VMModel): ValidMind model object
         options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
@@ -84,11 +93,28 @@ def init_dataset(
         )
 
     dataset_class = dataset.__class__.__name__
+    input_id = input_id or "dataset"
+
     # Instantiate supported dataset types here
-    if dataset_class == "DataFrame":
+    if isinstance(dataset, pd.DataFrame):
         logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
         vm_dataset = DataFrameDataset(
+            input_id=input_id,
             raw_dataset=dataset,
+            model=model,
+            target_column=target_column,
+            feature_columns=feature_columns,
+            text_column=text_column,
+            extra_columns=extra_columns,
+            target_class_labels=class_labels,
+            date_time_index=date_time_index,
+        )
+    elif isinstance(dataset, pl.DataFrame):
+        logger.info("Polars dataset detected. Initializing VM Dataset instance...")
+        vm_dataset = PolarsDataset(
+            input_id=input_id,
+            raw_dataset=dataset,
+            model=model,
             target_column=target_column,
             feature_columns=feature_columns,
             text_column=text_column,
@@ -99,7 +125,9 @@ def init_dataset(
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
         vm_dataset = NumpyDataset(
+            input_id=input_id,
             raw_dataset=dataset,
+            model=model,
             index=index,
             index_name=index_name,
             columns=columns,
@@ -113,7 +141,9 @@ def init_dataset(
     elif dataset_class == "TensorDataset":
         logger.info("Torch TensorDataset detected. Initializing VM Dataset instance...")
         vm_dataset = TorchDataset(
+            input_id=input_id,
             raw_dataset=dataset,
+            model=model,
             index=index,
             index_name=index_name,
             columns=columns,
@@ -127,25 +157,20 @@ def init_dataset(
         raise UnsupportedDatasetError(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
-    obj_key = input_id or "dataset"
     if __log:
         log_input(
-            name=obj_key,
+            name=input_id,
             type="dataset",
             metadata=get_dataset_info(vm_dataset),
         )
 
-    input_registry.add(key=obj_key, obj=vm_dataset)
-    vm_dataset.input_id = obj_key
+    input_registry.add(key=input_id, obj=vm_dataset)
 
     return vm_dataset
 
 
 def init_model(
     model: object,
-    train_ds: VMDataset = None,
-    test_ds: VMDataset = None,
-    validation_ds: VMDataset = None,
     input_id: str = None,
     __log=True,
 ) -> VMModel:
@@ -175,33 +200,26 @@ def init_model(
         raise UnsupportedModelError(
             f"Model type {class_obj} is not supported at the moment."
         )
-
+    input_id = input_id or "model"
     vm_model = class_obj(
+        input_id=input_id,
         model=model,  # Trained model instance
-        train_ds=train_ds,
-        test_ds=test_ds,
-        validation_ds=validation_ds,
         attributes=None,
     )
-    obj_key = input_id or "model"
     if __log:
         log_input(
-            name=obj_key,
+            name=input_id,
             type="model",
             metadata=get_model_info(vm_model),
         )
 
-    input_registry.add(key=obj_key, obj=vm_model)
-    vm_model.input_id = obj_key
+    input_registry.add(key=input_id, obj=vm_model)
 
     return vm_model
 
 
 def init_r_model(
     model_path: str,
-    train_ds: VMDataset = None,
-    test_ds: VMDataset = None,
-    validation_ds: VMDataset = None,
 ) -> VMModel:
     """
     Initializes a VM Model for an R model
@@ -250,9 +268,6 @@ def init_r_model(
     vm_model = RModel(
         r=r,
         model=model,
-        train_ds=train_ds,
-        test_ds=test_ds,
-        validation_ds=validation_ds,
     )
 
     return vm_model

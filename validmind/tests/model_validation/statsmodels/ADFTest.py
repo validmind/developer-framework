@@ -47,6 +47,7 @@ class ADFTest(ThresholdTest):
     """
 
     name = "adf_test"
+    required_inputs = ["dataset"]
     default_params = {"threshold": 0.05}
     metadata = {
         "task_types": ["regression"],
@@ -60,7 +61,7 @@ class ADFTest(ThresholdTest):
     }
 
     def run(self):
-        x_train = self.train_ds.raw_dataset
+        x_train = self.inputs.dataset.df
 
         results = []
         for col in x_train.columns:

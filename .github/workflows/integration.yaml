@@ -34,6 +34,7 @@ jobs:
       - name: Integration Tests
         run: make test-integration
         env:
+          NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
 

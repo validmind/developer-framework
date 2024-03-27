@@ -72,7 +72,7 @@ class WeakspotsDiagnosis(ThresholdTest):
     """
 
     name = "weak_spots"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
 
     default_params = {
         "features_columns": None,
@@ -113,18 +113,18 @@ class WeakspotsDiagnosis(ThresholdTest):
                 raise ValueError(f"Threshold for metric {metric} is missing")
 
         if self.params["features_columns"] is None:
-            features_list = self.inputs.model.train_ds.get_features_columns()
+            features_list = self.inputs.datasets[0].get_features_columns()
         else:
             features_list = self.params["features_columns"]
 
-        if self.inputs.model.train_ds.text_column in features_list:
+        if self.inputs.datasets[0].text_column in features_list:
             raise ValueError(
                 "Skiping Weakspots Diagnosis test for the dataset with text column"
             )
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(
-            elem in self.inputs.model.train_ds.get_features_columns()
+            elem in self.inputs.datasets[0].get_features_columns()
             for elem in features_list
         )
         if not all_present:
@@ -133,15 +133,15 @@ class WeakspotsDiagnosis(ThresholdTest):
                 + "training dataset feature columns"
             )
 
-        target_column = self.inputs.model.train_ds.target_column
+        target_column = self.inputs.datasets[0].target_column
         prediction_column = f"{target_column}_pred"
 
-        train_df = self.inputs.model.train_ds.df.copy()
-        train_class_pred = self.inputs.model.y_train_predict
+        train_df = self.inputs.datasets[0].df.copy()
+        train_class_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
         train_df[prediction_column] = train_class_pred
 
-        test_df = self.inputs.model.test_ds.df.copy()
-        test_class_pred = self.inputs.model.y_test_predict
+        test_df = self.inputs.datasets[1].df.copy()
+        test_class_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
         test_df[prediction_column] = test_class_pred
 
         test_results = []
@@ -150,7 +150,7 @@ class WeakspotsDiagnosis(ThresholdTest):
         results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
             bins = 10
-            if feature in self.inputs.model.train_ds.get_categorical_features_columns():
+            if feature in self.inputs.datasets[0].get_categorical_features_columns():
                 bins = len(train_df[feature].unique())
             train_df["bin"] = pd.cut(train_df[feature], bins=bins)
 

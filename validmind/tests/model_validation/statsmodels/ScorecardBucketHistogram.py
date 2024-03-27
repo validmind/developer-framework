@@ -61,7 +61,7 @@ class ScorecardBucketHistogram(Metric):
     """
 
     name = "scorecard_bucket_histogram"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk"],
@@ -133,8 +133,8 @@ class ScorecardBucketHistogram(Metric):
         pdo = self.params["pdo"]
         rating_classes = self.params["rating_classes"]
 
-        X_train = self.inputs.model.train_ds.x.copy()
-        X_test = self.inputs.model.test_ds.x.copy()
+        X_train = self.inputs.datasets[0].x.copy()
+        X_test = self.inputs.datasets[1].x.copy()
 
         X_train_probs = self.compute_probabilities(self.inputs.model, X_train)
         X_test_probs = self.compute_probabilities(self.inputs.model, X_test)

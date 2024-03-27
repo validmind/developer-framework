@@ -47,7 +47,7 @@ class DatasetSplit(Metric):
     """
 
     name = "dataset_split"
-    required_inputs = ["model"]
+    required_inputs = ["datasets"]
     metadata = {
         "task_types": [
             "classification",
@@ -86,7 +86,7 @@ class DatasetSplit(Metric):
                 proportion = raw_results[f"{dataset_name}_proportion"] * 100
                 table_records.append(
                     {
-                        "Dataset": DatasetSplit.dataset_labels[dataset_name],
+                        "Dataset": dataset_name,  # DatasetSplit.dataset_labels[dataset_name],
                         "Size": value,
                         "Proportion": f"{proportion:.2f}%",
                     }
@@ -96,22 +96,20 @@ class DatasetSplit(Metric):
 
     def run(self):
         # Try to extract metrics from each available dataset
-        available_datasets = ["train_ds", "test_ds", "validation_ds"]
+        available_datasets = self.inputs.datasets
         results = {}
         total_size = 0
 
         # First calculate the total size of the dataset
-        for dataset_name in available_datasets:
-            dataset = getattr(self.inputs.model, dataset_name, None)
+        for dataset in available_datasets:
             if dataset is not None:
                 total_size += len(dataset.df)
 
         # Then calculate the proportion of each dataset
-        for dataset_name in available_datasets:
-            dataset = getattr(self.inputs.model, dataset_name, None)
+        for dataset in available_datasets:
             if dataset is not None:
-                results[f"{dataset_name}_size"] = len(dataset.df)
-                results[f"{dataset_name}_proportion"] = len(dataset.df) / total_size
+                results[f"{dataset.input_id}_size"] = len(dataset.df)
+                results[f"{dataset.input_id}_proportion"] = len(dataset.df) / total_size
 
         results["total_size"] = total_size
 

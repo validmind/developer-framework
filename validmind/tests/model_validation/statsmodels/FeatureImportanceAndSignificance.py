@@ -52,6 +52,7 @@ class FeatureImportanceAndSignificance(Metric):
     """
 
     name = "feature_importance_and_significance"
+    required_inputs = ["models"]
     default_params = {
         "fontsize": 10,
         "p_threshold": 0.05,

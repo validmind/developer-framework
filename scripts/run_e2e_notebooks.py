@@ -32,26 +32,28 @@ import papermill as pm
 
 dotenv.load_dotenv()
 
+DEFAULT_PROJECT_ID = os.getenv(
+    "NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID", "clnt1f4qc00ap15lfts8ur7lw"
+)
+
 NOTEBOOKS_TO_RUN = [
     {
         "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
-        "project": "clnt1f4qc00ap15lfts8ur7lw",
+        "project": DEFAULT_PROJECT_ID,
     },
     "notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb",
     "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     {
         "path": "notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb",
-        "project": "clnt1pypw00o415lfjj78fkgl",
+        "project": DEFAULT_PROJECT_ID,
     },
 ]
-
-DEFAULT_PROJECT_ID = "clnt1f4qc00ap15lfts8ur7lw"
 
 INIT_CELL_CODE = """
 import validmind as vm
 
 vm.init(
-  api_host = "https://api.dev.vm.validmind.ai/api/v1/tracking",
+  api_host = "{api_host}",
   api_key = "{api_key}",
   api_secret = "{api_secret}",
   project = "{project_id}"
@@ -108,10 +110,14 @@ def run_notebook(notebook_path, kernel_name):
 
 
 def update_vm_init_cell(notebook_path, project_id):
+    api_host = os.getenv(
+        "NOTEBOOK_RUNNER_API_HOST", "https://api.dev.vm.validmind.ai/api/v1/tracking"
+    )
     api_key = os.getenv("NOTEBOOK_RUNNER_API_KEY")
     api_secret = os.getenv("NOTEBOOK_RUNNER_API_SECRET")
 
     init_code = INIT_CELL_CODE.format(
+        api_host=api_host,
         api_key=api_key,
         api_secret=api_secret,
         project_id=project_id,

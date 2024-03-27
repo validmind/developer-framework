@@ -50,7 +50,7 @@ class ClusterSizeDistribution(Metric):
     """
 
     name = "cluster_size_distribution"
-    required_inputs = ["model", "model.train_ds"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["clustering"],
         "tags": [
@@ -60,8 +60,8 @@ class ClusterSizeDistribution(Metric):
     }
 
     def run(self):
-        y_true_train = self.inputs.model.y_train_true
-        y_pred_train = self.inputs.model.y_train_predict
+        y_true_train = self.inputs.dataset.y
+        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model.input_id)
         y_true_train = y_true_train.astype(y_pred_train.dtype)
         df = pd.DataFrame(
             {"Actual": y_true_train.ravel(), "Prediction": y_pred_train.ravel()}

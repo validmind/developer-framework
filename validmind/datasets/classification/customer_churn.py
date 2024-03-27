@@ -7,6 +7,8 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+import validmind as vm
+
 from . import (
     simple_preprocess_booleans,
     simple_preprocess_categoricals,
@@ -56,3 +58,62 @@ def preprocess(df):
     train_df, validation_df = train_test_split(train_val_df, test_size=0.25)
 
     return train_df, validation_df, test_df
+
+
+def get_demo_test_config():
+    """
+    Returns input configuration for the default documentation
+    template assigned to this demo model
+
+    The default documentation template uses the following inputs:
+    - raw_dataset
+    - train_dataset
+    - test_dataset
+    - model
+
+    We assign the following inputs depending on the input config expected
+    by each test:
+
+    - When a test expects a "dataset" we use the raw_dataset
+    - When a tets expects "datasets" we use the train_dataset and test_dataset
+    - When a test expects a "model" we use the model
+    - When a test expects "model" and "dataset" we use the model and test_dataset
+    - The only exception is ClassifierPerformance since that runs twice: once
+        with the train_dataset (in sample) and once with the test_dataset (out of sample)
+    """
+    default_config = vm.get_test_suite().get_default_config()
+
+    for _, test_config in default_config.items():
+        if "model" in test_config["inputs"]:
+            test_config["inputs"]["model"] = "model"
+        if "datasets" in test_config["inputs"]:
+            test_config["inputs"]["datasets"] = [
+                "train_dataset",
+                "test_dataset",
+            ]
+        if "dataset" in test_config["inputs"]:
+            if "model" in test_config["inputs"]:
+                test_config["inputs"]["dataset"] = "test_dataset"
+            else:
+                test_config["inputs"]["dataset"] = "raw_dataset"
+
+    # ClassifierPerformance is a special case since we run an in-sample and out-of-sample
+    # test with two different datasets: train_dataset and test_dataset
+    default_config[
+        "validmind.model_validation.sklearn.ClassifierPerformance:in_sample"
+    ] = {
+        "inputs": {
+            "model": "model",
+            "dataset": "train_dataset",
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.ClassifierPerformance:out_of_sample"
+    ] = {
+        "inputs": {
+            "model": "model",
+            "dataset": "test_dataset",
+        }
+    }
+
+    return default_config

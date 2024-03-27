@@ -53,7 +53,7 @@ class LogRegressionConfusionMatrix(Metric):
     """
 
     name = "log_regression_confusion_matrix"
-    required_inputs = ["model"]
+    required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["visualization", "model_performance", "logistic_regression"],
@@ -66,18 +66,11 @@ class LogRegressionConfusionMatrix(Metric):
     def run(self):
         cut_off_threshold = self.default_parameters["cut_off_threshold"]
 
-        # Extract the actual model
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
-
-        y_true = np.array(model.test_ds.y)
+        y_true = self.inputs.dataset.y
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        y_pred_prob = model.predict(model.test_ds.x)
+        y_pred_prob = self.inputs.model.predict_proba(self.inputs.dataset.x)
         y_pred = np.where(y_pred_prob > cut_off_threshold, 1, 0)
         y_true = y_true.astype(y_pred.dtype)
 
