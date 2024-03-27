@@ -387,7 +387,7 @@ def run_test(
 
     if unit_metrics:
         TestClass = load_composite_metric(unit_metrics=unit_metrics, metric_name=name)
-        TestClass.test_id = f"validmind.composite_metric:{name}"
+        test_id = f"validmind.composite_metric:{name}"
     else:
         TestClass = load_test(test_id, reload=True)
 

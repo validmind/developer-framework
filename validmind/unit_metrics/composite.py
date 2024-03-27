@@ -36,7 +36,6 @@ class CompositeMetric(Metric):
             self.output_template = self._output_template
 
     def run(self):
-        print(f"Running composite metric {self.test_id}")
         self.result = run_metrics(
             key=self.test_id,
             metric_ids=self.unit_metrics,
@@ -54,7 +53,7 @@ class CompositeMetric(Metric):
 
 def load_composite_metric(
     metric_key: str = None, metric_name: str = None, unit_metrics: list[str] = None
-):
+) -> CompositeMetric:
     # this function can either create a composite metric from a list of unit metrics or
     # load a stored composite metric based on the test id
 
