@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
+import polars as pl
 
 from validmind.logging import get_logger
 from validmind.vm_models.model import VMModel
@@ -608,10 +609,15 @@ class DataFrameDataset(NumpyDataset):
 
         Args:
             raw_dataset (pd.DataFrame): The raw dataset as a pandas DataFrame.
+            input_id (str, optional): Identifier for the dataset. Defaults to None.
+            model (VMModel, optional): Model associated with the dataset. Defaults to None.
             target_column (str, optional): The target column of the dataset. Defaults to None.
+            extra_columns (dict, optional): Extra columns to include in the dataset. Defaults to None.
             feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
-            text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
-            target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
+            text_column (str, optional): The text column name of the dataset for NLP tasks. Defaults to None.
+            target_class_labels (dict, optional): The class labels for the target columns. Defaults to None.
+            options (dict, optional): Additional options for the dataset. Defaults to None.
+            date_time_index (bool, optional): Whether to use date-time index. Defaults to False.
         """
         index = None
         if isinstance(raw_dataset.index, pd.Index):
@@ -624,6 +630,57 @@ class DataFrameDataset(NumpyDataset):
             index_name=raw_dataset.index.name,
             index=index,
             columns=raw_dataset.columns.to_list(),
+            target_column=target_column,
+            extra_columns=extra_columns,
+            feature_columns=feature_columns,
+            text_column=text_column,
+            target_class_labels=target_class_labels,
+            options=options,
+            date_time_index=date_time_index,
+        )
+
+
+@dataclass
+class PolarsDataset(NumpyDataset):
+    """
+    VM dataset implementation for Polars DataFrame.
+    """
+
+    def __init__(
+        self,
+        raw_dataset: pl.DataFrame,
+        input_id: str = None,
+        model: VMModel = None,
+        target_column: str = None,
+        extra_columns: dict = None,
+        feature_columns: list = None,
+        text_column: str = None,
+        target_class_labels: dict = None,
+        options: dict = None,
+        date_time_index: bool = False,
+    ):
+        """
+        Initializes a PolarsDataset instance.
+
+        Args:
+            raw_dataset (pl.DataFrame): The raw dataset as a Polars DataFrame.
+            input_id (str, optional): Identifier for the dataset. Defaults to None.
+            model (VMModel, optional): Model associated with the dataset. Defaults to None.
+            target_column (str, optional): The target column of the dataset. Defaults to None.
+            extra_columns (dict, optional): Extra columns to include in the dataset. Defaults to None.
+            feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
+            text_column (str, optional): The text column name of the dataset for NLP tasks. Defaults to None.
+            target_class_labels (dict, optional): The class labels for the target columns. Defaults to None.
+            options (dict, optional): Additional options for the dataset. Defaults to None.
+            date_time_index (bool, optional): Whether to use date-time index. Defaults to False.
+        """
+        super().__init__(
+            raw_dataset=raw_dataset.to_numpy(),
+            input_id=input_id,
+            model=model,
+            index_name=None,
+            index=None,
+            columns=raw_dataset.columns,
             target_column=target_column,
             extra_columns=extra_columns,
             feature_columns=feature_columns,

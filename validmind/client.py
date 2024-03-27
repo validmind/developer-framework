@@ -7,6 +7,7 @@ Client interface for all data and model validation functions
 """
 
 import pandas as pd
+import polars as pl
 
 from .api_client import _log_input as log_input
 from .client_config import client_config
@@ -26,7 +27,13 @@ from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
 from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
-from .vm_models.dataset import DataFrameDataset, NumpyDataset, TorchDataset, VMDataset
+from .vm_models.dataset import (
+    DataFrameDataset,
+    NumpyDataset,
+    PolarsDataset,
+    TorchDataset,
+    VMDataset,
+)
 from .vm_models.model import VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
@@ -58,7 +65,7 @@ def init_dataset(
     DataFrames at the moment.
 
     Args:
-        dataset (pd.DataFrame): We only support Pandas DataFrames at the moment
+        dataset : dataset from various python libraries
         model (VMModel): ValidMind model object
         options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
@@ -89,9 +96,22 @@ def init_dataset(
     input_id = input_id or "dataset"
 
     # Instantiate supported dataset types here
-    if dataset_class == "DataFrame":
+    if isinstance(dataset, pd.DataFrame):
         logger.info("Pandas dataset detected. Initializing VM Dataset instance...")
         vm_dataset = DataFrameDataset(
+            input_id=input_id,
+            raw_dataset=dataset,
+            model=model,
+            target_column=target_column,
+            feature_columns=feature_columns,
+            text_column=text_column,
+            extra_columns=extra_columns,
+            target_class_labels=class_labels,
+            date_time_index=date_time_index,
+        )
+    elif isinstance(dataset, pl.DataFrame):
+        logger.info("Polars dataset detected. Initializing VM Dataset instance...")
+        vm_dataset = PolarsDataset(
             input_id=input_id,
             raw_dataset=dataset,
             model=model,
