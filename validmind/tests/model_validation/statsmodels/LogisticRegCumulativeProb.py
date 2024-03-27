@@ -57,7 +57,7 @@ class LogisticRegCumulativeProb(Metric):
     """
 
     name = "logistic_reg_cumulative_prob"
-    required_inputs = ["model"]
+    required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["logistic_regression", "visualization"],
@@ -130,12 +130,12 @@ class LogisticRegCumulativeProb(Metric):
             else self.inputs.model
         )
 
-        target_column = model.train_ds.target_column
+        target_column = self.datasets[0].target_column
         title = self.params["title"]
 
         # Create a copy of training and testing dataframes
-        df_train = model.train_ds._df.copy()
-        df_test = model.test_ds._df.copy()
+        df_train = self.datasets[0].df.copy()
+        df_test = self.datasets[1].df.copy()
 
         # Drop target_column to create feature dataframes
         X_train = df_train.drop(columns=[target_column])

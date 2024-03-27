@@ -58,11 +58,11 @@ class TokenDisparity(Metric):
     """
 
     name = "token_disparity"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
 
     def run(self):
-        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
-        y_pred = self.inputs.model.y_test_predict
+        y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
 
         df = pd.DataFrame({"reference_column": y_true, "generated_column": y_pred})
 

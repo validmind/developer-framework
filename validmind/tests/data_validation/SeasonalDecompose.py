@@ -70,11 +70,9 @@ class SeasonalDecompose(Metric):
         can be re-used by other tests. Note we store one `sd` at a time for every
         column in the dataset.
         """
-        sd_all_columns = (
-            self.test_context.get_context_data("seasonal_decompose") or dict()
-        )
+        sd_all_columns = self.context.get_context_data("seasonal_decompose") or dict()
         sd_all_columns[column] = sd_one_column
-        self.test_context.set_context_data("seasonal_decompose", sd_all_columns)
+        self.context.set_context_data("seasonal_decompose", sd_all_columns)
 
     def serialize_seasonal_decompose(self, sd):
         """

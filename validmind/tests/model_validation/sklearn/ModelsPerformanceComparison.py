@@ -52,7 +52,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     """
 
     name = "models_performance_comparison"
-    required_inputs = ["model", "models", "model.test_ds"]
+    required_inputs = ["model", "models", "dataset"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -63,12 +63,6 @@ class ModelsPerformanceComparison(ClassifierPerformance):
             "model_comparison",
         ],
     }
-
-    def y_true(self):
-        return self.inputs.model.y_test_true
-
-    def y_pred(self):
-        return self.inputs.model.y_test_predict
 
     def summary(self, metric_value: dict):
         """
@@ -125,7 +119,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         # Check models list is not empty
         if not self.inputs.models:
             raise SkipTestError(
-                "List of models must be provided as a `models` parameter to compare perforance"
+                "List of models must be provided as a `models` parameter to compare performance"
             )
 
         all_models = [self.inputs.model]
@@ -134,8 +128,8 @@ class ModelsPerformanceComparison(ClassifierPerformance):
             all_models.extend(self.inputs.models)
         results = {}
         for idx, model in enumerate(all_models):
-            y_true = model.y_test_true
-            class_pred = model.y_test_predict
+            y_true = self.inputs.dataset.y
+            class_pred = self.inputs.dataset.y_pred(model.input_id)
             report = metrics.classification_report(y_true, class_pred, output_dict=True)
             report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
             results["model_" + str(idx)] = report

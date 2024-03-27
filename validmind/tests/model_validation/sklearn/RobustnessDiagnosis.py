@@ -69,7 +69,7 @@ class RobustnessDiagnosis(ThresholdTest):
     """
 
     name = "robustness"
-    required_inputs = ["model", "model.train_ds", "model.test_ds"]
+    required_inputs = ["model", "datasets"]
     default_params = {
         "features_columns": None,
         "scaling_factor_std_dev_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
@@ -109,11 +109,11 @@ class RobustnessDiagnosis(ThresholdTest):
 
         features_list = self.params["features_columns"]
         if features_list is None:
-            features_list = self.inputs.model.train_ds.get_numeric_features_columns()
+            features_list = self.inputs.datasets[0].get_numeric_features_columns()
 
         # Check if all elements from features_list are present in the numerical feature columns
         all_present = all(
-            elem in self.inputs.model.train_ds.get_numeric_features_columns()
+            elem in self.inputs.datasets[0].get_numeric_features_columns()
             for elem in features_list
         )
         if not all_present:
@@ -122,16 +122,16 @@ class RobustnessDiagnosis(ThresholdTest):
                 + "dataset numerical feature columns"
             )
 
-        if self.inputs.model.train_ds.text_column in features_list:
+        if self.inputs.datasets[0].text_column in features_list:
             raise ValueError(
                 "Skiping Robustness Diagnosis test for the dataset with text column"
             )
 
-        train_df = self.inputs.model.train_ds.x_df().copy()
-        train_y_true = self.inputs.model.train_ds.y
+        train_df = self.inputs.datasets[0].x_df().copy()
+        train_y_true = self.inputs.datasets[0].y
 
-        test_df = self.inputs.model.test_ds.x_df().copy()
-        test_y_true = self.inputs.model.test_ds.y
+        test_df = self.inputs.datasets[1].x_df().copy()
+        test_y_true = self.inputs.datasets[1].y
 
         test_results = []
         test_figures = []

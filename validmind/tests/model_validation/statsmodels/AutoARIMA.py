@@ -57,6 +57,7 @@ class AutoARIMA(Metric):
     """
 
     name = "auto_arima"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": ["time_series_data", "forecasting", "model_selection", "statsmodels"],
@@ -67,7 +68,7 @@ class AutoARIMA(Metric):
     max_q = 3
 
     def run(self):
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
 
         results = []
 

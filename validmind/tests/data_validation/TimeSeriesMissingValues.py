@@ -92,7 +92,7 @@ class TimeSeriesMissingValues(ThresholdTest):
         )
 
     def run(self):
-        df = self.inputs.dataset._df
+        df = self.inputs.dataset.df
 
         # Check if the index of dataframe is datetime
         is_datetime = pd.api.types.is_datetime64_any_dtype(df.index)

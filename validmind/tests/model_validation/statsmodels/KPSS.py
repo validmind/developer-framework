@@ -46,6 +46,7 @@ class KPSS(Metric):
     """
 
     name = "kpss"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
         "tags": [

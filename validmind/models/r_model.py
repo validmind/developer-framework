@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models.dataset import VMDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
 
 logger = get_logger(__name__)
@@ -23,12 +22,6 @@ class RModel(VMModel):
     Attributes:
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         model (object, optional): The trained model instance. Defaults to None.
-        train_ds (Dataset, optional): The training dataset. Defaults to None.
-        test_ds (Dataset, optional): The test dataset. Defaults to None.
-        validation_ds (Dataset, optional): The validation dataset. Defaults to None.
-        y_train_predict (object, optional): The predicted outputs for the training dataset. Defaults to None.
-        y_test_predict (object, optional): The predicted outputs for the test dataset. Defaults to None.
-        y_validation_predict (object, optional): The predicted outputs for the validation dataset. Defaults to None.
         device_type(str, optional) The device where model is trained
     """
 
@@ -36,9 +29,6 @@ class RModel(VMModel):
         self,
         r: object = None,  # R instance
         model: object = None,  # Trained model instance
-        train_ds: VMDataset = None,
-        test_ds: VMDataset = None,
-        validation_ds: VMDataset = None,
         attributes: ModelAttributes = None,
     ):
         self.r = r
@@ -46,16 +36,10 @@ class RModel(VMModel):
 
         super().__init__(
             model=model,
-            train_ds=train_ds,
-            test_ds=test_ds,
-            validation_ds=validation_ds,
             attributes=attributes,
         )
 
         self._is_classification_model = self.__is_classification_model()
-        self.__load_model_predictions(self.train_ds, "_y_train_predict")
-        self.__load_model_predictions(self.test_ds, "_y_test_predict")
-        self.__load_model_predictions(self.validation_ds, "_y_validation_predict")
 
     def __get_predict_data_as_df(self, new_data):
         """
@@ -68,18 +52,6 @@ class RModel(VMModel):
             return new_data.df.drop(new_data.target_column, axis=1)
 
         return new_data.df
-
-    def __load_model_predictions(self, dataset, attr_name):
-        if self.model and dataset:
-            if dataset.prediction_column:
-                setattr(self, attr_name, dataset.y_pred)
-            else:
-                logger.info("Running predict()...This may take a while")
-                setattr(
-                    self,
-                    attr_name,
-                    self.predict(self.__get_predict_data_as_df(dataset)),
-                )
 
     def __model_class(self):
         """

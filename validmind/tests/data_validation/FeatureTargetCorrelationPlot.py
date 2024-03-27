@@ -54,11 +54,10 @@ class FeatureTargetCorrelationPlot(Metric):
     }
 
     def run(self):
-        features = self.params["features"]
         fig_height = self.params["fig_height"]
 
-        if features is None:
-            features = self.inputs.dataset.df.columns.to_list()
+        if self.params["features"] is None:
+            features = self.inputs.dataset.feature_columns
         else:
             features = self.params["features"]
 

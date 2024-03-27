@@ -66,7 +66,7 @@ class RougeMetrics(Metric):
     """
 
     name = "rouge_metric"
-    required_inputs = ["model", "model.test_ds"]
+    required_inputs = ["model", "dataset"]
     default_params = {
         "rouge_metrics": ["rouge-1", "rouge-2", "rouge-l"],
     }
@@ -85,8 +85,8 @@ class RougeMetrics(Metric):
                 f"Invalid metrics from {self.default_params.get('rouge_metrics')}"
             )
 
-        y_true = list(itertools.chain.from_iterable(self.inputs.model.y_test_true))
-        y_pred = self.inputs.model.y_test_predict
+        y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
 
         rouge = Rouge(metrics=r_metrics)
 

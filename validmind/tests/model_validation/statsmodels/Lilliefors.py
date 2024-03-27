@@ -55,6 +55,7 @@ class Lilliefors(Metric):
     """
 
     name = "lilliefors_test"
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": [
@@ -69,7 +70,6 @@ class Lilliefors(Metric):
         """
         Calculates Lilliefors test for each of the dataset features
         """
-        x_train = self.train_ds.df
         x_train = self.train_ds.df
 
         lilliefors_values = {}
