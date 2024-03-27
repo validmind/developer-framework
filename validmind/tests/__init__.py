@@ -350,11 +350,24 @@ def describe_test(test_id: str = None, raw: bool = False):
     )
 
 
-def run_test(test_id, params: dict = None, inputs=None, output_template=None, **kwargs):
+def run_test(
+    test_id: str = None,
+    name: str = None,
+    unit_metrics: list = None,
+    params: dict = None,
+    inputs=None,
+    output_template=None,
+    **kwargs,
+):
     """Run a test by test ID
 
     Args:
-        test_id (str): The test ID
+        test_id (str, option): The test ID to run - required when running a single test
+            i.e. when not running multiple unit metrics
+        name (str, optional): The name of the test (used to create a composite metric
+            out of multiple unit metrics) - required when running multiple unit metrics
+        unit_metrics (list, optional): A list of unit metric IDs to run as a composite
+            metric - required when running multiple unit metrics
         params (dict, optional): A dictionary of params to override the default params
         inputs: A dictionary of test inputs to pass to the Test
         output_template (str, optional): A template to use for customizing the output
@@ -364,7 +377,20 @@ def run_test(test_id, params: dict = None, inputs=None, output_template=None, **
             - models: A list of models to use for the test
             other inputs can be accessed inside the test via `self.inputs["input_name"]`
     """
-    TestClass = load_test(test_id, reload=True)
+    if not test_id and not name and not unit_metrics:
+        raise ValueError(
+            "`test_id` or `name` and `unit_metrics` must be provided to run a test"
+        )
+
+    if (unit_metrics and not name) or (name and not unit_metrics):
+        raise ValueError("`name` and `unit_metrics` must be provided together")
+
+    if unit_metrics:
+        TestClass = load_composite_metric(unit_metrics=unit_metrics, metric_name=name)
+        TestClass.test_id = f"validmind.composite_metric:{name}"
+    else:
+        TestClass = load_test(test_id, reload=True)
+
     test = TestClass(
         test_id=test_id,
         context=TestContext(),

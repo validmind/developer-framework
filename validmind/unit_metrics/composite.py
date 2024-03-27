@@ -32,10 +32,11 @@ class CompositeMetric(Metric):
         elif self.unit_metrics is None:
             raise ValueError("unit_metrics must be provided")
 
-        if self._output_template:
+        if hasattr(self, "_output_template"):
             self.output_template = self._output_template
 
     def run(self):
+        print(f"Running composite metric {self.test_id}")
         self.result = run_metrics(
             key=self.test_id,
             metric_ids=self.unit_metrics,
@@ -51,27 +52,44 @@ class CompositeMetric(Metric):
         return ResultSummary(results=[ResultTable(data=[result])])
 
 
-def load_composite_metric(metric_key: str):
+def load_composite_metric(
+    metric_key: str = None, metric_name: str = None, unit_metrics: list[str] = None
+):
+    # this function can either create a composite metric from a list of unit metrics or
+    # load a stored composite metric based on the test id
+
     # TODO: figure out this circular import thing:
     from ..api_client import get_metadata
 
-    # get the unit metric ids from the metadata
-    unit_metrics = run_async(
-        get_metadata, f"composite_metric_def:{metric_key}:unit_metrics"
-    )
-    output_template = run_async(
-        get_metadata, f"composite_metric_def:{metric_key}:output_template"
-    )
+    if metric_key:
+        # get the unit metric ids from the metadata
+        unit_metrics = run_async(
+            get_metadata, f"composite_metric_def:{metric_key}:unit_metrics"
+        )
 
-    class_def = type(
-        metric_key.split(".")[-1],
-        (CompositeMetric, Metric),
-        {
-            "__doc__": "Composite Metric built from multiple unit metrics",
-            "_unit_metrics": unit_metrics["json"],
-            "_output_template": output_template["json"]["output_template"],
-        },
-    )
+        output_template = run_async(
+            get_metadata, f"composite_metric_def:{metric_key}:output_template"
+        )
+
+        class_def = type(
+            metric_key.split(".")[-1],
+            (CompositeMetric,),
+            {
+                "__doc__": "Composite Metric built from multiple unit metrics",
+                "_unit_metrics": unit_metrics["json"],
+                "_output_template": output_template["json"]["output_template"],
+            },
+        )
+
+    else:
+        class_def = type(
+            metric_name,
+            (CompositeMetric,),
+            {
+                "__doc__": "Composite Metric built from multiple unit metrics",
+                "_unit_metrics": unit_metrics,
+            },
+        )
 
     return class_def
 
