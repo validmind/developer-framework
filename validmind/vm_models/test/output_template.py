@@ -4,7 +4,6 @@
 
 from datetime import datetime
 
-from bs4 import BeautifulSoup
 from dateutil import parser
 from jinja2 import Environment
 
@@ -54,29 +53,3 @@ class OutputTemplate:
             value=value,
             metric_history=values_history,
         )
-
-    def parse_summary_from_html(rendered_template_html):
-        soup = BeautifulSoup(rendered_template_html, "html.parser")
-
-        # find all `<table>` elements
-        tables = soup.find_all("table")
-        tables_data = []
-
-        for table in tables:
-            headers = [cell.text for cell in table.find_all("th")]
-
-            tables_data.append(
-                {
-                    "type": "table",
-                    "data": [
-                        {
-                            headers[i]: cell.text
-                            for i, cell in enumerate(row.find_all("td"))
-                        }
-                        for row in table.find("tbody").find_all("tr")
-                    ],
-                    "metadata": {"title": ""},  # TODO: add title
-                }
-            )
-
-        return tables_data
