@@ -10,6 +10,7 @@ from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
 from ..test_context import TestUtils
+from .result_wrapper import ResultWrapper
 
 
 class TestMetadata(TypedDict):
@@ -35,7 +36,7 @@ class Test(TestUtils):
     _ref_id: str = None  # unique identifier (populated at init)
     _section_id: str = None  # which section of template this test belongs to
     test_id: str = None  # populated when loading tests from suites
-    result: object = None  # type should be overridden by parent classes
+    result: ResultWrapper = None  # type should be overridden by parent classes
 
     params: dict = None  # populated by test suite from user-passed config
 

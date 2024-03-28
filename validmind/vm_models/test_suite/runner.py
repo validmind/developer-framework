@@ -126,7 +126,7 @@ class TestSuiteRunner:
             )
 
             try:
-                await test.log()
+                await test.log_async()
             except Exception as e:
                 self.pbar_description.value = "Failed to send result to ValidMind"
                 logger.error(f"Failed to log result: {test.result}")

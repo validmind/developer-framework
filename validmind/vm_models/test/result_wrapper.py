@@ -26,7 +26,7 @@ from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
 
 
-async def update_metadata(content_id: str, text: str) -> None:
+async def update_metadata(content_id: str, text: str, _json: dict | list = None):
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
@@ -43,7 +43,7 @@ async def update_metadata(content_id: str, text: str) -> None:
         or VM_OVERRIDE_METADATA == "True"
         or VM_OVERRIDE_METADATA is True
     ):
-        await api_client.log_metadata(content_id, text)
+        await api_client.log_metadata(content_id, text, _json)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -155,7 +155,7 @@ class ResultWrapper(ABC):
 
     def log(self):
         """Log the result... May be overridden by subclasses"""
-        return run_async(self.log_async)
+        run_async(self.log_async)
 
 
 @dataclass
@@ -298,7 +298,13 @@ class MetricResultWrapper(ResultWrapper):
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
-                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
+                tasks.append(
+                    update_metadata(
+                        content_id=metadata["content_id"],
+                        text=metadata.get("text", ""),
+                        _json=metadata.get("json"),
+                    )
+                )
 
         await asyncio.gather(*tasks)
 
