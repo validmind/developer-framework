@@ -9,7 +9,6 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestSuiteMetricResult,
 )
 
 logger = get_logger(__name__)
@@ -18,7 +17,7 @@ logger = get_logger(__name__)
 @dataclass
 class __TEST_NAME__(Metric):
     """
-    Automatically detects the AR order of a time series using both BIC and AIC.
+    Test Description goes here.
     """
 
     name = "__TEST_ID__"
@@ -29,11 +28,11 @@ class __TEST_NAME__(Metric):
         "tags": [],  # time_series_data, tabular_data, forecasting, etc. Can be any string
     }
 
-    def run(self) -> TestSuiteMetricResult:
+    def run(self):
         """Run the test and cache the results
 
         Returns:
-            TestSuiteMetricResult: The results of the test.
+            TestSuiteResult: The results of the test.
         """
         figure = None  # you can use plotly to create a figure here
 
@@ -51,7 +50,7 @@ class __TEST_NAME__(Metric):
             ],  # return a figure by importing from validmind.vm_models
         )
 
-    def summary(self, cached_results: TestSuiteMetricResult) -> ResultSummary:
+    def summary(self, cached_results) -> ResultSummary:
         """Summarize the results of the test.
 
         Args:
