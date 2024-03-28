@@ -105,7 +105,7 @@ class CompositeMetric(Metric):
 
 
 def load_composite_metric(
-    metric_key: str = None,
+    test_id: str = None,
     metric_name: str = None,
     unit_metrics: list[str] = None,
     output_template: str = None,
@@ -116,17 +116,17 @@ def load_composite_metric(
     # TODO: figure out this circular import thing:
     from ..api_client import get_metadata
 
-    if metric_key:
+    if test_id:
         # get the unit metric ids and output template (if any) from the metadata
         unit_metrics = run_async(
-            get_metadata, f"composite_metric_def:{metric_key}:unit_metrics"
+            get_metadata, f"composite_metric_def:{test_id}:unit_metrics"
         )["json"]
         output_template = run_async(
-            get_metadata, f"composite_metric_def:{metric_key}:output_template"
+            get_metadata, f"composite_metric_def:{test_id}:output_template"
         )["json"]["output_template"]
 
     class_def = type(
-        metric_key.split(".")[-1] if metric_key else metric_name,
+        test_id.split(".")[-1] if test_id else metric_name,
         (CompositeMetric,),
         {
             "__doc__": "Composite Metric built from multiple unit metrics",
