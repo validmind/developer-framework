@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import ast
+import inspect
 from dataclasses import dataclass
 from typing import Protocol
 from uuid import uuid4
@@ -11,7 +13,58 @@ from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
 from ..vm_models.test.result_wrapper import MetricResultWrapper
-from . import run_metric
+from . import _get_metric_class, run_metric
+
+
+def _extract_class_methods(cls):
+    source = inspect.getsource(cls)
+    tree = ast.parse(source)
+
+    class MethodVisitor(ast.NodeVisitor):
+        def __init__(self):
+            self.methods = {}
+
+        def visit_FunctionDef(self, node):
+            self.methods[node.name] = node
+            self.generic_visit(node)
+
+    visitor = MethodVisitor()
+    visitor.visit(tree)
+
+    return visitor.methods
+
+
+def _extract_required_inputs(cls):
+    methods = _extract_class_methods(cls)
+
+    class Visitor(ast.NodeVisitor):
+        def __init__(self):
+            self.properties = set()
+            self.visited_methods = set()
+
+        def visit_Attribute(self, node):
+            if isinstance(node.value, ast.Attribute) and node.value.attr == "inputs":
+                self.properties.add(node.attr)
+
+            self.generic_visit(node)
+
+        def visit_Call(self, node):
+            if isinstance(node.func, ast.Attribute) and isinstance(
+                node.func.value, ast.Name
+            ):
+                if node.func.value.id == "self" and node.func.attr in methods:
+                    method_name = node.func.attr
+
+                    if method_name not in self.visited_methods:
+                        self.visited_methods.add(method_name)
+                        self.visit(methods[method_name])
+
+            self.generic_visit(node)
+
+    visitor = Visitor()
+    visitor.visit(methods["run"])
+
+    return visitor.properties
 
 
 class MetricProtocol(Protocol):
@@ -37,7 +90,7 @@ class CompositeMetric(Metric):
 
     def run(self):
         self.result = run_metrics(
-            key=self.test_id,
+            test_id=self.test_id,
             metric_ids=self.unit_metrics,
             inputs=self._get_input_dict(),
             params=self.params,
@@ -52,7 +105,10 @@ class CompositeMetric(Metric):
 
 
 def load_composite_metric(
-    metric_key: str = None, metric_name: str = None, unit_metrics: list[str] = None
+    metric_key: str = None,
+    metric_name: str = None,
+    unit_metrics: list[str] = None,
+    output_template: str = None,
 ) -> CompositeMetric:
     # this function can either create a composite metric from a list of unit metrics or
     # load a stored composite metric based on the test id
@@ -61,34 +117,30 @@ def load_composite_metric(
     from ..api_client import get_metadata
 
     if metric_key:
-        # get the unit metric ids from the metadata
+        # get the unit metric ids and output template (if any) from the metadata
         unit_metrics = run_async(
             get_metadata, f"composite_metric_def:{metric_key}:unit_metrics"
-        )
-
+        )["json"]
         output_template = run_async(
             get_metadata, f"composite_metric_def:{metric_key}:output_template"
-        )
+        )["json"]["output_template"]
 
-        class_def = type(
-            metric_key.split(".")[-1],
-            (CompositeMetric,),
-            {
-                "__doc__": "Composite Metric built from multiple unit metrics",
-                "_unit_metrics": unit_metrics["json"],
-                "_output_template": output_template["json"]["output_template"],
-            },
-        )
+    class_def = type(
+        metric_key.split(".")[-1] if metric_key else metric_name,
+        (CompositeMetric,),
+        {
+            "__doc__": "Composite Metric built from multiple unit metrics",
+            "_unit_metrics": unit_metrics,
+            "_output_template": output_template,
+        },
+    )
 
-    else:
-        class_def = type(
-            metric_name,
-            (CompositeMetric,),
-            {
-                "__doc__": "Composite Metric built from multiple unit metrics",
-                "_unit_metrics": unit_metrics,
-            },
-        )
+    required_inputs = set()
+    for metric_id in unit_metrics:
+        metric_cls = _get_metric_class(metric_id)
+        required_inputs.update(_extract_required_inputs(metric_cls))
+
+    class_def.required_inputs = list(required_inputs)
 
     return class_def
 
@@ -99,13 +151,45 @@ def run_metrics(
     output_template=None,
     inputs=None,
     params=None,
-    key: str = None,
+    test_id: str = None,
     show=True,
 ) -> MetricResultWrapper:
+    """Run a composite metric
+
+    Composite metrics are metrics that are composed of multiple unit metrics. This
+    works by running individual unit metrics and then combining the results into a
+    single "MetricResult" object that can be logged and displayed just like any other
+    metric result. The special thing about composite metrics is that when they are
+    logged to the platform, metadata describing the unit metrics and output template
+    used to generate the composite metric is also logged. This means that by grabbing
+    the metadata for a composite metric (identified by the test ID
+    `validmind.composite_metric.<name>`) the framework can rebuild and rerun it at
+    any time.
+
+    Args:
+        name (str, optional): Name of the composite metric. Required if test_id is not
+            provided. Defaults to None.
+        metric_ids (list[str]): List of unit metric IDs to run. Required.
+        output_template (_type_, optional): Output template to customize the result
+            table.
+        inputs (_type_, optional): Inputs to pass to the unit metrics. Defaults to None
+        params (_type_, optional): Parameters to pass to the unit metrics. Defaults to
+            None.
+        test_id (str, optional): Test ID of the composite metric. Required if name is
+            not provided. Defaults to None.
+        show (bool, optional): Whether to show the result immediately. Defaults to True
+
+    Raises:
+        ValueError: If metric_ids is not provided
+        ValueError: If name or key is not provided
+
+    Returns:
+        MetricResultWrapper: The result wrapper object
+    """
     if not metric_ids:
         raise ValueError("metric_ids must be provided")
 
-    if not name and not key:
+    if not name and not test_id:
         raise ValueError("name or key must be provided")
 
     results = {}
@@ -118,24 +202,24 @@ def run_metrics(
         )
         results[list(result.summary.keys())[0]] = result.value
 
-    metric_key = f"validmind.composite_metric.{name}" if not key else key
+    test_id = f"validmind.composite_metric.{name}" if not test_id else test_id
 
     result_wrapper = MetricResultWrapper(
-        result_id=metric_key,
+        result_id=test_id,
         result_metadata=[
             {
-                "content_id": f"composite_metric_def:{metric_key}:unit_metrics",
+                "content_id": f"composite_metric_def:{test_id}:unit_metrics",
                 "json": metric_ids,
             },
             {
-                "content_id": f"composite_metric_def:{metric_key}:output_template",
+                "content_id": f"composite_metric_def:{test_id}:output_template",
                 "json": {"output_template": output_template},
             },
         ],
         inputs=list(inputs.keys()),
         output_template=output_template,
         metric=MetricResult(
-            key=metric_key,
+            key=test_id,
             ref_id=str(uuid4()),
             value=results,
             summary=ResultSummary(results=[ResultTable(data=[results])]),
