@@ -216,7 +216,9 @@ class MetricResultWrapper(ResultWrapper):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 
-        vbox_children = []
+        vbox_children = [
+            widgets.HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>")
+        ]
 
         if self.result_metadata:
             metric_description = self.result_metadata[0]
@@ -354,7 +356,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
         test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h2>{test_title} {"✅" if self.test_results.passed else "❌"}</h2>
+            <h1>{test_title} {"✅" if self.test_results.passed else "❌"}</h1>
             """
         )
 
