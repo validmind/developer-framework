@@ -32,17 +32,26 @@ async def update_metadata(content_id: str, text: str, _json: dict | list = None)
     override the existing metadata, but we can override it by
     setting the VM_OVERRIDE_METADATA environment variable to True
     """
-    VM_OVERRIDE_METADATA = os.environ.get("VM_OVERRIDE_METADATA", False)
-    try:
-        existing_metadata = await api_client.get_metadata(content_id)
-    except Exception:
-        existing_metadata = None  # TODO: handle this better
+    should_update = False
 
-    if (
-        existing_metadata is None
-        or VM_OVERRIDE_METADATA == "True"
-        or VM_OVERRIDE_METADATA is True
-    ):
+    # check if the env variable is set to force overwriting metadata
+    if os.environ.get("VM_OVERRIDE_METADATA", "false").lower() == "true":
+        should_update = True
+
+    # if not set, check if the content_id is a composite metric def
+    if not should_update and content_id.startswith("composite_metric_def:"):
+        # we always want composite metric definitions to be updated
+        should_update = True
+
+    # if not set, lets check if the metadata already exists
+    if not should_update:
+        try:
+            await api_client.get_metadata(content_id)
+        except Exception:  # TODO: this shouldn't be a catch-all
+            # if the metadata doesn't exist, we should create (update) it
+            should_update = True
+
+    if should_update:
         await api_client.log_metadata(content_id, text, _json)
 
 
