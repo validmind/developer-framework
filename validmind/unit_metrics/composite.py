@@ -85,7 +85,7 @@ class CompositeMetric(Metric):
         elif self.unit_metrics is None:
             raise ValueError("unit_metrics must be provided")
 
-        if hasattr(self, "_output_template"):
+        if hasattr(self, "_output_template") and self._output_template:
             self.output_template = self._output_template
 
     def run(self):
@@ -191,6 +191,10 @@ def run_metrics(
 
     if not name and not test_id:
         raise ValueError("name or key must be provided")
+
+    # if name is provided, make sure to squash it into a camel case string
+    if name:
+        name = "".join(word[0].upper() + word[1:] for word in name.split())
 
     results = {}
 
