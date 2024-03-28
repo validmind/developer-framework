@@ -5,7 +5,6 @@
 import ast
 import inspect
 from dataclasses import dataclass
-from typing import Protocol
 from uuid import uuid4
 
 from ..utils import clean_docstring, run_async
@@ -119,11 +118,16 @@ def load_composite_metric(
             get_metadata, f"composite_metric_def:{test_id}:output_template"
         )["json"]["output_template"]
 
+    description = f"""
+    Composite metric built from the following unit metrics:
+    {', '.join([metric_id.split('.')[-1] for metric_id in unit_metrics])}
+    """
+
     class_def = type(
         test_id.split(".")[-1] if test_id else metric_name,
         (CompositeMetric,),
         {
-            "__doc__": "Composite Metric built from multiple unit metrics",
+            "__doc__": description,
             "_unit_metrics": unit_metrics,
             "_output_template": output_template,
         },
