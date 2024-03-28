@@ -85,6 +85,8 @@ def nan_to_none(obj):
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
+        if isinstance(obj, pd.Interval):
+            return f"[{obj.left}, {obj.right}]"
         if isinstance(obj, np.integer):
             return int(obj)
         if isinstance(obj, np.floating):
