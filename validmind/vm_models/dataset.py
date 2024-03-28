@@ -36,9 +36,192 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def serialize(self):
+    def assign_predictions(
+        self,
+        model,
+        prediction_values: list = None,
+        prediction_column=None,
+    ):
         """
-        Serializes the dataset to a dictionary.
+        Assigns predictions to the dataset for a given model or prediction values.
+        The dataset is updated with a new column containing the predictions.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def input_id(self) -> str:
+        """
+        Returns input id of dataset.
+
+        Returns:
+            str: input_id.
+        """
+        return self.input_id
+
+    @property
+    @abstractmethod
+    def columns(self) -> list:
+        """
+        Returns the the list of columns in the dataset.
+
+        Returns:
+            List[str]: The columns list.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def target_column(self) -> str:
+        """
+        Returns the target column name of the dataset.
+
+        Returns:
+            str: The target column name.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def feature_columns(self) -> list:
+        """
+        Returns the feature columns of the dataset. If _feature_columns is None,
+        it returns all columns except the target column.
+
+        Returns:
+            list: The list of feature column names.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def text_column(self) -> str:
+        """
+        Returns the text column of the dataset.
+
+        Returns:
+            str: The text column name.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def x(self) -> np.ndarray:
+        """
+        Returns the input features (X) of the dataset.
+
+        Returns:
+            np.ndarray: The input features.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def y(self) -> np.ndarray:
+        """
+        Returns the target variables (y) of the dataset.
+
+        Returns:
+            np.ndarray: The target variables.
+        """
+        pass
+
+    @abstractmethod
+    def y_pred(self, model_id) -> np.ndarray:
+        """
+        Returns the prediction values (y_pred) of the dataset for a given model_id.
+
+        Returns:
+            np.ndarray: The prediction values.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def df(self):
+        """
+        Returns the dataset as a pandas DataFrame.
+
+        Returns:
+            pd.DataFrame: The dataset as a DataFrame.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def copy(self):
+        """
+        Returns a copy of the raw_dataset dataframe.
+        """
+        pass
+
+    @abstractmethod
+    def x_df(self):
+        """
+        Returns the non target and prediction columns.
+
+        Returns:
+            pd.DataFrame: The non target and prediction columns .
+        """
+        pass
+
+    @abstractmethod
+    def y_df(self):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        pass
+
+    @abstractmethod
+    def y_pred_df(self, model_id):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        pass
+
+    @abstractmethod
+    def prediction_column(self, model_id) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        pass
+
+    @abstractmethod
+    def get_features_columns(self):
+        """
+        Returns the column names of the feature variables.
+
+        Returns:
+            List[str]: The column names of the feature variables.
+        """
+        pass
+
+    @abstractmethod
+    def get_numeric_features_columns(self):
+        """
+        Returns the column names of the numeric feature variables.
+
+        Returns:
+            List[str]: The column names of the numeric feature variables.
+        """
+        pass
+
+    @abstractmethod
+    def get_categorical_features_columns(self):
+        """
+        Returns the column names of the categorical feature variables.
+
+        Returns:
+            List[str]: The column names of the categorical feature variables.
         """
         pass
 
