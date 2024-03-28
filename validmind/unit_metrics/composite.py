@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Protocol
 from uuid import uuid4
 
-from ..utils import run_async
+from ..utils import clean_docstring, run_async
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
@@ -67,13 +67,6 @@ def _extract_required_inputs(cls):
     return visitor.properties
 
 
-class MetricProtocol(Protocol):
-    unit_metrics: list[str]
-
-    def output(self, results):
-        pass
-
-
 @dataclass
 class CompositeMetric(Metric):
 
@@ -92,6 +85,7 @@ class CompositeMetric(Metric):
         self.result = run_metrics(
             test_id=self.test_id,
             metric_ids=self.unit_metrics,
+            description=self.description(),
             inputs=self._get_input_dict(),
             params=self.params,
             output_template=self.output_template,
@@ -148,11 +142,12 @@ def load_composite_metric(
 def run_metrics(
     name: str = None,
     metric_ids: list[str] = None,
-    output_template=None,
-    inputs=None,
-    params=None,
+    description: str = None,
+    output_template: str = None,
+    inputs: dict = None,
+    params: dict = None,
     test_id: str = None,
-    show=True,
+    show: bool = True,
 ) -> MetricResultWrapper:
     """Run a composite metric
 
@@ -170,6 +165,8 @@ def run_metrics(
         name (str, optional): Name of the composite metric. Required if test_id is not
             provided. Defaults to None.
         metric_ids (list[str]): List of unit metric IDs to run. Required.
+        description (str, optional): Description of the composite metric. Defaults to
+            None.
         output_template (_type_, optional): Output template to customize the result
             table.
         inputs (_type_, optional): Inputs to pass to the unit metrics. Defaults to None
@@ -212,6 +209,10 @@ def run_metrics(
         result_id=test_id,
         result_metadata=[
             {
+                "content_id": f"metric_description:{test_id}",
+                "text": clean_docstring(description),
+            },
+            {
                 "content_id": f"composite_metric_def:{test_id}:unit_metrics",
                 "json": metric_ids,
             },
@@ -234,14 +235,3 @@ def run_metrics(
         result_wrapper.show()
 
     return result_wrapper
-
-
-def metric(cls: MetricProtocol):
-    """decorator to compose metrics from classes"""
-
-    def run(self, inputs=None, params=None):
-        return run_metrics(self.unit_metrics, inputs=inputs, params=params)
-
-    cls.run = run
-
-    return cls
