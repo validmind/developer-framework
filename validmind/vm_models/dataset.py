@@ -48,6 +48,30 @@ class VMDataset(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_extra_column(self, column_name):
+        """
+        Returns the values of the specified extra column.
+
+        Args:
+            column_name (str): The name of the extra column.
+
+        Returns:
+            np.ndarray: The values of the extra column.
+        """
+        pass
+
+    @abstractmethod
+    def add_extra_column(self, column_name, column_values=None):
+        """
+        Adds an extra column to the dataset without modifying the dataset `features` and `target` columns.
+
+        Args:
+            column_name (str): The name of the extra column.
+            column_values (np.ndarray, optional): The values of the extra column.
+        """
+        pass
+
     @property
     @abstractmethod
     def input_id(self) -> str:
@@ -318,7 +342,7 @@ class NumpyDataset(VMDataset):
         # initialize target column
         self._target_column = target_column
         # initialize extra columns
-        self.__set_extra_columns(extra_columns, model)
+        self.__set_extra_columns(extra_columns)
         # initialize feature columns
         self.__set_feature_columns(feature_columns)
         # initialize text column, target class labels and options
@@ -328,7 +352,7 @@ class NumpyDataset(VMDataset):
         if model:
             self.assign_predictions(model)
 
-    def __set_extra_columns(self, extra_columns, model):
+    def __set_extra_columns(self, extra_columns):
         if extra_columns is None:
             extra_columns = {
                 "prediction_columns": {},
@@ -445,6 +469,59 @@ class NumpyDataset(VMDataset):
             logger.info(
                 f"Prediction column {self._extra_columns['prediction_columns'][model.input_id]} already linked to the {model.input_id}"
             )
+
+    def get_extra_column(self, column_name):
+        """
+        Returns the values of the specified extra column.
+
+        Args:
+            column_name (str): The name of the extra column.
+
+        Returns:
+            np.ndarray: The values of the extra column.
+        """
+        if column_name not in self.extra_columns:
+            raise ValueError(f"Column {column_name} is not an extra column")
+
+        return self._df[column_name]
+
+    def add_extra_column(self, column_name, column_values=None):
+        """
+        Adds an extra column to the dataset without modifying the dataset `features` and `target` columns.
+
+        Args:
+            column_name (str): The name of the extra column.
+            column_values (np.ndarray, optional): The values of the extra column.
+        """
+        if column_name in self.extra_columns:
+            logger.info(f"Column {column_name} already registered as an extra column")
+            return
+
+        # The column name already exists in the dataset so we just assign the extra column
+        if column_name in self.columns:
+            self._extra_columns[column_name] = column_name
+            logger.info(
+                f"Column {column_name} exists in the dataset, registering as an extra column"
+            )
+            return
+
+        if column_values is None:
+            raise ValueError(
+                "Column values must be provided when the column doesn't exist in the dataset"
+            )
+
+        if len(column_values) != self.df.shape[0]:
+            raise ValueError(
+                "Length of column values doesn't match number of rows of the dataset"
+            )
+
+        self._raw_dataset = np.hstack(
+            (self._raw_dataset, np.array(column_values).reshape(-1, 1))
+        )
+        self._columns.append(column_name)
+        self._df[column_name] = column_values
+        self._extra_columns[column_name] = column_name
+        logger.info(f"Column {column_name} added as an extra column")
 
     @property
     def raw_dataset(self) -> np.ndarray:

@@ -44,6 +44,12 @@
                                 <a class="function" href="#VMDataset.assign_predictions">assign_predictions</a>
                         </li>
                         <li>
+                                <a class="function" href="#VMDataset.get_extra_column">get_extra_column</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMDataset.add_extra_column">add_extra_column</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#VMDataset.columns">columns</a>
                         </li>
                         <li>
@@ -463,6 +469,57 @@
     
             <div class="docstring"><p>Assigns predictions to the dataset for a given model or prediction values.
 The dataset is updated with a new column containing the predictions.</p>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.get_extra_column" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">get_extra_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">column_name</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.get_extra_column"></a>
+    
+            <div class="docstring"><p>Returns the values of the specified extra column.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>column_name (str):</strong>  The name of the extra column.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>np.ndarray: The values of the extra column.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.add_extra_column" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">add_extra_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">column_name</span>, </span><span class="param"><span class="n">column_values</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.add_extra_column"></a>
+    
+            <div class="docstring"><p>Adds an extra column to the dataset without modifying the dataset <code>features</code> and <code>target</code> columns.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>column_name (str):</strong>  The name of the extra column.</li>
+<li><strong>column_values (np.ndarray, optional):</strong>  The values of the extra column.</li>
+</ul>
 </div>
 
 
