@@ -137,7 +137,7 @@ def load_composite_metric(
     for metric_id in unit_metrics:
         metric_cls = _get_metric_class(metric_id)
         # required_inputs.update(_extract_required_inputs(metric_cls))
-        required_inputs.update(metric_cls.required_inputs)
+        required_inputs.update(metric_cls.required_inputs or [])
 
     class_def.required_inputs = list(required_inputs)
 
