@@ -6,31 +6,10 @@ from unittest.mock import patch
 
 import xgboost as xgb
 
-from validmind.datasets.classification import customer_churn as demo_dataset
+from validmind.datasets.classification import customer_churn
 
 
 class TestFullTestSuite(unittest.TestCase):
-    def setUp(self):
-        self.df = demo_dataset.load_data()
-
-        self.train_df, validation_df, self.test_df = demo_dataset.preprocess(self.df)
-
-        x_train = self.train_df.drop(demo_dataset.target_column, axis=1)
-        y_train = self.train_df[demo_dataset.target_column]
-        x_val = validation_df.drop(demo_dataset.target_column, axis=1)
-        y_val = validation_df[demo_dataset.target_column]
-
-        self.model = xgb.XGBClassifier(early_stopping_rounds=10)
-        self.model.set_params(
-            eval_metric=["error", "logloss", "auc"],
-        )
-        self.model.fit(
-            x_train,
-            y_train,
-            eval_set=[(x_val, y_val)],
-            verbose=False,
-        )
-
     @patch.multiple(
         "validmind.api_client",
         log_figure=unittest.mock.DEFAULT,
@@ -46,32 +25,66 @@ class TestFullTestSuite(unittest.TestCase):
         from validmind.vm_models.model import VMModel
         from validmind.vm_models.test_suite.test_suite import TestSuite
 
-        self.vm_dataset = vm.init_dataset(
-            dataset=self.df,
-            target_column=demo_dataset.target_column,
-            class_labels=demo_dataset.class_labels,
+        raw_df = customer_churn.load_data()
+
+        train_df, validation_df, test_df = customer_churn.preprocess(raw_df)
+
+        x_train = train_df.drop(customer_churn.target_column, axis=1)
+        y_train = train_df[customer_churn.target_column]
+        x_val = validation_df.drop(customer_churn.target_column, axis=1)
+        y_val = validation_df[customer_churn.target_column]
+
+        model = xgb.XGBClassifier(early_stopping_rounds=10)
+        model.set_params(
+            eval_metric=["error", "logloss", "auc"],
         )
-        self.assertIsInstance(self.vm_dataset, VMDataset)
+        model.fit(
+            x_train,
+            y_train,
+            eval_set=[(x_val, y_val)],
+            verbose=False,
+        )
+
+        vm_raw_dataset = vm.init_dataset(
+            dataset=raw_df,
+            input_id="raw_dataset",
+            target_column=customer_churn.target_column,
+            class_labels=customer_churn.class_labels,
+        )
+        self.assertIsInstance(vm_raw_dataset, VMDataset)
 
         vm_train_ds = vm.init_dataset(
-            dataset=self.train_df,
-            target_column=demo_dataset.target_column,
+            dataset=train_df,
+            input_id="train_dataset",
+            target_column=customer_churn.target_column,
         )
         self.assertIsInstance(vm_train_ds, VMDataset)
 
-        self.vm_test_ds = vm.init_dataset(
-            dataset=self.test_df,
-            target_column=demo_dataset.target_column,
+        vm_test_ds = vm.init_dataset(
+            dataset=test_df, input_id="test_dataset", target_column=customer_churn.target_column
         )
-        self.assertIsInstance(self.vm_test_ds, VMDataset)
+        self.assertIsInstance(vm_test_ds, VMDataset)
 
-        self.vm_model = vm.init_model(self.model)
-        self.assertIsInstance(self.vm_model, VMModel)
+        vm_model = vm.init_model(
+            model,
+            input_id="model",
+        )
+        self.assertIsInstance(vm_model, VMModel)
+
+        vm_train_ds.assign_predictions(
+            model=vm_model,
+        )
+
+        vm_test_ds.assign_predictions(
+            model=vm_model,
+        )
+
+        config = customer_churn.get_demo_test_config(vm.get_test_suite("classifier_full_suite"))
 
         suite = vm.run_test_suite(
             "classifier_full_suite",
-            dataset=self.vm_dataset,
-            model=self.vm_model,
+            config=config,
+            fail_fast=True,
         )
 
         self.assertIsInstance(suite, TestSuite)
