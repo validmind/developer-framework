@@ -257,16 +257,7 @@ def run_metrics(
             key=test_id,
             ref_id=str(uuid4()),
             value=results,
-            summary=ResultSummary(
-                results=[
-                    ResultTable(
-                        data=[
-                            {"Metric": key, "Value": value}
-                            for key, value in results.items()
-                        ]
-                    )
-                ]
-            ),
+            summary=ResultSummary(results=[ResultTable(data=[results])]),
         ),
     )
 
