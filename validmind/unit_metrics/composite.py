@@ -7,7 +7,7 @@ import inspect
 from dataclasses import dataclass
 from uuid import uuid4
 
-from ..utils import clean_docstring, run_async
+from ..utils import clean_docstring, run_async, test_id_to_name
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
@@ -136,7 +136,8 @@ def load_composite_metric(
     required_inputs = set()
     for metric_id in unit_metrics:
         metric_cls = _get_metric_class(metric_id)
-        required_inputs.update(_extract_required_inputs(metric_cls))
+        # required_inputs.update(_extract_required_inputs(metric_cls))
+        required_inputs.update(metric_cls.required_inputs)
 
     class_def.required_inputs = list(required_inputs)
 
@@ -209,6 +210,31 @@ def run_metrics(
 
     test_id = f"validmind.composite_metric.{name}" if not test_id else test_id
 
+    if not output_template:
+
+        def row(key):
+            return f"""
+            <tr>
+                <td><strong>{key.upper()}</strong></td>
+                <td>{{{{ value['{key}'] | number }}}}</td>
+            </tr>
+            """
+
+        output_template = f"""
+        <h1{test_id_to_name(test_id)}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {"".join([row(key) for key in results.keys()])}
+            </tbody>
+        </table>
+        """
+
     result_wrapper = MetricResultWrapper(
         result_id=test_id,
         result_metadata=[
@@ -231,7 +257,16 @@ def run_metrics(
             key=test_id,
             ref_id=str(uuid4()),
             value=results,
-            summary=ResultSummary(results=[ResultTable(data=[results])]),
+            summary=ResultSummary(
+                results=[
+                    ResultTable(
+                        data=[
+                            {"Metric": key, "Value": value}
+                            for key, value in results.items()
+                        ]
+                    )
+                ]
+            ),
         ),
     )
 
