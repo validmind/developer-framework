@@ -5,6 +5,7 @@
 import ast
 import inspect
 from dataclasses import dataclass
+from typing import List
 from uuid import uuid4
 
 from ..utils import clean_docstring, run_async, test_id_to_name
@@ -69,7 +70,7 @@ def _extract_required_inputs(cls):
 @dataclass
 class CompositeMetric(Metric):
 
-    unit_metrics: list[str] = None
+    unit_metrics: List[str] = None
 
     def __post_init__(self):
         if self._unit_metrics:
@@ -100,7 +101,7 @@ class CompositeMetric(Metric):
 def load_composite_metric(
     test_id: str = None,
     metric_name: str = None,
-    unit_metrics: list[str] = None,
+    unit_metrics: List[str] = None,
     output_template: str = None,
 ) -> CompositeMetric:
     # this function can either create a composite metric from a list of unit metrics or
@@ -146,7 +147,7 @@ def load_composite_metric(
 
 def run_metrics(
     name: str = None,
-    metric_ids: list[str] = None,
+    metric_ids: List[str] = None,
     description: str = None,
     output_template: str = None,
     inputs: dict = None,
