@@ -73,17 +73,29 @@ class LogisticRegPredictionHistogram(Metric):
         Predict probabilities and add PD as a new column in X
         """
         probabilities = model.predict(X)
-        pd_series = probabilities
 
         # If X is a numpy array, convert it to DataFrame
         if isinstance(X, np.ndarray):
             X = pd.DataFrame(X)
 
-        X["probabilities"] = pd_series
+        X["probabilities"] = probabilities
         return X
 
     @staticmethod
-    def plot_prob_histogram(df_train, df_test, pd_col, target_col, title):
+    def plot_prob_histogram(
+        X_train, y_train, X_test, y_test, pd_col, target_col, title
+    ):
+
+        X_train = pd.DataFrame(X_train)
+        X_test = pd.DataFrame(X_test)
+
+        # Ensure y_train and y_test are 1-dimensional Series
+        y_train = pd.Series(y_train.squeeze(), name=target_col)
+        y_test = pd.Series(y_test.squeeze(), name=target_col)
+
+        df_train = pd.concat([X_train, y_train], axis=1)
+        df_test = pd.concat([X_test, y_test], axis=1)
+
         train_0 = df_train[df_train[target_col] == 0][pd_col]
         train_1 = df_train[df_train[target_col] == 1][pd_col]
         test_0 = df_test[df_test[target_col] == 0][pd_col]
@@ -120,29 +132,20 @@ class LogisticRegPredictionHistogram(Metric):
             else self.inputs.model
         )
 
-        target_column = model.train_ds.target_column
+        target_column = self.inputs.datasets[0].target_column
         title = self.params["title"]
 
-        # Create a copy of training and testing dataframes
-        df_train = self.datasets[0].df.copy()
-        df_test = self.datasets[1].df.copy()
+        X_train = self.inputs.datasets[0].x
+        y_train = self.inputs.datasets[0].y
 
-        # Drop target_column to create feature dataframes
-        X_train = df_train.drop(columns=[target_column])
-        X_test = df_test.drop(columns=[target_column])
-
-        # Subset only target_column to create target dataframes
-        y_train = df_train[[target_column]]
-        y_test = df_test[[target_column]]
+        X_test = self.inputs.datasets[1].x
+        y_test = self.inputs.datasets[1].y
 
         X_train = self.compute_probabilities(model, X_train)
         X_test = self.compute_probabilities(model, X_test)
 
-        df_train = pd.concat([X_train, y_train], axis=1)
-        df_test = pd.concat([X_test, y_test], axis=1)
-
         fig = self.plot_prob_histogram(
-            df_train, df_test, "probabilities", target_column, title
+            X_train, y_train, X_test, y_test, "probabilities", target_column, title
         )
 
         return self.cache_results(

@@ -71,11 +71,11 @@ class GINITable(Metric):
             else self.inputs.model
         )
 
-        X_train = self.datasets[0].x
-        y_train = self.datasets[0].y
+        X_train = self.inputs.datasets[0].x
+        y_train = self.inputs.datasets[0].y
 
-        X_test = self.datasets[1].x
-        y_test = self.datasets[1].y
+        X_test = self.inputs.datasets[1].x
+        y_test = self.inputs.datasets[1].y
 
         summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)
 

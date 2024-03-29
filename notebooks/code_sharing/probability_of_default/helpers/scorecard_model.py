@@ -333,7 +333,7 @@ def woe_binning(df, target_column, breaks_adj):
     """
     This function performs automatic binning using WoE.
     df: A pandas dataframe
-    target_column: The target variable in quotes, e.g. 'target'
+    target_column: The target variable in quotes, e.g. 'loan_status'
     """
 
     non_numeric_cols = df.select_dtypes(exclude=["int64", "float64"]).columns
