@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 13.1.1"/>
-    <title>validmind.unit_metrics API documentation</title>
+    <title>validmind.unit_metrics.composite API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,11 +17,11 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>            <a class="pdoc-button module-list-button" href="../validmind.html">
+        <div>            <a class="pdoc-button module-list-button" href="../unit_metrics.html">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-</svg>                &nbsp;validmind</a>
+</svg>                &nbsp;validmind.unit_metrics</a>
 
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
@@ -32,21 +32,29 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#get_input_type">get_input_type</a>
+                    <a class="class" href="#CompositeMetric">CompositeMetric</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#CompositeMetric.__init__">CompositeMetric</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#CompositeMetric.run">run</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#CompositeMetric.summary">summary</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
-                    <a class="function" href="#get_metric_cache_key">get_metric_cache_key</a>
+                    <a class="function" href="#load_composite_metric">load_composite_metric</a>
             </li>
             <li>
-                    <a class="function" href="#run_metric">run_metric</a>
+                    <a class="function" href="#run_metrics">run_metrics</a>
             </li>
     </ul>
 
 
-            <h3>Submodules</h3>
-            <ul>
-                    <li><a href="unit_metrics/composite.html">composite</a></li>
-            </ul>
 
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
@@ -59,79 +67,160 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../validmind.html">validmind</a><wbr>.unit_metrics    </h1>
+<a href="./../../validmind.html">validmind</a><wbr>.<a href="./../unit_metrics.html">unit_metrics</a><wbr>.composite    </h1>
 
                 
                 
                 
                 
             </section>
-                <section id="get_input_type">
-                    <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_input_type</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">input_obj</span></span><span class="return-annotation">):</span></span>
+                <section id="CompositeMetric">
+                    <div class="attr class">
+                    <div class="decorator">@dataclass</div>
+
+    <span class="def">class</span>
+    <span class="name">CompositeMetric</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
 
         
     </div>
-    <a class="headerlink" href="#get_input_type"></a>
+    <a class="headerlink" href="#CompositeMetric"></a>
     
-            <div class="docstring"><p>Determines whether the input object is a 'dataset' or 'model' based on its class module path.</p>
+    
 
-<h6 id="arguments">Arguments:</h6>
+                            <div id="CompositeMetric.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">CompositeMetric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestInput</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_ref_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_section_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">unit_metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
-<ul>
-<li><strong>input_obj:</strong>  The object to type check.</li>
-</ul>
+        
+    </div>
+    <a class="headerlink" href="#CompositeMetric.__init__"></a>
+    
+    
 
-<h6 id="returns">Returns:</h6>
+                            </div>
+                            <div id="CompositeMetric.run" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
-<blockquote>
-  <p>str: 'dataset' or 'model' depending on the object's module, or raises ValueError.</p>
-</blockquote>
+        
+    </div>
+    <a class="headerlink" href="#CompositeMetric.run"></a>
+    
+            <div class="docstring"><p>Run the calculation and cache its results</p>
 </div>
 
 
-                </section>
-                <section id="get_metric_cache_key">
-                    <div class="attr function">
+                            </div>
+                            <div id="CompositeMetric.summary" class="classattr">
+                                <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_metric_cache_key</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metric_id</span>, </span><span class="param"><span class="n">params</span>, </span><span class="param"><span class="n">inputs</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#get_metric_cache_key"></a>
+    <a class="headerlink" href="#CompositeMetric.summary"></a>
+    
+            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
+The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
+short summary of the metric results.</p>
+
+<p>We return None here because the metric summary is optional.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
+                                <dd id="CompositeMetric.key" class="variable">key</dd>
+                <dd id="CompositeMetric.cache_results" class="function">cache_results</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test.test.Test</dt>
+                                <dd id="CompositeMetric.description" class="function">description</dd>
+                <dd id="CompositeMetric.log" class="function">log</dd>
+
+            </div>
+            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
+                                <dd id="CompositeMetric.get_accessed_inputs" class="function">get_accessed_inputs</dd>
+                <dd id="CompositeMetric.dataset" class="variable">dataset</dd>
+                <dd id="CompositeMetric.model" class="variable">model</dd>
+                <dd id="CompositeMetric.models" class="variable">models</dd>
+                <dd id="CompositeMetric.validate_inputs" class="function">validate_inputs</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="load_composite_metric">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">load_composite_metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">unit_metrics</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n"><a href="#CompositeMetric">validmind.unit_metrics.composite.CompositeMetric</a></span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#load_composite_metric"></a>
     
     
 
                 </section>
-                <section id="run_metric">
+                <section id="run_metrics">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">run_metric</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metric_id</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">inputs</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">params</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">run_metrics</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">metric_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#run_metric"></a>
+    <a class="headerlink" href="#run_metrics"></a>
     
-            <div class="docstring"><p>Run a single metric</p>
+            <div class="docstring"><p>Run a composite metric</p>
 
-<p>This function provides a high level interface for running a single metric. A metric
-is a single test that calculates a value based on the input data.</p>
+<p>Composite metrics are metrics that are composed of multiple unit metrics. This
+works by running individual unit metrics and then combining the results into a
+single "MetricResult" object that can be logged and displayed just like any other
+metric result. The special thing about composite metrics is that when they are
+logged to the platform, metadata describing the unit metrics and output template
+used to generate the composite metric is also logged. This means that by grabbing
+the metadata for a composite metric (identified by the test ID
+<code>validmind.composite_metric.&lt;name&gt;</code>) the framework can rebuild and rerun it at
+any time.</p>
 
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>metric_id (str):</strong>  The metric name (e.g. 'F1')</li>
-<li><strong>params (dict):</strong>  A dictionary of the metric parameters</li>
+<li><strong>name (str, optional):</strong>  Name of the composite metric. Required if test_id is not
+provided. Defaults to None.</li>
+<li><strong>metric_ids (list[str]):</strong>  List of unit metric IDs to run. Required.</li>
+<li><strong>description (str, optional):</strong>  Description of the composite metric. Defaults to
+None.</li>
+<li><strong>output_template (_type_, optional):</strong>  Output template to customize the result
+table.</li>
+<li><strong>inputs (_type_, optional):</strong>  Inputs to pass to the unit metrics. Defaults to None</li>
+<li><strong>params (_type_, optional):</strong>  Parameters to pass to the unit metrics. Defaults to
+None.</li>
+<li><strong>test_id (str, optional):</strong>  Test ID of the composite metric. Required if name is
+not provided. Defaults to None.</li>
+<li><strong>show (bool, optional):</strong>  Whether to show the result immediately. Defaults to True</li>
+</ul>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If metric_ids is not provided</li>
+<li><strong>ValueError:</strong>  If name or key is not provided</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>MetricResult: The metric result object</p>
+  <p>MetricResultWrapper: The result wrapper object</p>
 </blockquote>
 </div>
 
@@ -190,7 +279,7 @@ is a single test that calculates a value based on the input data.</p>
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "../search.js";
+                script.src = "../../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -232,7 +321,7 @@ is a single test that calculates a value based on the input data.</p>
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `../${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }
