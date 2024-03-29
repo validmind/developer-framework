@@ -7549,4 +7549,4 @@ transformers = ["transformers"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "2395133cafd720e748ab7641d83a825f5eb1907cc7b5ce31e2dc7be1b8ddbd03"
+content-hash = "f27b9fae2fcdb953ac7b0a2a7b9b84a7093e0262e1745199c50e5977d76173e8"
