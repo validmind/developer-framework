@@ -10,7 +10,7 @@ import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
 import markdown
@@ -26,7 +26,7 @@ from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
 
 
-async def update_metadata(content_id: str, text: str, _json: dict | list = None):
+async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
