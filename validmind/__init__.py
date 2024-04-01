@@ -60,6 +60,7 @@ from .client import (  # noqa: E402
     run_documentation_tests,
     run_test_suite,
 )
+from .tests.decorator import metric
 from .unit_metrics import run_metric
 from .utils import run_async  # noqa: E402
 
@@ -105,6 +106,7 @@ __all__ = [  # noqa
     "init_dataset",
     "init_model",
     "init_r_model",
+    "metric",
     "preview_template",
     "run_documentation_tests",
     "run_test_suite",
