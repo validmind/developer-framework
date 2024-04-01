@@ -44,6 +44,7 @@ __tests = None
 __test_classes = None
 
 __test_providers: Dict[str, ExternalTestProvider] = {}
+__custom_tests: Dict[str, object] = {}
 
 
 def _test_description(test_class, truncate=True):
@@ -261,7 +262,10 @@ def load_test(test_id, reload=False):  # noqa: C901
     error = None
     namespace = parts[0]
 
-    if test_id.startswith("validmind.composite_metric"):
+    if test_id in __custom_tests:
+        test = __custom_tests[test_id]
+
+    elif test_id.startswith("validmind.composite_metric"):
         test = load_composite_metric(test_id)
 
     elif namespace == "validmind":
@@ -413,3 +417,7 @@ def register_test_provider(namespace: str, test_provider: ExternalTestProvider) 
         test_provider (ExternalTestProvider): The test provider
     """
     __test_providers[namespace] = test_provider
+
+
+def _register_custom_test(test_id: str, test_class: object):
+    __custom_tests[test_id] = test_class
