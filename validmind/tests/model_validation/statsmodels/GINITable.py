@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
 
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
@@ -65,19 +66,8 @@ class GINITable(Metric):
     }
 
     def run(self):
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
 
-        X_train = self.inputs.datasets[0].x
-        y_train = self.inputs.datasets[0].y
-
-        X_test = self.inputs.datasets[1].x
-        y_test = self.inputs.datasets[1].y
-
-        summary_metrics = self.compute_metrics(model, X_train, y_train, X_test, y_test)
+        summary_metrics = self.compute_metrics()
 
         return self.cache_results(
             {
@@ -85,51 +75,43 @@ class GINITable(Metric):
             }
         )
 
-    def compute_metrics(self, model, X_train, y_train, X_test, y_test):
+    def compute_metrics(self):
         """Computes AUC, GINI, and KS for train and test sets."""
-
         metrics_dict = {"Dataset": ["Train", "Test"], "AUC": [], "GINI": [], "KS": []}
 
-        for dataset, X, y in zip(
-            ["Train", "Test"], [X_train, X_test], [y_train, y_test]
+        # Retrieve y_true and y_pred for both datasets
+        y_true_train = self.inputs.datasets[0].y
+        y_true_test = self.inputs.datasets[1].y
+
+        # Flatten y_true arrays to make them one-dimensional
+        y_true_train = np.ravel(y_true_train)
+        y_true_test = np.ravel(y_true_test)
+
+        y_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+
+        for y_true, y_pred, dataset in zip(
+            [y_true_train, y_true_test], [y_pred_train, y_pred_test], ["Train", "Test"]
         ):
-            y_scores = model.predict(X)
-
-            print("Predicted scores obtained...")
-
             # Compute AUC, GINI, and KS
-            auc = self.compute_auc(y, y_scores)
-            gini = self.compute_gini(y, y_scores)
-            ks = self.compute_ks(y, y_scores)
+            print(f"Computing metrics for {dataset} dataset...")
+
+            y_true = np.array(y_true, dtype=float)
+            y_pred = np.array(y_pred, dtype=float)
+
+            fpr, tpr, thresholds = roc_curve(y_true, y_pred)
+            ks = max(tpr - fpr)
+
+            auc = roc_auc_score(y_true, y_pred)
+            gini = 2 * auc - 1
 
             # Add the metrics to the dictionary
             metrics_dict["AUC"].append(auc)
             metrics_dict["GINI"].append(gini)
             metrics_dict["KS"].append(ks)
 
-        # Convert dictionary to DataFrame for nicer display
         metrics_df = pd.DataFrame(metrics_dict)
         return metrics_df
-
-    def compute_auc(self, y_true, y_scores):
-        """Computes the Area Under the Curve (AUC)."""
-        print("Computing AUC...")
-        auc = roc_auc_score(y_true, y_scores)
-        return auc
-
-    def compute_gini(self, y_true, y_scores):
-        """Computes the Gini coefficient."""
-        print("Computing GINI...")
-        auc = self.compute_auc(y_true, y_scores)
-        gini = 2 * auc - 1
-        return gini
-
-    def compute_ks(self, y_true, y_scores):
-        """Computes the Kolmogorov-Smirnov (KS) statistic."""
-        print("Computing KS...")
-        fpr, tpr, _ = roc_curve(y_true, y_scores)
-        ks = np.max(tpr - fpr)
-        return ks
 
     def summary(self, metric_value):
         summary_metrics_table = metric_value["metrics_summary"]

@@ -369,8 +369,7 @@ def split(df, add_constant=False):
     return train_df, test_df
 
 
-def compute_scores(df):
-    df = df.copy()
+def compute_scores(probabilities):
 
     target_score = score_params["target_score"]
     target_odds = score_params["target_odds"]
@@ -379,8 +378,6 @@ def compute_scores(df):
     factor = pdo / np.log(2)
     offset = target_score - (factor * np.log(target_odds))
 
-    df["score"] = offset + factor * np.log(
-        df["probabilities"] / (1 - df["probabilities"])
-    )
+    scores = offset + factor * np.log(probabilities / (1 - probabilities))
 
-    return df
+    return scores

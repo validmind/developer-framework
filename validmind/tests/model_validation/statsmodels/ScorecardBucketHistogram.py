@@ -61,109 +61,72 @@ class ScorecardBucketHistogram(Metric):
     """
 
     name = "scorecard_bucket_histogram"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk"],
     }
     default_params = {
-        "title": "Distribution of Scores by Rating Classes",
-        "target_score": 600,
-        "target_odds": 50,
-        "pdo": 20,
-        "rating_classes": ["A", "B", "C", "D"],
+        "title": "Histogram of Scores",
+        "score_column": "score",
+        "bucket_column": "bucket",
     }
 
     @staticmethod
-    def compute_probabilities(model, X):
-        """
-        Predict probabilities and add them as a new column in X
-        """
-        probabilities = model.predict(X)
-        X["probabilities"] = probabilities
-        return X
-
-    @staticmethod
-    def compute_scores(X, target_score, target_odds, pdo):
-        X_copy = X.copy()
-        factor = pdo / np.log(2)
-        offset = target_score - (factor * np.log(target_odds))
-
-        X_copy["score"] = offset + factor * np.log(
-            X_copy["probabilities"] / (1 - X_copy["probabilities"])
-        )
-
-        return X_copy
-
-    @staticmethod
-    def plot_score_bucket_histogram(df, score_col, title, rating_classes):
-        df["bucket"] = pd.cut(
-            df[score_col], bins=len(rating_classes), labels=rating_classes, right=False
-        )
-
+    def plot_score_bucket_histogram(df, score_col, bucket_col, title):
         fig = go.Figure()
 
-        color_scale = [[0.0, "rgba(178, 24, 43, 1)"], [1.0, "rgba(33, 102, 172, 1)"]]
+        rating_classes = df[bucket_col].unique()
 
         for bucket in rating_classes:
-            df_bucket = df[df["bucket"] == bucket]
+            df_bucket = df[df[bucket_col] == bucket]
             bucket_values = df_bucket[score_col]
             fig.add_trace(
                 go.Histogram(
                     x=bucket_values,
-                    name=bucket,
+                    name=str(bucket),  # Ensure bucket names are string for the plot
                     opacity=0.6,
                 )
             )
 
         fig.update_layout(
             title_text=title,
-            xaxis_title="",
+            xaxis_title="Score",
             yaxis_title="Frequency",
             barmode="overlay",
-            coloraxis=dict(colorscale=color_scale, colorbar=dict(title="")),
         )
 
         return fig
 
     def run(self):
         title = self.params["title"]
-        target_score = self.params["target_score"]
-        target_odds = self.params["target_odds"]
-        pdo = self.params["pdo"]
-        rating_classes = self.params["rating_classes"]
+        score_column = self.params["score_column"]
+        bucket_column = self.params["bucket_column"]
 
-        X_train = self.inputs.datasets[0].x.copy()
-        X_test = self.inputs.datasets[1].x.copy()
+        # Directly retrieve the score and bucket column data
+        df_train = self.inputs.datasets[0].df.copy()
+        df_test = self.inputs.datasets[1].df.copy()
 
-        X_train_probs = self.compute_probabilities(self.inputs.model, X_train)
-        X_test_probs = self.compute_probabilities(self.inputs.model, X_test)
-
-        df_train_scores = self.compute_scores(
-            X_train_probs, target_score, target_odds, pdo
-        )
-        df_test_scores = self.compute_scores(
-            X_test_probs, target_score, target_odds, pdo
-        )
-
+        # The plot function now dynamically determines rating classes from the unique bucket values
         fig_train = self.plot_score_bucket_histogram(
-            df_train_scores,
-            "score",
+            df_train,
+            score_column,
+            bucket_column,
             title + " - Train Data",
-            rating_classes,
         )
         fig_test = self.plot_score_bucket_histogram(
-            df_test_scores,
-            "score",
+            df_test,
+            score_column,
+            bucket_column,
             title + " - Test Data",
-            rating_classes,
         )
 
+        # Return the results
         return self.cache_results(
             metric_value={
                 "score_distribution": {
-                    "train_scores": list(df_train_scores["score"]),
-                    "test_scores": list(df_test_scores["score"]),
+                    "train_scores": list(df_train[score_column]),
+                    "test_scores": list(df_test[score_column]),
                 },
             },
             figures=[

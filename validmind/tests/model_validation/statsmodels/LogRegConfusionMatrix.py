@@ -12,7 +12,7 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class LogRegressionConfusionMatrix(Metric):
+class LogRegConfusionMatrix(Metric):
     """
     Generates a confusion matrix for logistic regression model performance, utilizing thresholded probabilities for
     classification assessments.
@@ -52,7 +52,7 @@ class LogRegressionConfusionMatrix(Metric):
     lead to erroneous conclusions.
     """
 
-    name = "log_regression_confusion_matrix"
+    name = "log_reg_confusion_matrix"
     required_inputs = ["model", "dataset"]
     metadata = {
         "task_types": ["classification"],
@@ -64,13 +64,13 @@ class LogRegressionConfusionMatrix(Metric):
     }
 
     def run(self):
-        cut_off_threshold = self.default_parameters["cut_off_threshold"]
+        cut_off_threshold = self.params["cut_off_threshold"]
 
         y_true = self.inputs.dataset.y
         y_labels = np.unique(y_true)
         y_labels.sort()
 
-        y_pred_prob = self.inputs.model.predict_proba(self.inputs.dataset.x)
+        y_pred_prob = self.inputs.dataset.y_pred(self.inputs.model.input_id)
         y_pred = np.where(y_pred_prob > cut_off_threshold, 1, 0)
         y_true = y_true.astype(y_pred.dtype)
 

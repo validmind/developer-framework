@@ -53,37 +53,15 @@ class ScorecardHistogram(Metric):
     """
 
     name = "scorecard_histogram"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk"],
     }
     default_params = {
         "title": "Histogram of Scores",
-        "target_score": 600,
-        "target_odds": 50,
-        "pdo": 20,
+        "score_column": "score",
     }
-
-    @staticmethod
-    def compute_scores(model, X, target_score, target_odds, pdo):
-        X_copy = X.copy()
-        beta = model.model.params.values
-        alpha = model.model.params[0]
-        factor = pdo / np.log(2)
-        offset = target_score - (factor * np.log(target_odds))
-
-        for _, row in X_copy.iterrows():
-            score_i = 0
-            for i in range(1, len(beta)):
-                WoE_i = row[i]
-                score_i += (beta[i] * WoE_i) * factor
-
-            score_i += alpha * factor
-            score_i += offset
-            X_copy.loc[row.name, "score"] = score_i
-
-        return X_copy
 
     @staticmethod
     def plot_score_histogram(df_train, df_test, score_col, target_col, title):
@@ -117,39 +95,20 @@ class ScorecardHistogram(Metric):
         return fig
 
     def run(self):
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
 
-        target_column = model.train_ds.target_column
         title = self.params["title"]
-        target_score = self.params["target_score"]
-        target_odds = self.params["target_odds"]
-        pdo = self.params["pdo"]
+        score_column = self.params["score_column"]
 
-        # Create a copy of training and testing dataframes
         df_train = self.inputs.datasets[0].df.copy()
         df_test = self.inputs.datasets[1].df.copy()
 
-        # Drop target_column to create feature dataframes
-        X_train = df_train.drop(columns=[target_column])
-        X_test = df_test.drop(columns=[target_column])
+        target_column = self.inputs.datasets[0].target_column
 
-        # Subset only target_column to create target dataframes
-        y_train = df_train[[target_column]]
-        y_test = df_test[[target_column]]
+        scores_train = self.inputs.datasets[0].get_extra_column(score_column)
+        scores_test = self.inputs.datasets[1].get_extra_column(score_column)
 
-        X_train_scores = self.compute_scores(
-            model, X_train, target_score, target_odds, pdo
-        )
-        X_test_scores = self.compute_scores(
-            model, X_test, target_score, target_odds, pdo
-        )
-
-        df_train = pd.concat([X_train_scores, y_train], axis=1)
-        df_test = pd.concat([X_test_scores, y_test], axis=1)
+        df_train["score"] = scores_train
+        df_test["score"] = scores_test
 
         fig = self.plot_score_histogram(
             df_train, df_test, "score", target_column, title
@@ -158,8 +117,8 @@ class ScorecardHistogram(Metric):
         return self.cache_results(
             metric_value={
                 "score_histogram": {
-                    "train_scores": list(X_train_scores["score"]),
-                    "test_scores": list(X_test_scores["score"]),
+                    "train_scores": list(df_train["score"]),
+                    "test_scores": list(df_test["score"]),
                 },
             },
             figures=[

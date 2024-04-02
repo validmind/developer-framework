@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 import polars as pl
+import warnings
 
 from validmind.logging import get_logger
 from validmind.vm_models.model import VMModel
@@ -440,8 +441,9 @@ class NumpyDataset(VMDataset):
                 )
             pred_column = f"{model.input_id}_prediction"
             if pred_column in self.columns:
-                raise ValueError(
-                    f"Prediction column {pred_column} already exists in the dataset"
+                warnings.warn(
+                    f"Prediction column {pred_column} already exists in the dataset, overwriting the existing predictions",
+                    UserWarning,
                 )
             self.__assign_prediction_values(model, pred_column, prediction_values)
         elif not self.__model_id_in_prediction_columns(

@@ -13,7 +13,7 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class LogisticRegCumulativeProb(Metric):
+class LogRegCumulativeProb(Metric):
     """
     Visualizes cumulative probabilities of positive and negative classes for both training and testing in logistic
     regression models.
@@ -56,7 +56,7 @@ class LogisticRegCumulativeProb(Metric):
     provide misleading results.
     """
 
-    name = "logistic_reg_cumulative_prob"
+    name = "log_reg_cumulative_prob"
     required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
@@ -65,33 +65,7 @@ class LogisticRegCumulativeProb(Metric):
     default_params = {"title": "Cumulative Probabilities"}
 
     @staticmethod
-    def compute_probabilities(model, X):
-        """
-        Predict probabilities and add PD as a new column in X
-        """
-        probabilities = model.predict(X)
-
-        # If X is a numpy array, convert it to DataFrame
-        if isinstance(X, np.ndarray):
-            X = pd.DataFrame(X)
-
-        X["probabilities"] = probabilities
-        return X
-
-    @staticmethod
-    def plot_cumulative_prob(
-        X_train, y_train, X_test, y_test, prob_col, target_col, title
-    ):
-
-        X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
-
-        # Ensure y_train and y_test are 1-dimensional Series
-        y_train = pd.Series(y_train.squeeze(), name=target_col)
-        y_test = pd.Series(y_test.squeeze(), name=target_col)
-
-        df_train = pd.concat([X_train, y_train], axis=1)
-        df_test = pd.concat([X_test, y_test], axis=1)
+    def plot_cumulative_prob(df_train, df_test, prob_col, target_col, title):
 
         # Separate probabilities based on target column
         train_0 = np.sort(df_train[df_train[target_col] == 0][prob_col])
@@ -142,33 +116,26 @@ class LogisticRegCumulativeProb(Metric):
         return fig
 
     def run(self):
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
-
         target_column = self.inputs.datasets[0].target_column
         title = self.params["title"]
+        df_train = self.inputs.datasets[0].df.copy()
+        df_test = self.inputs.datasets[1].df.copy()
 
-        X_train = self.inputs.datasets[0].x
-        y_train = self.inputs.datasets[0].y
+        y_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
 
-        X_test = self.inputs.datasets[1].x
-        y_test = self.inputs.datasets[1].y
-
-        X_train = self.compute_probabilities(model, X_train)
-        X_test = self.compute_probabilities(model, X_test)
+        df_train["probabilities"] = y_pred_train
+        df_test["probabilities"] = y_pred_test
 
         fig = self.plot_cumulative_prob(
-            X_train, y_train, X_test, y_test, "probabilities", target_column, title
+            df_train, df_test, "probabilities", target_column, title
         )
 
         return self.cache_results(
             metric_value={
                 "cum_prob": {
-                    "train_probs": list(X_train["probabilities"]),
-                    "test_probs": list(X_test["probabilities"]),
+                    "train_probs": list(df_train["probabilities"]),
+                    "test_probs": list(df_test["probabilities"]),
                 },
             },
             figures=[

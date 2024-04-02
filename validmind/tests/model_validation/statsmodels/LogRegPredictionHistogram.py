@@ -13,7 +13,7 @@ from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class LogisticRegPredictionHistogram(Metric):
+class LogRegPredictionHistogram(Metric):
     """
     Generates and visualizes histograms of the Probability of Default predictions for both positive and negative
     classes in training and testing datasets.
@@ -58,7 +58,7 @@ class LogisticRegPredictionHistogram(Metric):
     quantifiable measure or score to assess model performance.
     """
 
-    name = "logistic_reg_prediction_histogram"
+    name = "log_reg_prediction_histogram"
     required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
@@ -68,33 +68,7 @@ class LogisticRegPredictionHistogram(Metric):
     default_params = {"title": "Histogram of Predictive Probabilities"}
 
     @staticmethod
-    def compute_probabilities(model, X):
-        """
-        Predict probabilities and add PD as a new column in X
-        """
-        probabilities = model.predict(X)
-
-        # If X is a numpy array, convert it to DataFrame
-        if isinstance(X, np.ndarray):
-            X = pd.DataFrame(X)
-
-        X["probabilities"] = probabilities
-        return X
-
-    @staticmethod
-    def plot_prob_histogram(
-        X_train, y_train, X_test, y_test, pd_col, target_col, title
-    ):
-
-        X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
-
-        # Ensure y_train and y_test are 1-dimensional Series
-        y_train = pd.Series(y_train.squeeze(), name=target_col)
-        y_test = pd.Series(y_test.squeeze(), name=target_col)
-
-        df_train = pd.concat([X_train, y_train], axis=1)
-        df_test = pd.concat([X_test, y_test], axis=1)
+    def plot_prob_histogram(df_train, df_test, pd_col, target_col, title):
 
         train_0 = df_train[df_train[target_col] == 0][pd_col]
         train_1 = df_train[df_train[target_col] == 1][pd_col]
@@ -126,33 +100,27 @@ class LogisticRegPredictionHistogram(Metric):
         return fig
 
     def run(self):
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
 
         target_column = self.inputs.datasets[0].target_column
         title = self.params["title"]
+        df_train = self.inputs.datasets[0].df.copy()
+        df_test = self.inputs.datasets[1].df.copy()
 
-        X_train = self.inputs.datasets[0].x
-        y_train = self.inputs.datasets[0].y
+        y_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
 
-        X_test = self.inputs.datasets[1].x
-        y_test = self.inputs.datasets[1].y
-
-        X_train = self.compute_probabilities(model, X_train)
-        X_test = self.compute_probabilities(model, X_test)
+        df_train["probabilities"] = y_pred_train
+        df_test["probabilities"] = y_pred_test
 
         fig = self.plot_prob_histogram(
-            X_train, y_train, X_test, y_test, "probabilities", target_column, title
+            df_train, df_test, "probabilities", target_column, title
         )
 
         return self.cache_results(
             metric_value={
                 "prob_histogram": {
-                    "train_probs": list(X_train["probabilities"]),
-                    "test_probs": list(X_test["probabilities"]),
+                    "train_probs": list(df_train["probabilities"]),
+                    "test_probs": list(df_test["probabilities"]),
                 },
             },
             figures=[
