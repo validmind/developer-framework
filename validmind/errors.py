@@ -48,7 +48,7 @@ class MissingCacheResultsArgumentsError(BaseError):
     pass
 
 
-class MissingModelPredictFnError(BaseError):
+class MissingOrInvalidModelPredictFnError(BaseError):
     """
     When the pytorch model is missing a predict function or its predict
     method does not have the expected arguments.
@@ -315,6 +315,14 @@ class UnsupportedModelError(BaseError):
     pass
 
 
+class UnsupportedModelForSHAPError(BaseError):
+    """
+    When an unsupported model is used for SHAP importance.
+    """
+
+    pass
+
+
 class SkipTestError(BaseError):
     """
     Useful error to throw when a test cannot be executed.
@@ -361,6 +369,8 @@ def should_raise_on_fail_fast(error) -> bool:
     """
     error_class = error.__class__.__name__
     return error_class not in [
+        "MissingOrInvalidModelPredictFnError",
         "MissingRequiredTestInputError",
         "SkipTestError",
+        "UnsupportedModelForSHAPError",
     ]

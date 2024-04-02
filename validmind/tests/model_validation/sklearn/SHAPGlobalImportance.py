@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import shap
 
+from validmind.errors import UnsupportedModelForSHAPError
 from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric
 
@@ -72,6 +73,9 @@ class SHAPGlobalImportance(Metric):
             "visualization",
         ],
     }
+    default_params = {
+        "kernel_explainer_samples": 10,
+    }
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
         """
@@ -127,22 +131,44 @@ class SHAPGlobalImportance(Metric):
             model_class == "XGBClassifier"
             or model_class == "RandomForestClassifier"
             or model_class == "CatBoostClassifier"
+            or model_class == "DecisionTreeClassifier"
         ):
             explainer = shap.TreeExplainer(trained_model)
         elif (
             model_class == "LogisticRegression"
             or model_class == "XGBRegressor"
             or model_class == "LinearRegression"
+            or model_class == "LinearSVC"
         ):
             explainer = shap.LinearExplainer(trained_model, self.inputs.dataset.x)
+        elif model_class == "SVC":
+            # KernelExplainer is slow so we use shap.sample to speed it up
+            explainer = shap.KernelExplainer(
+                trained_model.predict,
+                shap.sample(
+                    self.inputs.dataset.x,
+                    self.params["kernel_explainer_samples"],
+                ),
+            )
         else:
-            raise ValueError(f"Model {model_class} not supported for SHAP importance.")
+            raise UnsupportedModelForSHAPError(
+                f"Model {model_class} not supported for SHAP importance."
+            )
 
-        shap_values = explainer.shap_values(self.inputs.dataset.x)
+        # KernelExplainer is slow so we use shap.sample to speed it up
+        if isinstance(explainer, shap.KernelExplainer):
+            shap_sample = shap.sample(
+                self.inputs.dataset.x,
+                self.params["kernel_explainer_samples"],
+            )
+        else:
+            shap_sample = self.inputs.dataset.x
+
+        shap_values = explainer.shap_values(shap_sample)
 
         figures = [
-            self._generate_shap_plot("mean", shap_values, self.inputs.dataset.x),
-            self._generate_shap_plot("summary", shap_values, self.inputs.dataset.x),
+            self._generate_shap_plot("mean", shap_values, shap_sample),
+            self._generate_shap_plot("summary", shap_values, shap_sample),
         ]
 
         # restore warnings
