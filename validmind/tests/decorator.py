@@ -18,7 +18,12 @@ from validmind.vm_models import (
     ResultTable,
     ResultTableMetadata,
 )
-from validmind.vm_models.figure import Figure, is_matplotlib_figure, is_plotly_figure
+from validmind.vm_models.figure import (
+    Figure,
+    is_matplotlib_figure,
+    is_plotly_figure,
+    is_png_image,
+)
 from validmind.vm_models.test.result_wrapper import MetricResultWrapper
 
 from . import _register_custom_test
@@ -60,7 +65,7 @@ def _build_result(results, test_id, description, output_template):
     figures = []
 
     def process_item(item):
-        if is_matplotlib_figure(item) or is_plotly_figure(item):
+        if is_matplotlib_figure(item) or is_plotly_figure(item) or is_png_image(item):
             figures.append(
                 Figure(
                     key=f"{test_id}:{len(figures) + 1}",
