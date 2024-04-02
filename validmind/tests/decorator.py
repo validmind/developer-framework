@@ -49,14 +49,22 @@ def _inspect_signature(test_func: callable):
 
 
 def _build_result(results, test_id, description, output_template):
+    ref_id = str(uuid4())
+    figure_metadata = {
+        "_type": "metric",
+        "_name": test_id,
+        "_ref_id": ref_id,
+    }
+
     tables = []
     figures = []
 
     def process_item(item):
         if is_matplotlib_figure(item) or is_plotly_figure(item):
-            vm_figure = Figure(key=test_id, figure=item)
+            vm_figure = Figure(key=test_id, figure=item, metadata=figure_metadata)
             figures.append(vm_figure)
         elif isinstance(item, Figure):
+            item.metadata = figure_metadata
             figures.append(item)
         elif isinstance(item, list):
             tables.append(ResultTable(data=item))
@@ -84,8 +92,8 @@ def _build_result(results, test_id, description, output_template):
         result_id=test_id,
         metric=MetricResult(
             key=test_id,
-            ref_id=str(uuid4()),
-            value=None,
+            ref_id=ref_id,
+            value="Empty",
             summary=ResultSummary(results=tables),
         ),
         figures=figures,
