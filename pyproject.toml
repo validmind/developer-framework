@@ -37,6 +37,7 @@ pandas-profiling = "^3.6.6"
 pdoc = "^13.1.1"
 plotly = "^5.14.1"
 plotly-express = "^0.4.1"
+polars = "^0.20.15"
 pycocoevalcap = {version = "^1.2", optional = true}
 pydantic = "^1.9.1"
 pypmml = "^0.9.17"
@@ -60,7 +61,6 @@ tqdm = "^4.64.0"
 transformers = "^4.32.0"
 wget = "^3.2"
 xgboost = "^1.5.2"
-polars = "^0.20.15"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
