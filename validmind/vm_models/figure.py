@@ -29,6 +29,10 @@ def is_plotly_figure(figure) -> bool:
     return isinstance(figure, (go.Figure, go.FigureWidget))
 
 
+def is_png_image(figure) -> bool:
+    return isinstance(figure, bytes)
+
+
 @dataclass
 class Figure:
     """
@@ -110,6 +114,15 @@ class Figure:
                 )
             else:
                 return self.figure
+
+        elif is_png_image(self.figure):
+            encoded = base64.b64encode(self.figure).decode("utf-8")
+            return widgets.HTML(
+                value=f"""
+                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
+                """
+            )
+
         else:
             raise UnsupportedFigureError(
                 f"Figure type {type(self.figure)} not supported for plotting"
@@ -149,6 +162,9 @@ class Figure:
                     "application/json",
                 ),
             }
+
+        elif is_png_image(self.figure):
+            return {"image": (f"{self.key}.png", self.figure, "image/png")}
 
         raise UnsupportedFigureError(
             f"Unrecognized figure type: {get_full_typename(self.figure)}"

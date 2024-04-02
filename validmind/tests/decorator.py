@@ -61,11 +61,13 @@ def _build_result(results, test_id, description, output_template):
 
     def process_item(item):
         if is_matplotlib_figure(item) or is_plotly_figure(item):
-            vm_figure = Figure(key=test_id, figure=item, metadata=figure_metadata)
-            figures.append(vm_figure)
-        elif isinstance(item, Figure):
-            item.metadata = figure_metadata
-            figures.append(item)
+            figures.append(
+                Figure(
+                    key=f"{test_id}:{len(figures) + 1}",
+                    figure=item,
+                    metadata=figure_metadata,
+                )
+            )
         elif isinstance(item, list):
             tables.append(ResultTable(data=item))
         elif isinstance(item, pd.DataFrame):
@@ -156,8 +158,6 @@ def metric(func_or_id):
 
     def decorator(func):
         test_id = func_or_id or f"validmind.custom_metrics.{func.__name__}"
-
-        print(f"Registering custom metric with ID: {test_id}")
 
         inputs, params = _inspect_signature(func)
         description = inspect.getdoc(func)
