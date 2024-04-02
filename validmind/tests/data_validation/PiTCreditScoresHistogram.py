@@ -49,7 +49,7 @@ class PiTCreditScoresHistogram(Metric):
     """
 
     name = "pit_credit_scores_histogram"
-    required_context = ["dataset"]
+    required_inputs = ["dataset", "model"]
     default_params = {"title": "Histogram of Scores"}
     metadata = {
         "task_types": ["classification"],
@@ -108,8 +108,13 @@ class PiTCreditScoresHistogram(Metric):
 
     def run(self):
         df = self.inputs.dataset.df
-        default_column = self.params["default_column"]
-        predicted_default_column = self.params["predicted_default_column"]
+        default_column = (
+            self.params.get("default_column") or self.inputs.dataset.target_column
+        )
+        predicted_default_column = (
+            self.params.get("predicted_default_column")
+            or self.inputs.dataset.y_pred(self.inputs.model.input_id),
+        )
         scores_column = self.params["scores_column"]
         point_in_time_column = self.params["point_in_time_column"]
 
