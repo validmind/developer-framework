@@ -36,9 +36,216 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def serialize(self):
+    def assign_predictions(
+        self,
+        model,
+        prediction_values: list = None,
+        prediction_column=None,
+    ):
         """
-        Serializes the dataset to a dictionary.
+        Assigns predictions to the dataset for a given model or prediction values.
+        The dataset is updated with a new column containing the predictions.
+        """
+        pass
+
+    @abstractmethod
+    def get_extra_column(self, column_name):
+        """
+        Returns the values of the specified extra column.
+
+        Args:
+            column_name (str): The name of the extra column.
+
+        Returns:
+            np.ndarray: The values of the extra column.
+        """
+        pass
+
+    @abstractmethod
+    def add_extra_column(self, column_name, column_values=None):
+        """
+        Adds an extra column to the dataset without modifying the dataset `features` and `target` columns.
+
+        Args:
+            column_name (str): The name of the extra column.
+            column_values (np.ndarray, optional): The values of the extra column.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def input_id(self) -> str:
+        """
+        Returns input id of dataset.
+
+        Returns:
+            str: input_id.
+        """
+        return self.input_id
+
+    @property
+    @abstractmethod
+    def columns(self) -> list:
+        """
+        Returns the the list of columns in the dataset.
+
+        Returns:
+            List[str]: The columns list.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def target_column(self) -> str:
+        """
+        Returns the target column name of the dataset.
+
+        Returns:
+            str: The target column name.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def feature_columns(self) -> list:
+        """
+        Returns the feature columns of the dataset. If _feature_columns is None,
+        it returns all columns except the target column.
+
+        Returns:
+            list: The list of feature column names.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def text_column(self) -> str:
+        """
+        Returns the text column of the dataset.
+
+        Returns:
+            str: The text column name.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def x(self) -> np.ndarray:
+        """
+        Returns the input features (X) of the dataset.
+
+        Returns:
+            np.ndarray: The input features.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def y(self) -> np.ndarray:
+        """
+        Returns the target variables (y) of the dataset.
+
+        Returns:
+            np.ndarray: The target variables.
+        """
+        pass
+
+    @abstractmethod
+    def y_pred(self, model_id) -> np.ndarray:
+        """
+        Returns the prediction values (y_pred) of the dataset for a given model_id.
+
+        Returns:
+            np.ndarray: The prediction values.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def df(self):
+        """
+        Returns the dataset as a pandas DataFrame.
+
+        Returns:
+            pd.DataFrame: The dataset as a DataFrame.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def copy(self):
+        """
+        Returns a copy of the raw_dataset dataframe.
+        """
+        pass
+
+    @abstractmethod
+    def x_df(self):
+        """
+        Returns the non target and prediction columns.
+
+        Returns:
+            pd.DataFrame: The non target and prediction columns .
+        """
+        pass
+
+    @abstractmethod
+    def y_df(self):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        pass
+
+    @abstractmethod
+    def y_pred_df(self, model_id):
+        """
+        Returns the target columns (y) of the dataset.
+
+        Returns:
+            pd.DataFrame: The target columns.
+        """
+        pass
+
+    @abstractmethod
+    def prediction_column(self, model_id) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        pass
+
+    @abstractmethod
+    def get_features_columns(self):
+        """
+        Returns the column names of the feature variables.
+
+        Returns:
+            List[str]: The column names of the feature variables.
+        """
+        pass
+
+    @abstractmethod
+    def get_numeric_features_columns(self):
+        """
+        Returns the column names of the numeric feature variables.
+
+        Returns:
+            List[str]: The column names of the numeric feature variables.
+        """
+        pass
+
+    @abstractmethod
+    def get_categorical_features_columns(self):
+        """
+        Returns the column names of the categorical feature variables.
+
+        Returns:
+            List[str]: The column names of the categorical feature variables.
         """
         pass
 
@@ -135,7 +342,7 @@ class NumpyDataset(VMDataset):
         # initialize target column
         self._target_column = target_column
         # initialize extra columns
-        self.__set_extra_columns(extra_columns, model)
+        self.__set_extra_columns(extra_columns)
         # initialize feature columns
         self.__set_feature_columns(feature_columns)
         # initialize text column, target class labels and options
@@ -145,7 +352,7 @@ class NumpyDataset(VMDataset):
         if model:
             self.assign_predictions(model)
 
-    def __set_extra_columns(self, extra_columns, model):
+    def __set_extra_columns(self, extra_columns):
         if extra_columns is None:
             extra_columns = {
                 "prediction_columns": {},
@@ -262,6 +469,59 @@ class NumpyDataset(VMDataset):
             logger.info(
                 f"Prediction column {self._extra_columns['prediction_columns'][model.input_id]} already linked to the {model.input_id}"
             )
+
+    def get_extra_column(self, column_name):
+        """
+        Returns the values of the specified extra column.
+
+        Args:
+            column_name (str): The name of the extra column.
+
+        Returns:
+            np.ndarray: The values of the extra column.
+        """
+        if column_name not in self.extra_columns:
+            raise ValueError(f"Column {column_name} is not an extra column")
+
+        return self._df[column_name]
+
+    def add_extra_column(self, column_name, column_values=None):
+        """
+        Adds an extra column to the dataset without modifying the dataset `features` and `target` columns.
+
+        Args:
+            column_name (str): The name of the extra column.
+            column_values (np.ndarray, optional): The values of the extra column.
+        """
+        if column_name in self.extra_columns:
+            logger.info(f"Column {column_name} already registered as an extra column")
+            return
+
+        # The column name already exists in the dataset so we just assign the extra column
+        if column_name in self.columns:
+            self._extra_columns[column_name] = column_name
+            logger.info(
+                f"Column {column_name} exists in the dataset, registering as an extra column"
+            )
+            return
+
+        if column_values is None:
+            raise ValueError(
+                "Column values must be provided when the column doesn't exist in the dataset"
+            )
+
+        if len(column_values) != self.df.shape[0]:
+            raise ValueError(
+                "Length of column values doesn't match number of rows of the dataset"
+            )
+
+        self._raw_dataset = np.hstack(
+            (self._raw_dataset, np.array(column_values).reshape(-1, 1))
+        )
+        self._columns.append(column_name)
+        self._df[column_name] = column_values
+        self._extra_columns[column_name] = column_name
+        logger.info(f"Column {column_name} added as an extra column")
 
     @property
     def raw_dataset(self) -> np.ndarray:

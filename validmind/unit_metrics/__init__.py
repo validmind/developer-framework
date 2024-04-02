@@ -237,8 +237,6 @@ def run_metric(metric_id=None, inputs=None, params=None):
     # Run the metric
     result = metric.run()
 
-    cache_key = get_metric_cache_key(metric_id, params, inputs)
-
     unit_metric_results_cache[cache_key] = result
 
     return result

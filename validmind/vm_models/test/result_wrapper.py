@@ -10,7 +10,7 @@ import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
 import markdown
@@ -26,24 +26,33 @@ from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
 
 
-async def update_metadata(content_id: str, text: str) -> None:
+async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
     """
     Update the metadata of a content item. By default we don't
     override the existing metadata, but we can override it by
     setting the VM_OVERRIDE_METADATA environment variable to True
     """
-    VM_OVERRIDE_METADATA = os.environ.get("VM_OVERRIDE_METADATA", False)
-    try:
-        existing_metadata = await api_client.get_metadata(content_id)
-    except Exception:
-        existing_metadata = None  # TODO: handle this better
+    should_update = False
 
-    if (
-        existing_metadata is None
-        or VM_OVERRIDE_METADATA == "True"
-        or VM_OVERRIDE_METADATA is True
-    ):
-        await api_client.log_metadata(content_id, text)
+    # check if the env variable is set to force overwriting metadata
+    if os.environ.get("VM_OVERRIDE_METADATA", "false").lower() == "true":
+        should_update = True
+
+    # if not set, check if the content_id is a composite metric def
+    if not should_update and content_id.startswith("composite_metric_def:"):
+        # we always want composite metric definitions to be updated
+        should_update = True
+
+    # if not set, lets check if the metadata already exists
+    if not should_update:
+        try:
+            await api_client.get_metadata(content_id)
+        except Exception:  # TODO: this shouldn't be a catch-all
+            # if the metadata doesn't exist, we should create (update) it
+            should_update = True
+
+    if should_update:
+        await api_client.log_metadata(content_id, text, _json)
 
 
 def plot_figures(figures: List[Figure]) -> None:
@@ -155,7 +164,7 @@ class ResultWrapper(ABC):
 
     def log(self):
         """Log the result... May be overridden by subclasses"""
-        return run_async(self.log_async)
+        run_async(self.log_async)
 
 
 @dataclass
@@ -207,7 +216,9 @@ class MetricResultWrapper(ResultWrapper):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 
-        vbox_children = []
+        vbox_children = [
+            widgets.HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>")
+        ]
 
         if self.result_metadata:
             metric_description = self.result_metadata[0]
@@ -298,7 +309,13 @@ class MetricResultWrapper(ResultWrapper):
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
             for metadata in self.result_metadata:
-                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
+                tasks.append(
+                    update_metadata(
+                        content_id=metadata["content_id"],
+                        text=metadata.get("text", ""),
+                        _json=metadata.get("json"),
+                    )
+                )
 
         await asyncio.gather(*tasks)
 
@@ -339,7 +356,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
         test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h2>{test_title} {"✅" if self.test_results.passed else "❌"}</h2>
+            <h1>{test_title} {"✅" if self.test_results.passed else "❌"}</h1>
             """
         )
 
