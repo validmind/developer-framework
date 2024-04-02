@@ -60,7 +60,7 @@ def preprocess(df):
     return train_df, validation_df, test_df
 
 
-def get_demo_test_config():
+def get_demo_test_config(test_suite=None):
     """
     Returns input configuration for the default documentation
     template assigned to this demo model
@@ -81,7 +81,7 @@ def get_demo_test_config():
     - The only exception is ClassifierPerformance since that runs twice: once
         with the train_dataset (in sample) and once with the test_dataset (out of sample)
     """
-    default_config = vm.get_test_suite().get_default_config()
+    default_config = (test_suite or vm.get_test_suite()).get_default_config()
 
     for _, test_config in default_config.items():
         if "model" in test_config["inputs"]:

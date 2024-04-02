@@ -8,7 +8,6 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
-    TestSuiteThresholdTestResult,
     ThresholdTestResult,
     ThresholdTest,
 )
@@ -24,26 +23,29 @@ class __TEST_NAME__(ThresholdTest):
     """
 
     name = "__TEST_ID__"
-    required_inputs = []  # model, dataset, etc. (model.train_ds, model.test_ds)
+    required_inputs = []  # model, dataset, etc.
     default_params = {}
     metadata = {
         "task_types": [],  # classification, regression, etc. Should be one of ValidMind's task types
         "tags": [],  # time_series_data, tabular_data, forcasting, etc. Can be any string
     }
 
-    def run(self) -> TestSuiteThresholdTestResult:
+    def run(self):
         """Run the test and cache the results
 
         Returns:
-            TestSuiteThresholdTestResult: The results of the test.
+            ThresholdTestResultWrapper: The results of the test.
         """
+        table_with_numbers = {
+            "A": [1, 2, 3, 4, 5],
+            "B": [6, 7, 8, 9, 10],
+        }
+
         return self.cache_results(
             test_results_list=[
                 ThresholdTestResult(
                     passed=True,  # whether this test passed
-                    values={
-                        "hello": "world",
-                    },
+                    values=table_with_numbers,
                 )
             ],
             passed=True,  # whether all tests passed
@@ -65,7 +67,7 @@ class __TEST_NAME__(ThresholdTest):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results[0].values,
+                    data=results,
                     metadata=ResultTableMetadata(
                         title="__TEST_NAME__ Test Results",
                     ),

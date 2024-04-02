@@ -73,18 +73,6 @@ class ResidualsVisualInspection(Metric):
         "tags": ["statsmodels", "visualization"],
     }
 
-    def get_residuals(self, column, series):
-        """
-        Get the seasonal decomposition residuals from the test
-        context or re-compute them if not available. This allows
-        running the test individually or as part of a test suite.
-        """
-        sd_all_columns = self.test_context.get_context_data("seasonal_decompose")
-        if sd_all_columns is None or column not in sd_all_columns:
-            return seasonal_decompose(series, model="additive")
-
-        return sd_all_columns[column]
-
     @staticmethod
     def residual_analysis(residuals, variable_name, axes):
         residuals = residuals.dropna().reset_index(
@@ -115,7 +103,7 @@ class ResidualsVisualInspection(Metric):
 
         # TODO: specify which columns to plot via params
         for col in x_train.columns:
-            sd = self.get_residuals(col, x_train[col])
+            sd = seasonal_decompose(x_train[col], model="additive")
 
             # Remove NaN values from the residuals and reset the index
             residuals = pd.Series(sd.resid).dropna().reset_index(drop=True)
