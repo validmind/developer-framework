@@ -62,7 +62,7 @@
 
             </li>
             <li>
-                    <a class="class" href="#MissingModelPredictFnError">MissingModelPredictFnError</a>
+                    <a class="class" href="#MissingOrInvalidModelPredictFnError">MissingOrInvalidModelPredictFnError</a>
                             <ul class="memberlist">
                 </ul>
 
@@ -275,6 +275,12 @@
 
             </li>
             <li>
+                    <a class="class" href="#UnsupportedModelForSHAPError">UnsupportedModelForSHAPError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#SkipTestError">SkipTestError</a>
                             <ul class="memberlist">
                 </ul>
@@ -453,15 +459,15 @@
                                 </dl>
                             </div>
                 </section>
-                <section id="MissingModelPredictFnError">
+                <section id="MissingOrInvalidModelPredictFnError">
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">MissingModelPredictFnError</span><wbr>(<span class="base"><a href="#BaseError">BaseError</a></span>):
+    <span class="name">MissingOrInvalidModelPredictFnError</span><wbr>(<span class="base"><a href="#BaseError">BaseError</a></span>):
 
         
     </div>
-    <a class="headerlink" href="#MissingModelPredictFnError"></a>
+    <a class="headerlink" href="#MissingOrInvalidModelPredictFnError"></a>
     
             <div class="docstring"><p>When the pytorch model is missing a predict function or its predict
 method does not have the expected arguments.</p>
@@ -472,12 +478,12 @@ method does not have the expected arguments.</p>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="#BaseError">BaseError</a></dt>
-                                <dd id="MissingModelPredictFnError.__init__" class="function"><a href="#BaseError.__init__">BaseError</a></dd>
-                <dd id="MissingModelPredictFnError.description" class="function"><a href="#BaseError.description">description</a></dd>
+                                <dd id="MissingOrInvalidModelPredictFnError.__init__" class="function"><a href="#BaseError.__init__">BaseError</a></dd>
+                <dd id="MissingOrInvalidModelPredictFnError.description" class="function"><a href="#BaseError.description">description</a></dd>
 
             </div>
             <div><dt>builtins.BaseException</dt>
-                                <dd id="MissingModelPredictFnError.with_traceback" class="function">with_traceback</dd>
+                                <dd id="MissingOrInvalidModelPredictFnError.with_traceback" class="function">with_traceback</dd>
 
             </div>
                                 </dl>
@@ -1466,6 +1472,35 @@ method does not have the expected arguments.</p>
             </div>
             <div><dt>builtins.BaseException</dt>
                                 <dd id="UnsupportedModelError.with_traceback" class="function">with_traceback</dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="UnsupportedModelForSHAPError">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">UnsupportedModelForSHAPError</span><wbr>(<span class="base"><a href="#BaseError">BaseError</a></span>):
+
+        
+    </div>
+    <a class="headerlink" href="#UnsupportedModelForSHAPError"></a>
+    
+            <div class="docstring"><p>When an unsupported model is used for SHAP importance.</p>
+</div>
+
+
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#BaseError">BaseError</a></dt>
+                                <dd id="UnsupportedModelForSHAPError.__init__" class="function"><a href="#BaseError.__init__">BaseError</a></dd>
+                <dd id="UnsupportedModelForSHAPError.description" class="function"><a href="#BaseError.description">description</a></dd>
+
+            </div>
+            <div><dt>builtins.BaseException</dt>
+                                <dd id="UnsupportedModelForSHAPError.with_traceback" class="function">with_traceback</dd>
 
             </div>
                                 </dl>
