@@ -35,7 +35,6 @@ plotly = "^5.14.1"
 plotly-express = "^0.4.1"
 polars = "^0.20.15"
 pycocoevalcap = {version = "^1.2", optional = true}
-pydantic = "^1.9.1"
 pypmml = "^0.9.17"
 python-dotenv = "^0.20.0"
 requests = "^2.27.1"
