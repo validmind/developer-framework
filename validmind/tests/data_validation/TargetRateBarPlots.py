@@ -131,7 +131,9 @@ class TargetRateBarPlots(Metric):
         print(f"The column {default_column} is correct and contains only 1 and 0.")
 
     def run(self):
-        default_column = self.params["default_column"]
+        default_column = (
+            self.params.get("default_column") or self.inputs.dataset.target_column
+        )
         columns = self.params["columns"]
 
         # Check loan status variable has only 1 and 0

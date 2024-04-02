@@ -2,9 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from pandas import DataFrame
 from statsmodels.tsa.stattools import adfuller
 
-from validmind.vm_models import Metric
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 class ADF(Metric):
@@ -50,6 +51,31 @@ class ADF(Metric):
             "stationarity",
         ],
     }
+
+    def summary(self, metric_value: dict):
+        table = DataFrame.from_dict(metric_value, orient="index")
+        table = table.reset_index()
+        table.columns = [
+            "Feature",
+            "ADF Statistic",
+            "P-Value",
+            "Used Lag",
+            "Number of Observations",
+            "Critical Values",
+            "IC Best",
+        ]
+        table = table.rename_axis("Index", axis=1)
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=table,
+                    metadata=ResultTableMetadata(
+                        title="ADF Test Results for Each Feature"
+                    ),
+                ),
+            ]
+        )
 
     def run(self):
         """
