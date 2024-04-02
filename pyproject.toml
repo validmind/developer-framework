@@ -34,7 +34,7 @@ pandas = "1.5.3"
 plotly = "^5.14.1"
 plotly-express = "^0.4.1"
 polars = "^0.20.15"
-pycocoevalcap = { version = "^1.2", optional = true }
+pycocoevalcap = {version = "^1.2", optional = true}
 pypmml = "^0.9.17"
 python-dotenv = "^0.20.0"
 requests = "^2.27.1"
@@ -103,3 +103,6 @@ requires = ["poetry-core>=1.0.0"]
 [tool.isort]
 known_first_party = "validmind"
 profile = "black"
+
+[tool.poetry.scripts]
+vm-create-new-test = "scripts.create_new_test:generate_test"
