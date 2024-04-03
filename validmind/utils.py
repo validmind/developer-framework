@@ -255,7 +255,21 @@ def clean_docstring(docstring: str) -> str:
     # Join paragraphs with double newlines for markdown
     description = "\n\n".join(paragraphs)
 
-    return description
+    lines = description.split("\n")
+    in_bullet_list = False
+    for i, line in enumerate([line for line in lines]):
+        if line.strip().startswith("-") and not in_bullet_list:
+            if lines[i - 1] != "":
+                lines[i] = "\n" + line
+
+            in_bullet_list = True
+            continue
+        elif line.strip().startswith("-") and in_bullet_list:
+            continue
+        elif line.strip() == "" and in_bullet_list:
+            in_bullet_list = False
+
+    return "\n".join(lines)
 
 
 def format_number(number):

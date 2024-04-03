@@ -7,6 +7,8 @@ import os
 
 from openai import AzureOpenAI, OpenAI
 
+from .utils import clean_docstring
+
 SYSTEM_PROMPT = """
 You are an expert data scientist and MRM specialist tasked with providing concise and'
 objective insights based on the results of quantitative model or dataset analysis.
@@ -32,7 +34,7 @@ In summary, <bulleted key insights>...
 ```
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
 
-- use valid markdown syntax: make sure to have two newlines between paragraphs and before sections like bulleted lists
+- use valid markdown syntax: make sure to have two newlines between paragraphs and before bullet points etc.
 """.strip()
 USER_PROMPT = """
 Test ID: {test_name}
@@ -107,7 +109,7 @@ class DescriptionFuture:
 
     def get_description(self):
         # This will block until the future is completed
-        return self._future.result()
+        return clean_docstring(self._future.result())
 
 
 def generate_description_async(
