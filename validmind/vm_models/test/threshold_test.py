@@ -11,6 +11,7 @@ avoid confusion with the "tests" in the general data science/modeling sense.
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
+from ...ai import generate_description
 from ...utils import clean_docstring
 from ..figure import Figure
 from .result_summary import ResultSummary, ResultTable
@@ -76,16 +77,27 @@ class ThresholdTest(Test):
         Returns:
             TestSuiteResult: The test suite result object
         """
-        # Rename to self.result
-        # At a minimum, send the test description
+        result_summary = self.summary(test_results_list, passed)
+
+        description = generate_description(
+            test_name=self.test_id,
+            test_type=self.test_type,
+            test_description=self.description(),
+            test_results=[result.serialize() for result in test_results_list],
+            test_summary=result_summary.serialize(),
+        )
+        # result_metadata = [
+        #     {
+        #         "content_id": f"test_description:{self.test_id}",
+        #         "text": clean_docstring(self.description()),
+        #     }
+        # ]
         result_metadata = [
             {
                 "content_id": f"test_description:{self.test_id}",
-                "text": clean_docstring(self.description()),
+                "text": description,
             }
         ]
-
-        result_summary = self.summary(test_results_list, passed)
 
         self.result = ThresholdTestResultWrapper(
             result_id=self.test_id,
