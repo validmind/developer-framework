@@ -8,6 +8,7 @@ Test (as test_results) but we'll refer to it as a ThresholdTest to
 avoid confusion with the "tests" in the general data science/modeling sense.
 """
 
+import os
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
@@ -79,34 +80,31 @@ class ThresholdTest(Test):
         """
         result_summary = self.summary(test_results_list, passed)
 
-        description = generate_description(
-            test_name=self.test_id,
-            test_type=self.test_type,
-            test_description=self.description(),
-            test_results=[result.serialize() for result in test_results_list],
-            test_summary=result_summary.serialize(),
-        )
-        # result_metadata = [
-        #     {
-        #         "content_id": f"test_description:{self.test_id}",
-        #         "text": clean_docstring(self.description()),
-        #     }
-        # ]
-        result_metadata = [
-            {
-                "content_id": f"test_description:{self.test_id}",
-                "text": description,
-            }
-        ]
+        if (
+            os.environ.get("VALIDMIND_LLM_DESCRIPTIONS_ENABLED", "false").lower()
+            == "true"
+        ):
+            description = generate_description(
+                test_name=self.test_id,
+                test_type=self.test_type,
+                test_description=self.description().splitlines()[0],
+                test_results=[result.serialize() for result in test_results_list],
+                test_summary=result_summary.serialize(),
+                figures=figures,
+            )
+        else:
+            description = clean_docstring(self.description())
 
         self.result = ThresholdTestResultWrapper(
             result_id=self.test_id,
-            result_metadata=result_metadata,
+            result_metadata=[
+                {
+                    "content_id": f"test_description:{self.test_id}",
+                    "text": description,
+                }
+            ],
             inputs=self.get_accessed_inputs(),
             test_results=ThresholdTestResults(
-                # test_name=self.name,
-                # Now using the fully qualified test ID as `test_name`.
-                # Ideally the backend is updated to use `test_id` instead of `test_name`.
                 test_name=self.test_id,
                 ref_id=self._ref_id,
                 params=self.params,

@@ -129,6 +129,29 @@ class Figure:
             "metadata": json.dumps(self.metadata, allow_nan=False),
         }
 
+    def _get_b64_url(self):
+        """
+        Returns a base64 encoded URL for the figure
+        """
+        if self.is_matplotlib_figure():
+            buffer = BytesIO()
+            self.figure.savefig(buffer, format="png")
+            buffer.seek(0)
+
+            b64_data = base64.b64encode(buffer.read()).decode("utf-8")
+
+            return f"data:image/png;base64,{b64_data}"
+
+        elif self.is_plotly_figure():
+            bytes = self.figure.to_image(format="png")
+            b64_data = base64.b64encode(bytes).decode("utf-8")
+
+            return f"data:image/png;base64,{b64_data}"
+
+        raise UnsupportedFigureError(
+            f"Unrecognized figure type: {get_full_typename(self.figure)}"
+        )
+
     def serialize_files(self):
         """Creates a `requests`-compatible files object to be sent to the API"""
         if self.is_matplotlib_figure():

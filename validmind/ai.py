@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import concurrent.futures
 import os
 
 from openai import AzureOpenAI, OpenAI
@@ -10,39 +11,49 @@ SYSTEM_PROMPT = """
 You are an expert data scientist and MRM specialist tasked with providing concise and'
 objective insights based on the results of quantitative model or dataset analysis.
 
-Examine the provided statistical test results and compose a brief summary paragraph.
-Highlight crucial insights, focusing on the distribution characteristics, central
-tendencies (such as mean or median), and the variability (including standard deviation
-and range) of the metrics. Evaluate how these statistics might influence the
-development and performance of a predictive model. Identify and explain any discernible
-trends or anomalies in the test results. Your summary should be concise, coherent, and
-tailored for inclusion in machine learning model documentation, providing a clear
-understanding of the test results implications for predictive analytics.
+Examine the provided statistical test results and compose a brief summary. Highlight crucial
+insights, focusing on the distribution characteristics, central tendencies (such as mean or median),
+and the variability (including standard deviation and range) of the metrics. Evaluate how
+these statistics might influence the development and performance of a predictive model. Identify
+and explain any discernible trends or anomalies in the test results.
 
 Your analysis will act as the description of the result in the model documentation.
 
-Provide an unbiased and straightforward analysis of the data without any advisory
-content. Focus solely on presenting the data analysis in a factual and objective
-manner. Avoid any form of recommendations, suggestions, or advice. Keep the tone
-purely analytical and neutral.
-
-Ensure that the response does not exceed 150 words.
 Avoid long sentences and complex vocabulary.
 Structure the response clearly and logically.
 Use Markdown syntax to format the response.
-"""
+Use the following format for the response:
+```
+<Last Part of Test ID (formatted as a title)> is a <Test Type> that <explanation of what it does>...
+
+The results of this <Test Type> <detailed explanation of the results (perhaps even multiple paragraphs)>...
+
+In summary, <bulleted key insights>...
+```
+It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
+
+- make sure to have an empty line before markdown lists
+""".strip()
 USER_PROMPT = """
-Test Name: {test_name}
+Test ID: {test_name}
 Test Type: {test_type}
 Test Description: {test_description}
 Test Results (the raw results of the test):
 {test_results}
 Test Summary (what the user sees in the documentation):
 {test_summary}
-"""
+""".strip()
+USER_PROMPT_FIGURES = """
+Test ID: {test_name}
+Test Type: {test_type}
+Test Description: {test_description}
+The attached plots show the results of the test.
+""".strip()
 
 __client = None
 __model = None
+
+__executor = concurrent.futures.ThreadPoolExecutor()
 
 
 def __get_client_and_model():
@@ -82,31 +93,103 @@ def __get_client_and_model():
     return __client, __model
 
 
+class DescriptionFuture:
+    """This will be immediately returned from generate_description so that
+    the tests can continue to be run in parallel while the description is
+    retrieved asynchronously.
+
+    The value will be retrieved later and if its not ready yet, it should
+    block until it is.
+    """
+
+    def __init__(self, future):
+        self._future = future
+
+    def get_description(self):
+        # This will block until the future is completed
+        return self._future.result()
+
+
+def generate_description_async(
+    test_name: str,
+    test_type: str,
+    test_description: str,
+    test_results: str,
+    test_summary: str,
+    figures: list = None,
+):
+    """Generate the description for the test results"""
+    client, _ = __get_client_and_model()
+
+    if not test_results and not test_summary:
+        if not figures:
+            raise ValueError("No results, summary or figures provided")
+
+        response = client.chat.completions.create(
+            model="gpt-4-1106-vision-preview",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": USER_PROMPT_FIGURES.format(
+                                test_name=test_name,
+                                test_type=test_type,
+                                test_description=test_description,
+                            ),
+                        },
+                        *[
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": figure._get_b64_url(),
+                                },
+                            }
+                            for figure in figures
+                        ],
+                    ],
+                },
+            ],
+        )
+    else:
+        response = client.chat.completions.create(
+            model="gpt-4-turbo-preview",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": USER_PROMPT.format(
+                        test_name=test_name,
+                        test_type=test_type,
+                        test_description=test_description,
+                        test_results=test_results,
+                        test_summary=test_summary,
+                    ),
+                },
+            ],
+        )
+
+    return response.choices[0].message.content.strip("```").strip()
+
+
 def generate_description(
     test_name: str,
     test_type: str,
     test_description: str,
     test_results: str,
     test_summary: str,
+    figures: list = None,
 ):
-    """Generate the description for the test results"""
-    client, model = __get_client_and_model()
-
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {
-                "role": "user",
-                "content": USER_PROMPT.format(
-                    test_name=test_name,
-                    test_type=test_type,
-                    test_description=test_description,
-                    test_results=test_results,
-                    test_summary=test_summary,
-                ),
-            },
-        ],
+    future = __executor.submit(
+        generate_description_async,
+        test_name,
+        test_type,
+        test_description,
+        test_results,
+        test_summary,
+        figures,
     )
 
-    return response.choices[0].message.content
+    return DescriptionFuture(future)

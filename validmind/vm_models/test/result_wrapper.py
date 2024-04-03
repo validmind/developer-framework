@@ -18,6 +18,7 @@ import pandas as pd
 from IPython.display import display
 
 from ... import api_client
+from ...ai import DescriptionFuture
 from ...utils import NumpyEncoder, run_async, test_id_to_name
 from ..figure import Figure
 from .metric_result import MetricResult
@@ -102,7 +103,6 @@ class ResultWrapper(ABC):
         """
         Convert a markdown string to html
         """
-
         return markdown.markdown(description, extensions=["markdown.extensions.tables"])
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
@@ -221,12 +221,14 @@ class MetricResultWrapper(ResultWrapper):
         ]
 
         if self.result_metadata:
-            metric_description = self.result_metadata[0]
+            metric_description = self.result_metadata[0].get("text", "")
+            if isinstance(metric_description, DescriptionFuture):
+                metric_description = metric_description.get_description()
+                self.result_metadata[0]["text"] = metric_description
+
             vbox_children.append(
                 widgets.HTML(
-                    value=self._markdown_description_to_html(
-                        metric_description.get("text", "")
-                    )
+                    value=self._markdown_description_to_html(metric_description)
                 )
             )
 
@@ -308,6 +310,11 @@ class MetricResultWrapper(ResultWrapper):
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
+            description = self.result_metadata[0].get("text", "")
+            if isinstance(description, DescriptionFuture):
+                description = description.get_description()
+                self.result_metadata[0]["text"] = description
+
             for metadata in self.result_metadata:
                 tasks.append(
                     update_metadata(
@@ -361,9 +368,13 @@ class ThresholdTestResultWrapper(ResultWrapper):
         )
 
         if self.result_metadata:
-            metric_description = self.result_metadata[0]
+            metric_description = self.result_metadata[0].get("text", "")
+            if isinstance(metric_description, DescriptionFuture):
+                metric_description = metric_description.get_description()
+                self.result_metadata[0]["text"] = metric_description
+
             description_html.append(
-                self._markdown_description_to_html(metric_description.get("text", ""))
+                self._markdown_description_to_html(metric_description)
             )
 
         description_html.append(
@@ -392,6 +403,11 @@ class ThresholdTestResultWrapper(ResultWrapper):
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
         if hasattr(self, "result_metadata") and self.result_metadata:
+            description = self.result_metadata[0].get("text", "")
+            if isinstance(description, DescriptionFuture):
+                description = description.get_description()
+                self.result_metadata[0]["text"] = description
+
             for metadata in self.result_metadata:
                 tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
 
