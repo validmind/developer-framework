@@ -32,7 +32,7 @@ In summary, <bulleted key insights>...
 ```
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
 
-- make sure to have an empty line before markdown lists
+- use valid markdown syntax: make sure to have two newlines between paragraphs and before sections like bulleted lists
 """.strip()
 USER_PROMPT = """
 Test ID: {test_name}
