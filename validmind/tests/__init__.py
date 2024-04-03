@@ -262,8 +262,8 @@ def load_test(test_id, reload=False):  # noqa: C901
     error = None
     namespace = parts[0]
 
-    if test_id in __custom_tests:
-        test = __custom_tests[test_id]
+    if test_id.split(":")[0] in __custom_tests:
+        test = __custom_tests[test_id.split(":")[0]]
 
     elif test_id.startswith("validmind.composite_metric"):
         test = load_composite_metric(test_id)

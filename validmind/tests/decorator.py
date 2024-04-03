@@ -118,7 +118,9 @@ def _build_result(results, test_id, description, output_template):
 def get_run_method(func, inputs, params):
     def run(self: Metric):
         input_kwargs = {k: getattr(self.inputs, k) for k in inputs.keys()}
-        param_kwargs = {k: getattr(self.params, k) for k in params.keys()}
+        param_kwargs = {
+            k: self.params.get(k, params[k]["default"]) for k in params.keys()
+        }
 
         raw_results = func(**input_kwargs, **param_kwargs)
 
