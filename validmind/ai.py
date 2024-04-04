@@ -24,13 +24,17 @@ Your analysis will act as the description of the result in the model documentati
 Avoid long sentences and complex vocabulary.
 Structure the response clearly and logically.
 Use Markdown syntax to format the response.
+Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> "Class Imbalance".
 Use the following format for the response:
 ```
-<Last Part of Test ID (formatted as a title)> is a <Test Type> that <explanation of what it does>...
+**<Test Name>** is a **<Test Type>** that <continue to explain what it does in detail>...
 
-The results of this <Test Type> <detailed explanation of the results (perhaps even multiple paragraphs)>...
+The results of this <Test Type> <detailed explanation of the results>...
 
-In summary, <bulleted key insights>...
+In summary the following key insights can be gained from this <Test Type>
+
+- **<key insight 1 - title>**: <explanation of key insight 1>
+- ...<continue with any other key insights using the same format>
 ```
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
 
@@ -122,6 +126,9 @@ def generate_description_async(
 ):
     """Generate the description for the test results"""
     client, _ = __get_client_and_model()
+
+    # get last part of test id
+    test_name = test_name.split(".")[-1]
 
     if not test_results and not test_summary:
         if not figures:
