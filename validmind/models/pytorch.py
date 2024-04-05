@@ -2,7 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from validmind.errors import MissingModelPredictFnError
+from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
 from validmind.vm_models.model import (
     ModelAttributes,
@@ -41,7 +41,7 @@ class PyTorchModel(VMModel):
         Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingModelPredictFnError(
+            raise MissingOrInvalidModelPredictFnError(
                 "Model requires a implemention of predict_proba method with 1 argument"
                 + " that is tensor features matrix"
             )
@@ -54,7 +54,7 @@ class PyTorchModel(VMModel):
         Predict method for the model. This is a wrapper around the model's
         """
         if not has_method_with_arguments(self.model, "predict", 1):
-            raise MissingModelPredictFnError(
+            raise MissingOrInvalidModelPredictFnError(
                 "Model requires a implemention of predict method with 1 argument"
                 + " that is tensor features matrix"
             )
