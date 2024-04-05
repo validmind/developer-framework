@@ -22,7 +22,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     ThresholdTest,
     ThresholdTestResult,
-    VMDataset,
 )
 
 
