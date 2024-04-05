@@ -69,7 +69,6 @@ def _extract_required_inputs(cls):
 
 @dataclass
 class CompositeMetric(Metric):
-
     unit_metrics: List[str] = None
 
     def __post_init__(self):
