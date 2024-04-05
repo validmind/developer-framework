@@ -9,7 +9,7 @@ Notebooks Tested:
  - notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb
  - notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb
  - notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb
- - notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb
+ - notebooks/code_samples/custom_tests/external_test_providers.ipynb
 
 To add more notebooks to the list, simply add the path to the `NOTEBOOKS_TO_RUN` list.
 This will use the default project id for the notebook. If you want to use a different
@@ -44,7 +44,7 @@ NOTEBOOKS_TO_RUN = [
     "notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb",
     "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     {
-        "path": "notebooks/code_samples/custom_tests/external_test_providers_demo.ipynb",
+        "path": "notebooks/code_samples/custom_tests/external_test_providers.ipynb",
         "project": DEFAULT_PROJECT_ID,
     },
 ]
