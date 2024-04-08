@@ -185,27 +185,31 @@ class TextDescription(Metric):
             ("Total Unique Words", "Lexical Diversity"),
         ]
         params = {"combinations_to_plot": combinations_to_plot}
-        figures = self.text_description_scatter_plot(df_text_description, params)
+        figures = self.text_description_plots(df_text_description, params)
 
         return self.cache_results(
             figures=figures,
         )
 
     # Function to plot scatter plots for specified combinations using Plotly
-    def text_description_scatter_plot(self, df, params):
+    def text_description_plots(self, df, params):
         combinations_to_plot = params["combinations_to_plot"]
         figures = []
         # Create hist plots for each column
         for i, column in enumerate(df.columns):
             fig = px.histogram(df, x=column)
             fig.update_layout(bargap=0.2)
-            figures.append(Figure(for_object=self, key=self.key, figure=fig))
+            # Generate a unique key for each histogram using the column name and index
+            histogram_key = f"{self.name}_histogram_{column}_{i}"
+            figures.append(Figure(for_object=self, key=histogram_key, figure=fig))
 
-        for metric1, metric2 in combinations_to_plot:
+        for j, (metric1, metric2) in enumerate(combinations_to_plot):
             fig = px.scatter(
                 df, x=metric1, y=metric2, title=f"Scatter Plot: {metric1} vs {metric2}"
             )
-            figures.append(Figure(for_object=self, key=self.key, figure=fig))
+            # Generate a unique key for each scatter plot using the metric names and index
+            scatter_key = f"{self.name}_scatter_{metric1}_vs_{metric2}_{j}"
+            figures.append(Figure(for_object=self, key=scatter_key, figure=fig))
         plt.close("all")
 
         return figures

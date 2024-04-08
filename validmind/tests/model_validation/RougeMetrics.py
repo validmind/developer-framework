@@ -76,7 +76,6 @@ class RougeMetrics(Metric):
         if r_metrics is None:
             raise ValueError("rouge_metrics must be provided in params")
 
-        # With all
         if not (
             set(self.default_params.get("rouge_metrics")).intersection(r_metrics)
             == set(r_metrics)
@@ -97,12 +96,13 @@ class RougeMetrics(Metric):
 
         metrics_df = pd.DataFrame(score_list)
         figures = []
+
         for m in metrics_df.columns:
             df_scores = pd.DataFrame(metrics_df[m].tolist())
             # Visualization part
             fig = go.Figure()
 
-            # Adding the line plots
+            # Adding the line plots for precision, recall, and F1-score with lines and markers
             fig.add_trace(
                 go.Scatter(
                     x=df_scores.index,
@@ -129,11 +129,13 @@ class RougeMetrics(Metric):
             )
 
             fig.update_layout(
-                title="ROUGE Scores for Each Row",
+                title=f"ROUGE Scores for {m}",
                 xaxis_title="Row Index",
                 yaxis_title="Score",
             )
-            k = m.replace("-", "")
+
+            # Ensure a unique key for each metric
+            k = f"{m.replace('-', '')}_{len(figures)}"
             figures.append(
                 Figure(
                     for_object=self,
