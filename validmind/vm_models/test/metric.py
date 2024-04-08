@@ -90,7 +90,6 @@ class Metric(Test):
         ):
             description = generate_description(
                 test_name=self.test_id,
-                test_type=self.test_type,
                 test_description=self.description().splitlines()[0],
                 test_results=metric.serialize()["value"],
                 test_summary=metric.serialize()["summary"],

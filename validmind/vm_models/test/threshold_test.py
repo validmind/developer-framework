@@ -86,7 +86,6 @@ class ThresholdTest(Test):
         ):
             description = generate_description(
                 test_name=self.test_id,
-                test_type=self.test_type,
                 test_description=self.description().splitlines()[0],
                 test_results=[result.serialize() for result in test_results_list],
                 test_summary=result_summary.serialize(),

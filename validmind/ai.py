@@ -42,7 +42,6 @@ It is very important that the text is nicely formatted and contains enough infor
 """.strip()
 USER_PROMPT = """
 Test ID: {test_name}
-Test Type: {test_type}
 Test Description: {test_description}
 Test Results (the raw results of the test):
 {test_results}
@@ -118,7 +117,6 @@ class DescriptionFuture:
 
 def generate_description_async(
     test_name: str,
-    test_type: str,
     test_description: str,
     test_results: str,
     test_summary: str,
@@ -145,7 +143,6 @@ def generate_description_async(
                             "type": "text",
                             "text": USER_PROMPT_FIGURES.format(
                                 test_name=test_name,
-                                test_type=test_type,
                                 test_description=test_description,
                             ),
                         },
@@ -171,7 +168,6 @@ def generate_description_async(
                     "role": "user",
                     "content": USER_PROMPT.format(
                         test_name=test_name,
-                        test_type=test_type,
                         test_description=test_description,
                         test_results=test_results,
                         test_summary=test_summary,
@@ -185,7 +181,6 @@ def generate_description_async(
 
 def generate_description(
     test_name: str,
-    test_type: str,
     test_description: str,
     test_results: str,
     test_summary: str,
@@ -194,7 +189,6 @@ def generate_description(
     future = __executor.submit(
         generate_description_async,
         test_name,
-        test_type,
         test_description,
         test_results,
         test_summary,
