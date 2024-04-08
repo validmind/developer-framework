@@ -24,8 +24,10 @@ class MeteorScore(Metric):
     matches based on surface forms, stemmed forms, and synonyms. The score is a combination of unigram precision and recall,
     adjusted for word order through a fragmentation penalty.
 
-    **Visualization**: A line plot is generated to depict the METEOR scores across all instances in the dataset, highlighting
-    the model's performance on a per-text basis and indicating areas for potential improvement.
+    **Signs of High Risk**:
+    - Lower METEOR scores can indicate a lack of alignment between the machine-generated translations and their human-produced references, highlighting potential deficiencies in both the accuracy and fluency of translations.
+    - Significant discrepancies in word order or an excessive fragmentation penalty could signal issues with how the translation model processes and reconstructs sentence structures, potentially compromising the natural flow of translated text.
+    - Persistent underperformance across a variety of text types or linguistic contexts might suggest a broader inability of the model to adapt to the nuances of different languages or dialects, pointing towards gaps in its training or inherent limitations.
 
     **Strengths**:
     - Incorporates a balanced consideration of precision and recall, weighted towards recall to reflect the importance of
