@@ -21,6 +21,18 @@ from ..errors import InvalidFigureForObjectError, UnsupportedFigureError
 from ..utils import get_full_typename
 
 
+def is_matplotlib_figure(figure) -> bool:
+    return isinstance(figure, matplotlib.figure.Figure)
+
+
+def is_plotly_figure(figure) -> bool:
+    return isinstance(figure, (go.Figure, go.FigureWidget))
+
+
+def is_png_image(figure) -> bool:
+    return isinstance(figure, bytes)
+
+
 @dataclass
 class Figure:
     """
@@ -52,21 +64,9 @@ class Figure:
         if (
             not client_config.running_on_colab
             and self.figure
-            and self.is_plotly_figure()
+            and is_plotly_figure(self.figure)
         ):
             self.figure = go.FigureWidget(self.figure)
-
-    def is_matplotlib_figure(self) -> bool:
-        """
-        Returns True if the figure is a matplotlib figure
-        """
-        return isinstance(self.figure, matplotlib.figure.Figure)
-
-    def is_plotly_figure(self) -> bool:
-        """
-        Returns True if the figure is a plotly figure
-        """
-        return isinstance(self.figure, (go.Figure, go.FigureWidget))
 
     def _get_for_object_type(self):
         """
@@ -91,7 +91,7 @@ class Figure:
         we would render images as-is, but Plotly FigureWidgets don't work well
         on Google Colab when they are combined with ipywidgets.
         """
-        if self.is_matplotlib_figure():
+        if is_matplotlib_figure(self.figure):
             tmpfile = BytesIO()
             self.figure.savefig(tmpfile, format="png")
             encoded = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
@@ -101,7 +101,7 @@ class Figure:
                 """
             )
 
-        elif self.is_plotly_figure():
+        elif is_plotly_figure(self.figure):
             # FigureWidget can be displayed as-is but not on Google Colab. In this case
             # we just return the image representation of the figure.
             if client_config.running_on_colab:
@@ -114,6 +114,15 @@ class Figure:
                 )
             else:
                 return self.figure
+
+        elif is_png_image(self.figure):
+            encoded = base64.b64encode(self.figure).decode("utf-8")
+            return widgets.HTML(
+                value=f"""
+                <img style="width:100%; height: auto;" src="data:image/png;base64,{encoded}"/>
+                """
+            )
+
         else:
             raise UnsupportedFigureError(
                 f"Figure type {type(self.figure)} not supported for plotting"
@@ -154,13 +163,13 @@ class Figure:
 
     def serialize_files(self):
         """Creates a `requests`-compatible files object to be sent to the API"""
-        if self.is_matplotlib_figure():
+        if is_matplotlib_figure(self.figure):
             buffer = BytesIO()
             self.figure.savefig(buffer, bbox_inches="tight")
             buffer.seek(0)
             return {"image": (f"{self.key}.png", buffer, "image/png")}
 
-        elif self.is_plotly_figure():
+        elif is_plotly_figure(self.figure):
             # When using plotly, we need to use we will produce two files:
             # - a JSON file that will be used to display the figure in the UI
             # - a PNG file that will be used to display the figure in documents
@@ -176,6 +185,9 @@ class Figure:
                     "application/json",
                 ),
             }
+
+        elif is_png_image(self.figure):
+            return {"image": (f"{self.key}.png", self.figure, "image/png")}
 
         raise UnsupportedFigureError(
             f"Unrecognized figure type: {get_full_typename(self.figure)}"

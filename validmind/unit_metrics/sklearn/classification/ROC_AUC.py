@@ -11,7 +11,6 @@ from validmind.vm_models import UnitMetric
 
 @dataclass
 class ROC_AUC(UnitMetric):
-
     required_inputs = ["dataset", "model"]
 
     def run(self):
