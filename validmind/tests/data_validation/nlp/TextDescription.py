@@ -92,9 +92,12 @@ class TextDescription(Metric):
             total_words = len(words)
             total_sentences = len(sentences)
             avg_sentence_length = round(
-                sum(len(sentence.split()) for sentence in sentences) / total_sentences
-                if total_sentences
-                else 0,
+                (
+                    sum(len(sentence.split()) for sentence in sentences)
+                    / total_sentences
+                    if total_sentences
+                    else 0
+                ),
                 1,
             )
             total_paragraphs = len(paragraphs)
@@ -161,9 +164,14 @@ class TextDescription(Metric):
         return combined_df
 
     def run(self):
+
+        # Enforce that text_column must be provided as part of the params
+        if self.inputs.dataset.text_column is None:
+            raise ValueError("A 'text_column' must be provided to run this test.")
+
         # Can only run this test if we have a Dataset object
         if not isinstance(self.inputs.dataset, VMDataset):
-            raise ValueError("TextDescretion requires a validmind Dataset object")
+            raise ValueError("TextDescription requires a validmind Dataset object")
 
         df_text_description = self.text_description_table(
             self.inputs.dataset.df, self.params

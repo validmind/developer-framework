@@ -54,6 +54,7 @@ tqdm = "^4.64.0"
 transformers = { version = "^4.32.0", optional = true }
 xgboost = "^1.5.2"
 ydata-profiling = "^4.7.0"
+selfcheckgpt = "^0.1.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
