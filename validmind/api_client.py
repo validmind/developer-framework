@@ -171,6 +171,18 @@ def __ping() -> Dict[str, Any]:
     )
 
 
+def reload():
+    """Reconnect to the ValidMind API and reload the project configuration"""
+
+    try:
+        __ping()
+    except Exception as e:
+        # if the api host is https, assume we're not in dev mode and send to sentry
+        if _api_host.startswith("https://"):
+            send_single_error(e)
+        raise e
+
+
 async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
     if not _run_cuid:
         start_run()

@@ -57,6 +57,8 @@ class AIPoweredTest:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ],
+                temperature=0.0,
+                seed=42,
             )
             .choices[0]
             .message.content
