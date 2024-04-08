@@ -79,7 +79,7 @@ class RegressionModelsPerformance(Metric):
     def sample_performance_ols(self, models, datasets):
         evaluation_results = []
 
-        for (model, dataset) in zip(models, datasets):
+        for model, dataset in zip(models, datasets):
             X_columns = dataset.get_features_columns()
             y_true = dataset.y
             y_pred = dataset.y_pred(model.input_id)
