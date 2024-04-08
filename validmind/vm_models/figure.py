@@ -142,7 +142,7 @@ class Figure:
         """
         Returns a base64 encoded URL for the figure
         """
-        if self.is_matplotlib_figure():
+        if is_matplotlib_figure(self.figure):
             buffer = BytesIO()
             self.figure.savefig(buffer, format="png")
             buffer.seek(0)
@@ -151,7 +151,7 @@ class Figure:
 
             return f"data:image/png;base64,{b64_data}"
 
-        elif self.is_plotly_figure():
+        elif is_plotly_figure(self.figure):
             bytes = self.figure.to_image(format="png")
             b64_data = base64.b64encode(bytes).decode("utf-8")
 

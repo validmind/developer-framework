@@ -50,7 +50,6 @@ Test Summary (what the user sees in the documentation):
 """.strip()
 USER_PROMPT_FIGURES = """
 Test ID: {test_name}
-Test Type: {test_type}
 Test Description: {test_description}
 The attached plots show the results of the test.
 """.strip()
