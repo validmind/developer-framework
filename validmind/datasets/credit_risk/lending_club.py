@@ -14,6 +14,10 @@ from sklearn.model_selection import train_test_split
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(current_path, "datasets")
 
+# URLs or file paths for online and offline data
+online_data_file = "https://vmai.s3.us-west-1.amazonaws.com/datasets/lending_club_loan_data_2007_2014.csv"
+offline_data_file = os.path.join(dataset_path, "lending_club_loan_data_2007_2014.csv")
+
 target_column = "loan_status"
 
 drop_columns = [
@@ -90,30 +94,32 @@ score_params = {
 }
 
 
-def load(full_dataset=False):
-    data_file = "https://vmai.s3.us-west-1.amazonaws.com/datasets/lending_club_loan_data_2007_2014.csv"
+def load_data(source="online"):
+    """
+    Load data from either an online source or offline files, automatically dropping specified columns for offline data.
 
-    # Setting column 21 (index 20) to string data type to prevent DtypeWarning due to mixed types
-    print("Loading full dataset...")
-    df = pd.read_csv(data_file, dtype={20: str})
+    :param source: 'online' for online data, 'offline' for offline files. Defaults to 'online'.
+    :return: DataFrame containing the loaded data.
+    """
+
+    if source == "online":
+        print(f"Loading data from an online source: {online_data_file}")
+        df = pd.read_csv(online_data_file)
+    elif source == "offline":
+        print(f"Loading data from an offline file: {offline_data_file}")
+        df = pd.read_csv(offline_data_file)
+        # Inform the user about the pre-dropped columns in the offline dataset
+        print(
+            "The offline dataset has pre-dropped columns before saving the CSV file.\n"
+            "If you require these columns, please choose the online source and consider dropping columns as needed.\n"
+            f"Dropped columns: {drop_columns}"
+        )
+    else:
+        raise ValueError("Invalid source specified. Choose 'online' or 'offline'.")
+
     print(
-        f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
+        f"Rows: {df.shape[0]}, Columns: {df.shape[1]}, Missing values: {df.isnull().sum().sum()}"
     )
-
-    if not full_dataset:
-        # Check if drop_columns is provided and is a list
-        if drop_columns and isinstance(drop_columns, list):
-            # Drop specified columns if not loading the full dataset
-            df.drop(drop_columns, axis=1, inplace=True)
-            print(f"Dropped columns: {drop_columns}")
-            print(
-                f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
-            )
-        else:
-            print(
-                "No columns specified to drop or the provided drop_columns is not a list.\n"
-            )
-
     return df
 
 
