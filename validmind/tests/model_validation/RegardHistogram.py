@@ -58,21 +58,19 @@ class RegardHistogram(Metric):
 
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
         y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
-        input_text = self.inputs.dataset.df[self.inputs.dataset.text_column]
 
-        if not len(y_true) == len(y_pred) == len(input_text):
+        if not len(y_true) == len(y_pred):
             raise ValueError(
-                "Inconsistent lengths among input text, true summaries, and predicted summaries."
+                "Inconsistent lengths among true summaries and predicted summaries."
             )
 
-        return input_text, y_true, y_pred
+        return y_true, y_pred
 
     def regard_histogram(self):
         regard_tool = evaluate.load("regard")
-        input_text, y_true, y_pred = self._get_datasets()
+        y_true, y_pred = self._get_datasets()
 
         dataframes = {
-            "Input Text": input_text,
             "Target Text": y_true,
             "Predicted Summaries": y_pred,
         }
@@ -101,6 +99,7 @@ class RegardHistogram(Metric):
         )
 
         row_offset = 0
+
         for column_name, column_data in dataframes.items():
             results = regard_tool.compute(data=column_data)["regard"]
             regard_dicts = [

@@ -5,3 +5,8 @@
 """
 Example datasets that can be used with the developer framework.
 """
+
+__all__ = [
+    "cnn_dailymail",
+    "twitter_covide_19",
+]
