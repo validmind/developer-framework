@@ -400,14 +400,29 @@ class NumpyDataset(VMDataset):
         return model.input_id in self._extra_columns.get("prediction_columns", {})
 
     def __assign_prediction_values(self, model, pred_column, prediction_values):
+        # Link the prediction column with the model
         self._extra_columns.setdefault("prediction_columns", {})[
             model.input_id
         ] = pred_column
-        self._raw_dataset = np.hstack(
-            (self._raw_dataset, np.array(prediction_values).reshape(-1, 1))
+
+        # Check if the predictions are multi-dimensional (e.g., embeddings)
+        is_multi_dimensional = (
+            isinstance(prediction_values, np.ndarray) and prediction_values.ndim > 1
         )
-        self._columns.append(pred_column)
-        self._df[pred_column] = prediction_values
+
+        if is_multi_dimensional:
+            # For multi-dimensional outputs, convert to a list of lists to store in DataFrame
+            self._df[pred_column] = list(map(list, prediction_values))
+        else:
+            # If not multi-dimensional or a standard numpy array, reshape for compatibility
+            self._raw_dataset = np.hstack(
+                (self._raw_dataset, np.array(prediction_values).reshape(-1, 1))
+            )
+            self._df[pred_column] = prediction_values
+
+        # Update the dataset columns list
+        if pred_column not in self._columns:
+            self._columns.append(pred_column)
 
     def assign_predictions(  # noqa: C901 - we need to simplify this method
         self,
@@ -662,19 +677,42 @@ class NumpyDataset(VMDataset):
 
     def y_pred(self, model_id) -> np.ndarray:
         """
-        Returns the prediction variable (y_pred) of the dataset.
+        Returns the prediction variables for a given model_id, accommodating
+        both scalar predictions and multi-dimensional outputs such as embeddings.
+
+        Args:
+            model_id (str): The ID of the model whose predictions are sought.
 
         Returns:
-            np.ndarray: The prediction variables.
+            np.ndarray: The prediction variables, either as a flattened array for
+            scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        return self.raw_dataset[
-            :,
-            [
-                self.columns.index(name)
-                for name in self.columns
-                if name == self.prediction_column(model_id=model_id)
-            ],
-        ].flatten()
+        pred_column = self.prediction_column(model_id)
+
+        # First, attempt to retrieve the prediction data from the DataFrame
+        if hasattr(self, "_df") and pred_column in self._df.columns:
+            predictions = self._df[pred_column].to_numpy()
+
+            # Check if the predictions are stored as objects (e.g., lists for embeddings)
+            if self._df[pred_column].dtype == object:
+                # Attempt to convert lists to a numpy array
+                try:
+                    predictions = np.stack(predictions)
+                except ValueError as e:
+                    # Handling cases where predictions cannot be directly stacked
+                    raise ValueError(f"Error stacking prediction arrays: {e}")
+        else:
+            # Fallback to using the raw numpy dataset if DataFrame is not available or suitable
+            try:
+                predictions = self.raw_dataset[
+                    :, self.columns.index(pred_column)
+                ].flatten()
+            except IndexError as e:
+                raise ValueError(
+                    f"Prediction column '{pred_column}' not found in raw dataset: {e}"
+                )
+
+        return predictions
 
     @property
     def type(self) -> str:
