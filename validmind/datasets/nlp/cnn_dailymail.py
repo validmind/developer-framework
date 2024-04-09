@@ -4,10 +4,10 @@
 
 import os
 import textwrap
-import pandas as pd
 
+import pandas as pd
 from datasets import load_dataset
-from IPython.display import display, HTML
+from IPython.display import HTML, display
 from tabulate import tabulate
 
 # Define column names

@@ -12,7 +12,6 @@ from validmind.vm_models import UnitMetric
 
 @dataclass
 class RootMeanSquaredError(UnitMetric):
-
     required_inputs = ["dataset", "model"]
 
     def run(self):

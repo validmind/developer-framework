@@ -2,15 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
 import itertools
+from dataclasses import dataclass
+
 import pandas as pd
-from tqdm import tqdm
 import plotly.graph_objects as go
 import torch
+from selfcheckgpt.modeling_selfcheck import SelfCheckNLI
+from tqdm import tqdm
 
 from validmind.vm_models import Figure, Metric
-from selfcheckgpt.modeling_selfcheck import SelfCheckNLI
 
 
 @dataclass

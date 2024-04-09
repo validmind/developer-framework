@@ -101,7 +101,6 @@ class RegardHistogram(Metric):
         row_offset = 0
 
         for column_name, column_data in dataframes.items():
-
             results = regard_tool.compute(data=column_data)["regard"]
             regard_dicts = [
                 dict((x["label"], x["score"]) for x in sublist) for sublist in results

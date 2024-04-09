@@ -164,7 +164,6 @@ class TextDescription(Metric):
         return combined_df
 
     def run(self):
-
         # Enforce that text_column must be provided as part of the params
         if self.inputs.dataset.text_column is None:
             raise ValueError("A 'text_column' must be provided to run this test.")
