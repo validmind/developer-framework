@@ -43,12 +43,12 @@ def load_data(source="online", dataset_size=None):
 
     elif source == "offline":
         # Determine the file name based on the dataset size
-        if dataset_size == "100k":
+        if dataset_size == "100":
             data_file_name = "cnn_dailymail_100_with_predictions.csv"
-        elif dataset_size == "500k":
+        elif dataset_size == "500":
             data_file_name = "cnn_dailymail_500_with_predictions.csv"
         else:
-            raise ValueError("Invalid dataset_size specified. Choose '100k' or '500k'.")
+            raise ValueError("Invalid dataset_size specified. Choose '100' or '500'.")
 
         # Construct the file path
         data_file = os.path.join(dataset_path, data_file_name)
