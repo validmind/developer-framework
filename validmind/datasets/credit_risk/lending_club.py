@@ -58,19 +58,19 @@ drop_columns = [
     "last_credit_pull_d",
     "earliest_cr_line",
     "issue_d",
+    "addr_state",
+    "dti",
+    "revol_util",
+    "total_pymnt_inv",
+    "inq_last_6mths",
+    "total_rec_int",
+    "last_pymnt_amnt",
 ]
 
 drop_features = [
-    "addr_state",
-    "total_rec_int",
     "loan_amnt",
     "funded_amnt_inv",
-    "dti",
-    "revol_util",
     "total_pymnt",
-    "total_pymnt_inv",
-    "last_pymnt_amnt",
-    "inq_last_6mths",
 ]
 
 categorical_variables = [
