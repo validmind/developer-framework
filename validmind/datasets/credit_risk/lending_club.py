@@ -16,7 +16,9 @@ dataset_path = os.path.join(current_path, "datasets")
 
 # URLs or file paths for online and offline data
 online_data_file = "https://vmai.s3.us-west-1.amazonaws.com/datasets/lending_club_loan_data_2007_2014.csv"
-offline_data_file = os.path.join(dataset_path, "lending_club_loan_data_2007_2014.csv")
+offline_data_file = os.path.join(
+    dataset_path, "lending_club_loan_data_2007_2014_clean.csv.gz"
+)
 
 target_column = "loan_status"
 
@@ -105,15 +107,16 @@ def load_data(source="online"):
     if source == "online":
         print(f"Loading data from an online source: {online_data_file}")
         df = pd.read_csv(online_data_file)
+        df = _clean_data(df)
+
     elif source == "offline":
-        print(f"Loading data from an offline file: {offline_data_file}")
-        df = pd.read_csv(offline_data_file)
-        # Inform the user about the pre-dropped columns in the offline dataset
-        print(
-            "The offline dataset has pre-dropped columns before saving the CSV file.\n"
-            "If you require these columns, please choose the online source and consider dropping columns as needed.\n"
-            f"Dropped columns: {drop_columns}"
-        )
+        print(f"Loading data from an offline .gz file: {offline_data_file}")
+        # Since we know the offline_data_file path ends with '.zip', we replace it with '.csv.gz'
+        gzip_file_path = offline_data_file.replace(".zip", ".csv.gz")
+        print(f"Attempting to read from .gz file: {gzip_file_path}")
+        # Read the CSV file directly from the .gz archive
+        df = pd.read_csv(gzip_file_path, compression="gzip")
+        print("Data loaded successfully.")
     else:
         raise ValueError("Invalid source specified. Choose 'online' or 'offline'.")
 
@@ -123,8 +126,11 @@ def load_data(source="online"):
     return df
 
 
-def clean(df):
+def _clean_data(df):
     df = df.copy()
+
+    # Drop columns not relevant for application scorecards
+    df = df.drop(columns=drop_columns)
 
     # Drop rows with missing target values
     df.dropna(subset=[target_column], inplace=True)
@@ -133,10 +139,10 @@ def clean(df):
         f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
     )
 
-    # Drop columns with more than 50% missing values
+    # Drop columns with more than N percent missing values
     missing_values = df.isnull().mean()
-    df = df.loc[:, missing_values < 0.5]
-    print("Dropping columns with more than 50% missing values:")
+    df = df.loc[:, missing_values < 0.7]
+    print("Dropping columns with more than 70% missing values:")
     print(
         f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
     )
@@ -149,12 +155,6 @@ def clean(df):
         f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
     )
 
-    return df
-
-
-def preprocess(df):
-    df = df.copy()
-
     # Define the target variable for the model, representing loan default status.
     df[target_column] = df[target_column].map({"Fully Paid": 0, "Charged Off": 1})
 
@@ -164,6 +164,12 @@ def preprocess(df):
     print(
         f"Rows: {df.shape[0]}\nColumns: {df.shape[1]}\nMissing values: {df.isnull().sum().sum()}\n"
     )
+
+    return df
+
+
+def preprocess(df):
+    df = df.copy()
 
     # Convert the target variable to integer type for modeling.
     df[target_column] = df[target_column].astype(int)
