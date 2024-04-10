@@ -171,6 +171,18 @@ def __ping() -> Dict[str, Any]:
     )
 
 
+def reload():
+    """Reconnect to the ValidMind API and reload the project configuration"""
+
+    try:
+        __ping()
+    except Exception as e:
+        # if the api host is https, assume we're not in dev mode and send to sentry
+        if _api_host.startswith("https://"):
+            send_single_error(e)
+        raise e
+
+
 async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
     if not _run_cuid:
         start_run()
@@ -313,14 +325,14 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
 async def log_metadata(
     content_id: str,
     text: Optional[str] = None,
-    extra_json: Optional[Dict[str, Any]] = None,
+    _json: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Logs free-form metadata to ValidMind API.
 
     Args:
         content_id (str): Unique content identifier for the metadata
         text (str, optional): Free-form text to assign to the metadata. Defaults to None.
-        extra_json (dict, optional): Free-form key-value pairs to assign to the metadata. Defaults to None.
+        _json (dict, optional): Free-form key-value pairs to assign to the metadata. Defaults to None.
 
     Raises:
         Exception: If the API call fails
@@ -331,8 +343,8 @@ async def log_metadata(
     metadata_dict = {"content_id": content_id}
     if text is not None:
         metadata_dict["text"] = text
-    if extra_json is not None:
-        metadata_dict["extra_json"] = extra_json
+    if _json is not None:
+        metadata_dict["json"] = _json
 
     try:
         return await _post(

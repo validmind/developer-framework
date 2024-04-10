@@ -122,7 +122,6 @@ class DatasetDescription(Metric):
         return self.cache_results(results)
 
     def infer_datatype(self, df):
-
         vm_dataset_variables = {}
         typeset = ProfilingTypeSet(Settings())
         variable_types = typeset.infer_type(df)

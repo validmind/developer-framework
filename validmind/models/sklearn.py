@@ -2,7 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from validmind.errors import MissingModelPredictFnError
+from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
 from validmind.vm_models.model import (
     ModelAttributes,
@@ -40,9 +40,9 @@ class SKlearnModel(VMModel):
         predict_proba (for classification) or predict (for regression) method
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingModelPredictFnError(
-                "Model requires a implemention of predict_proba method with 1 argument"
-                + " that is features matrix"
+            raise MissingOrInvalidModelPredictFnError(
+                f"SKlearn model {self.model.__class__} Model does not have a compatible predict_proba implementation."
+                + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
             )
         if callable(getattr(self.model, "predict_proba", None)):
             return self.model.predict_proba(*args, **kwargs)[:, 1]

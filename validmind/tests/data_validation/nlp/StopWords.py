@@ -22,7 +22,6 @@ from validmind.vm_models import (
     ResultTableMetadata,
     ThresholdTest,
     ThresholdTestResult,
-    VMDataset,
 )
 
 
@@ -86,17 +85,13 @@ class StopWords(ThresholdTest):
                 ResultTable(
                     data=df,
                     metadata=ResultTableMetadata(
-                        title=f"Class Imbalance Results for Column {self.inputs.dataset.target_column}"
+                        title=f"Stop words results for column '{self.inputs.dataset.target_column}'"
                     ),
                 )
             ]
         )
 
     def run(self):
-        # Can only run this test if we have a Dataset object
-        if not isinstance(self.inputs.dataset, VMDataset):
-            raise ValueError("ClassImbalance requires a validmind Dataset object")
-
         text_column = self.inputs.dataset.text_column
 
         def create_corpus(df, text_column):

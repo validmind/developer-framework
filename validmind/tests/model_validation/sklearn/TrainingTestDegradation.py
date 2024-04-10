@@ -129,12 +129,12 @@ class TrainingTestDegradation(ThresholdTest):
         y_test_true = y_test_true.astype(y_test_pred.dtype)
 
         report_train = metrics.classification_report(
-            y_train_true, y_train_pred, output_dict=True
+            y_train_true, y_train_pred, output_dict=True, zero_division=0
         )
         report_train["roc_auc"] = multiclass_roc_auc_score(y_train_true, y_train_pred)
 
         report_test = metrics.classification_report(
-            y_test_true, y_test_pred, output_dict=True
+            y_test_true, y_test_pred, output_dict=True, zero_division=0
         )
         report_test["roc_auc"] = multiclass_roc_auc_score(y_test_true, y_test_pred)
 
@@ -145,7 +145,13 @@ class TrainingTestDegradation(ThresholdTest):
             for metric_name in ["precision", "recall", "f1-score"]:
                 train_score = report_train[class_name][metric_name]
                 test_score = report_test[class_name][metric_name]
-                degradation = (train_score - test_score) / train_score
+
+                # If training score is 0, degradation is assumed to be 100%
+                if train_score == 0:
+                    degradation = 1.0
+                else:
+                    degradation = (train_score - test_score) / train_score
+
                 passed = degradation < self.params["max_threshold"]
                 test_results.append(
                     ThresholdTestResult(
