@@ -59,21 +59,19 @@ class RegardScore(Metric):
 
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
         y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
-        input_text = self.inputs.dataset.df[self.inputs.dataset.text_column]
 
-        if not len(y_true) == len(y_pred) == len(input_text):
+        if not len(y_true) == len(y_pred):
             raise ValueError(
                 "Inconsistent lengths among input text, true summaries, and predicted summaries."
             )
 
-        return input_text, y_true, y_pred
+        return y_true, y_pred
 
     def regard_line_plot(self):
         regard_tool = evaluate.load("regard")
-        input_text, y_true, y_pred = self._get_datasets()
+        y_true, y_pred = self._get_datasets()
 
         dataframes = {
-            "Input Text": input_text,
             "Target Text": y_true,
             "Predicted Summaries": y_pred,
         }

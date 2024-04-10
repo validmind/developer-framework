@@ -131,7 +131,9 @@ class ClassifierPerformance(Metric):
         y_true = self.y_true()
         class_pred = self.y_pred()
 
-        report = metrics.classification_report(y_true, class_pred, output_dict=True)
+        report = metrics.classification_report(
+            y_true, class_pred, output_dict=True, zero_division=0
+        )
         report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
 
         return self.cache_results(report)

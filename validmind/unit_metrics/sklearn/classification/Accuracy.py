@@ -11,6 +11,8 @@ from validmind.vm_models import UnitMetric
 
 @dataclass
 class Accuracy(UnitMetric):
+    required_inputs = ["dataset", "model"]
+
     def run(self):
         y_true = self.inputs.dataset.y
         y_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)

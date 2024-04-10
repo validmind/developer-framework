@@ -50,7 +50,7 @@ from .__version__ import __version__  # noqa: E402
 from .api_client import init
 from .api_client import log_figure as _log_figure_async
 from .api_client import log_metrics as _log_metrics_async
-from .api_client import log_test_results
+from .api_client import log_test_results, reload
 from .client import (  # noqa: E402
     get_test_suite,
     init_dataset,
@@ -60,6 +60,7 @@ from .client import (  # noqa: E402
     run_documentation_tests,
     run_test_suite,
 )
+from .tests.decorator import metric
 from .unit_metrics import run_metric
 from .utils import run_async  # noqa: E402
 
@@ -105,7 +106,9 @@ __all__ = [  # noqa
     "init_dataset",
     "init_model",
     "init_r_model",
+    "metric",
     "preview_template",
+    "reload",
     "run_documentation_tests",
     "run_test_suite",
     "tests",

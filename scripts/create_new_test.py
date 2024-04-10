@@ -27,17 +27,26 @@ def _camel_to_snake(name):
 
 
 @click.command()
-@click.option("--test_type", prompt="Test type", help="Type of the test.")
-@click.option("--test_id", prompt="Test ID", help="ID of the test.")
+@click.option(
+    "--test_type",
+    type=click.Choice(["Metric", "ThresholdTest"], case_sensitive=False),
+    prompt="Test Type (Metric/ThresholdTest)",
+    help="Type of the test: 'Metric' or 'ThresholdTest'.",
+)
+@click.option(
+    "--test_id",
+    prompt="Test ID (Use a dot-separated format, i.e. 'data_validation.MyTest')",
+    help="ID of the test. Use a dot-separated format, i.e. 'data_validation.MyTest'.",
+)
 def generate_test(test_type, test_id):
     """Generate a Python module based on a template file"""
 
     # Split test_id into organization, category, and test_name
     parts = test_id.split(".")
-    organization, category_parts, test_name = parts[0], parts[1:-1], parts[-1]
+    category_parts, test_name = parts[0:-1], parts[-1]
 
     # Create the directory path based on test_id and test_type
-    dir_path = os.path.join(organization, "tests", *category_parts)
+    dir_path = os.path.join("tests", *category_parts)
 
     # Make directories if they don"t exist
     os.makedirs(dir_path, exist_ok=True)

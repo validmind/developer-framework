@@ -59,30 +59,25 @@ class DescriptiveAnalytics(Metric):
     }
 
     def run(self):
-        mean = np.mean(self.inputs.dataset.y_pred(self.inputs.model.input_id))
-        median = np.median(self.inputs.dataset.y_pred(self.inputs.model.input_id))
-        std = np.std(self.inputs.dataset.y_pred(self.inputs.model.input_id))
+        # Assuming y_pred returns a 2D array of embeddings [samples, features]
+        preds = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+
+        # Calculate statistics across the embedding dimensions, not across all embeddings
+        means = np.mean(preds, axis=0)  # Mean of each feature across all samples
+        medians = np.median(preds, axis=0)  # Median of each feature across all samples
+        stds = np.std(preds, axis=0)  # Std. dev. of each feature across all samples
+
+        # Plot histograms of the calculated statistics
+        mean_fig = px.histogram(x=means, title="Distribution of Embedding Means")
+        median_fig = px.histogram(x=medians, title="Distribution of Embedding Medians")
+        std_fig = px.histogram(
+            x=stds, title="Distribution of Embedding Standard Deviations"
+        )
 
         return self.cache_results(
             figures=[
-                Figure(
-                    for_object=self,
-                    key=self.key,
-                    figure=px.histogram(mean, title="Distribution of Embedding Means"),
-                ),
-                Figure(
-                    for_object=self,
-                    key=self.key,
-                    figure=px.histogram(
-                        median, title="Distribution of Embedding Medians"
-                    ),
-                ),
-                Figure(
-                    for_object=self,
-                    key=self.key,
-                    figure=px.histogram(
-                        std, title="Distribution of Embedding Standard Deviations"
-                    ),
-                ),
+                Figure(for_object=self, key=f"{self.key}_mean", figure=mean_fig),
+                Figure(for_object=self, key=f"{self.key}_median", figure=median_fig),
+                Figure(for_object=self, key=f"{self.key}_std", figure=std_fig),
             ],
         )

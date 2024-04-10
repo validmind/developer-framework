@@ -18,6 +18,7 @@ from markdown import markdown
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
+from ..unit_metrics.composite import load_composite_metric
 from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .__types__ import ExternalTestProvider
@@ -43,6 +44,7 @@ __tests = None
 __test_classes = None
 
 __test_providers: Dict[str, ExternalTestProvider] = {}
+__custom_tests: Dict[str, object] = {}
 
 
 def _test_description(test_class, truncate=True):
@@ -260,13 +262,13 @@ def load_test(test_id, reload=False):  # noqa: C901
     error = None
     namespace = parts[0]
 
-    if namespace != "validmind" and namespace not in __test_providers:
-        error = (
-            f"Unable to load test {test_id}. "
-            f"No Test Provider found for the namespace: {namespace}."
-        )
+    if test_id.split(":")[0] in __custom_tests:
+        test = __custom_tests[test_id.split(":")[0]]
 
-    if namespace == "validmind":
+    elif test_id.startswith("validmind.composite_metric"):
+        test = load_composite_metric(test_id)
+
+    elif namespace == "validmind":
         test_module = ".".join(parts[1:-1])
         test_class = parts[-1]
 
@@ -283,6 +285,12 @@ def load_test(test_id, reload=False):  # noqa: C901
             error = f"Unable to load test {test_id}. {e}"
         except AttributeError:
             error = f"Unable to load test {test_id}. Class not in module: {test_class}"
+
+    elif namespace != "validmind" and namespace not in __test_providers:
+        error = (
+            f"Unable to load test {test_id}. "
+            f"No Test Provider found for the namespace: {namespace}."
+        )
 
     elif namespace in __test_providers:
         try:
@@ -346,11 +354,24 @@ def describe_test(test_id: str = None, raw: bool = False):
     )
 
 
-def run_test(test_id, params: dict = None, inputs=None, output_template=None, **kwargs):
+def run_test(
+    test_id: str = None,
+    name: str = None,
+    unit_metrics: list = None,
+    params: dict = None,
+    inputs=None,
+    output_template=None,
+    **kwargs,
+):
     """Run a test by test ID
 
     Args:
-        test_id (str): The test ID
+        test_id (str, option): The test ID to run - required when running a single test
+            i.e. when not running multiple unit metrics
+        name (str, optional): The name of the test (used to create a composite metric
+            out of multiple unit metrics) - required when running multiple unit metrics
+        unit_metrics (list, optional): A list of unit metric IDs to run as a composite
+            metric - required when running multiple unit metrics
         params (dict, optional): A dictionary of params to override the default params
         inputs: A dictionary of test inputs to pass to the Test
         output_template (str, optional): A template to use for customizing the output
@@ -360,7 +381,20 @@ def run_test(test_id, params: dict = None, inputs=None, output_template=None, **
             - models: A list of models to use for the test
             other inputs can be accessed inside the test via `self.inputs["input_name"]`
     """
-    TestClass = load_test(test_id, reload=True)
+    if not test_id and not name and not unit_metrics:
+        raise ValueError(
+            "`test_id` or `name` and `unit_metrics` must be provided to run a test"
+        )
+
+    if (unit_metrics and not name) or (name and not unit_metrics):
+        raise ValueError("`name` and `unit_metrics` must be provided together")
+
+    if unit_metrics:
+        TestClass = load_composite_metric(unit_metrics=unit_metrics, metric_name=name)
+        test_id = f"validmind.composite_metric.{name}"
+    else:
+        TestClass = load_test(test_id, reload=True)
+
     test = TestClass(
         test_id=test_id,
         context=TestContext(),
@@ -383,3 +417,7 @@ def register_test_provider(namespace: str, test_provider: ExternalTestProvider) 
         test_provider (ExternalTestProvider): The test provider
     """
     __test_providers[namespace] = test_provider
+
+
+def _register_custom_test(test_id: str, test_class: object):
+    __custom_tests[test_id] = test_class

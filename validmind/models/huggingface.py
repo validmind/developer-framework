@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from validmind.errors import MissingModelPredictFnError
+from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
 from validmind.vm_models.model import (
     ModelAttributes,
@@ -44,7 +44,7 @@ class HFModel(VMModel):
         Invoke predict_proba from underline model
         """
         if not has_method_with_arguments(self.model, "predict_proba", 1):
-            raise MissingModelPredictFnError(
+            raise MissingOrInvalidModelPredictFnError(
                 "Model requires a implementation of predict_proba method with 1 argument"
                 + " that is tensor features matrix"
             )
