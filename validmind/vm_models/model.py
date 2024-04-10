@@ -207,3 +207,30 @@ def get_model_class(model):
     )
 
     return model_class
+
+
+def is_supported_model_type(model):
+    """
+    Checks if the model is a supported model type
+    """
+    return SUPPORTED_LIBRARIES.get(model_module(model), None) is not None
+
+
+def init_anonymous_model(raw_model, input_id=None, **kwargs):
+    """
+    Initializes an anonymous VM model object based on the type of the raw dataset.
+    This interface is used internally by ValidMind to create model objects that
+    are not logged as inputs to the API since the end user is not utilizing the
+    `init_model` interface to initialize a VMModel object.
+
+    Args:
+        raw_model (object): The raw model.
+        input_id (str, optional): The input ID of the model. Defaults to None.
+        kwargs (dict): Additional keyword arguments.
+
+    Returns:
+        VMModel: The VM model object.
+    """
+    from ..client import init_model
+
+    return init_model(raw_model, input_id=input_id, **kwargs)

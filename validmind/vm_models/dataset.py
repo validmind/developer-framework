@@ -19,6 +19,39 @@ from validmind.vm_models.model import VMModel
 logger = get_logger(__name__)
 
 
+def is_supported_dataset_type(dataset):
+    """
+    Checks if the dataset is a supported type.
+
+    Args:
+        dataset (object): The dataset to check.
+
+    Returns:
+        bool: True if the dataset is a supported type, False otherwise.
+    """
+    return isinstance(dataset, (pd.DataFrame, pl.DataFrame, np.ndarray))
+
+
+def init_anonymous_dataset(raw_dataset, input_id=None, **kwargs):
+    """
+    Initializes an anonymous VM dataset object based on the type of the raw dataset.
+    This interface is used internally by ValidMind to create dataset objects that
+    are not logged as inputs to the API since the end user is not utilizing the
+    `init_dataset` interface to initialize a VMDataset object.
+
+    Args:
+        raw_dataset (object): The raw dataset.
+        input_id (str, optional): The input ID of the dataset. Defaults to None.
+        kwargs (dict): Additional keyword arguments.
+
+    Returns:
+        VMDataset: The dataset object.
+    """
+    from ..client import init_dataset
+
+    return init_dataset(raw_dataset, input_id=input_id, **kwargs)
+
+
 @dataclass
 class VMDataset(ABC):
     """

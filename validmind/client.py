@@ -86,12 +86,6 @@ def init_dataset(
     Returns:
         vm.vm.Dataset: A VM Dataset instance
     """
-    # Show deprecation notice if type is passed
-    if type is not None:
-        logger.info(
-            "The 'type' argument to init_dataset() argument is deprecated and no longer required."
-        )
-
     dataset_class = dataset.__class__.__name__
     input_id = input_id or "dataset"
 

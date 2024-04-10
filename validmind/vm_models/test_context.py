@@ -13,6 +13,9 @@ TestContext
 # https://app.shortcut.com/validmind/story/2468/allow-arbitrary-test-context
 # There is more changes to come around how we handle test inputs, so once we iron out that, we can refactor
 
+import random
+import string
+
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
@@ -20,23 +23,24 @@ from validmind.input_registry import input_registry
 
 from ..errors import MissingRequiredTestInputError
 from ..logging import get_logger
-from .dataset import VMDataset
-from .model import VMModel
+from .dataset import VMDataset, init_anonymous_dataset, is_supported_dataset_type
+from .model import VMModel, init_anonymous_model, is_supported_model_type
 
 # More human readable context names for error messages
 CONTEXT_NAMES = {
     "dataset": "Dataset",
     "model": "Model",
     "models": "Models",
-    "model.train_ds": "Model Training Dataset",
-    "model.test_ds": "Model Testing Dataset",
-    "model.validation_ds": "Model Validation Dataset",
-    "train_ds": "Training Dataset",
-    "test_ds": "Testing Dataset",
-    "validation_ds": "Validation Dataset",
 }
 
 logger = get_logger(__name__)
+
+
+def random_input_id():
+    return "test_input_" + "".join(
+        random.SystemRandom().choice(string.ascii_lowercase + string.digits)
+        for _ in range(8)
+    )
 
 
 @dataclass
@@ -114,16 +118,47 @@ class InputAccessTrackerProxy:
         self._inputs = inputs
         self._accessed = set()
 
+    def __transform_vm_inputs_list(self, inputs_list):
+        """
+        Processes the input list and transforms to a VMModel or VMDataset object
+        if the input dataset or model is a supported type. Example supported types:
+        - Pandas DataFrame
+        - Numpy Array
+        - XGBoost model
+        - SKLearn model
+        - etc.
+        """
+        transformed_list = []
+        for i in inputs_list:
+            if is_supported_dataset_type(i):
+                i = init_anonymous_dataset(i, input_id=random_input_id())
+            elif is_supported_model_type(i):
+                i = init_anonymous_model(i, input_id=random_input_id())
+
+            transformed_list.append(i)
+            self._accessed.add(i.input_id)
+
+        return transformed_list
+
     def __getattr__(self, name):
         # Track access only if the attribute actually exists in the inputs
         if hasattr(self._inputs, name):
             input = getattr(self._inputs, name)
             # if the input is a list of inputs, track each input individually
             if isinstance(input, list) or isinstance(input, tuple):
-                for i in input:
-                    self._accessed.add(i.input_id)
+                input = self.__transform_vm_inputs_list(input)
+                setattr(self._inputs, name, input)
+            elif is_supported_dataset_type(input):
+                input = init_anonymous_dataset(input, input_id=random_input_id())
+                setattr(self._inputs, name, input)
+                self._accessed.add(input.input_id)
+            elif is_supported_model_type(input):
+                input = init_anonymous_model(input, input_id=random_input_id())
+                setattr(self._inputs, name, input)
+                self._accessed.add(input.input_id)
             else:
                 self._accessed.add(input.input_id)
+
             return getattr(self._inputs, name)
 
         raise AttributeError(

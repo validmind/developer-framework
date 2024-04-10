@@ -53,7 +53,6 @@ from .api_client import log_metrics as _log_metrics_async
 from .api_client import log_test_results, reload
 from .client import (  # noqa: E402
     get_test_suite,
-    init_dataset,
     init_model,
     init_r_model,
     preview_template,
