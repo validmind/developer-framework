@@ -98,7 +98,7 @@ class PDRatingClassPlot(Metric):
         return fig
 
     def run(self):
-        target_column = self.inputs.model.train_ds.target_column
+        target_column = self.inputs.datasets[0].target_column
         title = self.params["title"]
         rating_classes = self.params["rating_classes"]
 

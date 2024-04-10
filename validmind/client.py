@@ -181,9 +181,6 @@ def init_model(
 
     Args:
         model: A trained model
-        train_ds (vm.vm.Dataset): A training dataset (optional)
-        test_ds (vm.vm.Dataset): A testing dataset (optional)
-        validation_ds (vm.vm.Dataset): A validation dataset (optional)
         input_id (str): The input ID for the model (e.g. "my_model"). By default,
             this will be set to `model` but if you are passing this model as a
             test input using some other key than `model`, then you should set

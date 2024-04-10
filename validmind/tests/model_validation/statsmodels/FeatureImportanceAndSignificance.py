@@ -52,7 +52,7 @@ class FeatureImportanceAndSignificance(Metric):
     """
 
     name = "feature_importance_and_significance"
-    required_inputs = ["models"]
+    required_inputs = ["dataset", "models"]
     default_params = {
         "fontsize": 10,
         "p_threshold": 0.05,
@@ -71,13 +71,13 @@ class FeatureImportanceAndSignificance(Metric):
     }
 
     def compute_p_values_and_feature_importances(
-        self, regression_model, decision_tree_model
+        self, dataset, regression_model, decision_tree_model
     ):
         p_values = regression_model.model.pvalues
         feature_importances = permutation_importance(
             decision_tree_model.model,
-            decision_tree_model.train_ds.x,
-            decision_tree_model.train_ds.y,
+            dataset.x,
+            dataset.y,
             random_state=0,
             n_jobs=-2,
         ).importances_mean
@@ -89,9 +89,9 @@ class FeatureImportanceAndSignificance(Metric):
 
     def create_dataframe(
         self,
+        dataset,
         p_values,
         feature_importances,
-        regression_model,
         significant_only,
         p_threshold,
     ):
@@ -100,7 +100,7 @@ class FeatureImportanceAndSignificance(Metric):
                 "Normalized p-value": p_values,
                 "Normalized Feature Importance": feature_importances,
             },
-            index=regression_model.train_ds.x_df().columns,
+            index=dataset.x_df().columns,
         )
 
         if significant_only:
@@ -170,13 +170,15 @@ class FeatureImportanceAndSignificance(Metric):
         decision_tree_model = self.inputs.models[1]
 
         p_values, feature_importances = self.compute_p_values_and_feature_importances(
-            regression_model, decision_tree_model
+            self.inputs.dataset,
+            regression_model,
+            decision_tree_model,
         )
 
         df = self.create_dataframe(
+            self.inputs.dataset,
             p_values,
             feature_importances,
-            regression_model,
             significant_only,
             p_threshold,
         )

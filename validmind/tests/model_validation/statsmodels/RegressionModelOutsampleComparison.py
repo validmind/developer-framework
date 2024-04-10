@@ -66,12 +66,6 @@ class RegressionModelOutsampleComparison(Metric):
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
 
-        for model in all_models:
-            if model.test_ds is None:
-                raise ValueError(
-                    "Test dataset is missing in the ValidMind Model object"
-                )
-
         results = self._out_sample_performance_ols(all_models, self.inputs.dataset)
         return self.cache_results(
             {

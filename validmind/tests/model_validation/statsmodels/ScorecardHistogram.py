@@ -123,7 +123,7 @@ class ScorecardHistogram(Metric):
             else self.inputs.model
         )
 
-        target_column = model.train_ds.target_column
+        target_column = self.inputs.datasets[0].target_column
         title = self.params["title"]
         target_score = self.params["target_score"]
         target_odds = self.params["target_odds"]

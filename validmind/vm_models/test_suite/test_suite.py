@@ -67,13 +67,6 @@ class TestSuiteSection:
             return inputs_dict
 
         for input_name in test_class.required_inputs:
-            # This required input is not valid but the behavior in this function
-            # is consistent with required_inputs as defined in the test class so
-            # we will ignore it for now
-            #
-            # if input_name == "model.train_ds" or input_name == "model.test_ds":
-            #     continue
-
             # Assign None to the input to indicate that it is required
             inputs_dict[input_name] = None
 

@@ -58,13 +58,6 @@ class DatasetSplit(Metric):
         "tags": ["tabular_data", "time_series_data", "text_data"],
     }
 
-    dataset_labels = {
-        "train_ds": "Training",
-        "test_ds": "Test",
-        "validation_ds": "Validation",
-        "total": "Total",
-    }
-
     def summary(self, raw_results):
         """
         Returns a summarized representation of the dataset split information
@@ -86,7 +79,7 @@ class DatasetSplit(Metric):
                 proportion = raw_results[f"{dataset_name}_proportion"] * 100
                 table_records.append(
                     {
-                        "Dataset": dataset_name,  # DatasetSplit.dataset_labels[dataset_name],
+                        "Dataset": dataset_name,
                         "Size": value,
                         "Proportion": f"{proportion:.2f}%",
                     }
