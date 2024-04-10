@@ -8,12 +8,16 @@ from dataclasses import dataclass
 from typing import List
 from uuid import uuid4
 
+from ..errors import LoadTestError
+from ..logging import get_logger
 from ..utils import clean_docstring, run_async, test_id_to_name
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
 from ..vm_models.test.result_wrapper import MetricResultWrapper
 from . import _get_metric_class, run_metric
+
+logger = get_logger(__name__)
 
 
 def _extract_class_methods(cls):
@@ -111,12 +115,16 @@ def load_composite_metric(
 
     if test_id:
         # get the unit metric ids and output template (if any) from the metadata
-        unit_metrics = run_async(
-            get_metadata, f"composite_metric_def:{test_id}:unit_metrics"
-        )["json"]
-        output_template = run_async(
-            get_metadata, f"composite_metric_def:{test_id}:output_template"
-        )["json"]["output_template"]
+        try:
+            unit_metrics = run_async(
+                get_metadata, f"composite_metric_def:{test_id}:unit_metrics"
+            )["json"]
+            output_template = run_async(
+                get_metadata, f"composite_metric_def:{test_id}:output_template"
+            )["json"]["output_template"]
+        except Exception:
+            logger.error(f"Could not load composite metric {test_id}")
+            raise LoadTestError(f"Could not load composite metric {test_id}")
 
     description = f"""
     Composite metric built from the following unit metrics:
