@@ -137,13 +137,6 @@ def render_notebook(notebook_directory, file):
     output_notebook_directory = notebook_directory.replace("notebooks/", "")
     notebook_path = os.path.join(os.getcwd(), notebook_directory, file)
 
-    # if file == "external_test_providers.ipynb":
-    #     print(file)
-    #     print(notebook_path)
-    #     print(notebook_directory)
-    # else:
-    #     return
-
     # Patch the notebook kernelspec to use the python3 kernel using nbformat
     # this is necessary because quarto doesn't support specifying the kernel
     # when rendering the notebook
