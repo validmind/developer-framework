@@ -5277,6 +5277,24 @@ packaging = "*"
 test = ["pytest (>=6,!=7.0.0,!=7.0.1)", "pytest-cov (>=3.0.0)", "pytest-qt"]
 
 [[package]]
+name = "quarto"
+version = "0.1.0"
+description = "Python Interface to 'Quarto' Markdown Publishing System"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "quarto-0.1.0-py3-none-any.whl", hash = "sha256:8138fc9d1bee6269a5436837baedc699a262be1478f96444d6f99029f1a114f0"},
+    {file = "quarto-0.1.0.tar.gz", hash = "sha256:d9a4978110204f5b9d3af39faa9e195083efcbac8f6a23789e29cb27c72ded15"},
+]
+
+[package.dependencies]
+ipykernel = "*"
+jupyter-core = "*"
+nbclient = "*"
+nbformat = "*"
+pyyaml = "*"
+
+[[package]]
 name = "rapidfuzz"
 version = "3.6.1"
 description = "rapid fuzzy string matching"
@@ -8131,4 +8149,4 @@ transformers = ["transformers"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "4319562401b545bfd87bfb60888bf992a677cd016116b1fc61aa52c6f9f2a023"
+content-hash = "998312827cf9411ceb9bd62e6f0404017c3ff5be9e2b7bdbbb13715eb66d15e1"
