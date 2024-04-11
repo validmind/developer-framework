@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+<script src="../libs/clipboard/clipboard.min.js"></script>
+<script src="../libs/quarto-html/quarto.js"></script>
+<script src="../libs/quarto-html/popper.min.js"></script>
+<script src="../libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../libs/quarto-html/anchor.min.js"></script>
+<link
+  href="../libs/quarto-html/tippy.css"
+  rel="stylesheet"
+/>
+<link
+  href="../libs/quarto-html/quarto-syntax-highlighting.css"
+  rel="stylesheet"
+  id="quarto-text-highlighting-styles"
+/>
+<script src="../libs/bootstrap/bootstrap.min.js"></script>
+<link
+  href="../libs/bootstrap/bootstrap-icons.css"
+  rel="stylesheet"
+/>
+<link
+  href="../libs/bootstrap/bootstrap.min.css"
+  rel="stylesheet"
+  id="quarto-bootstrap"
+  data-mode="light"
+/>
+
+
+<meta charset="utf-8" />
+<meta name="generator" content="quarto-1.2.335" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+
+<title>run_a_test</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<!-- htmldependencies:E3FAD763 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="running-an-individual-test" class="level1">
+<h1>Running an Individual Test</h1>
+<p>This notebook shows how to run individual metrics or thresholds tests that is part of the ValidMind Developer Framework. These instructions include the code required to:</p>
+<ul>
+<li>Load a demo dataset</li>
+<li>Prepocess the raw dataset</li>
+<li>Train a model for testing</li>
+<li>Set up test inputs and run the test</li>
+<li>Initialize the required ValidMind objects</li>
+<li>Run the test</li>
+<li>Log the test results to ValidMind</li>
+</ul>
+<section id="before-you-begin" class="level2">
+<h2>Before you begin</h2>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class='callout-icon'></i>
+</div>
+<div class="callout-caption-container flex-fill">
+New to ValidMind?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For access to all features available in this notebook, create a free ValidMind account.</p>
+<p>Signing up is FREE — <a href="https://app.prod.validmind.ai"><strong>Sign up now</strong></a></p>
+</div>
+</div>
+<p>If you encounter errors due to missing modules in your Python environment, install the modules with <code>pip install</code>, and then re-run the notebook. For more help, refer to <a href="https://docs.python.org/3/installing/index.html">Installing Python Modules</a>.</p>
+</section>
+<section id="install-the-client-library" class="level2">
+<h2>Install the client library</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode" id="cb1"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>pip install <span class="op">-</span>q validmind</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING: You are using pip version 22.0.3; however, version 24.0 is available.
+You should consider upgrading via the &#39;/Users/andres/code/validmind-sdk/.venv/bin/python3 -m pip install --upgrade pip&#39; command.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Note: you may need to restart the kernel to use updated packages.</code></pre>
+</div>
+</div>
+</section>
+<section id="initialize-the-client-library" class="level2">
+<h2>Initialize the client library</h2>
+<p>ValidMind generates a unique <em>code snippet</em> for each registered model to connect with your developer environment. You initialize the client library with this code snippet, which ensures that your documentation and tests are uploaded to the correct model when you run the notebook.</p>
+<p>Get your code snippet:</p>
+<ol type="1">
+<li><p>In a browser, log into the <a href="https://app.prod.validmind.ai">Platform UI</a>.</p></li>
+<li><p>In the left sidebar, navigate to <strong>Model Inventory</strong> and click <strong>+ Register new model</strong>.</p></li>
+<li><p>Enter the model details, making sure to select <strong>Binary classification</strong> as the template and <strong>Marketing/Sales - Attrition/Churn Management</strong> as the use case, and click <strong>Continue</strong>. (<a href="https://docs.validmind.ai/guide/register-models-in-model-inventory.html">Need more help?</a>)</p></li>
+<li><p>Go to <strong>Getting Started</strong> and click <strong>Copy snippet to clipboard</strong>.</p></li>
+</ol>
+<p>Next, replace this placeholder with your own code snippet:</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode" id="cb4"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace with your code snippet</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> validmind <span class="im">as</span> vm</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>vm.init(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    api_host<span class="op">=</span><span class="st">&quot;https://api.prod.validmind.ai/api/v1/tracking&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    api_key<span class="op">=</span><span class="st">&quot;...&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    api_secret<span class="op">=</span><span class="st">&quot;...&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    project<span class="op">=</span><span class="st">&quot;...&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:57,203 - INFO(validmind.api_client): Connected to ValidMind. Project: [Int. Tests] Customer Churn - Initial Validation (cltnl29bz00051omgwepjgu1r)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode" id="cb6"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xgboost <span class="im">as</span> xgb</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span></code></pre></div>
+</div>
+</section>
+<section id="load-the-demo-dataset" class="level2">
+<h2>Load the demo dataset</h2>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode" id="cb7"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> validmind.datasets.classification <span class="im">import</span> customer_churn <span class="im">as</span> demo_dataset</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You can also import customer_churn like this:</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># from validmind.datasets.classification import taiwan_credit as demo_dataset</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> demo_dataset.load_data()</span></code></pre></div>
+</div>
+<section id="prepocess-the-raw-dataset" class="level3">
+<h3>Prepocess the raw dataset</h3>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode" id="cb8"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>train_df, validation_df, test_df <span class="op">=</span> demo_dataset.preprocess(df)</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="train-a-model-for-testing" class="level2">
+<h2>Train a model for testing</h2>
+<p>We train a simple customer churn model for our test.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode" id="cb9"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x_train <span class="op">=</span> train_df.drop(demo_dataset.target_column, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_df[demo_dataset.target_column]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x_val <span class="op">=</span> validation_df.drop(demo_dataset.target_column, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>y_val <span class="op">=</span> validation_df[demo_dataset.target_column]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> xgb.XGBClassifier(early_stopping_rounds<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>model.set_params(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    eval_metric<span class="op">=</span>[<span class="st">&quot;error&quot;</span>, <span class="st">&quot;logloss&quot;</span>, <span class="st">&quot;auc&quot;</span>],</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>model.fit(</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    x_train,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    y_train,</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    eval_set<span class="op">=</span>[(x_val, y_val)],</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>XGBClassifier(base_score=None, booster=None, callbacks=None,
+              colsample_bylevel=None, colsample_bynode=None,
+              colsample_bytree=None, early_stopping_rounds=10,
+              enable_categorical=False, eval_metric=[&#x27;error&#x27;, &#x27;logloss&#x27;, &#x27;auc&#x27;],
+              feature_types=None, gamma=None, gpu_id=None, grow_policy=None,
+              importance_type=None, interaction_constraints=None,
+              learning_rate=None, max_bin=None, max_cat_threshold=None,
+              max_cat_to_onehot=None, max_delta_step=None, max_depth=None,
+              max_leaves=None, min_child_weight=None, missing=nan,
+              monotone_constraints=None, n_estimators=100, n_jobs=None,
+              num_parallel_tree=None, predictor=None, random_state=None, ...)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">XGBClassifier</label><div class="sk-toggleable__content"><pre>XGBClassifier(base_score=None, booster=None, callbacks=None,
+              colsample_bylevel=None, colsample_bynode=None,
+              colsample_bytree=None, early_stopping_rounds=10,
+              enable_categorical=False, eval_metric=[&#x27;error&#x27;, &#x27;logloss&#x27;, &#x27;auc&#x27;],
+              feature_types=None, gamma=None, gpu_id=None, grow_policy=None,
+              importance_type=None, interaction_constraints=None,
+              learning_rate=None, max_bin=None, max_cat_threshold=None,
+              max_cat_to_onehot=None, max_delta_step=None, max_depth=None,
+              max_leaves=None, min_child_weight=None, missing=nan,
+              monotone_constraints=None, n_estimators=100, n_jobs=None,
+              num_parallel_tree=None, predictor=None, random_state=None, ...)</pre></div></div></div></div></div>
+</div>
+</div>
+</section>
+<section id="set-up-test-inputs-and-run-the-test" class="level2">
+<h2>Set up test inputs and run the test</h2>
+<section id="initialize-validmind-objects" class="level3">
+<h3>Initialize ValidMind objects</h3>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode" id="cb10"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>vm_train_ds <span class="op">=</span> vm.init_dataset(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    input_id<span class="op">=</span><span class="st">&quot;train_dataset&quot;</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    dataset<span class="op">=</span>train_df,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">&quot;generic&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    target_column<span class="op">=</span>demo_dataset.target_column,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>vm_test_ds <span class="op">=</span> vm.init_dataset(</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    input_id<span class="op">=</span><span class="st">&quot;test_dataset&quot;</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    dataset<span class="op">=</span>test_df,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">&quot;generic&quot;</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    target_column<span class="op">=</span>demo_dataset.target_column,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>vm_model <span class="op">=</span> vm.init_model(model, input_id<span class="op">=</span><span class="st">&quot;model&quot;</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:57,376 - INFO(validmind.client): The &#39;type&#39; argument to init_dataset() argument is deprecated and no longer required.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:57,376 - INFO(validmind.client): Pandas dataset detected. Initializing VM Dataset instance...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:57,607 - INFO(validmind.client): The &#39;type&#39; argument to init_dataset() argument is deprecated and no longer required.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:57,607 - INFO(validmind.client): Pandas dataset detected. Initializing VM Dataset instance...</code></pre>
+</div>
+</div>
+</section>
+<section id="assign-predictions-to-the-datasets" class="level3">
+<h3>Assign predictions to the datasets</h3>
+<p>We can now use the <code>assign_predictions()</code> method from the <code>Dataset</code> object to link existing predictions to any model. If no prediction values are passed, the method will compute predictions automatically:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode" id="cb15"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>vm_train_ds.assign_predictions(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>vm_model,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>vm_test_ds.assign_predictions(</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>vm_model,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:58,255 - INFO(validmind.vm_models.dataset): Running predict()... This may take a while</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2024-04-10 17:30:58,257 - INFO(validmind.vm_models.dataset): Running predict()... This may take a while</code></pre>
+</div>
+</div>
+</section>
+<section id="run-the-test" class="level3">
+<h3>Run the test</h3>
+<p>Individual tests can be easily run by calling the <code>run_test</code> function provided by the <code>validmind.tests</code> module. The function takes the following arguments:</p>
+<ul>
+<li><code>test_id</code>: The ID of the test to run. To find a particular test and get its, refer to the <code>explore_tests.ipynb</code> notebook</li>
+<li><code>params</code>: A dictionary of parameters for the test. These will override any <code>default_params</code> set in the test definition. Refer to the <code>explore_tests.ipynb</code> notebook to find the default parameters for a test.</li>
+</ul>
+<p>You can then pass in any inputs for the test as keyword arguments. Most likely, these will be <code>dataset</code> and <code>model</code> objects. Again, you may refer to the <code>explore_tests.ipynb</code> notebook to find the required inputs for a test.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode" id="cb18"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>test <span class="op">=</span> vm.tests.run_test(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    test_id<span class="op">=</span><span class="st">&quot;validmind.model_validation.sklearn.TrainingTestDegradation&quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>{},  <span class="co"># can be used to set overrides to the test&#39;s default parameters</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span>{<span class="st">&quot;model&quot;</span>: vm_model, <span class="st">&quot;datasets&quot;</span>: (vm_train_ds, vm_test_ds)},</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f7678d7179674b96b548f69d4c334465","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+</section>
+<section id="log-the-test-results-to-validmind" class="level3">
+<h3>Log the test results to ValidMind</h3>
+<p>After the test has been run, you can save the results to ValidMind by calling the <code>log</code> method of the test object returned after running the test:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode" id="cb19"><pre class="sourceCode python cell-code"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>test.log()</span></code></pre></div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+
+<script type=application/vnd.jupyter.widget-state+json>
+{"state":{"0b1a0e8201b74076b759afd0c2597177":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_5360c1bb6bc6418d9d3bb3870f8e3edb","placeholder":"​","style":"IPY_MODEL_35c848c521324344af638e3ed5bce141","tabbable":null,"tooltip":null,"value":"<style type=\"text/css\">\n#T_1ccbf  {\n  width: 100%;\n}\n#T_1ccbf tbody tr:nth-child(even) {\n  background-color: #FFFFFF;\n}\n#T_1ccbf tbody tr:nth-child(odd) {\n  background-color: #F5F5F5;\n}\n#T_1ccbf td {\n  padding-left: 5px;\n  padding-right: 5px;\n}\n#T_1ccbf  th {\n  padding-left: 5px;\n  padding-right: 5px;\n}\n</style>\n<table id=\"T_1ccbf\">\n  <thead>\n    <tr>\n      <th id=\"T_1ccbf_level0_col0\" class=\"col_heading level0 col0\" >Class</th>\n      <th id=\"T_1ccbf_level0_col1\" class=\"col_heading level0 col1\" >Metric</th>\n      <th id=\"T_1ccbf_level0_col2\" class=\"col_heading level0 col2\" >Train Score</th>\n      <th id=\"T_1ccbf_level0_col3\" class=\"col_heading level0 col3\" >Test Score</th>\n      <th id=\"T_1ccbf_level0_col4\" class=\"col_heading level0 col4\" >Degradation (%)</th>\n      <th id=\"T_1ccbf_level0_col5\" class=\"col_heading level0 col5\" >Pass/Fail</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td id=\"T_1ccbf_row0_col0\" class=\"data row0 col0\" >1</td>\n      <td id=\"T_1ccbf_row0_col1\" class=\"data row0 col1\" >Precision</td>\n      <td id=\"T_1ccbf_row0_col2\" class=\"data row0 col2\" >0.8638</td>\n      <td id=\"T_1ccbf_row0_col3\" class=\"data row0 col3\" >0.7333</td>\n      <td id=\"T_1ccbf_row0_col4\" class=\"data row0 col4\" >15.1031</td>\n      <td id=\"T_1ccbf_row0_col5\" class=\"data row0 col5\" >Fail</td>\n    </tr>\n    <tr>\n      <td id=\"T_1ccbf_row1_col0\" class=\"data row1 col0\" >1</td>\n      <td id=\"T_1ccbf_row1_col1\" class=\"data row1 col1\" >Recall</td>\n      <td id=\"T_1ccbf_row1_col2\" class=\"data row1 col2\" >0.5186</td>\n      <td id=\"T_1ccbf_row1_col3\" class=\"data row1 col3\" >0.4689</td>\n      <td id=\"T_1ccbf_row1_col4\" class=\"data row1 col4\" >9.5985</td>\n      <td id=\"T_1ccbf_row1_col5\" class=\"data row1 col5\" >Pass</td>\n    </tr>\n    <tr>\n      <td id=\"T_1ccbf_row2_col0\" class=\"data row2 col0\" >1</td>\n      <td id=\"T_1ccbf_row2_col1\" class=\"data row2 col1\" >F1-Score</td>\n      <td id=\"T_1ccbf_row2_col2\" class=\"data row2 col2\" >0.6481</td>\n      <td id=\"T_1ccbf_row2_col3\" class=\"data row2 col3\" >0.5720</td>\n      <td id=\"T_1ccbf_row2_col4\" class=\"data row2 col4\" >11.7453</td>\n      <td id=\"T_1ccbf_row2_col5\" class=\"data row2 col5\" >Fail</td>\n    </tr>\n    <tr>\n      <td id=\"T_1ccbf_row3_col0\" class=\"data row3 col0\" >0</td>\n      <td id=\"T_1ccbf_row3_col1\" class=\"data row3 col1\" >Precision</td>\n      <td id=\"T_1ccbf_row3_col2\" class=\"data row3 col2\" >0.8898</td>\n      <td id=\"T_1ccbf_row3_col3\" class=\"data row3 col3\" >0.8847</td>\n      <td id=\"T_1ccbf_row3_col4\" class=\"data row3 col4\" >0.5746</td>\n      <td id=\"T_1ccbf_row3_col5\" class=\"data row3 col5\" >Pass</td>\n    </tr>\n    <tr>\n      <td id=\"T_1ccbf_row4_col0\" class=\"data row4 col0\" >0</td>\n      <td id=\"T_1ccbf_row4_col1\" class=\"data row4 col1\" >Recall</td>\n      <td id=\"T_1ccbf_row4_col2\" class=\"data row4 col2\" >0.9794</td>\n      <td id=\"T_1ccbf_row4_col3\" class=\"data row4 col3\" >0.9598</td>\n      <td id=\"T_1ccbf_row4_col4\" class=\"data row4 col4\" >1.9961</td>\n      <td id=\"T_1ccbf_row4_col5\" class=\"data row4 col5\" >Pass</td>\n    </tr>\n    <tr>\n      <td id=\"T_1ccbf_row5_col0\" class=\"data row5 col0\" >0</td>\n      <td id=\"T_1ccbf_row5_col1\" class=\"data row5 col1\" >F1-Score</td>\n      <td id=\"T_1ccbf_row5_col2\" class=\"data row5 col2\" >0.9325</td>\n      <td id=\"T_1ccbf_row5_col3\" class=\"data row5 col3\" >0.9207</td>\n      <td id=\"T_1ccbf_row5_col4\" class=\"data row5 col4\" >1.2564</td>\n      <td id=\"T_1ccbf_row5_col5\" class=\"data row5 col5\" >Pass</td>\n    </tr>\n  </tbody>\n</table>\n"}},"35c848c521324344af638e3ed5bce141":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"5360c1bb6bc6418d9d3bb3870f8e3edb":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"626e98340a0f48deb3fe70a474989bfe":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"858d92a52ada4dfaa7686409f2ee5171":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"8ae78121b34a48c38f7136845f59a610":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"a34bf7007efe43dea97a2bb8b758bb07":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_8ae78121b34a48c38f7136845f59a610","placeholder":"​","style":"IPY_MODEL_858d92a52ada4dfaa7686409f2ee5171","tabbable":null,"tooltip":null,"value":"\n            <h1>Training Test Degradation ❌</h1>\n            <p>Tests if model performance degradation between training and test datasets exceeds a predefined threshold.</p>\n<p><strong>Purpose</strong>: The 'TrainingTestDegradation' class serves as a test to verify that the degradation in performance between the training and test datasets does not exceed a predefined threshold. This test serves as a measure to check the model's ability to generalize from its training data to unseen test data. It assesses key classification metric scores such as accuracy, precision, recall and f1 score, to verify the model's robustness and reliability.</p>\n<p><strong>Test Mechanism</strong>: The code applies several predefined metrics including accuracy, precision, recall and f1 scores to the model's predictions for both the training and test datasets. It calculates the degradation as the difference between the training score and test score divided by the training score. The test is considered successful if the degradation for each metric is less than the preset maximum threshold of 10%. The results are summarized in a table showing each metric's train score, test score, degradation percentage, and pass/fail status.</p>\n<p><strong>Signs of High Risk</strong>:</p>\n<ul>\n<li>A degradation percentage that exceeds the maximum allowed threshold of 10% for any of the evaluated metrics.</li>\n<li>A high difference or gap between the metric scores on the training and the test datasets.</li>\n<li>The 'Pass/Fail' column displaying 'Fail' for any of the evaluated metrics.</li>\n</ul>\n<p><strong>Strengths</strong>:</p>\n<ul>\n<li>This test provides a quantitative measure of the model's ability to generalize to unseen data, which is key for predicting its practical real-world performance.</li>\n<li>By evaluating multiple metrics, it takes into account different facets of model performance and enables a more holistic evaluation.</li>\n<li>The use of a variable predefined threshold allows the flexibility to adjust the acceptability criteria for different scenarios.</li>\n</ul>\n<p><strong>Limitations</strong>:</p>\n<ul>\n<li>The test compares raw performance on training and test data, but does not factor in the nature of the data. Areas with less representation in the training set, for instance, might still perform poorly on unseen data.</li>\n<li>It requires good coverage and balance in the test and training datasets to produce reliable results, which may not always be available.</li>\n<li>The test is currently only designed for classification tasks.</li>\n</ul>\n                <h4>Test Parameters</h4>\n                <pre>{\n  \"metrics\": [\n    \"accuracy\",\n    \"precision\",\n    \"recall\",\n    \"f1\"\n  ],\n  \"max_threshold\": 0.1\n}</pre>\n            "}},"c3d007d7f6964e01882c81248ca28b41":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"f7678d7179674b96b548f69d4c334465":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"VBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"VBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"VBoxView","box_style":"","children":["IPY_MODEL_a34bf7007efe43dea97a2bb8b758bb07","IPY_MODEL_f990d05298ea412cb7ab42a2b10e7639","IPY_MODEL_0b1a0e8201b74076b759afd0c2597177"],"layout":"IPY_MODEL_626e98340a0f48deb3fe70a474989bfe","tabbable":null,"tooltip":null}},"f98c11989f534f7fbc6094327a15d386":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"f990d05298ea412cb7ab42a2b10e7639":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_c3d007d7f6964e01882c81248ca28b41","placeholder":"​","style":"IPY_MODEL_f98c11989f534f7fbc6094327a15d386","tabbable":null,"tooltip":null,"value":"<h3>Training-Test Degradation Test</h3>"}}},"version_major":2,"version_minor":0}
+</script>
+<script id = "quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+</body>
+
+</html>
