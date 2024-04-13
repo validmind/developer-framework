@@ -271,6 +271,7 @@ class NumpyDataset(VMDataset):
     _extra_columns: dict = field(
         default_factory=lambda: {
             "prediction_columns": {},
+            "probability_columns": {},
             "group_by_column": None,
         }
     )
@@ -424,17 +425,50 @@ class NumpyDataset(VMDataset):
         if pred_column not in self._columns:
             self._columns.append(pred_column)
 
+    def __assign_prediction_probabilities(
+        self, model, prob_column, prediction_probabilities
+    ):
+        # Link the prediction column with the model
+        self._extra_columns.setdefault("probability_columns", {})[
+            model.input_id
+        ] = prob_column
+
+        # Check if the predictions are multi-dimensional (e.g., embeddings)
+        is_multi_dimensional = (
+            isinstance(prediction_probabilities, np.ndarray)
+            and prediction_probabilities.ndim > 1
+        )
+
+        if is_multi_dimensional:
+            # For multi-dimensional outputs, convert to a list of lists to store in DataFrame
+            self._df[prob_column] = list(map(list, prediction_probabilities))
+        else:
+            # If not multi-dimensional or a standard numpy array, reshape for compatibility
+            self._raw_dataset = np.hstack(
+                (self._raw_dataset, np.array(prediction_probabilities).reshape(-1, 1))
+            )
+            self._df[prob_column] = prediction_probabilities
+
+        # Update the dataset columns list
+        if prob_column not in self._columns:
+            self._columns.append(prob_column)
+
     def assign_predictions(  # noqa: C901 - we need to simplify this method
         self,
         model,
         prediction_values: list = None,
+        prediction_probabilities: list = None,
         prediction_column=None,
+        probability_column=None,
     ):
+
+        # Step 1: Check for Model Presence
         if not model:
             raise ValueError(
                 "Model must be provided to link prediction column with the dataset"
             )
 
+        # Step 2: Prediction Column Provided
         if prediction_column:
             if prediction_column not in self.columns:
                 raise ValueError(
@@ -449,6 +483,8 @@ class NumpyDataset(VMDataset):
             self._extra_columns.setdefault("prediction_columns", {})[
                 model.input_id
             ] = prediction_column
+
+        # Step 4: Prediction Values Provided without Specific Column
         elif prediction_values is not None:
             if len(prediction_values) != self.df.shape[0]:
                 raise ValueError(
@@ -460,7 +496,49 @@ class NumpyDataset(VMDataset):
                     f"Prediction column {pred_column} already exists in the dataset, overwriting the existing predictions",
                     UserWarning,
                 )
+
+            logger.info(
+                f"Assigning prediction values to column '{pred_column}' and linked to model '{model.input_id}'"
+            )
             self.__assign_prediction_values(model, pred_column, prediction_values)
+
+        # Step 3: Probability Column Provided
+        if probability_column:
+            if probability_column not in self.columns:
+                raise ValueError(
+                    f"Probability column {probability_column} doesn't exist in the dataset"
+                )
+            if self.__model_id_in_probability_columns(
+                model=model, probability_column=probability_column
+            ):
+                raise ValueError(
+                    f"Probability column {probability_column} already linked to the VM model"
+                )
+            self._extra_columns.setdefault("probability_columns", {})[
+                model.input_id
+            ] = probability_column
+
+        # Step 5: Prediction Probabilities Provided without Specific Column
+        elif prediction_probabilities is not None:
+            if len(prediction_probabilities) != self.df.shape[0]:
+                raise ValueError(
+                    "Length of prediction probabilities doesn't match number of rows of the dataset"
+                )
+            prob_column = f"{model.input_id}_probabilities"
+            if prob_column in self.columns:
+                warnings.warn(
+                    f"Probability column {prob_column} already exists in the dataset, overwriting the existing probabilities",
+                    UserWarning,
+                )
+
+            logger.info(
+                f"Assigning prediction probabilities to column '{prob_column}' and linked to model '{model.input_id}'"
+            )
+            self.__assign_prediction_probabilities(
+                model, prob_column, prediction_probabilities
+            )
+
+        # Step 6: Neither Specific Column Nor Values Provided
         elif not self.__model_id_in_prediction_columns(
             model=model, prediction_column=prediction_column
         ):
@@ -482,6 +560,8 @@ class NumpyDataset(VMDataset):
 
             prediction_values = np.array(model.predict(x_only))
             self.__assign_prediction_values(model, pred_column, prediction_values)
+
+        # Step 7: Prediction Column Already Linked
         else:
             logger.info(
                 f"Prediction column {self._extra_columns['prediction_columns'][model.input_id]} already linked to the {model.input_id}"
@@ -781,6 +861,20 @@ class NumpyDataset(VMDataset):
                 f"Prediction column is not linked with the given {model_id}"
             )
         return pred_column
+
+    def probability_column(self, model_id) -> str:
+        """
+        Returns the prediction column name of the dataset.
+
+        Returns:
+            str: The prediction column name.
+        """
+        prob_column = self._extra_columns.get("probability_columns", {}).get(model_id)
+        if prob_column is None:
+            raise ValueError(
+                f"Probability column is not linked with the given {model_id}"
+            )
+        return prob_column
 
     def serialize(self):
         """
