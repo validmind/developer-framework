@@ -74,7 +74,6 @@ class ROCCurve(Metric):
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
         y_true = self.inputs.dataset.y
-        # y_pred = model.predict_proba(self.inputs.dataset.x)
         y_prob = self.inputs.dataset.y_prob(self.inputs.model.input_id)
 
         # ROC curve is only supported for binary classification
@@ -84,7 +83,7 @@ class ROCCurve(Metric):
             )
 
         y_true = y_true.astype(y_prob.dtype).flatten()
-        assert np.all((y_prob >= 0) & (y_prob <= 1)), "Invalid probabilities in y_pred."
+        assert np.all((y_prob >= 0) & (y_prob <= 1)), "Invalid probabilities in y_prob."
 
         fpr, tpr, roc_thresholds = roc_curve(y_true, y_prob, drop_intermediate=False)
 
