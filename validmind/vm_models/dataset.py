@@ -161,6 +161,15 @@ class VMDataset(ABC):
         """
         pass
 
+    def y_prob(self, model_id) -> np.ndarray:
+        """
+        Returns the prediction probabilities (y_prob) of the dataset for a given model_id.
+
+        Returns:
+            np.ndarray: The prediction probabilities.
+        """
+        pass
+
     @property
     @abstractmethod
     def df(self):
@@ -793,6 +802,45 @@ class NumpyDataset(VMDataset):
                 )
 
         return predictions
+
+    def y_prob(self, model_id) -> np.ndarray:
+        """
+        Returns the prediction variables for a given model_id, accommodating
+        both scalar predictions and multi-dimensional outputs such as embeddings.
+
+        Args:
+            model_id (str): The ID of the model whose predictions are sought.
+
+        Returns:
+            np.ndarray: The prediction variables, either as a flattened array for
+            scalar predictions or as an array of arrays for multi-dimensional outputs.
+        """
+        prob_column = self.probability_column(model_id)
+
+        # First, attempt to retrieve the prediction data from the DataFrame
+        if hasattr(self, "_df") and prob_column in self._df.columns:
+            probabilities = self._df[prob_column].to_numpy()
+
+            # Check if the predictions are stored as objects (e.g., lists for embeddings)
+            if self._df[prob_column].dtype == object:
+                # Attempt to convert lists to a numpy array
+                try:
+                    probabilities = np.stack(probabilities)
+                except ValueError as e:
+                    # Handling cases where predictions cannot be directly stacked
+                    raise ValueError(f"Error stacking prediction arrays: {e}")
+        else:
+            # Fallback to using the raw numpy dataset if DataFrame is not available or suitable
+            try:
+                probabilities = self.raw_dataset[
+                    :, self.columns.index(prob_column)
+                ].flatten()
+            except IndexError as e:
+                raise ValueError(
+                    f"Prediction column '{prob_column}' not found in raw dataset: {e}"
+                )
+
+        return probabilities
 
     @property
     def type(self) -> str:

@@ -3,17 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-
 import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
 from validmind.vm_models import Figure, Metric
 
 
 @dataclass
-class LogRegCumulativeProb(Metric):
+class CumulativePredictionProbabilities(Metric):
     """
     Visualizes cumulative probabilities of positive and negative classes for both training and testing in logistic
     regression models.
@@ -56,7 +52,7 @@ class LogRegCumulativeProb(Metric):
     provide misleading results.
     """
 
-    name = "log_reg_cumulative_prob"
+    name = "cumulative_prediction_probabilities"
     required_inputs = ["model", "datasets"]
     metadata = {
         "task_types": ["classification"],
@@ -65,84 +61,80 @@ class LogRegCumulativeProb(Metric):
     default_params = {"title": "Cumulative Probabilities"}
 
     @staticmethod
-    def plot_cumulative_prob(df_train, df_test, prob_col, target_col, title):
+    def plot_cumulative_prob(dataframes, dataset_titles, target_col, title):
+        figures = []
+        # Define a color map for multiple classes
+        class_colors = {
+            0: "blue",
+            1: "red",
+            2: "green",
+            3: "purple",
+            4: "orange",
+            # ... add more colors for more classes
+        }
 
-        # Separate probabilities based on target column
-        train_0 = np.sort(df_train[df_train[target_col] == 0][prob_col])
-        train_1 = np.sort(df_train[df_train[target_col] == 1][prob_col])
-        test_0 = np.sort(df_test[df_test[target_col] == 0][prob_col])
-        test_1 = np.sort(df_test[df_test[target_col] == 1][prob_col])
-
-        # Calculate cumulative distributions
-        cumulative_train_0 = np.cumsum(train_0) / np.sum(train_0)
-        cumulative_train_1 = np.cumsum(train_1) / np.sum(train_1)
-        cumulative_test_0 = np.cumsum(test_0) / np.sum(test_0)
-        cumulative_test_1 = np.cumsum(test_1) / np.sum(test_1)
-
-        # Create subplot
-        fig = make_subplots(rows=1, cols=2, subplot_titles=("Train Data", "Test Data"))
-
-        # Create line plots for training data
-        trace_train_0 = go.Scatter(
-            x=train_0,
-            y=cumulative_train_0,
-            mode="lines",
-            name=f"Train {target_col} = 0",
+        # Check if there are more unique class values than colors defined
+        unique_classes = set(
+            np.concatenate([df[target_col].unique() for df in dataframes])
         )
-        trace_train_1 = go.Scatter(
-            x=train_1,
-            y=cumulative_train_1,
-            mode="lines",
-            name=f"Train {target_col} = 1",
-        )
+        if not unique_classes.issubset(class_colors.keys()):
+            missing_classes = unique_classes - set(class_colors.keys())
+            raise ValueError(
+                f"Color not defined for classes: {missing_classes}. Please update the class_colors dictionary."
+            )
 
-        # Create line plots for testing data
-        trace_test_0 = go.Scatter(
-            x=test_0, y=cumulative_test_0, mode="lines", name=f"Test {target_col} = 0"
-        )
-        trace_test_1 = go.Scatter(
-            x=test_1, y=cumulative_test_1, mode="lines", name=f"Test {target_col} = 1"
-        )
+        for i, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
+            fig = go.Figure()
+            for class_value in sorted(df[target_col].unique()):
+                # Calculate cumulative distribution for the current class
+                sorted_probs = np.sort(
+                    df[df[target_col] == class_value]["probabilities"]
+                )
+                cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
 
-        # Add traces to the subplots
-        fig.add_trace(trace_train_0, row=1, col=1)
-        fig.add_trace(trace_train_1, row=1, col=1)
-        fig.add_trace(trace_test_0, row=1, col=2)
-        fig.add_trace(trace_test_1, row=1, col=2)
-
-        # Update layout
-        fig.update_layout(title_text=title)
-
-        return fig
+                fig.add_trace(
+                    go.Scatter(
+                        x=sorted_probs,
+                        y=cumulative_probs,
+                        mode="lines",
+                        name=f"{dataset_title} {target_col} = {class_value}",
+                        line=dict(color=class_colors[class_value]),
+                    )
+                )
+            fig.update_layout(
+                title_text=f"{title} - {dataset_title}",
+                xaxis_title="Probability",
+                yaxis_title="Cumulative Distribution",
+                legend_title=target_col,
+            )
+            figures.append(fig)
+        return figures
 
     def run(self):
+        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
         target_column = self.inputs.datasets[0].target_column
-        title = self.params["title"]
-        df_train = self.inputs.datasets[0].df.copy()
-        df_test = self.inputs.datasets[1].df.copy()
+        title = self.params.get("title", self.default_params["title"])
 
-        y_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
-        y_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        dataframes = []
+        metric_value = {"cum_prob": {}}
+        for dataset in self.inputs.datasets:
+            df = dataset.df.copy()
+            y_prob = dataset.y_prob(self.inputs.model.input_id)
+            df["probabilities"] = y_prob
+            dataframes.append(df)
+            metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])
 
-        df_train["probabilities"] = y_pred_train
-        df_test["probabilities"] = y_pred_test
-
-        fig = self.plot_cumulative_prob(
-            df_train, df_test, "probabilities", target_column, title
+        figures = self.plot_cumulative_prob(
+            dataframes, dataset_titles, target_column, title
         )
 
-        return self.cache_results(
-            metric_value={
-                "cum_prob": {
-                    "train_probs": list(df_train["probabilities"]),
-                    "test_probs": list(df_test["probabilities"]),
-                },
-            },
-            figures=[
-                Figure(
-                    for_object=self,
-                    key="cum_prob",
-                    figure=fig,
-                )
-            ],
-        )
+        figures_list = [
+            Figure(
+                for_object=self,
+                key=f"cumulative_prob_{title.replace(' ', '_')}_{i+1}",
+                figure=fig,
+            )
+            for i, fig in enumerate(figures)
+        ]
+
+        return self.cache_results(metric_value=metric_value, figures=figures_list)

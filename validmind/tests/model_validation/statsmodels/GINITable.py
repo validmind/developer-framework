@@ -76,33 +76,29 @@ class GINITable(Metric):
         )
 
     def compute_metrics(self):
-        """Computes AUC, GINI, and KS for train and test sets."""
-        metrics_dict = {"Dataset": ["Train", "Test"], "AUC": [], "GINI": [], "KS": []}
+        """Computes AUC, GINI, and KS for an arbitrary number of datasets."""
+        # Initialize the dictionary to store results
+        metrics_dict = {"Dataset": [], "AUC": [], "GINI": [], "KS": []}
 
-        # Retrieve y_true and y_pred for both datasets
-        y_true_train = self.inputs.datasets[0].y
-        y_true_test = self.inputs.datasets[1].y
+        # Iterate over each dataset in the inputs
+        for i, dataset in enumerate(self.inputs.datasets):
+            dataset_label = (
+                dataset.input_id
+            )  # Use input_id as the label for each dataset
+            metrics_dict["Dataset"].append(dataset_label)
 
-        # Flatten y_true arrays to make them one-dimensional
-        y_true_train = np.ravel(y_true_train)
-        y_true_test = np.ravel(y_true_test)
+            # Retrieve y_true and y_pred for the current dataset
+            y_true = np.ravel(dataset.y)  # Flatten y_true to make it one-dimensional
+            y_prob = dataset.y_prob(self.inputs.model.input_id)
 
-        y_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
-        y_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
-
-        for y_true, y_pred, dataset in zip(
-            [y_true_train, y_true_test], [y_pred_train, y_pred_test], ["Train", "Test"]
-        ):
-            # Compute AUC, GINI, and KS
-            print(f"Computing metrics for {dataset} dataset...")
-
+            # Compute metrics
+            print(f"Computing metrics for {dataset_label}...")
             y_true = np.array(y_true, dtype=float)
-            y_pred = np.array(y_pred, dtype=float)
+            y_prob = np.array(y_prob, dtype=float)
 
-            fpr, tpr, thresholds = roc_curve(y_true, y_pred)
+            fpr, tpr, _ = roc_curve(y_true, y_prob)
             ks = max(tpr - fpr)
-
-            auc = roc_auc_score(y_true, y_pred)
+            auc = roc_auc_score(y_true, y_prob)
             gini = 2 * auc - 1
 
             # Add the metrics to the dictionary
@@ -110,6 +106,7 @@ class GINITable(Metric):
             metrics_dict["GINI"].append(gini)
             metrics_dict["KS"].append(ks)
 
+        # Create a DataFrame to store and return the results
         metrics_df = pd.DataFrame(metrics_dict)
         return metrics_df
 
