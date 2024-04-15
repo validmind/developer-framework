@@ -73,13 +73,6 @@ class ROCCurve(Metric):
         if self.inputs.model.model_library() == "FoundationModel":
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
-        # Extract the actual model
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
-
         y_true = self.inputs.dataset.y
         # y_pred = model.predict_proba(self.inputs.dataset.x)
         y_prob = self.inputs.dataset.y_prob(self.inputs.model.input_id)

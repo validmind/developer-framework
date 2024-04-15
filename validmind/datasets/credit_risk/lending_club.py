@@ -288,7 +288,7 @@ def woe_encoding(df):
     # Apply the WoE transformation
     df = sc.woebin_ply(df, bins=bins)
 
-    print(f"Successfully converted features to WoE values.")
+    print("Successfully converted features to WoE values.")
 
     return df
 

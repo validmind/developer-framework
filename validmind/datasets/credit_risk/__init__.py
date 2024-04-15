@@ -5,7 +5,6 @@
 """
 Entrypoint for credit risk datasets.
 """
-import pandas as pd
 
 __all__ = [
     "lending_club",
