@@ -89,7 +89,9 @@ class ScorecardHistogram(Metric):
                         x=scores_class,
                         opacity=0.75,
                         name=f"{dataset_title} {target_col} = {class_value}",
-                        marker=dict(color=class_colors[class_value]),
+                        marker=dict(
+                            color=dict(color=color_dict[class_value]),
+                        ),
                     )
                 )
             fig.update_layout(
@@ -103,10 +105,8 @@ class ScorecardHistogram(Metric):
         return figures
 
     def run(self):
-        title = self.params.get("title", self.default_params["title"])
-        score_column = self.params.get(
-            "score_column", self.default_params["score_column"]
-        )
+        title = self.params["title"]
+        score_column = self.params["score_column"]
         dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
         target_column = self.inputs.datasets[0].target_column
 
@@ -114,6 +114,12 @@ class ScorecardHistogram(Metric):
         metric_value = {"score_histogram": {}}
         for dataset in self.inputs.datasets:
             df = dataset.df.copy()
+            # Check if the score_column exists in the DataFrame
+            if score_column not in df.columns:
+                raise ValueError(
+                    f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
+                )
+
             df[score_column] = dataset.get_extra_column(score_column)
             dataframes.append(df)
             metric_value["score_histogram"][dataset.input_id] = list(df[score_column])
