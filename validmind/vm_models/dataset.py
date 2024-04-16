@@ -638,7 +638,7 @@ class NumpyDataset(VMDataset):
                 except MissingOrInvalidModelPredictFnError:
                     # Log that predict_proba is not available or failed
                     logger.warn(
-                        f"SKlearn model {model.__class__} Model does not have a compatible predict_proba implementation."
+                        f"Model class '{model.__class__}' does not have a compatible predict_proba implementation."
                         + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
                     )
 
