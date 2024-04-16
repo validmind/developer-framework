@@ -3,9 +3,10 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-
-import numpy as np
 import plotly.graph_objects as go
+
+from dataclasses import dataclass
+from matplotlib import cm
 
 from validmind.vm_models import Figure, Metric
 
@@ -68,28 +69,24 @@ class PredictionProbabilitiesHistogram(Metric):
     @staticmethod
     def plot_prob_histogram(dataframes, dataset_titles, target_col, title):
         figures = []
-        # Define a color map for multiple classes
-        class_colors = {
-            0: "blue",
-            1: "red",
-            2: "green",
-            3: "purple",
-            4: "orange",
-            # ... add more colors for more classes
-        }
 
-        # Check if there are more unique class values than colors defined
-        unique_classes = set(
-            np.concatenate([df[target_col].unique() for df in dataframes])
-        )
-        if not unique_classes.issubset(class_colors.keys()):
-            missing_classes = unique_classes - set(class_colors.keys())
-            raise ValueError(
-                f"Color not defined for classes: {missing_classes}. Please update the class_colors dictionary."
-            )
+        # Generate a colormap and convert to Plotly-accepted color format
+        # Adjust 'viridis' to any other matplotlib colormap if desired
+        colormap = cm.get_cmap("viridis")
 
         for i, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
             fig = go.Figure()
+
+            # Get unique classes and assign colors
+            classes = sorted(df[target_col].unique())
+            colors = [
+                colormap(i / len(classes))[:3] for i in range(len(classes))
+            ]  # RGB
+            color_dict = {
+                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+                for cls, rgb in zip(classes, colors)
+            }
+
             # Ensure classes are plotted in the specified order
             for class_value in sorted(df[target_col].unique()):
                 fig.add_trace(
@@ -98,8 +95,8 @@ class PredictionProbabilitiesHistogram(Metric):
                         opacity=0.75,
                         name=f"{dataset_title} {target_col} = {class_value}",
                         marker=dict(
-                            color=class_colors[class_value]
-                        ),  # Use the color map
+                            color=dict(color=color_dict[class_value]),
+                        ),
                     )
                 )
             fig.update_layout(
