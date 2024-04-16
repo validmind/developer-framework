@@ -314,7 +314,6 @@ def load_test(test_id, reload=False):  # noqa: C901
         metric(test_id)(test)
         test = __custom_tests[test_id]
 
-    test.__tags = module.__tags if hasattr(module, "__tags") else []
     test.test_id = test_id
 
     return test
