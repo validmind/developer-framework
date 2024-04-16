@@ -4,14 +4,7 @@
 
 from sklearn.metrics import accuracy_score
 
-__tags = ["classification", "accuracy"]
-__task_types = ["classification"]
 
-__hello = "world"
-
-
-@tags("classification", "accuracy")
-@task_types("classification")
 def Accuracy(dataset, model):
     """Calculates the accuracy of a model"""
     return accuracy_score(dataset.y, dataset.y_pred(model))
