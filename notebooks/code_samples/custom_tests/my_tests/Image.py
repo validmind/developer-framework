@@ -1,4 +1,3 @@
-
 # Saved from __main__.image
 # Test ID: my_custom_metrics.Image
 

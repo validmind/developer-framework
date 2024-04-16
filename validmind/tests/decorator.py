@@ -186,6 +186,15 @@ def _get_save_func(func, test_id):
         # ensure that the function name matches the test name
         source = source.replace(f"def {func.__name__}", f"def {test_name}")
 
+        # use black to format the code
+        try:
+            import black
+
+            source = black.format_str(source, mode=black.FileMode())
+        except ImportError:
+            # ignore if not available
+            pass
+
         with open(full_path, "w") as file:
             file.writelines(source)
 

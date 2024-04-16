@@ -1,4 +1,3 @@
-
 # Saved from __main__.external_api
 # Test ID: my_custom_metrics.ExternalAPI
 

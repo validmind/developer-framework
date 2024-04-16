@@ -4,22 +4,9 @@
 import numpy as np
 import plotly_express as px
 
-from validmind import metric
-
-
-@metric.ai_description
-def description(results, llm):
-    llm.generate_description("")
-
-
-@metric.description
-def description(results):
-    return "This metric demonstrates how to return many tables and figures in a single metric"
-
 
 def ComplexOutput():
     """This metric demonstrates how to return many tables and figures in a single metric"""
-
     # create a couple tables
     table = [{"A": 1, "B": 2}, {"A": 3, "B": 4}]
     table2 = [{"C": 5, "D": 6}, {"C": 7, "D": 8}]

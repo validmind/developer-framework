@@ -1,6 +1,6 @@
-
 # Saved from __main__.hyperparameters
 # Test ID: my_custom_metrics.Hyperparameters
+
 
 def Hyperparameters(model):
     """The hyperparameters of a machine learning model are the settings that control the learning process.
@@ -11,7 +11,7 @@ def Hyperparameters(model):
     on a given dataset. By examining the hyperparameters of a model, you can gain insight into how the model
     was trained and how it might be improved.
     """
-    hyperparameters = model.model.get_xgb_params() # dictionary of hyperparameters
+    hyperparameters = model.model.get_xgb_params()  # dictionary of hyperparameters
 
     # turn the dictionary into a table where each row contains a hyperparameter and its value
     return [{"Hyperparam": k, "Value": v} for k, v in hyperparameters.items() if v]
