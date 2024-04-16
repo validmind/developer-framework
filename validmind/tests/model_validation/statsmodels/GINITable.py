@@ -91,7 +91,6 @@ class GINITable(Metric):
             y_prob = dataset.y_prob(self.inputs.model.input_id)
 
             # Compute metrics
-            print(f"Computing metrics for {dataset_label}...")
             y_true = np.array(y_true, dtype=float)
             y_prob = np.array(y_prob, dtype=float)
 
