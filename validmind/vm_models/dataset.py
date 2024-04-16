@@ -151,9 +151,9 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction values (y_pred) of the dataset for a given model_id.
+        Returns the prediction values (y_pred) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction values.
@@ -200,7 +200,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -673,19 +673,19 @@ class NumpyDataset(VMDataset):
             ],
         ]
 
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (VMModel): The model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model_id)
+        pred_column = self.prediction_column(model.input_id)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
@@ -757,14 +757,14 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.target_column]
 
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column(model_id=model_id)]
+        return self._df[self.prediction_column(model)]
 
     def prediction_column(self, model_id) -> str:
         """

@@ -354,20 +354,27 @@ def fuzzy_match(string: str, search_string: str, threshold=0.7):
     return score >= threshold
 
 
-def test_id_to_name(test_id: str):
-    """Convert a test ID to a human-readable name"""
-    # Extract the last part of the ID string
+def test_id_to_name(test_id: str) -> str:
+    """Convert a test ID to a human-readable name.
+
+    Args:
+        test_id (str): The test identifier, typically in CamelCase or snake_case.
+
+    Returns:
+        str: A human-readable name derived from the test ID.
+    """
     last_part = test_id.split(".")[-1]
+    words = []
 
-    # Use a regular expression to find words and acronyms in the CamelCase string
-    words = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)", last_part)
+    # Split on underscores and apply regex to each part to handle CamelCase and acronyms
+    for part in last_part.split("_"):
+        # Regex pattern to match uppercase acronyms, mixed-case words, or alphanumeric combinations
+        words.extend(
+            re.findall(r"[A-Z]+(?:_[A-Z]+)*(?=_|$|[A-Z][a-z])|[A-Z]?[a-z0-9]+", part)
+        )
 
-    # Join the words with spaces and capitalize the first letter of each word, keeping acronyms unchanged
-    title = " ".join(
-        [word.capitalize() if not word.isupper() else word for word in words]
-    )
-
-    return title
+    # Join the words with spaces, capitalize non-acronym words
+    return " ".join(word.capitalize() if not word.isupper() else word for word in words)
 
 
 def get_model_info(model):

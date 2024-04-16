@@ -380,7 +380,7 @@ def preview_template():
 
 
 def run_documentation_tests(
-    section=None, send=True, fail_fast=False, inputs=None, **kwargs
+    section=None, send=True, fail_fast=False, inputs=None, config=None, **kwargs
 ):
     """Collect and run all the tests associated with a template
 
@@ -393,6 +393,7 @@ def run_documentation_tests(
         send (bool, optional): Whether to send the results to the ValidMind API. Defaults to True.
         fail_fast (bool, optional): Whether to stop running tests after the first failure. Defaults to False.
         inputs (dict, optional): A dictionary of test inputs to pass to the TestSuite
+        config: A dictionary of test parameters to override the defaults
         **kwargs: backwards compatibility for passing in test inputs using keyword arguments
 
     Returns:
@@ -421,6 +422,7 @@ def run_documentation_tests(
             send=send,
             fail_fast=fail_fast,
             inputs=inputs,
+            config=config,
             **kwargs,
         )
         test_suites[_section] = test_suite

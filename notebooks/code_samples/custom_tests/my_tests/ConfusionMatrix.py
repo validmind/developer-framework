@@ -1,6 +1,8 @@
-# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
-# See the LICENSE file in the root of this repository for details.
-# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+# Saved from __main__.confusion_matrix
+# Test ID: my_custom_metrics.ConfusionMatrix
+
+import matplotlib.pyplot as plt
+from sklearn import metrics
 
 
 def ConfusionMatrix(dataset, model):

@@ -61,7 +61,6 @@ from .client import (  # noqa: E402
     run_test_suite,
 )
 from .tests.decorator import metric
-from .unit_metrics import run_metric
 from .utils import run_async  # noqa: E402
 
 
@@ -119,5 +118,4 @@ __all__ = [  # noqa
     "log_figure",
     "log_metrics",
     "log_test_results",
-    "run_metric",
 ]

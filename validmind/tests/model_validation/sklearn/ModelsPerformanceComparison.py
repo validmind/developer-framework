@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 
 from numpy import unique
-from sklearn import metrics
+from sklearn.metrics import classification_report
 
 from validmind.errors import SkipTestError
 from validmind.vm_models import ResultSummary, ResultTable, ResultTableMetadata
@@ -129,8 +129,9 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         results = {}
         for idx, model in enumerate(all_models):
             y_true = self.inputs.dataset.y
-            class_pred = self.inputs.dataset.y_pred(model.input_id)
-            report = metrics.classification_report(y_true, class_pred, output_dict=True)
-            report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
+            y_pred = self.inputs.dataset.y_pred(model)
+            report = classification_report(y_true, y_pred, output_dict=True)
+            report["roc_auc"] = multiclass_roc_auc_score(y_true, y_pred)
             results["model_" + str(idx)] = report
+
         return self.cache_results(results)

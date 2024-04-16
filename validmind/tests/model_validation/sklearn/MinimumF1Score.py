@@ -97,7 +97,7 @@ class MinimumF1Score(ThresholdTest):
 
     def run(self):
         y_true = self.inputs.dataset.y
-        class_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        class_pred = self.inputs.dataset.y_pred(self.inputs.model)
         y_true = y_true.astype(class_pred.dtype)
 
         if len(unique(y_true)) > 2:
