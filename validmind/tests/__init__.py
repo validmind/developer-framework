@@ -25,7 +25,7 @@ from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_n
 from ..vm_models import TestContext, TestInput
 from .__types__ import ExternalTestProvider
 from .decorator import metric
-from .test_providers import GithubTestProvider, LocalTestProvider
+from .test_providers import LocalTestProvider
 
 logger = get_logger(__name__)
 
@@ -38,7 +38,6 @@ __all__ = [
     "load_test",
     "describe_test",
     "register_test_provider",
-    "GithubTestProvider",
     "LoadTestError",
     "LocalTestProvider",
 ]

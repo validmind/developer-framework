@@ -1023,12 +1023,16 @@ class TorchDataset(NumpyDataset):
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        # if we can't import torch, then it's not a PyTorch model
+
         try:
             import torch
         except ImportError:
-            return False
+            raise ImportError(
+                "PyTorch is not installed, please run `pip install validmind[pytorch]`"
+            )
+
         columns = []
+
         for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
             if id == 0 and feature_columns is None:
                 n_cols = tens.shape[1]
@@ -1039,9 +1043,11 @@ class TorchDataset(NumpyDataset):
                     ).astype(str)
                 ]
                 columns.append(feature_columns)
+
             elif id == 1 and target_column is None:
                 target_column = "y"
                 columns.append(target_column)
+
             elif id == 2 and extra_columns is None:
                 extra_columns.prediction_column = "y_pred"
                 columns.append(extra_columns.prediction_column)
