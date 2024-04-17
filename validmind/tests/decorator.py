@@ -235,6 +235,7 @@ def metric(func_or_id):
 
     - Table: Either a list of dictionaries or a pandas DataFrame
     - Plot: Either a matplotlib figure or a plotly figure
+    - Scalar: A single number or string
 
     The function may also include a docstring. This docstring will be used and logged
     as the metric's description.
@@ -274,5 +275,22 @@ def metric(func_or_id):
 
     if callable(func_or_id):
         return decorator(func_or_id)
+
+    return decorator
+
+
+# decorators for adding tasks and tags to metric functions __tasks__ and __tags__
+def tasks(*args):
+    def decorator(func):
+        func.__tasks__ = list(args)
+        return func
+
+    return decorator
+
+
+def tags(*args):
+    def decorator(func):
+        func.__tags__ = list(args)
+        return func
 
     return decorator
