@@ -44,18 +44,6 @@
                     <a class="function" href="#register_test_provider">register_test_provider</a>
             </li>
             <li>
-                    <a class="class" href="#GithubTestProvider">GithubTestProvider</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#GithubTestProvider.__init__">GithubTestProvider</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#GithubTestProvider.load_test">load_test</a>
-                        </li>
-                </ul>
-
-            </li>
-            <li>
                     <a class="class" href="#LoadTestError">LoadTestError</a>
                             <ul class="memberlist">
                 </ul>
@@ -200,78 +188,6 @@ Defaults to False.</li>
 </div>
 
 
-                </section>
-                <section id="GithubTestProvider">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">GithubTestProvider</span>:
-
-        
-    </div>
-    <a class="headerlink" href="#GithubTestProvider"></a>
-    
-            <div class="docstring"><p>A class used to download python files from a Github repository and
-dynamically load and execute the tests from those files.</p>
-</div>
-
-
-                            <div id="GithubTestProvider.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">GithubTestProvider</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">org</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">repo</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">token</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GithubTestProvider.__init__"></a>
-    
-            <div class="docstring"><p>Initialize the GithubTestProvider with the given org, repo, and token.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>org (str):</strong>  The Github organization.</li>
-<li><strong>repo (str):</strong>  The Github repository.</li>
-<li><strong>token (str):</strong>  The Github access token.</li>
-</ul>
-</div>
-
-
-                            </div>
-                            <div id="GithubTestProvider.load_test" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">load_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">test_id</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#GithubTestProvider.load_test"></a>
-    
-            <div class="docstring"><p>Load the test identified by the given test_id.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>test_id (str):</strong>  The identifier of the test. This corresponds to the</li>
-<li>relative path of the python file in the repository, with slashes replaced by dots.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>The test class that matches the last part of the test_id.</p>
-</blockquote>
-
-<h6 id="raises">Raises:</h6>
-
-<ul>
-<li><strong>Exception:</strong>  If the test can't be imported or loaded.</li>
-</ul>
-</div>
-
-
-                            </div>
                 </section>
                 <section id="LoadTestError">
                     <div class="attr class">
