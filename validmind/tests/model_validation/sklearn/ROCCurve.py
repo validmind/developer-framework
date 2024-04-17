@@ -73,15 +73,8 @@ class ROCCurve(Metric):
         if self.inputs.model.model_library() == "FoundationModel":
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
-        # Extract the actual model
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
-
         y_true = self.inputs.dataset.y
-        y_pred = model.predict_proba(self.inputs.dataset.x)
+        y_prob = self.inputs.dataset.y_prob(self.inputs.model.input_id)
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:
@@ -89,14 +82,15 @@ class ROCCurve(Metric):
                 "ROC Curve is only supported for binary classification models"
             )
 
-        y_true = y_true.astype(y_pred.dtype).flatten()
-        assert np.all((y_pred >= 0) & (y_pred <= 1)), "Invalid probabilities in y_pred."
+        y_true = y_true.astype(y_prob.dtype).flatten()
+        assert np.all((y_prob >= 0) & (y_prob <= 1)), "Invalid probabilities in y_prob."
 
-        fpr, tpr, roc_thresholds = roc_curve(y_true, y_pred, drop_intermediate=False)
+        fpr, tpr, roc_thresholds = roc_curve(y_true, y_prob, drop_intermediate=False)
+
         # Remove Inf values from roc_thresholds
         valid_thresholds_mask = np.isfinite(roc_thresholds)
         roc_thresholds = roc_thresholds[valid_thresholds_mask]
-        auc = roc_auc_score(y_true, y_pred)
+        auc = roc_auc_score(y_true, y_prob)
 
         trace0 = go.Scatter(
             x=fpr,
