@@ -117,7 +117,7 @@ class CumulativePredictionProbabilities(Metric):
         metric_value = {"cum_prob": {}}
         for dataset in self.inputs.datasets:
             df = dataset.df.copy()
-            y_prob = dataset.y_prob(self.inputs.model.input_id)
+            y_prob = dataset.y_prob(self.inputs.model)
             df["probabilities"] = y_prob
             dataframes.append(df)
             metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])

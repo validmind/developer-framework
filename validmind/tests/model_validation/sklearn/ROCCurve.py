@@ -74,7 +74,7 @@ class ROCCurve(Metric):
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
         y_true = self.inputs.dataset.y
-        y_prob = self.inputs.dataset.y_prob(self.inputs.model.input_id)
+        y_prob = self.inputs.dataset.y_prob(self.inputs.model)
 
         # ROC curve is only supported for binary classification
         if len(np.unique(y_true)) > 2:
