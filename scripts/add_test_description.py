@@ -124,7 +124,7 @@ def add_description_to_test(path):
     with open(path, "r") as f:
         file_contents = f.read()
 
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4", # or gpt-3.5-turbo
         messages=[
             {"role": "system", "content": add_prompt},
@@ -186,7 +186,7 @@ def add_summary_to_test(path):
     with open(path, "r") as f:
         file_contents = f.read()
 
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4", # or gpt-3.5-turbo
         messages=[
             {"role": "system", "content": summary_prompt},
@@ -233,7 +233,7 @@ def fix_test_description(path):
     with open(path, "r") as f:
         file_contents = f.read()
 
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model="gpt-4", # or gpt-3.5-turbo
         messages=[
             {"role": "system", "content": fix_prompt},
