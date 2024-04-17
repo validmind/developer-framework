@@ -1,5 +1,6 @@
 # Saved from __main__.hyperparameters
-# Test ID: my_custom_metrics.Hyperparameters
+# Original Test ID: my_custom_metrics.Hyperparameters
+# New Test ID: <test_provider_namespace>.Hyperparameters
 
 
 def Hyperparameters(model):

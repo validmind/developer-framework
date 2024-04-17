@@ -1,5 +1,6 @@
 # Saved from __main__.image
-# Test ID: my_custom_metrics.Image
+# Original Test ID: my_custom_metrics.Image
+# New Test ID: <test_provider_namespace>.Image
 
 import io
 import matplotlib.pyplot as plt

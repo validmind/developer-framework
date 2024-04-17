@@ -1,5 +1,6 @@
 # Saved from __main__.external_api
-# Test ID: my_custom_metrics.ExternalAPI
+# Original Test ID: my_custom_metrics.ExternalAPI
+# New Test ID: <test_provider_namespace>.ExternalAPI
 
 import requests
 

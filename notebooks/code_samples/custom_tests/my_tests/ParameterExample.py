@@ -1,5 +1,6 @@
 # Saved from __main__.parameter_example
-# Test ID: my_custom_metrics.ParameterExample
+# Original Test ID: my_custom_metrics.ParameterExample
+# New Test ID: <test_provider_namespace>.ParameterExample
 
 import plotly_express as px
 

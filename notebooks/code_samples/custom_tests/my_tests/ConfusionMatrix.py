@@ -1,5 +1,6 @@
 # Saved from __main__.confusion_matrix
-# Test ID: my_custom_metrics.ConfusionMatrix
+# Original Test ID: my_custom_metrics.ConfusionMatrix
+# New Test ID: <test_provider_namespace>.ConfusionMatrix
 
 import matplotlib.pyplot as plt
 from sklearn import metrics

@@ -1,5 +1,6 @@
 # Saved from __main__.complex_output
-# Test ID: my_custom_metrics.ComplexOutput
+# Original Test ID: my_custom_metrics.ComplexOutput
+# New Test ID: <test_provider_namespace>.ComplexOutput
 
 import numpy as np
 import plotly_express as px
