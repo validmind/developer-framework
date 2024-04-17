@@ -162,11 +162,21 @@ def _get_run_method(func, inputs, params):
 
 
 def _get_save_func(func, test_id):
-    def save(path=".", imports=None):
-        if not os.path.exists(path):
-            os.makedirs(path)
+    def save(root_folder=".", imports=None):
+        parts = test_id.split(".")
 
-        test_name = f"{test_id.split('.')[-1]}"
+        if len(parts) > 1:
+            path = os.path.join(root_folder, *parts[1:-1])
+            test_name = parts[-1]
+            new_test_id = f"<test_provider_namespace>.{'.'.join(parts[1:])}"
+        else:
+            path = root_folder
+            test_name = parts[0]
+            new_test_id = f"<test_provider_namespace>.{test_name}"
+
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+
         full_path = os.path.join(path, f"{test_name}.py")
 
         source = inspect.getsource(func)
@@ -178,7 +188,8 @@ def _get_save_func(func, test_id):
         # add comment to the top of the file
         source = f"""
 # Saved from {func.__module__}.{func.__name__}
-# Test ID: {test_id}
+# Original Test ID: {test_id}
+# New Test ID: {new_test_id}
 
 {source}
 """
@@ -198,9 +209,12 @@ def _get_save_func(func, test_id):
         with open(full_path, "w") as file:
             file.writelines(source)
 
-        print(
-            f"Saved to {os.path.abspath(full_path)}!",
-            "Be sure to add any necessary imports to the top of the file.",
+        logger.info(
+            f"Saved to {os.path.abspath(full_path)}!"
+            "Be sure to add any necessary imports to the top of the file."
+        )
+        logger.info(
+            f"This metric can be run with the ID: {new_test_id}",
         )
 
     return save
