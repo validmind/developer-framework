@@ -71,6 +71,9 @@
                                 <a class="function" href="#VMDataset.y_pred">y_pred</a>
                         </li>
                         <li>
+                                <a class="function" href="#VMDataset.y_prob">y_prob</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#VMDataset.df">df</a>
                         </li>
                         <li>
@@ -86,7 +89,13 @@
                                 <a class="function" href="#VMDataset.y_pred_df">y_pred_df</a>
                         </li>
                         <li>
+                                <a class="function" href="#VMDataset.y_prob_df">y_prob_df</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#VMDataset.prediction_column">prediction_column</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMDataset.probability_column">probability_column</a>
                         </li>
                         <li>
                                 <a class="function" href="#VMDataset.get_features_columns">get_features_columns</a>
@@ -455,7 +464,7 @@
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">assign_predictions</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">prediction_values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>, </span><span class="param"><span class="n">prediction_column</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">assign_predictions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span>,</span><span class="param">	<span class="n">prediction_values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_probabilities</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_column</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">probability_column</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -655,6 +664,27 @@ it returns all columns except the target column.</p>
 
 
                             </div>
+                            <div id="VMDataset.y_prob" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">y_prob</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.y_prob"></a>
+    
+            <div class="docstring"><p>Returns the prediction probabilities (y_prob) of the dataset for a given model_id.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>np.ndarray: The prediction probabilities.</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="VMDataset.df" class="classattr">
                                 <div class="attr variable">
             <span class="name">df</span>
@@ -753,6 +783,28 @@ it returns all columns except the target column.</p>
 
 
                             </div>
+                            <div id="VMDataset.y_prob_df" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">y_prob_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.y_prob_df"></a>
+    
+            <div class="docstring"><p>Returns the target columns (y) of the dataset.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>pd.DataFrame: The target columns.</p>
+</blockquote>
+</div>
+
+
+                            </div>
                             <div id="VMDataset.prediction_column" class="classattr">
                                 <div class="attr function">
                     <div class="decorator">@abstractmethod</div>
@@ -770,6 +822,27 @@ it returns all columns except the target column.</p>
 
 <blockquote>
   <p>str: The prediction column name.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.probability_column" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">probability_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.probability_column"></a>
+    
+            <div class="docstring"><p>Returns the probability column name of the dataset.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>str: The probability column name.</p>
 </blockquote>
 </div>
 

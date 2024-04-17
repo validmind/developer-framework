@@ -6,6 +6,7 @@ import warnings
 from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
+import numpy as np
 import shap
 
 from validmind.errors import UnsupportedModelForSHAPError
@@ -93,9 +94,30 @@ class SHAPGlobalImportance(Metric):
 
         summary_plot_extra_args = {}
         if type_ == "mean":
-            summary_plot_extra_args = {"plot_type": "bar"}
+            # Calculate the mean absolute SHAP value for each feature
+            mean_abs_shap = np.abs(shap_values).mean(axis=0)
 
-        shap.summary_plot(shap_values, x_test, show=False, **summary_plot_extra_args)
+            # Find the maximum mean absolute SHAP value
+            max_shap_value = np.max(mean_abs_shap)
+
+            # Normalize all SHAP values based on the top feature
+            shap_values = (
+                shap_values / max_shap_value * 100
+            )  # scaling factor to make the top feature 100%
+            summary_plot_extra_args = {"plot_type": "bar"}
+            shap.summary_plot(
+                shap_values, x_test, show=False, **summary_plot_extra_args
+            )
+
+            # Customize the plot using matplotlib
+            plt.xlabel("Normalized SHAP Value (Percentage)", fontsize=13)
+            plt.ylabel("Features", fontsize=13)
+            plt.title("Normalized Feature Importance", fontsize=13)
+        else:
+            shap.summary_plot(
+                shap_values, x_test, show=False, **summary_plot_extra_args
+            )
+
         figure = plt.gcf()
         # avoid displaying on notebooks and clears the canvas for the next plot
         plt.close()
@@ -132,6 +154,8 @@ class SHAPGlobalImportance(Metric):
             or model_class == "RandomForestClassifier"
             or model_class == "CatBoostClassifier"
             or model_class == "DecisionTreeClassifier"
+            or model_class == "RandomForestRegressor"
+            or model_class == "GradientBoostingRegressor"
         ):
             explainer = shap.TreeExplainer(trained_model)
         elif (
@@ -158,11 +182,11 @@ class SHAPGlobalImportance(Metric):
         # KernelExplainer is slow so we use shap.sample to speed it up
         if isinstance(explainer, shap.KernelExplainer):
             shap_sample = shap.sample(
-                self.inputs.dataset.x,
+                self.inputs.dataset.x_df(),
                 self.params["kernel_explainer_samples"],
             )
         else:
-            shap_sample = self.inputs.dataset.x
+            shap_sample = self.inputs.dataset.x_df()
 
         shap_values = explainer.shap_values(shap_sample)
 
