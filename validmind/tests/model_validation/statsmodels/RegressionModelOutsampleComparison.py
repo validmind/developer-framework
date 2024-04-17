@@ -102,7 +102,7 @@ class RegressionModelOutsampleComparison(Metric):
             y_test = dataset.y
 
             # Predict the test data
-            y_pred = dataset.y_pred(fitted_model.input_id)
+            y_pred = dataset.y_pred(fitted_model)
 
             # Calculate the residuals
             residuals = y_test - y_pred

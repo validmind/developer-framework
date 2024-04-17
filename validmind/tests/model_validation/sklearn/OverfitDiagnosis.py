@@ -119,12 +119,12 @@ class OverfitDiagnosis(ThresholdTest):
 
         # Add prediction column in the training dataset
         train_df = self.inputs.datasets[0].df.copy()
-        train_class_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        train_class_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
         train_df[prediction_column] = train_class_pred
 
         # Add prediction column in the test dataset
         test_df = self.inputs.datasets[1].df.copy()
-        test_class_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        test_class_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
         test_df[prediction_column] = test_class_pred
 
         test_results = []

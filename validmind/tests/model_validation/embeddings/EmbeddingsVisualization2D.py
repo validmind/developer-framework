@@ -67,7 +67,7 @@ class EmbeddingsVisualization2D(Metric):
             )
 
         # use TSNE to reduce dimensionality of embeddings
-        num_samples = len(self.inputs.dataset.y_pred(self.inputs.model.input_id))
+        num_samples = len(self.inputs.dataset.y_pred(self.inputs.model))
 
         if self.params["perplexity"] >= num_samples:
             perplexity = num_samples - 1

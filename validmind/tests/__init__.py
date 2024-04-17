@@ -5,6 +5,7 @@
 """All Tests for ValidMind"""
 
 import importlib
+import inspect
 import sys
 from pathlib import Path
 from pprint import pformat
@@ -18,11 +19,13 @@ from markdown import markdown
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
+from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
 from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .__types__ import ExternalTestProvider
-from .test_providers import GithubTestProvider, LocalTestProvider
+from .decorator import metric
+from .test_providers import LocalTestProvider
 
 logger = get_logger(__name__)
 
@@ -35,7 +38,6 @@ __all__ = [
     "load_test",
     "describe_test",
     "register_test_provider",
-    "GithubTestProvider",
     "LoadTestError",
     "LocalTestProvider",
 ]
@@ -305,6 +307,12 @@ def load_test(test_id, reload=False):  # noqa: C901
         logger.error(error)
         raise LoadTestError(error)
 
+    if inspect.isfunction(test):
+        # if its a function, we decorate it and then load the class
+        # TODO: simplify this as we move towards all funcitonal metrics
+        metric(test_id)(test)
+        test = __custom_tests[test_id]
+
     test.test_id = test_id
 
     return test
@@ -361,6 +369,7 @@ def run_test(
     params: dict = None,
     inputs=None,
     output_template=None,
+    show=True,
     **kwargs,
 ):
     """Run a test by test ID
@@ -375,6 +384,7 @@ def run_test(
         params (dict, optional): A dictionary of params to override the default params
         inputs: A dictionary of test inputs to pass to the Test
         output_template (str, optional): A template to use for customizing the output
+        show (bool, optional): Whether to display the results. Defaults to True.
         **kwargs: Any extra arguments will be passed in via the TestInput object. i.e.:
             - dataset: A validmind Dataset object or a Pandas DataFrame
             - model: A model to use for the test
@@ -389,9 +399,18 @@ def run_test(
     if (unit_metrics and not name) or (name and not unit_metrics):
         raise ValueError("`name` and `unit_metrics` must be provided together")
 
+    if test_id and test_id.startswith("validmind.unit_metrics"):
+        # TODO: as we move towards a more unified approach to metrics
+        # we will want to make everything functional and remove the
+        # separation between unit metrics and "normal" metrics
+        return run_metric(test_id, inputs=inputs, params=params, show=show)
+
     if unit_metrics:
-        TestClass = load_composite_metric(unit_metrics=unit_metrics, metric_name=name)
-        test_id = f"validmind.composite_metric.{name}"
+        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
+        TestClass = load_composite_metric(
+            unit_metrics=unit_metrics, metric_name=metric_id_name
+        )
+        test_id = f"validmind.composite_metric.{metric_id_name}"
     else:
         TestClass = load_test(test_id, reload=True)
 
@@ -404,7 +423,9 @@ def run_test(
     )
 
     test.run()
-    test.result.show()
+
+    if show:
+        test.result.show()
 
     return test.result
 

@@ -72,7 +72,7 @@ class ConfusionMatrix(Metric):
         labels.sort()
         labels = np.array(labels).T.tolist()
 
-        y_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
         y_true = y_true.astype(y_pred.dtype)
 
         cm = metrics.confusion_matrix(y_true, y_pred, labels=labels)

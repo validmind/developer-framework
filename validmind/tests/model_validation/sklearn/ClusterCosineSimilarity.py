@@ -67,7 +67,7 @@ class ClusterCosineSimilarity(Metric):
 
     def run(self):
         y_true_train = self.inputs.dataset.y
-        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model)
         y_true_train = y_true_train.astype(y_pred_train.dtype).flatten()
         num_clusters = len(np.unique(y_pred_train))
         # Calculate cosine similarity for each cluster

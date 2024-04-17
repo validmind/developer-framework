@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-import plotly.graph_objects as go
 
+import plotly.graph_objects as go
 from matplotlib import cm
 
 from validmind.vm_models import Figure, Metric

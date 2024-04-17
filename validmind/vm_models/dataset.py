@@ -6,16 +6,16 @@
 Dataset class wrapper
 """
 
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
 import polars as pl
-import warnings
 
-from validmind.logging import get_logger
 from validmind.errors import MissingOrInvalidModelPredictFnError
+from validmind.logging import get_logger
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -155,9 +155,9 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction values (y_pred) of the dataset for a given model_id.
+        Returns the prediction values (y_pred) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction values.
@@ -213,7 +213,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -496,7 +496,6 @@ class NumpyDataset(VMDataset):
         prediction_column=None,
         probability_column=None,
     ):
-
         def _is_probability(output):
             """Check if the output from the predict method is probabilities."""
             # This is a simple check that assumes output is probabilities if they lie between 0 and 1
@@ -836,19 +835,19 @@ class NumpyDataset(VMDataset):
             ],
         ]
 
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (VMModel): The model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model_id)
+        pred_column = self.prediction_column(model.input_id)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
@@ -959,14 +958,14 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.target_column]
 
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column(model_id=model_id)]
+        return self._df[self.prediction_column(model)]
 
     def y_prob_df(self, model_id):
         """
@@ -1248,12 +1247,16 @@ class TorchDataset(NumpyDataset):
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        # if we can't import torch, then it's not a PyTorch model
+
         try:
             import torch
         except ImportError:
-            return False
+            raise ImportError(
+                "PyTorch is not installed, please run `pip install validmind[pytorch]`"
+            )
+
         columns = []
+
         for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
             if id == 0 and feature_columns is None:
                 n_cols = tens.shape[1]
@@ -1264,9 +1267,11 @@ class TorchDataset(NumpyDataset):
                     ).astype(str)
                 ]
                 columns.append(feature_columns)
+
             elif id == 1 and target_column is None:
                 target_column = "y"
                 columns.append(target_column)
+
             elif id == 2 and extra_columns is None:
                 extra_columns.prediction_column = "y_pred"
                 columns.append(extra_columns.prediction_column)
