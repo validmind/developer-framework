@@ -61,8 +61,13 @@ def init_dataset(
     """
     Initializes a VM Dataset, which can then be passed to other functions
     that can perform additional analysis and tests on the data. This function
-    also ensures we are reading a valid dataset type. We only support Pandas
-    DataFrames at the moment.
+    also ensures we are reading a valid dataset type.
+
+    The following dataset types are supported:
+    - Pandas DataFrame
+    - Polars DataFrame
+    - Numpy ndarray
+    - Torch TensorDataset
 
     Args:
         dataset : dataset from various python libraries
