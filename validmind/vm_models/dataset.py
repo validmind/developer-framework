@@ -500,7 +500,9 @@ class NumpyDataset(VMDataset):
             """Check if the output from the predict method is probabilities."""
             # This is a simple check that assumes output is probabilities if they lie between 0 and 1
             if np.all((output >= 0) & (output <= 1)):
-                return True
+                # Check if there is at least one element that is neither 0 nor 1
+                if np.any((output > 0) & (output < 1)):
+                    return True
             return False
 
         # Step 1: Check for Model Presence
@@ -626,7 +628,10 @@ class NumpyDataset(VMDataset):
 
             else:
 
-                # If not probabilities, attempt to run predict_proba
+                # If not assign the prediction values directly
+                pred_column = f"{model.input_id}_prediction"
+                self.__assign_prediction_values(model, pred_column, prediction_values)
+
                 try:
                     logger.info("Running predict_proba()... This may take a while")
                     prediction_probabilities = np.array(model.predict_proba(x_only))
