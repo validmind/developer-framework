@@ -164,9 +164,9 @@ class VMDataset(ABC):
         """
         pass
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction probabilities (y_prob) of the dataset for a given model_id.
+        Returns the prediction probabilities (y_prob) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction probabilities.
@@ -223,7 +223,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -233,7 +233,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
@@ -242,7 +242,7 @@ class VMDataset(ABC):
         """
         pass
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the probability column name of the dataset.
 
@@ -847,7 +847,7 @@ class NumpyDataset(VMDataset):
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model.input_id)
+        pred_column = self.prediction_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
@@ -874,19 +874,19 @@ class NumpyDataset(VMDataset):
 
         return predictions
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (str): The ID of the model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        prob_column = self.probability_column(model_id)
+        prob_column = self.probability_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and prob_column in self._df.columns:
@@ -967,22 +967,23 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.prediction_column(model)]
 
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.probability_column(model_id=model_id)]
+        return self._df[self.probability_column(model)]
 
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         pred_column = self._extra_columns.get("prediction_columns", {}).get(model_id)
         if pred_column is None:
             raise ValueError(
@@ -990,13 +991,14 @@ class NumpyDataset(VMDataset):
             )
         return pred_column
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         prob_column = self._extra_columns.get("probability_columns", {}).get(model_id)
         if prob_column is None:
             raise ValueError(
