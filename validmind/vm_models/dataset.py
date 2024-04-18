@@ -503,7 +503,7 @@ class NumpyDataset(VMDataset):
                 # Check if there is at least one element that is neither 0 nor 1
                 if np.any((output > 0) & (output < 1)):
                     return True
-            return False
+return np.all((output >= 0) & (output <= 1)) and np.any((output > 0) & (output < 1))
 
         # Step 1: Check for Model Presence
         if not model:
