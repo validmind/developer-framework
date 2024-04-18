@@ -847,7 +847,7 @@ class NumpyDataset(VMDataset):
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model.input_id)
+        pred_column = self.prediction_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
