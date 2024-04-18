@@ -18,7 +18,7 @@ import openai
 
 dotenv.load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
+OPENAI_GPT_MODEL = "gpt-4-turbo" # or gpt-4 or gpt-3.5-turbo
 add_prompt = """
 You are an expert in validating Machine Learning models using MRM (Model Risk Management) best practices. You are also an expert in writing descriptions that are pleasant to read while being very useful.
 You will be provided the source code for a metric or threshold test that is run against an ML model. You will analyze the code to determine the details and implementation of the test. Finally, you will write clear, descriptive and informative descriptions in the format described that will document the tests for developers and risk management teams.
@@ -125,7 +125,7 @@ def add_description_to_test(path):
         file_contents = f.read()
 
     response = openai.chat.completions.create(
-        model="gpt-4", # or gpt-3.5-turbo
+        model=OPENAI_GPT_MODEL, 
         messages=[
             {"role": "system", "content": add_prompt},
             {"role": "user", "content": f"```python\n{file_contents}```"},
@@ -187,7 +187,7 @@ def add_summary_to_test(path):
         file_contents = f.read()
 
     response = openai.chat.completions.create(
-        model="gpt-4", # or gpt-3.5-turbo
+        model=OPENAI_GPT_MODEL,
         messages=[
             {"role": "system", "content": summary_prompt},
             {"role": "user", "content": f"```python\n{file_contents}```"},
@@ -227,14 +227,14 @@ def add_summary_to_test(path):
         f.write("\n".join(lines))
 
 def fix_test_description(path):
-    """You can switch to gpt3.5 if you don't have access but gpt4 should do a better job"""
+    """You can switch to gpt3.5 if you don't have access but gpt4- should do a better job"""
     # get file contents from path
     click.echo(f"\n\n{path}:\n")
     with open(path, "r") as f:
         file_contents = f.read()
 
     response = openai.chat.completions.create(
-        model="gpt-4", # or gpt-3.5-turbo
+        model=OPENAI_GPT_MODEL,
         messages=[
             {"role": "system", "content": fix_prompt},
             {"role": "user", "content": f"```python\n{file_contents}```"},
