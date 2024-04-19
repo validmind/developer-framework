@@ -294,6 +294,7 @@ def tasks(*tasks):
 
     def decorator(func):
         func.__tasks__ = list(tasks)
+        return func
 
     return decorator
 
