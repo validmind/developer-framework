@@ -164,9 +164,9 @@ class VMDataset(ABC):
         """
         pass
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction probabilities (y_prob) of the dataset for a given model_id.
+        Returns the prediction probabilities (y_prob) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction probabilities.
@@ -223,7 +223,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -233,7 +233,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
@@ -242,7 +242,7 @@ class VMDataset(ABC):
         """
         pass
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the probability column name of the dataset.
 
@@ -500,8 +500,12 @@ class NumpyDataset(VMDataset):
             """Check if the output from the predict method is probabilities."""
             # This is a simple check that assumes output is probabilities if they lie between 0 and 1
             if np.all((output >= 0) & (output <= 1)):
-                return True
-            return False
+                # Check if there is at least one element that is neither 0 nor 1
+                if np.any((output > 0) & (output < 1)):
+                    return True
+            return np.all((output >= 0) & (output <= 1)) and np.any(
+                (output > 0) & (output < 1)
+            )
 
         # Step 1: Check for Model Presence
         if not model:
@@ -626,7 +630,10 @@ class NumpyDataset(VMDataset):
 
             else:
 
-                # If not probabilities, attempt to run predict_proba
+                # If not assign the prediction values directly
+                pred_column = f"{model.input_id}_prediction"
+                self.__assign_prediction_values(model, pred_column, prediction_values)
+
                 try:
                     logger.info("Running predict_proba()... This may take a while")
                     prediction_probabilities = np.array(model.predict_proba(x_only))
@@ -847,7 +854,7 @@ class NumpyDataset(VMDataset):
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model.input_id)
+        pred_column = self.prediction_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
@@ -874,19 +881,19 @@ class NumpyDataset(VMDataset):
 
         return predictions
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (str): The ID of the model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        prob_column = self.probability_column(model_id)
+        prob_column = self.probability_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and prob_column in self._df.columns:
@@ -967,22 +974,23 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.prediction_column(model)]
 
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.probability_column(model_id=model_id)]
+        return self._df[self.probability_column(model)]
 
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         pred_column = self._extra_columns.get("prediction_columns", {}).get(model_id)
         if pred_column is None:
             raise ValueError(
@@ -990,13 +998,14 @@ class NumpyDataset(VMDataset):
             )
         return pred_column
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         prob_column = self._extra_columns.get("probability_columns", {}).get(model_id)
         if prob_column is None:
             raise ValueError(

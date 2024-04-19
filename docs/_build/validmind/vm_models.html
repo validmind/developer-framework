@@ -644,13 +644,13 @@ it returns all columns except the target column.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">y_prob</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+        <span class="name">y_prob</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
 
         
     </div>
     <a class="headerlink" href="#VMDataset.y_prob"></a>
     
-            <div class="docstring"><p>Returns the prediction probabilities (y_prob) of the dataset for a given model_id.</p>
+            <div class="docstring"><p>Returns the prediction probabilities (y_prob) of the dataset for a given model.</p>
 
 <h6 id="returns">Returns:</h6>
 
@@ -764,7 +764,7 @@ it returns all columns except the target column.</p>
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">y_prob_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">):</span></span>
+        <span class="name">y_prob_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -786,7 +786,7 @@ it returns all columns except the target column.</p>
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">prediction_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">prediction_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
         
     </div>
@@ -807,7 +807,7 @@ it returns all columns except the target column.</p>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">probability_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model_id</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">probability_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
         
     </div>

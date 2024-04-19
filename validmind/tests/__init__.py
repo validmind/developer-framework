@@ -23,7 +23,7 @@ from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
 from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
-from .decorator import metric
+from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
 
 logger = get_logger(__name__)
@@ -39,6 +39,10 @@ __all__ = [
     "register_test_provider",
     "LoadTestError",
     "LocalTestProvider",
+    ### Decorators for functional metrics
+    "metric",
+    "tags",
+    "tasks",
 ]
 
 __tests = None

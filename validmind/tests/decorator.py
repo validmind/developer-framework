@@ -255,6 +255,8 @@ def metric(func_or_id):
 
         inputs, params = _inspect_signature(func)
         description = inspect.getdoc(func)
+        tasks = getattr(func, "__tasks__", [])
+        tags = getattr(func, "__tags__", [])
 
         metric_class = type(
             func.__name__,
@@ -264,6 +266,10 @@ def metric(func_or_id):
                 "required_inputs": list(inputs.keys()),
                 "default_parameters": params,
                 "__doc__": description,
+                "metadata": {
+                    "task_types": tasks,
+                    "tags": tags,
+                },
             },
         )
         _register_custom_test(test_id, metric_class)
@@ -279,18 +285,28 @@ def metric(func_or_id):
     return decorator
 
 
-# decorators for adding tasks and tags to metric functions __tasks__ and __tags__
-def tasks(*args):
+def tasks(*tasks):
+    """Decorator for specifying the task types that a metric is designed for.
+
+    Args:
+        *tasks: The task types that the metric is designed for.
+    """
+
     def decorator(func):
-        func.__tasks__ = list(args)
-        return func
+        func.__tasks__ = list(tasks)
 
     return decorator
 
 
-def tags(*args):
+def tags(*tags):
+    """Decorator for specifying tags for a metric.
+
+    Args:
+        *tags: The tags to apply to the metric.
+    """
+
     def decorator(func):
-        func.__tags__ = list(args)
+        func.__tags__ = list(tags)
         return func
 
     return decorator
