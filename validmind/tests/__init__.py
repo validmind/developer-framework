@@ -282,14 +282,6 @@ def _load_validmind_test(test_id, reload=False):
     return error, test
 
 
-def _handle_functional_test(test):
-    # if its a function, we decorate it and then load the class
-    # TODO: simplify this as we move towards all funcitonal metrics
-    metric(test.test_id)(test)
-
-    return __custom_tests[test.test_id]
-
-
 def load_test(test_id, reload=False):
     test_id, result_id = test_id.split(":", 1) if ":" in test_id else (test_id, None)
 
@@ -325,7 +317,10 @@ def load_test(test_id, reload=False):
     test.test_id = f"{test_id}:{result_id}" if result_id else test_id
 
     if inspect.isfunction(test):
-        return _handle_functional_test(test)
+        # if its a function, we decorate it and then load the class
+        # TODO: simplify this as we move towards all funcitonal metrics
+        metric(test.test_id)(test)
+        return __custom_tests[test.test_id]
 
     return test
 
@@ -419,10 +414,15 @@ def run_test(
 
     if unit_metrics:
         metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        TestClass = load_composite_metric(
+        test_id = f"validmind.composite_metric.{metric_id_name}"
+
+        error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
         )
-        test_id = f"validmind.composite_metric.{metric_id_name}"
+
+        if error:
+            raise LoadTestError(error)
+
     else:
         TestClass = load_test(test_id, reload=True)
 

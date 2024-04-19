@@ -44,10 +44,9 @@ NOTEBOOKS_TO_RUN = [
     "notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb",
     # "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     # TODO: fix the above when we have a regression template installed
-    {
-        "path": "notebooks/code_samples/custom_tests/external_test_providers.ipynb",
-        "project": DEFAULT_PROJECT_ID,
-    },
+    "notebooks/how_to/run_unit_metrics.ipynb",
+    "notebooks/code_samples/custom_tests/external_test_providers.ipynb"
+    "notebooks/code_samples/custom_tests/implementing_custom_tests.ipynb",
 ]
 
 INIT_CELL_CODE = """
