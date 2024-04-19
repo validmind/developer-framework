@@ -4,6 +4,10 @@
 
 from sklearn.metrics import r2_score
 
+from validmind import tags, tasks
 
+
+@tags("regression", "sklearn", "unit_metric")
+@tasks("regression")
 def RSquaredError(model, dataset):
     return r2_score(dataset.y, dataset.y_pred(model))
