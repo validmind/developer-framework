@@ -39,7 +39,7 @@ __all__ = [
     "register_test_provider",
     "LoadTestError",
     "LocalTestProvider",
-    ### Decorators for functional metrics
+    # Decorators for functional metrics
     "metric",
     "tags",
     "tasks",
@@ -291,7 +291,6 @@ def load_test(test_id, reload=False):
     test_id, result_id = test_id.split(":", 1) if ":" in test_id else (test_id, None)
 
     error = None
-    module = None
     namespace = test_id.split(".", 1)[0]
 
     # TODO: lets implement an extensible loading system instead of this ugly if/else
@@ -440,12 +439,12 @@ def run_test(
     return test.result
 
 
-def register_test_provider(namespace: str, test_provider: ExternalTestProvider) -> None:
+def register_test_provider(namespace: str, test_provider: TestProvider) -> None:
     """Register an external test provider
 
     Args:
         namespace (str): The namespace of the test provider
-        test_provider (ExternalTestProvider): The test provider
+        test_provider (TestProvider): The test provider
     """
     __test_providers[namespace] = test_provider
 

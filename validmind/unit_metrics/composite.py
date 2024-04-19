@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from typing import List, Tuple, Union
 from uuid import uuid4
 
-from ..errors import LoadTestError
 from ..logging import get_logger
 from ..tests.decorator import _inspect_signature
 from ..utils import clean_docstring, run_async, test_id_to_name
