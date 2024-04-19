@@ -262,6 +262,9 @@ def _load_validmind_test(test_id, reload=False):
     test_module = ".".join(parts[1:-1])
     test_class = parts[-1]
 
+    error = None
+    test = None
+
     try:
         full_path = f"validmind.tests.{test_module}.{test_class}"
 
