@@ -88,7 +88,7 @@ class GINITable(Metric):
 
             # Retrieve y_true and y_pred for the current dataset
             y_true = np.ravel(dataset.y)  # Flatten y_true to make it one-dimensional
-            y_prob = dataset.y_prob(self.inputs.model.input_id)
+            y_prob = dataset.y_prob(self.inputs.model)
 
             # Compute metrics
             y_true = np.array(y_true, dtype=float)

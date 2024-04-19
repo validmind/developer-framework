@@ -54,7 +54,7 @@ class MeteorScore(Metric):
         meteor_scores = []
 
         for prediction, reference in zip(
-            self.inputs.dataset.y_pred(self.inputs.model.input_id),
+            self.inputs.dataset.y_pred(self.inputs.model),
             self.inputs.dataset.y,
         ):
             # Compute the METEOR score for the current prediction-reference pair

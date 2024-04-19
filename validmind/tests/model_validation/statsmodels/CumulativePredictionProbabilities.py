@@ -2,10 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from dataclasses import dataclass
+
 import numpy as np
 import plotly.graph_objects as go
-
-from dataclasses import dataclass
 from matplotlib import cm
 
 from validmind.vm_models import Figure, Metric
@@ -117,7 +117,7 @@ class CumulativePredictionProbabilities(Metric):
         metric_value = {"cum_prob": {}}
         for dataset in self.inputs.datasets:
             df = dataset.df.copy()
-            y_prob = dataset.y_prob(self.inputs.model.input_id)
+            y_prob = dataset.y_prob(self.inputs.model)
             df["probabilities"] = y_prob
             dataframes.append(df)
             metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])

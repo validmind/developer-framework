@@ -57,7 +57,7 @@ class ToxicityHistogram(Metric):
             raise AttributeError("The 'model' attribute is missing.")
 
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
         input_text = self.inputs.dataset.df[self.inputs.dataset.text_column]
 
         # Ensure consistency in lengths

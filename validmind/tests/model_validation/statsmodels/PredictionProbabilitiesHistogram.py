@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-import plotly.graph_objects as go
 
+import plotly.graph_objects as go
 from matplotlib import cm
 
 from validmind.vm_models import Figure, Metric
@@ -116,7 +116,7 @@ class PredictionProbabilitiesHistogram(Metric):
         metric_value = {"prob_histogram": {}}
         for _, dataset in enumerate(self.inputs.datasets):
             df = dataset.df.copy()
-            y_prob = dataset.y_prob(self.inputs.model.input_id)
+            y_prob = dataset.y_prob(self.inputs.model)
             df["probabilities"] = y_prob
             dataframes.append(df)
             metric_value["prob_histogram"][dataset.input_id] = list(df["probabilities"])

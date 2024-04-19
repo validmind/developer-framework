@@ -6,16 +6,16 @@
 Dataset class wrapper
 """
 
+import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
 import polars as pl
-import warnings
 
-from validmind.logging import get_logger
 from validmind.errors import MissingOrInvalidModelPredictFnError
+from validmind.logging import get_logger
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -155,18 +155,18 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction values (y_pred) of the dataset for a given model_id.
+        Returns the prediction values (y_pred) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction values.
         """
         pass
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction probabilities (y_prob) of the dataset for a given model_id.
+        Returns the prediction probabilities (y_prob) of the dataset for a given model.
 
         Returns:
             np.ndarray: The prediction probabilities.
@@ -213,7 +213,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -223,7 +223,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
@@ -233,7 +233,7 @@ class VMDataset(ABC):
         pass
 
     @abstractmethod
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
@@ -242,7 +242,7 @@ class VMDataset(ABC):
         """
         pass
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the probability column name of the dataset.
 
@@ -496,13 +496,16 @@ class NumpyDataset(VMDataset):
         prediction_column=None,
         probability_column=None,
     ):
-
         def _is_probability(output):
             """Check if the output from the predict method is probabilities."""
             # This is a simple check that assumes output is probabilities if they lie between 0 and 1
             if np.all((output >= 0) & (output <= 1)):
-                return True
-            return False
+                # Check if there is at least one element that is neither 0 nor 1
+                if np.any((output > 0) & (output < 1)):
+                    return True
+            return np.all((output >= 0) & (output <= 1)) and np.any(
+                (output > 0) & (output < 1)
+            )
 
         # Step 1: Check for Model Presence
         if not model:
@@ -627,7 +630,10 @@ class NumpyDataset(VMDataset):
 
             else:
 
-                # If not probabilities, attempt to run predict_proba
+                # If not assign the prediction values directly
+                pred_column = f"{model.input_id}_prediction"
+                self.__assign_prediction_values(model, pred_column, prediction_values)
+
                 try:
                     logger.info("Running predict_proba()... This may take a while")
                     prediction_probabilities = np.array(model.predict_proba(x_only))
@@ -836,19 +842,19 @@ class NumpyDataset(VMDataset):
             ],
         ]
 
-    def y_pred(self, model_id) -> np.ndarray:
+    def y_pred(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (VMModel): The model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        pred_column = self.prediction_column(model_id)
+        pred_column = self.prediction_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and pred_column in self._df.columns:
@@ -875,19 +881,19 @@ class NumpyDataset(VMDataset):
 
         return predictions
 
-    def y_prob(self, model_id) -> np.ndarray:
+    def y_prob(self, model) -> np.ndarray:
         """
-        Returns the prediction variables for a given model_id, accommodating
+        Returns the prediction variables for a given model, accommodating
         both scalar predictions and multi-dimensional outputs such as embeddings.
 
         Args:
-            model_id (str): The ID of the model whose predictions are sought.
+            model (str): The ID of the model whose predictions are sought.
 
         Returns:
             np.ndarray: The prediction variables, either as a flattened array for
             scalar predictions or as an array of arrays for multi-dimensional outputs.
         """
-        prob_column = self.probability_column(model_id)
+        prob_column = self.probability_column(model)
 
         # First, attempt to retrieve the prediction data from the DataFrame
         if hasattr(self, "_df") and prob_column in self._df.columns:
@@ -959,31 +965,32 @@ class NumpyDataset(VMDataset):
         """
         return self._df[self.target_column]
 
-    def y_pred_df(self, model_id):
+    def y_pred_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column(model_id=model_id)]
+        return self._df[self.prediction_column(model)]
 
-    def y_prob_df(self, model_id):
+    def y_prob_df(self, model):
         """
         Returns the target columns (y) of the dataset.
 
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.probability_column(model_id=model_id)]
+        return self._df[self.probability_column(model)]
 
-    def prediction_column(self, model_id) -> str:
+    def prediction_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         pred_column = self._extra_columns.get("prediction_columns", {}).get(model_id)
         if pred_column is None:
             raise ValueError(
@@ -991,13 +998,14 @@ class NumpyDataset(VMDataset):
             )
         return pred_column
 
-    def probability_column(self, model_id) -> str:
+    def probability_column(self, model) -> str:
         """
         Returns the prediction column name of the dataset.
 
         Returns:
             str: The prediction column name.
         """
+        model_id = model.input_id
         prob_column = self._extra_columns.get("probability_columns", {}).get(model_id)
         if prob_column is None:
             raise ValueError(
@@ -1248,12 +1256,16 @@ class TorchDataset(NumpyDataset):
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
         """
-        # if we can't import torch, then it's not a PyTorch model
+
         try:
             import torch
         except ImportError:
-            return False
+            raise ImportError(
+                "PyTorch is not installed, please run `pip install validmind[pytorch]`"
+            )
+
         columns = []
+
         for id, tens in zip(range(0, len(raw_dataset.tensors)), raw_dataset.tensors):
             if id == 0 and feature_columns is None:
                 n_cols = tens.shape[1]
@@ -1264,9 +1276,11 @@ class TorchDataset(NumpyDataset):
                     ).astype(str)
                 ]
                 columns.append(feature_columns)
+
             elif id == 1 and target_column is None:
                 target_column = "y"
                 columns.append(target_column)
+
             elif id == 2 and extra_columns is None:
                 extra_columns.prediction_column = "y_pred"
                 columns.append(extra_columns.prediction_column)

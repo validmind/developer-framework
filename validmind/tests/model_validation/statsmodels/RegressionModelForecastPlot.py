@@ -94,8 +94,8 @@ class RegressionModelForecastPlot(Metric):
             train_ds = datasets[0]
             test_ds = datasets[1]
 
-            y_pred = train_ds.y_pred(fitted_model.input_id)
-            y_pred_test = test_ds.y_pred(fitted_model.input_id)
+            y_pred = train_ds.y_pred(fitted_model)
+            y_pred_test = test_ds.y_pred(fitted_model)
 
             # Check that start_date and end_date are within the data range
             all_dates = pd.concat([pd.Series(train_ds.index), pd.Series(test_ds.index)])

@@ -68,9 +68,16 @@ def get_logger(name="validmind", log_level=None):
     logger = logging.getLogger(name)
     logger.setLevel(log_level or _get_log_level())
 
-    # Check if the handler is already added
-    if not any(isinstance(h, type(handler)) for h in logger.handlers):
+    # Clear existing handlers if any (or refine the existing logic as necessary)
+    # TODO: lets add some better handler management
+    if not any(
+        isinstance(h, type(handler)) and h.formatter._fmt == formatter._fmt
+        for h in logger.handlers
+    ):
         logger.addHandler(handler)
+
+    # Prevent logger from propagating to root logger
+    logger.propagate = False
 
     return logger
 

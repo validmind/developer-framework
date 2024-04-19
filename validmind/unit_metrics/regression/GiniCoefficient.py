@@ -2,38 +2,28 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import numpy as np
 
-from validmind.vm_models import UnitMetric
 
+def GiniCoefficient(dataset, model):
+    y_true = dataset.y
+    y_pred = dataset.y_pred(model)
 
-@dataclass
-class GiniCoefficient(UnitMetric):
-    required_inputs = ["dataset", "model"]
+    # Sort true values and corresponding predicted values
+    idx = np.argsort(y_true)
+    y_true_sorted = y_true[idx]
+    y_pred_sorted = y_pred[idx]
 
-    def run(self):
-        y_true = self.inputs.dataset.y
-        y_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
+    # Compute cumulative sums
+    cumsum_true = np.cumsum(y_true_sorted)
+    cumsum_pred = np.cumsum(y_pred_sorted)
 
-        # Sort true values and corresponding predicted values
-        idx = np.argsort(y_true)
-        y_true_sorted = y_true[idx]
-        y_pred_sorted = y_pred[idx]
+    # Normalize cumulative sums
+    cumsum_true_norm = cumsum_true / np.max(cumsum_true)
+    cumsum_pred_norm = cumsum_pred / np.max(cumsum_pred)
 
-        # Compute cumulative sums
-        cumsum_true = np.cumsum(y_true_sorted)
-        cumsum_pred = np.cumsum(y_pred_sorted)
+    # Compute area under the Lorenz curve
+    area_lorenz = np.trapz(cumsum_pred_norm, x=cumsum_true_norm)
 
-        # Normalize cumulative sums
-        cumsum_true_norm = cumsum_true / np.max(cumsum_true)
-        cumsum_pred_norm = cumsum_pred / np.max(cumsum_pred)
-
-        # Compute area under the Lorenz curve
-        area_lorenz = np.trapz(cumsum_pred_norm, x=cumsum_true_norm)
-
-        # Compute Gini coefficient
-        gini_coeff = 1 - 2 * area_lorenz
-
-        return self.cache_results(metric_value=gini_coeff)
+    # Compute Gini coefficient
+    return 1 - 2 * area_lorenz

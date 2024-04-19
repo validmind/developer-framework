@@ -4,11 +4,16 @@
 
 """Decorators for creating and registering metrics with the ValidMind framework."""
 
+# TODO: as we move entirely to a functional approach a lot of this logic
+# should be moved into the __init__ to replace the old class-based stuff
+
 import inspect
+import os
 from uuid import uuid4
 
 import pandas as pd
 
+from validmind.errors import MissingRequiredTestInputError
 from validmind.logging import get_logger
 from validmind.utils import clean_docstring
 from validmind.vm_models import (
@@ -25,8 +30,6 @@ from validmind.vm_models.figure import (
     is_png_image,
 )
 from validmind.vm_models.test.result_wrapper import MetricResultWrapper
-
-from . import _register_custom_test
 
 logger = get_logger(__name__)
 
@@ -53,7 +56,7 @@ def _inspect_signature(test_func: callable):
     return inputs, params
 
 
-def _build_result(results, test_id, description, output_template):
+def _build_result(results, test_id, description, output_template):  # noqa: C901
     ref_id = str(uuid4())
     figure_metadata = {
         "_type": "metric",
@@ -65,7 +68,17 @@ def _build_result(results, test_id, description, output_template):
     figures = []
 
     def process_item(item):
-        if is_matplotlib_figure(item) or is_plotly_figure(item) or is_png_image(item):
+        # TOOD: build out a more robust/extensible system for this
+        # TODO: custom type handlers would be really cool
+
+        # unit metrics (scalar values) - show in a simple table for now
+        if isinstance(item, int) or isinstance(item, float) or isinstance(item, str):
+            tables.append(ResultTable(data=[{test_id.split(".")[-1]: item}]))
+
+        # plots
+        elif isinstance(item, Figure):
+            figures.append(item)
+        elif is_matplotlib_figure(item) or is_plotly_figure(item) or is_png_image(item):
             figures.append(
                 Figure(
                     key=f"{test_id}:{len(figures) + 1}",
@@ -73,18 +86,24 @@ def _build_result(results, test_id, description, output_template):
                     metadata=figure_metadata,
                 )
             )
-        elif isinstance(item, list):
-            tables.append(ResultTable(data=item))
-        elif isinstance(item, pd.DataFrame):
+
+        # tables
+        elif isinstance(item, list) or isinstance(item, pd.DataFrame):
             tables.append(ResultTable(data=item))
         elif isinstance(item, dict):
             for table_name, table in item.items():
+                if not isinstance(table, list) and not isinstance(table, pd.DataFrame):
+                    raise ValueError(
+                        f"Invalid table format: {table_name} must be a list or DataFrame"
+                    )
+
                 tables.append(
                     ResultTable(
                         data=table,
                         metadata=ResultTableMetadata(title=table_name),
                     )
                 )
+
         else:
             raise ValueError(f"Invalid return type: {type(item)}")
 
@@ -110,14 +129,20 @@ def _build_result(results, test_id, description, output_template):
                 "text": clean_docstring(description),
             }
         ],
-        inputs=[],
+        inputs=[],  # TODO: add input tracking
         output_template=output_template,
     )
 
 
-def get_run_method(func, inputs, params):
+def _get_run_method(func, inputs, params):
     def run(self: Metric):
-        input_kwargs = {k: getattr(self.inputs, k) for k in inputs.keys()}
+        input_kwargs = {}
+        for k in inputs.keys():
+            try:
+                input_kwargs[k] = getattr(self.inputs, k)
+            except AttributeError:
+                raise MissingRequiredTestInputError(f"Missing required input: {k}.")
+
         param_kwargs = {
             k: self.params.get(k, params[k]["default"]) for k in params.keys()
         }
@@ -134,6 +159,65 @@ def get_run_method(func, inputs, params):
         return self.result
 
     return run
+
+
+def _get_save_func(func, test_id):
+    def save(root_folder=".", imports=None):
+        parts = test_id.split(".")
+
+        if len(parts) > 1:
+            path = os.path.join(root_folder, *parts[1:-1])
+            test_name = parts[-1]
+            new_test_id = f"<test_provider_namespace>.{'.'.join(parts[1:])}"
+        else:
+            path = root_folder
+            test_name = parts[0]
+            new_test_id = f"<test_provider_namespace>.{test_name}"
+
+        if not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+
+        full_path = os.path.join(path, f"{test_name}.py")
+
+        source = inspect.getsource(func)
+        # remove decorator line
+        source = source.split("\n", 1)[1]
+        if imports:
+            imports = "\n".join(imports)
+            source = f"{imports}\n\n\n{source}"
+        # add comment to the top of the file
+        source = f"""
+# Saved from {func.__module__}.{func.__name__}
+# Original Test ID: {test_id}
+# New Test ID: {new_test_id}
+
+{source}
+"""
+
+        # ensure that the function name matches the test name
+        source = source.replace(f"def {func.__name__}", f"def {test_name}")
+
+        # use black to format the code
+        try:
+            import black
+
+            source = black.format_str(source, mode=black.FileMode())
+        except ImportError:
+            # ignore if not available
+            pass
+
+        with open(full_path, "w") as file:
+            file.writelines(source)
+
+        logger.info(
+            f"Saved to {os.path.abspath(full_path)}!"
+            "Be sure to add any necessary imports to the top of the file."
+        )
+        logger.info(
+            f"This metric can be run with the ID: {new_test_id}",
+        )
+
+    return save
 
 
 def metric(func_or_id):
@@ -163,6 +247,8 @@ def metric(func_or_id):
         The decorated function.
     """
 
+    from . import _register_custom_test
+
     def decorator(func):
         test_id = func_or_id or f"validmind.custom_metrics.{func.__name__}"
 
@@ -173,13 +259,16 @@ def metric(func_or_id):
             func.__name__,
             (Metric,),
             {
-                "run": get_run_method(func, inputs, params),
+                "run": _get_run_method(func, inputs, params),
                 "required_inputs": list(inputs.keys()),
                 "default_parameters": params,
                 "__doc__": description,
             },
         )
         _register_custom_test(test_id, metric_class)
+
+        # special function to allow the function to be saved to a file
+        func.save = _get_save_func(func, test_id)
 
         return func
 
