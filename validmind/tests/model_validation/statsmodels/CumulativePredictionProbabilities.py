@@ -96,7 +96,9 @@ class CumulativePredictionProbabilities(Metric):
                         y=cumulative_probs,
                         mode="lines",
                         name=f"{dataset_title} {target_col} = {class_value}",
-                        line=dict(color=color_dict[class_value]),
+                        line=dict(
+                            color=color_dict[class_value],
+                        ),
                     )
                 )
             fig.update_layout(
