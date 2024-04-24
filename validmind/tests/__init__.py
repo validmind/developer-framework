@@ -282,7 +282,18 @@ def _load_validmind_test(test_id, reload=False):
     return error, test
 
 
-def load_test(test_id, reload=False):
+def load_test(test_id: str, reload=False):
+    """Load a test by test ID
+
+    Test IDs are in the format `namespace.path_to_module.TestClassOrFuncName[:result_id]`.
+    The result ID is optional and is used to distinguish between multiple results from the
+    running the same test.
+
+    Args:
+        test_id (str): The test ID
+        reload (bool, optional): Whether to reload the test module. Defaults to False.
+    """
+    # TODO: we should use a dedicated class for test IDs to handle this consistently
     test_id, result_id = test_id.split(":", 1) if ":" in test_id else (test_id, None)
 
     error = None
