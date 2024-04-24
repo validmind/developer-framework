@@ -89,7 +89,7 @@ class ScorecardHistogram(Metric):
                         opacity=0.75,
                         name=f"{dataset_title} {target_col} = {class_value}",
                         marker=dict(
-                            color=dict(color=color_dict[class_value]),
+                            color=color_dict[class_value],
                         ),
                     )
                 )
