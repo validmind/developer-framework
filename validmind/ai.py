@@ -71,7 +71,7 @@ def __get_client_and_model():
 
     if "OPENAI_API_KEY" in os.environ:
         __client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4-turbo-preview")
+        __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4-turbo")
 
     elif "AZURE_OPENAI_KEY" in os.environ:
         if "AZURE_OPENAI_ENDPOINT" not in os.environ:

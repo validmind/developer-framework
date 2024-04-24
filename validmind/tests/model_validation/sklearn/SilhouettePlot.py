@@ -69,7 +69,7 @@ class SilhouettePlot(Metric):
     }
 
     def run(self):
-        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred_train = self.inputs.dataset.y_pred(self.inputs.model)
         # Calculate the silhouette score
         silhouette_avg = silhouette_score(
             self.inputs.dataset.x,

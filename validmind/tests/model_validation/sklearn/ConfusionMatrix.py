@@ -72,15 +72,30 @@ class ConfusionMatrix(Metric):
         labels.sort()
         labels = np.array(labels).T.tolist()
 
-        class_pred = self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
-        y_true = y_true.astype(class_pred.dtype)
-        cm = metrics.confusion_matrix(y_true, class_pred, labels=labels)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
+        y_true = y_true.astype(y_pred.dtype)
+
+        cm = metrics.confusion_matrix(y_true, y_pred, labels=labels)
+        tn, fp, fn, tp = cm.ravel()
+
+        # Custom text to display on the heatmap cells
+        text = [
+            [
+                f"<b>True Negatives (TN)</b><br />{tn}",
+                f"<b>False Positives (FP)</b><br />{fp}",
+            ],
+            [
+                f"<b>False Negatives (FN)</b><br />{fn}",
+                f"<b>True Positives (TP)</b><br />{tp}",
+            ],
+        ]
 
         fig = ff.create_annotated_heatmap(
             z=cm,
             colorscale="Blues",
             x=labels,
             y=labels,
+            annotation_text=text,
         )
 
         fig["data"][0][

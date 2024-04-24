@@ -60,7 +60,7 @@ class RegressionModelSummary(Metric):
         X_columns = self.inputs.dataset.get_features_columns()
 
         y_true = self.inputs.dataset.y
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
 
         r2 = r2_score(y_true, y_pred)
         adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(X_columns))

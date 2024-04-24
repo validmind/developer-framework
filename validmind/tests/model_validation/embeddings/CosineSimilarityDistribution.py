@@ -57,9 +57,7 @@ class CosineSimilarityDistribution(Metric):
 
     def run(self):
         # Compute cosine similarity
-        similarities = cosine_similarity(
-            self.inputs.dataset.y_pred(self.inputs.model.input_id)
-        )
+        similarities = cosine_similarity(self.inputs.dataset.y_pred(self.inputs.model))
 
         # plot the distribution
         fig = px.histogram(

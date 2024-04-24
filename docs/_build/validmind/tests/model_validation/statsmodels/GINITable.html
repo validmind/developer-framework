@@ -44,15 +44,6 @@
                                 <a class="function" href="#GINITable.compute_metrics">compute_metrics</a>
                         </li>
                         <li>
-                                <a class="function" href="#GINITable.compute_auc">compute_auc</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#GINITable.compute_gini">compute_gini</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#GINITable.compute_ks">compute_ks</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#GINITable.summary">summary</a>
                         </li>
                 </ul>
@@ -175,58 +166,13 @@ lead to inaccuracies in the metrics if the data is not appropriately preprocesse
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">compute_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">X_train</span>, </span><span class="param"><span class="n">y_train</span>, </span><span class="param"><span class="n">X_test</span>, </span><span class="param"><span class="n">y_test</span></span><span class="return-annotation">):</span></span>
+        <span class="name">compute_metrics</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#GINITable.compute_metrics"></a>
     
-            <div class="docstring"><p>Computes AUC, GINI, and KS for train and test sets.</p>
-</div>
-
-
-                            </div>
-                            <div id="GINITable.compute_auc" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">compute_auc</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">y_true</span>, </span><span class="param"><span class="n">y_scores</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#GINITable.compute_auc"></a>
-    
-            <div class="docstring"><p>Computes the Area Under the Curve (AUC).</p>
-</div>
-
-
-                            </div>
-                            <div id="GINITable.compute_gini" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">compute_gini</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">y_true</span>, </span><span class="param"><span class="n">y_scores</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#GINITable.compute_gini"></a>
-    
-            <div class="docstring"><p>Computes the Gini coefficient.</p>
-</div>
-
-
-                            </div>
-                            <div id="GINITable.compute_ks" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">compute_ks</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">y_true</span>, </span><span class="param"><span class="n">y_scores</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#GINITable.compute_ks"></a>
-    
-            <div class="docstring"><p>Computes the Kolmogorov-Smirnov (KS) statistic.</p>
+            <div class="docstring"><p>Computes AUC, GINI, and KS for an arbitrary number of datasets.</p>
 </div>
 
 

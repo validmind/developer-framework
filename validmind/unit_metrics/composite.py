@@ -2,73 +2,21 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import ast
-import inspect
 from dataclasses import dataclass
 from typing import List
 from uuid import uuid4
 
 from ..errors import LoadTestError
 from ..logging import get_logger
+from ..tests.decorator import _inspect_signature
 from ..utils import clean_docstring, run_async, test_id_to_name
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
 from ..vm_models.test.result_wrapper import MetricResultWrapper
-from . import _get_metric_class, run_metric
+from . import load_metric, run_metric
 
 logger = get_logger(__name__)
-
-
-def _extract_class_methods(cls):
-    source = inspect.getsource(cls)
-    tree = ast.parse(source)
-
-    class MethodVisitor(ast.NodeVisitor):
-        def __init__(self):
-            self.methods = {}
-
-        def visit_FunctionDef(self, node):
-            self.methods[node.name] = node
-            self.generic_visit(node)
-
-    visitor = MethodVisitor()
-    visitor.visit(tree)
-
-    return visitor.methods
-
-
-def _extract_required_inputs(cls):
-    methods = _extract_class_methods(cls)
-
-    class Visitor(ast.NodeVisitor):
-        def __init__(self):
-            self.properties = set()
-            self.visited_methods = set()
-
-        def visit_Attribute(self, node):
-            if isinstance(node.value, ast.Attribute) and node.value.attr == "inputs":
-                self.properties.add(node.attr)
-
-            self.generic_visit(node)
-
-        def visit_Call(self, node):
-            if isinstance(node.func, ast.Attribute) and isinstance(
-                node.func.value, ast.Name
-            ):
-                if node.func.value.id == "self" and node.func.attr in methods:
-                    method_name = node.func.attr
-
-                    if method_name not in self.visited_methods:
-                        self.visited_methods.add(method_name)
-                        self.visit(methods[method_name])
-
-            self.generic_visit(node)
-
-    visitor = Visitor()
-    visitor.visit(methods["run"])
-
-    return visitor.properties
 
 
 @dataclass
@@ -143,9 +91,8 @@ def load_composite_metric(
 
     required_inputs = set()
     for metric_id in unit_metrics:
-        metric_cls = _get_metric_class(metric_id)
-        # required_inputs.update(_extract_required_inputs(metric_cls))
-        required_inputs.update(metric_cls.required_inputs or [])
+        inputs, _ = _inspect_signature(load_metric(metric_id))
+        required_inputs.update(inputs.keys())
 
     class_def.required_inputs = list(required_inputs)
 
@@ -209,22 +156,24 @@ def run_metrics(
     results = {}
 
     for metric_id in metric_ids:
-        result = run_metric(
+        metric_name = test_id_to_name(metric_id)
+        results[metric_name] = run_metric(
             metric_id=metric_id,
             inputs=inputs,
             params=params,
+            show=False,
+            value_only=True,
         )
-        results[list(result.summary.keys())[0]] = result.value
 
     test_id = f"validmind.composite_metric.{name}" if not test_id else test_id
 
     if not output_template:
 
-        def row(key):
+        def row(name):
             return f"""
             <tr>
-                <td><strong>{key.upper()}</strong></td>
-                <td>{{{{ value['{key}'] | number }}}}</td>
+                <td><strong>{name}</strong></td>
+                <td>{{{{ value['{name}'] | number }}}}</td>
             </tr>
             """
 
@@ -238,9 +187,15 @@ def run_metrics(
                 </tr>
             </thead>
             <tbody>
-                {"".join([row(key) for key in results.keys()])}
+                {"".join([row(name) for name in results.keys()])}
             </tbody>
         </table>
+        <style>
+            th, td {{
+                padding: 5px;
+                text-align: left;
+            }}
+        </style>
         """
 
     result_wrapper = MetricResultWrapper(

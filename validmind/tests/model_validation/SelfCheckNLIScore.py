@@ -45,7 +45,7 @@ class SelfCheckNLIScore(Metric):
     def run(self):
         # Assuming the dataset is structured with generated sentences and reference samples
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
 
         hallucination_scores = self.compute_hallucination_scores(y_pred, y_true)
 

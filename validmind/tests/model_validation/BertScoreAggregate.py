@@ -50,7 +50,7 @@ class BertScoreAggregate(Metric):
 
     def run(self):
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
 
         bert = evaluate.load("bertscore")
         bert_s = bert.compute(predictions=y_pred, references=y_true, lang="en")

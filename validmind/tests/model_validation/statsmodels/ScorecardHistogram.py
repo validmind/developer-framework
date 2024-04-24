@@ -4,10 +4,8 @@
 
 from dataclasses import dataclass
 
-import numpy as np
-import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+from matplotlib import cm
 
 from validmind.vm_models import Figure, Metric
 
@@ -53,120 +51,89 @@ class ScorecardHistogram(Metric):
     """
 
     name = "scorecard_histogram"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["datasets"]
     metadata = {
         "task_types": ["classification"],
         "tags": ["tabular_data", "visualization", "credit_risk"],
     }
     default_params = {
         "title": "Histogram of Scores",
-        "target_score": 600,
-        "target_odds": 50,
-        "pdo": 20,
+        "score_column": "score",
     }
 
     @staticmethod
-    def compute_scores(model, X, target_score, target_odds, pdo):
-        X_copy = X.copy()
-        beta = model.model.params.values
-        alpha = model.model.params[0]
-        factor = pdo / np.log(2)
-        offset = target_score - (factor * np.log(target_odds))
+    def plot_score_histogram(dataframes, dataset_titles, score_col, target_col, title):
+        figures = []
+        # Generate a colormap and convert to Plotly-accepted color format
+        # Adjust 'viridis' to any other matplotlib colormap if desired
+        colormap = cm.get_cmap("viridis")
 
-        for _, row in X_copy.iterrows():
-            score_i = 0
-            for i in range(1, len(beta)):
-                WoE_i = row[i]
-                score_i += (beta[i] * WoE_i) * factor
+        for _, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
+            fig = go.Figure()
 
-            score_i += alpha * factor
-            score_i += offset
-            X_copy.loc[row.name, "score"] = score_i
+            # Get unique classes and assign colors
+            classes = sorted(df[target_col].unique())
+            colors = [
+                colormap(i / len(classes))[:3] for i in range(len(classes))
+            ]  # RGB
+            color_dict = {
+                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+                for cls, rgb in zip(classes, colors)
+            }
 
-        return X_copy
-
-    @staticmethod
-    def plot_score_histogram(df_train, df_test, score_col, target_col, title):
-        scores_train_0 = df_train[df_train[target_col] == 0][score_col]
-        scores_train_1 = df_train[df_train[target_col] == 1][score_col]
-        scores_test_0 = df_test[df_test[target_col] == 0][score_col]
-        scores_test_1 = df_test[df_test[target_col] == 1][score_col]
-
-        fig = make_subplots(rows=1, cols=2, subplot_titles=("Train Data", "Test Data"))
-
-        trace_train_0 = go.Histogram(
-            x=scores_train_0, opacity=0.75, name=f"Train {target_col} = 0"
-        )
-        trace_train_1 = go.Histogram(
-            x=scores_train_1, opacity=0.75, name=f"Train {target_col} = 1"
-        )
-        trace_test_0 = go.Histogram(
-            x=scores_test_0, opacity=0.75, name=f"Test {target_col} = 0"
-        )
-        trace_test_1 = go.Histogram(
-            x=scores_test_1, opacity=0.75, name=f"Test {target_col} = 1"
-        )
-
-        fig.add_trace(trace_train_0, row=1, col=1)
-        fig.add_trace(trace_train_1, row=1, col=1)
-        fig.add_trace(trace_test_0, row=1, col=2)
-        fig.add_trace(trace_test_1, row=1, col=2)
-
-        fig.update_layout(barmode="overlay", title_text=title)
-
-        return fig
+            for class_value in sorted(df[target_col].unique()):
+                scores_class = df[df[target_col] == class_value][score_col]
+                fig.add_trace(
+                    go.Histogram(
+                        x=scores_class,
+                        opacity=0.75,
+                        name=f"{dataset_title} {target_col} = {class_value}",
+                        marker=dict(
+                            color=color_dict[class_value],
+                        ),
+                    )
+                )
+            fig.update_layout(
+                barmode="overlay",
+                title_text=f"{title} - {dataset_title}",
+                xaxis_title="Score",
+                yaxis_title="Frequency",
+                legend_title=target_col,
+            )
+            figures.append(fig)
+        return figures
 
     def run(self):
-        model = (
-            self.inputs.model[0]
-            if isinstance(self.inputs.model, list)
-            else self.inputs.model
-        )
-
-        target_column = model.train_ds.target_column
         title = self.params["title"]
-        target_score = self.params["target_score"]
-        target_odds = self.params["target_odds"]
-        pdo = self.params["pdo"]
+        score_column = self.params["score_column"]
+        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
+        target_column = self.inputs.datasets[0].target_column
 
-        # Create a copy of training and testing dataframes
-        df_train = self.inputs.datasets[0].df.copy()
-        df_test = self.inputs.datasets[1].df.copy()
-
-        # Drop target_column to create feature dataframes
-        X_train = df_train.drop(columns=[target_column])
-        X_test = df_test.drop(columns=[target_column])
-
-        # Subset only target_column to create target dataframes
-        y_train = df_train[[target_column]]
-        y_test = df_test[[target_column]]
-
-        X_train_scores = self.compute_scores(
-            model, X_train, target_score, target_odds, pdo
-        )
-        X_test_scores = self.compute_scores(
-            model, X_test, target_score, target_odds, pdo
-        )
-
-        df_train = pd.concat([X_train_scores, y_train], axis=1)
-        df_test = pd.concat([X_test_scores, y_test], axis=1)
-
-        fig = self.plot_score_histogram(
-            df_train, df_test, "score", target_column, title
-        )
-
-        return self.cache_results(
-            metric_value={
-                "score_histogram": {
-                    "train_scores": list(X_train_scores["score"]),
-                    "test_scores": list(X_test_scores["score"]),
-                },
-            },
-            figures=[
-                Figure(
-                    for_object=self,
-                    key="score_histogram",
-                    figure=fig,
+        dataframes = []
+        metric_value = {"score_histogram": {}}
+        for dataset in self.inputs.datasets:
+            df = dataset.df.copy()
+            # Check if the score_column exists in the DataFrame
+            if score_column not in df.columns:
+                raise ValueError(
+                    f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
                 )
-            ],
+
+            df[score_column] = dataset.get_extra_column(score_column)
+            dataframes.append(df)
+            metric_value["score_histogram"][dataset.input_id] = list(df[score_column])
+
+        figures = self.plot_score_histogram(
+            dataframes, dataset_titles, score_column, target_column, title
         )
+
+        figures_list = [
+            Figure(
+                for_object=self,
+                key=f"score_histogram_{title.replace(' ', '_')}_{i+1}",
+                figure=fig,
+            )
+            for i, fig in enumerate(figures)
+        ]
+
+        return self.cache_results(metric_value=metric_value, figures=figures_list)
