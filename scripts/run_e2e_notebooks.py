@@ -24,6 +24,7 @@ This uses the dev environment for now... In the future, we may want to change th
 """
 
 import os
+import re
 
 import click
 import dotenv
@@ -127,12 +128,11 @@ def update_vm_init_cell(notebook_path, project_id):
         nb = nbformat.read(f, as_version=4)
 
     for cell in nb["cells"]:
-        if cell["cell_type"] == "code":
-            if (
-                "import validmind as vm" in cell["source"]
-                and "vm.init(" in cell["source"]
-            ):
-                cell["source"] = init_code
+        if cell["cell_type"] == "code" and "vm.init(" in cell["source"]:
+            # replace any existing vm.init() calls with the new one
+            cell["source"] = re.sub(
+                r"vm.init\(.+\)", init_code, cell["source"], flags=re.DOTALL
+            )
 
     with open(notebook_path, "w") as f:
         nbformat.write(nb, f)
