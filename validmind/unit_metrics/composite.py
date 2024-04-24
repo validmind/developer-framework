@@ -3,10 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple, Union
 from uuid import uuid4
 
-from ..errors import LoadTestError
 from ..logging import get_logger
 from ..tests.decorator import _inspect_signature
 from ..utils import clean_docstring, run_async, test_id_to_name
@@ -54,7 +53,7 @@ def load_composite_metric(
     metric_name: str = None,
     unit_metrics: List[str] = None,
     output_template: str = None,
-) -> CompositeMetric:
+) -> Tuple[Union[None, str], Union[CompositeMetric, None]]:
     # this function can either create a composite metric from a list of unit metrics or
     # load a stored composite metric based on the test id
 
@@ -71,8 +70,7 @@ def load_composite_metric(
                 get_metadata, f"composite_metric_def:{test_id}:output_template"
             )["json"]["output_template"]
         except Exception:
-            logger.error(f"Could not load composite metric {test_id}")
-            raise LoadTestError(f"Could not load composite metric {test_id}")
+            return f"Could not load composite metric {test_id}", None
 
     description = f"""
     Composite metric built from the following unit metrics:
@@ -96,7 +94,7 @@ def load_composite_metric(
 
     class_def.required_inputs = list(required_inputs)
 
-    return class_def
+    return None, class_def
 
 
 def run_metrics(

@@ -4,6 +4,10 @@
 
 from sklearn.metrics import roc_auc_score
 
+from validmind import tags, tasks
 
+
+@tags("classification", "sklearn", "unit_metric")
+@tasks("classification")
 def ROC_AUC(model, dataset, **kwargs):
     return roc_auc_score(dataset.y, dataset.y_pred(model), **kwargs)

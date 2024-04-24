@@ -5,7 +5,11 @@
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
+from validmind import tags, tasks
 
+
+@tags("regression", "sklearn", "unit_metric")
+@tasks("regression")
 def RootMeanSquaredError(model, dataset, **kwargs):
     return np.sqrt(
         mean_squared_error(

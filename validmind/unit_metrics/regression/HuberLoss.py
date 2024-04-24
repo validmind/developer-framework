@@ -4,7 +4,11 @@
 
 import numpy as np
 
+from validmind import tags, tasks
 
+
+@tags("regression", "unit_metric")
+@tasks("regression")
 def HuberLoss(model, dataset):
     y_true = dataset.y
     y_pred = dataset.y_pred(model)

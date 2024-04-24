@@ -235,6 +235,7 @@ def metric(func_or_id):
 
     - Table: Either a list of dictionaries or a pandas DataFrame
     - Plot: Either a matplotlib figure or a plotly figure
+    - Scalar: A single number or string
 
     The function may also include a docstring. This docstring will be used and logged
     as the metric's description.
@@ -254,6 +255,8 @@ def metric(func_or_id):
 
         inputs, params = _inspect_signature(func)
         description = inspect.getdoc(func)
+        tasks = getattr(func, "__tasks__", [])
+        tags = getattr(func, "__tags__", [])
 
         metric_class = type(
             func.__name__,
@@ -263,6 +266,10 @@ def metric(func_or_id):
                 "required_inputs": list(inputs.keys()),
                 "default_parameters": params,
                 "__doc__": description,
+                "metadata": {
+                    "task_types": tasks,
+                    "tags": tags,
+                },
             },
         )
         _register_custom_test(test_id, metric_class)
@@ -274,5 +281,33 @@ def metric(func_or_id):
 
     if callable(func_or_id):
         return decorator(func_or_id)
+
+    return decorator
+
+
+def tasks(*tasks):
+    """Decorator for specifying the task types that a metric is designed for.
+
+    Args:
+        *tasks: The task types that the metric is designed for.
+    """
+
+    def decorator(func):
+        func.__tasks__ = list(tasks)
+        return func
+
+    return decorator
+
+
+def tags(*tags):
+    """Decorator for specifying tags for a metric.
+
+    Args:
+        *tags: The tags to apply to the metric.
+    """
+
+    def decorator(func):
+        func.__tags__ = list(tags)
+        return func
 
     return decorator

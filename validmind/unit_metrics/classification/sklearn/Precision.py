@@ -4,6 +4,10 @@
 
 from sklearn.metrics import precision_score
 
+from validmind import tags, tasks
 
+
+@tags("classification", "sklearn", "unit_metric")
+@tasks("classification")
 def Precision(model, dataset, **kwargs):
     return precision_score(dataset.y, dataset.y_pred(model), **kwargs)
