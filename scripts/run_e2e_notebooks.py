@@ -128,7 +128,10 @@ def update_vm_init_cell(notebook_path, project_id):
 
     for cell in nb["cells"]:
         if cell["cell_type"] == "code":
-            if "import validmind as vm" in cell["source"]:
+            if (
+                "import validmind as vm" in cell["source"]
+                and "vm.init(" in cell["source"]
+            ):
                 cell["source"] = init_code
 
     with open(notebook_path, "w") as f:
