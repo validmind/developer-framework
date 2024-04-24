@@ -6,7 +6,6 @@
 
 import importlib
 import inspect
-import re
 import sys
 from pathlib import Path
 from pprint import pformat
