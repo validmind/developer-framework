@@ -198,7 +198,7 @@ class TestAPIClient(unittest.TestCase):
             data=json.dumps(
                 {
                     "content_id": "1234",
-                    "text": "Some Text",
+                    "text": "<p>Some Text</p>",
                     "json": {"key": "value"},
                 }
             ),
