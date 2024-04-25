@@ -11,17 +11,17 @@ from pathlib import Path
 from pprint import pformat
 from typing import Dict
 
+import mistune
 import pandas as pd
 from IPython.display import display
 from ipywidgets import HTML
-from markdown import markdown
 
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
+from ..utils import format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -356,7 +356,7 @@ def describe_test(test_id: str = None, raw: bool = False):
         "Test Type": test.test_type,
         "Required Inputs": test.required_inputs,
         "Params": test.default_params or {},
-        "Description": clean_docstring(test.__doc__),
+        "Description": test.__doc__,
     }
 
     if raw:
@@ -366,7 +366,7 @@ def describe_test(test_id: str = None, raw: bool = False):
         HTML(
             test_content_block_html.format(
                 title=f'{details["Name"]}',
-                description=markdown(details["Description"]),
+                description=mistune.html(details["Description"]),
                 required_inputs=", ".join(details["Required Inputs"] or ["None"]),
                 params_table="\n".join(
                     [
