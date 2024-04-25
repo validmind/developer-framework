@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
