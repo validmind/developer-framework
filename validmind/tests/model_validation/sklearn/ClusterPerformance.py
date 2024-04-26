@@ -101,11 +101,11 @@ class ClusterPerformance(Metric):
 
     def run(self):
         y_true_train = self.inputs.datasets[0].y
-        class_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        class_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model)
         y_true_train = y_true_train.astype(class_pred_train.dtype)
 
         y_true_test = self.inputs.datasets[1].y
-        class_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        class_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model)
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
         samples = ["train", "test"]

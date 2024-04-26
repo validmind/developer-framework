@@ -60,7 +60,7 @@ class DescriptiveAnalytics(Metric):
 
     def run(self):
         # Assuming y_pred returns a 2D array of embeddings [samples, features]
-        preds = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        preds = self.inputs.dataset.y_pred(self.inputs.model)
 
         # Calculate statistics across the embedding dimensions, not across all embeddings
         means = np.mean(preds, axis=0)  # Mean of each feature across all samples

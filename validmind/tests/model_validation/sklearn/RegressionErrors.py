@@ -130,11 +130,11 @@ class RegressionErrors(Metric):
 
     def run(self):
         y_train_true = self.inputs.datasets[0].y
-        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model.input_id)
+        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
         y_train_true = y_train_true.astype(y_train_pred.dtype)
 
         y_test_true = self.inputs.datasets[1].y
-        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model.input_id)
+        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
         y_test_true = y_test_true.astype(y_test_pred.dtype)
 
         results = self.regression_errors(

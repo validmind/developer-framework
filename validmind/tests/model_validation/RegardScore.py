@@ -58,7 +58,7 @@ class RegardScore(Metric):
             raise AttributeError("The 'model' attribute is missing.")
 
         y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model.input_id)
+        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
 
         if not len(y_true) == len(y_pred):
             raise ValueError(

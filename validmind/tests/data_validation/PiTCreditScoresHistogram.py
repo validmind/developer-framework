@@ -113,7 +113,7 @@ class PiTCreditScoresHistogram(Metric):
         )
         predicted_default_column = (
             self.params.get("predicted_default_column")
-            or self.inputs.dataset.y_pred(self.inputs.model.input_id),
+            or self.inputs.dataset.y_pred(self.inputs.model),
         )
         scores_column = self.params["scores_column"]
         point_in_time_column = self.params["point_in_time_column"]
