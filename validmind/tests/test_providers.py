@@ -5,18 +5,30 @@
 import importlib.util
 import os
 import sys
+from typing import Protocol
 
 from validmind.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class GithubTestProviderLoadTestError(Exception):
-    """
-    When the module was loaded but the test class can't be located.
-    """
+class TestProvider(Protocol):
+    """Protocol for user-defined test providers"""
 
-    pass
+    def load_test(self, test_id: str):
+        """Load the test by test ID
+
+        Args:
+            test_id (str): The test ID (does not contain the namespace under which
+                the test is registered)
+
+        Returns:
+            Test: A test class or function
+
+        Raises:
+            FileNotFoundError: If the test is not found
+        """
+        ...
 
 
 class LocalTestProviderLoadModuleError(Exception):
