@@ -365,7 +365,6 @@ def describe_test(test_id: str = None, raw: bool = False):
     if raw:
         return details
 
-    print(mistune.html(details["Description"].strip()))
     display(
         HTML(
             test_content_block_html.format(
