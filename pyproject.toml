@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "2.0.13"
+version = "2.0.14"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
@@ -28,8 +28,8 @@ llvmlite = [
   { version = "*", python = ">=3.8,<=3.11" },
   { version = ">=0.42.0", python = ">=3.12" },
 ]
-markdown = "^3.4.3"
 matplotlib = "<3.8.3"
+mistune = "^3.0.2"
 nltk = "^3.8.1"
 numpy = [
   { version = "^1.23.3", python = ">=3.8,<=3.11" },

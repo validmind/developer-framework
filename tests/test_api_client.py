@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import call, MagicMock, Mock, patch
 
 import matplotlib.pyplot as plt
-import pandas as pd
+import mistune
 from aiohttp.formdata import FormData
 
 # simluate environment variables being set
@@ -15,11 +15,9 @@ os.environ["VM_API_HOST"] = "your_api_host"
 os.environ["VM_API_PROJECT"] = "your_project"
 os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
-import validmind as vm
 import validmind.api_client as api_client
 from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
 from validmind.vm_models.figure import Figure
-from validmind.utils import NumpyEncoder
 
 
 loop = asyncio.new_event_loop()
@@ -198,7 +196,7 @@ class TestAPIClient(unittest.TestCase):
             data=json.dumps(
                 {
                     "content_id": "1234",
-                    "text": "Some Text",
+                    "text": mistune.html("Some Text"),
                     "json": {"key": "value"},
                 }
             ),
