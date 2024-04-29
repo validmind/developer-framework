@@ -16,6 +16,7 @@ from io import BytesIO
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import aiohttp
+import mistune
 import requests
 from aiohttp import FormData
 
@@ -343,7 +344,7 @@ async def log_metadata(
     """
     metadata_dict = {"content_id": content_id}
     if text is not None:
-        metadata_dict["text"] = text
+        metadata_dict["text"] = mistune.html(text)
     if _json is not None:
         metadata_dict["json"] = _json
 

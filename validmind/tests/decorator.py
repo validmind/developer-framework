@@ -15,7 +15,6 @@ import pandas as pd
 
 from validmind.errors import MissingRequiredTestInputError
 from validmind.logging import get_logger
-from validmind.utils import clean_docstring
 from validmind.vm_models import (
     Metric,
     MetricResult,
@@ -126,7 +125,7 @@ def _build_result(results, test_id, description, output_template):  # noqa: C901
         result_metadata=[
             {
                 "content_id": f"metric_description:{test_id}",
-                "text": clean_docstring(description),
+                "text": description,
             }
         ],
         inputs=[],  # TODO: add input tracking
