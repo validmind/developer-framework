@@ -6,6 +6,7 @@
 
 from abc import abstractmethod
 from dataclasses import dataclass
+from inspect import getdoc
 from typing import ClassVar, List, TypedDict
 from uuid import uuid4
 
@@ -66,7 +67,7 @@ class Test(TestUtils):
         Return the test description. May be overridden by subclasses. Defaults
         to returning the class' docstring
         """
-        return self.__doc__.strip()
+        return getdoc(self).strip()
 
     @abstractmethod
     def summary(self, *args, **kwargs):
