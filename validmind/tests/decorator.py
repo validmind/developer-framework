@@ -55,7 +55,7 @@ def _inspect_signature(test_func: callable):
     return inputs, params
 
 
-def _build_result(results, test_id, description, output_template):  # noqa: C901
+def _build_result(results, test_id, description, output_template, inputs):  # noqa: C901
     ref_id = str(uuid4())
     figure_metadata = {
         "_type": "metric",
@@ -128,7 +128,7 @@ def _build_result(results, test_id, description, output_template):  # noqa: C901
                 "text": description,
             }
         ],
-        inputs=[],  # TODO: add input tracking
+        inputs=inputs,
         output_template=output_template,
     )
 
@@ -151,8 +151,9 @@ def _get_run_method(func, inputs, params):
         self.result = _build_result(
             results=raw_results,
             test_id=self.test_id,
-            description=self.__doc__,
+            description=inspect.getdoc(self),
             output_template=self.output_template,
+            inputs=list(inputs.keys()),
         )
 
         return self.result
