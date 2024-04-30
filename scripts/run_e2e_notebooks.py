@@ -47,7 +47,7 @@ NOTEBOOKS_TO_RUN = [
     # TODO: fix the above when we have a regression template installed
     "notebooks/how_to/run_unit_metrics.ipynb",
     "notebooks/code_samples/custom_tests/integrate-external_test_providers.ipynb",
-    "notebooks/code_samples/custom_tests/implementing_custom_tests.ipynb",
+    "notebooks/code_samples/custom_tests/implement_custom_tests.ipynb",
 ]
 
 INIT_CELL_CODE = """
