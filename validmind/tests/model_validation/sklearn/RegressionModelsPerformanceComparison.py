@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass
 
 import numpy as np
-from sklearn import metrics
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from validmind.errors import SkipTestError
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
@@ -67,12 +67,12 @@ class RegressionModelsPerformanceComparison(Metric):
     }
 
     def regression_errors(self, y_true_test, y_pred_test):
-        mae_test = metrics.mean_absolute_error(y_true_test, y_pred_test)
+        mae_test = mean_absolute_error(y_true_test, y_pred_test)
 
         results = {}
         results["Mean Absolute Error (MAE)"] = mae_test
 
-        mse_test = metrics.mean_squared_error(y_true_test, y_pred_test)
+        mse_test = mean_squared_error(y_true_test, y_pred_test)
         results["Mean Squared Error (MSE)"] = mse_test
         results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
 
@@ -121,12 +121,14 @@ class RegressionModelsPerformanceComparison(Metric):
 
         if self.inputs.models is not None:
             all_models.extend(self.inputs.models)
+
         results = {}
 
         for idx, model in enumerate(all_models):
             result = self.regression_errors(
                 y_true_test=self.inputs.dataset.y,
-                y_pred_test=self.inputs.dataset.y_pred(model.input_id),
+                y_pred_test=self.inputs.dataset.y_pred(model),
             )
             results["model_" + str(idx)] = result
+
         return self.cache_results(results)

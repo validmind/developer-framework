@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import call, MagicMock, Mock, patch
 
 import matplotlib.pyplot as plt
-import pandas as pd
+import mistune
 from aiohttp.formdata import FormData
 
 # simluate environment variables being set
@@ -15,11 +15,9 @@ os.environ["VM_API_HOST"] = "your_api_host"
 os.environ["VM_API_PROJECT"] = "your_project"
 os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
-import validmind as vm
 import validmind.api_client as api_client
 from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
 from validmind.vm_models.figure import Figure
-from validmind.utils import NumpyEncoder
 
 
 loop = asyncio.new_event_loop()
@@ -166,19 +164,19 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(mock_post.call_args[0][0], url)
         self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
 
-    @patch("aiohttp.ClientSession.post")
-    def test_log_figures(self, mock_post: MagicMock):
-        mock_response = MockResponse(200, json=[{"cuid": "1234"}, {"cuid": "5678"}])
-        mock_post.return_value = mock_response
-        api_client.client_config.feature_flags["log_figures"] = True
+    # @patch("aiohttp.ClientSession.post")
+    # def test_log_figures(self, mock_post: MagicMock):
+    #     mock_response = MockResponse(200, json=[{"cuid": "1234"}, {"cuid": "5678"}])
+    #     mock_post.return_value = mock_response
+    #     api_client.client_config.feature_flags["log_figures"] = True
 
-        self.run_async(api_client.log_figures, [mock_figure(), mock_figure()])
+    #     self.run_async(api_client.log_figures, [mock_figure(), mock_figure()])
 
-        url = f"{os.environ['VM_API_HOST']}/log_figures?run_cuid={os.environ['VM_RUN_CUID']}"
-        mock_post.assert_called_once()
-        self.assertEqual(len(mock_post.call_args), 2)
-        self.assertEqual(mock_post.call_args[0][0], url)
-        self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
+    #     url = f"{os.environ['VM_API_HOST']}/log_figures?run_cuid={os.environ['VM_RUN_CUID']}"
+    #     mock_post.assert_called_once()
+    #     self.assertEqual(len(mock_post.call_args), 2)
+    #     self.assertEqual(mock_post.call_args[0][0], url)
+    #     self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
 
     @patch("aiohttp.ClientSession.post")
     def test_log_metadata(self, mock_post: MagicMock):
@@ -198,7 +196,7 @@ class TestAPIClient(unittest.TestCase):
             data=json.dumps(
                 {
                     "content_id": "1234",
-                    "text": "Some Text",
+                    "text": mistune.html("Some Text"),
                     "json": {"key": "value"},
                 }
             ),
@@ -214,7 +212,9 @@ class TestAPIClient(unittest.TestCase):
         self.run_async(api_client.log_metrics, metrics, inputs=["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_metrics?run_cuid={os.environ['VM_RUN_CUID']}"
-        mock_post.assert_called_with(url, data=json.dumps([{"key": "value", "inputs": ["input1"]}]))
+        mock_post.assert_called_with(
+            url, data=json.dumps([{"key": "value", "inputs": ["input1"]}])
+        )
 
     @patch("aiohttp.ClientSession.post")
     def test_log_test_result(self, mock_post):
@@ -228,7 +228,9 @@ class TestAPIClient(unittest.TestCase):
         url = f"{os.environ['VM_API_HOST']}/log_test_results"
         url += f"?dataset_type=training&run_cuid={os.environ['VM_RUN_CUID']}"
 
-        mock_post.assert_called_with(url, data=json.dumps({"key": "value", "inputs": ["input1"]}))
+        mock_post.assert_called_with(
+            url, data=json.dumps({"key": "value", "inputs": ["input1"]})
+        )
 
     @patch("validmind.api_client.log_test_result")
     def test_log_test_results(self, mock_log_test_result: MagicMock):

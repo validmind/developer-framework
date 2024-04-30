@@ -82,7 +82,7 @@ class RegressionModelsPerformance(Metric):
         for model, dataset in zip(models, datasets):
             X_columns = dataset.get_features_columns()
             y_true = dataset.y
-            y_pred = dataset.y_pred(model.input_id)
+            y_pred = dataset.y_pred(model)
 
             # Extract R-squared and Adjusted R-squared
             r2 = r2_score(y_true, y_pred)

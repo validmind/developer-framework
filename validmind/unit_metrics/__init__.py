@@ -3,14 +3,13 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import hashlib
-import importlib
 import json
+from importlib import import_module
 
 import numpy as np
 
-from validmind.vm_models import TestInput
-
-from ..utils import get_model_info
+from ..tests.decorator import _build_result, _inspect_signature
+from ..utils import get_model_info, test_id_to_name
 
 unit_metric_results_cache = {}
 
@@ -134,52 +133,6 @@ def _fast_hash(df, sample_size=1000, model_and_prediction_info=None):
     return hash_obj.hexdigest()
 
 
-def _get_metric_class(metric_id):
-    """Get the metric class by metric_id
-
-    This function will load the metric class by metric_id.
-
-    Args:
-        metric_id (str): The full metric id (e.g. 'validmind.vm_models.test.v2.model_validation.sklearn.F1')
-
-    Returns:
-        Metric: The metric class
-    """
-
-    metric_module = importlib.import_module(f"{metric_id}")
-
-    class_name = metric_id.split(".")[-1]
-
-    # Access the class within the F1 module
-    metric_class = getattr(metric_module, class_name)
-
-    return metric_class
-
-
-def get_input_type(input_obj):
-    """
-    Determines whether the input object is a 'dataset' or 'model' based on its class module path.
-
-    Args:
-        input_obj: The object to type check.
-
-    Returns:
-        str: 'dataset' or 'model' depending on the object's module, or raises ValueError.
-    """
-    # Obtain the class object of input_obj (for clarity and debugging)
-    class_obj = input_obj.__class__
-
-    # Obtain the module name as a string from the class object
-    class_module = class_obj.__module__
-
-    if "validmind.vm_models.dataset" in class_module:
-        return "dataset"
-    elif "validmind.models" in class_module:
-        return "model"
-    else:
-        raise ValueError("Input must be of type validmind Dataset or Model")
-
-
 def get_metric_cache_key(metric_id, params, inputs):
     cache_elements = [metric_id]
 
@@ -209,34 +162,88 @@ def get_metric_cache_key(metric_id, params, inputs):
     return key
 
 
-def run_metric(metric_id=None, inputs=None, params=None):
-    """Run a single metric
-
-    This function provides a high level interface for running a single metric. A metric
-    is a single test that calculates a value based on the input data.
+def load_metric(metric_id):
+    """Load a metric class from a string
 
     Args:
-        metric_id (str): The metric name (e.g. 'F1')
-        params (dict): A dictionary of the metric parameters
+        metric_id (str): The metric id (e.g. 'validmind.unit_metrics.classification.sklearn.F1')
 
     Returns:
-        MetricResult: The metric result object
+        callable: The metric function
     """
+    return getattr(import_module(metric_id), metric_id.split(".")[-1])
+
+
+def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False):
+    """Run a single metric and cache the results
+
+    Args:
+        metric_id (str): The metric id (e.g. 'validmind.unit_metrics.classification.sklearn.F1')
+        inputs (dict): A dictionary of the metric inputs
+        params (dict): A dictionary of the metric parameters
+        show (bool): Whether to display the results
+        value_only (bool): Whether to return only the value
+    """
+    inputs = inputs or {}
+    params = params or {}
+
     cache_key = get_metric_cache_key(metric_id, params, inputs)
 
-    # Check if the metric value already exists in the global variable
-    if cache_key in unit_metric_results_cache:
-        return unit_metric_results_cache[cache_key]
+    if cache_key not in unit_metric_results_cache:
+        metric = load_metric(metric_id)
+        _inputs, _params = _inspect_signature(metric)
 
-    # Load the metric class by metric_id
-    metric_class = _get_metric_class(metric_id)
+        result = metric(
+            **{k: v for k, v in inputs.items() if k in _inputs.keys()},
+            **{k: v for k, v in params.items() if k in _params.keys()},
+        )
+        unit_metric_results_cache[cache_key] = (result, list(_inputs.keys()))
 
-    # Initialize the metric
-    metric = metric_class(test_id=metric_id, inputs=TestInput(inputs), params=params)
+    value = unit_metric_results_cache[cache_key][0]
 
-    # Run the metric
-    result = metric.run()
+    if value_only:
+        return value
 
-    unit_metric_results_cache[cache_key] = result
+    output_template = f"""
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>{test_id_to_name(metric_id)}</strong></td>
+                <td>{value:.4f}</td>
+            </tr>
+        </tbody>
+    </table>
+    <style>
+        th, td {{
+            padding: 5px;
+            text-align: left;
+        }}
+    </style>
+    """
+    result = _build_result(
+        results=value,
+        test_id=metric_id,
+        description="",
+        output_template=output_template,
+        inputs=unit_metric_results_cache[cache_key][1],
+    )
+
+    # in case the user tries to log the result object
+    def log(self):
+        raise Exception(
+            "Cannot log unit metrics directly..."
+            "You can run this unit metric as part of a composite metric and log that"
+        )
+
+    result.log = log
+
+    if show:
+        result.show()
 
     return result
