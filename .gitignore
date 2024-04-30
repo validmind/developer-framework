@@ -203,3 +203,6 @@ r/validmind/.Rproj.user
 
 # scratch notebooks
 notebooks/scratch/
+
+# Custom tests
+my_tests/
