@@ -4,6 +4,10 @@
 
 import numpy as np
 
+from validmind import tags, tasks
 
+
+@tags("regression", "unit_metric")
+@tasks("regression")
 def MeanBiasDeviation(model, dataset):
     return np.mean(dataset.y - dataset.y_pred(model))

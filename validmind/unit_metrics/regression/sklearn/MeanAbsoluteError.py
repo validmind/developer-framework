@@ -4,6 +4,10 @@
 
 from sklearn.metrics import mean_absolute_error as _mean_absolute_error
 
+from validmind import tags, tasks
 
+
+@tags("regression", "sklearn", "unit_metric")
+@tasks("regression")
 def MeanAbsoluteError(model, dataset, **kwargs):
     return _mean_absolute_error(dataset.y, dataset.y_pred(model), **kwargs)

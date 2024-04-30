@@ -60,6 +60,12 @@
                     <a class="function" href="#run_test_suite">run_test_suite</a>
             </li>
             <li>
+                    <a class="function" href="#tags">tags</a>
+            </li>
+            <li>
+                    <a class="function" href="#tasks">tasks</a>
+            </li>
+            <li>
                     <a class="function" href="#log_figure">log_figure</a>
             </li>
             <li>
@@ -141,7 +147,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;2.0.12&#39;</span>
+<span class="default_value">&#39;2.0.15&#39;</span>
 
         
     </div>
@@ -383,6 +389,7 @@ parameters. It can return any number of the following types:</p>
 <ul>
 <li>Table: Either a list of dictionaries or a pandas DataFrame</li>
 <li>Plot: Either a matplotlib figure or a plotly figure</li>
+<li>Scalar: A single number or string</li>
 </ul>
 
 <p>The function may also include a docstring. This docstring will be used and logged
@@ -527,6 +534,48 @@ documentation or <code>vm.describe_test()</code> for more details on the inputs 
 <blockquote>
   <p>TestSuite: the TestSuite instance</p>
 </blockquote>
+</div>
+
+
+                </section>
+                <section id="tags">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tags</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">tags</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#tags"></a>
+    
+            <div class="docstring"><p>Decorator for specifying tags for a metric.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>*tags:</strong>  The tags to apply to the metric.</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="tasks">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tasks</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">tasks</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#tasks"></a>
+    
+            <div class="docstring"><p>Decorator for specifying the task types that a metric is designed for.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>*tasks:</strong>  The task types that the metric is designed for.</li>
+</ul>
 </div>
 
 

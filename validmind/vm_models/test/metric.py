@@ -15,7 +15,6 @@ import pandas as pd
 
 from ...ai import generate_description
 from ...errors import MissingCacheResultsArgumentsError
-from ...utils import clean_docstring
 from ..figure import Figure
 from .metric_result import MetricResult
 from .result_wrapper import MetricResultWrapper
@@ -98,7 +97,7 @@ class Metric(Test):
             )
         else:
             revision_name = "Default Description"
-            description = clean_docstring(self.description())
+            description = self.description()
 
         description_metadata = {
             "content_id": f"metric_description:{self.test_id}::{revision_name}",

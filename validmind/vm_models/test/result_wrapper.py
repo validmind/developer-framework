@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
-import markdown
+import mistune
 import pandas as pd
 from IPython.display import display
 
@@ -103,7 +103,7 @@ class ResultWrapper(ABC):
         """
         Convert a markdown string to html
         """
-        return markdown.markdown(description, extensions=["markdown.extensions.tables"])
+        return mistune.html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """

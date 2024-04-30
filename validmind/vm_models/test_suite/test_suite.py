@@ -7,6 +7,7 @@ Base class for test suites and test suite sections
 """
 
 from dataclasses import dataclass
+from inspect import getdoc
 from typing import ClassVar, List, Optional, Union
 
 from ...logging import get_logger
@@ -154,7 +155,7 @@ class TestSuite:
 
     @property
     def description(self):
-        return self.__doc__
+        return getdoc(self).strip()
 
     @property
     def title(self):

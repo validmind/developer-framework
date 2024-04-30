@@ -4,6 +4,10 @@
 
 from sklearn.metrics import mean_squared_error
 
+from validmind import tags, tasks
 
+
+@tags("regression", "sklearn", "unit_metric")
+@tasks("regression")
 def MeanSquaredError(model, dataset, **kwargs):
     return mean_squared_error(dataset.y, dataset.y_pred(model), **kwargs)

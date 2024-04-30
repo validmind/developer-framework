@@ -61,6 +61,15 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="function" href="#metric">metric</a>
+            </li>
+            <li>
+                    <a class="function" href="#tags">tags</a>
+            </li>
+            <li>
+                    <a class="function" href="#tasks">tasks</a>
+            </li>
     </ul>
 
 
@@ -131,13 +140,26 @@ line. Defaults to True. (only used if pretty=True)</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">load_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_id</span>, </span><span class="param"><span class="n">reload</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
+        <span class="name">load_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">reload</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#load_test"></a>
     
-    
+            <div class="docstring"><p>Load a test by test ID</p>
+
+<p>Test IDs are in the format <code>namespace.path_to_module.TestClassOrFuncName[:result_id]</code>.
+The result ID is optional and is used to distinguish between multiple results from the
+running the same test.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_id (str):</strong>  The test ID in the format <code>namespace.path_to_module.TestName[:result_id]</code></li>
+<li><strong>reload (bool, optional):</strong>  Whether to reload the test module. Defaults to False.</li>
+</ul>
+</div>
+
 
                 </section>
                 <section id="describe_test">
@@ -171,7 +193,7 @@ Defaults to False.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_test_provider</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_provider</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">tests</span><span class="o">.</span><span class="n">__types__</span><span class="o">.</span><span class="n">ExternalTestProvider</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">register_test_provider</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_provider</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">tests</span><span class="o">.</span><span class="n">test_providers</span><span class="o">.</span><span class="n">TestProvider</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
         
     </div>
@@ -183,7 +205,7 @@ Defaults to False.</li>
 
 <ul>
 <li><strong>namespace (str):</strong>  The namespace of the test provider</li>
-<li><strong>test_provider (ExternalTestProvider):</strong>  The test provider</li>
+<li><strong>test_provider (TestProvider):</strong>  The test provider</li>
 </ul>
 </div>
 
@@ -313,6 +335,95 @@ test = test_provider.load_test("my_namespace.my_test_class")
 
 
                             </div>
+                </section>
+                <section id="metric">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">metric</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func_or_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#metric"></a>
+    
+            <div class="docstring"><p>Decorator for creating and registering metrics with the ValidMind framework.</p>
+
+<p>Creates a metric object and registers it with ValidMind under the provided ID. If
+no ID is provided, the function name will be used as to build one. So if the
+function name is <code>my_metric</code>, the metric will be registered under the ID
+<code>validmind.custom_metrics.my_metric</code>.</p>
+
+<p>This decorator works by creating a new <code>Metric</code> class will be created whose <code>run</code>
+method calls the decorated function. This function should take as arguments the
+inputs it requires (<code>dataset</code>, <code>datasets</code>, <code>model</code>, <code>models</code>) followed by any
+parameters. It can return any number of the following types:</p>
+
+<ul>
+<li>Table: Either a list of dictionaries or a pandas DataFrame</li>
+<li>Plot: Either a matplotlib figure or a plotly figure</li>
+<li>Scalar: A single number or string</li>
+</ul>
+
+<p>The function may also include a docstring. This docstring will be used and logged
+as the metric's description.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>func:</strong>  The function to decorate</li>
+<li><strong>test_id:</strong>  The identifier for the metric. If not provided, the function name is used.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The decorated function.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="tags">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tags</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">tags</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#tags"></a>
+    
+            <div class="docstring"><p>Decorator for specifying tags for a metric.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>*tags:</strong>  The tags to apply to the metric.</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="tasks">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tasks</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">tasks</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#tasks"></a>
+    
+            <div class="docstring"><p>Decorator for specifying the task types that a metric is designed for.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>*tasks:</strong>  The task types that the metric is designed for.</li>
+</ul>
+</div>
+
+
                 </section>
     </main>
 <script>

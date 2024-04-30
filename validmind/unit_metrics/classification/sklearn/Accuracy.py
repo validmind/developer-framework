@@ -4,7 +4,11 @@
 
 from sklearn.metrics import accuracy_score
 
+from validmind import tags, tasks
 
+
+@tags("classification", "sklearn", "unit_metric")
+@tasks("classification")
 def Accuracy(dataset, model):
     """Calculates the accuracy of a model"""
     return accuracy_score(dataset.y, dataset.y_pred(model))
