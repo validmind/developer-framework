@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.models import Prompt
+from validmind.models.foundation import Prompt
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)

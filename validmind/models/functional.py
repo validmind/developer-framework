@@ -2,7 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from validmind.vm_models import VMModel
+from validmind.vm_models.model import VMModel
 
 
 class FunctionalModel(VMModel):
@@ -21,4 +21,21 @@ class FunctionalModel(VMModel):
             raise ValueError("FunctionalModel requires a callable predict_fn")
 
         self.name = self.name or self.predict_fn.__name__
-        self.predict = self.predict_fn
+
+    def predict(self, X, *args, **kwargs):
+        print(type(X))
+        print(type(X[0]))
+        try:
+            print(type(X[0][0]))
+            print(len(X[0]))
+        except:
+            pass
+
+        return [
+            (
+                self.predict_fn(*x, *args, **kwargs)
+                if isinstance(x, (list, tuple))
+                else self.predict_fn(x, *args, **kwargs)
+            )
+            for x in X
+        ]

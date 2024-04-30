@@ -8,6 +8,7 @@ from typing import List
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -17,13 +18,14 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
+logger = get_logger(__name__)
+
 
 class StabilityAnalysis(ThresholdTest):
     """Base class for embeddings stability analysis tests"""
 
     required_inputs = ["model", "dataset"]
     default_params = {
-        "text_column": None,
         "mean_similarity_threshold": 0.7,
     }
     metadata = {
@@ -61,16 +63,12 @@ class StabilityAnalysis(ThresholdTest):
 
     def run(self):
         # Perturb the test dataset
-        col = self.params.get("text_column")
-
-        if col is None:
-            raise ValueError(
-                "The `text_column` parameter must be provided to the StabilityAnalysis test."
-            )
-
-        original_data_df = self.inputs.dataset.df[col]
+        original_data_df = self.inputs.dataset.df[self.inputs.dataset.text_column]
         perturbed_data_df = original_data_df.copy()
         perturbed_data_df = perturbed_data_df.apply(self.perturb_data)
+
+        logger.debug(f"Original data: {original_data_df}")
+        logger.debug(f"Perturbed data: {perturbed_data_df}")
 
         # Compute embeddings for the original and perturbed dataset
         original_embeddings = self.inputs.model.predict(original_data_df)

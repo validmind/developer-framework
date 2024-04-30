@@ -92,13 +92,9 @@ class VMModel(ABC):
             "attributes": self.attributes.__dict__,
         }
 
-    @abstractmethod
-    def predict_proba(self, *args, **kwargs):
-        """
-        Predict probability for the model.
-        This is a wrapper around the model's if available
-        """
-        pass
+    def predict_proba(self):
+        """Predict probabilties - must be implemented by subclass if needed"""
+        raise NotImplementedError
 
     @abstractmethod
     def predict(self, *args, **kwargs):

@@ -640,7 +640,7 @@ class NumpyDataset(VMDataset):
                     self.__assign_prediction_probabilities(
                         model, prob_column, prediction_probabilities
                     )
-                except MissingOrInvalidModelPredictFnError:
+                except Exception:
                     # Log that predict_proba is not available or failed
                     logger.warn(
                         f"Model class '{model.__class__}' does not have a compatible predict_proba implementation."
