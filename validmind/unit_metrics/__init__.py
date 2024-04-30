@@ -8,7 +8,7 @@ from importlib import import_module
 
 import numpy as np
 
-from ..tests.decorator import _build_result
+from ..tests.decorator import _build_result, _inspect_signature
 from ..utils import get_model_info, test_id_to_name
 
 unit_metric_results_cache = {}
@@ -191,9 +191,15 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
 
     if cache_key not in unit_metric_results_cache:
         metric = load_metric(metric_id)
-        unit_metric_results_cache[cache_key] = metric(**inputs, **params)
+        _inputs, _params = _inspect_signature(metric)
 
-    value = unit_metric_results_cache[cache_key]
+        result = metric(
+            **{k: v for k, v in inputs.items() if k in _inputs.keys()},
+            **{k: v for k, v in params.items() if k in _params.keys()},
+        )
+        unit_metric_results_cache[cache_key] = (result, list(_inputs.keys()))
+
+    value = unit_metric_results_cache[cache_key][0]
 
     if value_only:
         return value
@@ -225,6 +231,7 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
         test_id=metric_id,
         description="",
         output_template=output_template,
+        inputs=unit_metric_results_cache[cache_key][1],
     )
 
     # in case the user tries to log the result object
