@@ -16,6 +16,7 @@ from io import BytesIO
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import aiohttp
+import mistune
 import requests
 from aiohttp import FormData
 
@@ -294,32 +295,33 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
     Returns:
         dict: The response from the API
     """
-    if client_config.can_log_figures():  # check if the backend supports batch logging
-        try:
-            data = {}
-            files = {}
-            for figure in figures:
-                data.update(
-                    {f"{k}-{figure.key}": v for k, v in figure.serialize().items()}
-                )
-                files.update(
-                    {
-                        f"{k}-{figure.key}": v
-                        for k, v in figure.serialize_files().items()
-                    }
-                )
+    # this actually slows things down - better to log them in parallel
+    # if client_config.can_log_figures():  # check if the backend supports batch logging
+    #     try:
+    #         data = {}
+    #         files = {}
+    #         for figure in figures:
+    #             data.update(
+    #                 {f"{k}-{figure.key}": v for k, v in figure.serialize().items()}
+    #             )
+    #             files.update(
+    #                 {
+    #                     f"{k}-{figure.key}": v
+    #                     for k, v in figure.serialize_files().items()
+    #                 }
+    #             )
 
-            return await _post(
-                "log_figures",
-                data=data,
-                files=files,
-            )
-        except Exception as e:
-            logger.error("Error logging figures to ValidMind API")
-            raise e
+    #         return await _post(
+    #             "log_figures",
+    #             data=data,
+    #             files=files,
+    #         )
+    #     except Exception as e:
+    #         logger.error("Error logging figures to ValidMind API")
+    #         raise e
 
-    else:
-        return await asyncio.gather(*[log_figure(figure) for figure in figures])
+    # else:
+    return await asyncio.gather(*[log_figure(figure) for figure in figures])
 
 
 async def log_metadata(
@@ -342,7 +344,7 @@ async def log_metadata(
     """
     metadata_dict = {"content_id": content_id}
     if text is not None:
-        metadata_dict["text"] = text
+        metadata_dict["text"] = mistune.html(text)
     if _json is not None:
         metadata_dict["json"] = _json
 

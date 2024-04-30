@@ -238,40 +238,6 @@ def summarize_data_quality_results(results):
     )
 
 
-def clean_docstring(docstring: str) -> str:
-    """
-    Clean up docstrings by removing leading and trailing whitespace and
-    replacing newlines with spaces.
-    """
-    description = (docstring or "").strip()
-    paragraphs = description.split("\n\n")  # Split into paragraphs
-    paragraphs = [
-        " ".join([line.strip() for line in paragraph.split("\n")])
-        for paragraph in paragraphs
-    ]
-    paragraphs = [
-        paragraph.replace(" - ", "\n- ") for paragraph in paragraphs
-    ]  # Add newline before list items
-    # Join paragraphs with double newlines for markdown
-    description = "\n\n".join(paragraphs)
-
-    lines = description.split("\n")
-    in_bullet_list = False
-    for i, line in enumerate([line for line in lines]):
-        if line.strip().startswith("-") and not in_bullet_list:
-            if lines[i - 1] != "":
-                lines[i] = "\n" + line
-
-            in_bullet_list = True
-            continue
-        elif line.strip().startswith("-") and in_bullet_list:
-            continue
-        elif line.strip() == "" and in_bullet_list:
-            in_bullet_list = False
-
-    return "\n".join(lines)
-
-
 def format_number(number):
     """
     Format a number for display purposes. If the number is a float, round it
@@ -354,20 +320,27 @@ def fuzzy_match(string: str, search_string: str, threshold=0.7):
     return score >= threshold
 
 
-def test_id_to_name(test_id: str):
-    """Convert a test ID to a human-readable name"""
-    # Extract the last part of the ID string
+def test_id_to_name(test_id: str) -> str:
+    """Convert a test ID to a human-readable name.
+
+    Args:
+        test_id (str): The test identifier, typically in CamelCase or snake_case.
+
+    Returns:
+        str: A human-readable name derived from the test ID.
+    """
     last_part = test_id.split(".")[-1]
+    words = []
 
-    # Use a regular expression to find words and acronyms in the CamelCase string
-    words = re.findall(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)", last_part)
+    # Split on underscores and apply regex to each part to handle CamelCase and acronyms
+    for part in last_part.split("_"):
+        # Regex pattern to match uppercase acronyms, mixed-case words, or alphanumeric combinations
+        words.extend(
+            re.findall(r"[A-Z]+(?:_[A-Z]+)*(?=_|$|[A-Z][a-z])|[A-Z]?[a-z0-9]+", part)
+        )
 
-    # Join the words with spaces and capitalize the first letter of each word, keeping acronyms unchanged
-    title = " ".join(
-        [word.capitalize() if not word.isupper() else word for word in words]
-    )
-
-    return title
+    # Join the words with spaces, capitalize non-acronym words
+    return " ".join(word.capitalize() if not word.isupper() else word for word in words)
 
 
 def get_model_info(model):

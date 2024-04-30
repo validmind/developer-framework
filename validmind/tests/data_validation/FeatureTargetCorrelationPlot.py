@@ -74,7 +74,9 @@ class FeatureTargetCorrelationPlot(Metric):
 
     def visualize_feature_target_correlation(self, df, target_column, fig_height):
         # Compute correlations with the target variable
-        correlations = df.corr(numeric_only=True)[target_column].drop(target_column)
+        correlations = (
+            df.corr(numeric_only=True)[target_column].drop(target_column).to_frame()
+        )
         correlations = correlations.loc[:, ~correlations.columns.duplicated()]
 
         correlations = correlations.sort_values(by=target_column, ascending=True)

@@ -183,8 +183,8 @@ catboost_info
 # Ignore pytorch models
 *.pt
 
-# Lending Club datasets
-lending_club_loan_data_*
+# Lending Club datasets csv
+lending_club_loan_data_*.csv
 
 # Pickle files
 *.pkl
@@ -203,3 +203,6 @@ r/validmind/.Rproj.user
 
 # scratch notebooks
 notebooks/scratch/
+
+# Custom tests
+my_tests/

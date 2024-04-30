@@ -65,8 +65,14 @@ class ScatterPlot(Metric):
         if not set(columns).issubset(set(df.columns)):
             raise ValueError("Provided 'columns' must exist in the dataset")
 
-        sns.pairplot(data=df, diag_kind="kde")
-
+        g = sns.pairplot(data=df, diag_kind="kde")
+        for ax in g.axes.flatten():
+            # rotate x axis labels
+            ax.set_xlabel(ax.get_xlabel(), rotation=45)
+            # rotate y axis labels
+            ax.set_ylabel(ax.get_ylabel(), rotation=45)
+            # set y labels alignment
+            ax.yaxis.get_label().set_horizontalalignment("right")
         # Get the current figure
         fig = plt.gcf()
 

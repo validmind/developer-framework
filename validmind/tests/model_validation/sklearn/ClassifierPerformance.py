@@ -5,17 +5,17 @@
 from dataclasses import dataclass
 
 from numpy import unique
-from sklearn import metrics, preprocessing
+from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.preprocessing import LabelBinarizer
 
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
 def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
-    lb = preprocessing.LabelBinarizer()
+    lb = LabelBinarizer()
     lb.fit(y_test)
-    y_test = lb.transform(y_test)
-    y_pred = lb.transform(y_pred)
-    return metrics.roc_auc_score(y_test, y_pred, average=average)
+
+    return roc_auc_score(lb.transform(y_test), lb.transform(y_pred), average=average)
 
 
 @dataclass
@@ -73,7 +73,7 @@ class ClassifierPerformance(Metric):
         When building a multi-class summary we need to calculate weighted average,
         macro average and per class metrics.
         """
-        classes = {str(i) for i in unique(self.y_true())}
+        classes = {str(i) for i in unique(self.inputs.dataset.y)}
         pr_f1_table = [
             {
                 "Class": class_name,
@@ -121,19 +121,16 @@ class ClassifierPerformance(Metric):
             ]
         )
 
-    def y_true(self):
-        return self.inputs.dataset.y
-
-    def y_pred(self):
-        return self.inputs.dataset.y_pred(model_id=self.inputs.model.input_id)
-
     def run(self):
-        y_true = self.y_true()
-        class_pred = self.y_pred()
-
-        report = metrics.classification_report(
-            y_true, class_pred, output_dict=True, zero_division=0
+        report = classification_report(
+            self.inputs.dataset.y,
+            self.inputs.dataset.y_pred(self.inputs.model),
+            output_dict=True,
+            zero_division=0,
         )
-        report["roc_auc"] = multiclass_roc_auc_score(y_true, class_pred)
+        report["roc_auc"] = multiclass_roc_auc_score(
+            self.inputs.dataset.y,
+            self.inputs.dataset.y_pred(self.inputs.model),
+        )
 
         return self.cache_results(report)

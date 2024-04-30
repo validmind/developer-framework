@@ -4,9 +4,9 @@
 
 from pprint import pformat
 
+import mistune
 from IPython.display import display
 from ipywidgets import HTML, Accordion, VBox
-from markdown import markdown
 
 from .html_templates.content_blocks import (
     failed_content_block_html,
@@ -75,7 +75,7 @@ def _create_content_widget(content):
             HTML(
                 test_content_block_html.format(
                     title=test_deets["Name"],
-                    description=markdown(test_deets["Description"]),
+                    description=mistune.html(test_deets["Description"]),
                     required_inputs=", ".join(
                         test_deets["Required Inputs"] or ["None"]
                     ),

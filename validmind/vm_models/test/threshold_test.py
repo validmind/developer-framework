@@ -13,7 +13,6 @@ from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
 from ...ai import generate_description
-from ...utils import clean_docstring
 from ..figure import Figure
 from .result_summary import ResultSummary, ResultTable
 from .result_wrapper import ThresholdTestResultWrapper
@@ -94,7 +93,7 @@ class ThresholdTest(Test):
             )
         else:
             revision_name = "Default Description"
-            description = clean_docstring(self.description())
+            description = self.description()
 
         description_metadata = {
             "content_id": f"test_description:{self.test_id}::{revision_name}",

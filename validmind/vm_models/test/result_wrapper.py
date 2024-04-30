@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
-import markdown
+import mistune
 import pandas as pd
 from IPython.display import display
 
@@ -103,7 +103,7 @@ class ResultWrapper(ABC):
         """
         Convert a markdown string to html
         """
-        return markdown.markdown(description, extensions=["markdown.extensions.tables"])
+        return mistune.html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
@@ -120,21 +120,19 @@ class ResultWrapper(ABC):
                     [
                         {
                             "selector": "",
-                            "props": [
-                                ("width", "100%"),
-                            ],
+                            "props": [("width", "100%")],
+                        },
+                        {
+                            "selector": "th",
+                            "props": [("text-align", "left")],
                         },
                         {
                             "selector": "tbody tr:nth-child(even)",
-                            "props": [
-                                ("background-color", "#FFFFFF"),
-                            ],
+                            "props": [("background-color", "#FFFFFF")],
                         },
                         {
                             "selector": "tbody tr:nth-child(odd)",
-                            "props": [
-                                ("background-color", "#F5F5F5"),
-                            ],
+                            "props": [("background-color", "#F5F5F5")],
                         },
                         {
                             "selector": "td, th",
@@ -144,7 +142,8 @@ class ResultWrapper(ABC):
                             ],
                         },
                     ]
-                )  # add borders
+                )
+                .set_properties(**{"text-align": "left"})
                 .to_html(escape=False)
             )  # table.data is an orient=records dump
 
@@ -217,7 +216,7 @@ class MetricResultWrapper(ResultWrapper):
             return ""
 
         vbox_children = [
-            widgets.HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>")
+            widgets.HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>"),
         ]
 
         if self.result_metadata:

@@ -61,29 +61,23 @@ class TestFullTestSuite(unittest.TestCase):
         self.assertIsInstance(vm_train_ds, VMDataset)
 
         vm_test_ds = vm.init_dataset(
-            dataset=test_df, input_id="test_dataset", target_column=customer_churn.target_column
+            dataset=test_df,
+            input_id="test_dataset",
+            target_column=customer_churn.target_column,
         )
         self.assertIsInstance(vm_test_ds, VMDataset)
 
-        vm_model = vm.init_model(
-            model,
-            input_id="model",
-        )
+        vm_model = vm.init_model(model, input_id="model")
         self.assertIsInstance(vm_model, VMModel)
 
-        vm_train_ds.assign_predictions(
-            model=vm_model,
-        )
-
-        vm_test_ds.assign_predictions(
-            model=vm_model,
-        )
-
-        config = customer_churn.get_demo_test_config(vm.get_test_suite("classifier_full_suite"))
+        vm_train_ds.assign_predictions(model=vm_model)
+        vm_test_ds.assign_predictions(model=vm_model)
 
         suite = vm.run_test_suite(
             "classifier_full_suite",
-            config=config,
+            config=customer_churn.get_demo_test_config(
+                vm.get_test_suite("classifier_full_suite")
+            ),
             fail_fast=True,
         )
 
