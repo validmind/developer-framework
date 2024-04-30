@@ -23,14 +23,6 @@ class FunctionalModel(VMModel):
         self.name = self.name or self.predict_fn.__name__
 
     def predict(self, X, *args, **kwargs):
-        print(type(X))
-        print(type(X[0]))
-        try:
-            print(type(X[0][0]))
-            print(len(X[0]))
-        except:
-            pass
-
         return [
             (
                 self.predict_fn(*x, *args, **kwargs)
