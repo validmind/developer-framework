@@ -345,10 +345,10 @@ def test_id_to_name(test_id: str) -> str:
 
 def get_model_info(model):
     """Attempts to extract all model info from a model object instance"""
-    architecture = model.model_name()
-    framework = model.model_library()
-    framework_version = model.model_library_version()
-    language = model.model_language()
+    architecture = model.name
+    framework = model.library
+    framework_version = model.libary_version
+    language = model.language
 
     if language is None:
         language = f"Python {python_version()}"
