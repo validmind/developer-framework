@@ -87,14 +87,12 @@ class RAGModel(VMModel):
         Y = []
 
         for x in X:
-            print(type(x), x)
-
             if self.embedder:
                 x_embed = self.embedder.predict(x)
             else:
                 x_embed = x
 
-            context = self.retriever.predict([x_embed])
-            Y.append(self.generator.predict([x, context]))
+            x.append(self.retriever.predict([x_embed])[0])
+            Y.append(self.generator.predict([x]))
 
         return Y
