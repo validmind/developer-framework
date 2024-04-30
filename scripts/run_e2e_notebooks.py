@@ -46,7 +46,7 @@ NOTEBOOKS_TO_RUN = [
     # "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     # TODO: fix the above when we have a regression template installed
     "notebooks/how_to/run_unit_metrics.ipynb",
-    "notebooks/code_samples/custom_tests/integrate-external_test_providers.ipynb",
+    "notebooks/code_samples/custom_tests/integrate_external_test_providers.ipynb",
     "notebooks/code_samples/custom_tests/implement_custom_tests.ipynb",
 ]
 
