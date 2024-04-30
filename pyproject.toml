@@ -10,7 +10,7 @@ description = "ValidMind Developer Framework"
 license = "Commercial License"
 name = "validmind"
 readme = "README.pypi.md"
-version = "2.1.0"
+version = "2.1.1"
 
 [tool.poetry.dependencies]
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
@@ -30,6 +30,7 @@ llvmlite = [
 matplotlib = "<3.8.3"
 mistune = "^3.0.2"
 nltk = "^3.8.1"
+numba = "<0.59.0" # TODO: https://github.com/validmind/developer-framework/pull/28
 numpy = [
   {version = "^1.23.3", python = ">=3.8,<=3.11"},
   {version = ">=1.26.0", python = ">=3.12"},

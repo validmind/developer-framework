@@ -77,6 +77,7 @@ class SHAPGlobalImportance(Metric):
     }
     default_params = {
         "kernel_explainer_samples": 10,
+        "tree_or_linear_explainer_samples": 200,
     }
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
@@ -181,7 +182,12 @@ class SHAPGlobalImportance(Metric):
                 self.params["kernel_explainer_samples"],
             )
         else:
-            shap_sample = self.inputs.dataset.x_df()
+            shap_sample = self.inputs.dataset.x_df().sample(
+                min(
+                    self.params["tree_or_linear_explainer_samples"],
+                    self.inputs.dataset.x_df().shape[0],
+                )
+            )
 
         shap_values = explainer.shap_values(shap_sample)
 
