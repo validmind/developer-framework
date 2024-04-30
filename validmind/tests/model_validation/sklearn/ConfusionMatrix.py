@@ -98,7 +98,7 @@ class ConfusionMatrix(Metric):
             colorscale="Blues",
             x=labels,
             y=labels,
-            annotation_text=text or None,
+            annotation_text=text,
         )
 
         fig["data"][0][
