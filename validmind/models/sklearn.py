@@ -2,38 +2,23 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.vm_models.model import (
-    ModelAttributes,
-    VMModel,
-    has_method_with_arguments,
-)
+from validmind.vm_models.model import VMModel, has_method_with_arguments
 
 logger = get_logger(__name__)
 
 
 class SKlearnModel(VMModel):
-    """
-    An SKlearn model class that wraps a trained model instance and its associated data.
+    def __post_init__(self):
+        if not self.model:
+            raise ValueError("Model object is a required argument for SKlearnModel")
 
-    Attributes:
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
-        model (object, optional): The trained model instance. Defaults to None.
-        device_type(str, optional) The device where model is trained
-    """
-
-    def __init__(
-        self,
-        model: object = None,  # Trained model instance
-        input_id: str = None,
-        attributes: ModelAttributes = None,
-    ):
-        super().__init__(
-            model=model,
-            input_id=input_id,
-            attributes=attributes,
-        )
+        self.library = self.model.__class__.__module__.split(".")[0]
+        self.class_ = self.model.__class__.__name__
+        self.name = self.name or type(self.model).__name__
 
     def predict_proba(self, *args, **kwargs):
         """
@@ -54,20 +39,36 @@ class SKlearnModel(VMModel):
         """
         return self.model.predict(*args, **kwargs)
 
-    def model_library(self):
-        """
-        Returns the model library name
-        """
-        return self.model.__class__.__module__.split(".")[0]
 
-    def model_class(self):
-        """
-        Returns the model class name
-        """
-        return self.model.__class__.__name__
+class CatBoostModel(SKlearnModel):
+    """Wrapper for CatBoost model"""
 
-    def model_name(self):
+    pass
+
+
+class XGBoostModel(SKlearnModel):
+    """Wrapper for XGBoost model"""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.library = "xgboost"
+
+
+class StatsModelsModel(SKlearnModel):
+    """Wrapper for StatsModels model"""
+
+    def __post_init__(self):
+        super().__post_init__()
+        self.library = "statsmodels"
+
+    def regression_coefficients(self):
         """
-        Returns model name
+        Returns the regression coefficients summary of the model
         """
-        return type(self.model).__name__
+        raw_summary = self.model.summary()
+
+        table = raw_summary.tables[1].data
+        headers = table.pop(0)
+        headers[0] = "Feature"
+
+        return pd.DataFrame(table, columns=headers)

@@ -8,36 +8,17 @@ import pandas as pd
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.vm_models.model import (
-    ModelAttributes,
-    VMModel,
-    has_method_with_arguments,
-)
+from validmind.vm_models.model import VMModel, has_method_with_arguments
 
 logger = get_logger(__name__)
 
 
 @dataclass
 class HFModel(VMModel):
-    """
-    An Hugging Face model class that wraps a trained model instance and its associated data.
-
-    Attributes:
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
-        model (object, optional): The trained model instance. Defaults to None.
-    """
-
-    def __init__(
-        self,
-        input_id: str = None,
-        model: object = None,  # Trained model instance
-        attributes: ModelAttributes = None,
-    ):
-        super().__init__(
-            model=model,
-            input_id=input_id,
-            attributes=attributes,
-        )
+    def __post_init__(self):
+        self.library = self.model.__class__.__module__.split(".")[0]
+        self.class_ = self.model.__class__.__name__
+        self.name = self.name or type(self.model).__name__
 
     def predict_proba(self, *args, **kwargs):
         """
@@ -69,24 +50,3 @@ class HFModel(VMModel):
             return pd.DataFrame([embedding[0][0] for embedding in results])
         else:
             return results
-
-    def model_library(self):
-        """
-        Returns the model library name
-        """
-        return self.model.__class__.__module__.split(".")[0]
-
-    def model_class(self):
-        """
-        Returns the model class name
-        """
-        return self.model.__class__.__name__
-
-    def model_name(self):
-        """
-        Returns model name
-        """
-        return type(self.model).__name__
-
-    def is_pytorch_model(self):
-        return self.model_library() == "torch"

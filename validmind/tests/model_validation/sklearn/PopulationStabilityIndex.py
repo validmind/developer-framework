@@ -92,9 +92,9 @@ class PopulationStabilityIndex(Metric):
         # The data looks like this: [{"initial": 2652, "percent_initial": 0.5525, "new": 830, "percent_new": 0.5188, "psi": 0.0021},...
         psi_table = [
             {
-                "Bin": i
-                if i < (len(metric_value) - 1)
-                else "Total",  # The last bin is the "Total" bin
+                "Bin": (
+                    i if i < (len(metric_value) - 1) else "Total"
+                ),  # The last bin is the "Total" bin
                 "Count Initial": values["initial"],
                 "Percent Initial (%)": values["percent_initial"] * 100,
                 "Count New": values["new"],
@@ -180,13 +180,8 @@ class PopulationStabilityIndex(Metric):
         return psi_df.to_dict(orient="records")
 
     def run(self):
-        model_library = self.inputs.model.model_library()
-        if (
-            model_library == "statsmodels"
-            or model_library == "pytorch"
-            or model_library == "catboost"
-        ):
-            logger.info(f"Skiping PSI for {model_library} models")
+        if self.inputs.model.library in ["statsmodels", "pytorch", "catboost"]:
+            logger.info(f"Skiping PSI for {self.inputs.model.library} models")
             return
 
         num_bins = self.params["num_bins"]
