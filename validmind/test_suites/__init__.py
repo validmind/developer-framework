@@ -5,6 +5,8 @@
 """
 Entrypoint for test suites.
 """
+from inspect import getdoc
+
 import pandas as pd
 
 from ..logging import get_logger
@@ -139,7 +141,7 @@ def list_suites(pretty: bool = True):
             {
                 "ID": suite_id,
                 "Name": test_suite.__name__,
-                "Description": test_suite.__doc__.strip(),
+                "Description": getdoc(test_suite).strip(),
                 "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
             }
         )
@@ -167,7 +169,7 @@ def describe_suite(test_suite_id: str, verbose=False):
                     {
                         "ID": test_suite_id,
                         "Name": test_suite.__name__,
-                        "Description": test_suite.__doc__.strip(),
+                        "Description": getdoc(test_suite).strip(),
                         "Tests": ", ".join(_get_test_suite_test_ids(test_suite)),
                     }
                 ]

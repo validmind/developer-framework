@@ -7,8 +7,6 @@ import os
 
 from openai import AzureOpenAI, OpenAI
 
-from .utils import clean_docstring
-
 SYSTEM_PROMPT = """
 You are an expert data scientist and MRM specialist tasked with providing concise and'
 objective insights based on the results of quantitative model or dataset analysis.
@@ -23,22 +21,20 @@ Your analysis will act as the description of the result in the model documentati
 
 Avoid long sentences and complex vocabulary.
 Structure the response clearly and logically.
-Use Markdown syntax to format the response.
+Use valid Markdown syntax to format the response (tables are supported).
 Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> "Class Imbalance".
-Use the following format for the response:
+Use the following format for the response (feel free to modify slightly if necessary):
 ```
 **<Test Name>** <continue to explain what it does in detail>...
 
 The results of this test <detailed explanation of the results>...
 
-In summary the following key insights can be gained from this <Test Type>
+In summary the following key insights can be gained:
 
 - **<key insight 1 - title>**: <explanation of key insight 1>
 - ...<continue with any other key insights using the same format>
 ```
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
-
-- use valid markdown syntax: make sure to have two newlines between paragraphs and before bullet points etc.
 """.strip()
 USER_PROMPT = """
 Test ID: {test_name}
@@ -111,7 +107,7 @@ class DescriptionFuture:
 
     def get_description(self):
         # This will block until the future is completed
-        return clean_docstring(self._future.result())
+        return self._future.result()
 
 
 def generate_description_async(
@@ -132,7 +128,7 @@ def generate_description_async(
             raise ValueError("No results, summary or figures provided")
 
         response = client.chat.completions.create(
-            model="gpt-4-1106-vision-preview",
+            model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {
@@ -160,7 +156,7 @@ def generate_description_async(
         )
     else:
         response = client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model="gpt-4-turbo",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {

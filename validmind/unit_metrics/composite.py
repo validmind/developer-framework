@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from ..logging import get_logger
 from ..tests.decorator import _inspect_signature
-from ..utils import clean_docstring, run_async, test_id_to_name
+from ..utils import run_async, test_id_to_name
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
@@ -201,7 +201,7 @@ def run_metrics(
         result_metadata=[
             {
                 "content_id": f"metric_description:{test_id}",
-                "text": clean_docstring(description),
+                "text": description,
             },
             {
                 "content_id": f"composite_metric_def:{test_id}:unit_metrics",

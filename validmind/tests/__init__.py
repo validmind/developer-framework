@@ -11,17 +11,17 @@ from pathlib import Path
 from pprint import pformat
 from typing import Dict
 
+import mistune
 import pandas as pd
 from IPython.display import display
 from ipywidgets import HTML
-from markdown import markdown
 
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import clean_docstring, format_dataframe, fuzzy_match, test_id_to_name
+from ..utils import format_dataframe, fuzzy_match, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -53,10 +53,12 @@ __custom_tests: Dict[str, object] = {}
 
 
 def _test_description(test_class, truncate=True):
-    if truncate and len(test_class.__doc__.split("\n")) > 5:
-        return test_class.__doc__.strip().split("\n")[0] + "..."
+    description = inspect.getdoc(test_class).strip()
 
-    return test_class.__doc__
+    if truncate and len(description.split("\n")) > 5:
+        return description.strip().split("\n")[0] + "..."
+
+    return description
 
 
 def _load_tests(test_ids):
@@ -290,7 +292,7 @@ def load_test(test_id: str, reload=False):
     running the same test.
 
     Args:
-        test_id (str): The test ID
+        test_id (str): The test ID in the format `namespace.path_to_module.TestName[:result_id]`
         reload (bool, optional): Whether to reload the test module. Defaults to False.
     """
     # TODO: we should use a dedicated class for test IDs to handle this consistently
@@ -325,13 +327,14 @@ def load_test(test_id: str, reload=False):
         logger.error(error)
         raise LoadTestError(error)
 
-    test.test_id = f"{test_id}:{result_id}" if result_id else test_id
-
     if inspect.isfunction(test):
         # if its a function, we decorate it and then load the class
-        # TODO: simplify this as we move towards all funcitonal metrics
-        metric(test.test_id)(test)
-        return __custom_tests[test.test_id]
+        # TODO: simplify this as we move towards all functional metrics
+        # "_" is used here so it doesn't conflict with other test ids
+        metric("_")(test)
+        test = __custom_tests["_"]
+
+    test.test_id = f"{test_id}:{result_id}" if result_id else test_id
 
     return test
 
@@ -356,7 +359,7 @@ def describe_test(test_id: str = None, raw: bool = False):
         "Test Type": test.test_type,
         "Required Inputs": test.required_inputs,
         "Params": test.default_params or {},
-        "Description": clean_docstring(test.__doc__),
+        "Description": inspect.getdoc(test).strip() or "",
     }
 
     if raw:
@@ -366,7 +369,7 @@ def describe_test(test_id: str = None, raw: bool = False):
         HTML(
             test_content_block_html.format(
                 title=f'{details["Name"]}',
-                description=markdown(details["Description"]),
+                description=mistune.html(details["Description"].strip()),
                 required_inputs=", ".join(details["Required Inputs"] or ["None"]),
                 params_table="\n".join(
                     [
