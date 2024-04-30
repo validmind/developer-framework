@@ -16,8 +16,8 @@ logger = get_logger(__name__)
 @dataclass
 class RAGPrompt(Prompt):
     def __post_init__(self):
-        if "contexts" not in self.variables:
-            raise ValueError("Prompt must contain 'contexts' variable")
+        if "context" not in self.variables:
+            raise ValueError("Prompt must contain 'context' variable")
 
     template: str
     variables: list
@@ -29,15 +29,15 @@ Please generate a response to the following query:
 {x}
 ```
 
-Using the information provided in the following contexts:
+Using the information provided in the following context:
 ```
-{'\n\n##########\n'.join(contexts)}
+{context}
 ```
 """.strip()
 
 DEFAULT_PROMPT = RAGPrompt(
     template=DEFAULT_PROMPT_TEMPLATE,
-    variables=["x", "contexts"],
+    variables=["x", "context"],
 )
 
 
@@ -83,16 +83,18 @@ class RAGModel(VMModel):
 
         self.name = self.name or "RAG Model"
 
-    def _build_prompt(self, x: pd.DataFrame):
-        """
-        Builds the prompt for the model
-        """
-        return self.prompt.template.format(
-            **{key: x[key] for key in self.prompt.variables}
-        )
+    def predict(self, X):
+        Y = []
 
-    def predict(self, X: pd.DataFrame):
-        """
-        Predict method for the model. This is a wrapper around the model's
-        """
-        return [self.predict_fn(self._build_prompt(x[1])) for x in X.iterrows()]
+        for x in X:
+            print(type(x), x)
+
+            if self.embedder:
+                x_embed = self.embedder.predict(x)
+            else:
+                x_embed = x
+
+            context = self.retriever.predict([x_embed])
+            Y.append(self.generator.predict([x, context]))
+
+        return Y
