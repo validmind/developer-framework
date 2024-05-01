@@ -347,7 +347,7 @@ def get_model_info(model):
     """Attempts to extract all model info from a model object instance"""
     architecture = model.name
     framework = model.library
-    framework_version = model.libary_version
+    framework_version = model.library_version
     language = model.language
 
     if language is None:
