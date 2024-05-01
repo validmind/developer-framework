@@ -3,9 +3,14 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
+from typing import List, Union
+
+import numpy as np
+import pandas as pd
 
 from validmind.logging import get_logger
 from validmind.models.foundation import Prompt
+from validmind.models.functional import FunctionalModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -39,7 +44,19 @@ DEFAULT_PROMPT = RAGPrompt(
 )
 
 
-class RAGModel(VMModel):
+class EmbeddingModel(FunctionalModel):
+    output_column: str = "embedding"
+
+
+class RetrievalModel(FunctionalModel):
+    output_column: str = "contexts"
+
+
+class GenerationModel(FunctionalModel):
+    output_column: str = "answer"
+
+
+class RAGModel(FunctionalModel):
     """RAGModel class wraps a RAG Model and its components
 
     This class wraps a set of component models that make up a RAG model.
@@ -65,6 +82,8 @@ class RAGModel(VMModel):
             variables
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         input_id (str, optional): The input ID of the model. Defaults to None.
+        output_column (str, optional): The output column name where predictions are stored.
+          Defaults to the `input_id` plus `_prediction`.
         name (str, optional): The name of the model. Defaults to RAG Model
     """
 
@@ -81,16 +100,14 @@ class RAGModel(VMModel):
 
         self.name = self.name or "RAG Model"
 
-    def predict(self, X):
-        Y = []
+    def predict(self, X: Union[pd.Series, pd.DataFrame]):
+        if isinstance(X, pd.Series):
+            X = X.to_frame()
 
-        for x in X:
-            if self.embedder:
-                x_embed = self.embedder.predict(x)
-            else:
-                x_embed = x
+        if self.embedder:
+            X[self.embedder.output_column] = self.embedder.predict(X)
 
-            x.append(self.retriever.predict([x_embed])[0])
-            Y.append(self.generator.predict([x]))
+        X[self.retriever.output_column] = self.retriever.predict(X)
+        X[self.generator.output_column] = self.generator.predict(X)
 
-        return Y
+        return X

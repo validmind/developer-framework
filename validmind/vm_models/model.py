@@ -50,20 +50,28 @@ class VMModel(ABC):
     Attributes:
         model (object, optional): The trained model instance. Defaults to None.
         input_id (str, optional): The input ID for the model. Defaults to None.
+        output_column (str, optional): The output column name where predictions are stored.
+          Defaults to the `input_id` plus `_prediction`.
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         name (str, optional): The name of the model. Defaults to the class name.
     """
+
+    output_column: str = None
 
     def __init__(
         self,
         input_id: str = None,
         model: object = None,
         attributes: ModelAttributes = None,
+        output_column: str = None,
         name: str = None,
         **kwargs,
     ):
         self.model = model
         self.input_id = input_id or f"{id(self)}"
+        self.output_column = (
+            output_column or self.output_column or f"{self.input_id}_prediction"
+        )
 
         self.language = "Python"
         self.library = self.__class__.__name__

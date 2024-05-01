@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models.model import VMModel
+from validmind.models.functional import FunctionalModel
 
 logger = get_logger(__name__)
 
@@ -18,7 +18,7 @@ class Prompt:
     variables: list
 
 
-class FoundationModel(VMModel):
+class FoundationModel(FunctionalModel):
     """FoundationModel class wraps a Foundation LLM endpoint
 
     This class wraps a predict function that is user-defined and adapts it to works
@@ -29,6 +29,8 @@ class FoundationModel(VMModel):
           and return the result from the model
         prompt (Prompt): The prompt object that defines the prompt template and the
           variables (if any)
+        output_column (str, optional): The output column name where predictions are stored.
+          Defaults to the `input_id` plus `_prediction`.
         name (str, optional): The name of the model. Defaults to name of the predict_fn
     """
 

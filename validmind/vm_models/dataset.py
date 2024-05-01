@@ -16,7 +16,7 @@ import polars as pl
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.models import FoundationModel
+from validmind.models import FunctionalModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -590,7 +590,7 @@ class NumpyDataset(VMDataset):
         ):
 
             # Compute prediction values directly from the VM model
-            pred_column = f"{model.input_id}_prediction"
+            pred_column = model.output_column or f"{model.input_id}_prediction"
             if pred_column in self.columns:
                 logger.info(
                     f"Prediction column {pred_column} already exist in the dataset. Linking the model with the {pred_column} column"
@@ -602,7 +602,7 @@ class NumpyDataset(VMDataset):
             # If the model is a FoundationModel, we need to pass the DataFrame to
             # the predict method since it requires column names in order to format
             # the input prompt with its template variables
-            x_only = self.x_df() if isinstance(model, FoundationModel) else self.x
+            x_only = self._df if isinstance(model, FunctionalModel) else self.x
 
             prediction_values = np.array(model.predict(x_only))
 
