@@ -3,9 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Union
 
-import numpy as np
 import pandas as pd
 
 from validmind.logging import get_logger
