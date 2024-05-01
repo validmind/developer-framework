@@ -4,10 +4,12 @@ Our code samples, based on Jupyter notebooks, are designed to showcase the capab
 
 Sample notebooks are organized into the following folders:
 
-* `notebooks/code_samples` — showcase end-to-end functionality for documenting models
-* `notebooks/how_to` — learn how to use specific ValidMind features, e.g. how to list all test suites
-* `notebooks/tutorials` — get step-by-step instructions and learn about ValidMind concepts in depth
-* `notebooks/code_sharing` — share your own notebooks or document code internally
+* `notebooks/code_samples` — Showcase end-to-end functionality for documenting models
+* `notebooks/how_to` — Learn how to use specific ValidMind features, e.g. how to list all test suites
+* `notebooks/tutorials` — Get step-by-step instructions and learn about ValidMind concepts in depth
+* `notebooks/code_sharing` — Share your own notebooks or document code internally
+* `notebooks/archive` — Deprecrated notebooks, that have either been retired or replaced with newer content
+
 
 ## Getting started 
 
