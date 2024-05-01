@@ -34,7 +34,12 @@ from .vm_models.dataset import (
     TorchDataset,
     VMDataset,
 )
-from .vm_models.model import VMModel, get_model_class
+from .vm_models.model import (
+    ModelAttributes,
+    VMModel,
+    get_model_class,
+    is_model_metadata,
+)
 
 pd.option_context("format.precision", 2)
 
@@ -175,8 +180,9 @@ def init_dataset(
 
 
 def init_model(
-    model: object,
+    model: object = None,
     input_id: str = None,
+    attributes: dict = None,
     __log=True,
 ) -> VMModel:
     """
@@ -186,13 +192,11 @@ def init_model(
 
     Args:
         model: A trained model
-        train_ds (vm.vm.Dataset): A training dataset (optional)
-        test_ds (vm.vm.Dataset): A testing dataset (optional)
-        validation_ds (vm.vm.Dataset): A validation dataset (optional)
         input_id (str): The input ID for the model (e.g. "my_model"). By default,
             this will be set to `model` but if you are passing this model as a
             test input using some other key than `model`, then you should set
             this to the same key.
+        attributes (dict): A dictionary of model attributes
 
     Raises:
         ValueError: If the model type is not supported
@@ -201,21 +205,34 @@ def init_model(
         vm.VMModel: A VM Model instance
     """
     class_obj = get_model_class(model=model)
-    if not class_obj:
+    if not class_obj and not is_model_metadata(attributes):
         raise UnsupportedModelError(
-            f"Model type {class_obj} is not supported at the moment."
+            f"Model class {str(model.__class__)} is not supported at the moment."
         )
+
     input_id = input_id or "model"
-    vm_model = class_obj(
-        input_id=input_id,
-        model=model,  # Trained model instance
-        attributes=None,
-    )
+    vm_model = None
+    metadata = None
+
+    if class_obj:
+        vm_model = class_obj(
+            input_id=input_id,
+            model=model,  # Trained model instance
+        )
+        metadata = get_model_info(vm_model)
+    else:
+        model_attributes = ModelAttributes.from_dict(attributes)
+        vm_model = VMModel(
+            input_id=input_id,
+            attributes=model_attributes,
+        )
+        metadata = attributes
+
     if __log:
         log_input(
             name=input_id,
             type="model",
-            metadata=get_model_info(vm_model),
+            metadata=metadata,
         )
 
     input_registry.add(key=input_id, obj=vm_model)
