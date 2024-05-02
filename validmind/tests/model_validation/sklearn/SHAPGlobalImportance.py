@@ -176,6 +176,7 @@ class SHAPGlobalImportance(Metric):
                 ),
             )
         else:
+            model_class = "<ExternalModel>" if model_class is None else model_class
             raise UnsupportedModelForSHAPError(
                 f"Model {model_class} not supported for SHAP importance."
             )

@@ -490,7 +490,7 @@ class NumpyDataset(VMDataset):
 
     def assign_predictions(  # noqa: C901 - we need to simplify this method
         self,
-        model,
+        model: VMModel,
         prediction_values: list = None,
         prediction_probabilities: list = None,
         prediction_column=None,
@@ -542,9 +542,6 @@ class NumpyDataset(VMDataset):
                     UserWarning,
                 )
 
-            logger.info(
-                f"Assigning prediction values to column '{pred_column}' and linked to model '{model.input_id}'"
-            )
             self.__assign_prediction_values(model, pred_column, prediction_values)
 
         # Step 3: Probability Column Provided
@@ -576,9 +573,6 @@ class NumpyDataset(VMDataset):
                     UserWarning,
                 )
 
-            logger.info(
-                f"Assigning prediction probabilities to column '{prob_column}' and linked to model '{model.input_id}'"
-            )
             self.__assign_prediction_probabilities(
                 model, prob_column, prediction_probabilities
             )
@@ -587,6 +581,16 @@ class NumpyDataset(VMDataset):
         elif not self.__model_id_in_prediction_columns(
             model=model, prediction_column=prediction_column
         ):
+
+            # Ensure the VMModel has a predict method. This should not happen in practice
+            # unless the user is trying to initialize a model with attributes only.
+            if not hasattr(model, "predict"):
+                raise AttributeError(
+                    "VMModel object does not have a predict method. "
+                    "\nUnable to compute predictions from the model. "
+                    "Please assign predictions directly with "
+                    "vm_dataset.assign_predictions(model, prediction_values)"
+                )
 
             # Compute prediction values directly from the VM model
             pred_column = f"{model.input_id}_prediction"
@@ -643,10 +647,13 @@ class NumpyDataset(VMDataset):
                     )
                 except MissingOrInvalidModelPredictFnError:
                     # Log that predict_proba is not available or failed
-                    logger.warn(
-                        f"Model class '{model.__class__}' does not have a compatible predict_proba implementation."
-                        + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
-                    )
+                    # TODO: don't log this warning for all models. Linear regression models
+                    # would not have predict_proba
+                    # logger.warn(
+                    #     f"Model class ({model.model.__class__}) '{model.__class__}' does not have a compatible predict_proba implementation."
+                    #     + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
+                    # )
+                    pass
 
         # Step 7: Prediction Column Already Linked
         else:
