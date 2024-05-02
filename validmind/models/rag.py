@@ -44,15 +44,15 @@ DEFAULT_PROMPT = RAGPrompt(
 
 
 class EmbeddingModel(FunctionalModel):
-    output_column: str = "embedding"
+    prediction_column: str = "embedding"
 
 
 class RetrievalModel(FunctionalModel):
-    output_column: str = "contexts"
+    prediction_column: str = "contexts"
 
 
 class GenerationModel(FunctionalModel):
-    output_column: str = "answer"
+    prediction_column: str = "answer"
 
 
 class RAGModel(FunctionalModel):
@@ -81,7 +81,7 @@ class RAGModel(FunctionalModel):
             variables
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         input_id (str, optional): The input ID of the model. Defaults to None.
-        output_column (str, optional): The output column name where predictions are stored.
+        prediction_column (str, optional): The output column name where predictions are stored.
           Defaults to the `input_id` plus `_prediction`.
         name (str, optional): The name of the model. Defaults to RAG Model
     """
@@ -104,9 +104,9 @@ class RAGModel(FunctionalModel):
             X = X.to_frame()
 
         if self.embedder:
-            X[self.embedder.output_column] = self.embedder.predict(X)
+            X[self.embedder.prediction_column] = self.embedder.predict(X)
 
-        X[self.retriever.output_column] = self.retriever.predict(X)
-        X[self.generator.output_column] = self.generator.predict(X)
+        X[self.retriever.prediction_column] = self.retriever.predict(X)
+        X[self.generator.prediction_column] = self.generator.predict(X)
 
         return X

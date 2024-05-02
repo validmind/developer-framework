@@ -16,7 +16,7 @@ class FunctionalModel(VMModel):
     Attributes:
         predict_fn (callable): The predict function that should take a prompt as input
           and return the result from the model
-        output_column (str, optional): The output column name where predictions are stored.
+        prediction_column (str, optional): The output column name where predictions are stored.
           Defaults to the `input_id` plus `_prediction`.
         input_id (str, optional): The input ID for the model. Defaults to None.
         name (str, optional): The name of the model. Defaults to the name of the predict_fn.

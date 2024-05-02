@@ -594,7 +594,7 @@ class NumpyDataset(VMDataset):
                 )
 
             # Compute prediction values directly from the VM model
-            pred_column = model.output_column or f"{model.input_id}_prediction"
+            pred_column = model.prediction_column or f"{model.input_id}_prediction"
             if pred_column in self.columns:
                 logger.info(
                     f"Prediction column {pred_column} already exist in the dataset. Linking the model with the {pred_column} column"
