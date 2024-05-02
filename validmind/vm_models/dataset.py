@@ -592,7 +592,7 @@ class NumpyDataset(VMDataset):
             # unless the user is trying to initialize a model with attributes only.
             if not hasattr(model, "predict"):
                 raise AttributeError(
-                    f"VMModel object does not have a predict method. "
+                    "VMModel object does not have a predict method. "
                     "\nUnable to compute predictions from the model. "
                     "Please assign predictions directly with "
                     "vm_dataset.assign_predictions(model, prediction_values)"
