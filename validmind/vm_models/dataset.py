@@ -490,7 +490,7 @@ class NumpyDataset(VMDataset):
 
     def assign_predictions(  # noqa: C901 - we need to simplify this method
         self,
-        model,
+        model: VMModel,
         prediction_values: list = None,
         prediction_probabilities: list = None,
         prediction_column=None,
@@ -588,6 +588,16 @@ class NumpyDataset(VMDataset):
             model=model, prediction_column=prediction_column
         ):
 
+            # Ensure the VMModel has a predict method. This should not happen in practice
+            # unless the user is trying to initialize a model with attributes only.
+            if not hasattr(model, "predict"):
+                raise AttributeError(
+                    f"VMModel object does not have a predict method. "
+                    "\nUnable to compute predictions from the model. "
+                    "Please assign predictions directly with "
+                    "vm_dataset.assign_predictions(model, prediction_values)"
+                )
+
             # Compute prediction values directly from the VM model
             pred_column = f"{model.input_id}_prediction"
             if pred_column in self.columns:
@@ -606,6 +616,7 @@ class NumpyDataset(VMDataset):
             )
 
             prediction_values = np.array(model.predict(x_only))
+            print(prediction_values)
 
             # Check if the prediction values are probabilities
             if _is_probability(prediction_values):

@@ -109,21 +109,6 @@ class VMModel:
         }
 
     @abstractmethod
-    def predict_proba(self, *args, **kwargs):
-        """
-        Predict probability for the model.
-        This is a wrapper around the model's if available
-        """
-        pass
-
-    @abstractmethod
-    def predict(self, *args, **kwargs):
-        """
-        Predict method for the model. This is a wrapper around the model's
-        """
-        pass
-
-    @abstractmethod
     def model_language(self, *args, **kwargs):
         """
         Programming language used to train the model. Assume Python if this
