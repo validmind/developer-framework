@@ -4,6 +4,7 @@ Unit tests for VMDataset class
 
 import unittest
 from unittest import TestCase
+from unittest.mock import patch
 
 import pandas as pd
 import numpy as np
@@ -41,14 +42,14 @@ class TestTabularDataset(TestCase):
         """
         vm_dataset = DataFrameDataset(raw_dataset=self.df, target_column="target")
 
-        self.assertEquals(vm_dataset.target_column, "target")
+        self.assertEqual(vm_dataset.target_column, "target")
         np.testing.assert_array_equal(vm_dataset.y, self.df[["target"]].values)
         pd.testing.assert_series_equal(vm_dataset.y_df(), self.df["target"])
 
         # Feature columns should be all columns except the target column
-        self.assertEquals(vm_dataset.get_numeric_features_columns(), ["col1"])
-        self.assertEquals(vm_dataset.get_categorical_features_columns(), ["col2"])
-        self.assertEquals(vm_dataset.feature_columns, ["col1", "col2"])
+        self.assertEqual(vm_dataset.get_numeric_features_columns(), ["col1"])
+        self.assertEqual(vm_dataset.get_categorical_features_columns(), ["col2"])
+        self.assertEqual(vm_dataset.feature_columns, ["col1", "col2"])
 
     def test_init_dataset_pandas_feature_columns(self):
         """
@@ -61,9 +62,9 @@ class TestTabularDataset(TestCase):
         # Only one feature column "col1"
         np.testing.assert_array_equal(vm_dataset.x, self.df[["col1"]].values)
 
-        self.assertEquals(vm_dataset.get_numeric_features_columns(), ["col1"])
-        self.assertEquals(vm_dataset.get_categorical_features_columns(), [])
-        self.assertEquals(vm_dataset.feature_columns, ["col1"])
+        self.assertEqual(vm_dataset.get_numeric_features_columns(), ["col1"])
+        self.assertEqual(vm_dataset.get_categorical_features_columns(), [])
+        self.assertEqual(vm_dataset.feature_columns, ["col1"])
 
     def test_assign_predictions_invalid_model(self):
         """
@@ -118,7 +119,7 @@ class TestTabularDataset(TestCase):
             vm_dataset.prediction_column(vm_model)
 
         vm_dataset.assign_predictions(model=vm_model)
-        self.assertEquals(vm_dataset.prediction_column(vm_model), "logreg_prediction")
+        self.assertEqual(vm_dataset.prediction_column(vm_model), "logreg_prediction")
 
         # Check that the predictions are assigned to the dataset
         self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
@@ -134,6 +135,7 @@ class TestTabularDataset(TestCase):
         """
         Test assigning predictions to dataset with a valid model
         """
+        # TODO "y": [0.1, 0.2, 0.3] wil trick the _is_probability() method
         df = pd.DataFrame({"x1": [1, 2, 3], "x2": [4, 5, 6], "y": [0.1, 1.2, 2.3]})
         vm_dataset = DataFrameDataset(
             raw_dataset=df, target_column="y", feature_columns=["x1", "x2"]
@@ -150,7 +152,7 @@ class TestTabularDataset(TestCase):
             vm_dataset.prediction_column(vm_model)
 
         vm_dataset.assign_predictions(model=vm_model)
-        self.assertEquals(vm_dataset.prediction_column(vm_model), "linreg_prediction")
+        self.assertEqual(vm_dataset.prediction_column(vm_model), "linreg_prediction")
 
         # Check that the predictions are assigned to the dataset
         self.assertTrue("linreg_prediction" in vm_dataset.df.columns)
@@ -162,7 +164,7 @@ class TestTabularDataset(TestCase):
 
     def test_assign_predictions_with_multiple_models(self):
         """
-        Test assigning predictions to dataset with a valid model
+        Test assigning predictions from multiple models to a single dataset
         """
         df = pd.DataFrame({"x1": [1, 2, 3], "x2": [4, 5, 6], "y": [0, 1, 0]})
         vm_dataset = DataFrameDataset(
@@ -179,29 +181,109 @@ class TestTabularDataset(TestCase):
         vm_lr_model = init_model(input_id="logreg", model=lr_model, __log=False)
         vm_rf_model = init_model(input_id="rf", model=rf_model, __log=False)
 
+        lr_model_predictions = lr_model.predict(vm_dataset.x)
+        rf_model_predictions = rf_model.predict(vm_dataset.x)
+
         vm_dataset.assign_predictions(model=vm_lr_model)
         vm_dataset.assign_predictions(model=vm_rf_model)
 
-        self.assertEquals(
-            vm_dataset.prediction_column(vm_lr_model), "logreg_prediction"
-        )
-        self.assertEquals(vm_dataset.prediction_column(vm_rf_model), "rf_prediction")
+        self.assertEqual(vm_dataset.prediction_column(vm_lr_model), "logreg_prediction")
+        self.assertEqual(vm_dataset.prediction_column(vm_rf_model), "rf_prediction")
 
-        # Check that the predictions are assigned to the dataset
+        # Check that the predictions are assigned to the dataset and they match
+        # their respective models
         self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
         self.assertTrue("rf_prediction" in vm_dataset.df.columns)
-        self.assertIsInstance(vm_dataset.y_pred(vm_lr_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_pred_df(vm_lr_model), pd.Series)
-        self.assertIsInstance(vm_dataset.y_pred(vm_rf_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_pred_df(vm_rf_model), pd.Series)
+        np.testing.assert_array_equal(
+            vm_dataset.y_pred(vm_lr_model), lr_model_predictions
+        )
+        np.testing.assert_array_equal(
+            vm_dataset.y_pred(vm_rf_model), rf_model_predictions
+        )
 
         # This model in particular will calculate probabilities as well
         self.assertTrue("logreg_probabilities" in vm_dataset.df.columns)
         self.assertTrue("rf_probabilities" in vm_dataset.df.columns)
-        self.assertIsInstance(vm_dataset.y_prob(vm_lr_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_prob_df(vm_lr_model), pd.Series)
-        self.assertIsInstance(vm_dataset.y_prob(vm_rf_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_prob_df(vm_rf_model), pd.Series)
+
+    def test_assign_predictions_with_model_and_prediction_values(self):
+        """
+        Test assigning predictions to dataset with pre-computed model predictions
+        """
+        df = pd.DataFrame({"x1": [1, 2, 3], "x2": [4, 5, 6], "y": [0, 1, 0]})
+        vm_dataset = DataFrameDataset(
+            raw_dataset=df, target_column="y", feature_columns=["x1", "x2"]
+        )
+
+        # Train a simple model
+        lr_model = LogisticRegression()
+        lr_model.fit(vm_dataset.x, vm_dataset.y.ravel())
+
+        vm_lr_model = init_model(input_id="logreg", model=lr_model, __log=False)
+
+        lr_model_predictions = lr_model.predict(vm_dataset.x)
+
+        with patch.object(
+            lr_model, "predict", return_value=lr_model_predictions
+        ) as mock:
+            vm_dataset.assign_predictions(
+                model=vm_lr_model, prediction_values=lr_model_predictions
+            )
+            # The model's predict method should not be called
+            mock.assert_not_called()
+
+        self.assertEqual(vm_dataset.prediction_column(vm_lr_model), "logreg_prediction")
+
+        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
+        np.testing.assert_array_equal(
+            vm_dataset.y_pred(vm_lr_model), lr_model_predictions
+        )
+
+        # Probabilities are not auto-assigned if prediction_values are provided
+        self.assertTrue("logreg_probabilities" not in vm_dataset.df.columns)
+
+    def test_assign_predictions_with_no_model_and_prediction_values(self):
+        """
+        Test assigning predictions to dataset with pre-computed model predictions
+        """
+        df = pd.DataFrame({"x1": [1, 2, 3], "x2": [4, 5, 6], "y": [0, 1, 0]})
+        vm_dataset = DataFrameDataset(
+            raw_dataset=df, target_column="y", feature_columns=["x1", "x2"]
+        )
+
+        # Train a simple model
+        # This time let's simulate that the predictions came from a model we don't have access to
+        lr_model = LogisticRegression()
+        lr_model.fit(vm_dataset.x, vm_dataset.y.ravel())
+
+        model_attributes = {
+            "architecture": "spark",
+            "language": "Python",
+        }
+
+        vm_lr_model = init_model(
+            input_id="logreg", attributes=model_attributes, __log=False
+        )
+
+        lr_model_predictions = lr_model.predict(vm_dataset.x)
+
+        with patch.object(
+            lr_model, "predict", return_value=lr_model_predictions
+        ) as mock:
+            vm_dataset.assign_predictions(
+                model=vm_lr_model, prediction_values=lr_model_predictions
+            )
+            # The model's predict method should not be called
+            mock.assert_not_called()
+
+        self.assertEqual(vm_dataset.prediction_column(vm_lr_model), "logreg_prediction")
+
+        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
+        np.testing.assert_array_equal(
+            vm_dataset.y_pred(vm_lr_model), lr_model_predictions
+        )
+
+        # Probabilities are not auto-assigned if prediction_values are provided
+        self.assertTrue("logreg_probabilities" not in vm_dataset.df.columns)
 
 
 if __name__ == "__main__":
