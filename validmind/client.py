@@ -205,10 +205,15 @@ def init_model(
         vm.VMModel: A VM Model instance
     """
     class_obj = get_model_class(model=model)
-    if not class_obj and not is_model_metadata(attributes):
-        raise UnsupportedModelError(
-            f"Model class {str(model.__class__)} is not supported at the moment."
-        )
+    if not class_obj:
+        if not attributes:
+            raise UnsupportedModelError(
+                f"Model class {str(model.__class__)} is not supported at the moment."
+            )
+        elif not is_model_metadata(attributes):
+            raise UnsupportedModelError(
+                f"Model attributes {str(attributes)} are missing required keys 'architecture' and 'language'."
+            )
 
     input_id = input_id or "model"
     vm_model = None

@@ -108,17 +108,22 @@ class TestInitModel(TestCase):
         vm_model = init_model(model)
         self.assertEqual(vm_model.model, model)
 
-    @mock.patch(
-        "validmind.client.log_input",
-        return_value="1234",
-    )
-    def test_init_model_metadata_dict(self, mock_log_input):
+    def test_init_model_invalid_metadata_dict(self):
+        # Model metadata requires architecture and language at a minimum
+        metadata = {
+            "key": "value",
+            "foo": "bar",
+        }
+        with self.assertRaises(UnsupportedModelError) as context:
+            init_model(attributes=metadata, __log=False)
+
+    def test_init_model_metadata_dict(self):
         # Model metadata requires architecture and language at a minimum
         metadata = {
             "architecture": "Spark",
             "language": "Python",
         }
-        vm_model = init_model(attributes=metadata)
+        vm_model = init_model(attributes=metadata, __log=False)
 
         # Model will be none but attributes will be populated
         self.assertEqual(vm_model.attributes.architecture, metadata["architecture"])
