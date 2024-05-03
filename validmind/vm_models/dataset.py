@@ -638,22 +638,24 @@ class NumpyDataset(VMDataset):
                 pred_column = f"{model.input_id}_prediction"
                 self.__assign_prediction_values(model, pred_column, prediction_values)
 
-                try:
-                    logger.info("Running predict_proba()... This may take a while")
-                    prediction_probabilities = np.array(model.predict_proba(x_only))
-                    prob_column = f"{model.input_id}_probabilities"
-                    self.__assign_prediction_probabilities(
-                        model, prob_column, prediction_probabilities
-                    )
-                except MissingOrInvalidModelPredictFnError:
-                    # Log that predict_proba is not available or failed
-                    # TODO: don't log this warning for all models. Linear regression models
-                    # would not have predict_proba
-                    # logger.warn(
-                    #     f"Model class ({model.model.__class__}) '{model.__class__}' does not have a compatible predict_proba implementation."
-                    #     + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
-                    # )
-                    pass
+                if hasattr(model.model.__class__, "predict_proba"):
+
+                    try:
+                        logger.info("Running predict_proba()... This may take a while")
+                        prediction_probabilities = np.array(model.predict_proba(x_only))
+                        prob_column = f"{model.input_id}_probabilities"
+                        self.__assign_prediction_probabilities(
+                            model, prob_column, prediction_probabilities
+                        )
+                    except MissingOrInvalidModelPredictFnError:
+                        # Log that predict_proba is not available or failed
+                        # TODO: don't log this warning for all models. Linear regression models
+                        # would not have predict_proba
+                        # logger.warn(
+                        #     f"Model class ({model.model.__class__}) '{model.__class__}' does not have a compatible predict_proba implementation."
+                        #     + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
+                        # )
+                        pass
 
         # Step 7: Prediction Column Already Linked
         else:
