@@ -36,7 +36,7 @@ class StabilityAnalysis(ThresholdTest):
     }
 
     @abstractmethod
-    def perturb_data(self, data: pd.Series) -> str:
+    def perturb_data(self, data: str) -> str:
         """Perturb a string of text (overriden by subclasses)"""
         pass
 

@@ -13,6 +13,7 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 from validmind.client import init_model
+from validmind.models import MetadataModel
 from validmind.vm_models.dataset import DataFrameDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
 
@@ -44,7 +45,7 @@ class TestTabularDataset(TestCase):
 
         self.assertEqual(vm_dataset.target_column, "target")
         np.testing.assert_array_equal(vm_dataset.y, self.df[["target"]].values)
-        pd.testing.assert_series_equal(vm_dataset.y_df(), self.df["target"])
+        pd.testing.assert_frame_equal(vm_dataset.y_df(), self.df["target"].to_frame())
 
         # Feature columns should be all columns except the target column
         self.assertEqual(vm_dataset.get_numeric_features_columns(), ["col1"])
@@ -81,7 +82,8 @@ class TestTabularDataset(TestCase):
         # If a user initializes a VMModel with no underlying model or passes attributes only
         vm_model = VMModel(input_id="1234")
         with self.assertRaises(
-            AttributeError, msg="VMModel must have a valid predict method"
+            TypeError,
+            msg="Can't instantiate abstract class VMModel with abstract method predict",
         ):
             vm_dataset.assign_predictions(model=vm_model)
 
@@ -124,12 +126,12 @@ class TestTabularDataset(TestCase):
         # Check that the predictions are assigned to the dataset
         self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
         self.assertIsInstance(vm_dataset.y_pred(vm_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.Series)
+        self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.DataFrame)
 
         # This model in particular will calculate probabilities as well
         self.assertTrue("logreg_probabilities" in vm_dataset.df.columns)
         self.assertIsInstance(vm_dataset.y_prob(vm_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_prob_df(vm_model), pd.Series)
+        self.assertIsInstance(vm_dataset.y_prob_df(vm_model), pd.DataFrame)
 
     def test_assign_predictions_with_regression_model(self):
         """
@@ -157,7 +159,7 @@ class TestTabularDataset(TestCase):
         # Check that the predictions are assigned to the dataset
         self.assertTrue("linreg_prediction" in vm_dataset.df.columns)
         self.assertIsInstance(vm_dataset.y_pred(vm_model), np.ndarray)
-        self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.Series)
+        self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.DataFrame)
 
         # Linear models do not have probabilities
         self.assertFalse("linreg_probabilities" in vm_dataset.df.columns)

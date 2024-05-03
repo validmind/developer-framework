@@ -9,6 +9,7 @@ Dataset class wrapper
 import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -20,6 +21,12 @@ from validmind.models import FunctionModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
+
+
+def _as_df(series_or_frame: Union[pd.Series, pd.DataFrame]) -> pd.DataFrame:
+    if isinstance(series_or_frame, pd.Series):
+        return series_or_frame.to_frame()
+    return series_or_frame
 
 
 @dataclass
@@ -946,7 +953,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The dataset as a DataFrame.
         """
-        return self._df.to_frame() if isinstance(self._df, pd.Series) else self._df
+        return _as_df(self._df)
 
     @property
     def copy(self):
@@ -962,9 +969,9 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The non target and prediction columns .
         """
-        return self.df[
-            [name for name in self.columns if name in self.feature_columns]
-        ].to_frame()
+        return _as_df(
+            self.df[[name for name in self.columns if name in self.feature_columns]]
+        )
 
     def y_df(self):
         """
@@ -973,7 +980,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self.df[self.target_column]
+        return _as_df(self.df[self.target_column])
 
     def y_pred_df(self, model):
         """
@@ -982,7 +989,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self.df[self.prediction_column(model)].to_frame()
+        return _as_df(self.df[self.prediction_column(model)])
 
     def y_prob_df(self, model):
         """
@@ -991,7 +998,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self.df[self.probability_column(model)].to_frame()
+        return _as_df(self.df[self.probability_column(model)])
 
     def prediction_column(self, model) -> str:
         """

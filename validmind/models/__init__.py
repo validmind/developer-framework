@@ -5,6 +5,7 @@
 from .foundation import FoundationModel, Prompt
 from .function import FunctionModel
 from .huggingface import HFModel
+from .metadata import MetadataModel
 from .pytorch import PyTorchModel
 from .rag import EmbeddingModel, GenerationModel, RAGModel, RAGPrompt, RetrievalModel
 from .sklearn import CatBoostModel, SKlearnModel, StatsModelsModel, XGBoostModel
@@ -16,6 +17,7 @@ __all__ = [
     "FunctionModel",
     "GenerationModel",
     "HFModel",
+    "MetadataModel",
     "Prompt",
     "PyTorchModel",
     "RAGModel",
