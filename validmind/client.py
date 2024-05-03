@@ -21,6 +21,7 @@ from .errors import (
 )
 from .input_registry import input_registry
 from .logging import get_logger
+from .models.metadata import MetadataModel
 from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
@@ -227,7 +228,7 @@ def init_model(
         metadata = get_model_info(vm_model)
     else:
         model_attributes = ModelAttributes.from_dict(attributes)
-        vm_model = VMModel(
+        vm_model = MetadataModel(
             input_id=input_id,
             attributes=model_attributes,
         )

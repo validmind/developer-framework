@@ -9,6 +9,7 @@ Dataset class wrapper
 import warnings
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -16,10 +17,16 @@ import polars as pl
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.models import FunctionalModel
+from validmind.models import FunctionModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
+
+
+def _as_df(series_or_frame: Union[pd.Series, pd.DataFrame]) -> pd.DataFrame:
+    if isinstance(series_or_frame, pd.Series):
+        return series_or_frame.to_frame()
+    return series_or_frame
 
 
 @dataclass
@@ -594,7 +601,9 @@ class NumpyDataset(VMDataset):
                 )
 
             # Compute prediction values directly from the VM model
-            pred_column = model.output_column or f"{model.input_id}_prediction"
+            # set the output column to `model.predict_col` set by user
+            # or default to `{model.input_id}_prediction`
+            pred_column = model.predict_col or f"{model.input_id}_prediction"
             if pred_column in self.columns:
                 logger.info(
                     f"Prediction column {pred_column} already exist in the dataset. Linking the model with the {pred_column} column"
@@ -606,7 +615,7 @@ class NumpyDataset(VMDataset):
             # If the model is a FoundationModel, we need to pass the DataFrame to
             # the predict method since it requires column names in order to format
             # the input prompt with its template variables
-            x_only = self._df if isinstance(model, FunctionalModel) else self.x
+            x_only = self._df if isinstance(model, FunctionModel) else self.x
 
             prediction_values = np.array(model.predict(x_only))
 
@@ -637,22 +646,24 @@ class NumpyDataset(VMDataset):
                 pred_column = f"{model.input_id}_prediction"
                 self.__assign_prediction_values(model, pred_column, prediction_values)
 
-                try:
-                    logger.info("Running predict_proba()... This may take a while")
-                    prediction_probabilities = np.array(model.predict_proba(x_only))
-                    prob_column = f"{model.input_id}_probabilities"
-                    self.__assign_prediction_probabilities(
-                        model, prob_column, prediction_probabilities
-                    )
-                except MissingOrInvalidModelPredictFnError:
-                    # Log that predict_proba is not available or failed
-                    # TODO: don't log this warning for all models. Linear regression models
-                    # would not have predict_proba
-                    # logger.warn(
-                    #     f"Model class ({model.model.__class__}) '{model.__class__}' does not have a compatible predict_proba implementation."
-                    #     + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
-                    # )
-                    pass
+                if hasattr(model.model.__class__, "predict_proba"):
+
+                    try:
+                        logger.info("Running predict_proba()... This may take a while")
+                        prediction_probabilities = np.array(model.predict_proba(x_only))
+                        prob_column = f"{model.input_id}_probabilities"
+                        self.__assign_prediction_probabilities(
+                            model, prob_column, prediction_probabilities
+                        )
+                    except MissingOrInvalidModelPredictFnError:
+                        # Log that predict_proba is not available or failed
+                        # TODO: don't log this warning for all models. Linear regression models
+                        # would not have predict_proba
+                        # logger.warn(
+                        #     f"Model class ({model.model.__class__}) '{model.__class__}' does not have a compatible predict_proba implementation."
+                        #     + " Please assign predictions directly with vm_dataset.assign_predictions(model, prediction_values)"
+                        # )
+                        pass
 
         # Step 7: Prediction Column Already Linked
         else:
@@ -944,14 +955,14 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The dataset as a DataFrame.
         """
-        return self._df
+        return _as_df(self._df)
 
     @property
     def copy(self):
         """
         Returns a copy of the raw_dataset dataframe.
         """
-        return self._df.copy()
+        return self.df.copy()
 
     def x_df(self):
         """
@@ -960,7 +971,9 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The non target and prediction columns .
         """
-        return self._df[[name for name in self.columns if name in self.feature_columns]]
+        return _as_df(
+            self.df[[name for name in self.columns if name in self.feature_columns]]
+        )
 
     def y_df(self):
         """
@@ -969,7 +982,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.target_column]
+        return _as_df(self.df[self.target_column])
 
     def y_pred_df(self, model):
         """
@@ -978,7 +991,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column(model)]
+        return _as_df(self.df[self.prediction_column(model)])
 
     def y_prob_df(self, model):
         """
@@ -987,7 +1000,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.probability_column(model)]
+        return _as_df(self.df[self.probability_column(model)])
 
     def prediction_column(self, model) -> str:
         """
