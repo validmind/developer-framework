@@ -7,7 +7,21 @@ from ragas import evaluate
 from ragas.metrics import context_relevancy
 
 
-def ContextRelevancy(dataset):
-    result = evaluate(Dataset.from_pandas(dataset._df), metrics=[context_relevancy])
+def ContextRelevancy(
+    dataset,
+    question_column="question",
+    answer_column="answer",
+    ground_truth_column="ground_truth",
+    contexts_column="contexts",
+):
+    required_columns = [
+        question_column,
+        answer_column,
+        ground_truth_column,
+        contexts_column,
+    ]
+    result = evaluate(
+        Dataset.from_pandas(dataset.df[required_columns]), metrics=[context_relevancy]
+    )
 
     return result.to_pandas()["context_relevancy"].to_list()
