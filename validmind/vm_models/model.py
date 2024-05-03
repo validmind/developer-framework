@@ -63,27 +63,27 @@ class VMModel(ABC):
     Attributes:
         model (object, optional): The trained model instance. Defaults to None.
         input_id (str, optional): The input ID for the model. Defaults to None.
-        output_column (str, optional): The output column name where predictions are stored.
+        predict_col (str, optional): The output column name where predictions are stored.
           Defaults to the `input_id` plus `_prediction`.
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         name (str, optional): The name of the model. Defaults to the class name.
     """
 
-    output_column: str = None
+    predict_col: str = None
 
     def __init__(
         self,
         input_id: str = None,
         model: object = None,
         attributes: ModelAttributes = None,
-        output_column: str = None,
+        predict_col: str = None,
         name: str = None,
         **kwargs,
     ):
         self.model = model
         self.input_id = input_id or f"{id(self)}"
-        self.output_column = (
-            output_column or self.output_column or f"{self.input_id}_prediction"
+        self.predict_col = (
+            predict_col or self.predict_col or f"{self.input_id}_prediction"
         )
 
         self.language = "Python"
@@ -113,39 +113,14 @@ class VMModel(ABC):
             "attributes": self.attributes.__dict__,
         }
 
-    @abstractmethod
-    def model_language(self, *args, **kwargs):
-        """
-        Programming language used to train the model. Assume Python if this
-        method is not implemented
-        """
-        pass
+    def predict_proba(self):
+        """Predict probabilties - must be implemented by subclass if needed"""
+        raise NotImplementedError
 
     @abstractmethod
-    def model_library(self, *args, **kwargs):
-        """
-        Model framework library
-        """
-        pass
-
-    @abstractmethod
-    def model_library_version(self, *args, **kwargs):
-        """
-        Model framework library version
-        """
-        pass
-
-    @abstractmethod
-    def model_class(self, *args, **kwargs):
+    def predict(self, *args, **kwargs):
         """
         Predict method for the model. This is a wrapper around the model's
-        """
-        pass
-
-    @abstractmethod
-    def model_name(self, *args, **kwargs):
-        """
-        Model name
         """
         pass
 

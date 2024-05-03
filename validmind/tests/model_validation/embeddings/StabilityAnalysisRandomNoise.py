@@ -118,6 +118,9 @@ class StabilityAnalysisRandomNoise(StabilityAnalysis):
     }
 
     def perturb_data(self, data):
+        if not isinstance(data, str):
+            return data
+
         probability = self.params["probability"]
 
         # Tokenize the string based on spaces

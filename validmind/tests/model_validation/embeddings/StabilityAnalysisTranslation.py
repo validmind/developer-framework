@@ -61,6 +61,9 @@ class StabilityAnalysisTranslation(StabilityAnalysis):
     }
 
     def perturb_data(self, data: str):
+        if not isinstance(data, str):
+            return data
+
         source_lang = self.params["source_lang"]
         target_lang = self.params["target_lang"]
 

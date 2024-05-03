@@ -9,7 +9,7 @@ import pandas as pd
 
 from validmind.logging import get_logger
 from validmind.models.foundation import Prompt
-from validmind.models.functional import FunctionalModel
+from validmind.models.function import FunctionModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -43,19 +43,19 @@ DEFAULT_PROMPT = RAGPrompt(
 )
 
 
-class EmbeddingModel(FunctionalModel):
-    output_column: str = "embedding"
+class EmbeddingModel(FunctionModel):
+    predict_col: str = "embedding"
 
 
-class RetrievalModel(FunctionalModel):
-    output_column: str = "contexts"
+class RetrievalModel(FunctionModel):
+    predict_col: str = "contexts"
 
 
-class GenerationModel(FunctionalModel):
-    output_column: str = "answer"
+class GenerationModel(FunctionModel):
+    predict_col: str = "answer"
 
 
-class RAGModel(FunctionalModel):
+class RAGModel(FunctionModel):
     """RAGModel class wraps a RAG Model and its components
 
     This class wraps a set of component models that make up a RAG model.
@@ -81,7 +81,7 @@ class RAGModel(FunctionalModel):
             variables
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         input_id (str, optional): The input ID of the model. Defaults to None.
-        output_column (str, optional): The output column name where predictions are stored.
+        predict_col (str, optional): The output column name where predictions are stored.
           Defaults to the `input_id` plus `_prediction`.
         name (str, optional): The name of the model. Defaults to RAG Model
     """
@@ -103,27 +103,10 @@ class RAGModel(FunctionalModel):
         if isinstance(X, pd.Series):
             X = X.to_frame()
 
-        if self.embedder.output_column in X.columns:
-            logger.info(
-                f"Embedding column '{self.embedder.output_column}' already exists, skipping computation."
-            )
-        else:
-            logger.info(f"Computing embeddings for {len(X)} rows.")
-            X[self.embedder.output_column] = self.embedder.predict(X)
+        if self.embedder:
+            X[self.embedder.predict_col] = self.embedder.predict(X)
 
-        if self.retriever.output_column in X.columns:
-            logger.info(
-                f"Context column '{self.retriever.output_column}' already exists, skipping computation."
-            )
-        else:
-            logger.info(f"Retrieving contexts for {len(X)} rows.")
-            X[self.retriever.output_column] = self.retriever.predict(X)
-        if self.generator.output_column in X.columns:
-            logger.info(
-                f"Answer column '{self.generator.output_column}' already exists, skipping computation."
-            )
-        else:
-            logger.info(f"Generating answers for {len(X)} rows.")
-            X[self.generator.output_column] = self.generator.predict(X)
+        X[self.retriever.predict_col] = self.retriever.predict(X)
+        X[self.generator.predict_col] = self.generator.predict(X)
 
         return X
