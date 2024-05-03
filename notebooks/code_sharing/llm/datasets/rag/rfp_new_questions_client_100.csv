@@ -1,0 +1,24 @@
+Project_Title,RFP_Question_ID,RFP_Question,RFP_Answer,Area,Requester,Status
+Gen AI-Driven Financial Advisory System,1,"What is your experience in developing AI-based applications, and can you provide examples of successful projects?",,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,2,How do you ensure your AI-based apps remain up-to-date with the latest AI advancements and technologies?,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,3,Can your AI-based applications be customized to meet specific user or business needs?,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,4,What measures do you take to ensure user privacy and data security in your AI-based apps?,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,5,How do you approach user interface and experience design in AI-based apps to ensure ease of use and engagement?,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,6,Describe your support and maintenance services for AI-based applications post-launch.,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,7,How do you measure the success and impact of your AI-based applications on client objectives?,,General,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,8,"How do you ensure the ethical use of LLMs in your applications, particularly regarding bias mitigation and data privacy?",,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,9,"Can you describe the process of training your LLMs, including data sourcing, model selection, and validation methods?",,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,10,How do you handle the continuous learning and updating of your LLMs to adapt to new data and evolving user needs?,,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,11,What measures do you take to ensure the transparency and explainability of decisions made by your LLMs?,,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,12,How do you assess and ensure the performance and scalability of your LLMs in high-demand scenarios?,,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,13,"Can you provide examples of successful deployments of your LLM-based applications, including the challenges faced and how they were addressed?",,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,14,What is your approach to integrating LLMs with existing systems and workflows within an organization?,,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,15,"How do you plan to support and maintain LLM-based applications post-deployment, including handling model drift and providing updates?",,Large Language Models,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,16,How does your AI solution align with the NIST AI RMF's guidelines for trustworthy and responsible AI?,,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,17,Can you describe the governance structures you have in place to manage AI risks as recommended by the NIST AI RMF?,,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,18,How do you identify and assess AI risks in line with the NIST AI RMF's 'Map' function?,,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,19,"What measures do you take to ensure transparency and explainability in AI decision-making, as emphasized by the NIST AI RMF?",,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,20,"How do you track and measure exposure to AI risks, and what metrics do you use, as suggested by the NIST AI RMF's 'Measure' function?",,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,21,Describe how your AI solutions manage and mitigate identified risks in accordance with the NIST AI RMF's 'Manage' function.,,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,22,How do you ensure that your AI solutions are compliant with U.S. regulations on data privacy and security?,,AI Regulation,Client 100,Backlog
+Gen AI-Driven Financial Advisory System,23,"In what ways do you contribute to the continual improvement of AI risk management practices, as envisioned by the NIST AI RMF?",,AI Regulation,Client 100,Backlog
