@@ -122,12 +122,6 @@
                                 <a class="function" href="#VMModel.serialize">serialize</a>
                         </li>
                         <li>
-                                <a class="function" href="#VMModel.predict_proba">predict_proba</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.predict">predict</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#VMModel.model_language">model_language</a>
                         </li>
                         <li>
@@ -168,6 +162,9 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#ModelAttributes.__init__">ModelAttributes</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelAttributes.from_dict">from_dict</a>
                         </li>
                 </ul>
 
@@ -953,39 +950,6 @@ it returns all columns except the target column.</p>
 
 
                             </div>
-                            <div id="VMModel.predict_proba" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">predict_proba</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.predict_proba"></a>
-    
-            <div class="docstring"><p>Predict probability for the model.
-This is a wrapper around the model's if available</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.predict" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">predict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.predict"></a>
-    
-            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
-</div>
-
-
-                            </div>
                             <div id="VMModel.model_language" class="classattr">
                                 <div class="attr function">
                     <div class="decorator">@abstractmethod</div>
@@ -1161,13 +1125,29 @@ on Google Colab when they are combined with ipywidgets.</p>
                             <div id="ModelAttributes.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ModelAttributes.__init__"></a>
     
     
+
+                            </div>
+                            <div id="ModelAttributes.from_dict" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@classmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">data</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelAttributes.from_dict"></a>
+    
+            <div class="docstring"><p>Creates a ModelAttributes instance from a dictionary</p>
+</div>
+
 
                             </div>
                 </section>

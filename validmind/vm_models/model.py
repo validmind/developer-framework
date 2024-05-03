@@ -41,6 +41,19 @@ class ModelAttributes:
     architecture: str = None
     framework: str = None
     framework_version: str = None
+    language: str = None
+
+    @classmethod
+    def from_dict(cls, data):
+        """
+        Creates a ModelAttributes instance from a dictionary
+        """
+        return cls(
+            architecture=data.get("architecture"),
+            framework=data.get("framework"),
+            framework_version=data.get("framework_version"),
+            language=data.get("language"),
+        )
 
 
 class VMModel(ABC):
@@ -100,14 +113,39 @@ class VMModel(ABC):
             "attributes": self.attributes.__dict__,
         }
 
-    def predict_proba(self):
-        """Predict probabilties - must be implemented by subclass if needed"""
-        raise NotImplementedError
+    @abstractmethod
+    def model_language(self, *args, **kwargs):
+        """
+        Programming language used to train the model. Assume Python if this
+        method is not implemented
+        """
+        pass
 
     @abstractmethod
-    def predict(self, *args, **kwargs):
+    def model_library(self, *args, **kwargs):
+        """
+        Model framework library
+        """
+        pass
+
+    @abstractmethod
+    def model_library_version(self, *args, **kwargs):
+        """
+        Model framework library version
+        """
+        pass
+
+    @abstractmethod
+    def model_class(self, *args, **kwargs):
         """
         Predict method for the model. This is a wrapper around the model's
+        """
+        pass
+
+    @abstractmethod
+    def model_name(self, *args, **kwargs):
+        """
+        Model name
         """
         pass
 
@@ -164,7 +202,7 @@ def get_model_class(model):
     model_class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
 
     if model_class_name is None:
-        raise Exception("Model library not supported")
+        return None
 
     model_class = getattr(
         importlib.import_module("validmind.models"),
@@ -172,3 +210,23 @@ def get_model_class(model):
     )
 
     return model_class
+
+
+def is_model_metadata(model):
+    """
+    Checks if the model is a dictionary containing metadata about a model.
+    We want to check if the metadata dictionary contains at least the following keys:
+
+    - architecture
+    - language
+    """
+    if not isinstance(model, dict):
+        return False
+
+    if "architecture" not in model:
+        return False
+
+    if "language" not in model:
+        return False
+
+    return True

@@ -17,6 +17,7 @@ from validmind import (
     get_test_suite,
     run_documentation_tests,
 )
+from validmind.errors import UnsupportedModelError
 
 
 @dataclass
@@ -92,15 +93,41 @@ class TestInitDataset(TestCase):
 
 
 class TestInitModel(TestCase):
+    def test_init_model_invalid_model(self):
+        model = dict()
+        with self.assertRaises(UnsupportedModelError):
+            init_model(model)
+
     @mock.patch(
         "validmind.client.log_input",
         return_value="1234",
     )
-    def test_init_model(self, mock_log_input):
+    def test_init_model_supported_model(self, mock_log_input):
         # Test initializing an SKLearn model
         model = sklearn.linear_model.LinearRegression()
         vm_model = init_model(model)
         self.assertEqual(vm_model.model, model)
+
+    def test_init_model_invalid_metadata_dict(self):
+        # Model metadata requires architecture and language at a minimum
+        metadata = {
+            "key": "value",
+            "foo": "bar",
+        }
+        with self.assertRaises(UnsupportedModelError) as context:
+            init_model(attributes=metadata, __log=False)
+
+    def test_init_model_metadata_dict(self):
+        # Model metadata requires architecture and language at a minimum
+        metadata = {
+            "architecture": "Spark",
+            "language": "Python",
+        }
+        vm_model = init_model(attributes=metadata, __log=False)
+
+        # Model will be none but attributes will be populated
+        self.assertEqual(vm_model.attributes.architecture, metadata["architecture"])
+        self.assertEqual(vm_model.attributes.language, metadata["language"])
 
 
 # Run methods are tested in test_full_suite_nb.py and test_full_suite.py
