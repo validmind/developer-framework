@@ -9,6 +9,7 @@ import importlib
 import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from types import UnionType
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -30,6 +31,23 @@ R_MODEL_TYPES = [
 R_MODEL_METHODS = [
     "glm.fit",
 ]
+
+
+class ModelPipeline:
+    """Helper class for chaining models together
+
+    This shouldn't be used directly, it just gets used when chaining models with the
+    `|` operator since you can't use a list directly - you must use a type that
+    overloads the `|` operator.
+    """
+
+    def __init__(self, models):
+        self.models = models
+
+    def __or__(self, other):
+        self.models.append(other)
+
+        return self
 
 
 @dataclass
@@ -63,28 +81,20 @@ class VMModel(ABC):
     Attributes:
         model (object, optional): The trained model instance. Defaults to None.
         input_id (str, optional): The input ID for the model. Defaults to None.
-        predict_col (str, optional): The output column name where predictions are stored.
-          Defaults to the `input_id` plus `_prediction`.
         attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         name (str, optional): The name of the model. Defaults to the class name.
     """
-
-    predict_col: str = None
 
     def __init__(
         self,
         input_id: str = None,
         model: object = None,
         attributes: ModelAttributes = None,
-        predict_col: str = None,
         name: str = None,
         **kwargs,
     ):
         self.model = model
         self.input_id = input_id or f"{id(self)}"
-        self.predict_col = (
-            predict_col or self.predict_col or f"{self.input_id}_prediction"
-        )
 
         self.language = "Python"
         self.library = self.__class__.__name__
@@ -104,6 +114,12 @@ class VMModel(ABC):
     def __post_init__(self):
         """Allows child classes to add their own post-init logic"""
         pass
+
+    def __or__(self, other):
+        if not isinstance(other, VMModel):
+            raise ValueError("Can only chain VMModel objects")
+
+        return ModelPipeline([self, other])
 
     def serialize(self):
         """
