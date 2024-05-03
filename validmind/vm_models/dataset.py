@@ -16,7 +16,7 @@ import polars as pl
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.models import FunctionalModel
+from validmind.models import FunctionModel
 from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
@@ -606,7 +606,7 @@ class NumpyDataset(VMDataset):
             # If the model is a FoundationModel, we need to pass the DataFrame to
             # the predict method since it requires column names in order to format
             # the input prompt with its template variables
-            x_only = self._df if isinstance(model, FunctionalModel) else self.x
+            x_only = self._df if isinstance(model, FunctionModel) else self.x
 
             prediction_values = np.array(model.predict(x_only))
 
@@ -944,14 +944,14 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The dataset as a DataFrame.
         """
-        return self._df
+        return self._df.to_frame() if isinstance(self._df, pd.Series) else self._df
 
     @property
     def copy(self):
         """
         Returns a copy of the raw_dataset dataframe.
         """
-        return self._df.copy()
+        return self.df.copy()
 
     def x_df(self):
         """
@@ -960,7 +960,9 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The non target and prediction columns .
         """
-        return self._df[[name for name in self.columns if name in self.feature_columns]]
+        return self.df[
+            [name for name in self.columns if name in self.feature_columns]
+        ].to_frame()
 
     def y_df(self):
         """
@@ -969,7 +971,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.target_column]
+        return self.df[self.target_column]
 
     def y_pred_df(self, model):
         """
@@ -978,7 +980,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.prediction_column(model)]
+        return self.df[self.prediction_column(model)].to_frame()
 
     def y_prob_df(self, model):
         """
@@ -987,7 +989,7 @@ class NumpyDataset(VMDataset):
         Returns:
             pd.DataFrame: The target columns.
         """
-        return self._df[self.probability_column(model)]
+        return self.df[self.probability_column(model)].to_frame()
 
     def prediction_column(self, model) -> str:
         """

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from .foundation import FoundationModel, Prompt
-from .functional import FunctionalModel
+from .function import FunctionModel
 from .huggingface import HFModel
 from .pytorch import PyTorchModel
 from .rag import EmbeddingModel, GenerationModel, RAGModel, RAGPrompt, RetrievalModel
@@ -13,7 +13,7 @@ __all__ = [
     "CatBoostModel",
     "EmbeddingModel",
     "FoundationModel",
-    "FunctionalModel",
+    "FunctionModel",
     "GenerationModel",
     "HFModel",
     "Prompt",
