@@ -103,10 +103,27 @@ class RAGModel(FunctionalModel):
         if isinstance(X, pd.Series):
             X = X.to_frame()
 
-        if self.embedder:
+        if self.embedder.output_column in X.columns:
+            logger.info(
+                f"Embedding column '{self.embedder.output_column}' already exists, skipping computation."
+            )
+        else:
+            logger.info(f"Computing embeddings for {len(X)} rows.")
             X[self.embedder.output_column] = self.embedder.predict(X)
 
-        X[self.retriever.output_column] = self.retriever.predict(X)
-        X[self.generator.output_column] = self.generator.predict(X)
+        if self.retriever.output_column in X.columns:
+            logger.info(
+                f"Context column '{self.retriever.output_column}' already exists, skipping computation."
+            )
+        else:
+            logger.info(f"Retrieving contexts for {len(X)} rows.")
+            X[self.retriever.output_column] = self.retriever.predict(X)
+        if self.generator.output_column in X.columns:
+            logger.info(
+                f"Answer column '{self.generator.output_column}' already exists, skipping computation."
+            )
+        else:
+            logger.info(f"Generating answers for {len(X)} rows.")
+            X[self.generator.output_column] = self.generator.predict(X)
 
         return X
