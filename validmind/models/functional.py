@@ -42,3 +42,18 @@ class FunctionalModel(VMModel):
             Y.append(self.predict_fn(**x[1]))
 
         return Y
+
+    def model_language(self):
+        return ""
+
+    def model_library(self):
+        return ""
+
+    def model_library_version(self):
+        return ""
+
+    def model_class(self):
+        return ""
+
+    def model_name(self):
+        return ""
