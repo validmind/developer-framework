@@ -7,7 +7,21 @@ from ragas import evaluate
 from ragas.metrics import answer_similarity
 
 
-def AnswerSimilarity(dataset):
-    result = evaluate(Dataset.from_pandas(dataset._df), metrics=[answer_similarity])
+def AnswerSimilarity(
+    dataset,
+    question_column="question",
+    answer_column="answer",
+    ground_truth_column="ground_truth",
+    contexts_column="contexts",
+):
+    required_columns = [
+        question_column,
+        answer_column,
+        ground_truth_column,
+        contexts_column,
+    ]
+    result = evaluate(
+        Dataset.from_pandas(dataset.df[required_columns]), metrics=[answer_similarity]
+    )
 
     return result.to_pandas()["answer_similarity"].to_list()
