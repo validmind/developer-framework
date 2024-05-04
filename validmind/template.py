@@ -26,6 +26,7 @@ CONTENT_TYPE_MAP = {
     "metadata_text": "Metadata Text",
     "dynamic": "Dynamic Content",
     "text": "Text",
+    "risk_assessment": "Risk Assessment",
 }
 
 
