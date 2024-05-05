@@ -134,9 +134,7 @@ class RModel(VMModel):
 
         if new_data_class == "numpy.ndarray":
             # We need to reconstruct the DataFrame from the ndarray using the column names
-            new_data = pd.DataFrame(
-                new_data, columns=self.test_ds.get_features_columns()
-            )
+            new_data = pd.DataFrame(new_data, columns=self.test_ds.feature_columns)
         elif new_data_class != "pandas.core.frame.DataFrame":
             raise ValueError(
                 f"new_data must be a DataFrame or ndarray. Got {new_data_class}"

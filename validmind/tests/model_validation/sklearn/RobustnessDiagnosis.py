@@ -109,11 +109,11 @@ class RobustnessDiagnosis(ThresholdTest):
 
         features_list = self.params["features_columns"]
         if features_list is None:
-            features_list = self.inputs.datasets[0].get_numeric_features_columns()
+            features_list = self.inputs.datasets[0].feature_columns_numeric
 
         # Check if all elements from features_list are present in the numerical feature columns
         all_present = all(
-            elem in self.inputs.datasets[0].get_numeric_features_columns()
+            elem in self.inputs.datasets[0].feature_columns_numeric
             for elem in features_list
         )
         if not all_present:

@@ -116,10 +116,8 @@ class DescriptiveStatistics(Metric):
 
     def run(self):
         feature_columns = self.inputs.dataset.feature_columns
-        numerical_feature_columns = self.inputs.dataset.get_numeric_features_columns()
-        categorical_feature_columns = (
-            self.inputs.dataset.get_categorical_features_columns()
-        )
+        numerical_feature_columns = self.inputs.dataset.feature_columns_numeric
+        categorical_feature_columns = self.inputs.dataset.feature_columns_categorical
 
         df = self.inputs.dataset.df[feature_columns]
 

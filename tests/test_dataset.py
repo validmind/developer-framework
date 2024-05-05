@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 from validmind.client import init_model
 from validmind.models import MetadataModel
-from validmind.vm_models.dataset import DataFrameDataset
+from validmind.vm_models.dataset.dataset import DataFrameDataset
 from validmind.vm_models.model import ModelAttributes, VMModel
 
 
@@ -48,8 +48,8 @@ class TestTabularDataset(TestCase):
         pd.testing.assert_frame_equal(vm_dataset.y_df(), self.df["target"].to_frame())
 
         # Feature columns should be all columns except the target column
-        self.assertEqual(vm_dataset.get_numeric_features_columns(), ["col1"])
-        self.assertEqual(vm_dataset.get_categorical_features_columns(), ["col2"])
+        self.assertEqual(vm_dataset.feature_columns_numeric, ["col1"])
+        self.assertEqual(vm_dataset.feature_columns_categorical, ["col2"])
         self.assertEqual(vm_dataset.feature_columns, ["col1", "col2"])
 
     def test_init_dataset_pandas_feature_columns(self):
@@ -63,8 +63,8 @@ class TestTabularDataset(TestCase):
         # Only one feature column "col1"
         np.testing.assert_array_equal(vm_dataset.x, self.df[["col1"]].values)
 
-        self.assertEqual(vm_dataset.get_numeric_features_columns(), ["col1"])
-        self.assertEqual(vm_dataset.get_categorical_features_columns(), [])
+        self.assertEqual(vm_dataset.feature_columns_numeric, ["col1"])
+        self.assertEqual(vm_dataset.feature_columns_categorical, [])
         self.assertEqual(vm_dataset.feature_columns, ["col1"])
 
     def test_assign_predictions_invalid_model(self):

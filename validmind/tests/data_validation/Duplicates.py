@@ -84,7 +84,7 @@ class Duplicates(ThresholdTest):
         if self.inputs.dataset.text_column:
             columns = self.inputs.dataset.text_column
         else:
-            columns = self.inputs.dataset.get_features_columns()
+            columns = self.inputs.dataset.feature_columns
 
         df = self.inputs.dataset.df[columns]
         # Find duplicate rows

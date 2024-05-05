@@ -72,7 +72,7 @@ class ChiSquaredFeaturesTable(Metric):
 
         # Ensure cat_features is provided
         if not cat_features:
-            cat_features = self.inputs.dataset.get_categorical_features_columns()
+            cat_features = self.inputs.dataset.feature_columns_categorical
 
         df = self.inputs.dataset.df
 

@@ -90,7 +90,7 @@ class RegressionR2Square(Metric):
             }
         )
 
-        X_columns = self.inputs.datasets[0].get_features_columns()
+        X_columns = self.inputs.datasets[0].feature_columns
         adj_r2_train = adj_r2_score(
             y_train_true, y_train_pred, len(y_train_true), len(X_columns)
         )

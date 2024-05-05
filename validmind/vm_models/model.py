@@ -9,7 +9,8 @@ import importlib
 import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from types import UnionType
+
+from validmind.errors import MissingOrInvalidModelPredictFnError
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -131,7 +132,9 @@ class VMModel(ABC):
 
     def predict_proba(self):
         """Predict probabilties - must be implemented by subclass if needed"""
-        raise NotImplementedError
+        raise MissingOrInvalidModelPredictFnError(
+            "`predict_proba()` method not implemented for this model"
+        )
 
     @abstractmethod
     def predict(self, *args, **kwargs):
