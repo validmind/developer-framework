@@ -163,7 +163,7 @@ class VMDataset:
             )
             self.df[column_name] = column_values
 
-    def assign_predictions(
+    def assign_predictions(  # noqa: C901
         self,
         model: VMModel,
         prediction_column: str = None,

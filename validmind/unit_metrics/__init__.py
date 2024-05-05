@@ -6,8 +6,6 @@ import hashlib
 import json
 from importlib import import_module
 
-import numpy as np
-
 from ..tests.decorator import _build_result, _inspect_signature
 from ..utils import get_model_info, test_id_to_name
 
