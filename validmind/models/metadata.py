@@ -34,3 +34,9 @@ class MetadataModel(VMModel):
         raise MissingOrInvalidModelPredictFnError(
             "MetadataModel does not support inference"
         )
+
+    def predict_proba(self, *args, **kwargs):
+        """Not implemented for MetadataModel"""
+        raise MissingOrInvalidModelPredictFnError(
+            "MetadataModel does not support inference"
+        )

@@ -48,16 +48,16 @@ class VMDataset:
 
     def __init__(
         self,
-        raw_dataset,
+        raw_dataset: np.ndarray,
         input_id: str = None,
         model: VMModel = None,
-        index=None,
-        index_name=None,
-        date_time_index=False,
-        columns=None,
+        index: np.ndarray = None,
+        index_name: str = None,
+        date_time_index: bool = False,
+        columns: list = None,
         target_column: str = None,
         feature_columns: list = None,
-        text_column=None,
+        text_column: str = None,
         extra_columns: dict = None,
         target_class_labels: dict = None,
         options: dict = None,
@@ -92,7 +92,7 @@ class VMDataset:
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self.index = index
 
-        self.df = pd.DataFrame(self.raw_dataset, columns=columns).infer_objects()
+        self.df = pd.DataFrame(self._raw_dataset, columns=columns).infer_objects()
         # set index to dataframe
         if index is not None:
             self.df.set_index(pd.Index(index), inplace=True)
@@ -103,7 +103,7 @@ class VMDataset:
 
         self.options = options
 
-        self.columns = set(columns) if columns else set()
+        self.columns = columns or []
         self.target_column = target_column
         self.text_column = text_column
         self.target_class_labels = target_class_labels
@@ -126,9 +126,6 @@ class VMDataset:
             excluded = [self.target_column, *self.extra_columns.flatten()]
             self.feature_columns = [col for col in self.columns if col not in excluded]
 
-        # sanity check to make unique
-        self.feature_columns = list(set(self.feature_columns))
-
         self.feature_columns_numeric = (
             self.df[self.feature_columns]
             .select_dtypes(include=[np.number])
@@ -146,7 +143,7 @@ class VMDataset:
                 "Length of values doesn't match number of rows of the dataset"
             )
 
-        self.columns.add(column_name)
+        self.columns.append(column_name)
 
         # Check if the values are multi-dimensional (e.g., embeddings)
         is_multi_dimensional = (
@@ -158,8 +155,8 @@ class VMDataset:
             self.df[column_name] = list(map(list, column_values))
         else:
             # If not multi-dimensional or a standard numpy array, reshape for compatibility
-            self.raw_dataset = np.hstack(
-                (self.raw_dataset, np.array(column_values).reshape(-1, 1))
+            self._raw_dataset = np.hstack(
+                (self._raw_dataset, np.array(column_values).reshape(-1, 1))
             )
             self.df[column_name] = column_values
 
@@ -172,20 +169,23 @@ class VMDataset:
         probability_values: list = None,
         prediction_probabilities: list = None,  # DEPRECATED: use probability_values
     ):
-        if prediction_probabilities:
+        if prediction_probabilities is not None:
             warnings.warn(
                 "The `prediction_probabilities` argument is deprecated. Use `probability_values` instead.",
                 DeprecationWarning,
             )
             probability_values = prediction_probabilities
 
-        if prediction_column and prediction_values:
+        if not isinstance(model, VMModel):
+            raise ValueError("Expected VMModel instance for argument `model`")
+
+        if prediction_column and prediction_values is not None:
             raise ValueError(
                 "Only one of the following arguments can be provided: "
                 "`prediction_column`, `prediction_values`"
             )
 
-        if probability_column and probability_values:
+        if probability_column and probability_values is not None:
             raise ValueError(
                 "Only one of the following arguments can be provided: "
                 "`probability_column`, `probability_values`"
@@ -201,8 +201,8 @@ class VMDataset:
                 f"Probability column {probability_column} doesn't exist in the dataset"
             )
 
-        if (probability_column or probability_values) and (
-            not prediction_column and not prediction_values
+        if (probability_column or probability_values is not None) and (
+            not prediction_column and prediction_values is None
         ):
             raise ValueError(
                 "Cannot use precomputed probabilities without precomputed predictions"
@@ -214,20 +214,20 @@ class VMDataset:
         if self.probability_column(model):
             logger.warning("Model probabilities already assigned... Overwriting.")
 
-        if not prediction_values:
+        if prediction_values is None:
             # TODO: All VMModel instances should take the VMDataset as input for `predict()`
             probability_values, prediction_values = compute_predictions(
                 model, self.df if isinstance(model, FunctionModel) else self.x
             )
 
         prediction_column = prediction_column or f"{model.input_id}_prediction"
-        self.prediction_column(model, prediction_column)
         self._add_column(prediction_column, prediction_values)
+        self.prediction_column(model, prediction_column)
 
-        if probability_values:
+        if probability_values is not None:
             probability_column = probability_column or f"{model.input_id}_probabilities"
-            self.probability_column(model, probability_column)
             self._add_column(probability_column, probability_values)
+            self.probability_column(model, probability_column)
 
     def prediction_column(self, model: VMModel, column_name: str = None) -> str:
         """Get or set the prediction column for a model."""
@@ -269,11 +269,11 @@ class VMDataset:
                 f"{column_name} already exists in the dataset but `column_values` were passed. Overwriting..."
             )
 
-        # remove column from features if it exists
-        self._set_feature_columns(self.feature_columns.remove(column_name))
-
         self.extra_columns.extras.add(column_name)
         self._add_column(column_name, column_values)
+
+        # reset feature columns to exclude the new extra column
+        self._set_feature_columns()
 
         logger.info(
             f"Extra column {column_name} with {len(column_values)} values added to the dataset"
@@ -311,7 +311,7 @@ class VMDataset:
         Returns:
             np.ndarray: The predictions for the model
         """
-        return np.stack(self.df[self.prediction_column(model)])
+        return np.hstack(self.df[self.prediction_column(model)].values)
 
     def y_prob(self, model) -> np.ndarray:
         """Returns the probabilities for a given model.

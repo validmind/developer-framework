@@ -25,6 +25,9 @@ class ExtraColumns:
 
     @classmethod
     def from_dict(cls, data: dict):
+        if not data:
+            return cls()
+
         return cls(
             extras=set(
                 [
@@ -57,10 +60,7 @@ class ExtraColumns:
             self.prediction_columns[model.input_id] = column_name
             return column_name
 
-        try:
-            return self.prediction_columns[model.input_id]
-        except KeyError:
-            raise ValueError(f"No prediction column found for model {model.input_id}")
+        return self.prediction_columns.get(model.input_id)
 
     def probability_column(self, model, column_name: str = None) -> str:
         """Get or set the probability column for a model."""
@@ -68,10 +68,7 @@ class ExtraColumns:
             self.probability_columns[model.input_id] = column_name
             return column_name
 
-        try:
-            return self.probability_columns[model.input_id]
-        except KeyError:
-            raise ValueError(f"No probability column found for model {model.input_id}")
+        return self.probability_columns.get(model.input_id)
 
 
 def is_probabilties(output):
@@ -91,9 +88,9 @@ def as_df(series_or_frame: Union[pd.Series, pd.DataFrame]) -> pd.DataFrame:
 
 
 def compute_predictions(model, X) -> tuple:
+    probability_values = None
+
     try:
-        # call predict_proba() to raise if not implemented
-        model.predict_proba()
         logger.info("Running predict_proba()... This may take a while")
         probability_values = np.array(model.predict_proba(X))
         logger.info("Done running predict_proba()...")
@@ -101,17 +98,19 @@ def compute_predictions(model, X) -> tuple:
         # if not predict_proba() then its likely a regression model or a classification
         # model that doesn't support predict_proba()
         pass
+
     try:
         logger.info("Running predict()... This may take a while")
         prediction_values = np.array(model.predict(X))
         logger.info("Done running predict()...")
     except MissingOrInvalidModelPredictFnError:
-        raise TypeError(
+        raise MissingOrInvalidModelPredictFnError(
             "Cannot compute predictions for model's that don't support inference. "
             "You can pass `prediction_values` or `prediction_columns` to use precomputed predictions"
         )
+
     # TODO: this is really not ideal/robust and should not be handled by dataset class
-    if not probability_values and is_probabilties(prediction_values):
+    if probability_values is None and is_probabilties(prediction_values):
         logger.info(
             "Predict method returned probabilities instead of direct labels or regression values. "
             "This implies the model is likely configured for a classification task with probability output."
@@ -120,7 +119,9 @@ def compute_predictions(model, X) -> tuple:
         logger.info(
             f"Converting probabilties to binary classes using thresholding with `{threshold=}`."
         )
+
         return prediction_values, (prediction_values > threshold).astype(int)
+
     return probability_values, prediction_values
 
 

@@ -130,7 +130,7 @@ class VMModel(ABC):
             "attributes": self.attributes.__dict__,
         }
 
-    def predict_proba(self):
+    def predict_proba(self, *args, **kwargs):
         """Predict probabilties - must be implemented by subclass if needed"""
         raise MissingOrInvalidModelPredictFnError(
             "`predict_proba()` method not implemented for this model"
