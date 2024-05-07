@@ -57,9 +57,8 @@ class PipelineModel(VMModel):
         }
 
     def predict(self, X):
-        Y = {}
-
         for model in self.pipeline.models:
-            Y[model.input_id] = model.predict(X)
+            predictions = model.predict(X)
+            X[model.input_id] = predictions
 
-        return Y
+        return predictions
