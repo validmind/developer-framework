@@ -41,38 +41,13 @@ class FunctionModel(VMModel):
 
         self.name = self.name or self.predict_fn.__name__
 
-    def predict(self, X, return_alias=False):
+    def predict(self, X):
         """Compute predictions for the input (X)
 
         Args:
             X (pandas.DataFrame): The input features to predict on
-            return_alias (bool, optional): Whether to return the alias for the predictions.
-                Defaults to False to be consistent with most "predict" methods.
 
         Returns:
             list: The predictions
         """
-        Y = []
-
-        for x in X.to_dict(orient="records") if isinstance(X, pd.DataFrame) else X:
-            Y.append(self.predict_fn(x))
-
-            # if any value in x is a dictionary, "spread" it as a new key
-            # for v in list(x.values()):
-            #     if isinstance(v, dict):
-            #         x.update(v)
-
-            # input = Input(x)
-            # output = self.predict_fn(input)
-
-            # if input != output:
-            #     raise ValueError(
-            #         "FunctionModel `predict_fn` must return the input dictionary"
-            #     )
-
-            # Y.append(output.get_new())
-
-        # if return_alias:
-        #     return alias, Y
-
-        return Y
+        return [self.predict_fn(x) for x in X.to_dict(orient="records")]

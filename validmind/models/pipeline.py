@@ -59,16 +59,10 @@ class PipelineModel(VMModel):
         }
 
     def predict(self, X):
-        return_value = False
-
-        if isinstance(X, dict):
-            return_value = True
-            X = pd.DataFrame([X])
-        else:
-            X = X.copy()
+        X = X.copy()
 
         for model in self.pipeline.models:
             predictions = model.predict(X)
             X[model.input_id] = predictions
 
-        return predictions[0] if return_value else predictions
+        return predictions
