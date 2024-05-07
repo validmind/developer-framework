@@ -2,8 +2,6 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import pandas as pd
-
 from validmind.logging import get_logger
 from validmind.vm_models.model import ModelAttributes, ModelPipeline, VMModel
 
