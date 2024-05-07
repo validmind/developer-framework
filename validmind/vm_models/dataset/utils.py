@@ -15,32 +15,13 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class Column(str):
-    """Column class for the dataset."""
-
-    name: str
-    alias: str = None
-
-    def __init__(self, name, alias=None):
-        self.name = name
-        self.alias = alias
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def names(self):
-        return [self.name, self.alias] if self.alias else [self.name]
-
-
-@dataclass
 class ExtraColumns:
     """Extra columns for the dataset."""
 
-    extras: Set[Column] = field(default_factory=set)
-    group_by_column: Column = None
-    prediction_columns: Dict[str, Column] = field(default_factory=dict)
-    probability_columns: Dict[str, Column] = field(default_factory=dict)
+    extras: Set[str] = field(default_factory=set)
+    group_by_column: str = None
+    prediction_columns: Dict[str, str] = field(default_factory=dict)
+    probability_columns: Dict[str, str] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -50,26 +31,18 @@ class ExtraColumns:
         return cls(
             extras=set(
                 [
-                    Column(k)
+                    k
                     for k in data.keys()
                     if k not in ["group_by", "predictions", "probabilities"]
                 ]
             ),
-            group_by_column=Column(data["group_by"]) if "group_by" in data else None,
-            prediction_columns=(
-                {k: Column(v) for k, v in data.get("predictions", {}).items()}
-                if "predictions" in data
-                else {}
-            ),
-            probability_columns=(
-                {k: Column(v) for k, v in data.get("probabilities", {}).items()}
-                if "probabilities" in data
-                else {}
-            ),
+            group_by_column=data.get("group_by"),
+            prediction_columns=data.get("predictions", {}),
+            probability_columns=data.get("probabilities", {}),
         )
 
-    # mimic dictionary behaviour but only for the extras
     def __contains__(self, key):
+        """Allow checking if a key is `in` the extra columns"""
         return key in self.flatten()
 
     def flatten(self) -> List[str]:
@@ -81,35 +54,22 @@ class ExtraColumns:
             *self.probability_columns.values(),
         ]
 
-    def add_extra(self, column_name: str, alias: str = None) -> Column:
-        column = Column(column_name, alias)
-        self.extras.add(column)
+    def add_extra(self, column_name: str) -> str:
+        self.extras.add(column_name)
 
-        return column
+        return column_name
 
-    def prediction_column(
-        self, model, column_name: str = None, alias: str = None
-    ) -> Column:
+    def prediction_column(self, model, column_name: str = None):
         """Get or set the prediction column for a model."""
         if column_name:
-            self.prediction_columns[model.input_id] = Column(column_name, alias)
-
-        if not column_name and alias:
-            # add alias to the existing column
-            self.prediction_columns[model.input_id].alias = alias
+            self.prediction_columns[model.input_id] = column_name
 
         return self.prediction_columns.get(model.input_id)
 
-    def probability_column(
-        self, model, column_name: str = None, alias: str = None
-    ) -> Column:
+    def probability_column(self, model, column_name: str = None):
         """Get or set the probability column for a model."""
         if column_name:
-            self.probability_columns[model.input_id] = Column(column_name, alias)
-
-        if not column_name and alias:
-            # add alias to the existing column
-            self.probability_columns[model.input_id].alias = alias
+            self.probability_columns[model.input_id] = column_name
 
         return self.probability_columns.get(model.input_id)
 
@@ -140,16 +100,16 @@ def compute_predictions(model, X) -> tuple:
     try:
         logger.info("Running predict_proba()... This may take a while")
         probability_values = model.predict_proba(X)
-        logger.info("Done running predict_proba()...")
+        logger.info("Done running predict_proba()")
     except MissingOrInvalidModelPredictFnError:
         # if not predict_proba() then its likely a regression model or a classification
         # model that doesn't support predict_proba()
-        pass
+        logger.info("Not running predict_proba() for unsupported models.")
 
     try:
         logger.info("Running predict()... This may take a while")
         prediction_values = model.predict(X)
-        logger.info("Done running predict()...")
+        logger.info("Done running predict()")
     except MissingOrInvalidModelPredictFnError:
         raise MissingOrInvalidModelPredictFnError(
             "Cannot compute predictions for model's that don't support inference. "

@@ -57,12 +57,9 @@ class PipelineModel(VMModel):
         }
 
     def predict(self, X):
-        Y = []
+        Y = {}
 
-        for row in X.to_dict(orient="records"):
-            for model_key, model in self.pipeline.models:
-                row[model_key] = model.predict(row)
-
-            Y.append(row)
+        for model in self.pipeline.models:
+            Y[model.input_id] = model.predict(X)
 
         return Y

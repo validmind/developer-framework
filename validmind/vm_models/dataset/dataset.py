@@ -104,6 +104,7 @@ class VMDataset:
         self.options = options
 
         self.columns = columns or []
+        self.column_aliases = {}
         self.target_column = target_column
         self.text_column = text_column
         self.target_class_labels = target_class_labels
@@ -138,44 +139,22 @@ class VMDataset:
         )
 
     def _add_column(self, column_name, column_values):
-        if len(column_values) != self.df.shape[0]:
+        if len(column_values) != len(self.df):
             raise ValueError(
-                "Length of values doesn't match number of rows of the dataset"
+                "Length of values doesn't match number of rows in the DataFrame."
             )
 
         self.columns.append(column_name)
+        self.df[column_name] = column_values
 
-        # Check if the values are multi-dimensional (e.g., embeddings)
-        is_multi_dimensional = (
-            isinstance(column_values, np.ndarray) and column_values.ndim > 1
-        )
-
-        if is_multi_dimensional:
-            # For multi-dimensional outputs, convert to a list of lists to store in DataFrame
-            self.df[column_name] = list(map(list, column_values))
-        else:
-            # If not multi-dimensional or a standard numpy array, reshape for compatibility
-            self._raw_dataset = np.hstack(
-                (self._raw_dataset, np.array(column_values).reshape(-1, 1))
-            )
-            self.df[column_name] = column_values
-
-    def assign_predictions(  # noqa: C901
+    def _validate_assign_predictions(
         self,
         model: VMModel,
-        prediction_column: str = None,
-        prediction_values: list = None,
-        probability_column: str = None,
-        probability_values: list = None,
-        prediction_probabilities: list = None,  # DEPRECATED: use probability_values
+        prediction_column: str,
+        prediction_values: list,
+        probability_column: str,
+        probability_values: list,
     ):
-        if prediction_probabilities is not None:
-            warnings.warn(
-                "The `prediction_probabilities` argument is deprecated. Use `probability_values` instead.",
-                DeprecationWarning,
-            )
-            probability_values = prediction_probabilities
-
         if not isinstance(model, VMModel):
             raise ValueError("Expected VMModel instance for argument `model`")
 
@@ -208,6 +187,30 @@ class VMDataset:
                 "Cannot use precomputed probabilities without precomputed predictions"
             )
 
+    def assign_predictions(
+        self,
+        model: VMModel,
+        prediction_column: str = None,
+        prediction_values: list = None,
+        probability_column: str = None,
+        probability_values: list = None,
+        prediction_probabilities: list = None,  # DEPRECATED: use probability_values
+    ):
+        if prediction_probabilities is not None:
+            warnings.warn(
+                "The `prediction_probabilities` argument is deprecated. Use `probability_values` instead.",
+                DeprecationWarning,
+            )
+            probability_values = prediction_probabilities
+
+        self._validate_assign_predictions(
+            model,
+            prediction_column,
+            prediction_values,
+            probability_column,
+            probability_values,
+        )
+
         if self.prediction_column(model):
             logger.warning("Model predictions already assigned... Overwriting.")
 
@@ -215,10 +218,12 @@ class VMDataset:
             logger.warning("Model probabilities already assigned... Overwriting.")
 
         if prediction_values is None:
-            # TODO: All VMModel instances should take the VMDataset as input for `predict()`
-            probability_values, prediction_values = compute_predictions(
-                model, self.df if isinstance(model, FunctionModel) else self.x
-            )
+            if isinstance(model, FunctionModel):
+                X = self.df
+            else:
+                X = self.x
+
+            probability_values, prediction_values = compute_predictions(model, X)
 
         prediction_column = prediction_column or f"{model.input_id}_prediction"
         self._add_column(prediction_column, prediction_values)

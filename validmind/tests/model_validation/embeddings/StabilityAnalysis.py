@@ -76,6 +76,10 @@ class StabilityAnalysis(ThresholdTest):
         # Compute embeddings for the original and perturbed dataset
         original_embeddings = self.inputs.dataset.y_pred(self.inputs.model)
         perturbed_embeddings = self.inputs.model.predict(perturbed)
+        print(original_embeddings, type(original_embeddings), len(original_embeddings))
+        print(
+            perturbed_embeddings, type(perturbed_embeddings), len(perturbed_embeddings)
+        )
 
         # Compute cosine similarities between original and perturbed embeddings
         similarities = cosine_similarity(
