@@ -13,7 +13,7 @@ import pandas as pd
 import polars as pl
 
 from validmind.logging import get_logger
-from validmind.models import FunctionModel
+from validmind.models import FunctionModel, PipelineModel
 from validmind.vm_models.model import VMModel
 
 from .utils import ExtraColumns, as_df, compute_predictions, convert_index_to_datetime
@@ -218,11 +218,7 @@ class VMDataset:
             logger.warning("Model probabilities already assigned... Overwriting.")
 
         if prediction_values is None:
-            if isinstance(model, FunctionModel):
-                X = self.df
-            else:
-                X = self.x
-
+            X = self.df if isinstance(model, (FunctionModel, PipelineModel)) else self.x
             probability_values, prediction_values = compute_predictions(model, X)
 
         prediction_column = prediction_column or f"{model.input_id}_prediction"
@@ -316,7 +312,7 @@ class VMDataset:
         Returns:
             np.ndarray: The predictions for the model
         """
-        return np.hstack(self.df[self.prediction_column(model)].values)
+        return np.stack(self.df[self.prediction_column(model)].values)
 
     def y_prob(self, model) -> np.ndarray:
         """Returns the probabilities for a given model.
@@ -361,7 +357,6 @@ class VMDataset:
             f"Extra Columns: {self.extra_columns}\n"
             f"Target Class Labels: {self.target_class_labels}\n"
             f"Columns: {self.columns}\n"
-            f"Index Name: {self.index_name}\n"
             f"Index: {self.index}\n"
             f"=================\n"
         )

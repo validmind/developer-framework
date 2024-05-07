@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from validmind.vm_models.model import VMModel
 
 
@@ -52,21 +54,23 @@ class FunctionModel(VMModel):
         """
         Y = []
 
-        for x in X.to_dict(orient="records"):
+        for x in X.to_dict(orient="records") if isinstance(X, pd.DataFrame) else X:
+            Y.append(self.predict_fn(x))
+
             # if any value in x is a dictionary, "spread" it as a new key
-            for v in list(x.values()):
-                if isinstance(v, dict):
-                    x.update(v)
+            # for v in list(x.values()):
+            #     if isinstance(v, dict):
+            #         x.update(v)
 
-            input = Input(x)
-            output = self.predict_fn(input)
+            # input = Input(x)
+            # output = self.predict_fn(input)
 
-            if input != output:
-                raise ValueError(
-                    "FunctionModel `predict_fn` must return the input dictionary"
-                )
+            # if input != output:
+            #     raise ValueError(
+            #         "FunctionModel `predict_fn` must return the input dictionary"
+            #     )
 
-            Y.append(output.get_new())
+            # Y.append(output.get_new())
 
         # if return_alias:
         #     return alias, Y
