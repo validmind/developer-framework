@@ -78,7 +78,15 @@ def _serialize_dataset(dataset, model):
         This approach guarantees that the hash will distinguish between model-generated predictions
         and pre-computed prediction columns, addressing potential hash collisions.
     """
-    return _fast_hash(dataset.df)
+    return _fast_hash(
+        dataset.df[
+            [
+                *dataset.feature_columns,
+                dataset.target_column,
+                dataset.prediction_column(model),
+            ]
+        ]
+    )
 
 
 def _fast_hash(df, sample_size=1000):
