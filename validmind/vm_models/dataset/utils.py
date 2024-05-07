@@ -15,13 +15,32 @@ logger = get_logger(__name__)
 
 
 @dataclass
+class Column(str):
+    """Column class for the dataset."""
+
+    name: str
+    alias: str = None
+
+    def __init__(self, name, alias=None):
+        self.name = name
+        self.alias = alias
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def names(self):
+        return [self.name, self.alias] if self.alias else [self.name]
+
+
+@dataclass
 class ExtraColumns:
     """Extra columns for the dataset."""
 
-    extras: Set[str] = field(default_factory=set)
-    group_by_column: str = None
-    prediction_columns: Dict[str, str] = field(default_factory=dict)
-    probability_columns: Dict[str, str] = field(default_factory=dict)
+    extras: Set[Column] = field(default_factory=set)
+    group_by_column: Column = None
+    prediction_columns: Dict[str, Column] = field(default_factory=dict)
+    probability_columns: Dict[str, Column] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -31,14 +50,22 @@ class ExtraColumns:
         return cls(
             extras=set(
                 [
-                    k
+                    Column(k)
                     for k in data.keys()
                     if k not in ["group_by", "predictions", "probabilities"]
                 ]
             ),
-            group_by_column=data.get("group_by"),
-            prediction_columns=data.get("predictions", {}),
-            probability_columns=data.get("probabilities", {}),
+            group_by_column=Column(data["group_by"]) if "group_by" in data else None,
+            prediction_columns=(
+                {k: Column(v) for k, v in data.get("predictions", {}).items()}
+                if "predictions" in data
+                else {}
+            ),
+            probability_columns=(
+                {k: Column(v) for k, v in data.get("probabilities", {}).items()}
+                if "probabilities" in data
+                else {}
+            ),
         )
 
     # mimic dictionary behaviour but only for the extras
@@ -54,31 +81,37 @@ class ExtraColumns:
             *self.probability_columns.values(),
         ]
 
-    def prediction_column(self, model, column_name: str = None) -> str:
+    def add_extra(self, column_name: str, alias: str = None) -> Column:
+        column = Column(column_name, alias)
+        self.extras.add(column)
+
+        return column
+
+    def prediction_column(
+        self, model, column_name: str = None, alias: str = None
+    ) -> Column:
         """Get or set the prediction column for a model."""
         if column_name:
-            self.prediction_columns[model.input_id] = column_name
-            return column_name
+            self.prediction_columns[model.input_id] = Column(column_name, alias)
+
+        if not column_name and alias:
+            # add alias to the existing column
+            self.prediction_columns[model.input_id].alias = alias
 
         return self.prediction_columns.get(model.input_id)
 
-    def probability_column(self, model, column_name: str = None) -> str:
+    def probability_column(
+        self, model, column_name: str = None, alias: str = None
+    ) -> Column:
         """Get or set the probability column for a model."""
         if column_name:
-            self.probability_columns[model.input_id] = column_name
-            return column_name
+            self.probability_columns[model.input_id] = Column(column_name, alias)
+
+        if not column_name and alias:
+            # add alias to the existing column
+            self.probability_columns[model.input_id].alias = alias
 
         return self.probability_columns.get(model.input_id)
-
-
-def is_probabilties(output):
-    """Check if the output from the predict method is probabilities."""
-    # This is a simple check that assumes output is probabilities if they lie between 0 and 1
-    if np.all((output >= 0) & (output <= 1)):
-        # Check if there is at least one element that is neither 0 nor 1
-        if np.any((output > 0) & (output < 1)):
-            return True
-    return np.all((output >= 0) & (output <= 1)) and np.any((output > 0) & (output < 1))
 
 
 def as_df(series_or_frame: Union[pd.Series, pd.DataFrame]) -> pd.DataFrame:
@@ -87,12 +120,26 @@ def as_df(series_or_frame: Union[pd.Series, pd.DataFrame]) -> pd.DataFrame:
     return series_or_frame
 
 
+def _is_probabilties(output):
+    """Check if the output from the predict method is probabilities."""
+    if not isinstance(output, np.ndarray) or output.ndim > 1:
+        return False
+
+    # This is a simple check that assumes output is probabilities if they lie between 0 and 1
+    if np.all((output >= 0) & (output <= 1)):
+        # Check if there is at least one element that is neither 0 nor 1
+        if np.any((output > 0) & (output < 1)):
+            return True
+
+    return np.all((output >= 0) & (output <= 1)) and np.any((output > 0) & (output < 1))
+
+
 def compute_predictions(model, X) -> tuple:
     probability_values = None
 
     try:
         logger.info("Running predict_proba()... This may take a while")
-        probability_values = np.array(model.predict_proba(X))
+        probability_values = model.predict_proba(X)
         logger.info("Done running predict_proba()...")
     except MissingOrInvalidModelPredictFnError:
         # if not predict_proba() then its likely a regression model or a classification
@@ -101,7 +148,7 @@ def compute_predictions(model, X) -> tuple:
 
     try:
         logger.info("Running predict()... This may take a while")
-        prediction_values = np.array(model.predict(X))
+        prediction_values = model.predict(X)
         logger.info("Done running predict()...")
     except MissingOrInvalidModelPredictFnError:
         raise MissingOrInvalidModelPredictFnError(
@@ -110,7 +157,7 @@ def compute_predictions(model, X) -> tuple:
         )
 
     # TODO: this is really not ideal/robust and should not be handled by dataset class
-    if probability_values is None and is_probabilties(prediction_values):
+    if probability_values is None and _is_probabilties(prediction_values):
         logger.info(
             "Predict method returned probabilities instead of direct labels or regression values. "
             "This implies the model is likely configured for a classification task with probability output."
