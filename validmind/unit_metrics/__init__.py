@@ -6,8 +6,6 @@ import hashlib
 import json
 from importlib import import_module
 
-import numpy as np
-
 from ..tests.decorator import _build_result, _inspect_signature
 from ..utils import get_model_info, test_id_to_name
 
@@ -58,7 +56,7 @@ def _serialize_model(model):
     return hash_object.hexdigest()
 
 
-def _serialize_dataset(dataset, model_id):
+def _serialize_dataset(dataset, model):
     """
     Serialize the description of the dataset input to a unique hash.
 
@@ -68,11 +66,11 @@ def _serialize_dataset(dataset, model_id):
 
     Args:
         dataset: The dataset object, which should have properties like _df (pandas DataFrame),
-                 target_column (string), feature_columns (list of strings), and _extra_columns (dict).
-        model_id (str): The ID of the model associated with the prediction column.
+                 target_column (string), feature_columns (list of strings), and extra_columns (dict).
+        model (VMModel): The model whose predictions will be included in the serialized dataset
 
     Returns:
-        str: A SHA-256 hash representing the dataset.
+        str: MD5 hash of the dataset
 
     Note:
         Including the model ID and prediction column name in the hash calculation ensures uniqueness,
@@ -80,57 +78,33 @@ def _serialize_dataset(dataset, model_id):
         This approach guarantees that the hash will distinguish between model-generated predictions
         and pre-computed prediction columns, addressing potential hash collisions.
     """
-
-    # Access the prediction column for the given model ID from the dataset's extra columns
-    prediction_column_name = dataset._extra_columns["prediction_columns"][model_id]
-
-    # Include model ID and prediction column name directly in the hash calculation
-    model_and_prediction_info = f"{model_id}_{prediction_column_name}".encode()
-
-    # Start with target and feature columns, and include the prediction column
-    columns = (
-        [dataset._target_column] + dataset._feature_columns + [prediction_column_name]
+    return _fast_hash(
+        dataset.df[
+            [
+                *dataset.feature_columns,
+                dataset.target_column,
+                dataset.prediction_column(model),
+            ]
+        ].to_frame()
     )
 
-    # Use _fast_hash function and include model_and_prediction_info in the hash calculation
-    hash_digest = _fast_hash(
-        dataset._df[columns], model_and_prediction_info=model_and_prediction_info
-    )
 
-    return hash_digest
-
-
-def _fast_hash(df, sample_size=1000, model_and_prediction_info=None):
+def _fast_hash(df, sample_size=1000):
     """
-    Generates a hash for a DataFrame by sampling and combining its size, content,
-    and optionally model and prediction information.
+    Generates a fast hash by sampling, converting to string and md5 hashing.
 
     Args:
         df (pd.DataFrame): The DataFrame to hash.
         sample_size (int): The maximum number of rows to include in the sample.
-        model_and_prediction_info (bytes, optional): Additional information to include in the hash.
 
     Returns:
-        str: A SHA-256 hash of the DataFrame's sample and additional information.
+        str: MD5 hash of the DataFrame.
     """
-    # Convert the number of rows to bytes and include it in the hash calculation
-    rows_bytes = str(len(df)).encode()
+    df_sample = df.sample(n=min(sample_size, len(df)), random_state=42)
 
-    # Sample rows if DataFrame is larger than sample_size, ensuring reproducibility
-    if len(df) > sample_size:
-        df_sample = df.sample(n=sample_size, random_state=42)
-    else:
-        df_sample = df
-
-    # Convert the sampled DataFrame to a byte array. np.asarray ensures compatibility with various DataFrame contents.
-    byte_array = np.asarray(df_sample).data.tobytes()
-
-    # Initialize the hash object and update it with the row count, data bytes, and additional info
-    hash_obj = hashlib.sha256(
-        rows_bytes + byte_array + (model_and_prediction_info or b"")
-    )
-
-    return hash_obj.hexdigest()
+    return hashlib.md5(
+        df_sample.to_string(header=True, index=True).encode()
+    ).hexdigest()
 
 
 def get_metric_cache_key(metric_id, params, inputs):
@@ -150,9 +124,8 @@ def get_metric_cache_key(metric_id, params, inputs):
 
     dataset = inputs["dataset"]
     model = inputs["model"]
-    model_id = model.input_id
 
-    cache_elements.append(_serialize_dataset(dataset, model_id))
+    cache_elements.append(_serialize_dataset(dataset, model))
 
     cache_elements.append(_serialize_model(model))
 

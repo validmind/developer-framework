@@ -4,37 +4,21 @@
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
-from validmind.vm_models.model import (
-    ModelAttributes,
-    VMModel,
-    has_method_with_arguments,
-)
+from validmind.vm_models.model import VMModel, has_method_with_arguments
 
 logger = get_logger(__name__)
 
 
 class PyTorchModel(VMModel):
-    """
-    An PyTorch model class that wraps a trained model instance and its associated data.
+    """PyTorchModel class wraps a PyTorch model"""
 
-    Attributes:
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
-        model (object, optional): The trained model instance. Defaults to None.
-        device_type(str, optional) The device where model is trained
-    """
+    def __post_init__(self):
+        if not self.model:
+            raise ValueError("Model object is a required argument for PyTorchModel")
 
-    def __init__(
-        self,
-        model: object = None,  # Trained model instance
-        input_id: str = None,
-        attributes: ModelAttributes = None,
-    ):
-        super().__init__(
-            model=model,
-            input_id=input_id,
-            attributes=attributes,
-        )
-        self._device_type = next(self.model.parameters()).device
+        self.library = "torch"
+        self.name = self.name or "PyTorch Neural Network"
+        self.device_type = next(self.model.parameters()).device
 
     def predict_proba(self, *args, **kwargs):
         """
@@ -61,21 +45,3 @@ class PyTorchModel(VMModel):
         import torch
 
         return self.model.predict(torch.tensor(args[0]).to(self.device_type))
-
-    def model_library(self):
-        """
-        Returns the model library name
-        """
-        return "torch"
-
-    def model_class(self):
-        """
-        Returns the model class name
-        """
-        return "PyTorchModel"
-
-    def model_name(self):
-        """
-        Returns model architecture
-        """
-        return "PyTorch Neural Networks"

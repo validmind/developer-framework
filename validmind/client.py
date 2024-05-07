@@ -21,19 +21,14 @@ from .errors import (
 )
 from .input_registry import input_registry
 from .logging import get_logger
+from .models.metadata import MetadataModel
 from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
 from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
-from .vm_models.dataset import (
-    DataFrameDataset,
-    NumpyDataset,
-    PolarsDataset,
-    TorchDataset,
-    VMDataset,
-)
+from .vm_models.dataset import DataFrameDataset, PolarsDataset, TorchDataset, VMDataset
 from .vm_models.model import (
     ModelAttributes,
     VMModel,
@@ -134,7 +129,7 @@ def init_dataset(
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
-        vm_dataset = NumpyDataset(
+        vm_dataset = VMDataset(
             input_id=input_id,
             raw_dataset=dataset,
             model=model,
@@ -227,7 +222,7 @@ def init_model(
         metadata = get_model_info(vm_model)
     else:
         model_attributes = ModelAttributes.from_dict(attributes)
-        vm_model = VMModel(
+        vm_model = MetadataModel(
             input_id=input_id,
             attributes=model_attributes,
         )

@@ -115,7 +115,7 @@ class LaggedCorrelationHeatmap(Metric):
         else:
             target_col = self.inputs.dataset.target_column
 
-        independent_vars = list(self.inputs.dataset.get_features_columns())
+        independent_vars = list(self.inputs.dataset.feature_columns)
         num_lags = self.params.get("num_lags", 10)
 
         if isinstance(target_col, list) and len(target_col) == 1:

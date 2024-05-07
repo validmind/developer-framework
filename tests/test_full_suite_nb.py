@@ -25,7 +25,7 @@ class TestFullTestSuiteNB(unittest.TestCase):
         mock_ipython.return_value = True
 
         import validmind as vm
-        from validmind.vm_models.dataset import VMDataset
+        from validmind.vm_models.dataset.dataset import VMDataset
         from validmind.vm_models.model import VMModel
         from validmind.vm_models.test_suite.test_suite import TestSuite
 
@@ -65,7 +65,9 @@ class TestFullTestSuiteNB(unittest.TestCase):
         self.assertIsInstance(vm_train_ds, VMDataset)
 
         vm_test_ds = vm.init_dataset(
-            dataset=test_df, input_id="test_dataset", target_column=customer_churn.target_column
+            dataset=test_df,
+            input_id="test_dataset",
+            target_column=customer_churn.target_column,
         )
         self.assertIsInstance(vm_test_ds, VMDataset)
 
@@ -83,7 +85,9 @@ class TestFullTestSuiteNB(unittest.TestCase):
             model=vm_model,
         )
 
-        config = customer_churn.get_demo_test_config(vm.get_test_suite("classifier_full_suite"))
+        config = customer_churn.get_demo_test_config(
+            vm.get_test_suite("classifier_full_suite")
+        )
 
         async def run_test_suite():
             return vm.run_test_suite(

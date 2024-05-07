@@ -55,6 +55,9 @@ class StabilityAnalysisKeyword(StabilityAnalysis):
     }
 
     def perturb_data(self, data: str):
+        if not isinstance(data, str):
+            return data
+
         # Tokenize the string
         tokens = re.findall(r"[\w']+[.,!?;]?|[\w']+", data)
         modified_tokens = []

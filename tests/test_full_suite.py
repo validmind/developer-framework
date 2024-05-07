@@ -21,7 +21,7 @@ class TestFullTestSuite(unittest.TestCase):
     @patch("validmind.client.log_input", return_value="1234")
     def test_run_full_suite(self, *mocks, **mocks2):
         import validmind as vm
-        from validmind.vm_models.dataset import VMDataset
+        from validmind.vm_models.dataset.dataset import VMDataset
         from validmind.vm_models.model import VMModel
         from validmind.vm_models.test_suite.test_suite import TestSuite
 

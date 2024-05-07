@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from sklearn.metrics import roc_auc_score, roc_curve
 
 from validmind.errors import SkipTestError
+from validmind.models import FoundationModel
 from validmind.vm_models import Figure, Metric
 
 
@@ -70,7 +71,7 @@ class ROCCurve(Metric):
     }
 
     def run(self):
-        if self.inputs.model.model_library() == "FoundationModel":
+        if isinstance(self.inputs.model, FoundationModel):
             raise SkipTestError("Skipping ROCCurve for Foundation models")
 
         y_true = self.inputs.dataset.y

@@ -74,7 +74,7 @@ class ANOVAOneWayTable(Metric):
 
         # Select all numerical features if none are specified
         if features is None:
-            features = self.inputs.dataset.get_numeric_features_columns()
+            features = self.inputs.dataset.feature_columns_numeric
 
         anova_results = self.anova_numerical_features(features, p_threshold)
 

@@ -2,19 +2,22 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from .catboost import CatBoostModel
 from .foundation import FoundationModel, Prompt
+from .function import FunctionModel
 from .huggingface import HFModel
+from .metadata import MetadataModel
+from .pipeline import PipelineModel
 from .pytorch import PyTorchModel
-from .sklearn import SKlearnModel
-from .statsmodels import StatsModelsModel
-from .xgboost import XGBoostModel
+from .sklearn import CatBoostModel, SKlearnModel, StatsModelsModel, XGBoostModel
 
 __all__ = [
     "CatBoostModel",
     "FoundationModel",
+    "FunctionModel",
     "HFModel",
+    "MetadataModel",
     "Prompt",
+    "PipelineModel",
     "PyTorchModel",
     "SKlearnModel",
     "StatsModelsModel",

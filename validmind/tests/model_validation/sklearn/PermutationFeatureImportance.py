@@ -71,15 +71,14 @@ class PermutationFeatureImportance(Metric):
         x = self.inputs.dataset.x_df()
         y = self.inputs.dataset.y_df()
 
-        model_library = self.inputs.model.model_library()
-        if (
-            model_library == "statsmodels"
-            or model_library == "pytorch"
-            or model_library == "catboost"
-            or model_library == "transformers"
-            or model_library == "R"
-        ):
-            raise SkipTestError(f"Skipping PFI for {model_library} models")
+        if self.inputs.model.library in [
+            "statsmodels",
+            "pytorch",
+            "catboost",
+            "transformers",
+            "R",
+        ]:
+            raise SkipTestError(f"Skipping PFI for {self.inputs.model.library} models")
 
         pfi_values = permutation_importance(
             self.inputs.model.model,

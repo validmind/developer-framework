@@ -7,8 +7,10 @@ Model class wrapper module
 """
 import importlib
 import inspect
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
+
+from validmind.errors import MissingOrInvalidModelPredictFnError
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -30,6 +32,23 @@ R_MODEL_TYPES = [
 R_MODEL_METHODS = [
     "glm.fit",
 ]
+
+
+class ModelPipeline:
+    """Helper class for chaining models together
+
+    This shouldn't be used directly, it just gets used when chaining models with the
+    `|` operator since you can't use a list directly - you must use a type that
+    overloads the `|` operator.
+    """
+
+    def __init__(self, models):
+        self.models = models
+
+    def __or__(self, other):
+        self.models.append(other)
+
+        return self
 
 
 @dataclass
@@ -56,49 +75,52 @@ class ModelAttributes:
         )
 
 
-class VMModel:
+class VMModel(ABC):
     """
     An base class that wraps a trained model instance and its associated data.
 
     Attributes:
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
         model (object, optional): The trained model instance. Defaults to None.
-        device_type(str, optional) The device where model is trained
+        input_id (str, optional): The input ID for the model. Defaults to None.
+        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        name (str, optional): The name of the model. Defaults to the class name.
     """
-
-    input_id: str = None
 
     def __init__(
         self,
         input_id: str = None,
         model: object = None,
         attributes: ModelAttributes = None,
+        name: str = None,
+        **kwargs,
     ):
-        self._model = model
-        self._input_id = input_id
-        self._attributes = attributes
+        self.model = model
+        self.input_id = input_id or f"{id(self)}"
 
-        # The device where model is trained
-        self._device_type = None
+        self.language = "Python"
+        self.library = self.__class__.__name__
+        self.library_version = "N/A"
+        self.class_ = self.__class__.__name__
 
-    @property
-    def attributes(self):
-        return self._attributes
+        self.name = name or self.__class__.__name__
 
-    @property
-    def input_id(self):
-        return self._input_id
+        self.attributes = attributes
 
-    @property
-    def model(self):
-        return self._model
+        # set any additional attributes passed in (likely for subclasses)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
-    @property
-    def device_type(self):
-        """
-        The device where model is trained
-        """
-        return self._device_type
+        self.__post_init__()
+
+    def __post_init__(self):
+        """Allows child classes to add their own post-init logic"""
+        pass
+
+    def __or__(self, other):
+        if not isinstance(other, VMModel):
+            raise ValueError("Can only chain VMModel objects")
+
+        return ModelPipeline([self, other])
 
     def serialize(self):
         """
@@ -108,39 +130,16 @@ class VMModel:
             "attributes": self.attributes.__dict__,
         }
 
-    @abstractmethod
-    def model_language(self, *args, **kwargs):
-        """
-        Programming language used to train the model. Assume Python if this
-        method is not implemented
-        """
-        pass
+    def predict_proba(self, *args, **kwargs):
+        """Predict probabilties - must be implemented by subclass if needed"""
+        raise MissingOrInvalidModelPredictFnError(
+            "`predict_proba()` method not implemented for this model"
+        )
 
     @abstractmethod
-    def model_library(self, *args, **kwargs):
-        """
-        Model framework library
-        """
-        pass
-
-    @abstractmethod
-    def model_library_version(self, *args, **kwargs):
-        """
-        Model framework library version
-        """
-        pass
-
-    @abstractmethod
-    def model_class(self, *args, **kwargs):
+    def predict(self, *args, **kwargs):
         """
         Predict method for the model. This is a wrapper around the model's
-        """
-        pass
-
-    @abstractmethod
-    def model_name(self, *args, **kwargs):
-        """
-        Model name
         """
         pass
 

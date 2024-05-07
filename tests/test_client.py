@@ -75,8 +75,8 @@ class TestInitDataset(TestCase):
         # Test initializing a Pandas DataFrame
         df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
         vm_dataset = init_dataset(df, target_column="col1")
-        self.assertIsInstance(vm_dataset._df, pd.DataFrame)
-        self.assertTrue(vm_dataset._df.equals(df))
+        self.assertIsInstance(vm_dataset.df, pd.DataFrame)
+        self.assertTrue(vm_dataset.df.equals(df))
 
     @mock.patch(
         "validmind.client.log_input",
@@ -86,8 +86,8 @@ class TestInitDataset(TestCase):
         # Test initializing a numpy ndarray
         arr = np.array([[1, 2, 3], [4, 5, 6]])
         vm_dataset = init_dataset(arr, target_column=2)
-        self.assertIsInstance(vm_dataset._df, pd.DataFrame)
-        self.assertTrue(vm_dataset._df.equals(pd.DataFrame(arr)))
+        self.assertIsInstance(vm_dataset.df, pd.DataFrame)
+        self.assertTrue(vm_dataset.df.equals(pd.DataFrame(arr)))
 
     # TODO: Test initializing a PyTorch tensor
 

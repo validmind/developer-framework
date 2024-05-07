@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models.model import ModelAttributes, VMModel
+from validmind.models.function import FunctionModel
 
 logger = get_logger(__name__)
 
@@ -18,7 +18,7 @@ class Prompt:
     variables: list
 
 
-class FoundationModel(VMModel):
+class FoundationModel(FunctionModel):
     """FoundationModel class wraps a Foundation LLM endpoint
 
     This class wraps a predict function that is user-defined and adapts it to works
@@ -29,22 +29,14 @@ class FoundationModel(VMModel):
           and return the result from the model
         prompt (Prompt): The prompt object that defines the prompt template and the
           variables (if any)
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
+        name (str, optional): The name of the model. Defaults to name of the predict_fn
     """
 
-    def __init__(
-        self,
-        predict_fn: callable,
-        prompt: Prompt,  # prompt used for model (for now just a string)
-        attributes: ModelAttributes = None,
-        input_id: str = None,
-    ):
-        super().__init__(
-            attributes=attributes,
-            input_id=input_id,
-        )
-        self.predict_fn = predict_fn
-        self.prompt = prompt
+    def __post_init__(self):
+        if not getattr(self, "predict_fn") or not callable(self.predict_fn):
+            raise ValueError("FoundationModel requires a callable predict_fn")
+
+        self.name = self.name or self.predict_fn.__name__
 
     def _build_prompt(self, x: pd.DataFrame):
         """
@@ -59,21 +51,3 @@ class FoundationModel(VMModel):
         Predict method for the model. This is a wrapper around the model's
         """
         return [self.predict_fn(self._build_prompt(x[1])) for x in X.iterrows()]
-
-    def model_library(self):
-        """
-        Returns the model library name
-        """
-        return "FoundationModel"
-
-    def model_class(self):
-        """
-        Returns the model class name
-        """
-        return "FoundationModel"
-
-    def model_name(self):
-        """
-        Returns model name
-        """
-        return "FoundationModel"
