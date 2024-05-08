@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.vm_models.model import VMModel
 
 
@@ -30,4 +31,12 @@ class MetadataModel(VMModel):
 
     def predict(self, *args, **kwargs):
         """Not implemented for MetadataModel"""
-        raise NotImplementedError("MetadataModel does not support inference")
+        raise MissingOrInvalidModelPredictFnError(
+            "MetadataModel does not support inference"
+        )
+
+    def predict_proba(self, *args, **kwargs):
+        """Not implemented for MetadataModel"""
+        raise MissingOrInvalidModelPredictFnError(
+            "MetadataModel does not support inference"
+        )

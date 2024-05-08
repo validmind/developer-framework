@@ -29,8 +29,6 @@ class FoundationModel(FunctionModel):
           and return the result from the model
         prompt (Prompt): The prompt object that defines the prompt template and the
           variables (if any)
-        predict_col (str, optional): The output column name where predictions are stored.
-          Defaults to the `input_id` plus `_prediction`.
         name (str, optional): The name of the model. Defaults to name of the predict_fn
     """
 

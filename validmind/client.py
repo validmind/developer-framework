@@ -28,13 +28,7 @@ from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
 from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
-from .vm_models.dataset import (
-    DataFrameDataset,
-    NumpyDataset,
-    PolarsDataset,
-    TorchDataset,
-    VMDataset,
-)
+from .vm_models.dataset import DataFrameDataset, PolarsDataset, TorchDataset, VMDataset
 from .vm_models.model import (
     ModelAttributes,
     VMModel,
@@ -135,7 +129,7 @@ def init_dataset(
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
-        vm_dataset = NumpyDataset(
+        vm_dataset = VMDataset(
             input_id=input_id,
             raw_dataset=dataset,
             model=model,

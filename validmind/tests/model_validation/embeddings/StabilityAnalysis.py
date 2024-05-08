@@ -74,13 +74,12 @@ class StabilityAnalysis(ThresholdTest):
         logger.debug(f"Perturbed data: {perturbed}")
 
         # Compute embeddings for the original and perturbed dataset
-        original_embeddings = self.inputs.model.predict(original)
-        perturbed_embeddings = self.inputs.model.predict(perturbed)
+        original_embeddings = self.inputs.dataset.y_pred(self.inputs.model)
+        perturbed_embeddings = np.stack(self.inputs.model.predict(perturbed))
 
         # Compute cosine similarities between original and perturbed embeddings
         similarities = cosine_similarity(
-            original_embeddings,
-            perturbed_embeddings,
+            original_embeddings, perturbed_embeddings
         ).diagonal()
 
         mean = np.mean(similarities)

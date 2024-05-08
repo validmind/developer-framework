@@ -20,7 +20,7 @@ from validmind.input_registry import input_registry
 
 from ..errors import MissingRequiredTestInputError
 from ..logging import get_logger
-from .dataset import VMDataset
+from .dataset.dataset import VMDataset
 from .model import VMModel
 
 # More human readable context names for error messages

@@ -80,7 +80,7 @@ class RegressionModelsPerformance(Metric):
         evaluation_results = []
 
         for model, dataset in zip(models, datasets):
-            X_columns = dataset.get_features_columns()
+            X_columns = dataset.feature_columns
             y_true = dataset.y
             y_pred = dataset.y_pred(model)
 

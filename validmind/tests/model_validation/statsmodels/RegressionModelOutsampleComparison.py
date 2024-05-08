@@ -96,7 +96,7 @@ class RegressionModelOutsampleComparison(Metric):
 
         for fitted_model in model_list:
             # Extract the column names of the independent variables from the model
-            independent_vars = dataset.get_features_columns()
+            independent_vars = dataset.feature_columns
 
             # Separate the target variable and features in the test dataset
             y_test = dataset.y
