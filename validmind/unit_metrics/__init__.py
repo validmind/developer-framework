@@ -85,7 +85,7 @@ def _serialize_dataset(dataset, model):
                 dataset.target_column,
                 dataset.prediction_column(model),
             ]
-        ].to_frame()
+        ]
     )
 
 
