@@ -14,14 +14,15 @@ def ContextPrecision(
     ground_truth_column="ground_truth",
     contexts_column="contexts",
 ):
-    required_columns = [
-        question_column,
-        answer_column,
-        ground_truth_column,
-        contexts_column,
-    ]
+    required_columns = {
+        question_column: "question",
+        answer_column: "answer",
+        ground_truth_column: "ground_truth",
+        contexts_column: "contexts",
+    }
+    df = dataset.df.rename(columns=required_columns, inplace=False)
     result = evaluate(
-        Dataset.from_pandas(dataset.df[required_columns]), metrics=[context_precision]
+        Dataset.from_pandas(df[list(required_columns.values())]),
+        metrics=[context_precision],
     )
-
     return result.to_pandas()["context_precision"].to_list()
