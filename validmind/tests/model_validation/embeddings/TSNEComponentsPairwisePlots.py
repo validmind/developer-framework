@@ -1,3 +1,7 @@
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -62,8 +66,8 @@ def TSNEComponentsPairwisePlots(
     else:
         fig = px.scatter(
             tsne_df,
-            x=f"Component 1",
-            y=f"Component 1",
+            x="Component 1",
+            y="Component 1",
             title=f"{title} - {getattr(model, 'input_id', 'Unknown Model')}",
             labels={
                 "Component 1": "Component 1",
