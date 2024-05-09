@@ -72,25 +72,24 @@ class Punctuations(Metric):
         text_column = self.inputs.dataset.text_column
         corpus = create_corpus(self.inputs.dataset.df, text_column=text_column)
 
-        dic = defaultdict(int)
         special = string.punctuation
+        dic = defaultdict(int, {key: 0 for key in special})
         for i in corpus:
             if i in special:
                 dic[i] += 1
-
+        figures = []
+        # if dic:
         fig = plt.figure()
         x, y = zip(*dic.items())
         plt.bar(x, y, color="#17C37B")
-
+        figures.append(
+            Figure(
+                for_object=self,
+                key=self.key,
+                figure=fig,
+            )
+        )
         # Do this if you want to prevent the figure from being displayed
         plt.close("all")
 
-        return self.cache_results(
-            figures=[
-                Figure(
-                    for_object=self,
-                    key=self.key,
-                    figure=fig,
-                )
-            ]
-        )
+        return self.cache_results(figures=figures)
