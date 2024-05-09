@@ -36,15 +36,10 @@ def EuclideanDistanceHeatmap(
     # Calculate pairwise Euclidean distance
     distance_matrix = euclidean_distances(embeddings)
 
-    # Create labels for axes
-    indices = [f"{xaxis_title} {i+1}" for i in range(len(dataset.df))]
-
     # Create the heatmap using Plotly
     fig = px.imshow(
         distance_matrix,
         labels=dict(x=xaxis_title, y=yaxis_title, color=color),
-        x=indices,
-        y=indices,
         text_auto=True,
         aspect="auto",
         color_continuous_scale=color_scale,
@@ -54,8 +49,6 @@ def EuclideanDistanceHeatmap(
         title=f"{title} - {model.input_id}",
         xaxis_title=xaxis_title,
         yaxis_title=yaxis_title,
-        xaxis=dict(showticklabels=False),  # Hide x-axis tick labels
-        yaxis=dict(showticklabels=False),  # Hide y-axis tick labels
     )
 
     return fig

@@ -36,14 +36,10 @@ def CosineSimilarityHeatmap(
     # Calculate pairwise cosine similarity
     similarity_matrix = cosine_similarity(embeddings)
 
-    indices = [f"{xaxis_title} {i+1}" for i in range(len(dataset.df))]
-
     # Create the heatmap using Plotly
     fig = px.imshow(
         similarity_matrix,
         labels=dict(x=xaxis_title, y=yaxis_title, color=color),
-        x=indices,
-        y=indices,
         text_auto=True,
         aspect="auto",
         color_continuous_scale=color_scale,
@@ -53,8 +49,6 @@ def CosineSimilarityHeatmap(
         title=f"{title} - {model.input_id}",
         xaxis_title=xaxis_title,
         yaxis_title=yaxis_title,
-        xaxis=dict(showticklabels=False),  # Hide x-axis tick labels
-        yaxis=dict(showticklabels=False),  # Hide y-axis tick labels
     )
 
     return fig
