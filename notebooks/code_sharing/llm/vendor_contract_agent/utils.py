@@ -1,20 +1,176 @@
 import json
 import os
+import requests
 import sqlite3
+import time
+from typing_extensions import override
 
-from openai import OpenAI
-from tenacity import retry, wait_random_exponential, stop_after_attempt
-from termcolor import colored
+import mistune
+from bs4 import BeautifulSoup
+from duckduckgo_search import DDGS
+from IPython.display import display
+from ipywidgets import HTML
+from openai import AssistantEventHandler, OpenAI
 
 GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL", "gpt-3.5-turbo-0613")
 TOOL_FOLDER = os.environ.get("OPENAI_TOOL_FOLDER", "tool_definitions")
 CONTRACTS_DATA = "contracts.json"
 VENDORS_DATA = "vendors.json"
+AGENT_MESSAGE_WRAPPER_HTML = """
+<div id="message_container">
+{message_html}
+</div>
+<style>
+#message_container {{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+}}
+</style>
+"""
 
 client = OpenAI()
 db_connection = None
+print_lock = False
 
 
+def blocking_print(*parts, **kwargs):
+    global print_lock
+
+    # print to console but wait until the lock is released
+    while print_lock:
+        time.sleep(0.1)
+        pass
+
+    print_lock = True
+    print(*parts, **kwargs)
+    print_lock = False
+
+
+class AgentEventHandler(AssistantEventHandler):
+    @override
+    def on_event(self, event):
+        if os.environ["DEBUG"] == "1":
+            print("got event...")
+            blocking_print(f"Event: {event}")
+            blocking_print(f"Data: {event}")
+
+        if event.event == "thread.run.requires_action":
+            run_id = event.data.id
+            self.handle_requires_action(event.data, run_id)
+
+    def handle_requires_action(self, data, run_id):
+        tool_outputs = []
+
+        for tool in data.required_action.submit_tool_outputs.tool_calls:
+            kwargs = json.loads(tool.function.arguments)
+            if tool.function.name == "query_database":
+                blocking_print("> Querying database with: ", kwargs)
+                result = call_tool(query_db, **kwargs)
+                blocking_print("> Result: ", result)
+                blocking_print("\n")
+
+                tool_outputs.append(
+                    {
+                        "tool_call_id": tool.id,
+                        "output": result,
+                    }
+                )
+            elif tool.function.name == "search_online":
+                blocking_print("> Searching online with: ", kwargs)
+                result = call_tool(search_online, **kwargs)
+                blocking_print("> Result: ", result)
+                blocking_print("\n")
+                tool_outputs.append(
+                    {
+                        "tool_call_id": tool.id,
+                        "output": result,
+                    }
+                )
+
+        # Submit all tool_outputs at the same time
+        self.submit_tool_outputs(tool_outputs, run_id)
+
+    def submit_tool_outputs(self, tool_outputs, run_id):
+        # Use the submit_tool_outputs_stream helper
+        with client.beta.threads.runs.submit_tool_outputs_stream(
+            thread_id=self.current_run.thread_id,
+            run_id=self.current_run.id,
+            tool_outputs=tool_outputs,
+            event_handler=AgentEventHandler(),
+        ) as stream:
+            started = False
+            widget = HTML(AGENT_MESSAGE_WRAPPER_HTML.format(message_html=""))
+            agent_message = ""
+
+            for text in stream.text_deltas:
+                if not started:
+                    started = True
+                    blocking_print("> Receiving message from agent:")
+                    display(widget)
+
+                # blocking_print(text, end="", flush=True)
+                agent_message += text
+                widget.value = AGENT_MESSAGE_WRAPPER_HTML.format(
+                    message_html=mistune.markdown(agent_message)
+                )
+
+            blocking_print()
+
+
+# Helper Functions
+def pretty_print(messages):
+    print("# Messages")
+    for m in messages:
+        print(f"{m.role}: {m.content[0].text.value}")
+    print()
+
+
+def show_json(obj):
+    display(json.loads(obj.model_dump_json()))
+
+
+# Function Call Functions
+def search_online(search_type, query=None, url=None):
+    if search_type == "browse":
+        # use duckduckgo to search for the query
+        results = DDGS().text(query, max_results=5)
+        return json.dumps(results)
+
+    if search_type == "scrape":
+        # scrape the text of the url
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        text = soup.get_text()
+        return text.strip()
+
+    raise ValueError(f"Unknown search type: {search_type}")
+
+
+def query_db(query):
+    global db_connection
+
+    cursor = db_connection.cursor()
+    cursor.execute(query)
+
+    results = cursor.fetchall()
+
+    # return as string
+    return json.dumps(results)
+
+
+def call_tool(func, **kwargs):
+    try:
+        return func(**kwargs)
+    except Exception as e:
+        # return a string explaining to the llm what went wrong
+        message = f"Error calling tool: {func.__name__}"
+
+        return f"{message}: {str(e)}"
+
+
+# Function Call Spec
 def get_tools_spec():
     tools_spec = []
 
@@ -30,61 +186,7 @@ def get_tools_spec():
     return tools_spec
 
 
-@retry(wait=wait_random_exponential(multiplier=1, max=40), stop=stop_after_attempt(3))
-def chat_completion_request(messages, tools=None, tool_choice=None, model=GPT_MODEL):
-    try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=tools,
-            tool_choice=tool_choice,
-        )
-        return response
-    except Exception as e:
-        print("Unable to generate ChatCompletion response")
-        print(f"Exception: {e}")
-        return e
-
-
-def pretty_print_conversation(messages):
-    role_to_color = {
-        "system": "red",
-        "user": "green",
-        "assistant": "blue",
-        "function": "magenta",
-    }
-
-    for message in messages:
-        if message["role"] == "system":
-            print(
-                colored(
-                    f"system: {message['content']}\n", role_to_color[message["role"]]
-                )
-            )
-        elif message["role"] == "user":
-            print(
-                colored(f"user: {message['content']}\n", role_to_color[message["role"]])
-            )
-        elif message["role"] == "assistant" and message.get("function_call"):
-            print(
-                colored(
-                    f"assistant: {message['function_call']}\n",
-                    role_to_color[message["role"]],
-                )
-            )
-        elif message["role"] == "assistant" and not message.get("function_call"):
-            print(
-                colored(
-                    f"assistant: {message['content']}\n", role_to_color[message["role"]]
-                )
-            )
-        elif message["role"] == "function":
-            print(
-                colored(
-                    f"function ({message['name']}): {message['content']}\n",
-                    role_to_color[message["role"]],
-                )
-            )
+# Agent Functions
 
 
 def _load_data():
@@ -132,7 +234,7 @@ def init_db():
     )
 
     # Load JSON data from files
-    with open(CONTRACTS_DATA, "r") as file:
+    with open(VENDORS_DATA, "r") as file:
         vendors_data = json.load(file)
         for vendor in vendors_data:
             vendor["contracts"] = ",".join(vendor["contracts"])
@@ -151,7 +253,7 @@ def init_db():
             "INSERT INTO vendors VALUES (?, ?, ?, ?, ?)", vendors_insert
         )
 
-    with open(VENDORS_DATA, "r") as file:
+    with open(CONTRACTS_DATA, "r") as file:
         contracts_data = json.load(file)
         contracts_insert = [
             (
@@ -199,41 +301,3 @@ def get_schema_description():
             description += f"  {column['column_name']}: {column['data_type']}\n"
 
     return description
-
-
-def query_db(query):
-    global db_connection
-
-    cursor = db_connection.cursor()
-    cursor.execute(query)
-    return cursor.fetchall()
-
-
-# with open("contracts.json") as f:
-#     contract_data = json.load(f)
-# with open("vendors.json") as f:
-#     vendors = json.load(f)
-# response = client.chat.completions.create(
-#     messages=[
-#         {
-#             "role": "system",
-#             "content": "Please expand the user-provided data with synthetic data.\nDo not make up vendors though, use real, popular software vendors.",
-#         },
-#         {
-#             "role": "user",
-#             "content": f"Contracts data:\n{json.dumps(contract_data)}",
-#         },
-#         {
-#             "role": "user",
-#             "content": f"Vendors data:\n{json.dumps(vendors)}",
-#         },
-#         {
-#             "role": "user",
-#             "content": "Return a json object with the keys `vendors` and `contracts` that greatly expands the existing example data. Use the same schema and structure and create the contracts first so you can link the vendor and contracts correctly.",
-#         }
-#     ],
-#     model="gpt-4-turbo",
-#     temperature=1,
-#     max_tokens=4096,
-#     response_format={"type": "json_object"},
-# )
