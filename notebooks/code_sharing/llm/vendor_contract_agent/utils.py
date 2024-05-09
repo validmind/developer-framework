@@ -14,8 +14,8 @@ from openai import AssistantEventHandler, OpenAI
 
 GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL", "gpt-3.5-turbo-0613")
 TOOL_FOLDER = os.environ.get("OPENAI_TOOL_FOLDER", "tool_definitions")
-CONTRACTS_DATA = "contracts.json"
-VENDORS_DATA = "vendors.json"
+CONTRACTS_DATA = "data/contracts.json"
+VENDORS_DATA = "data/vendors.json"
 AGENT_MESSAGE_WRAPPER_HTML = """
 <div id="message_container">
 {message_html}
