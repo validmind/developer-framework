@@ -66,6 +66,7 @@ tqdm = "^4.64.0"
 transformers = {version = "^4.32.0", optional = true}
 xgboost = ">=1.5.2,<3"
 ydata-profiling = "^4.7.0"
+textblob = "^0.18.0.post0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1.0"
