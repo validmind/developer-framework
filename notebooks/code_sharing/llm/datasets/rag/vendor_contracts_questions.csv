@@ -1,0 +1,51 @@
+Question #,Question,Answer
+1,What software do we have available for data analytics?,"Evisort Analytics, Kira QuickSearch, Seal Discovery"
+2,What taxonomy category is Tableau in?,Not listed. The dataset doesn't include Tableau.
+3,Who are the BSLs that support Asset Servicing?,"Not specifically mentioned. BSLs include Legal, Finance, Operations, IT, Business, All Departments, Small Business."
+4,Is Cisco a preferred vendor?,Cisco is not listed as a vendor in the provided contracts.
+5,Which active vendors are covering comparable capability as Miro?,"HighQ might offer collaborative features similar to Miro, but Miro isn't directly compared in the dataset."
+6,What was our spend on Jabra products in the last two years?,Jabra is not listed in the contracts. No spend recorded.
+7,"Do we have any contracts with Cisco containing an exclusivity provision, restricting our ability to engage another vendor for similar services?",Cisco is not listed in the contracts; no such exclusivity is noted.
+8,What are the engagements we have with Tableau?,Tableau is not listed in the contracts. No engagements noted.
+9,Which vendors are categorized under Legal Management?,"CobbleStone, Onit, LinkSquares, Thomson Reuters, ContractRoom, Mitratech, Precisely"
+10,What is the total annual spend for AI technologies?,"$126,000 (Sum of annual spend for SirionLabs, CobbleStone, Kira Systems, Seal Software, LinkSquares)"
+11,Who offers the most comprehensive contract management tools?,"Concord, offering Automated workflows, Real-time collaboration"
+12,Which contracts include cloud storage solutions?,Precisely offers cloud storage as part of its contract creation and storage services.
+13,Are there any vendors offering digital signature solutions?,DocuSign and PandaDoc
+14,What is the highest historical spend among the contracts?,"Mitratech, with a historical spend of $50,000"
+15,How many contracts support the IT department?,1 (Agiloft)
+16,List all contracts with no exclusivity clause.,All 20 contracts
+17,Which vendors have contracts extending beyond 2025?,"SirionLabs, DocuSign, CobbleStone, Onit, Thomson Reuters, Zycus, Precisely"
+18,How much was spent on legal management software in the past two years?,"$112,000 (Sum of annual spends for CobbleStone, Onit, LinkSquares, Thomson Reuters, ContractRoom, Mitratech, Precisely)"
+19,What is the average annual spend on contracts that include electronic signatures as a feature?,"$12,500 (Average of DocuSign and PandaDoc)"
+20,How many vendors provide document management services?,"4 (DocuSign, PandaDoc, Thomson Reuters, Precisely)"
+21,Which contract has the most diverse set of features?,"Mitratech, offering comprehensive legal operations management with policy management and legal hold among other features."
+22,How many contracts are primarily focused on compliance management?,"4 (Icertis, Evisort, Zycus, Mitratech)"
+23,What contracts are due to expire within the next year?,"C002, C004, C005, C006, C008, C010, C012, C014, C015, C017"
+24,"Which contracts are valued at over $20,000 but under $25,000?","SirionLabs, Concord, Agiloft, Zycus, Seal Software"
+25,List all vendors that are considered non-preferred.,"Evisort, Concord, Agiloft, Kira Systems, ContractWorks, Zycus, Seal Software, ContractRoom, Precisely"
+26,What is the longest contract duration among the listed contracts?,"HighQ has a contract duration from March 15, 2023, to March 14"
+27,How many contracts provide automated workflows as a feature?,"5 (SirionLabs, Concord, Onit, Mitratech, Precisely)"
+28,Which contracts are associated with vendors who also provide consulting services?,None listed as providing consulting services.
+29,What are the engagement terms for vendors offering machine learning capabilities?,Kira Systems and Seal Software offer AI-enhanced document review and AI-powered contract analysis respectively.
+30,Which contracts are associated with vendors listed as preferred?,"SirionLabs, DocuSign, LexisNexis, PandaDoc, HighQ, Mitratech"
+31,Which contracts offer services related to Procurement Management?,Zycus
+32,List all vendors providing services for Legal Research.,LexisNexis
+33,What is the total spend on contracts that include AI document analysis?,"$39,000 (Seal Software $20,000, Kira Systems $19,000)"
+34,Who are the vendors that provide secure document sharing as a feature?,HighQ
+35,What contracts include services for Contract Automation?,Thomson Reuters
+36,How many contracts offer cloud-based services?,1 (Precisely)
+37,What is the total spend on contracts expiring in 2024?,"$162,000"
+38,Which contracts are primarily focused on Data Analytics?,"Evisort, Kira Systems, Seal Software"
+39,List the vendors that offer Electronic Signature technologies.,"DocuSign, PandaDoc"
+40,What is the smallest contract value listed?,"ContractWorks $10,000"
+41,Which contracts support the Marketing department?,PandaDoc
+42,List all preferred vendors that provide collaboration tools.,HighQ
+43,"Are there any contracts valued at exactly $20,000?","SirionLabs, LinkSquares, Seal Software"
+44,Which vendors have the shortest contract duration?,"LexisNexis, ContractWorks (Less than 2 years)"
+45,What is the average duration of contracts focused on Legal Management?,"2.14 years (Average duration for CobbleStone, Onit, LinkSquares, Thomson Reuters, Mitratech, ContractRoom, Precisely)"
+46,Which vendors offer contract lifecycle management with a focus on IT?,Agiloft
+47,List all contracts that include Compliance as a feature.,"Evisort, Icertis, Zycus, Mitratech"
+48,What are the main services offered by vendors who also manage assets?,This specific detail is not listed in the contracts.
+49,Which contracts include machine learning and cloud storage as features?,None of the contracts include both features together.
+50,Who are the vendors providing contract discovery and analytics services?,Seal Software
