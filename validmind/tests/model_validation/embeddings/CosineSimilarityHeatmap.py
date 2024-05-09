@@ -53,6 +53,8 @@ def CosineSimilarityHeatmap(
         title=f"{title} - {model.input_id}",
         xaxis_title=xaxis_title,
         yaxis_title=yaxis_title,
+        xaxis=dict(showticklabels=False),  # Hide x-axis tick labels
+        yaxis=dict(showticklabels=False),  # Hide y-axis tick labels
     )
 
     return fig
