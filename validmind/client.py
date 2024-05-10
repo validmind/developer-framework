@@ -216,7 +216,7 @@ def init_model(
     vm_model = None
     metadata = None
 
-    if class_obj.__name__ == "PipelineModel":
+    if getattr(class_obj, "__name__") == "PipelineModel":
         vm_model = class_obj(
             pipeline=model,
             input_id=input_id,
