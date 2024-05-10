@@ -43,10 +43,6 @@ def EuclideanDistanceComparison(dataset, models):
     - Euclidean distance can be sensitive to the scale of the data, meaning that preprocessing steps like normalization
       might be necessary to ensure meaningful comparisons.
     - Does not consider the orientation or angle between vectors, focusing purely on magnitude differences.
-
-    **Outputs:**
-    - Figures: A list of bar charts visualizing the Euclidean distances for each model pair.
-    - Table: A DataFrame containing descriptive statistics summarizing the Euclidean distances for each combination of models.
     """
 
     figures = []
