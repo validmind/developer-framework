@@ -12,10 +12,11 @@ from IPython.display import display
 from ipywidgets import HTML
 from openai import AssistantEventHandler, OpenAI
 
-GPT_MODEL = os.environ.get("OPENAI_GPT_MODEL", "gpt-3.5-turbo-0613")
 TOOL_FOLDER = os.environ.get("OPENAI_TOOL_FOLDER", "tool_definitions")
+
 CONTRACTS_DATA = "data/contracts.json"
 VENDORS_DATA = "data/vendors.json"
+
 AGENT_MESSAGE_WRAPPER_HTML = """
 <div id="message_container">
 {message_html}
@@ -29,6 +30,7 @@ AGENT_MESSAGE_WRAPPER_HTML = """
 }}
 </style>
 """
+
 
 client = OpenAI()
 db_connection = None
@@ -49,6 +51,10 @@ def blocking_print(*parts, **kwargs):
 
 
 class AgentEventHandler(AssistantEventHandler):
+    def __init__(self, input):
+        self.input = input
+        super().__init__()
+
     @override
     def on_event(self, event):
         if os.environ["DEBUG"] == "1":
@@ -65,6 +71,13 @@ class AgentEventHandler(AssistantEventHandler):
 
         for tool in data.required_action.submit_tool_outputs.tool_calls:
             kwargs = json.loads(tool.function.arguments)
+            self.input.setdefault("tool_calls", []).append(
+                {
+                    "function": tool.function.name,
+                    "arguments": kwargs,
+                }
+            )
+
             if tool.function.name == "query_database":
                 blocking_print("> Querying database with: ", kwargs)
                 result = call_tool(query_db, **kwargs)
@@ -77,6 +90,8 @@ class AgentEventHandler(AssistantEventHandler):
                         "output": result,
                     }
                 )
+                self.input.setdefault("contexts", []).append(result)
+
             elif tool.function.name == "search_online":
                 blocking_print("> Searching online with: ", kwargs)
                 result = call_tool(search_online, **kwargs)
@@ -88,6 +103,7 @@ class AgentEventHandler(AssistantEventHandler):
                         "output": result,
                     }
                 )
+                self.input.setdefault("contexts", []).append(result)
 
         # Submit all tool_outputs at the same time
         self.submit_tool_outputs(tool_outputs, run_id)
@@ -98,8 +114,9 @@ class AgentEventHandler(AssistantEventHandler):
             thread_id=self.current_run.thread_id,
             run_id=self.current_run.id,
             tool_outputs=tool_outputs,
-            event_handler=AgentEventHandler(),
+            event_handler=AgentEventHandler(self.input),
         ) as stream:
+
             started = False
             widget = HTML(AGENT_MESSAGE_WRAPPER_HTML.format(message_html=""))
             agent_message = ""
@@ -110,13 +127,13 @@ class AgentEventHandler(AssistantEventHandler):
                     blocking_print("> Receiving message from agent:")
                     display(widget)
 
-                # blocking_print(text, end="", flush=True)
                 agent_message += text
                 widget.value = AGENT_MESSAGE_WRAPPER_HTML.format(
                     message_html=mistune.markdown(agent_message)
                 )
 
-            blocking_print()
+            if started:
+                self.input.setdefault("messages", []).append(agent_message)
 
 
 # Helper Functions
