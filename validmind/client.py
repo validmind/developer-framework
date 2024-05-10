@@ -178,6 +178,7 @@ def init_model(
     model: object = None,
     input_id: str = None,
     attributes: dict = None,
+    predict_fn: callable = None,
     __log=True,
 ) -> VMModel:
     """
@@ -192,6 +193,7 @@ def init_model(
             test input using some other key than `model`, then you should set
             this to the same key.
         attributes (dict): A dictionary of model attributes
+        predict_fn (callable): A function that takes an input and returns a prediction
 
     Raises:
         ValueError: If the model type is not supported
@@ -199,7 +201,7 @@ def init_model(
     Returns:
         vm.VMModel: A VM Model instance
     """
-    class_obj = get_model_class(model=model)
+    class_obj = get_model_class(model=model, predict_fn=predict_fn)
     if not class_obj:
         if not attributes:
             raise UnsupportedModelError(
@@ -214,10 +216,18 @@ def init_model(
     vm_model = None
     metadata = None
 
-    if class_obj:
+    if class_obj.__name__ == "PipelineModel":
+        vm_model = class_obj(
+            pipeline=model,
+            input_id=input_id,
+        )
+        # TODO: Add metadata for pipeline model
+        metadata = get_model_info(vm_model)
+    elif class_obj:
         vm_model = class_obj(
             input_id=input_id,
             model=model,  # Trained model instance
+            predict_fn=predict_fn,
         )
         metadata = get_model_info(vm_model)
     else:
