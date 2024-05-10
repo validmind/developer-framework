@@ -2,12 +2,13 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import itertools
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
-import itertools
 
 
 def TSNEComponentsPairwisePlots(

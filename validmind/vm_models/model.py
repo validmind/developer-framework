@@ -19,6 +19,8 @@ SUPPORTED_LIBRARIES = {
     "statsmodels": "StatsModelsModel",
     "torch": "PyTorchModel",
     "transformers": "HFModel",
+    "function": "FunctionModel",
+    "pipeline": "PipelineModel",
     "custom": "SKlearnModel",
 }
 
@@ -192,8 +194,14 @@ def model_module(model):
     return module
 
 
-def get_model_class(model):
-    model_class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
+def get_model_class(model, predict_fn=None):
+    # TODO: more consistent way to determine this?!
+    if predict_fn is not None:
+        model_class_name = SUPPORTED_LIBRARIES["function"]
+    elif isinstance(model, ModelPipeline):
+        model_class_name = SUPPORTED_LIBRARIES["pipeline"]
+    else:
+        model_class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
 
     if model_class_name is None:
         return None
