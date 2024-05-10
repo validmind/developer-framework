@@ -70,7 +70,35 @@
     </div>
     <a class="headerlink" href="#LanguageDetection"></a>
     
-    
+            <div class="docstring"><p>Detects the language of each text entry in a dataset and visualizes the distribution of languages
+as a histogram.</p>
+
+<p>This method checks for a specified text column in the dataset's dataframe, uses a language detection
+library to determine the language of each text entry, and returns a histogram plot of the language
+distribution.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>dataset (Dataset):</strong>  A dataset object which must have a <code>df</code> attribute (a pandas DataFrame)
+and a <code>text_column</code> attribute indicating the name of the column containing text. If the
+<code>text_column</code> attribute is not set, a ValueError is raised.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of detected
+  languages across the dataset's text entries.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the <code>text_column</code> is not specified in the dataset object.</li>
+</ul>
+</div>
+
 
                 </section>
     </main>
