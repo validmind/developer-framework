@@ -52,8 +52,6 @@ def ContextRecall(
         metrics=[context_recall],
     )
 
-    fig = px.histogram(
-        x=result.to_pandas()["context_recall"].to_list(), nbins=10
-    )
+    fig = px.histogram(x=result.to_pandas()["context_recall"].to_list(), nbins=10)
 
     return fig
