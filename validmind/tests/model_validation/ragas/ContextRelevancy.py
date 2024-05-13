@@ -45,10 +45,33 @@ def ContextRelevancy(
         ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
-    df = dataset.df.rename(columns=required_columns, inplace=False)
-    result = evaluate(
+    df = dataset.df.copy()
+    df.rename(columns=required_columns, inplace=False)
+
+    result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
         metrics=[context_relevancy],
+    ).to_pandas()
+
+    fig_histogram = px.histogram(x=result_df["context_relevancy"].to_list(), nbins=10)
+    fig_box = px.box(x=result_df["context_relevancy"].to_list())
+
+    return (
+        {
+            "Scores": result_df[
+                ["question", "contexts", "answer", "ground_truth", "context_relevancy"]
+            ],
+            "Aggregate Scores": [
+                {
+                    "Mean Score": result_df["context_relevancy"].mean(),
+                    "Median Score": result_df["context_relevancy"].median(),
+                    "Max Score": result_df["context_relevancy"].max(),
+                    "Min Score": result_df["context_relevancy"].min(),
+                    "Standard Deviation": result_df["context_relevancy"].std(),
+                    "Count": len(result_df),
+                }
+            ],
+        },
+        fig_histogram,
+        fig_box,
     )
-    fig = px.histogram(x=result.to_pandas()["context_relevancy"].to_list(), nbins=10)
-    return fig

@@ -44,14 +44,42 @@ def ContextEntityRecall(
         ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
-    df = dataset.df.rename(columns=required_columns, inplace=False)
-    result = evaluate(
+
+    df = dataset.df.copy()
+    df.rename(columns=required_columns, inplace=False)
+
+    result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
         metrics=[context_entity_recall],
-    )
+    ).to_pandas()
 
-    fig = px.histogram(
-        x=result.to_pandas()["context_entity_recall"].to_list(), nbins=10
+    fig_histogram = px.histogram(
+        x=result_df["context_entity_recall"].to_list(), nbins=10
     )
+    fig_box = px.box(x=result_df["context_entity_recall"].to_list())
 
-    return fig
+    return (
+        {
+            "Scores": result_df[
+                [
+                    "question",
+                    "contexts",
+                    "answer",
+                    "ground_truth",
+                    "context_entity_recall",
+                ]
+            ],
+            "Aggregate Scores": [
+                {
+                    "Mean Score": result_df["context_entity_recall"].mean(),
+                    "Median Score": result_df["context_entity_recall"].median(),
+                    "Max Score": result_df["context_entity_recall"].max(),
+                    "Min Score": result_df["context_entity_recall"].min(),
+                    "Standard Deviation": result_df["context_entity_recall"].std(),
+                    "Count": len(result_df),
+                }
+            ],
+        },
+        fig_histogram,
+        fig_box,
+    )

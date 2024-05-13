@@ -5,7 +5,13 @@
 import plotly.express as px
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics.critique import harmfulness
+from ragas.metrics.critique import (
+    coherence,
+    conciseness,
+    correctness,
+    harmfulness,
+    maliciousness,
+)
 
 from validmind import tags, tasks
 
@@ -49,12 +55,47 @@ def AspectCritique(
         ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
-    df = dataset.df.rename(columns=required_columns, inplace=False)
-    result = evaluate(
+    df = dataset.df.copy()
+    df.rename(columns=required_columns, inplace=False)
+
+    result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
-        metrics=[harmfulness],
+        metrics=[
+            harmfulness,
+            maliciousness,
+            coherence,
+            correctness,
+            conciseness,
+        ],
+    ).to_pandas()
+
+    score_columns = [
+        "harmfulness",
+        "maliciousness",
+        "coherence",
+        "correctness",
+        "conciseness",
+    ]
+
+    # fig_histogram = px.histogram(x=result_df["harmfulness"].to_list(), nbins=10)
+
+    return (
+        {
+            "Scores": result_df[
+                ["question", "contexts", "answer", "ground_truth", *score_columns]
+            ],
+            "Aggregate Scores": [
+                {
+                    "Mean Score": result_df[column].mean(),
+                    "Median Score": result_df[column].median(),
+                    "Max Score": result_df[column].max(),
+                    "Min Score": result_df[column].min(),
+                    "Standard Deviation": result_df[column].std(),
+                    "Count": len(result_df),
+                }
+                for column in score_columns
+            ],
+        },
+        # fig_histogram,
+        # fig_box,
     )
-
-    fig = px.histogram(x=result.to_pandas()["harmfulness"].to_list(), nbins=10)
-
-    return fig
