@@ -7,34 +7,42 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import context_entity_recall
 
+from validmind import tags, tasks
+
 from .utils import get_renamed_columns
 
 
+@tags("ragas", "llm", "retrieval_performance")
+@tasks("text_qa", "text_generation", "text_summarization")
 def ContextEntityRecall(
     dataset,
     contexts_column: str = "contexts",
     ground_truth_column: str = "ground_truth",
 ):
     """
-    Evaluates the context entity recall metric for dataset entries and visualizes the results.
+    Evaluates the context entity recall for dataset entries and visualizes the results.
 
-    This function processes a dataset containing questions, answers, ground truths, and contexts,
-    calculates the context entity recall using a specified metric, and returns a histogram plot of
-    the recall scores.
+    ### Overview
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            that contains the necessary columns.
-        contexts_column (str, optional): The name of the column containing context information.
-            Defaults to "contexts".
-        ground_truth_column (str, optional): The name of the column containing the correct answers.
-            Defaults to "ground_truth".
+    This metric gives the measure of recall of the retrieved context, based on the
+    number of entities present in both `ground_truths` and `contexts` relative to the
+    number of entities present in the `ground_truths` alone. Simply put, it is a measure
+    of what fraction of entities are recalled from `ground_truths`. This metric is
+    useful in fact-based use cases like tourism help desk, historical QA, etc. This
+    metric can help evaluate the retrieval mechanism for entities, based on comparison
+    with entities present in `ground_truths`, because in cases where entities matter,
+    we need the `contexts` which cover them.
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of context entity recall scores.
+    ### Formula
 
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    To compute this metric, we use two sets, $GE$ and $CE$, representing the set of
+    entities present in `ground_truths` and set of entities present in `contexts`
+    respectively. We then take the number of elements in intersection of these sets and
+    divide it by the number of elements present in the $GE$, given by the formula:
+
+    $$
+    \\text{context entity recall} = \\frac{| CE \cap GE |}{| GE |}
+    $$
     """
     required_columns = {
         ground_truth_column: "ground_truth",

@@ -10,45 +10,44 @@ from ragas.metrics import answer_correctness
 from validmind import tags, tasks
 
 
-@tags("nlp", "text_data", "visualization")
-@tasks("text_classification", "text_summarization")
+@tags("ragas", "llm")
+@tasks("text_qa", "text_generation", "text_summarization")
 def AnswerCorrectness(
     dataset,
     question_column="question",
     answer_column="answer",
     ground_truth_column="ground_truth",
-    contexts_column="contexts",
 ):
     """
-    Evaluates the correctness of answers in a dataset with respect to the provided ground truths and
-    visualizes the results in a histogram.
+    Evaluates the correctness of answers in a dataset with respect to the provided ground
+    truths and visualizes the results in a histogram.
 
-    This function calculates the correctness of answers by comparing them to the ground truth references
-    within the context of the given questions and contexts. It utilizes a pre-defined correctness metric
-    to assess these comparisons and generates a histogram plot of the correctness scores.
+    The assessment of Answer Correctness involves gauging the accuracy of the generated
+    answer when compared to the ground truth. This evaluation relies on the `ground truth`
+    and the `answer`, with scores ranging from 0 to 1. A higher score indicates a closer
+    alignment between the generated answer and the ground truth, signifying better
+    correctness.
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            containing the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers
-            or reference text. Defaults to "ground_truth".
-        contexts_column (str, optional): The name of the column containing the contexts related to each
-            question and answer pair. Defaults to "contexts".
+    Answer correctness encompasses two critical aspects: semantic similarity between the
+    generated answer and the ground truth, as well as factual similarity. These aspects
+    are combined using a weighted scheme to formulate the answer correctness score. Users
+    also have the option to employ a `threshold` value to round the resulting score to
+    a binary value (0 or 1) based on the threshold.
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of answer correctness
-        scores across the dataset's entries.
+    Factual correctness quantifies the factual overlap between the generated answer and
+    the ground truth answer. This is done using the concepts of:
 
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    - TP (True Positive): Facts or statements that are present in both the ground truth
+      and the generated answer.
+    - FP (False Positive): Facts or statements that are present in the generated answer
+      but not in the ground truth.
+    - FN (False Negative): Facts or statements that are present in the ground truth but
+      not in the generated answer.
     """
     required_columns = {
         question_column: "question",
         answer_column: "answer",
         ground_truth_column: "ground_truth",
-        contexts_column: "contexts",
     }
     df = dataset.df.copy()
     df.rename(columns=required_columns, inplace=False)
@@ -64,7 +63,7 @@ def AnswerCorrectness(
     return (
         {
             "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "answer_correctness"]
+                ["question", "answer", "ground_truth", "answer_correctness"]
             ],
             "Aggregate Scores": [
                 {

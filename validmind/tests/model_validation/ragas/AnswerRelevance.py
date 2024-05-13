@@ -9,49 +9,54 @@ from ragas.metrics import answer_relevancy
 
 from validmind import tags, tasks
 
+from .utils import get_renamed_columns
 
-@tags("nlp", "text_data", "visualization")
-@tasks("text_classification", "text_summarization")
+
+@tags("ragas", "llm", "rag_performance")
+@tasks("text_qa", "text_generation", "text_summarization")
 def AnswerRelevance(
     dataset,
     question_column="question",
     answer_column="answer",
-    ground_truth_column="ground_truth",
     contexts_column="contexts",
 ):
     """
-    Evaluates the relevance of answers in a dataset with respect to the provided questions and contexts,
-    and visualizes the results.
+    Assesses how pertinent the generated answer is to the given prompt.
 
-    This function calculates the relevance of generated or provided answers in a dataset based on their
-    alignment with given questions and contexts. It uses a pre-defined relevancy metric to assess
-    this alignment and generates a histogram plot of the relevancy scores.
+    The evaluation metric, Answer Relevancy, focuses on assessing how pertinent the
+    generated answer is to the given prompt. A lower score is assigned to answers that
+    are incomplete or contain redundant information and higher scores indicate better
+    relevancy. This metric is computed using the `question`, the `contexts` and the
+    `answer`.
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            containing the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers
-            or reference text. Defaults to "ground_truth".
-        contexts_column (str, optional): The name of the column containing the contexts related to each
-            question and answer pair. Defaults to "contexts".
+    The Answer Relevancy is defined as the mean cosine similartiy of the original
+    `question` to a number of artifical questions, which are generated (reverse-engineered)
+    based on the `answer`:
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of answer relevancy scores
-        across the dataset's entries.
+    $$
+    \\text{answer relevancy} = \\frac{1}{N} \sum_{i=1}^{N} cos(E_{g_i}, E_o)
+    $$
+    $$
+    \\text{answer relevancy} = \\frac{1}{N} \sum_{i=1}^{N} \\frac{E_{g_i} \cdot E_o}{\|E_{g_i}\|\|E_o\|}
+    $$
 
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    Where:
+    - $E_{g_i}$ is the embedding of the generated question $i$.
+    - $E_o$ is the embedding of the original question.
+    - $N$ is the number of generated questions - 3 by default.
+
+    **Note**: *This is a reference-free metric, meaning that it does not require a
+    `ground_truth` answer to compare against. A similar metric that does evaluate the
+    correctness of a generated answser with respect to a `ground_truth` answer is
+    `validmind.model_validation.ragas.AnswerCorrectness`.*
     """
     required_columns = {
         question_column: "question",
         answer_column: "answer",
-        ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -63,9 +68,7 @@ def AnswerRelevance(
 
     return (
         {
-            "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "answer_relevancy"]
-            ],
+            "Scores": result_df[["question", "contexts", "answer", "answer_relevancy"]],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_relevancy"].mean(),

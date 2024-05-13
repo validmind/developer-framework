@@ -7,9 +7,13 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import context_recall
 
+from validmind import tags, tasks
+
 from .utils import get_renamed_columns
 
 
+@tags("ragas", "llm", "retrieval_performance")
+@tasks("text_qa", "text_generation", "text_summarization", "text_classification")
 def ContextRecall(
     dataset,
     question_column: str = "question",
@@ -18,8 +22,8 @@ def ContextRecall(
 ):
     """
     Context recall measures the extent to which the retrieved context aligns with the
-    annotated answer, treated as the ground truth. It is computed based on the ground
-    truth and the retrieved context, and the values range between 0 and 1, with higher
+    annotated answer, treated as the ground truth. It is computed based on the `ground
+    truth` and the `retrieved context`, and the values range between 0 and 1, with higher
     values indicating better performance.
 
     To estimate context recall from the ground truth answer, each sentence in the ground

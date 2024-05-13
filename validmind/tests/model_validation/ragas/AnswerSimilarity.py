@@ -9,47 +9,42 @@ from ragas.metrics import answer_similarity
 
 from validmind import tags, tasks
 
+from .utils import get_renamed_columns
 
-@tags("nlp", "text_data", "visualization")
-@tasks("text_classification", "text_summarization")
+
+@tags("ragas", "llm")
+@tasks("text_qa", "text_generation", "text_summarization")
 def AnswerSimilarity(
     dataset,
-    question_column="question",
     answer_column="answer",
     ground_truth_column="ground_truth",
-    contexts_column="contexts",
 ):
     """
-    Calculates the answer similarity metric for dataset entries based on a provided ground truth.
+    Calculates the semantic similarity between generated answers and ground truths
 
-    This function takes a dataset containing columns for questions, answers, the correct answers
-    (ground truth), and context information. It evaluates answer similarity using a specified
-    metric, mapping columns as needed and returns a list of similarity scores.
+    The concept of Answer Semantic Similarity pertains to the assessment of the semantic
+    resemblance between the generated answer and the ground truth. This evaluation is
+    based on the `ground_truth` and the `answer`, with values falling within the range
+    of 0 to 1. A higher score signifies a better alignment between the generated answer
+    and the ground truth.
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            that contains the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers.
-            Defaults to "ground_truth".
-        contexts_column (str, optional): The name of the column containing context information.
-            Defaults to "contexts".
+    Measuring the semantic similarity between answers can offer valuable insights into
+    the quality of the generated response. This evaluation utilizes a cross-encoder
+    model to calculate the semantic similarity score.
 
-    Returns:
-        list: A list of answer similarity scores for each entry in the dataset.
+    See this paper for more details: https://arxiv.org/pdf/2108.06130.pdf
 
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    The following steps are involved in computing the answer similarity score:
+    1. Vectorize the ground truth answer using the specified embedding model.
+    2. Vectorize the generated answer using the same embedding model.
+    3. Compute the cosine similarity between the two vectors.
     """
     required_columns = {
-        question_column: "question",
         answer_column: "answer",
         ground_truth_column: "ground_truth",
-        contexts_column: "contexts",
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -61,9 +56,7 @@ def AnswerSimilarity(
 
     return (
         {
-            "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "answer_similarity"]
-            ],
+            "Scores": result_df[["answer", "ground_truth", "answer_similarity"]],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_similarity"].mean(),

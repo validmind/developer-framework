@@ -9,49 +9,41 @@ from ragas.metrics import faithfulness
 
 from validmind import tags, tasks
 
+from .utils import get_renamed_columns
 
-@tags("nlp", "text_data", "visualization")
-@tasks("rag", "text_summarization")
+
+@tags("ragas", "llm", "rag_performance")
+@tasks("text_qa", "text_generation", "text_summarization")
 def Faithfulness(
     dataset,
-    question_column="question",
     answer_column="answer",
-    ground_truth_column="ground_truth",
     contexts_column="contexts",
 ):
     """
-    Evaluates the faithfulness metric for generated answers in a dataset and visualizes the results.
+    Evaluates the faithfulness of the generated answers with respect to retrieved contexts.
 
-    This function analyzes how faithful the generated answers are to the provided contexts in a dataset.
-    It processes a dataset containing questions, answers, ground truths, and contexts, calculates
-    the faithfulness of each answer with respect to its context and ground truth, and returns a histogram
-    plot of these faithfulness scores.
+    This metric uses a judge LLM to measure the factual consistency of the generated answer
+    against the given context(s). It is calculated using the generated text `answer` from
+    the LLM and the retrieved `contexts` which come from some RAG process. The score is
+    a value between 0 and 1, where a higher score indicates that the generated answer is
+    more faithful to the given context(s).
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            that contains the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing generated answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers
-            or reference text. Defaults to "ground_truth".
-        contexts_column (str, optional): The name of the column containing the contexts related to each question
-            and answer pair. Defaults to "contexts".
+    The generated answer is regarded as faithful if all the claims that are made in the
+    answer can be inferred from the given context. To calculate this a set of claims from
+    the generated answer is first identified. Then each one of these claims are cross checked
+    with given context to determine if it can be inferred from given context or not. The
+    faithfulness score formula is as follows:
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of faithfulness scores
-        across the dataset's entries.
-
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    $$
+    \\text{Faithfulness score} = {|\\text{Number of claims in the generated answer that can be inferred from given context}| \over |\\text{Total number of claims in the generated answer}|}
+    $$
     """
     required_columns = {
-        question_column: "question",
         answer_column: "answer",
-        ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -63,9 +55,7 @@ def Faithfulness(
 
     return (
         {
-            "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "faithfulness"]
-            ],
+            "Scores": result_df[["contexts", "answer", "faithfulness"]],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["faithfulness"].mean(),
