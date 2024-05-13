@@ -264,7 +264,7 @@ def metric(func_or_id):
             {
                 "run": _get_run_method(func, inputs, params),
                 "required_inputs": list(inputs.keys()),
-                "default_parameters": params,
+                "default_params": {k: v["default"] for k, v in params.items()},
                 "__doc__": description,
                 "metadata": {
                     "task_types": tasks,
