@@ -7,47 +7,39 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import context_recall
 
+from .utils import get_renamed_columns
+
 
 def ContextRecall(
     dataset,
-    question_column="question",
-    answer_column="answer",
-    ground_truth_column="ground_truth",
-    contexts_column="contexts",
+    question_column: str = "question",
+    contexts_column: str = "contexts",
+    ground_truth_column: str = "ground_truth",
 ):
     """
-    Evaluates the context recall metric for dataset entries and visualizes the results in a histogram.
+    Context recall measures the extent to which the retrieved context aligns with the
+    annotated answer, treated as the ground truth. It is computed based on the ground
+    truth and the retrieved context, and the values range between 0 and 1, with higher
+    values indicating better performance.
 
-    This function processes a dataset containing questions, answers, ground truths, and contexts,
-    calculating the context recall using a specified metric. Context recall assesses how well the
-    context provided supports the answers in relation to the questions and ground truths. The function
-    returns a histogram plot of these recall scores.
+    To estimate context recall from the ground truth answer, each sentence in the ground
+    truth answer is analyzed to determine whether it can be attributed to the retrieved
+    context or not. In an ideal scenario, all sentences in the ground truth answer
+    should be attributable to the retrieved context.
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            that contains the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers
-            or reference text. Defaults to "ground_truth".
-        contexts_column (str, optional): The name of the column containing the contexts related to each
-            question and answer pair. Defaults to "contexts".
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of context recall scores
-        across the dataset's entries.
-
-    Raises:
-        KeyError: If any of the required columns are missing in the dataset.
+    The formula for calculating context recall is as follows:
+    $$
+    \\text{context recall} = {|\\text{GT sentences that can be attributed to context}| \over |\\text{Number of sentences in GT}|}
+    $$
     """
     required_columns = {
         question_column: "question",
-        answer_column: "answer",
-        ground_truth_column: "ground_truth",
         contexts_column: "contexts",
+        ground_truth_column: "ground_truth",
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -60,7 +52,7 @@ def ContextRecall(
     return (
         {
             "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "context_recall"]
+                ["question", "contexts", "ground_truth", "context_recall"]
             ],
             "Aggregate Scores": [
                 {

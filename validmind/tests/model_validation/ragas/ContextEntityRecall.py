@@ -7,13 +7,13 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import context_entity_recall
 
+from .utils import get_renamed_columns
+
 
 def ContextEntityRecall(
     dataset,
-    question_column="question",
-    answer_column="answer",
-    ground_truth_column="ground_truth",
-    contexts_column="contexts",
+    contexts_column: str = "contexts",
+    ground_truth_column: str = "ground_truth",
 ):
     """
     Evaluates the context entity recall metric for dataset entries and visualizes the results.
@@ -25,12 +25,10 @@ def ContextEntityRecall(
     Args:
         dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
             that contains the necessary columns.
-        question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers.
-            Defaults to "ground_truth".
         contexts_column (str, optional): The name of the column containing context information.
             Defaults to "contexts".
+        ground_truth_column (str, optional): The name of the column containing the correct answers.
+            Defaults to "ground_truth".
 
     Returns:
         plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of context entity recall scores.
@@ -39,14 +37,11 @@ def ContextEntityRecall(
         KeyError: If any of the required columns are missing in the dataset.
     """
     required_columns = {
-        question_column: "question",
-        answer_column: "answer",
         ground_truth_column: "ground_truth",
         contexts_column: "contexts",
     }
 
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -62,9 +57,7 @@ def ContextEntityRecall(
         {
             "Scores": result_df[
                 [
-                    "question",
                     "contexts",
-                    "answer",
                     "ground_truth",
                     "context_entity_recall",
                 ]

@@ -7,13 +7,14 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import context_precision
 
+from .utils import get_renamed_columns
+
 
 def ContextPrecision(
     dataset,
-    question_column="question",
-    answer_column="answer",
-    ground_truth_column="ground_truth",
-    contexts_column="contexts",
+    question_column: str = "question",
+    contexts_column: str = "contexts",
+    ground_truth_column: str = "ground_truth",
 ):
     """
     Evaluates the context precision metric for dataset entries and visualizes the results.
@@ -26,9 +27,6 @@ def ContextPrecision(
         dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
             that contains the necessary columns.
         question_column (str, optional): The name of the column containing questions. Defaults to "question".
-        answer_column (str, optional): The name of the column containing answers. Defaults to "answer".
-        ground_truth_column (str, optional): The name of the column containing the correct answers.
-            Defaults to "ground_truth".
         contexts_column (str, optional): The name of the column containing context information.
             Defaults to "contexts".
 
@@ -40,12 +38,11 @@ def ContextPrecision(
     """
     required_columns = {
         question_column: "question",
-        answer_column: "answer",
-        ground_truth_column: "ground_truth",
         contexts_column: "contexts",
+        ground_truth_column: "ground_truth",
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
@@ -58,7 +55,7 @@ def ContextPrecision(
     return (
         {
             "Scores": result_df[
-                ["question", "contexts", "answer", "ground_truth", "context_precision"]
+                ["question", "contexts", "ground_truth", "context_precision"]
             ],
             "Aggregate Scores": [
                 {
