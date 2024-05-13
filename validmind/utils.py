@@ -412,7 +412,7 @@ def display_with_mathjax(html_widget):
     <script>
     window.MathJax = {
         tex2jax: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
             displayMath: [['$$', '$$'], ['\\[', '\\]']],
             processEscapes: true,
             skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
@@ -421,14 +421,15 @@ def display_with_mathjax(html_widget):
         }
     };
 
-    (function () {
+    setTimeout(function () {
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML';
         document.head.appendChild(script);
-        })();
+    }, 500);
     </script>
     """
+    # FIXME: really hacky way to make sure mathjax runs after the HTML is rendered
 
     display(html_widget)
     display(HTML(math_jax_snippet))
