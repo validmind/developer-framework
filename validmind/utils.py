@@ -12,6 +12,7 @@ from platform import python_version
 from typing import Any
 
 import matplotlib.pylab as pylab
+import mistune
 import nest_asyncio
 import numpy as np
 import pandas as pd
@@ -403,3 +404,38 @@ def preview_test_config(config):
     """
 
     display(HTML(collapsible_html))
+
+
+def display_with_mathjax(html_widget):
+    """Display HTML with MathJax rendering enabled"""
+    math_jax_snippet = """
+    <script>
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            ignoreClass: ".*",
+            processClass: "math"
+        }
+    };
+
+    (function () {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML';
+        document.head.appendChild(script);
+        })();
+    </script>
+    """
+
+    display(html_widget)
+    display(HTML(math_jax_snippet))
+
+
+def md_to_html(md: str) -> str:
+    """Converts Markdown to HTML using mistune with plugins"""
+    renderer = mistune.create_markdown(plugins=["math"])
+
+    return renderer(md)

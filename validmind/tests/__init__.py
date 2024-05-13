@@ -11,9 +11,7 @@ from pathlib import Path
 from pprint import pformat
 from typing import Dict
 
-import mistune
 import pandas as pd
-from IPython.display import display
 from ipywidgets import HTML
 
 from ..errors import LoadTestError
@@ -21,7 +19,13 @@ from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import format_dataframe, fuzzy_match, test_id_to_name
+from ..utils import (
+    display_with_mathjax,
+    format_dataframe,
+    fuzzy_match,
+    md_to_html,
+    test_id_to_name,
+)
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -75,10 +79,12 @@ def _pretty_list_tests(tests, truncate=True):
 
     table = [
         {
-            "Test Type": __test_classes[test_id].test_type,
-            "Name": test_id_to_name(test_id),
-            "Description": _test_description(__test_classes[test_id], truncate),
             "ID": test_id,
+            "Name": test_id_to_name(test_id),
+            "Test Type": __test_classes[test_id].test_type,
+            "Description": _test_description(__test_classes[test_id], truncate),
+            "Required Inputs": __test_classes[test_id].required_inputs,
+            "Params": __test_classes[test_id].default_params or {},
         }
         for test_id in tests
     ]
@@ -365,11 +371,11 @@ def describe_test(test_id: str = None, raw: bool = False):
     if raw:
         return details
 
-    display(
+    display_with_mathjax(
         HTML(
             test_content_block_html.format(
                 title=f'{details["Name"]}',
-                description=mistune.html(details["Description"].strip()),
+                description=md_to_html(details["Description"].strip()),
                 required_inputs=", ".join(details["Required Inputs"] or ["None"]),
                 params_table="\n".join(
                     [

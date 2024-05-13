@@ -4,8 +4,6 @@
 
 from pprint import pformat
 
-import mistune
-from IPython.display import display
 from ipywidgets import HTML, Accordion, VBox
 
 from .html_templates.content_blocks import (
@@ -15,7 +13,7 @@ from .html_templates.content_blocks import (
 )
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
-from .utils import is_notebook
+from .utils import display_with_mathjax, is_notebook, md_to_html
 from .vm_models import TestSuite
 
 logger = get_logger(__name__)
@@ -76,7 +74,7 @@ def _create_content_widget(content):
             HTML(
                 test_content_block_html.format(
                     title=test_deets["Name"],
-                    description=mistune.html(test_deets["Description"]),
+                    description=md_to_html(test_deets["Description"]),
                     required_inputs=", ".join(
                         test_deets["Required Inputs"] or ["None"]
                     ),
@@ -165,7 +163,7 @@ def preview_template(template):
         logger.warning("preview_template() only works in Jupyter Notebook")
         return
 
-    display(
+    display_with_mathjax(
         _create_section_widget(_convert_sections_to_section_tree(template["sections"]))
     )
 

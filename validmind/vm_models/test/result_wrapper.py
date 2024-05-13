@@ -13,13 +13,12 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
-import mistune
 import pandas as pd
 from IPython.display import display
 
 from ... import api_client
 from ...ai import DescriptionFuture
-from ...utils import NumpyEncoder, run_async, test_id_to_name
+from ...utils import NumpyEncoder, md_to_html, run_async, test_id_to_name
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
@@ -103,7 +102,7 @@ class ResultWrapper(ABC):
         """
         Convert a markdown string to html
         """
-        return mistune.html(description)
+        return md_to_html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
