@@ -39,8 +39,8 @@ def Faithfulness(
     $$
     """
     required_columns = {
-        answer_column: "answer",
-        contexts_column: "contexts",
+        "answer": answer_column,
+        "contexts": contexts_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

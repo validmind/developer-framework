@@ -45,8 +45,8 @@ def ContextEntityRecall(
     $$
     """
     required_columns = {
-        ground_truth_column: "ground_truth",
-        contexts_column: "contexts",
+        "ground_truth": ground_truth_column,
+        "contexts": contexts_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

@@ -40,8 +40,8 @@ def AnswerSimilarity(
     3. Compute the cosine similarity between the two vectors.
     """
     required_columns = {
-        answer_column: "answer",
-        ground_truth_column: "ground_truth",
+        "answer": answer_column,
+        "ground_truth": ground_truth_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

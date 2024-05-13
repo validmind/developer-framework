@@ -37,8 +37,8 @@ def ContextRelevancy(
     $$
     """
     required_columns = {
-        question_column: "question",
-        contexts_column: "contexts",
+        "question": question_column,
+        "contexts": contexts_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

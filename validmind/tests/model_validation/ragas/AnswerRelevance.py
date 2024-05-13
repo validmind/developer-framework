@@ -51,9 +51,9 @@ def AnswerRelevance(
     `validmind.model_validation.ragas.AnswerCorrectness`.*
     """
     required_columns = {
-        question_column: "question",
-        answer_column: "answer",
-        contexts_column: "contexts",
+        "question": question_column,
+        "answer": answer_column,
+        "contexts": contexts_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

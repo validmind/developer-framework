@@ -38,9 +38,9 @@ def ContextRecall(
     $$
     """
     required_columns = {
-        question_column: "question",
-        contexts_column: "contexts",
-        ground_truth_column: "ground_truth",
+        "question": question_column,
+        "contexts": contexts_column,
+        "ground_truth": ground_truth_column,
     }
 
     df = get_renamed_columns(dataset.df, required_columns)

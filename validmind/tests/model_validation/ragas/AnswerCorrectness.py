@@ -9,6 +9,8 @@ from ragas.metrics import answer_correctness
 
 from validmind import tags, tasks
 
+from .utils import get_renamed_columns
+
 
 @tags("ragas", "llm")
 @tasks("text_qa", "text_generation", "text_summarization")
@@ -45,12 +47,12 @@ def AnswerCorrectness(
       not in the generated answer.
     """
     required_columns = {
-        question_column: "question",
-        answer_column: "answer",
-        ground_truth_column: "ground_truth",
+        "question": question_column,
+        "answer": answer_column,
+        "ground_truth": ground_truth_column,
     }
-    df = dataset.df.copy()
-    df.rename(columns=required_columns, inplace=False)
+
+    df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df[list(required_columns.values())]),
