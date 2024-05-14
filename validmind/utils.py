@@ -19,6 +19,7 @@ import pandas as pd
 import seaborn as sns
 from IPython.core import getipython
 from IPython.display import HTML, display
+from latex2mathml.converter import convert
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
@@ -435,8 +436,27 @@ def display_with_mathjax(html_widget):
     display(HTML(math_jax_snippet))
 
 
-def md_to_html(md: str) -> str:
+def md_to_html(md: str, mathml=False) -> str:
     """Converts Markdown to HTML using mistune with plugins"""
-    renderer = mistune.create_markdown(plugins=["math"])
+    # use mistune with math plugin to convert to html
+    html = mistune.create_markdown(plugins=["math"])(md)
 
-    return renderer(md)
+    if not mathml:
+        # return the html as is (with latex that will be rendered by MathJax)
+        return html
+
+    # convert the latex to MathML which CKeditor can render
+    math_block_pattern = re.compile(r'<div class="math">\$\$([\s\S]*?)\$\$</div>')
+    html = math_block_pattern.sub(
+        lambda match: "<p>{}</p>".format(convert(match.group(1), display="block")), html
+    )
+
+    inline_math_pattern = re.compile(r'<span class="math">\\\((.*?)\\\)</span>')
+    html = inline_math_pattern.sub(
+        lambda match: "<span>{}</span>".format(
+            convert(match.group(1)), display="inline"
+        ),
+        html,
+    )
+
+    return html

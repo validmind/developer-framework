@@ -14,11 +14,16 @@ from typing import Dict, List, Optional, Union
 
 import ipywidgets as widgets
 import pandas as pd
-from IPython.display import display
 
 from ... import api_client
 from ...ai import DescriptionFuture
-from ...utils import NumpyEncoder, md_to_html, run_async, test_id_to_name
+from ...utils import (
+    NumpyEncoder,
+    display_with_mathjax,
+    md_to_html,
+    run_async,
+    test_id_to_name,
+)
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
@@ -153,7 +158,7 @@ class ResultWrapper(ABC):
 
     def show(self):
         """Display the result... May be overridden by subclasses"""
-        display(self.to_widget())
+        display_with_mathjax(self.to_widget())
 
     @abstractmethod
     async def log_async(self):

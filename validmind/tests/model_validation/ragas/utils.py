@@ -36,17 +36,17 @@ def get_renamed_columns(df, column_map):
     """
     new_df = df.copy()
 
-    for col_in_df, new_name in column_map.items():
-        if callable(new_name):
+    for new_name, source in column_map.items():
+        if callable(source):
             try:
-                new_df[new_name] = new_df[col_in_df].apply(new_name)
+                new_df[new_name] = new_df.apply(source, axis=1)
             except Exception as e:
                 raise ValueError(
-                    f"Error applying function to column '{col_in_df}': {str(e)}"
+                    f"Failed to apply function to DataFrame. Error: {str(e)}"
                 )
 
-        elif "." in col_in_df:
-            root_col, sub_col = col_in_df.split(".")
+        elif "." in source:
+            root_col, sub_col = source.split(".")
 
             if root_col in new_df.columns:
                 new_df[new_name] = new_df[root_col].apply(
@@ -57,6 +57,6 @@ def get_renamed_columns(df, column_map):
                 raise KeyError(f"Column '{root_col}' not found in DataFrame.")
 
         else:
-            new_df.rename(columns={col_in_df: new_name}, inplace=True)
+            new_df.rename(columns={source: new_name}, inplace=True)
 
     return new_df

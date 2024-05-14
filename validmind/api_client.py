@@ -343,7 +343,7 @@ async def log_metadata(
     """
     metadata_dict = {"content_id": content_id}
     if text is not None:
-        metadata_dict["text"] = md_to_html(text)
+        metadata_dict["text"] = md_to_html(text, mathml=True)
     if _json is not None:
         metadata_dict["json"] = _json
 
