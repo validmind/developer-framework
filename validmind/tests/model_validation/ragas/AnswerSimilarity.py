@@ -72,7 +72,7 @@ def AnswerSimilarity(
     ```python
     pred_col = dataset.prediction_column(model)
     params = {
-        "answer_column": lambda row: "\n\n".join(row[pred_col]["messages"]),
+        "answer_column": lambda row: "\\n\\n".join(row[pred_col]["messages"]),
         "ground_truth_column": "my_ground_truth_col",
     }
     ```
@@ -85,7 +85,7 @@ def AnswerSimilarity(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df[list(required_columns.values())]),
+        Dataset.from_pandas(df),
         metrics=[answer_similarity],
     ).to_pandas()
 

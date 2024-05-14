@@ -73,7 +73,7 @@ def Faithfulness(
     pred_col = dataset.prediction_column(model)
     params = {
         "contexts_column": lambda row: [row[pred_col]["context_message"]],
-        "answer_column": lambda row: "\n\n".join(row[pred_col]["messages"]),
+        "answer_column": lambda row: "\\n\\n".join(row[pred_col]["messages"]),
     }
     ```
     """
@@ -85,7 +85,7 @@ def Faithfulness(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df[list(required_columns.values())]),
+        Dataset.from_pandas(df),
         metrics=[faithfulness],
     ).to_pandas()
 

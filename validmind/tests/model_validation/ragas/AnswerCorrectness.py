@@ -82,7 +82,7 @@ def AnswerCorrectness(
     ```python
     pred_col = dataset.prediction_column(model)
     params = {
-        "answer_column": lambda row: "\n\n".join(row[pred_col]["messages"]),
+        "answer_column": lambda row: "\\n\\n".join(row[pred_col]["messages"]),
         "ground_truth_column": lambda row: [row[pred_col]["context_message"]],
     }
     ```
@@ -96,8 +96,7 @@ def AnswerCorrectness(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df[list(required_columns.values())]),
-        metrics=[answer_correctness],
+        Dataset.from_pandas(df), metrics=[answer_correctness]
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["answer_correctness"].to_list(), nbins=10)

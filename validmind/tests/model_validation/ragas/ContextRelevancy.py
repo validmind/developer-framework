@@ -80,7 +80,7 @@ def ContextRelevancy(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df[list(required_columns.values())]),
+        Dataset.from_pandas(df),
         metrics=[context_relevancy],
     ).to_pandas()
 

@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 
 def _udf_get_sub_col(x, root_col, sub_col):
     if not isinstance(x, dict):
@@ -34,12 +36,13 @@ def get_renamed_columns(df, column_map):
     Returns:
         pd.DataFrame: The DataFrame with columns renamed.
     """
-    new_df = df.copy()
+    old_df = df.copy()
+    new_df = pd.DataFrame()
 
     for new_name, source in column_map.items():
         if callable(source):
             try:
-                new_df[new_name] = new_df.apply(source, axis=1)
+                new_df[new_name] = old_df.apply(source, axis=1)
             except Exception as e:
                 raise ValueError(
                     f"Failed to apply function to DataFrame. Error: {str(e)}"
@@ -49,7 +52,7 @@ def get_renamed_columns(df, column_map):
             root_col, sub_col = source.split(".")
 
             if root_col in new_df.columns:
-                new_df[new_name] = new_df[root_col].apply(
+                new_df[new_name] = old_df[root_col].apply(
                     lambda x: _udf_get_sub_col(x, root_col, sub_col)
                 )
 
@@ -57,6 +60,10 @@ def get_renamed_columns(df, column_map):
                 raise KeyError(f"Column '{root_col}' not found in DataFrame.")
 
         else:
-            new_df.rename(columns={source: new_name}, inplace=True)
+            if source in new_df.columns:
+                new_df[new_name] = old_df[source]
+
+            else:
+                raise KeyError(f"Column '{source}' not found in DataFrame.")
 
     return new_df

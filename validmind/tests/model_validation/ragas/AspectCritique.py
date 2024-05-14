@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import plotly.express as px
 from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics.critique import (
@@ -126,27 +127,33 @@ def AspectCritique(
         AspectCritique(name=name, definition=description)
         for name, description in additional_aspects
     ]
+    all_aspects = [*built_in_aspects, *custom_aspects]
 
-    result_df = evaluate(
-        Dataset.from_pandas(df[list(required_columns.values())]),
-        metrics=[*built_in_aspects, *custom_aspects],
-    ).to_pandas()
+    result_df = evaluate(Dataset.from_pandas(df), metrics=all_aspects).to_pandas()
 
-    print(result_df)
+    df_melted = result_df.melt(
+        id_vars=["question", "answer", "contexts"],
+        value_vars=[aspect.name for aspect in all_aspects],
+        var_name="Metric",
+        value_name="Result",
+    )
+    df_counts = df_melted.groupby(["Metric", "Result"]).size().reset_index(name="Count")
+    df_counts["Result"] = df_counts["Result"].map({0: "Fail", 1: "Pass"})
 
-    score_columns = [*aspects, *[aspect.name for aspect in custom_aspects]]
+    fig = px.bar(
+        df_counts,
+        x="Metric",
+        y="Count",
+        color="Result",
+        color_discrete_map={"Fail": "red", "Pass": "green"},
+        labels={"Count": "Pass vs Fail Count", "Metric": "Aspect Name"},
+        barmode="group",
+        title="Aspect Critique Results",
+    )
 
     return {
-        "Scores": result_df[["question", "contexts", "answer", *score_columns]],
-        "Aggregate Scores": [
-            {
-                "Mean Score": result_df[column].mean(),
-                "Median Score": result_df[column].median(),
-                "Max Score": result_df[column].max(),
-                "Min Score": result_df[column].min(),
-                "Standard Deviation": result_df[column].std(),
-                "Count": len(result_df),
-            }
-            for column in score_columns
-        ],
-    }
+        "Aspect Scores": [
+            {"Aspect": aspect, "Score": result_df[aspect].mean()}
+            for aspect in aspects + [aspect.name for aspect in custom_aspects]
+        ]
+    }, fig
