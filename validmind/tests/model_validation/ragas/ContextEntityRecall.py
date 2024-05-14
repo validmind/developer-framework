@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import warnings
+
 import plotly.express as px
 from datasets import Dataset
 from ragas import evaluate
@@ -83,6 +85,12 @@ def ContextEntityRecall(
     }
     ```
     """
+    warnings.filterwarnings(
+        "ignore",
+        category=FutureWarning,
+        message="promote has been superseded by promote_options='default'.",
+    )
+
     required_columns = {
         "ground_truth": ground_truth_column,
         "contexts": contexts_column,

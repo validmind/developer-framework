@@ -2,11 +2,13 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import warnings
+
 import plotly.express as px
 from datasets import Dataset
 from ragas import evaluate
+from ragas.metrics.critique import AspectCritique as _AspectCritique
 from ragas.metrics.critique import (
-    AspectCritique,
     coherence,
     conciseness,
     correctness,
@@ -114,6 +116,12 @@ def AspectCritique(
     )
     ```
     """
+    warnings.filterwarnings(
+        "ignore",
+        category=FutureWarning,
+        message="promote has been superseded by promote_options='default'.",
+    )
+
     required_columns = {
         "question": question_column,
         "answer": answer_column,
@@ -124,7 +132,7 @@ def AspectCritique(
 
     built_in_aspects = [aspect_map[aspect] for aspect in aspects]
     custom_aspects = [
-        AspectCritique(name=name, definition=description)
+        _AspectCritique(name=name, definition=description)
         for name, description in additional_aspects
     ]
     all_aspects = [*built_in_aspects, *custom_aspects]
