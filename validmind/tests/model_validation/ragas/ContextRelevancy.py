@@ -35,7 +35,7 @@ def ContextRelevancy(
     the given question. The final score is determined by the following formula:
 
     $$
-    \\text{context relevancy} = {|S| \over |\\text{Total number of sentences in retrieved context}|}
+    \\text{context relevancy} = {|S| \\over |\\text{Total number of sentences in retrieved context}|}
     $$
 
     ### Configuring Columns

@@ -30,13 +30,13 @@ def ContextPrecision(
     where higher scores indicate better precision.
 
     $$
-    \\text{Context Precision@K} = \\frac{\sum_{k=1}^{K} \left( \\text{Precision@k} \\times v_k \\right)}{\\text{Total number of relevant items in the top } K \\text{ results}}
+    \\text{Context Precision@K} = \\frac{\\sum_{k=1}^{K} \\left( \\text{Precision@k} \\times v_k \\right)}{\\text{Total number of relevant items in the top } K \\text{ results}}
     $$
     $$
-    \\text{Precision@k} = {\\text{true positives@k} \over  (\\text{true positives@k} + \\text{false positives@k})}
+    \\text{Precision@k} = {\\text{true positives@k} \\over  (\\text{true positives@k} + \\text{false positives@k})}
     $$
 
-    Where $K$ is the total number of chunks in contexts and $v_k \in \{0, 1\}$ is the
+    Where $K$ is the total number of chunks in contexts and $v_k \\in \\{0, 1\\}$ is the
     relevance indicator at rank $k$.
 
     ### Configuring Columns

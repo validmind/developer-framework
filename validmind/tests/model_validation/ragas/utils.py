@@ -2,8 +2,6 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import pandas as pd
-
 
 def _udf_get_sub_col(x, root_col, sub_col):
     if not isinstance(x, dict):

@@ -43,7 +43,7 @@ def ContextEntityRecall(
     divide it by the number of elements present in the $GE$, given by the formula:
 
     $$
-    \\text{context entity recall} = \\frac{| CE \cap GE |}{| GE |}
+    \\text{context entity recall} = \\frac{| CE \\cap GE |}{| GE |}
     $$
 
     ### Configuring Columns

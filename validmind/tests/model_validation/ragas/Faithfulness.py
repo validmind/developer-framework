@@ -37,7 +37,7 @@ def Faithfulness(
     faithfulness score formula is as follows:
 
     $$
-    \\text{Faithfulness score} = {|\\text{Number of claims in the generated answer that can be inferred from given context}| \over |\\text{Total number of claims in the generated answer}|}
+    \\text{Faithfulness score} = {|\\text{Number of claims in the generated answer that can be inferred from given context}| \\over |\\text{Total number of claims in the generated answer}|}
     $$
 
     ### Configuring Columns

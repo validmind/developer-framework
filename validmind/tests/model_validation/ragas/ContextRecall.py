@@ -36,7 +36,7 @@ def ContextRecall(
 
     The formula for calculating context recall is as follows:
     $$
-    \\text{context recall} = {|\\text{GT sentences that can be attributed to context}| \over |\\text{Number of sentences in GT}|}
+    \\text{context recall} = {|\\text{GT sentences that can be attributed to context}| \\over |\\text{Number of sentences in GT}|}
     $$
 
     ### Configuring Columns

@@ -454,7 +454,7 @@ def md_to_html(md: str, mathml=False) -> str:
     inline_math_pattern = re.compile(r'<span class="math">\\\((.*?)\\\)</span>')
     html = inline_math_pattern.sub(
         lambda match: "<span>{}</span>".format(
-            convert(match.group(1)), display="inline"
+            convert(match.group(1), display="inline")
         ),
         html,
     )

@@ -36,10 +36,10 @@ def AnswerRelevance(
     based on the `answer`:
 
     $$
-    \\text{answer relevancy} = \\frac{1}{N} \sum_{i=1}^{N} cos(E_{g_i}, E_o)
+    \\text{answer relevancy} = \\frac{1}{N} \\sum_{i=1}^{N} cos(E_{g_i}, E_o)
     $$
     $$
-    \\text{answer relevancy} = \\frac{1}{N} \sum_{i=1}^{N} \\frac{E_{g_i} \cdot E_o}{\|E_{g_i}\|\|E_o\|}
+    \\text{answer relevancy} = \\frac{1}{N} \\sum_{i=1}^{N} \\frac{E_{g_i} \\cdot E_o}{\\|E_{g_i}\\|\\|E_o\\|}
     $$
 
     Where:
