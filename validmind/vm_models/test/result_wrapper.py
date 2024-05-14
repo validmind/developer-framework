@@ -304,15 +304,18 @@ class MetricResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    def _check_sensitive_data(self):
+    def _get_filtered_summary(self):
         """Check if the metric summary has columns from input datasets"""
-        columns = set()
         dataset_columns = set()
 
-        if not self.metric or not self.metric.summary:
-            return False
+        for input_id in self.inputs:
+            input_obj = input_registry.get(input_id)
+            if isinstance(input_obj, VMDataset):
+                dataset_columns.update(input_obj.columns)
 
-        for table in self.metric.summary.results:
+        for table in [*self.metric.summary.results]:
+            columns = set()
+
             if isinstance(table.data, pd.DataFrame):
                 columns.update(table.data.columns)
             elif isinstance(table.data, list):
@@ -320,28 +323,27 @@ class MetricResultWrapper(ResultWrapper):
             else:
                 raise ValueError("Invalid data type in summary table")
 
-        for input_id in self.inputs:
-            input_obj = input_registry.get(input_id)
-            if isinstance(input_obj, VMDataset):
-                dataset_columns.update(input_obj.columns)
+            if bool(columns.intersection(dataset_columns)):
+                logger.warning(
+                    "Sensitive data in metric summary table. Not logging to API automatically."
+                    " Pass `unsafe=True` to result.log() method to override manually."
+                )
+                logger.warning(
+                    f"The following columns are present in the table: {columns}"
+                    f" and also present in the dataset: {dataset_columns}"
+                )
 
-        if bool(columns.intersection(dataset_columns)):
-            logger.warning(
-                "Sensitive data in metric summary. Not logging to API automatically."
-                " Pass `unsafe=True` to result.log() method to override manually."
-            )
-            logger.warning(
-                f"The following columns are present in the metric summary: {columns}"
-                f" and are present in the input datasets: {dataset_columns}"
-            )
-            return True
+                self.metric.summary.results.remove(table)
 
-        return False
+        return self.metric.summary
 
     async def log_async(self, unsafe=False):
         tasks = []  # collect tasks to run in parallel (async)
 
-        if self.metric and (unsafe or not self._check_sensitive_data()):
+        if self.metric:
+            if self.metric.summary and not unsafe:
+                self.metric.summary = self._get_filtered_summary()
+
             tasks.append(
                 api_client.log_metrics(
                     metrics=[self.metric],

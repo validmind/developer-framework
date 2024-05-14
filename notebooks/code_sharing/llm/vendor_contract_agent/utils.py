@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import requests
 import sqlite3
 import time
@@ -7,10 +8,10 @@ from typing_extensions import override
 
 import mistune
 from bs4 import BeautifulSoup
-from duckduckgo_search import DDGS
 from IPython.display import display
 from ipywidgets import HTML
 from openai import AssistantEventHandler, OpenAI
+from serpapi.google_search import GoogleSearch
 
 TOOL_FOLDER = os.environ.get("OPENAI_TOOL_FOLDER", "tool_definitions")
 
@@ -33,6 +34,9 @@ AGENT_MESSAGE_WRAPPER_HTML = """
 
 
 client = OpenAI()
+
+GoogleSearch.SERP_API_KEY = os.environ.get("SERP_API_KEY", "")
+
 db_connection = None
 print_lock = False
 
@@ -152,7 +156,23 @@ def show_json(obj):
 def search_online(search_type, query=None, url=None):
     if search_type == "browse":
         # use duckduckgo to search for the query
-        results = DDGS().text(query, max_results=5)
+        # results = DDGS().text(query, max_results=5)
+        # return json.dumps(results)
+
+        # use serpapi to search for the query
+        search = GoogleSearch({"q": query, "location": "Austin, Texas"})
+        results = search.get_dict()
+
+        # remove the ads, search metadata, params and info
+        results.pop("ads", None)
+        results.pop("search_metadata", None)
+        results.pop("search_parameters", None)
+        results.pop("search_information", None)
+        results.pop("top_stories_links", None)
+        results.pop("top_stories_serpapi_link", None)
+        results.pop("pagination", None)
+        results.pop("serpapi_pagination", None)
+
         return json.dumps(results)
 
     if search_type == "scrape":
@@ -160,7 +180,8 @@ def search_online(search_type, query=None, url=None):
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         text = soup.get_text()
-        return text.strip()
+
+        return re.sub(r"\s+", " ", text).strip()
 
     raise ValueError(f"Unknown search type: {search_type}")
 
