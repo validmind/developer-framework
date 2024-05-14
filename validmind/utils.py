@@ -18,11 +18,14 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.core import getipython
-from IPython.display import HTML, display
+from IPython.display import HTML
+from IPython.display import display as ipy_display
 from latex2mathml.converter import convert
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
+
+from .html_templates.content_blocks import math_jax_snippet, python_syntax_highlighting
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
@@ -404,36 +407,24 @@ def preview_test_config(config):
     <div id="collapsibleContent" style="display:none;"><pre>{formatted_json}</pre></div>
     """
 
-    display(HTML(collapsible_html))
+    ipy_display(HTML(collapsible_html))
 
 
-def display_with_mathjax(html_widget):
-    """Display HTML with MathJax rendering enabled"""
-    math_jax_snippet = """
-    <script>
-    window.MathJax = {
-        tex2jax: {
-            inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true,
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            ignoreClass: ".*",
-            processClass: "math"
-        }
-    };
+def display(widget_or_html, syntax_highlighting=True, mathjax=True):
+    """Display widgets with extra goodies (syntax highlighting, MathJax, etc.)"""
+    if isinstance(widget_or_html, str):
+        ipy_display(HTML(widget_or_html))
+        # if html we can auto-detect if we actually need syntax highlighting or MathJax
+        syntax_highlighting = 'class="language-' in widget_or_html
+        mathjax = "$$" in widget_or_html
+    else:
+        ipy_display(widget_or_html)
 
-    setTimeout(function () {
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML';
-        document.head.appendChild(script);
-    }, 500);
-    </script>
-    """
-    # FIXME: really hacky way to make sure mathjax runs after the HTML is rendered
+    if syntax_highlighting:
+        ipy_display(HTML(python_syntax_highlighting))
 
-    display(html_widget)
-    display(HTML(math_jax_snippet))
+    if mathjax:
+        ipy_display(HTML(math_jax_snippet))
 
 
 def md_to_html(md: str, mathml=False) -> str:

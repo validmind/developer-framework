@@ -19,13 +19,7 @@ from ... import api_client
 from ...ai import DescriptionFuture
 from ...input_registry import input_registry
 from ...logging import get_logger
-from ...utils import (
-    NumpyEncoder,
-    display_with_mathjax,
-    md_to_html,
-    run_async,
-    test_id_to_name,
-)
+from ...utils import NumpyEncoder, display, md_to_html, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
@@ -163,7 +157,7 @@ class ResultWrapper(ABC):
 
     def show(self):
         """Display the result... May be overridden by subclasses"""
-        display_with_mathjax(self.to_widget())
+        display(self.to_widget())
 
     @abstractmethod
     async def log_async(self):
@@ -188,10 +182,8 @@ class FailedResultWrapper(ResultWrapper):
     def __repr__(self) -> str:
         return f'FailedResult(result_id="{self.result_id}")'
 
-    def to_widget(self):
-        return widgets.HTML(
-            value=f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
-        )
+    def to_html(self):
+        return f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
 
     async def log_async(self):
         pass
@@ -220,7 +212,7 @@ class MetricResultWrapper(ResultWrapper):
         else:
             return f"{self.__class__.__name__}(result_id={self.result_id}, figures)"
 
-    def to_widget(self):
+    def to_html(self):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 

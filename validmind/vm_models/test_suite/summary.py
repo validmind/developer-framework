@@ -8,7 +8,7 @@ from typing import List, Optional
 import ipywidgets as widgets
 
 from ...logging import get_logger
-from ...utils import display_with_mathjax, md_to_html
+from ...utils import display, md_to_html
 from ..test.result_wrapper import FailedResultWrapper
 from .test_suite import TestSuiteSection, TestSuiteTest
 
@@ -63,7 +63,7 @@ class TestSuiteSectionSummary:
         self.summary = widgets.VBox(self._widgets)
 
     def display(self):
-        display_with_mathjax(self.summary)
+        display(self.summary)
 
 
 @dataclass
@@ -155,4 +155,4 @@ class TestSuiteSummary:
         self.summary = widgets.VBox(self._widgets)
 
     def display(self):
-        display_with_mathjax(self.summary)
+        display(self.summary)

@@ -6,26 +6,20 @@
 
 import importlib
 import inspect
+import json
 import sys
 from pathlib import Path
 from pprint import pformat
 from typing import Dict
 
 import pandas as pd
-from ipywidgets import HTML
 
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import (
-    display_with_mathjax,
-    format_dataframe,
-    fuzzy_match,
-    md_to_html,
-    test_id_to_name,
-)
+from ..utils import display, format_dataframe, fuzzy_match, md_to_html, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -345,7 +339,7 @@ def load_test(test_id: str, reload=False):
     return test
 
 
-def describe_test(test_id: str = None, raw: bool = False):
+def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
     """Get or show details about the test
 
     This function can be used to see test details including the test name, description,
@@ -371,22 +365,31 @@ def describe_test(test_id: str = None, raw: bool = False):
     if raw:
         return details
 
-    display_with_mathjax(
-        HTML(
-            test_content_block_html.format(
-                title=f'{details["Name"]}',
-                description=md_to_html(details["Description"].strip()),
-                required_inputs=", ".join(details["Required Inputs"] or ["None"]),
-                params_table="\n".join(
-                    [
-                        f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
-                        for param, value in details["Params"].items()
-                    ]
-                ),
-                table_display="table" if details["Params"] else "none",
-            )
-        )
+    html = test_content_block_html.format(
+        test_id=test_id,
+        uuid=hash(test_id),
+        title=f'{details["Name"]}',
+        description=md_to_html(details["Description"].strip()),
+        required_inputs=", ".join(details["Required Inputs"] or ["None"]),
+        params_table="\n".join(
+            [
+                f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
+                for param, value in details["Params"].items()
+            ]
+        ),
+        table_display="table" if details["Params"] else "none",
+        example_inputs=json.dumps(
+            {name: f"my_vm_{name}" for name in details["Required Inputs"]},
+            indent=4,
+        ),
+        example_params=json.dumps(details["Params"] or {}, indent=4),
+        instructions_display="block" if show else "none",
     )
+
+    if not show:
+        return html
+
+    display(html)
 
 
 def run_test(

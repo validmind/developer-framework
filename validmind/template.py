@@ -9,11 +9,10 @@ from ipywidgets import HTML, Accordion, VBox
 from .html_templates.content_blocks import (
     failed_content_block_html,
     non_test_content_block_html,
-    test_content_block_html,
 )
 from .logging import get_logger
 from .tests import LoadTestError, describe_test
-from .utils import display_with_mathjax, is_notebook, md_to_html
+from .utils import display, is_notebook
 from .vm_models import TestSuite
 
 logger = get_logger(__name__)
@@ -65,29 +64,12 @@ def _create_content_widget(content):
         )
 
     try:
-        test_deets = describe_test(test_id=content["content_id"], raw=True)
+        test_html = describe_test(test_id=content["content_id"], show=False)
     except LoadTestError:
         return HTML(failed_content_block_html.format(test_id=content["content_id"]))
 
     return Accordion(
-        children=[
-            HTML(
-                test_content_block_html.format(
-                    title=test_deets["Name"],
-                    description=md_to_html(test_deets["Description"]),
-                    required_inputs=", ".join(
-                        test_deets["Required Inputs"] or ["None"]
-                    ),
-                    params_table="\n".join(
-                        [
-                            f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
-                            for param, value in test_deets["Params"].items()
-                        ]
-                    ),
-                    table_display="table" if test_deets["Params"] else "none",
-                )
-            )
-        ],
+        children=[HTML(test_html)],
         titles=[f"{content_type} Block: '{content['content_id']}'"],
     )
 
@@ -116,7 +98,10 @@ def _create_sub_section_widget(sub_sections, section_number):
                 contents_widget,
             )
         else:
-            accordion.children = (*accordion.children, HTML("<p>Empty Section</p>"))
+            accordion.children = (
+                *accordion.children,
+                HTML("<p>Empty Section</p>"),
+            )
 
         accordion.set_title(
             i, f"{section_number}.{i + 1}. {section['title']} ('{section['id']}')"
@@ -163,7 +148,7 @@ def preview_template(template):
         logger.warning("preview_template() only works in Jupyter Notebook")
         return
 
-    display_with_mathjax(
+    display(
         _create_section_widget(_convert_sections_to_section_tree(template["sections"]))
     )
 
