@@ -17,6 +17,8 @@ import pandas as pd
 
 from ... import api_client
 from ...ai import DescriptionFuture
+from ...input_registry import input_registry
+from ...logging import get_logger
 from ...utils import (
     NumpyEncoder,
     display_with_mathjax,
@@ -24,11 +26,14 @@ from ...utils import (
     run_async,
     test_id_to_name,
 )
+from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
 from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
+
+logger = get_logger(__name__)
 
 
 async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
@@ -299,10 +304,44 @@ class MetricResultWrapper(ResultWrapper):
 
         return widgets.VBox(vbox_children)
 
-    async def log_async(self):
+    def _check_sensitive_data(self):
+        """Check if the metric summary has columns from input datasets"""
+        columns = set()
+        dataset_columns = set()
+
+        if not self.metric or not self.metric.summary:
+            return False
+
+        for table in self.metric.summary.results:
+            if isinstance(table.data, pd.DataFrame):
+                columns.update(table.data.columns)
+            elif isinstance(table.data, list):
+                columns.update(table.data[0].keys())
+            else:
+                raise ValueError("Invalid data type in summary table")
+
+        for input_id in self.inputs:
+            input_obj = input_registry.get(input_id)
+            if isinstance(input_obj, VMDataset):
+                dataset_columns.update(input_obj.columns)
+
+        if bool(columns.intersection(dataset_columns)):
+            logger.warning(
+                "Sensitive data in metric summary. Not logging to API automatically."
+                " Pass `unsafe=True` to result.log() method to override manually."
+            )
+            logger.warning(
+                f"The following columns are present in the metric summary: {columns}"
+                f" and are present in the input datasets: {dataset_columns}"
+            )
+            return True
+
+        return False
+
+    async def log_async(self, unsafe=False):
         tasks = []  # collect tasks to run in parallel (async)
 
-        if self.metric:
+        if self.metric and (unsafe or not self._check_sensitive_data()):
             tasks.append(
                 api_client.log_metrics(
                     metrics=[self.metric],
@@ -310,8 +349,10 @@ class MetricResultWrapper(ResultWrapper):
                     output_template=self.output_template,
                 )
             )
+
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
+
         if hasattr(self, "result_metadata") and self.result_metadata:
             description = self.result_metadata[0].get("text", "")
             if isinstance(description, DescriptionFuture):

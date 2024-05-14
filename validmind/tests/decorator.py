@@ -153,7 +153,7 @@ def _get_run_method(func, inputs, params):
             test_id=self.test_id,
             description=inspect.getdoc(self),
             output_template=self.output_template,
-            inputs=list(inputs.keys()),
+            inputs=self.get_accessed_inputs(),
         )
 
         return self.result
