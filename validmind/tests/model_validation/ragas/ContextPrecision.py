@@ -36,6 +36,47 @@ def ContextPrecision(
 
     Where $K$ is the total number of chunks in contexts and $v_k \in \{0, 1\}$ is the
     relevance indicator at rank $k$.
+
+    ### Configuring Columns
+
+    This metric requires the following columns in your dataset:
+    - `question` (str): The text query that was input into the model.
+    - `contexts` (List[str]): A list of text contexts which are retrieved and which
+    will be evaluated to make sure they contain relevant info in the correct order.
+    - `ground_truth` (str): The ground truth text to compare with the retrieved contexts.
+
+    If the above data is not in the appropriate column, you can specify different column
+    names for these fields using the parameters `question_column`, `contexts_column`
+    and `ground_truth_column`.
+
+    For example, if your dataset has this data stored in different columns, you can
+    pass the following parameters:
+    ```python
+    {
+        "question_column": "question",
+        "contexts_column": "context_info"
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
+
+    If the data is stored as a dictionary in another column, specify the column and key
+    like this:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": f"{pred_col}.contexts",
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
+
+    For more complex situations, you can use a function to extract the data:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": lambda x: [x[pred_col]["context_message"]],
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
     """
     required_columns = {
         "question": question_column,
