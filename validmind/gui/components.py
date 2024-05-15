@@ -2,30 +2,61 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-# gui/components.py
-
 import json
+import os
 
 from IPython.display import HTML, display
+
+JS_BUNDLE_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "js/bundle.js"
+)
+
+COMPONENT_BOILERPLATE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ margin: 0; padding: 0; }}
+        #root {{ width: 100%; height: 100%; }}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+
+<script>
+{js}
+(function() {{
+    const props = {props};
+    console.log(VMComponents.{name});
+    console.log(props);
+    ReactDOM.render(React.createElement(VMComponents.{name}, props), document.getElementById('root'));
+}})();
+</script>
+</html>
+"""
+
+IFRAME_BOILERPLATE = """
+<iframe srcdoc="{html}" width="99%" height="700px"></iframe>
+"""
 
 
 class Component:
     def __init__(self, **props):
-        self.name = self.__class__.__name__.lower()
+        self.name = self.__class__.__name__
         self.props = props
 
-    def to_html(self):
-        return f"""
-<h1>{self.name}</h1>
-<{self.name} id="{self.name}">
-</{self.name}>
-<script>
-document.getElementById("{self.name}").data = {self.to_json()};
-</script>
-"""
+        self.js = self._load_js()
 
-    def to_json(self):
-        return json.dumps(self.props)
+    def _load_js(self):
+        with open(JS_BUNDLE_PATH, "r") as file:
+            return file.read()
+
+    def to_html(self):
+        html = COMPONENT_BOILERPLATE.format(
+            name=self.name, props=json.dumps(self.props), js=self.js
+        )
+        return IFRAME_BOILERPLATE.format(html=html.replace('"', "&quot;"))
 
     def display(self):
         display(HTML(self.to_html()))

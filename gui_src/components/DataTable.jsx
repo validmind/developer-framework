@@ -1,10 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import { ChakraProvider, Box, Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
 import { useTable, useFilters, useSortBy } from 'react-table';
 import customTheme from '../theme';
 import styled from 'styled-components';
-import { toWebComponent } from 'react-to-webcomponent';
 
 const DefaultColumnFilter = ({ column: { filterValue, preFilteredRows, setFilter } }) => {
     const count = preFilteredRows.length;
@@ -139,8 +137,6 @@ const DataTable = ({ data: initialData, comm_id }) => {
     );
 };
 
-const DataTableComponent = toWebComponent(DataTable, React, ReactDOM);
-
-customElements.define('data-table-component', DataTableComponent);
+// window.DataTable = DataTable;
 
 export default DataTable;
