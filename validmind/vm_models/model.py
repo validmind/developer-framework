@@ -97,7 +97,7 @@ class VMModel(ABC):
         **kwargs,
     ):
         self.model = model
-        self.input_id = input_id or f"{id(self)}"
+        self.input_id = input_id
 
         self.language = "Python"
         self.library = self.__class__.__name__
@@ -203,7 +203,7 @@ def get_model_class(model, predict_fn=None):
     else:
         model_class_name = SUPPORTED_LIBRARIES.get(model_module(model), None)
 
-    if model_class_name is None:
+    if not model_class_name:
         return None
 
     model_class = getattr(
