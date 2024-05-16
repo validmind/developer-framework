@@ -125,7 +125,7 @@ class LocalTestProvider:
 
             test_id = (
                 f"{path.parent.stem}.{path.stem}"
-                if path.parent.parent.stem == d
+                if path.parent.parent.stem == ""
                 else f"{path.stem}"
             )
             tests[test_id] = self.load_test(test_id)

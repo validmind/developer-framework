@@ -189,19 +189,19 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
         matched_by_task = [
             test_id
             for test_id in tests
-            if hasattr(__test_objs[test_id], "metadata")
+            if hasattr(__tests[test_id], "metadata")
             and any(
                 filter.lower() in task.lower()
-                for task in __test_objs[test_id].metadata["task_types"]
+                for task in __tests[test_id].metadata["task_types"]
             )
         ]
         matched_by_tags = [
             test_id
             for test_id in tests
-            if hasattr(__test_objs[test_id], "metadata")
+            if hasattr(__tests[test_id], "metadata")
             and any(
                 fuzzy_match(tag, filter.lower())
-                for tag in __test_objs[test_id].metadata["tags"]
+                for tag in __tests[test_id].metadata["tags"]
             )
         ]
 
@@ -212,16 +212,16 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
         tests = [
             test_id
             for test_id in tests
-            if hasattr(__test_objs[test_id], "metadata")
-            and task in __test_objs[test_id].metadata["task_types"]
+            if hasattr(__tests[test_id], "metadata")
+            and task in __tests[test_id].metadata["task_types"]
         ]
 
     if tags is not None:
         tests = [
             test_id
             for test_id in tests
-            if hasattr(__test_objs[test_id], "metadata")
-            and all(tag in __test_objs[test_id].metadata["tags"] for tag in tags)
+            if hasattr(__tests[test_id], "metadata")
+            and all(tag in __tests[test_id].metadata["tags"] for tag in tags)
         ]
 
     return TestList(tests, truncate=truncate)
