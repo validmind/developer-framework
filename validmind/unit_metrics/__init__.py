@@ -170,7 +170,11 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
             **{k: v for k, v in inputs.items() if k in _inputs.keys()},
             **{k: v for k, v in params.items() if k in _params.keys()},
         )
-        unit_metric_results_cache[cache_key] = (result, list(_inputs.keys()))
+        unit_metric_results_cache[cache_key] = (
+            result,
+            # store the input ids that were used to calculate the result
+            [v.input_id for v in inputs.values()],
+        )
 
     value = unit_metric_results_cache[cache_key][0]
 
@@ -208,7 +212,7 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
     )
 
     # in case the user tries to log the result object
-    def log(self):
+    def log():
         raise Exception(
             "Cannot log unit metrics directly..."
             "You can run this unit metric as part of a composite metric and log that"
