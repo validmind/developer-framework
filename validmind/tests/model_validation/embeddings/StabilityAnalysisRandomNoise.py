@@ -114,9 +114,15 @@ class StabilityAnalysisRandomNoise(StabilityAnalysis):
     name = "Text Embeddings Stability Analysis to Random Noise"
     default_params = {
         **StabilityAnalysis.default_params,
+        "probability": 0.02,
     }
 
-    def perturb_data(self, data, probability=0.02):
+    def perturb_data(self, data):
+        if not isinstance(data, str):
+            return data
+
+        probability = self.params["probability"]
+
         # Tokenize the string based on spaces
         words = data.split()
 

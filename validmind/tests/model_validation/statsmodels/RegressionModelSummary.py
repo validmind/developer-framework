@@ -57,7 +57,7 @@ class RegressionModelSummary(Metric):
     }
 
     def run(self):
-        X_columns = self.inputs.dataset.get_features_columns()
+        X_columns = self.inputs.dataset.feature_columns
 
         y_true = self.inputs.dataset.y
         y_pred = self.inputs.dataset.y_pred(self.inputs.model)

@@ -6,7 +6,7 @@
 Models entrypoint
 """
 
-from .dataset import VMDataset
+from .dataset.dataset import VMDataset
 from .figure import Figure
 from .model import R_MODEL_TYPES, ModelAttributes, VMModel
 from .test.metric import Metric

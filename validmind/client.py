@@ -21,20 +21,20 @@ from .errors import (
 )
 from .input_registry import input_registry
 from .logging import get_logger
+from .models.metadata import MetadataModel
 from .models.r_model import RModel
 from .template import get_template_test_suite
 from .template import preview_template as _preview_template
 from .test_suites import get_by_id as get_test_suite_by_id
 from .utils import get_dataset_info, get_model_info
 from .vm_models import TestInput, TestSuite, TestSuiteRunner
-from .vm_models.dataset import (
-    DataFrameDataset,
-    NumpyDataset,
-    PolarsDataset,
-    TorchDataset,
-    VMDataset,
+from .vm_models.dataset import DataFrameDataset, PolarsDataset, TorchDataset, VMDataset
+from .vm_models.model import (
+    ModelAttributes,
+    VMModel,
+    get_model_class,
+    is_model_metadata,
 )
-from .vm_models.model import VMModel, get_model_class
 
 pd.option_context("format.precision", 2)
 
@@ -129,7 +129,7 @@ def init_dataset(
         )
     elif dataset_class == "ndarray":
         logger.info("Numpy ndarray detected. Initializing VM Dataset instance...")
-        vm_dataset = NumpyDataset(
+        vm_dataset = VMDataset(
             input_id=input_id,
             raw_dataset=dataset,
             model=model,
@@ -175,8 +175,10 @@ def init_dataset(
 
 
 def init_model(
-    model: object,
-    input_id: str = None,
+    model: object = None,
+    input_id: str = "model",
+    attributes: dict = None,
+    predict_fn: callable = None,
     __log=True,
 ) -> VMModel:
     """
@@ -185,14 +187,13 @@ def init_model(
     also ensures we are creating a model supported libraries.
 
     Args:
-        model: A trained model
-        train_ds (vm.vm.Dataset): A training dataset (optional)
-        test_ds (vm.vm.Dataset): A testing dataset (optional)
-        validation_ds (vm.vm.Dataset): A validation dataset (optional)
+        model: A trained model or VMModel instance
         input_id (str): The input ID for the model (e.g. "my_model"). By default,
             this will be set to `model` but if you are passing this model as a
             test input using some other key than `model`, then you should set
             this to the same key.
+        attributes (dict): A dictionary of model attributes
+        predict_fn (callable): A function that takes an input and returns a prediction
 
     Raises:
         ValueError: If the model type is not supported
@@ -200,22 +201,64 @@ def init_model(
     Returns:
         vm.VMModel: A VM Model instance
     """
-    class_obj = get_model_class(model=model)
-    if not class_obj:
-        raise UnsupportedModelError(
-            f"Model type {class_obj} is not supported at the moment."
+    # vm_model = model if isinstance(model, VMModel) else None
+    # metadata = None
+
+    # if not vm_model:
+    #     class_obj = get_model_class(model=model, predict_fn=predict_fn)
+    #     if not class_obj:
+    #         if not attributes:
+    #             raise UnsupportedModelError(
+    #                 f"Model class {str(model.__class__)} is not supported at the moment."
+    #             )
+    #         elif not is_model_metadata(attributes):
+    #             raise UnsupportedModelError(
+    #                 f"Model attributes {str(attributes)} are missing required keys 'architecture' and 'language'."
+    #             )
+    vm_model = model if isinstance(model, VMModel) else None
+    class_obj = get_model_class(model=model, predict_fn=predict_fn)
+
+    if not vm_model and not class_obj:
+        if not attributes:
+            raise UnsupportedModelError(
+                f"Model class {str(model.__class__)} is not supported at the moment."
+            )
+
+        if not is_model_metadata(attributes):
+            raise UnsupportedModelError(
+                f"Model attributes {str(attributes)} are missing required keys 'architecture' and 'language'."
+            )
+
+    if isinstance(vm_model, VMModel):
+        vm_model.input_id = (
+            input_id if input_id != "model" else (vm_model.input_id or input_id)
         )
-    input_id = input_id or "model"
-    vm_model = class_obj(
-        input_id=input_id,
-        model=model,  # Trained model instance
-        attributes=None,
-    )
+        metadata = get_model_info(vm_model)
+    elif hasattr(class_obj, "__name__") and class_obj.__name__ == "PipelineModel":
+        vm_model = class_obj(
+            pipeline=model,
+            input_id=input_id,
+        )
+        # TODO: Add metadata for pipeline model
+        metadata = get_model_info(vm_model)
+    elif class_obj:
+        vm_model = class_obj(
+            input_id=input_id,
+            model=model,  # Trained model instance
+            predict_fn=predict_fn,
+        )
+        metadata = get_model_info(vm_model)
+    else:
+        vm_model = MetadataModel(
+            input_id=input_id, attributes=ModelAttributes.from_dict(attributes)
+        )
+        metadata = attributes
+
     if __log:
         log_input(
             name=input_id,
             type="model",
-            metadata=get_model_info(vm_model),
+            metadata=metadata,
         )
 
     input_registry.add(key=input_id, obj=vm_model)

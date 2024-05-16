@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from sklearn.metrics import precision_recall_curve
 
 from validmind.errors import SkipTestError
+from validmind.models import FoundationModel
 from validmind.vm_models import Figure, Metric
 
 
@@ -42,7 +43,7 @@ class PrecisionRecallCurve(Metric):
     different threshold levels.
 
     **Limitations**:
-    * This metric is only applicable to binary classification models – it raises errors for multiclass classification
+    * This metric is only applicable to binary classification models - it raises errors for multiclass classification
     models or Foundation models.
     * It may not fully represent the overall accuracy of the model if the cost of false positives and false negatives
     are extremely different, or if the dataset is heavily imbalanced.
@@ -62,7 +63,7 @@ class PrecisionRecallCurve(Metric):
     }
 
     def run(self):
-        if self.inputs.model.model_library() == "FoundationModel":
+        if isinstance(self.inputs.model, FoundationModel):
             raise SkipTestError("Skipping PrecisionRecallCurve for Foundation models")
 
         y_true = self.inputs.dataset.y

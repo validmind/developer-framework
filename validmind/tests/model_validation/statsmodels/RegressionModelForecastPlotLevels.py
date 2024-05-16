@@ -98,7 +98,7 @@ class RegressionModelForecastPlotLevels(Metric):
         figures = []
 
         for i, fitted_model in enumerate(model_list):
-            feature_columns = datasets[0].get_features_columns()
+            feature_columns = datasets[0].feature_columns
 
             train_ds = datasets[0]
             test_ds = datasets[1]

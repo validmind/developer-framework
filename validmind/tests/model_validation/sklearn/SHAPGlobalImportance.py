@@ -11,6 +11,7 @@ import shap
 
 from validmind.errors import UnsupportedModelForSHAPError
 from validmind.logging import get_logger
+from validmind.models import CatBoostModel, SKlearnModel, StatsModelsModel
 from validmind.vm_models import Figure, Metric
 
 logger = get_logger(__name__)
@@ -131,20 +132,14 @@ class SHAPGlobalImportance(Metric):
         )
 
     def run(self):
-        model_library = self.inputs.model.model_library()
-        if model_library in [
-            "statsmodels",
-            "pytorch",
-            "catboost",
-            "transformers",
-            "FoundationModel",
-            "R",
-        ]:
-            logger.info(f"Skiping SHAP for {model_library} models")
+        if not isinstance(self.inputs.model, SKlearnModel) or isinstance(
+            self.inputs.model, (CatBoostModel, StatsModelsModel)
+        ):
+            logger.info(f"Skiping SHAP for {self.inputs.model.library} models")
             return
 
         trained_model = self.inputs.model.model
-        model_class = self.inputs.model.model_class()
+        model_class = self.inputs.model.class_
 
         # the shap library generates a bunch of annoying warnings that we don't care about
         warnings.filterwarnings("ignore", category=UserWarning)
@@ -176,6 +171,7 @@ class SHAPGlobalImportance(Metric):
                 ),
             )
         else:
+            model_class = "<ExternalModel>" if model_class is None else model_class
             raise UnsupportedModelForSHAPError(
                 f"Model {model_class} not supported for SHAP importance."
             )

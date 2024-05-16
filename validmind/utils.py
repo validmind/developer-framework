@@ -12,15 +12,20 @@ from platform import python_version
 from typing import Any
 
 import matplotlib.pylab as pylab
+import mistune
 import nest_asyncio
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.core import getipython
-from IPython.display import HTML, display
+from IPython.display import HTML
+from IPython.display import display as ipy_display
+from latex2mathml.converter import convert
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 from numpy import ndarray
 from tabulate import tabulate
+
+from .html_templates.content_blocks import math_jax_snippet, python_syntax_highlighting
 
 DEFAULT_BIG_NUMBER_DECIMALS = 2
 DEFAULT_SMALL_NUMBER_DECIMALS = 4
@@ -97,6 +102,8 @@ class NumpyEncoder(json.JSONEncoder):
             return bool(obj)
         if isinstance(obj, pd.Timestamp):
             return str(obj)
+        if isinstance(obj, set):
+            return list(obj)
         return super().default(obj)
 
     def encode(self, obj):
@@ -345,10 +352,10 @@ def test_id_to_name(test_id: str) -> str:
 
 def get_model_info(model):
     """Attempts to extract all model info from a model object instance"""
-    architecture = model.model_name()
-    framework = model.model_library()
-    framework_version = model.model_library_version()
-    language = model.model_language()
+    architecture = model.name
+    framework = model.library
+    framework_version = model.library_version
+    language = model.language
 
     if language is None:
         language = f"Python {python_version()}"
@@ -402,4 +409,47 @@ def preview_test_config(config):
     <div id="collapsibleContent" style="display:none;"><pre>{formatted_json}</pre></div>
     """
 
-    display(HTML(collapsible_html))
+    ipy_display(HTML(collapsible_html))
+
+
+def display(widget_or_html, syntax_highlighting=True, mathjax=True):
+    """Display widgets with extra goodies (syntax highlighting, MathJax, etc.)"""
+    if isinstance(widget_or_html, str):
+        ipy_display(HTML(widget_or_html))
+        # if html we can auto-detect if we actually need syntax highlighting or MathJax
+        syntax_highlighting = 'class="language-' in widget_or_html
+        mathjax = "$$" in widget_or_html
+    else:
+        ipy_display(widget_or_html)
+
+    if syntax_highlighting:
+        ipy_display(HTML(python_syntax_highlighting))
+
+    if mathjax:
+        ipy_display(HTML(math_jax_snippet))
+
+
+def md_to_html(md: str, mathml=False) -> str:
+    """Converts Markdown to HTML using mistune with plugins"""
+    # use mistune with math plugin to convert to html
+    html = mistune.create_markdown(plugins=["math"])(md)
+
+    if not mathml:
+        # return the html as is (with latex that will be rendered by MathJax)
+        return html
+
+    # convert the latex to MathML which CKeditor can render
+    math_block_pattern = re.compile(r'<div class="math">\$\$([\s\S]*?)\$\$</div>')
+    html = math_block_pattern.sub(
+        lambda match: "<p>{}</p>".format(convert(match.group(1), display="block")), html
+    )
+
+    inline_math_pattern = re.compile(r'<span class="math">\\\((.*?)\\\)</span>')
+    html = inline_math_pattern.sub(
+        lambda match: "<span>{}</span>".format(
+            convert(match.group(1), display="inline")
+        ),
+        html,
+    )
+
+    return html

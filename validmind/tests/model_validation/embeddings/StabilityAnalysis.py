@@ -6,8 +6,10 @@ from abc import abstractmethod
 from typing import List
 
 import numpy as np
+import plotly.express as px
 from sklearn.metrics.pairwise import cosine_similarity
 
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -17,13 +19,14 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
+logger = get_logger(__name__)
+
 
 class StabilityAnalysis(ThresholdTest):
     """Base class for embeddings stability analysis tests"""
 
     required_inputs = ["model", "dataset"]
     default_params = {
-        "text_column": None,
         "mean_similarity_threshold": 0.7,
     }
     metadata = {
@@ -61,25 +64,22 @@ class StabilityAnalysis(ThresholdTest):
 
     def run(self):
         # Perturb the test dataset
-        col = self.params.get("text_column")
+        original = self.inputs.dataset.df
+        perturbed = original.copy()
+        perturbed.update(
+            perturbed.select_dtypes(include="object").applymap(self.perturb_data)
+        )
 
-        if col is None:
-            raise ValueError(
-                "The `text_column` parameter must be provided to the StabilityAnalysis test."
-            )
-
-        original_data_df = self.inputs.dataset.df[col]
-        perturbed_data_df = original_data_df.copy()
-        perturbed_data_df = perturbed_data_df.apply(self.perturb_data)
+        logger.debug(f"Original data: {original}")
+        logger.debug(f"Perturbed data: {perturbed}")
 
         # Compute embeddings for the original and perturbed dataset
-        original_embeddings = self.inputs.model.predict(original_data_df)
-        perturbed_embeddings = self.inputs.model.predict(perturbed_data_df)
+        original_embeddings = self.inputs.dataset.y_pred(self.inputs.model)
+        perturbed_embeddings = np.stack(self.inputs.model.predict(perturbed))
 
         # Compute cosine similarities between original and perturbed embeddings
         similarities = cosine_similarity(
-            original_embeddings,
-            perturbed_embeddings,
+            original_embeddings, perturbed_embeddings
         ).diagonal()
 
         mean = np.mean(similarities)
@@ -91,15 +91,26 @@ class StabilityAnalysis(ThresholdTest):
         # Determine if the test passed based on the mean similarity and threshold
         passed = mean > self.params["mean_similarity_threshold"]
 
-        # Plot the distribution of cosine similarities using plotly
-        import plotly.express as px
-
-        fig = px.histogram(
-            x=similarities.flatten(),
-            nbins=100,
-            title="Cosine Similarity Distribution",
-            labels={"x": "Cosine Similarity"},
-        )
+        figures = [
+            px.histogram(
+                x=similarities.flatten(),
+                nbins=100,
+                title="Cosine Similarity Distribution",
+                labels={"x": "Cosine Similarity"},
+            ),
+            px.density_contour(
+                x=similarities.flatten(),
+                nbinsx=100,
+                title="Cosine Similarity Density",
+                labels={"x": "Cosine Similarity"},
+                marginal_x="histogram",
+            ),
+            px.box(
+                x=similarities.flatten(),
+                labels={"x": "Cosine Similarity"},
+                title="Cosine Similarity Box Plot",
+            ),
+        ]
 
         # For this example, we are not caching the results as done in the reference `run` method
         return self.cache_results(
@@ -121,6 +132,7 @@ class StabilityAnalysis(ThresholdTest):
                     key=self.name,
                     figure=fig,
                 )
+                for fig in figures
             ],
             passed=passed,
         )
