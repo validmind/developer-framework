@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 14.4.0"/>
-    <title>validmind.tests.model_validation.BleuScore API documentation</title>
+    <title>validmind.tests.model_validation.RougeScore API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -32,7 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#BleuScore">BleuScore</a>
+                    <a class="function" href="#RougeScore">RougeScore</a>
             </li>
     </ul>
 
@@ -49,57 +49,57 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../../../validmind.html">validmind</a><wbr>.<a href="./../../tests.html">tests</a><wbr>.<a href="./../model_validation.html">model_validation</a><wbr>.BleuScore    </h1>
+<a href="./../../../validmind.html">validmind</a><wbr>.<a href="./../../tests.html">tests</a><wbr>.<a href="./../model_validation.html">model_validation</a><wbr>.RougeScore    </h1>
 
                 
                 
                 
                 
             </section>
-                <section id="BleuScore">
+                <section id="RougeScore">
                     <div class="attr function">
                     <div class="decorator">@tags(&#39;nlp&#39;, &#39;text_data&#39;, &#39;visualization&#39;)</div>
         <div class="decorator">@tasks(&#39;text_classification&#39;, &#39;text_summarization&#39;)</div>
 
         <span class="def">def</span>
-        <span class="name">BleuScore</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+        <span class="name">RougeScore</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">metric</span><span class="o">=</span><span class="s1">&#39;rouge-1&#39;</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#BleuScore"></a>
+    <a class="headerlink" href="#RougeScore"></a>
     
-            <div class="docstring"><p>Evaluates the quality of machine-generated text using BLEU metrics and visualizes the results through histograms
-and bar charts, alongside compiling a comprehensive table of descriptive statistics for BLEU scores.</p>
+            <div class="docstring"><p>Evaluates the quality of machine-generated text using ROUGE metrics and visualizes the results through histograms
+and bar charts, alongside compiling a comprehensive table of descriptive statistics for each ROUGE metric.</p>
 
 <p><strong>Purpose:</strong>
-This function is designed to assess the quality of text generated by machine learning models using the BLEU metric.
-BLEU, which stands for Bilingual Evaluation Understudy, is a metric used to evaluate the overlap of n-grams between
-the machine-generated text and reference texts. This evaluation is crucial for tasks such as text summarization,
-machine translation, and text generation, where the goal is to produce text that accurately reflects the content
-and meaning of human-crafted references.</p>
+This function is designed to assess the quality of text generated by machine learning models using various ROUGE metrics.
+ROUGE, which stands for Recall-Oriented Understudy for Gisting Evaluation, is a set of metrics used to evaluate the
+overlap of n-grams, word sequences, and word pairs between the machine-generated text and reference texts. This evaluation
+is crucial for tasks such as text summarization, machine translation, and text generation, where the goal is to produce text
+that accurately reflects the content and meaning of human-crafted references.</p>
 
 <p><strong>Test Mechanism:</strong>
-The function starts by extracting the true and predicted values from the provided dataset and model. It then initializes
-the BLEU evaluator. For each pair of true and predicted texts, the function calculates the BLEU scores and compiles them
-into a dataframe. Histograms and bar charts are generated for the BLEU scores to visualize their distribution. Additionally,
-a table of descriptive statistics (mean, median, standard deviation, minimum, and maximum) is compiled for the BLEU scores,
-providing a comprehensive summary of the model's performance.</p>
+The function starts by extracting the true and predicted values from the provided dataset and model. It then initializes the ROUGE
+evaluator with the specified metric (e.g., ROUGE-1). For each pair of true and predicted texts, the function calculates the ROUGE
+scores and compiles them into a dataframe. Histograms and bar charts are generated for each ROUGE metric (Precision, Recall, and F1 Score)
+to visualize their distribution. Additionally, a table of descriptive statistics (mean, median, standard deviation, minimum, and maximum)
+is compiled for each metric, providing a comprehensive summary of the model's performance.</p>
 
 <p><strong>Signs of High Risk:</strong></p>
 
 <ul>
-<li>Consistently low BLEU scores could indicate poor quality in the generated text, suggesting that the model fails to capture
-the essential content of the reference texts.</li>
+<li>Consistently low scores across ROUGE metrics could indicate poor quality in the generated text, suggesting that the model fails
+to capture the essential content of the reference texts.</li>
 <li>Low precision scores might suggest that the generated text contains a lot of redundant or irrelevant information.</li>
 <li>Low recall scores may indicate that important information from the reference text is being omitted.</li>
-<li>An imbalanced performance between precision and recall, reflected by a low BLEU score, could signal issues in the model's
-ability to balance informativeness and conciseness.</li>
+<li>An imbalanced performance between precision and recall, reflected by a low F1 Score, could signal issues in the model's ability
+to balance informativeness and conciseness.</li>
 </ul>
 
 <p><strong>Strengths:</strong></p>
 
 <ul>
-<li>Provides a straightforward and widely-used evaluation of text quality through BLEU scores.</li>
+<li>Provides a multifaceted evaluation of text quality through different ROUGE metrics, offering a detailed view of model performance.</li>
 <li>Visual representations (histograms and bar charts) make it easier to interpret the distribution and trends of the scores.</li>
 <li>Descriptive statistics offer a concise summary of the model's strengths and weaknesses in generating text.</li>
 </ul>
@@ -107,10 +107,9 @@ ability to balance informativeness and conciseness.</li>
 <p><strong>Limitations:</strong></p>
 
 <ul>
-<li>BLEU metrics primarily focus on n-gram overlap and may not fully capture semantic coherence, fluency, or grammatical quality
-of the text.</li>
+<li>ROUGE metrics primarily focus on n-gram overlap and may not fully capture semantic coherence, fluency, or grammatical quality of the text.</li>
 <li>The evaluation relies on the availability of high-quality reference texts, which may not always be obtainable.</li>
-<li>While useful for comparison, BLEU scores alone do not provide a complete assessment of a model's performance and should be
+<li>While useful for comparison, ROUGE scores alone do not provide a complete assessment of a model's performance and should be
 supplemented with other metrics and qualitative analysis.</li>
 </ul>
 </div>

@@ -32,19 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#TokenDisparity">TokenDisparity</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#TokenDisparity.__init__">TokenDisparity</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TokenDisparity.run">run</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TokenDisparity.token_disparity_histograms">token_disparity_histograms</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#TokenDisparity">TokenDisparity</a>
             </li>
     </ul>
 
@@ -69,137 +57,56 @@
                 
             </section>
                 <section id="TokenDisparity">
-                    <div class="attr class">
-                    <div class="decorator">@dataclass</div>
+                    <div class="attr function">
+                    <div class="decorator">@tags(&#39;nlp&#39;, &#39;text_data&#39;, &#39;visualization&#39;)</div>
+        <div class="decorator">@tasks(&#39;text_classification&#39;, &#39;text_summarization&#39;)</div>
 
-    <span class="def">class</span>
-    <span class="name">TokenDisparity</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+        <span class="def">def</span>
+        <span class="name">TokenDisparity</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#TokenDisparity"></a>
     
-            <div class="docstring"><p>Assess and visualize token count disparity between model's predicted and actual dataset.</p>
+            <div class="docstring"><p>Evaluates the token disparity between reference and generated texts, visualizing the results through histograms
+and bar charts, alongside compiling a comprehensive table of descriptive statistics for token counts.</p>
 
-<p><strong>Purpose</strong>:
-The Token Disparity metric is designed to assess the distributional congruence between the model's predicted
-outputs and the actual data. This is achieved by constructing histograms that illustrate the disparity in token
-count between the two columns. Additionally, this metric is used to measure the model's verbosity in comparison to
-the genuine dataset.</p>
+<p><strong>Purpose:</strong>
+This function is designed to assess the token disparity between reference and generated texts. Token disparity is
+important for understanding how closely the length and token usage of generated texts match the reference texts.</p>
 
-<p><strong>Test Mechanism</strong>:
-The mechanism of running this test involves tokenizing both columns: one containing the actual data and the other
-containing the model's predictions. The BERT tokenizer is used for tokenizing the contents of each column. After
-tokenization, tokens in each column are counted and represented in two distinct histograms to facilitate the
-visualization of token count distribution in the actual and predicted data. To quantify the difference in
-distribution, the histogram of the actual tokens is compared with the histogram of the predicted tokens.</p>
+<p><strong>Test Mechanism:</strong>
+The function starts by extracting the true and predicted values from the provided dataset and model. It then calculates
+the number of tokens in each reference and generated text. Histograms and bar charts are generated for the token counts
+of both reference and generated texts to visualize their distribution. Additionally, a table of descriptive statistics
+(mean, median, standard deviation, minimum, and maximum) is compiled for the token counts, providing a comprehensive
+summary of the model's performance.</p>
 
-<p><strong>Signs of High Risk</strong>:
-High risk or potential failure in model performance may be suggested by:</p>
+<p><strong>Signs of High Risk:</strong></p>
 
 <ul>
-<li>Significant incongruities in distribution patterns between the two histograms.</li>
-<li>Marked divergence of the predicted histogram from the reference histogram, indicating that the model may be
-generating output with unexpected verbosity.</li>
-<li>This might result in an output that has a significantly higher or lower number of tokens than expected.</li>
+<li>Significant disparity in token counts between reference and generated texts could indicate issues with text generation
+quality, such as verbosity or lack of detail.</li>
+<li>Consistently low token counts in generated texts compared to references might suggest that the model is producing
+incomplete or overly concise outputs.</li>
 </ul>
 
-<p><strong>Strengths</strong>:
-Strengths of the Token Disparity metric include:</p>
+<p><strong>Strengths:</strong></p>
 
 <ul>
-<li>It provides a clear and visual comparison of predicted versus actual token distributions, enhancing understanding
-of the model's output consistency and verbosity.</li>
-<li>It is able to detect potential issues with the model's output generation capability, such as over-production or
-under-production of tokens compared to the actual data set.</li>
+<li>Provides a simple yet effective evaluation of text length and token usage.</li>
+<li>Visual representations (histograms and bar charts) make it easier to interpret the distribution and trends of token counts.</li>
+<li>Descriptive statistics offer a concise summary of the model's performance in generating texts of appropriate length.</li>
 </ul>
 
-<p><strong>Limitations</strong>:
-Limitations of the Token Disparity metric include:</p>
+<p><strong>Limitations:</strong></p>
 
 <ul>
-<li>The metric focuses solely on token count, disregarding the semantics behind those tokens. Consequently, it may
-miss out on issues related to relevance or meaningfulness of produced tokens.</li>
-<li>The assumption that similar token count between predicted and actual data suggests accurate output, which is not
-always the case.</li>
-<li>Dependence on the BERT tokenizer, which may not always be the optimum choice for all types of text data.</li>
+<li>Token counts alone do not provide a complete assessment of text quality and should be supplemented with other metrics and qualitative analysis.</li>
 </ul>
 </div>
 
 
-                            <div id="TokenDisparity.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">TokenDisparity</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestInput</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_ref_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_section_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#TokenDisparity.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="TokenDisparity.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TokenDisparity.run"></a>
-    
-            <div class="docstring"><p>Run the calculation and cache its results</p>
-</div>
-
-
-                            </div>
-                            <div id="TokenDisparity.token_disparity_histograms" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">token_disparity_histograms</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">df</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TokenDisparity.token_disparity_histograms"></a>
-    
-            <div class="docstring"><p>Visualize the token counts distribution of two given columns using histograms.</p>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>df</strong>:  DataFrame containing the text columns.</li>
-<li><strong>params</strong>:  Dictionary with the keys ["reference_column", "generated_column"].</li>
-</ul>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="TokenDisparity.key" class="variable">key</dd>
-                <dd id="TokenDisparity.summary" class="function">summary</dd>
-                <dd id="TokenDisparity.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="TokenDisparity.description" class="function">description</dd>
-                <dd id="TokenDisparity.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="TokenDisparity.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="TokenDisparity.dataset" class="variable">dataset</dd>
-                <dd id="TokenDisparity.model" class="variable">model</dd>
-                <dd id="TokenDisparity.models" class="variable">models</dd>
-                <dd id="TokenDisparity.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
