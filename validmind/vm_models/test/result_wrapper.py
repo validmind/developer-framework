@@ -12,19 +12,22 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
-import ipywidgets as widgets
-import mistune
 import pandas as pd
-from IPython.display import display
+from ipywidgets import HTML, GridBox, Layout, VBox
 
 from ... import api_client
 from ...ai import DescriptionFuture
-from ...utils import NumpyEncoder, run_async, test_id_to_name
+from ...input_registry import input_registry
+from ...logging import get_logger
+from ...utils import NumpyEncoder, display, md_to_html, run_async, test_id_to_name
+from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
 from .output_template import OutputTemplate
 from .result_summary import ResultSummary
 from .threshold_test_result import ThresholdTestResults
+
+logger = get_logger(__name__)
 
 
 async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
@@ -64,9 +67,9 @@ def plot_figures(figures: List[Figure]) -> None:
     plots = [figure.to_widget() for figure in figures]
 
     num_columns = 2 if len(figures) > 1 else 1
-    return widgets.GridBox(
+    return GridBox(
         plots,
-        layout=widgets.Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
+        layout=Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
     )
 
 
@@ -103,7 +106,7 @@ class ResultWrapper(ABC):
         """
         Convert a markdown string to html
         """
-        return mistune.html(description)
+        return md_to_html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
@@ -148,8 +151,8 @@ class ResultWrapper(ABC):
             )  # table.data is an orient=records dump
 
             if table.metadata and table.metadata.title:
-                tables.append(widgets.HTML(value=f"<h3>{table.metadata.title}</h3>"))
-            tables.append(widgets.HTML(value=summary_table))
+                tables.append(HTML(value=f"<h3>{table.metadata.title}</h3>"))
+            tables.append(HTML(value=summary_table))
         return tables
 
     def show(self):
@@ -180,9 +183,7 @@ class FailedResultWrapper(ResultWrapper):
         return f'FailedResult(result_id="{self.result_id}")'
 
     def to_widget(self):
-        return widgets.HTML(
-            value=f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>"
-        )
+        return HTML(f"<h3 style='color: red;'>{self.message}</h3><p>{self.error}</p>")
 
     async def log_async(self):
         pass
@@ -216,7 +217,7 @@ class MetricResultWrapper(ResultWrapper):
             return ""
 
         vbox_children = [
-            widgets.HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>"),
+            HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>"),
         ]
 
         if self.result_metadata:
@@ -226,9 +227,7 @@ class MetricResultWrapper(ResultWrapper):
                 self.result_metadata[0]["text"] = metric_description
 
             vbox_children.append(
-                widgets.HTML(
-                    value=self._markdown_description_to_html(metric_description)
-                )
+                HTML(value=self._markdown_description_to_html(metric_description))
             )
 
         if self.metric:
@@ -236,18 +235,18 @@ class MetricResultWrapper(ResultWrapper):
                 rendered_output = OutputTemplate(self.output_template).render(
                     value=self.metric.value
                 )
-                vbox_children.append(widgets.HTML(rendered_output))
+                vbox_children.append(HTML(rendered_output))
             elif self.metric.summary:
                 tables = self._summary_tables_to_widget(self.metric.summary)
                 vbox_children.extend(tables)
 
         if self.figures:
-            vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
+            vbox_children.append(HTML(value="<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
 
         vbox_children.append(
-            widgets.HTML(
+            HTML(
                 value="""
         <style>
             .metric-result {
@@ -293,12 +292,48 @@ class MetricResultWrapper(ResultWrapper):
             )
         )
 
-        return widgets.VBox(vbox_children)
+        return VBox(vbox_children)
 
-    async def log_async(self):
+    def _get_filtered_summary(self):
+        """Check if the metric summary has columns from input datasets"""
+        dataset_columns = set()
+
+        for input_id in self.inputs:
+            input_obj = input_registry.get(input_id)
+            if isinstance(input_obj, VMDataset):
+                dataset_columns.update(input_obj.columns)
+
+        for table in [*self.metric.summary.results]:
+            columns = set()
+
+            if isinstance(table.data, pd.DataFrame):
+                columns.update(table.data.columns)
+            elif isinstance(table.data, list):
+                columns.update(table.data[0].keys())
+            else:
+                raise ValueError("Invalid data type in summary table")
+
+            if bool(columns.intersection(dataset_columns)):
+                logger.warning(
+                    "Sensitive data in metric summary table. Not logging to API automatically."
+                    " Pass `unsafe=True` to result.log() method to override manually."
+                )
+                logger.warning(
+                    f"The following columns are present in the table: {columns}"
+                    f" and also present in the dataset: {dataset_columns}"
+                )
+
+                self.metric.summary.results.remove(table)
+
+        return self.metric.summary
+
+    async def log_async(self, unsafe=False):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
+            if self.metric.summary and not unsafe:
+                self.metric.summary = self._get_filtered_summary()
+
             tasks.append(
                 api_client.log_metrics(
                     metrics=[self.metric],
@@ -306,8 +341,10 @@ class MetricResultWrapper(ResultWrapper):
                     output_template=self.output_template,
                 )
             )
+
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
+
         if hasattr(self, "result_metadata") and self.result_metadata:
             description = self.result_metadata[0].get("text", "")
             if isinstance(description, DescriptionFuture):
@@ -383,18 +420,18 @@ class ThresholdTestResultWrapper(ResultWrapper):
             """
         )
 
-        vbox_children.append(widgets.HTML(value="".join(description_html)))
+        vbox_children.append(HTML(value="".join(description_html)))
 
         if self.test_results.summary:
             tables = self._summary_tables_to_widget(self.test_results.summary)
             vbox_children.extend(tables)
 
         if self.figures:
-            vbox_children.append(widgets.HTML(value="<h3>Plots</h3>"))
+            vbox_children.append(HTML(value="<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
 
-        return widgets.VBox(vbox_children)
+        return VBox(vbox_children)
 
     async def log_async(self):
         tasks = [api_client.log_test_result(self.test_results, self.inputs)]

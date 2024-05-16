@@ -1,0 +1,182 @@
+[
+    {
+        "contract_id": "C001",
+        "vendor_id": "V001",
+        "start_date": "2021-01-01",
+        "end_date": "2023-12-31",
+        "contract_value": 300000,
+        "terms_conditions": "Exclusive supply agreement for specified hardware components.",
+        "products_description": "Cisco networking software services"
+    },
+    {
+        "contract_id": "C002",
+        "vendor_id": "V001",
+        "start_date": "2022-01-01",
+        "end_date": "2024-12-31",
+        "contract_value": 200000,
+        "terms_conditions": "Annual subscription for maintenance and support agreement.",
+        "products_description": "Cisco support and maintenance services"
+    },
+    {
+        "contract_id": "C003",
+        "vendor_id": "V002",
+        "start_date": "2020-05-01",
+        "end_date": "2023-04-30",
+        "contract_value": 300000,
+        "terms_conditions": "Annual licensing for data analytics software.",
+        "products_description": "Tableau data analytics software"
+    },
+    {
+        "contract_id": "C004",
+        "vendor_id": "V003",
+        "start_date": "2022-02-01",
+        "end_date": "2025-01-31",
+        "contract_value": 150000,
+        "terms_conditions": "Contract lifecycle management platform license (annual).",
+        "products_description": "SirionLabs contract lifecycle management software"
+    },
+    {
+        "contract_id": "C005",
+        "vendor_id": "V004",
+        "start_date": "2019-01-01",
+        "end_date": "2024-01-01",
+        "contract_value": 250000,
+        "terms_conditions": "Provision of ERP solutions.",
+        "products_description": "SAP ERP software"
+    },
+    {
+        "contract_id": "C006",
+        "vendor_id": "V004",
+        "start_date": "2023-01-02",
+        "end_date": "2026-01-01",
+        "contract_value": 200000,
+        "terms_conditions": "ERP system upgrades and technical support provided by vendor for 3 years.",
+        "products_description": "SAP ERP software upgrades and technical support"
+    },
+    {
+        "contract_id": "C007",
+        "vendor_id": "V005",
+        "start_date": "2022-08-01",
+        "end_date": "2025-07-31",
+        "contract_value": 120000,
+        "terms_conditions": "Cloud services provisioning - unlimited consulting hours to setup and provision new AWS services for 3 years - renewal option available.",
+        "products_description": "Amazon Web Services (AWS) cloud services provision."
+    },
+    {
+        "contract_id": "C008",
+        "vendor_id": "V005",
+        "start_date": "2021-09-01",
+        "end_date": "2024-08-31",
+        "contract_value": 95000,
+        "terms_conditions": "Pay-as-you-go AWS cloud services.",
+        "products_description": "Amazon Web Services (AWS) cloud services"
+    },
+    {
+        "contract_id": "C009",
+        "vendor_id": "V006",
+        "start_date": "2021-11-01",
+        "end_date": "2024-10-30",
+        "contract_value": 185000,
+        "terms_conditions": "Annual licensing for Fortinet network security software.",
+        "products_description": "Fortinet network security software"
+    },
+    {
+        "contract_id": "C010",
+        "vendor_id": "V007",
+        "start_date": "2023-03-01",
+        "end_date": "2026-02-28",
+        "contract_value": 270000,
+        "terms_conditions": "VMWare enterprise agreement - multi-year licensing.",
+        "products_description": "VMWare virtualization software"
+    },
+    {
+        "contract_id": "C011",
+        "vendor_id": "V008",
+        "start_date": "2022-05-15",
+        "end_date": "2025-05-14",
+        "contract_value": 220000,
+        "terms_conditions": "Annual licensing - paid in advance. By default, the contract will renew automatically. Licensee may cancel the contract by providing written notice at least 30 days before the end of the contract term.",
+        "products_description": "Adobe Creative Cloud software suite."
+    },
+    {
+        "contract_id": "C012",
+        "vendor_id": "V009",
+        "start_date": "2020-06-01",
+        "end_date": "2023-05-31",
+        "contract_value": 260000,
+        "terms_conditions": "Multi-year CAD software licensing.",
+        "products_description": "Autodesk CAD software for 2D and 3D design including AutoCAD, Revit, and Maya."
+    },
+    {
+        "contract_id": "C013",
+        "vendor_id": "V010",
+        "start_date": "2021-07-01",
+        "end_date": "2024-06-30",
+        "contract_value": 180000,
+        "terms_conditions": "CRM Software as a Service (SaaS) subscription.",
+        "products_description": "Salesforce CRM software with features including sales management, customer service, and marketing automation."
+    },
+    {
+        "contract_id": "C014",
+        "vendor_id": "V011",
+        "start_date": "2022-09-01",
+        "end_date": "2025-08-31",
+        "contract_value": 210000,
+        "terms_conditions": "Annual subscription for office productivity suite.",
+        "products_description": "Microsoft Office 365 suite including Word, Excel, PowerPoint, and Teams."
+    },
+    {
+        "contract_id": "C015",
+        "vendor_id": "V011",
+        "start_date": "2023-10-01",
+        "end_date": "2026-09-30",
+        "contract_value": 240000,
+        "terms_conditions": "Azure compute and storage services. Pay-as-you-go pricing.",
+        "products_description": "Microsoft Azure services including virtual machines, storage accounts, and networking capabilities."
+    },
+    {
+        "contract_id": "C016",
+        "vendor_id": "V012",
+        "start_date": "2021-11-01",
+        "end_date": "2024-10-31",
+        "contract_value": 230000,
+        "terms_conditions": "Annual licensing for IBM GRC software.",
+        "products_description": "IBM Governance, Risk and Compliance (GRC) software for business analytics and decision-making support."
+    },
+    {
+        "contract_id": "C017",
+        "vendor_id": "V013",
+        "start_date": "2022-12-01",
+        "end_date": "2025-11-30",
+        "contract_value": 200000,
+        "terms_conditions": "Dell Office computer hardware (laptops, desktops, monitors).",
+        "products_description": "Dell office hardware including various models of laptops, desktops, and high-resolution monitors."
+    },
+    {
+        "contract_id": "C018",
+        "vendor_id": "V014",
+        "start_date": "2020-01-01",
+        "end_date": "2023-12-31",
+        "contract_value": 250000,
+        "terms_conditions": "Annual licensing for Oracle database software (Enterprise Edition).",
+        "products_description": "Oracle Database Enterprise Edition with full suite of features including performance optimization and security enhancements."
+    },
+    {
+        "contract_id": "C019",
+        "vendor_id": "V014",
+        "start_date": "2022-02-01",
+        "end_date": "2025-01-31",
+        "contract_value": 220000,
+        "terms_conditions": "Pay-as-you-go Oracle Cloud Infrastructure services.",
+        "products_description": "Oracle Cloud Infrastructure services including compute, storage, and network services with flexible pay-as-you-go pricing."
+    },
+    {
+        "contract_id": "C020",
+        "vendor_id": "V015",
+        "start_date": "2021-03-01",
+        "end_date": "2024-02-29",
+        "contract_value": 190000,
+        "terms_conditions": "HP Server hardware and support services. Annual maintenance contract.",
+        "products_description": "Hewlett Packard Enterprise servers and related support services, focusing on reliability and enterprise-level performance."
+    }
+]

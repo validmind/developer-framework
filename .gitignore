@@ -209,3 +209,8 @@ notebooks/scratch/
 
 # Custom tests
 my_tests/
+
+# SQLite DB
+*.sqlite
+*.db
+*.db-journal

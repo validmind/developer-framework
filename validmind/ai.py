@@ -67,7 +67,7 @@ def __get_client_and_model():
 
     if "OPENAI_API_KEY" in os.environ:
         __client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4-turbo")
+        __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4o")
 
     elif "AZURE_OPENAI_KEY" in os.environ:
         if "AZURE_OPENAI_ENDPOINT" not in os.environ:
@@ -128,7 +128,7 @@ def generate_description_async(
             raise ValueError("No results, summary or figures provided")
 
         response = client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {
@@ -156,7 +156,7 @@ def generate_description_async(
         )
     else:
         response = client.chat.completions.create(
-            model="gpt-4-turbo",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {

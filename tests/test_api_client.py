@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import call, MagicMock, Mock, patch
 
 import matplotlib.pyplot as plt
-import mistune
 from aiohttp.formdata import FormData
 
 # simluate environment variables being set
@@ -17,6 +16,7 @@ os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind.api_client as api_client
 from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
+from validmind.utils import md_to_html
 from validmind.vm_models.figure import Figure
 
 
@@ -196,7 +196,7 @@ class TestAPIClient(unittest.TestCase):
             data=json.dumps(
                 {
                     "content_id": "1234",
-                    "text": mistune.html("Some Text"),
+                    "text": md_to_html("Some Text"),
                     "json": {"key": "value"},
                 }
             ),
