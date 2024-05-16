@@ -127,6 +127,7 @@ setTimeout(function () {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML';
     document.head.appendChild(script);
 }, 300);
+</script>
 """
 
 failed_content_block_html = """
