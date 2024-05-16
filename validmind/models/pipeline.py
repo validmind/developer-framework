@@ -31,7 +31,7 @@ class PipelineModel(VMModel):
         name: str = None,
     ):
         self.pipeline = pipeline
-        self.input_id = input_id or f"{id(self)}"
+        self.input_id = input_id
 
         self.language = "Python"
         self.library = self.__class__.__name__
