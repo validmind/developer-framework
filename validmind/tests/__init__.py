@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 from pprint import pformat
-from typing import Dict
+from typing import Dict, List
 from uuid import uuid4
 
 import pandas as pd
@@ -24,7 +24,8 @@ from ..unit_metrics.composite import load_composite_metric
 from ..utils import display, format_dataframe, fuzzy_match, md_to_html, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
-from .test_providers import LocalTestProvider, TestProvider
+from .providers import LocalTestProvider, test_providers
+from .utils import test_description
 
 logger = get_logger(__name__)
 
@@ -45,80 +46,90 @@ __all__ = [
     "tasks",
 ]
 
-__tests = None
-__test_classes = None
-
-__test_providers: Dict[str, TestProvider] = {}
+__tests: Dict[str, object] = {}
 __custom_tests: Dict[str, object] = {}
 
 
-def _test_description(test_class, truncate=True):
-    description = inspect.getdoc(test_class).strip()
+class TestList:
+    def __init__(self, test_ids: List[str], truncate: bool) -> None:
+        self.test_ids = test_ids
+        self.truncate = truncate
 
-    if truncate and len(description.split("\n")) > 5:
-        return description.strip().split("\n")[0] + "..."
+    def pretty(self):
+        table = [
+            {
+                "ID": _id,
+                "Name": test_id_to_name(_id),
+                "Test Type": test.test_type,
+                "Description": test_description(test, self.truncate),
+                "Required Inputs": test.required_inputs,
+                "Params": test.default_params or {},
+            }
+            for _id, test in __tests.items()
+        ]
 
-    return description
+        return format_dataframe(pd.DataFrame(table))
 
+    def __str__(self):
+        return self.lists
 
-def _load_tests(test_ids):
-    global __test_classes
-
-    if __test_classes is None:
-        __test_classes = {}
-        for test_id in test_ids:
-            __test_classes[test_id] = load_test(test_id)
-
-
-def _pretty_list_tests(tests, truncate=True):
-    _load_tests(tests)
-
-    table = [
-        {
-            "ID": test_id,
-            "Name": test_id_to_name(test_id),
-            "Test Type": __test_classes[test_id].test_type,
-            "Description": _test_description(__test_classes[test_id], truncate),
-            "Required Inputs": __test_classes[test_id].required_inputs,
-            "Params": __test_classes[test_id].default_params or {},
-        }
-        for test_id in tests
-    ]
-
-    return format_dataframe(pd.DataFrame(table))
+    def __repr__(self):
+        return self.pretty()
 
 
-def _initialize_test_classes():
-    """
-    Initialize and populate the __test_classes global variable.
-    """
-    global __test_classes
-
-    if __test_classes is None:
-        __test_classes = {}
-        for path in Path(__file__).parent.glob("**/*.py"):
+def __init__():
+    """Initialize and populate tests."""
+    for d in [p.name for p in Path(__file__).parent.iterdir() if p.is_dir()]:
+        for path in Path(__file__).parent.joinpath(d).glob("**/**/*.py"):
             if path.name.startswith("__") or not path.name[0].isupper():
-                continue  # skip special files and non-class files
-            test_id = path.stem  # or any other way to define test_id
-            __test_classes[test_id] = load_test(
-                test_id
-            )  # Assuming a function load_test exists
+                continue  # skip __init__.py and other special files as well as non Test files
+
+            test_id = (
+                f"validmind.{d}.{path.parent.stem}.{path.stem}"
+                if path.parent.parent.stem == d
+                else f"validmind.{d}.{path.stem}"
+            )
+            __tests[test_id] = load_test(test_id)
 
 
 def list_tags():
     """
     List unique tags from all test classes.
     """
-    _initialize_test_classes()
-
     unique_tags = set()
 
-    for test_class in __test_classes.values():
+    for test_class in __tests.values():
         if hasattr(test_class, "metadata") and "tags" in test_class.metadata:
             for tag in test_class.metadata["tags"]:
                 unique_tags.add(tag)
 
     return list(unique_tags)
+
+
+def list_tasks():
+    """List unique task types from all tests."""
+    tasks = set()
+
+    for test_class in __tests.values():
+        metadata = getattr(test_class, "metadata", {})
+
+        tasks.update(
+            [
+                *metadata.get("tasks", []),
+                *metadata.get("task_types", []),
+            ]
+        )
+
+    return list(tasks)
+
+
+def list_task_types():
+    """DEPRECATED: Use `list_tasks()` instead"""
+    logger.warning(
+        "DEPRECATED:`list_task_types()` is deprecated. Use `list_tasks()` instead."
+    )
+
+    return list_tasks()
 
 
 def list_tasks_and_tags():
@@ -129,41 +140,25 @@ def list_tasks_and_tags():
     Returns:
         pandas.DataFrame: A DataFrame with 'Task Type' and concatenated 'Tags'.
     """
-    _initialize_test_classes()
     task_tags_dict = {}
 
-    for test_class in __test_classes.values():
-        if hasattr(test_class, "metadata"):
-            task_types = test_class.metadata.get("task_types", [])
-            tags = test_class.metadata.get("tags", [])
+    for test_class in __tests.values():
+        metadata = getattr(test_class, "metadata", {})
 
-            for task_type in task_types:
-                if task_type not in task_tags_dict:
-                    task_tags_dict[task_type] = set()
-                task_tags_dict[task_type].update(tags)
+        for task in [
+            *metadata.get("tasks", []),
+            *metadata.get("task_types", []),
+        ]:
+            task_tags_dict.setdefault(task, set()).update(metadata.get("tags", []))
 
-    # Convert the dictionary into a DataFrame
-    task_tags_data = [
-        {"Task Type": task_type, "Tags": ", ".join(tags)}
-        for task_type, tags in task_tags_dict.items()
-    ]
-    return format_dataframe(pd.DataFrame(task_tags_data))
-
-
-def list_task_types():
-    """
-    List unique task types from all test classes.
-    """
-    _initialize_test_classes()
-
-    unique_task_types = set()
-
-    for test_class in __test_classes.values():
-        if hasattr(test_class, "metadata") and "task_types" in test_class.metadata:
-            for task_type in test_class.metadata["task_types"]:
-                unique_task_types.add(task_type)
-
-    return list(unique_task_types)
+    return format_dataframe(
+        pd.DataFrame(
+            [
+                {"Task Type": task_type, "Tags": ", ".join(tags)}
+                for task_type, tags in task_tags_dict.items()
+            ]
+        )
+    )
 
 
 def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
@@ -184,50 +179,29 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
     Returns:
         list or pandas.DataFrame: A list of all tests or a formatted table.
     """
-    global __tests
-
-    if __tests is None:
-        __tests = []
-
-        directories = [p.name for p in Path(__file__).parent.iterdir() if p.is_dir()]
-
-        for d in directories:
-            for path in Path(__file__).parent.joinpath(d).glob("**/**/*.py"):
-                if path.name.startswith("__") or not path.name[0].isupper():
-                    continue  # skip __init__.py and other special files as well as non Test files
-
-                test_id = (
-                    f"validmind.{d}.{path.parent.stem}.{path.stem}"
-                    if path.parent.parent.stem == d
-                    else f"validmind.{d}.{path.stem}"
-                )
-                __tests.append(test_id)
-
-    tests = __tests
+    tests = list(__tests.keys())
 
     # first filter by the filter string since it's the most general search
     if filter is not None:
-        _load_tests(tests)
-
         matched_by_id = [
             test_id for test_id in tests if filter.lower() in test_id.lower()
         ]
         matched_by_task = [
             test_id
             for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
+            if hasattr(__test_objs[test_id], "metadata")
             and any(
                 filter.lower() in task.lower()
-                for task in __test_classes[test_id].metadata["task_types"]
+                for task in __test_objs[test_id].metadata["task_types"]
             )
         ]
         matched_by_tags = [
             test_id
             for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
+            if hasattr(__test_objs[test_id], "metadata")
             and any(
                 fuzzy_match(tag, filter.lower())
-                for tag in __test_classes[test_id].metadata["tags"]
+                for tag in __test_objs[test_id].metadata["tags"]
             )
         ]
 
@@ -235,29 +209,22 @@ def list_tests(filter=None, task=None, tags=None, pretty=True, truncate=True):
 
     # then filter by task type and tags since they are more specific
     if task is not None:
-        _load_tests(tests)
-
         tests = [
             test_id
             for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and task in __test_classes[test_id].metadata["task_types"]
+            if hasattr(__test_objs[test_id], "metadata")
+            and task in __test_objs[test_id].metadata["task_types"]
         ]
 
     if tags is not None:
-        _load_tests(tests)
-
         tests = [
             test_id
             for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and all(tag in __test_classes[test_id].metadata["tags"] for tag in tags)
+            if hasattr(__test_objs[test_id], "metadata")
+            and all(tag in __test_objs[test_id].metadata["tags"] for tag in tags)
         ]
 
-    if pretty:
-        return _pretty_list_tests(tests, truncate=truncate)
-
-    return tests
+    return TestList(tests, truncate=truncate)
 
 
 def _load_validmind_test(test_id, reload=False):
@@ -305,6 +272,8 @@ def load_test(test_id: str, reload=False):
 
     # TODO: lets implement an extensible loading system instead of this ugly if/else
     if test_id in __custom_tests:
+        if reload:
+            logger.warning("Cannot reload custom tests... Using ")
         test = __custom_tests[test_id]
 
     elif test_id.startswith("validmind.composite_metric"):
@@ -313,13 +282,13 @@ def load_test(test_id: str, reload=False):
     elif namespace == "validmind":
         error, test = _load_validmind_test(test_id, reload=reload)
 
-    elif namespace in __test_providers:
+    elif namespace in test_providers:
         try:
-            test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+            test = test_providers[namespace].load_test(test_id.split(".", 1)[1])
         except Exception as e:
             error = (
                 f"Unable to load test {test_id} from test provider: "
-                f"{__test_providers[namespace]}\n Got Exception: {e}"
+                f"{test_providers[namespace]}\n Got Exception: {e}"
             )
 
     else:
@@ -472,15 +441,8 @@ def run_test(
     return test.result
 
 
-def register_test_provider(namespace: str, test_provider: TestProvider) -> None:
-    """Register an external test provider
-
-    Args:
-        namespace (str): The namespace of the test provider
-        test_provider (TestProvider): The test provider
-    """
-    __test_providers[namespace] = test_provider
-
-
 def _register_custom_test(test_id: str, test_class: object):
     __custom_tests[test_id] = test_class
+
+
+__init__()
