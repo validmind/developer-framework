@@ -11,8 +11,10 @@ import sys
 from pathlib import Path
 from pprint import pformat
 from typing import Dict
+from uuid import uuid4
 
 import pandas as pd
+from ipywidgets import HTML, Accordion
 
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
@@ -367,7 +369,7 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
 
     html = test_content_block_html.format(
         test_id=test_id,
-        uuid=hash(test_id),
+        uuid=str(uuid4()),
         title=f'{details["Name"]}',
         description=md_to_html(details["Description"].strip()),
         required_inputs=", ".join(details["Required Inputs"] or ["None"]),
@@ -389,7 +391,12 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
     if not show:
         return html
 
-    display(html)
+    display(
+        Accordion(
+            children=[HTML(html)],
+            titles=[f"Test Description: {details['Name']} ('{test_id}')"],
+        )
+    )
 
 
 def run_test(

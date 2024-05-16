@@ -20,9 +20,11 @@ test_content_block_html = """
 <div class="unset">
   <h3>How to Run:</h3>
 
-  <button onclick="toggleInstructions('{uuid}')">Show/Hide Instructions</button>
+  <button
+      onclick="(() => {{e = document.getElementById('expandable_instructions_{uuid}'); e.style.display === 'none' ? e.style.display = 'block' : e.style.display = 'none'}})()"
+  >Show/Hide Instructions</button>
 
-  <div id="expandable_instructions_{uuid}" style="display:{instructions_display};">
+  <div id="expandable_instructions_{uuid}" style="display: {instructions_display};">
   <h4>Code:</h4>
     <pre>
         <code class='language-python'>import validmind as vm
@@ -60,9 +62,6 @@ result.log()</code>
 </div>
 
 <style>
-.unset {{
-  all: unset;
-}}
 h5.vm_required_context {{
     margin-top: 25px;
 }}
@@ -97,28 +96,21 @@ table.vm_params_table td, table.vm_params_table th {{
   border: .8px solid --jp-border-color0;
 }}
 </style>
-
-<script>
-function toggleInstructions(uuid) {{
-  var instructions = document.getElementById("expandable_instructions_" + uuid);
-  if (instructions.style.display === "none") {{
-    instructions.style.display = "block";
-  }} else {{
-    instructions.style.display = "none";
-  }}
-}}
-</script>
 """
 
 python_syntax_highlighting = """
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css" />
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-<script defer>hljs.highlightAll();</script>
+<script defer type="module">
+import hljs from 'https://unpkg.com/@highlightjs/cdn-assets@11.9.0/es/highlight.min.js';
+import python from 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/es/languages/python.min.js';
+
+hljs.registerLanguage('python', python);
+hljs.highlightAll();
+</script>
 """
 
+# FIXME: this is a bit too hacky
 math_jax_snippet = """
-<script defer>
+<script>
 window.MathJax = {
     tex2jax: {
         inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
@@ -135,7 +127,6 @@ setTimeout(function () {
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML';
     document.head.appendChild(script);
 }, 300);
-</script>
 """
 
 failed_content_block_html = """
