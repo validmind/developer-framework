@@ -139,7 +139,6 @@ class VMDataset:
         )
 
     def _add_column(self, column_name, column_values):
-        print(f"Adding column {column_name} with {len(column_values)} values")
         if len(column_values) != len(self.df):
             raise ValueError(
                 "Length of values doesn't match number of rows in the DataFrame."
@@ -229,7 +228,6 @@ class VMDataset:
             X = self.df if isinstance(model, (FunctionModel, PipelineModel)) else self.x
             probability_values, prediction_values = compute_predictions(model, X)
 
-        print(f"Prediction values: {prediction_values}")
         prediction_column = prediction_column or f"{model.input_id}_prediction"
         self._add_column(prediction_column, prediction_values)
         self.prediction_column(model, prediction_column)
@@ -246,9 +244,8 @@ class VMDataset:
 
     def prediction_column(self, model: VMModel, column_name: str = None) -> str:
         """Get or set the prediction column for a model."""
-        if column_name:
-            if column_name not in self.columns:
-                raise ValueError(f"{column_name} doesn't exist in the dataset")
+        if column_name and column_name not in self.columns:
+            raise ValueError("{column_name} doesn't exist in the dataset")
 
         if column_name and column_name in self.feature_columns:
             self.feature_columns.remove(column_name)
