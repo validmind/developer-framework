@@ -147,7 +147,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;2.2.0&#39;</span>
+<span class="default_value">&#39;2.2.1&#39;</span>
 
         
     </div>
@@ -284,7 +284,7 @@ this to the same key.</li>
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">predict_fn</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="nb">callable</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
+        <span class="name">init_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;model&#39;</span>,</span><span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">predict_fn</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="nb">callable</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">__log</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">) -> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>:</span></span>
 
         
     </div>
@@ -297,7 +297,7 @@ also ensures we are creating a model supported libraries.</p>
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>model:</strong>  A trained model</li>
+<li><strong>model:</strong>  A trained model or VMModel instance</li>
 <li><strong>input_id (str):</strong>  The input ID for the model (e.g. "my_model"). By default,
 this will be set to <code>model</code> but if you are passing this model as a
 test input using some other key than <code>model</code>, then you should set
