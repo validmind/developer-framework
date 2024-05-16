@@ -10,6 +10,7 @@ Before running this, you need to either set an environment variable OPENAI_API_K
 or create a .env file in the root of the project with the following contents:
 OPENAI_API_KEY=<your api key>
 """
+
 import os
 
 import click
@@ -18,7 +19,7 @@ import openai
 
 dotenv.load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-OPENAI_GPT_MODEL = "gpt-4-turbo" # or gpt-4 or gpt-3.5-turbo
+OPENAI_GPT_MODEL = "gpt-4o"  # or gpt-4-turbo or gpt-3.5-turbo etc
 add_prompt = """
 You are an expert in validating Machine Learning models using MRM (Model Risk Management) best practices. You are also an expert in writing descriptions that are pleasant to read while being very useful.
 You will be provided the source code for a metric or threshold test that is run against an ML model. You will analyze the code to determine the details and implementation of the test. Finally, you will write clear, descriptive and informative descriptions in the format described that will document the tests for developers and risk management teams.
@@ -90,29 +91,30 @@ It does not have to be a complete sentence but should be grammatically correct. 
 Respond with only the summary and don't include any explanation or other text
 """.strip()
 
+
 def indent_and_wrap(text, indentation=4, wrap_length=120):
-    lines = text.split('\n')
+    lines = text.split("\n")
     result = []
 
     for line in lines:
-        if line == '':
-            result.append('')
+        if line == "":
+            result.append("")
             continue
 
-        line = ' ' * indentation + line
+        line = " " * indentation + line
 
         while len(line) > wrap_length:
-            space_index = line.rfind(' ', 0, wrap_length)
+            space_index = line.rfind(" ", 0, wrap_length)
 
             if space_index == -1:
                 space_index = wrap_length
 
             result.append(line[:space_index])
-            line = ' ' * indentation + line[space_index:].lstrip()
+            line = " " * indentation + line[space_index:].lstrip()
 
         result.append(line)
 
-    return '\n'.join(result)
+    return "\n".join(result)
 
 
 def add_description_to_test(path):
@@ -125,7 +127,7 @@ def add_description_to_test(path):
         file_contents = f.read()
 
     response = openai.chat.completions.create(
-        model=OPENAI_GPT_MODEL, 
+        model=OPENAI_GPT_MODEL,
         messages=[
             {"role": "system", "content": add_prompt},
             {"role": "user", "content": f"```python\n{file_contents}```"},
@@ -220,11 +222,12 @@ def add_summary_to_test(path):
         raise ValueError("Could not find line number")
 
     # insert the new description lines
-    lines.insert(insert_line_num, f'{summary}\n')
+    lines.insert(insert_line_num, f"{summary}\n")
 
     # write the updated file contents back to the file
     with open(path, "w") as f:
         f.write("\n".join(lines))
+
 
 def fix_test_description(path):
     """You can switch to gpt3.5 if you don't have access but gpt4- should do a better job"""

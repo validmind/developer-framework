@@ -1,0 +1,107 @@
+[
+    {
+        "vendor_id": "V001",
+        "vendor_name": "Cisco Systems",
+        "category": "Networking Hardware",
+        "total_spend": 500000,
+        "contracts": ["C001", "C002"]
+    },
+    {
+        "vendor_id": "V002",
+        "vendor_name": "Tableau Software",
+        "category": "Data Analytics",
+        "total_spend": 300000,
+        "contracts": ["C003"]
+    },
+    {
+        "vendor_id": "V003",
+        "vendor_name": "SirionLabs",
+        "category": "Contract Management Software",
+        "total_spend": 150000,
+        "contracts": ["C004"]
+    },
+    {
+        "vendor_id": "V004",
+        "vendor_name": "SAP",
+        "category": "Enterprise Resource Planning",
+        "total_spend": 450000,
+        "contracts": ["C005", "C006"]
+    },
+    {
+        "vendor_id": "V005",
+        "vendor_name": "Amazon Web Services",
+        "category": "Cloud Computing",
+        "total_spend": 215000,
+        "contracts": ["C007", "C008"]
+    },
+    {
+        "vendor_id": "V006",
+        "vendor_name": "Fortinet",
+        "category": "Cybersecurity",
+        "total_spend": 185000,
+        "contracts": ["C009"]
+    },
+    {
+        "vendor_id": "V007",
+        "vendor_name": "VMware",
+        "category": "Virtualization and Cloud Infrastructure",
+        "total_spend": 270000,
+        "contracts": ["C010"]
+    },
+    {
+        "vendor_id": "V008",
+        "vendor_name": "Adobe Systems",
+        "category": "Graphic Design Software",
+        "total_spend": 220000,
+        "contracts": ["C011"]
+    },
+    {
+        "vendor_id": "V009",
+        "vendor_name": "Autodesk",
+        "category": "CAD Software",
+        "total_spend": 260000,
+        "contracts": ["C012"]
+    },
+    {
+        "vendor_id": "V010",
+        "vendor_name": "Salesforce",
+        "category": "Customer Relationship Management",
+        "total_spend": 320000,
+        "contracts": ["C013"]
+    },
+    {
+        "vendor_id": "V011",
+        "vendor_name": "Microsoft",
+        "category": "Productivity Software",
+        "total_spend": 400000,
+        "contracts": ["C014", "C015"]
+    },
+    {
+        "vendor_id": "V012",
+        "vendor_name": "IBM",
+        "category": "IT Services and Consulting",
+        "total_spend": 380000,
+        "contracts": ["C016"]
+    },
+    {
+        "vendor_id": "V013",
+        "vendor_name": "Dell Technologies",
+        "category": "Computers and Peripherals",
+        "total_spend": 290000,
+        "contracts": ["C017"]
+    },
+    {
+        "vendor_id": "V014",
+        "vendor_name": "Oracle",
+        "category": "Database Management",
+        "total_spend": 350000,
+        "contracts": ["C018", "C019"]
+    },
+    {
+        "vendor_id": "V015",
+        "vendor_name": "Hewlett Packard Enterprise",
+        "category": "Servers and Storage",
+        "total_spend": 240000,
+        "contracts": ["C020"]
+    }
+]

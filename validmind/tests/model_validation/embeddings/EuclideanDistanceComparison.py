@@ -2,10 +2,11 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from itertools import combinations
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from itertools import combinations
 from sklearn.metrics.pairwise import euclidean_distances
 
 
