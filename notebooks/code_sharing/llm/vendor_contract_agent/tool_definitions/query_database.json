@@ -1,0 +1,17 @@
+{
+    "type": "function",
+    "function": {
+        "name": "query_database",
+        "description": "Query the contract database to retrieve information about contracts with a particular vendor",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "SQL query to execute against the database"
+                }
+            },
+            "required": ["query"]
+        }
+    }
+}

@@ -218,6 +218,13 @@ class VMDataset:
         if self.probability_column(model):
             logger.warning("Model probabilities already assigned... Overwriting.")
 
+        # if the user passes a column name, we assume it has precomputed predictions
+        if prediction_column:
+            prediction_values = self.df[prediction_column].values
+
+            if probability_column:
+                probability_values = self.df[probability_column].values
+
         if prediction_values is None:
             X = self.df if isinstance(model, (FunctionModel, PipelineModel)) else self.x
             probability_values, prediction_values = compute_predictions(model, X)
@@ -231,6 +238,11 @@ class VMDataset:
             probability_column = probability_column or f"{model.input_id}_probabilities"
             self._add_column(probability_column, probability_values)
             self.probability_column(model, probability_column)
+        else:
+            logger.info(
+                "No probabilities computed or provided. "
+                "Not adding probability column to the dataset."
+            )
 
     def prediction_column(self, model: VMModel, column_name: str = None) -> str:
         """Get or set the prediction column for a model."""
@@ -238,11 +250,8 @@ class VMDataset:
             if column_name not in self.columns:
                 raise ValueError(f"{column_name} doesn't exist in the dataset")
 
-            if (
-                column_name in self.feature_columns
-                and self.target_column in self.feature_columns
-            ):
-                self.feature_columns.remove(self.target_column)
+        if column_name and column_name in self.feature_columns:
+            self.feature_columns.remove(column_name)
 
         return self.extra_columns.prediction_column(model, column_name)
 
@@ -252,7 +261,7 @@ class VMDataset:
             raise ValueError("{column_name} doesn't exist in the dataset")
 
         if column_name and column_name in self.feature_columns:
-            self.feature_columns.remove(self.target_column)
+            self.feature_columns.remove(column_name)
 
         return self.extra_columns.probability_column(model, column_name)
 

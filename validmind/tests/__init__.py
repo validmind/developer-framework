@@ -6,22 +6,22 @@
 
 import importlib
 import inspect
+import json
 import sys
 from pathlib import Path
 from pprint import pformat
 from typing import Dict
+from uuid import uuid4
 
-import mistune
 import pandas as pd
-from IPython.display import display
-from ipywidgets import HTML
+from ipywidgets import HTML, Accordion
 
 from ..errors import LoadTestError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import format_dataframe, fuzzy_match, test_id_to_name
+from ..utils import display, format_dataframe, fuzzy_match, md_to_html, test_id_to_name
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -75,10 +75,12 @@ def _pretty_list_tests(tests, truncate=True):
 
     table = [
         {
-            "Test Type": __test_classes[test_id].test_type,
-            "Name": test_id_to_name(test_id),
-            "Description": _test_description(__test_classes[test_id], truncate),
             "ID": test_id,
+            "Name": test_id_to_name(test_id),
+            "Test Type": __test_classes[test_id].test_type,
+            "Description": _test_description(__test_classes[test_id], truncate),
+            "Required Inputs": __test_classes[test_id].required_inputs,
+            "Params": __test_classes[test_id].default_params or {},
         }
         for test_id in tests
     ]
@@ -339,7 +341,7 @@ def load_test(test_id: str, reload=False):
     return test
 
 
-def describe_test(test_id: str = None, raw: bool = False):
+def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
     """Get or show details about the test
 
     This function can be used to see test details including the test name, description,
@@ -365,20 +367,34 @@ def describe_test(test_id: str = None, raw: bool = False):
     if raw:
         return details
 
+    html = test_content_block_html.format(
+        test_id=test_id,
+        uuid=str(uuid4()),
+        title=f'{details["Name"]}',
+        description=md_to_html(details["Description"].strip()),
+        required_inputs=", ".join(details["Required Inputs"] or ["None"]),
+        params_table="\n".join(
+            [
+                f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
+                for param, value in details["Params"].items()
+            ]
+        ),
+        table_display="table" if details["Params"] else "none",
+        example_inputs=json.dumps(
+            {name: f"my_vm_{name}" for name in details["Required Inputs"]},
+            indent=4,
+        ),
+        example_params=json.dumps(details["Params"] or {}, indent=4),
+        instructions_display="block" if show else "none",
+    )
+
+    if not show:
+        return html
+
     display(
-        HTML(
-            test_content_block_html.format(
-                title=f'{details["Name"]}',
-                description=mistune.html(details["Description"].strip()),
-                required_inputs=", ".join(details["Required Inputs"] or ["None"]),
-                params_table="\n".join(
-                    [
-                        f"<tr><td>{param}</td><td>{pformat(value, indent=4)}</td></tr>"
-                        for param, value in details["Params"].items()
-                    ]
-                ),
-                table_display="table" if details["Params"] else "none",
-            )
+        Accordion(
+            children=[HTML(html)],
+            titles=[f"Test Description: {details['Name']} ('{test_id}')"],
         )
     )
 

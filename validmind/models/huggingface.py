@@ -4,7 +4,6 @@
 
 from dataclasses import dataclass
 
-
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
 from validmind.vm_models.model import VMModel, has_method_with_arguments

@@ -2,9 +2,9 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import evaluate
 import pandas as pd
 import plotly.graph_objects as go
-import evaluate
 
 from validmind import tags, tasks
 

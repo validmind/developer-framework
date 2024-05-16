@@ -37,6 +37,7 @@ class CompositeMetric(Metric):
             metric_ids=self.unit_metrics,
             description=self.description(),
             inputs=self._get_input_dict(),
+            accessed_inputs=self.get_accessed_inputs(),
             params=self.params,
             output_template=self.output_template,
             show=False,
@@ -103,6 +104,7 @@ def run_metrics(
     description: str = None,
     output_template: str = None,
     inputs: dict = None,
+    accessed_inputs: List[str] = None,
     params: dict = None,
     test_id: str = None,
     show: bool = True,
@@ -128,6 +130,8 @@ def run_metrics(
         output_template (_type_, optional): Output template to customize the result
             table.
         inputs (_type_, optional): Inputs to pass to the unit metrics. Defaults to None
+        accessed_inputs (_type_, optional): Inputs that were accessed when running the
+            unit metrics - used for input tracking. Defaults to None.
         params (_type_, optional): Parameters to pass to the unit metrics. Defaults to
             None.
         test_id (str, optional): Test ID of the composite metric. Required if name is
@@ -212,7 +216,7 @@ def run_metrics(
                 "json": {"output_template": output_template},
             },
         ],
-        inputs=list(inputs.keys()),
+        inputs=accessed_inputs,
         output_template=output_template,
         metric=MetricResult(
             key=test_id,
