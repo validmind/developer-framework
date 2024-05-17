@@ -1,4 +1,5 @@
 """Test all of the public synchronous functions that call the async api client functions"""
+
 import json
 import os
 import unittest
@@ -65,7 +66,9 @@ class TestAPIClient(unittest.TestCase):
         vm.log_metrics(metrics, inputs=["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_metrics?run_cuid={os.environ['VM_RUN_CUID']}"
-        mock_post.assert_called_with(url, data=json.dumps([{"key": "value", "inputs": ["input1"]}]))
+        mock_post.assert_called_with(
+            url, data=json.dumps([{"key": "value", "inputs": ["input1"]}])
+        )
 
     @patch("validmind.api_client.log_test_result")
     def test_log_test_results(self, mock_log_test_result: MagicMock):
@@ -74,8 +77,8 @@ class TestAPIClient(unittest.TestCase):
 
         mock_log_test_result.assert_has_calls(
             [
-                call(results[0], ["input1"], "training"),
-                call(results[1], ["input1"], "training"),
+                call(results[0], ["input1"]),
+                call(results[1], ["input1"]),
             ]
         )
 

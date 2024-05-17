@@ -239,8 +239,8 @@ class TestAPIClient(unittest.TestCase):
 
         mock_log_test_result.assert_has_calls(
             [
-                call(results[0], ["input1"], "training"),
-                call(results[1], ["input1"], "training"),
+                call(results[0], ["input1"]),
+                call(results[1], ["input1"]),
             ]
         )
 
