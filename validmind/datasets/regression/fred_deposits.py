@@ -25,4 +25,4 @@ def load_data():
     df = deposits.join([fed_funds, tb3ms, gs10, gs30], how="inner")
     df.columns = ["Deposits", "FEDFUNDS", "TB3MS", "GS10", "GS30"]
 
-    return df
+    return deposits, fed_funds, tb3ms, gs10, gs30
