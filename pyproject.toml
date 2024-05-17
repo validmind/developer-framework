@@ -33,8 +33,9 @@ matplotlib = "<3.8.3"
 mistune = "^3.0.2"
 nltk = "^3.8.1"
 numba = "<0.59.0" # TODO: https://github.com/validmind/developer-framework/pull/28
+pymc3 = "^3.11.5"
 numpy = [
-  {version = "^1.23.3", python = ">=3.8,<=3.11"},
+  {version = ">=1.15.0,<1.22.2", python = ">=3.8,<=3.11"},
   {version = ">=1.26.0", python = ">=3.12"},
 ]
 openai = {version = "^1.3.7", optional = true}
