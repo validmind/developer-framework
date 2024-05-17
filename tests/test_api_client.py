@@ -226,7 +226,7 @@ class TestAPIClient(unittest.TestCase):
         self.run_async(api_client.log_test_result, result, ["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_test_results"
-        url += f"?dataset_type=training&run_cuid={os.environ['VM_RUN_CUID']}"
+        url += f"?run_cuid={os.environ['VM_RUN_CUID']}"
 
         mock_post.assert_called_with(
             url, data=json.dumps({"key": "value", "inputs": ["input1"]})
