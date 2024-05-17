@@ -21,7 +21,14 @@ from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics import run_metric
 from ..unit_metrics.composite import load_composite_metric
-from ..utils import display, format_dataframe, fuzzy_match, md_to_html, test_id_to_name
+from ..utils import (
+    NumpyEncoder,
+    display,
+    format_dataframe,
+    fuzzy_match,
+    md_to_html,
+    test_id_to_name,
+)
 from ..vm_models import TestContext, TestInput
 from .decorator import metric, tags, tasks
 from .test_providers import LocalTestProvider, TestProvider
@@ -384,7 +391,7 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
             {name: f"my_vm_{name}" for name in details["Required Inputs"]},
             indent=4,
         ),
-        example_params=json.dumps(details["Params"] or {}, indent=4),
+        example_params=json.dumps(details["Params"] or {}, indent=4, cls=NumpyEncoder),
         instructions_display="block" if show else "none",
     )
 

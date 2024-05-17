@@ -176,7 +176,7 @@ def init_dataset(
 
 def init_model(
     model: object = None,
-    input_id: str = None,
+    input_id: str = "model",
     attributes: dict = None,
     predict_fn: callable = None,
     __log=True,
@@ -187,7 +187,7 @@ def init_model(
     also ensures we are creating a model supported libraries.
 
     Args:
-        model: A trained model
+        model: A trained model or VMModel instance
         input_id (str): The input ID for the model (e.g. "my_model"). By default,
             this will be set to `model` but if you are passing this model as a
             test input using some other key than `model`, then you should set
@@ -201,22 +201,40 @@ def init_model(
     Returns:
         vm.VMModel: A VM Model instance
     """
+    # vm_model = model if isinstance(model, VMModel) else None
+    # metadata = None
+
+    # if not vm_model:
+    #     class_obj = get_model_class(model=model, predict_fn=predict_fn)
+    #     if not class_obj:
+    #         if not attributes:
+    #             raise UnsupportedModelError(
+    #                 f"Model class {str(model.__class__)} is not supported at the moment."
+    #             )
+    #         elif not is_model_metadata(attributes):
+    #             raise UnsupportedModelError(
+    #                 f"Model attributes {str(attributes)} are missing required keys 'architecture' and 'language'."
+    #             )
+    vm_model = model if isinstance(model, VMModel) else None
     class_obj = get_model_class(model=model, predict_fn=predict_fn)
-    if not class_obj:
+
+    if not vm_model and not class_obj:
         if not attributes:
             raise UnsupportedModelError(
                 f"Model class {str(model.__class__)} is not supported at the moment."
             )
-        elif not is_model_metadata(attributes):
+
+        if not is_model_metadata(attributes):
             raise UnsupportedModelError(
                 f"Model attributes {str(attributes)} are missing required keys 'architecture' and 'language'."
             )
 
-    input_id = input_id or "model"
-    vm_model = None
-    metadata = None
-
-    if hasattr(class_obj, "__name__") and class_obj.__name__ == "PipelineModel":
+    if isinstance(vm_model, VMModel):
+        vm_model.input_id = (
+            input_id if input_id != "model" else (vm_model.input_id or input_id)
+        )
+        metadata = get_model_info(vm_model)
+    elif hasattr(class_obj, "__name__") and class_obj.__name__ == "PipelineModel":
         vm_model = class_obj(
             pipeline=model,
             input_id=input_id,
@@ -231,10 +249,8 @@ def init_model(
         )
         metadata = get_model_info(vm_model)
     else:
-        model_attributes = ModelAttributes.from_dict(attributes)
         vm_model = MetadataModel(
-            input_id=input_id,
-            attributes=model_attributes,
+            input_id=input_id, attributes=ModelAttributes.from_dict(attributes)
         )
         metadata = attributes
 

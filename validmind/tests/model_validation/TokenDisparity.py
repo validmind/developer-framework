@@ -2,139 +2,102 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import itertools
-from dataclasses import dataclass
-
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-from transformers import BertTokenizer
 
-from validmind.vm_models import Figure, Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class TokenDisparity(Metric):
+@tags("nlp", "text_data", "visualization")
+@tasks("text_classification", "text_summarization")
+def TokenDisparity(dataset, model):
     """
-    Assess and visualize token count disparity between model's predicted and actual dataset.
+    Evaluates the token disparity between reference and generated texts, visualizing the results through histograms
+    and bar charts, alongside compiling a comprehensive table of descriptive statistics for token counts.
 
-    **Purpose**:
-    The Token Disparity metric is designed to assess the distributional congruence between the model's predicted
-    outputs and the actual data. This is achieved by constructing histograms that illustrate the disparity in token
-    count between the two columns. Additionally, this metric is used to measure the model's verbosity in comparison to
-    the genuine dataset.
+    **Purpose:**
+    This function is designed to assess the token disparity between reference and generated texts. Token disparity is
+    important for understanding how closely the length and token usage of generated texts match the reference texts.
 
-    **Test Mechanism**:
-    The mechanism of running this test involves tokenizing both columns: one containing the actual data and the other
-    containing the model's predictions. The BERT tokenizer is used for tokenizing the contents of each column. After
-    tokenization, tokens in each column are counted and represented in two distinct histograms to facilitate the
-    visualization of token count distribution in the actual and predicted data. To quantify the difference in
-    distribution, the histogram of the actual tokens is compared with the histogram of the predicted tokens.
+    **Test Mechanism:**
+    The function starts by extracting the true and predicted values from the provided dataset and model. It then calculates
+    the number of tokens in each reference and generated text. Histograms and bar charts are generated for the token counts
+    of both reference and generated texts to visualize their distribution. Additionally, a table of descriptive statistics
+    (mean, median, standard deviation, minimum, and maximum) is compiled for the token counts, providing a comprehensive
+    summary of the model's performance.
 
-    **Signs of High Risk**:
-    High risk or potential failure in model performance may be suggested by:
+    **Signs of High Risk:**
+    - Significant disparity in token counts between reference and generated texts could indicate issues with text generation
+      quality, such as verbosity or lack of detail.
+    - Consistently low token counts in generated texts compared to references might suggest that the model is producing
+      incomplete or overly concise outputs.
 
-    - Significant incongruities in distribution patterns between the two histograms.
-    - Marked divergence of the predicted histogram from the reference histogram, indicating that the model may be
-    generating output with unexpected verbosity.
-    - This might result in an output that has a significantly higher or lower number of tokens than expected.
+    **Strengths:**
+    - Provides a simple yet effective evaluation of text length and token usage.
+    - Visual representations (histograms and bar charts) make it easier to interpret the distribution and trends of token counts.
+    - Descriptive statistics offer a concise summary of the model's performance in generating texts of appropriate length.
 
-    **Strengths**:
-    Strengths of the Token Disparity metric include:
-
-    - It provides a clear and visual comparison of predicted versus actual token distributions, enhancing understanding
-    of the model's output consistency and verbosity.
-    - It is able to detect potential issues with the model's output generation capability, such as over-production or
-    under-production of tokens compared to the actual data set.
-
-    **Limitations**:
-    Limitations of the Token Disparity metric include:
-
-    - The metric focuses solely on token count, disregarding the semantics behind those tokens. Consequently, it may
-    miss out on issues related to relevance or meaningfulness of produced tokens.
-    - The assumption that similar token count between predicted and actual data suggests accurate output, which is not
-    always the case.
-    - Dependence on the BERT tokenizer, which may not always be the optimum choice for all types of text data.
+    **Limitations:**
+    - Token counts alone do not provide a complete assessment of text quality and should be supplemented with other metrics and qualitative analysis.
     """
 
-    name = "token_disparity"
-    required_inputs = ["model", "dataset"]
+    # Extract true and predicted values
+    y_true = dataset.y
+    y_pred = dataset.y_pred(model)
 
-    def run(self):
-        y_true = list(itertools.chain.from_iterable(self.inputs.dataset.y))
-        y_pred = self.inputs.dataset.y_pred(self.inputs.model)
+    # Calculate token counts
+    token_counts_true = [len(text.split()) for text in y_true]
+    token_counts_pred = [len(text.split()) for text in y_pred]
 
-        df = pd.DataFrame({"reference_column": y_true, "generated_column": y_pred})
+    # Create a dataframe for reference and generated token counts
+    df = pd.DataFrame(
+        {"reference_tokens": token_counts_true, "generated_tokens": token_counts_pred}
+    )
 
-        fig = self.token_disparity_histograms(df)
-        figures = []
-        figures.append(
-            Figure(
-                for_object=self,
-                key=self.key,
-                figure=fig,
-            )
+    figures = []
+
+    # Generate histograms and bar charts for reference and generated token counts
+    token_types = ["reference_tokens", "generated_tokens"]
+    token_names = ["Reference Tokens", "Generated Tokens"]
+
+    for token_type, token_name in zip(token_types, token_names):
+        # Histogram
+        hist_fig = go.Figure(data=[go.Histogram(x=df[token_type])])
+        hist_fig.update_layout(
+            title=f"{token_name} Histogram",
+            xaxis_title=token_name,
+            yaxis_title="Count",
         )
-        return self.cache_results(figures=figures)
+        figures.append(hist_fig)
 
-    def token_disparity_histograms(self, df):
-        """
-        Visualize the token counts distribution of two given columns using histograms.
-
-        :param df: DataFrame containing the text columns.
-        :param params: Dictionary with the keys ["reference_column", "generated_column"].
-        """
-
-        reference_column = "reference_column"
-        generated_column = "generated_column"
-
-        # Initialize the tokenizer
-        tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-
-        # Tokenize the columns and get the number of tokens
-        df["tokens_1"] = df[reference_column].apply(
-            lambda x: len(tokenizer.tokenize(x))
+        # Bar Chart
+        bar_fig = go.Figure(data=[go.Bar(x=df.index, y=df[token_type])])
+        bar_fig.update_layout(
+            title=f"{token_name} Bar Chart",
+            xaxis_title="Row Index",
+            yaxis_title=token_name,
         )
-        df["tokens_2"] = df[generated_column].apply(
-            lambda x: len(tokenizer.tokenize(x))
-        )
+        figures.append(bar_fig)
 
-        # Create subplots: 1 row, 2 columns
-        fig = make_subplots(
-            rows=1,
-            cols=2,
-            subplot_titles=(
-                f"Tokens in {reference_column}",
-                f"Tokens in {generated_column}",
-            ),
-        )
+    # Calculate statistics for each token count type
+    stats_df = df.describe().loc[["mean", "50%", "max", "min", "std"]]
+    stats_df = stats_df.rename(
+        index={
+            "mean": "Mean Count",
+            "50%": "Median Count",
+            "max": "Max Count",
+            "min": "Min Count",
+            "std": "Standard Deviation",
+        }
+    ).T
+    stats_df["Count"] = len(df)
 
-        # Add histograms
-        fig.add_trace(
-            go.Histogram(
-                x=df["tokens_1"],
-                marker_color="blue",
-                name=f"Tokens in {reference_column}",
-            ),
-            row=1,
-            col=1,
-        )
+    # Rename columns for clarity
+    stats_df.index = stats_df.index.map(
+        {"reference_tokens": "Reference Tokens", "generated_tokens": "Generated Tokens"}
+    )
 
-        fig.add_trace(
-            go.Histogram(
-                x=df["tokens_2"],
-                marker_color="red",
-                name=f"Tokens in {generated_column}",
-            ),
-            row=1,
-            col=2,
-        )
+    # Create a DataFrame from all collected statistics
+    result_df = pd.DataFrame(stats_df).reset_index().rename(columns={"index": "Metric"})
 
-        # Update layout
-        fig.update_layout(title_text="Token Distributions", bargap=0.1)
-
-        fig.update_yaxes(title_text="Number of Documents")
-        fig.update_xaxes(title_text="Number of Tokens", row=1, col=1)
-        fig.update_xaxes(title_text="Number of Tokens", row=1, col=2)
-
-        return fig
+    return (result_df, *tuple(figures))
