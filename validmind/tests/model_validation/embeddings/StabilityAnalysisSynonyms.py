@@ -65,6 +65,9 @@ class StabilityAnalysisSynonyms(StabilityAnalysis):
     }
 
     def perturb_data(self, data):
+        if not isinstance(data, str):
+            return data
+
         # download the nltk wordnet
         nltk.download("wordnet", quiet=True)
 

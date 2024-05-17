@@ -57,7 +57,7 @@ class TargetRateBarPlots(Metric):
 
         # Use all categorical features if columns is not specified, else use selected columns
         if columns is None:
-            features = self.inputs.dataset.get_categorical_features_columns()
+            features = self.inputs.dataset.feature_columns_categorical
         else:
             features = columns
 

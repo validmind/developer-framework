@@ -183,6 +183,9 @@ catboost_info
 # Ignore pytorch models
 *.pt
 
+# sqlite dbs
+*.sqlite
+
 # Lending Club datasets csv
 lending_club_loan_data_*.csv
 
@@ -206,3 +209,8 @@ notebooks/scratch/
 
 # Custom tests
 my_tests/
+
+# SQLite DB
+*.sqlite
+*.db
+*.db-journal

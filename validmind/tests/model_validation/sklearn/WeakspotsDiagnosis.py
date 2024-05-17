@@ -113,7 +113,7 @@ class WeakspotsDiagnosis(ThresholdTest):
                 raise ValueError(f"Threshold for metric {metric} is missing")
 
         if self.params["features_columns"] is None:
-            features_list = self.inputs.datasets[0].get_features_columns()
+            features_list = self.inputs.datasets[0].feature_columns
         else:
             features_list = self.params["features_columns"]
 
@@ -124,8 +124,7 @@ class WeakspotsDiagnosis(ThresholdTest):
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(
-            elem in self.inputs.datasets[0].get_features_columns()
-            for elem in features_list
+            elem in self.inputs.datasets[0].feature_columns for elem in features_list
         )
         if not all_present:
             raise ValueError(
@@ -150,7 +149,7 @@ class WeakspotsDiagnosis(ThresholdTest):
         results_headers.extend(self.default_metrics.keys())
         for feature in features_list:
             bins = 10
-            if feature in self.inputs.datasets[0].get_categorical_features_columns():
+            if feature in self.inputs.datasets[0].feature_columns_categorical:
                 bins = len(train_df[feature].unique())
             train_df["bin"] = pd.cut(train_df[feature], bins=bins)
 

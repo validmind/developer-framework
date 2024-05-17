@@ -90,7 +90,7 @@ class OverfitDiagnosis(ThresholdTest):
             raise ValueError("features_columns must be provided in params")
 
         if self.params["features_columns"] is None:
-            features_list = self.inputs.datasets[0].get_features_columns()
+            features_list = self.inputs.datasets[0].feature_columns
         else:
             features_list = self.params["features_columns"]
 
@@ -101,8 +101,7 @@ class OverfitDiagnosis(ThresholdTest):
 
         # Check if all elements from features_list are present in the feature columns
         all_present = all(
-            elem in self.inputs.datasets[0].get_features_columns()
-            for elem in features_list
+            elem in self.inputs.datasets[0].feature_columns for elem in features_list
         )
         if not all_present:
             raise ValueError(
@@ -134,10 +133,7 @@ class OverfitDiagnosis(ThresholdTest):
 
         for feature_column in features_list:
             bins = 10
-            if (
-                feature_column
-                in self.inputs.datasets[0].get_categorical_features_columns()
-            ):
+            if feature_column in self.inputs.datasets[0].feature_columns_categorical:
                 bins = len(train_df[feature_column].unique())
             train_df["bin"] = pd.cut(train_df[feature_column], bins=bins)
 

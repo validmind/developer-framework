@@ -112,16 +112,15 @@ class ScorecardHistogram(Metric):
         dataframes = []
         metric_value = {"score_histogram": {}}
         for dataset in self.inputs.datasets:
-            df = dataset.df.copy()
-            # Check if the score_column exists in the DataFrame
-            if score_column not in df.columns:
+            if score_column not in dataset.df.columns:
                 raise ValueError(
                     f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
                 )
 
-            df[score_column] = dataset.get_extra_column(score_column)
-            dataframes.append(df)
-            metric_value["score_histogram"][dataset.input_id] = list(df[score_column])
+            dataframes.append(dataset.df.copy())
+            metric_value["score_histogram"][dataset.input_id] = list(
+                dataset.df[score_column]
+            )
 
         figures = self.plot_score_histogram(
             dataframes, dataset_titles, score_column, target_column, title

@@ -35,31 +35,19 @@
                     <a class="class" href="#VMDataset">VMDataset</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="variable" href="#VMDataset.input_id">input_id</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.raw_dataset">raw_dataset</a>
+                                <a class="function" href="#VMDataset.__init__">VMDataset</a>
                         </li>
                         <li>
                                 <a class="function" href="#VMDataset.assign_predictions">assign_predictions</a>
                         </li>
                         <li>
-                                <a class="function" href="#VMDataset.get_extra_column">get_extra_column</a>
+                                <a class="function" href="#VMDataset.prediction_column">prediction_column</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMDataset.probability_column">probability_column</a>
                         </li>
                         <li>
                                 <a class="function" href="#VMDataset.add_extra_column">add_extra_column</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.columns">columns</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.target_column">target_column</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.feature_columns">feature_columns</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.text_column">text_column</a>
                         </li>
                         <li>
                                 <a class="variable" href="#VMDataset.x">x</a>
@@ -74,12 +62,6 @@
                                 <a class="function" href="#VMDataset.y_prob">y_prob</a>
                         </li>
                         <li>
-                                <a class="variable" href="#VMDataset.df">df</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMDataset.copy">copy</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#VMDataset.x_df">x_df</a>
                         </li>
                         <li>
@@ -92,19 +74,7 @@
                                 <a class="function" href="#VMDataset.y_prob_df">y_prob_df</a>
                         </li>
                         <li>
-                                <a class="function" href="#VMDataset.prediction_column">prediction_column</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMDataset.probability_column">probability_column</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMDataset.get_features_columns">get_features_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMDataset.get_numeric_features_columns">get_numeric_features_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMDataset.get_categorical_features_columns">get_categorical_features_columns</a>
+                                <a class="function" href="#VMDataset.target_classes">target_classes</a>
                         </li>
                 </ul>
 
@@ -113,12 +83,6 @@
                     <a class="class" href="#VMModel">VMModel</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#VMModel.__init__">VMModel</a>
-                        </li>
-                        <li>
-                                <a class="variable" href="#VMModel.device_type">device_type</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#VMModel.serialize">serialize</a>
                         </li>
                         <li>
@@ -126,21 +90,6 @@
                         </li>
                         <li>
                                 <a class="function" href="#VMModel.predict">predict</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.model_language">model_language</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.model_library">model_library</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.model_library_version">model_library_version</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.model_class">model_class</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#VMModel.model_name">model_name</a>
                         </li>
                 </ul>
 
@@ -168,6 +117,9 @@
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#ModelAttributes.__init__">ModelAttributes</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#ModelAttributes.from_dict">from_dict</a>
                         </li>
                 </ul>
 
@@ -390,100 +342,119 @@
             </section>
                 <section id="VMDataset">
                     <div class="attr class">
-                    <div class="decorator">@dataclass</div>
-
+            
     <span class="def">class</span>
-    <span class="name">VMDataset</span><wbr>(<span class="base">abc.ABC</span>):
+    <span class="name">VMDataset</span>:
 
         
     </div>
     <a class="headerlink" href="#VMDataset"></a>
     
-            <div class="docstring"><p>Abstract base class for VM datasets.</p>
+            <div class="docstring"><p>Base class for VM datasets</p>
+
+<p>Child classes should be used to support new dataset types (tensor, polars etc)
+by converting the user's dataset into a numpy array collecting metadata like
+column names and then call this (parent) class <code><a href="#VMDataset.__init__">__init__</a></code> method.</p>
+
+<p>This way we can support multiple dataset types but under the hood we only
+need to work with numpy arrays and pandas dataframes in this class.</p>
+
+<h6 id="attributes">Attributes:</h6>
+
+<ul>
+<li><strong>raw_dataset (np.ndarray):</strong>  The raw dataset as a NumPy array.</li>
+<li><strong>input_id (str):</strong>  Identifier for the dataset.</li>
+<li><strong>index (np.ndarray):</strong>  The raw dataset index as a NumPy array.</li>
+<li><strong>columns (Set[str]):</strong>  The column names of the dataset.</li>
+<li><strong>target_column (str):</strong>  The target column name of the dataset.</li>
+<li><strong>feature_columns (List[str]):</strong>  The feature column names of the dataset.</li>
+<li><strong>feature_columns_numeric (List[str]):</strong>  The numeric feature column names of the dataset.</li>
+<li><strong>feature_columns_categorical (List[str]):</strong>  The categorical feature column names of the dataset.</li>
+<li><strong>text_column (str):</strong>  The text column name of the dataset for NLP tasks.</li>
+<li><strong>target_class_labels (Dict):</strong>  The class labels for the target columns.</li>
+<li><strong>df (pd.DataFrame):</strong>  The dataset as a pandas DataFrame.</li>
+<li><strong>extra_columns (Dict):</strong>  Extra columns to include in the dataset.</li>
+</ul>
 </div>
 
 
-                            <div id="VMDataset.input_id" class="classattr">
-                                <div class="attr variable">
-            <span class="name">input_id</span><span class="annotation">: str</span>
+                            <div id="VMDataset.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">VMDataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">raw_dataset</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">date_time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">feature_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extra_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
-    <a class="headerlink" href="#VMDataset.input_id"></a>
+    <a class="headerlink" href="#VMDataset.__init__"></a>
     
-            <div class="docstring"><p>Returns input id of dataset.</p>
+            <div class="docstring"><p>Initializes a VMDataset instance.</p>
 
-<h6 id="returns">Returns:</h6>
+<h6 id="arguments">Arguments:</h6>
 
-<blockquote>
-  <p>str: input_id.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.raw_dataset" class="classattr">
-                                <div class="attr variable">
-            <span class="name">raw_dataset</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.raw_dataset"></a>
-    
-            <div class="docstring"><p>Returns the raw dataset.</p>
+<ul>
+<li><strong>raw_dataset (np.ndarray):</strong>  The raw dataset as a NumPy array.</li>
+<li><strong>input_id (str):</strong>  Identifier for the dataset.</li>
+<li><strong>model (VMModel):</strong>  Model associated with the dataset.</li>
+<li><strong>index (np.ndarray):</strong>  The raw dataset index as a NumPy array.</li>
+<li><strong>index_name (str):</strong>  The raw dataset index name as a NumPy array.</li>
+<li><strong>date_time_index (bool):</strong>  Whether the index is a datetime index.</li>
+<li><strong>columns (List[str], optional):</strong>  The column names of the dataset. Defaults to None.</li>
+<li><strong>target_column (str, optional):</strong>  The target column name of the dataset. Defaults to None.</li>
+<li><strong>feature_columns (str, optional):</strong>  The feature column names of the dataset. Defaults to None.</li>
+<li><strong>text_column (str, optional):</strong>  The text column name of the dataset for nlp tasks. Defaults to None.</li>
+<li><strong>target_class_labels (Dict, optional):</strong>  The class labels for the target columns. Defaults to None.</li>
+<li><strong>options (Dict, optional):</strong>  Additional options for the dataset. Defaults to None.</li>
+</ul>
 </div>
 
 
                             </div>
                             <div id="VMDataset.assign_predictions" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
-        <span class="name">assign_predictions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span>,</span><span class="param">	<span class="n">prediction_values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_probabilities</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_column</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">probability_column</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">assign_predictions</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span>,</span><span class="param">	<span class="n">prediction_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">probability_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">probability_values</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">prediction_probabilities</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#VMDataset.assign_predictions"></a>
     
-            <div class="docstring"><p>Assigns predictions to the dataset for a given model or prediction values.
-The dataset is updated with a new column containing the predictions.</p>
+    
+
+                            </div>
+                            <div id="VMDataset.prediction_column" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">prediction_column</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span>,</span><span class="param">	<span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.prediction_column"></a>
+    
+            <div class="docstring"><p>Get or set the prediction column for a model.</p>
 </div>
 
 
                             </div>
-                            <div id="VMDataset.get_extra_column" class="classattr">
+                            <div id="VMDataset.probability_column" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
-        <span class="name">get_extra_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">column_name</span></span><span class="return-annotation">):</span></span>
+        <span class="name">probability_column</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span>,</span><span class="param">	<span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
         
     </div>
-    <a class="headerlink" href="#VMDataset.get_extra_column"></a>
+    <a class="headerlink" href="#VMDataset.probability_column"></a>
     
-            <div class="docstring"><p>Returns the values of the specified extra column.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>column_name (str):</strong>  The name of the extra column.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>np.ndarray: The values of the extra column.</p>
-</blockquote>
+            <div class="docstring"><p>Get or set the probability column for a model.</p>
 </div>
 
 
                             </div>
                             <div id="VMDataset.add_extra_column" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
         <span class="name">add_extra_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">column_name</span>, </span><span class="param"><span class="n">column_values</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
@@ -499,83 +470,6 @@ The dataset is updated with a new column containing the predictions.</p>
 <li><strong>column_name (str):</strong>  The name of the extra column.</li>
 <li><strong>column_values (np.ndarray, optional):</strong>  The values of the extra column.</li>
 </ul>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.columns" class="classattr">
-                                <div class="attr variable">
-            <span class="name">columns</span><span class="annotation">: list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.columns"></a>
-    
-            <div class="docstring"><p>Returns the the list of columns in the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>List[str]: The columns list.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.target_column" class="classattr">
-                                <div class="attr variable">
-            <span class="name">target_column</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.target_column"></a>
-    
-            <div class="docstring"><p>Returns the target column name of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>str: The target column name.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.feature_columns" class="classattr">
-                                <div class="attr variable">
-            <span class="name">feature_columns</span><span class="annotation">: list</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.feature_columns"></a>
-    
-            <div class="docstring"><p>Returns the feature columns of the dataset. If _feature_columns is None,
-it returns all columns except the target column.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>list: The list of feature column names.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.text_column" class="classattr">
-                                <div class="attr variable">
-            <span class="name">text_column</span><span class="annotation">: str</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.text_column"></a>
-    
-            <div class="docstring"><p>Returns the text column of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>str: The text column name.</p>
-</blockquote>
 </div>
 
 
@@ -620,8 +514,7 @@ it returns all columns except the target column.</p>
                             </div>
                             <div id="VMDataset.y_pred" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
         <span class="name">y_pred</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
 
@@ -629,12 +522,21 @@ it returns all columns except the target column.</p>
     </div>
     <a class="headerlink" href="#VMDataset.y_pred"></a>
     
-            <div class="docstring"><p>Returns the prediction values (y_pred) of the dataset for a given model.</p>
+            <div class="docstring"><p>Returns the predictions for a given model.</p>
+
+<p>Attempts to stack complex prediction types (e.g., embeddings) into a single,
+multi-dimensional array.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>model (VMModel):</strong>  The model whose predictions are sought.</li>
+</ul>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>np.ndarray: The prediction values.</p>
+  <p>np.ndarray: The predictions for the model</p>
 </blockquote>
 </div>
 
@@ -650,53 +552,26 @@ it returns all columns except the target column.</p>
     </div>
     <a class="headerlink" href="#VMDataset.y_prob"></a>
     
-            <div class="docstring"><p>Returns the prediction probabilities (y_prob) of the dataset for a given model.</p>
+            <div class="docstring"><p>Returns the probabilities for a given model.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>model (str):</strong>  The ID of the model whose predictions are sought.</li>
+</ul>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>np.ndarray: The prediction probabilities.</p>
+  <p>np.ndarray: The probability variables.</p>
 </blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.df" class="classattr">
-                                <div class="attr variable">
-            <span class="name">df</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.df"></a>
-    
-            <div class="docstring"><p>Returns the dataset as a pandas DataFrame.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The dataset as a DataFrame.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.copy" class="classattr">
-                                <div class="attr variable">
-            <span class="name">copy</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.copy"></a>
-    
-            <div class="docstring"><p>Returns a copy of the raw_dataset dataframe.</p>
 </div>
 
 
                             </div>
                             <div id="VMDataset.x_df" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
         <span class="name">x_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
@@ -704,188 +579,67 @@ it returns all columns except the target column.</p>
     </div>
     <a class="headerlink" href="#VMDataset.x_df"></a>
     
-            <div class="docstring"><p>Returns the non target and prediction columns.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The non target and prediction columns .</p>
-</blockquote>
+            <div class="docstring"><p>Returns a dataframe containing only the feature columns</p>
 </div>
 
 
                             </div>
                             <div id="VMDataset.y_df" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
-        <span class="name">y_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">y_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
         
     </div>
     <a class="headerlink" href="#VMDataset.y_df"></a>
     
-            <div class="docstring"><p>Returns the target columns (y) of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The target columns.</p>
-</blockquote>
+            <div class="docstring"><p>Returns a dataframe containing the target column</p>
 </div>
 
 
                             </div>
                             <div id="VMDataset.y_pred_df" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
-        <span class="name">y_pred_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+        <span class="name">y_pred_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
         
     </div>
     <a class="headerlink" href="#VMDataset.y_pred_df"></a>
     
-            <div class="docstring"><p>Returns the target columns (y) of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The target columns.</p>
-</blockquote>
+            <div class="docstring"><p>Returns a dataframe containing the predictions for a given model</p>
 </div>
 
 
                             </div>
                             <div id="VMDataset.y_prob_df" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
-        <span class="name">y_prob_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
+        <span class="name">y_prob_df</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
         
     </div>
     <a class="headerlink" href="#VMDataset.y_prob_df"></a>
     
-            <div class="docstring"><p>Returns the target columns (y) of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>pd.DataFrame: The target columns.</p>
-</blockquote>
+            <div class="docstring"><p>Returns a dataframe containing the probabilities for a given model</p>
 </div>
 
 
                             </div>
-                            <div id="VMDataset.prediction_column" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">prediction_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.prediction_column"></a>
-    
-            <div class="docstring"><p>Returns the prediction column name of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>str: The prediction column name.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.probability_column" class="classattr">
+                            <div id="VMDataset.target_classes" class="classattr">
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">probability_column</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">target_classes</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#VMDataset.probability_column"></a>
+    <a class="headerlink" href="#VMDataset.target_classes"></a>
     
-            <div class="docstring"><p>Returns the probability column name of the dataset.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>str: The probability column name.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.get_features_columns" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">get_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.get_features_columns"></a>
-    
-            <div class="docstring"><p>Returns the column names of the feature variables.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>List[str]: The column names of the feature variables.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.get_numeric_features_columns" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">get_numeric_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.get_numeric_features_columns"></a>
-    
-            <div class="docstring"><p>Returns the column names of the numeric feature variables.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>List[str]: The column names of the numeric feature variables.</p>
-</blockquote>
-</div>
-
-
-                            </div>
-                            <div id="VMDataset.get_categorical_features_columns" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">get_categorical_features_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMDataset.get_categorical_features_columns"></a>
-    
-            <div class="docstring"><p>Returns the column names of the categorical feature variables.</p>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>List[str]: The column names of the categorical feature variables.</p>
-</blockquote>
+            <div class="docstring"><p>Returns the unique number of target classes for the target (Y) variable</p>
 </div>
 
 
@@ -895,7 +649,7 @@ it returns all columns except the target column.</p>
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">VMModel</span>:
+    <span class="name">VMModel</span><wbr>(<span class="base">abc.ABC</span>):
 
         
     </div>
@@ -906,38 +660,14 @@ it returns all columns except the target column.</p>
 <h6 id="attributes">Attributes:</h6>
 
 <ul>
-<li><strong>attributes (ModelAttributes, optional):</strong>  The attributes of the model. Defaults to None.</li>
 <li><strong>model (object, optional):</strong>  The trained model instance. Defaults to None.</li>
-<li>device_type(str, optional) The device where model is trained</li>
+<li><strong>input_id (str, optional):</strong>  The input ID for the model. Defaults to None.</li>
+<li><strong>attributes (ModelAttributes, optional):</strong>  The attributes of the model. Defaults to None.</li>
+<li><strong>name (str, optional):</strong>  The name of the model. Defaults to the class name.</li>
 </ul>
 </div>
 
 
-                            <div id="VMModel.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">VMModel</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">attributes</span><span class="p">:</span> <span class="n"><a href="#ModelAttributes">ModelAttributes</a></span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="VMModel.device_type" class="classattr">
-                                <div class="attr variable">
-            <span class="name">device_type</span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.device_type"></a>
-    
-            <div class="docstring"><p>The device where model is trained</p>
-</div>
-
-
-                            </div>
                             <div id="VMModel.serialize" class="classattr">
                                 <div class="attr function">
             
@@ -955,8 +685,7 @@ it returns all columns except the target column.</p>
                             </div>
                             <div id="VMModel.predict_proba" class="classattr">
                                 <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
+            
         <span class="def">def</span>
         <span class="name">predict_proba</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
 
@@ -964,8 +693,7 @@ it returns all columns except the target column.</p>
     </div>
     <a class="headerlink" href="#VMModel.predict_proba"></a>
     
-            <div class="docstring"><p>Predict probability for the model.
-This is a wrapper around the model's if available</p>
+            <div class="docstring"><p>Predict probabilties - must be implemented by subclass if needed</p>
 </div>
 
 
@@ -982,87 +710,6 @@ This is a wrapper around the model's if available</p>
     <a class="headerlink" href="#VMModel.predict"></a>
     
             <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.model_language" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_language</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.model_language"></a>
-    
-            <div class="docstring"><p>Programming language used to train the model. Assume Python if this
-method is not implemented</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.model_library" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_library</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.model_library"></a>
-    
-            <div class="docstring"><p>Model framework library</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.model_library_version" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_library_version</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.model_library_version"></a>
-    
-            <div class="docstring"><p>Model framework library version</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.model_class" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_class</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.model_class"></a>
-    
-            <div class="docstring"><p>Predict method for the model. This is a wrapper around the model's</p>
-</div>
-
-
-                            </div>
-                            <div id="VMModel.model_name" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@abstractmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">model_name</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#VMModel.model_name"></a>
-    
-            <div class="docstring"><p>Model name</p>
 </div>
 
 
@@ -1161,13 +808,29 @@ on Google Colab when they are combined with ipywidgets.</p>
                             <div id="ModelAttributes.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
     <a class="headerlink" href="#ModelAttributes.__init__"></a>
     
     
+
+                            </div>
+                            <div id="ModelAttributes.from_dict" class="classattr">
+                                <div class="attr function">
+                    <div class="decorator">@classmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">from_dict</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">data</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelAttributes.from_dict"></a>
+    
+            <div class="docstring"><p>Creates a ModelAttributes instance from a dictionary</p>
+</div>
+
 
                             </div>
                 </section>

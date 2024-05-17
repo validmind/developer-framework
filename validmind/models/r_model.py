@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from validmind.logging import get_logger
-from validmind.vm_models.model import ModelAttributes, VMModel
+from validmind.vm_models.model import VMModel
 
 logger = get_logger(__name__)
 
@@ -16,48 +16,22 @@ def get_full_class_name(obj):
 
 
 class RModel(VMModel):
-    """
-    An R model class that wraps a "fitted" R model instance and its associated data.
+    """An R model class that wraps a "fitted" R model instance and its associated data."""
 
-    Attributes:
-        attributes (ModelAttributes, optional): The attributes of the model. Defaults to None.
-        model (object, optional): The trained model instance. Defaults to None.
-        device_type(str, optional) The device where model is trained
-    """
+    def __post_init__(self):
+        self.language = self.r["version"].rx2("version.string")[0]
+        self.library = self.class_ = "R"
 
-    def __init__(
-        self,
-        r: object = None,  # R instance
-        model: object = None,  # Trained model instance
-        attributes: ModelAttributes = None,
-    ):
-        self.r = r
-        self._is_classification_model = False
-
-        super().__init__(
-            model=model,
-            attributes=attributes,
+        name_map = {
+            "xgb.Booster": "XGBoost",
+            "glm": self.__glm_model_class(),
+            "lm": "Linear Regression",
+        }
+        self.name = self.name or name_map.get(
+            self.__model_class(), self.__model_class()
         )
 
         self._is_classification_model = self.__is_classification_model()
-
-    def __get_predict_data_as_df(self, new_data):
-        """
-        Builds the correct data shape and format for the predict method when the
-        caller has passed a Pandas dataframe as input. This function makes sure to
-        adjust the shape of the input dataset to the predict() signature depending
-        if it's a regular R model or an XGBoost model
-        """
-        if self.__model_class() == "xgb.Booster":
-            return new_data.df.drop(new_data.target_column, axis=1)
-
-        return new_data.df
-
-    def __model_class(self):
-        """
-        Returns the model class name
-        """
-        return self.r["class"](self.model)[0]
 
     def __is_classification_model(self):
         """
@@ -77,6 +51,24 @@ class RModel(VMModel):
             return model_family == "binomial"
 
         return False
+
+    def __get_predict_data_as_df(self, new_data):
+        """
+        Builds the correct data shape and format for the predict method when the
+        caller has passed a Pandas dataframe as input. This function makes sure to
+        adjust the shape of the input dataset to the predict() signature depending
+        if it's a regular R model or an XGBoost model
+        """
+        if self.__model_class() == "xgb.Booster":
+            return new_data.df.drop(new_data.target_column, axis=1)
+
+        return new_data.df
+
+    def __model_class(self):
+        """
+        Returns the model class name
+        """
+        return self.r["class"](self.model)[0]
 
     def __glm_model_class(self):
         """
@@ -142,9 +134,7 @@ class RModel(VMModel):
 
         if new_data_class == "numpy.ndarray":
             # We need to reconstruct the DataFrame from the ndarray using the column names
-            new_data = pd.DataFrame(
-                new_data, columns=self.test_ds.get_features_columns()
-            )
+            new_data = pd.DataFrame(new_data, columns=self.test_ds.feature_columns)
         elif new_data_class != "pandas.core.frame.DataFrame":
             raise ValueError(
                 f"new_data must be a DataFrame or ndarray. Got {new_data_class}"
@@ -162,45 +152,6 @@ class RModel(VMModel):
             return predicted_classes
 
         return predicted_probs
-
-    def model_language(self):
-        """
-        Returns the model library name
-        """
-        return self.r["version"].rx2("version.string")[0]
-
-    def model_library(self):
-        """
-        Returns the model library name
-        """
-        return "R"
-
-    def model_library_version(self, *args, **kwargs):
-        """
-        Model framework library version
-        """
-        return "N/A"
-
-    def model_class(self):
-        """
-        Returns the model class name
-        """
-        return "R"
-
-    def model_name(self):
-        """
-        Returns model name
-        """
-        model_class_name = self.__model_class()
-
-        if model_class_name == "lm":
-            return "Linear Regression"
-        elif model_class_name == "xgb.Booster":
-            return "XGBoost"
-        elif model_class_name == "glm":
-            return self.__glm_model_class()
-
-        return model_class_name
 
     def regression_coefficients(self):
         """
