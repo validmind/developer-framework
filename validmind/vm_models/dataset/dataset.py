@@ -114,7 +114,7 @@ class VMDataset:
         if model:
             self.assign_predictions(model)
 
-    def _set_feature_columns(self, feature_columns):
+    def _set_feature_columns(self, feature_columns=None):
         if feature_columns is not None and (
             not isinstance(feature_columns, list)
             or not all(isinstance(col, str) for col in feature_columns)
@@ -269,7 +269,9 @@ class VMDataset:
             column_name (str): The name of the extra column.
             column_values (np.ndarray, optional): The values of the extra column.
         """
-        if column_name not in self.columns and not column_values:
+        if column_name not in self.columns and (
+            column_values is None or len(column_values) == 0
+        ):
             raise ValueError(
                 "Column values must be provided when the column doesn't exist in the dataset"
             )
