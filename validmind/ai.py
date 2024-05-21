@@ -28,6 +28,7 @@ Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> 
 Explain the test, its purpose, its mechanism/formula etc and why it is useful.
 If relevant, provide a very brief description of the way this test is used in model/dataset evaluation and how it is interpreted.
 Highlight the key insights from the test results. The key insights should be concise and easily understood.
+End the response with any closing remarks, summary or additional useful information.
 
 Use the following format for the response (feel free to modify slightly if necessary):
 ```
@@ -44,23 +45,27 @@ The following key insights can be identified in the test results:
 ```
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
 """.strip()
+
+
 USER_PROMPT = """
 Test ID: `{test_name}`
 
-<Test Description>
+<Test Docstring>
 {test_description}
-</Test Description>
+</Test Docstring>
 
 <Test Results Summary>
 {test_summary}
 </Test Results Summary>
 """.strip()
+
+
 USER_PROMPT_FIGURES = """
 Test ID: `{test_name}`
 
-<Test Description>
+<Test Docstring>
 {test_description}
-</Test Description>
+</Test Docstring>
 
 The attached plots show the results of the test.
 """.strip()
