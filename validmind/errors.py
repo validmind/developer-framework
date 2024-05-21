@@ -339,7 +339,7 @@ def raise_api_error(error_string):
     try:
         json_response = json.loads(error_string)
         api_code = json_response.get("code")
-        api_description = json_response.get("description")
+        api_description = json_response.get("description", json_response.get("message"))
     except json.decoder.JSONDecodeError:
         api_code = "unknown"
         api_description = error_string
