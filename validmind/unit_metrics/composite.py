@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from ..logging import get_logger
 from ..tests.decorator import _inspect_signature
-from ..utils import run_async, test_id_to_name
+from ..utils import get_description_metadata, run_async, test_id_to_name
 from ..vm_models.test.metric import Metric
 from ..vm_models.test.metric_result import MetricResult
 from ..vm_models.test.result_summary import ResultSummary, ResultTable
@@ -200,13 +200,15 @@ def run_metrics(
         </style>
         """
 
+    result_summary = ResultSummary(results=[ResultTable(data=[results])])
     result_wrapper = MetricResultWrapper(
         result_id=test_id,
         result_metadata=[
-            {
-                "content_id": f"metric_description:{test_id}",
-                "text": description,
-            },
+            get_description_metadata(
+                test_id=test_id,
+                default_description=description,
+                summary=result_summary.serialize(),
+            ),
             {
                 "content_id": f"composite_metric_def:{test_id}:unit_metrics",
                 "json": metric_ids,
@@ -222,7 +224,7 @@ def run_metrics(
             key=test_id,
             ref_id=str(uuid4()),
             value=results,
-            summary=ResultSummary(results=[ResultTable(data=[results])]),
+            summary=result_summary,
         ),
     )
 
