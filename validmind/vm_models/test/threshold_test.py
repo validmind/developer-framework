@@ -78,7 +78,7 @@ class ThresholdTest(Test):
         """
         result_summary = self.summary(test_results_list, passed)
 
-        return ThresholdTestResultWrapper(
+        self.result = ThresholdTestResultWrapper(
             result_id=self.test_id,
             result_metadata=[
                 get_description_metadata(
@@ -99,3 +99,5 @@ class ThresholdTest(Test):
             ),
             figures=figures,
         )
+
+        return self.result
