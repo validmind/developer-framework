@@ -37,16 +37,23 @@ In summary the following key insights can be gained:
 It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
 """.strip()
 USER_PROMPT = """
-Test ID: {test_name}
-Test Description: {test_description}
-Test Results:
-```
+Test ID: `{test_name}`
+
+<Test Description>
+{test_description}
+</Test Description>
+
+<Test Results Summary>
 {test_summary}
-```
+</Test Results Summary>
 """.strip()
 USER_PROMPT_FIGURES = """
-Test ID: {test_name}
-Test Description: {test_description}
+Test ID: `{test_name}`
+
+<Test Description>
+{test_description}
+</Test Description>
+
 The attached plots show the results of the test.
 """.strip()
 
