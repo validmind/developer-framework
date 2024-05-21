@@ -39,10 +39,10 @@ It is very important that the text is nicely formatted and contains enough infor
 USER_PROMPT = """
 Test ID: {test_name}
 Test Description: {test_description}
-Test Results (the raw results of the test):
-{test_results}
-Test Summary (what the user sees in the documentation):
+Test Results:
+```
 {test_summary}
+```
 """.strip()
 USER_PROMPT_FIGURES = """
 Test ID: {test_name}
@@ -113,21 +113,40 @@ class DescriptionFuture:
 def generate_description_async(
     test_name: str,
     test_description: str,
-    test_results: str,
     test_summary: str,
     figures: list = None,
 ):
     """Generate the description for the test results"""
-    client, _ = __get_client_and_model()
+    if not test_summary and not figures:
+        raise ValueError("No summary or figures provided - cannot generate description")
 
+    client, _ = __get_client_and_model()
     # get last part of test id
     test_name = test_name.split(".")[-1]
 
-    if not test_results and not test_summary:
-        if not figures:
-            raise ValueError("No results, summary or figures provided")
+    if test_summary:
+        return (
+            client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {
+                        "role": "user",
+                        "content": USER_PROMPT.format(
+                            test_name=test_name,
+                            test_description=test_description,
+                            test_summary=test_summary,
+                        ),
+                    },
+                ],
+            )
+            .choices[0]
+            .message.content.strip("```")
+            .strip()
+        )
 
-        response = client.chat.completions.create(
+    return (
+        client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
@@ -154,30 +173,15 @@ def generate_description_async(
                 },
             ],
         )
-    else:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": USER_PROMPT.format(
-                        test_name=test_name,
-                        test_description=test_description,
-                        test_results=test_results,
-                        test_summary=test_summary,
-                    ),
-                },
-            ],
-        )
-
-    return response.choices[0].message.content.strip("```").strip()
+        .choices[0]
+        .message.content.strip("```")
+        .strip()
+    )
 
 
 def generate_description(
     test_name: str,
     test_description: str,
-    test_results: str,
     test_summary: str,
     figures: list = None,
 ):
@@ -185,7 +189,6 @@ def generate_description(
         generate_description_async,
         test_name,
         test_description,
-        test_results,
         test_summary,
         figures,
     )
