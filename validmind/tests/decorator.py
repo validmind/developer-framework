@@ -15,6 +15,7 @@ import pandas as pd
 
 from validmind.errors import MissingRequiredTestInputError
 from validmind.logging import get_logger
+from validmind.utils import get_description_metadata
 from validmind.vm_models import (
     Metric,
     MetricResult,
@@ -113,20 +114,24 @@ def _build_result(results, test_id, description, output_template, inputs):  # no
     else:
         process_item(results)
 
+    result_summary = ResultSummary(results=tables)
+
     return MetricResultWrapper(
         result_id=test_id,
         metric=MetricResult(
             key=test_id,
             ref_id=ref_id,
             value="Empty",
-            summary=ResultSummary(results=tables),
+            summary=result_summary,
         ),
         figures=figures,
         result_metadata=[
-            {
-                "content_id": f"metric_description:{test_id}",
-                "text": description,
-            }
+            get_description_metadata(
+                test_id=test_id,
+                default_description=description,
+                summary=result_summary.serialize(),
+                figures=figures,
+            )
         ],
         inputs=inputs,
         output_template=output_template,
