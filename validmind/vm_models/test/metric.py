@@ -6,7 +6,6 @@
 Class for storing ValidMind metric objects and associated
 data for display and reporting purposes
 """
-import os
 from abc import abstractmethod
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Union

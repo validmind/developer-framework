@@ -434,7 +434,9 @@ def display(widget_or_html, syntax_highlighting=True, mathjax=True):
 def md_to_html(md: str, mathml=False) -> str:
     """Converts Markdown to HTML using mistune with plugins"""
     # use mistune with math plugin to convert to html
-    html = mistune.create_markdown(plugins=["math"])(md)
+    html = mistune.create_markdown(
+        plugins=["math", "table", "strikethrough", "footnotes"]
+    )(md)
 
     if not mathml:
         # return the html as is (with latex that will be rendered by MathJax)

@@ -22,6 +22,7 @@ Your analysis will act as the description of the result in the model documentati
 Avoid long sentences and complex vocabulary.
 Structure the response clearly and logically.
 Use valid Markdown syntax to format the response (tables are supported).
+Do not include the test results summary or figures in the response - these will be shown alongside your description.
 Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> "Class Imbalance".
 Use the following format for the response (feel free to modify slightly if necessary):
 ```
