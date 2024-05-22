@@ -137,10 +137,7 @@ class DescriptionFuture:
 
     def get_description(self):
         # This will block until the future is completed
-        response = self._future.result()
-        print(response)
-        print("\n\n")
-        return response
+        return self._future.result()
 
 
 def generate_description(
