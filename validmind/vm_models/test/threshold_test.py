@@ -86,6 +86,7 @@ class ThresholdTest(Test):
                     default_description=self.description(),
                     summary=result_summary.serialize(),
                     figures=figures,
+                    prefix="test_description",
                 )
             ],
             inputs=self.get_accessed_inputs(),
