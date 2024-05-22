@@ -149,6 +149,8 @@ class TestSuiteRunner:
         if not is_notebook():
             return logger.info("Test suite done...")
 
+        self.pbar_description.value = "Collecting test results..."
+
         summary = TestSuiteSummary(
             title=self.suite.title,
             description=self.suite.description,
