@@ -388,7 +388,7 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
         ),
         table_display="table" if details["Params"] else "none",
         example_inputs=json.dumps(
-            {name: f"my_vm_{name}" for name in details["Required Inputs"]},
+            {name: f"my_vm_{name}" for name in (details["Required Inputs"] or [])},
             indent=4,
         ),
         example_params=json.dumps(details["Params"] or {}, indent=4, cls=NumpyEncoder),
