@@ -71,6 +71,7 @@ class TestSuiteSummary:
     title: str
     description: str
     sections: List[TestSuiteSection]
+    show_link: bool = True
 
     _widgets: List[widgets.Widget] = None
 
@@ -145,7 +146,8 @@ class TestSuiteSummary:
         self._widgets = []
 
         self._add_title()
-        self._add_results_link()
+        if self.show_link:
+            self._add_results_link()
         self._add_description()
         if len(self.sections) == 1:
             self._add_top_level_section_summary()
