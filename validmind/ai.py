@@ -24,6 +24,7 @@ This will act as the description and interpretation of the result in the model d
 It will be displayed alongside the test results table and figures.
 
 Avoid long sentences and complex vocabulary.
+Avoid overly verbose explanations - the goal is to explain to a user what they are seeing in the results.
 Structure the response clearly and logically.
 Use valid Markdown syntax to format the response.
 Respond only with your analysis and insights, not the verbatim test results.
@@ -33,6 +34,7 @@ Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> 
 Explain the test, its purpose, its mechanism/formula etc and why it is useful.
 If relevant, provide a very brief description of the way this test is used in model/dataset evaluation and how it is interpreted.
 Highlight the key insights from the test results. The key insights should be concise and easily understood.
+An insight should only be included if it is something not entirely obvious from the test results.
 End the response with any closing remarks, summary or additional useful information.
 
 Use the following format for the response (feel free to stray from it if necessary - this is a suggested starting point):
@@ -136,8 +138,15 @@ class DescriptionFuture:
         self._future = future
 
     def get_description(self):
-        # This will block until the future is completed
-        return self._future.result()
+        from .utils import md_to_html
+
+        if isinstance(self._future, str):
+            description = self._future
+        else:
+            # This will block until the future is completed
+            description = self._future.result()
+
+        return md_to_html(description, mathml=True)
 
 
 def generate_description(
@@ -164,6 +173,8 @@ def generate_description(
         return (
             client.chat.completions.create(
                 model=model,
+                temperature=0,
+                seed=42,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {
@@ -183,6 +194,8 @@ def generate_description(
     return (
         client.chat.completions.create(
             model=model,
+            temperature=0,
+            seed=42,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {
@@ -219,17 +232,17 @@ def background_generate_description(
     test_summary: str,
     figures: list = None,
 ):
-    future = __executor.submit(
-        # function to run in a separate thread
-        generate_description,
-        # arguments to pass to the function
-        test_id,
-        test_description,
-        test_summary,
-        figures,
-    )
+    def wrapped():
+        try:
+            return generate_description(
+                test_id, test_description, test_summary, figures
+            )
+        except Exception as e:
+            logger.error(f"Failed to generate description: {e}")
 
-    return DescriptionFuture(future)
+            return DescriptionFuture(test_description)
+
+    return DescriptionFuture(__executor.submit(wrapped))
 
 
 def is_configured():

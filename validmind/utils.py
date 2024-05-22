@@ -507,7 +507,7 @@ def get_description_metadata(
 
     else:
         revision_name = "Default Description"
-        description = default_description
+        description = md_to_html(default_description, mathml=True)
 
     return {
         "content_id": f"{prefix}:{test_id}::{revision_name}",

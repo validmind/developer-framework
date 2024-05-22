@@ -22,7 +22,7 @@ from aiohttp import FormData
 from .client_config import client_config
 from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
-from .utils import NumpyEncoder, md_to_html, run_async
+from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 # TODO: can't import types from vm_models because of circular dependency
@@ -349,7 +349,7 @@ async def log_metadata(
     """
     metadata_dict = {"content_id": content_id}
     if text is not None:
-        metadata_dict["text"] = md_to_html(text, mathml=True)
+        metadata_dict["text"] = text
     if _json is not None:
         metadata_dict["json"] = _json
 
