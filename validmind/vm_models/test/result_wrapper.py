@@ -155,6 +155,55 @@ class ResultWrapper(ABC):
             tables.append(HTML(value=summary_table))
         return tables
 
+    def _validate_section_id_for_block(self, section_id: str, position: int = None):
+        """
+        Validate the section_id exits on the template before logging. We validate
+        if the section exists and if the user provided position is within the bounds
+        of the section. When the position is None, we assume it goes to the end of the section.
+        """
+        if section_id is None:
+            return
+
+        api_client.reload()
+        found = False
+        client_config = api_client.client_config
+
+        for section in client_config.documentation_template["sections"]:
+            if section["id"] == section_id:
+                found = True
+                break
+
+        if not found:
+            raise ValueError(
+                f"Section with id {section_id} not found in the model's document"
+            )
+
+        # Check if the block already exists in the section
+        block_definition = {
+            "content_id": self.result_id,
+            "content_type": (
+                "metric" if isinstance(self, MetricResultWrapper) else "test"
+            ),
+        }
+        blocks = section.get("contents", [])
+        for block in blocks:
+            if (
+                block["content_id"] == block_definition["content_id"]
+                and block["content_type"] == block_definition["content_type"]
+            ):
+                logger.info(
+                    f"Test driven block with content_id {block_definition['content_id']} already exists in the document's section"
+                )
+                return
+
+        # Validate that the position is within the bounds of the section
+        if position is not None:
+            num_blocks = len(blocks)
+            if position < 0 or position > num_blocks:
+                raise ValueError(
+                    f"Invalid position {position}. Must be between 0 and {num_blocks}"
+                )
+
     def show(self):
         """Display the result... May be overridden by subclasses"""
         display(self.to_widget())
@@ -164,9 +213,11 @@ class ResultWrapper(ABC):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
 
-    def log(self):
+    def log(self, section_id: str = None, position: int = None):
         """Log the result... May be overridden by subclasses"""
-        run_async(self.log_async)
+
+        self._validate_section_id_for_block(section_id, position)
+        run_async(self.log_async, section_id=section_id, position=position)
 
 
 @dataclass
@@ -327,7 +378,9 @@ class MetricResultWrapper(ResultWrapper):
 
         return self.metric.summary
 
-    async def log_async(self, unsafe=False):
+    async def log_async(
+        self, section_id: str = None, position: int = None, unsafe=False
+    ):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
@@ -339,6 +392,8 @@ class MetricResultWrapper(ResultWrapper):
                     metrics=[self.metric],
                     inputs=self.inputs,
                     output_template=self.output_template,
+                    section_id=section_id,
+                    position=position,
                 )
             )
 
@@ -433,8 +488,12 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
         return VBox(vbox_children)
 
-    async def log_async(self):
-        tasks = [api_client.log_test_result(self.test_results, self.inputs)]
+    async def log_async(self, section_id: str = None, position: int = None):
+        tasks = [
+            api_client.log_test_result(
+                self.test_results, self.inputs, section_id, position
+            )
+        ]
 
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
