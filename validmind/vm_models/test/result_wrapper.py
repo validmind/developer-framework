@@ -7,7 +7,6 @@ Result Wrappers for test and metric results
 """
 import asyncio
 import json
-import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
@@ -19,7 +18,7 @@ from ... import api_client
 from ...ai import DescriptionFuture
 from ...input_registry import input_registry
 from ...logging import get_logger
-from ...utils import NumpyEncoder, display, run_async, test_id_to_name
+from ...utils import AI_REVISION_NAME, NumpyEncoder, display, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
@@ -44,8 +43,12 @@ async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] =
     if content_id.split(":", 1)[0] in ["metric_description", "test_description"]:
         try:
             md = await api_client.get_metadata(content_id)
-            should_update = md["text"] != text
-            logger.debug(f"checking if description has changed: {should_update}")
+            # if there is an existing description, only update it if the new one
+            # is different and is an AI-generated description
+            should_update = (
+                md["text"] != text if revision_name == AI_REVISION_NAME else False
+            )
+            logger.debug(f"Check if description has changed: {should_update}")
         except Exception:
             # if exception, assume its not created yet TODO: don't catch all
             should_update = True
