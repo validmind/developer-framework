@@ -7,6 +7,11 @@ import os
 
 from openai import AzureOpenAI, OpenAI
 
+from .logging import get_logger
+
+logger = get_logger(__name__)
+
+
 SYSTEM_PROMPT = """
 You are an expert data scientist and MRM specialist.
 You are tasked with analyzing the results of a quantitative test run on some model or dataset.
@@ -73,12 +78,17 @@ The attached plots show the results of the test.
 __client = None
 __model = None
 
+# can be None, True or False (ternary to represent initial state, ack and failed ack)
+__ack = None
+
 __executor = concurrent.futures.ThreadPoolExecutor()
 
 
 def __get_client_and_model():
-    """
-    Get the model to use for generating interpretations
+    """Get model and client to use for generating interpretations
+
+    On first call, it will look in the environment for the API key endpoint, model etc.
+    and store them in a global variable to avoid loading them up again.
     """
     global __client, __model
 
@@ -130,8 +140,8 @@ class DescriptionFuture:
         return self._future.result()
 
 
-def generate_description_async(
-    test_name: str,
+def generate_description(
+    test_id: str,
     test_description: str,
     test_summary: str,
     figures: list = None,
@@ -140,14 +150,20 @@ def generate_description_async(
     if not test_summary and not figures:
         raise ValueError("No summary or figures provided - cannot generate description")
 
-    client, _ = __get_client_and_model()
+    client, model = __get_client_and_model()
     # get last part of test id
-    test_name = test_name.split(".")[-1]
+    test_name = test_id.split(".")[-1]
+    # truncate the test description to save time
+    test_description = (
+        f"{test_description[:500]}..."
+        if len(test_description) > 500
+        else test_description
+    )
 
     if test_summary:
         return (
             client.chat.completions.create(
-                model="gpt-4o",
+                model=model,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {
@@ -167,7 +183,7 @@ def generate_description_async(
 
     return (
         client.chat.completions.create(
-            model="gpt-4o",
+            model=model,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {
@@ -199,18 +215,42 @@ def generate_description_async(
     )
 
 
-def generate_description(
-    test_name: str,
+def background_generate_description(
+    test_id: str,
     test_description: str,
     test_summary: str,
     figures: list = None,
 ):
     future = __executor.submit(
-        generate_description_async,
-        test_name,
+        # function to run in a separate thread
+        generate_description,
+        # arguments to pass to the function
+        test_id,
         test_description,
         test_summary,
         figures,
     )
 
     return DescriptionFuture(future)
+
+
+def is_configured():
+    global __ack
+
+    if __ack:
+        return True
+
+    try:
+        client, model = __get_client_and_model()
+        # send an empty message with max_tokens=1 to "ping" the API
+        client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": ""}],
+            max_tokens=1,
+        )
+        __ack = True
+    except Exception as e:
+        logger.debug(f"Failed to connect to OpenAI: {e}")
+        __ack = False
+
+    return True

@@ -45,9 +45,9 @@ class TestSuiteSectionSummary:
         for test in self.tests:
             children.append(test.result.to_widget())
             titles.append(
-                f"❌ {test.result.name}: {test.title} ({test.test_id})"
+                f"❌ {test.result.name}: {test.name} ({test.test_id})"
                 if isinstance(test.result, FailedResultWrapper)
-                else f"{test.result.name}: {test.title} ({test.test_id})"
+                else f"{test.result.name}: {test.name} ({test.test_id})"
             )
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
