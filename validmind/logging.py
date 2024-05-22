@@ -13,16 +13,13 @@ from sentry_sdk.utils import event_from_exception, exc_info_from_error
 
 from .__version__ import __version__
 
-__log_level = None
 __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505239625465856"
 
 
 def _get_log_level():
-    """Get the log level from the environment variable if not already set"""
-    if __log_level is not None:
-        return __log_level
-
+    """Get the log level from the environment variable"""
     log_level_str = os.environ.get("LOG_LEVEL", "INFO").upper()
+
     if log_level_str not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         raise ValueError(f"Invalid log level: {log_level_str}")
 
@@ -57,7 +54,7 @@ def init_sentry(server_config):
 
 
 def get_logger(name="validmind", log_level=None):
-    """Get a logger for the given name"""
+    """Get a logger for the given module name"""
     formatter = logging.Formatter(
         fmt="%(asctime)s - %(levelname)s(%(name)s): %(message)s"
     )
@@ -69,7 +66,7 @@ def get_logger(name="validmind", log_level=None):
     logger.setLevel(log_level or _get_log_level())
 
     # Clear existing handlers if any (or refine the existing logic as necessary)
-    # TODO: lets add some better handler management
+    # TODO: move this to a yaml config and only configure once
     if not any(
         isinstance(h, type(handler)) and h.formatter._fmt == formatter._fmt
         for h in logger.handlers

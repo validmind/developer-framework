@@ -35,8 +35,9 @@ If relevant, provide a very brief description of the way this test is used in mo
 Highlight the key insights from the test results. The key insights should be concise and easily understood.
 End the response with any closing remarks, summary or additional useful information.
 
-Use the following format for the response (feel free to modify slightly if necessary):
-```
+Use the following format for the response (feel free to stray from it if necessary - this is a suggested starting point):
+
+<ResponseFormat>
 **<Test Name>** calculates the xyz <continue to explain what it does in detail>...
 
 This test is useful for <explain why and for what this test is useful>...
@@ -47,8 +48,7 @@ The following key insights can be identified in the test results:
 
 - **<key insight 1 - title>**: <concise explanation of key insight 1>
 - ...<continue with any other key insights using the same format>
-```
-It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
+</ResponseFormat>
 """.strip()
 
 
@@ -137,7 +137,10 @@ class DescriptionFuture:
 
     def get_description(self):
         # This will block until the future is completed
-        return self._future.result()
+        response = self._future.result()
+        print(response)
+        print("\n\n")
+        return response
 
 
 def generate_description(
@@ -177,8 +180,7 @@ def generate_description(
                 ],
             )
             .choices[0]
-            .message.content.strip("```")
-            .strip()
+            .message.content
         )
 
     return (
@@ -210,8 +212,7 @@ def generate_description(
             ],
         )
         .choices[0]
-        .message.content.strip("```")
-        .strip()
+        .message.content
     )
 
 
@@ -238,19 +239,23 @@ def is_configured():
     global __ack
 
     if __ack:
+        logger.debug("__ack is True, returning True")
         return True
 
     try:
         client, model = __get_client_and_model()
         # send an empty message with max_tokens=1 to "ping" the API
-        client.chat.completions.create(
+        response = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": ""}],
             max_tokens=1,
+        )
+        logger.debug(
+            f"Received response from OpenAI: {response.choices[0].message.content}"
         )
         __ack = True
     except Exception as e:
         logger.debug(f"Failed to connect to OpenAI: {e}")
         __ack = False
 
-    return True
+    return __ack

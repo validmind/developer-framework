@@ -459,7 +459,13 @@ def md_to_html(md: str, mathml=False) -> str:
     return html
 
 
-def get_description_metadata(test_id, default_description, summary=None, figures=None):
+def get_description_metadata(
+    test_id,
+    default_description,
+    summary=None,
+    figures=None,
+    prefix="metric_description",
+):
     """Get Metadata Dictionary for a Test or Metric Result
 
     Generates an LLM interpretation of the test results or uses the default
@@ -504,6 +510,6 @@ def get_description_metadata(test_id, default_description, summary=None, figures
         description = default_description
 
     return {
-        "content_id": f"metric_description:{test_id}::{revision_name}",
+        "content_id": f"{prefix}:{test_id}::{revision_name}",
         "text": description,
     }
