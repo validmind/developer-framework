@@ -35,8 +35,14 @@ class TestSuiteSectionSummary:
         self._build_summary()
 
     def _add_description(self):
-        description = f'<div class="result">{md_to_html(self.description)}</div>'
-        self._widgets.append(widgets.HTML(value=description))
+        if not self.description:
+            return
+
+        self._widgets.append(
+            widgets.HTML(
+                value=f'<div class="result">{md_to_html(self.description)}</div>'
+            )
+        )
 
     def _add_tests_summary(self):
         children = []
@@ -101,8 +107,11 @@ class TestSuiteSummary:
         self._widgets.append(widgets.HTML(value=results_link))
 
     def _add_description(self):
-        description = f'<div class="result">{md_to_html(self.description)}</div>'
-        self._widgets.append(widgets.HTML(value=description))
+        self._widgets.append(
+            widgets.HTML(
+                value=f'<div class="result">{md_to_html(self.description)}</div>'
+            )
+        )
 
     def _add_sections_summary(self):
         children = []
