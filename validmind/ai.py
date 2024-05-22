@@ -101,6 +101,8 @@ def __get_client_and_model():
         __client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4o")
 
+        logger.debug(f"Using OpenAI {__model} for generating descriptions")
+
     elif "AZURE_OPENAI_KEY" in os.environ:
         if "AZURE_OPENAI_ENDPOINT" not in os.environ:
             raise ValueError(
@@ -118,6 +120,8 @@ def __get_client_and_model():
             api_version=os.environ.get("AZURE_OPENAI_VERSION", "2023-05-15"),
         )
         __model = os.environ.get("AZURE_OPENAI_MODEL")
+
+        logger.debug(f"Using Azure OpenAI {__model} for generating descriptions")
 
     else:
         raise ValueError("OPENAI_API_KEY or AZURE_OPENAI_KEY must be set")
@@ -170,6 +174,9 @@ def generate_description(
     )
 
     if test_summary:
+        logger.debug(
+            f"Generating description for test {test_name} with stringified summary"
+        )
         return (
             client.chat.completions.create(
                 model=model,
@@ -191,6 +198,9 @@ def generate_description(
             .message.content
         )
 
+    logger.debug(
+        f"Generating description for test {test_name} with {len(figures)} figures"
+    )
     return (
         client.chat.completions.create(
             model=model,
@@ -249,7 +259,6 @@ def is_configured():
     global __ack
 
     if __ack:
-        logger.debug("__ack is True, returning True")
         return True
 
     try:
