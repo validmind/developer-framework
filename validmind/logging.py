@@ -42,7 +42,7 @@ def init_sentry(server_config):
     if os.getenv("VM_NO_TELEMETRY", False):
         return
 
-    if server_config.get("send_logs", False) is False:
+    if not server_config.get("send_logs", False):
         return
 
     config = {
