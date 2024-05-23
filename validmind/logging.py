@@ -18,7 +18,7 @@ __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505
 
 def _get_log_level():
     """Get the log level from the environment variable"""
-    log_level_str = os.environ.get("LOG_LEVEL", "INFO").upper()
+    log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
 
     if log_level_str not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         raise ValueError(f"Invalid log level: {log_level_str}")
@@ -39,6 +39,9 @@ def init_sentry(server_config):
             - dsn (str): The Sentry DSN
             ...: Other config options for Sentry
     """
+    if os.getenv("VM_NO_TELEMETRY", False):
+        return
+
     if server_config.get("send_logs", False) is False:
         return
 

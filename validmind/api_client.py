@@ -29,12 +29,12 @@ from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 logger = get_logger(__name__)
 
-_api_key = os.environ.get("VM_API_KEY")
-_api_secret = os.environ.get("VM_API_SECRET")
-_api_host = os.environ.get("VM_API_HOST")
+_api_key = os.getenv("VM_API_KEY")
+_api_secret = os.getenv("VM_API_SECRET")
+_api_host = os.getenv("VM_API_HOST")
 
-_project = os.environ.get("VM_API_PROJECT")
-_run_cuid = os.environ.get("VM_RUN_CUID")
+_project = os.getenv("VM_API_PROJECT")
+_run_cuid = os.getenv("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
 
@@ -102,21 +102,21 @@ def init(
         api_secret = None
         project = None
 
-    _project = project or os.environ.get("VM_API_PROJECT")
+    _project = project or os.getenv("VM_API_PROJECT")
 
     if _project is None:
         raise MissingProjectIdError()
 
-    _api_key = api_key or os.environ.get("VM_API_KEY")
-    _api_secret = api_secret or os.environ.get("VM_API_SECRET")
+    _api_key = api_key or os.getenv("VM_API_KEY")
+    _api_secret = api_secret or os.getenv("VM_API_SECRET")
 
     if _api_key is None or _api_secret is None:
         raise MissingAPICredentialsError()
 
-    _api_host = api_host or os.environ.get(
+    _api_host = api_host or os.getenv(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
     )
-    _run_cuid = os.environ.get("VM_RUN_CUID", None)
+    _run_cuid = os.getenv("VM_RUN_CUID", None)
 
     try:
         __ping()

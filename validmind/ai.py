@@ -98,8 +98,8 @@ def __get_client_and_model():
         return __client, __model
 
     if "OPENAI_API_KEY" in os.environ:
-        __client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-        __model = os.environ.get("VM_OPENAI_MODEL", "gpt-4o")
+        __client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        __model = os.getenv("VM_OPENAI_MODEL", "gpt-4o")
 
         logger.debug(f"Using OpenAI {__model} for generating descriptions")
 
@@ -115,11 +115,11 @@ def __get_client_and_model():
             )
 
         __client = AzureOpenAI(
-            azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-            api_key=os.environ.get("AZURE_OPENAI_KEY"),
-            api_version=os.environ.get("AZURE_OPENAI_VERSION", "2023-05-15"),
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+            api_key=os.getenv("AZURE_OPENAI_KEY"),
+            api_version=os.getenv("AZURE_OPENAI_VERSION", "2023-05-15"),
         )
-        __model = os.environ.get("AZURE_OPENAI_MODEL")
+        __model = os.getenv("AZURE_OPENAI_MODEL")
 
         logger.debug(f"Using Azure OpenAI {__model} for generating descriptions")
 
