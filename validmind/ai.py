@@ -31,7 +31,8 @@ Highlight the key insights from the test results. The key insights should be con
 End the response with any closing remarks, summary or additional useful information.
 
 Use the following format for the response (feel free to modify slightly if necessary):
-```
+
+<ResponseFormat>
 **<Test Name>** calculates the xyz <continue to explain what it does in detail>...
 
 This test is useful for <explain why and for what this test is useful>...
@@ -42,8 +43,7 @@ The following key insights can be identified in the test results:
 
 - **<key insight 1 - title>**: <concise explanation of key insight 1>
 - ...<continue with any other key insights using the same format>
-```
-It is very important that the text is nicely formatted and contains enough information to be useful to the user as documentation.
+</ResponseFormat>
 """.strip()
 
 
@@ -161,8 +161,7 @@ def generate_description_async(
                 ],
             )
             .choices[0]
-            .message.content.strip("```")
-            .strip()
+            .message.content.strip()
         )
 
     return (
@@ -194,8 +193,7 @@ def generate_description_async(
             ],
         )
         .choices[0]
-        .message.content.strip("```")
-        .strip()
+        .message.content.strip()
     )
 
 
