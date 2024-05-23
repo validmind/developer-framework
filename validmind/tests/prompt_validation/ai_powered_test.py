@@ -20,8 +20,8 @@ class AIPoweredTest:
 
     def __init__(self, *args, **kwargs):
         if "OPENAI_API_KEY" in os.environ:
-            self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-            self.model_name = os.environ.get("VM_OPENAI_MODEL", "gpt-3.5-turbo")
+            self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+            self.model_name = os.getenv("VM_OPENAI_MODEL", "gpt-3.5-turbo")
 
         elif "AZURE_OPENAI_KEY" in os.environ:
             if "AZURE_OPENAI_ENDPOINT" not in os.environ:
@@ -35,11 +35,11 @@ class AIPoweredTest:
                 )
 
             self.client = AzureOpenAI(
-                azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.environ.get("AZURE_OPENAI_KEY"),
-                api_version=os.environ.get("AZURE_OPENAI_VERSION", "2023-05-15"),
+                azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                api_key=os.getenv("AZURE_OPENAI_KEY"),
+                api_version=os.getenv("AZURE_OPENAI_VERSION", "2023-05-15"),
             )
-            self.model_name = os.environ.get("AZURE_OPENAI_MODEL")
+            self.model_name = os.getenv("AZURE_OPENAI_MODEL")
 
         else:
             raise ValueError(

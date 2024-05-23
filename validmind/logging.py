@@ -13,20 +13,43 @@ from sentry_sdk.utils import event_from_exception, exc_info_from_error
 
 from .__version__ import __version__
 
-__log_level = None
 __dsn = "https://48f446843657444aa1e2c0d716ef864b@o1241367.ingest.sentry.io/4505239625465856"
 
 
 def _get_log_level():
-    """Get the log level from the environment variable if not already set"""
-    if __log_level is not None:
-        return __log_level
+    """Get the log level from the environment variable"""
+    log_level_str = os.getenv("LOG_LEVEL", "INFO").upper()
 
-    log_level_str = os.environ.get("LOG_LEVEL", "INFO").upper()
     if log_level_str not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         raise ValueError(f"Invalid log level: {log_level_str}")
 
     return logging.getLevelName(log_level_str)
+
+
+def get_logger(name="validmind", log_level=None):
+    """Get a logger for the given module name"""
+    formatter = logging.Formatter(
+        fmt="%(asctime)s - %(levelname)s(%(name)s): %(message)s"
+    )
+
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(log_level or _get_log_level())
+
+    # Clear existing handlers if any (or refine the existing logic as necessary)
+    # TODO: move this to a yaml config and only configure once
+    if not any(
+        isinstance(h, type(handler)) and h.formatter._fmt == formatter._fmt
+        for h in logger.handlers
+    ):
+        logger.addHandler(handler)
+
+    # Prevent logger from propagating to root logger
+    logger.propagate = False
+
+    return logger
 
 
 def init_sentry(server_config):
@@ -42,7 +65,10 @@ def init_sentry(server_config):
             - dsn (str): The Sentry DSN
             ...: Other config options for Sentry
     """
-    if server_config.get("send_logs", False) is False:
+    if os.getenv("VM_NO_TELEMETRY", False):
+        return
+
+    if not server_config.get("send_logs", False):
         return
 
     config = {
@@ -53,33 +79,13 @@ def init_sentry(server_config):
         "environment": "production",
     }
     config.update({k: v for k, v in server_config.items() if k != "send_logs"})
-    sentry_sdk.init(**config)
 
-
-def get_logger(name="validmind", log_level=None):
-    """Get a logger for the given name"""
-    formatter = logging.Formatter(
-        fmt="%(asctime)s - %(levelname)s(%(name)s): %(message)s"
-    )
-
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(log_level or _get_log_level())
-
-    # Clear existing handlers if any (or refine the existing logic as necessary)
-    # TODO: lets add some better handler management
-    if not any(
-        isinstance(h, type(handler)) and h.formatter._fmt == formatter._fmt
-        for h in logger.handlers
-    ):
-        logger.addHandler(handler)
-
-    # Prevent logger from propagating to root logger
-    logger.propagate = False
-
-    return logger
+    try:
+        sentry_sdk.init(**config)
+    except Exception as e:
+        logger = get_logger(__name__)
+        logger.info("Sentry failed to initialize - ignoring...")
+        logger.debug(f"Sentry error: {str(e)}")
 
 
 def log_performance(func, name=None, logger=None, force=False):

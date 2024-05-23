@@ -145,14 +145,17 @@ class TestSuiteRunner:
 
             await asyncio.sleep(0.5)
 
-    def summarize(self):
+    def summarize(self, show_link: bool = True):
         if not is_notebook():
             return logger.info("Test suite done...")
+
+        self.pbar_description.value = "Collecting test results..."
 
         summary = TestSuiteSummary(
             title=self.suite.title,
             description=self.suite.description,
             sections=self.suite.sections,
+            show_link=show_link,
         )
         summary.display()
 
@@ -181,6 +184,6 @@ class TestSuiteRunner:
             run_async(self.log_results)
             run_async_check(self._check_progress)
 
-        self.summarize()
+        self.summarize(show_link=send)
 
         self._stop_progress_bar()
