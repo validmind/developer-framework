@@ -250,7 +250,7 @@ def background_generate_description(
         except Exception as e:
             logger.error(f"Failed to generate description: {e}")
 
-            return DescriptionFuture(test_description)
+            return test_description
 
     return DescriptionFuture(__executor.submit(wrapped))
 
