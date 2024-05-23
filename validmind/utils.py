@@ -485,8 +485,9 @@ def get_description_metadata(
     Args:
         test_id (str): The test ID
         default_description (str): The default description for the test
-        summary (str): The stringified summary tables for the test result
-        figures (List[Figure]): A list of Figure objects attached to the test result
+        summary (Any): The test summary or results to interpret
+        figures (List[Figure]): The figures to attach to the test suite result
+        prefix (str): The prefix to use for the content ID (Default: "metric_description")
 
     Returns:
         dict: The metadata object to be logged with the test results

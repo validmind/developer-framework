@@ -195,7 +195,7 @@ def generate_description(
                 ],
             )
             .choices[0]
-            .message.content
+            .message.content.strip()
         )
 
     logger.debug(
@@ -232,7 +232,7 @@ def generate_description(
             ],
         )
         .choices[0]
-        .message.content
+        .message.content.strip()
     )
 
 
