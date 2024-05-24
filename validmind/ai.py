@@ -20,13 +20,14 @@ You will provide both the developer and other consumers of the documentation wit
 The overarching theme to maintain is MRM documentation.
 
 Examine the provided statistical test results and compose a description of the results.
-This will act as the description and interpretation of the result in the model documentation.
-It will be displayed alongside the test results table and figures.
+The results are either in the form of serialized tables or images of plots.
+Compose a description and interpretation of the result to accompany it in MRM documentation.
+It will be read by other data scientists and developers and by validators and stakeholders.
 
+Use valid Markdown syntax to format the response.
 Avoid long sentences and complex vocabulary.
 Avoid overly verbose explanations - the goal is to explain to a user what they are seeing in the results.
 Structure the response clearly and logically.
-Use valid Markdown syntax to format the response.
 Respond only with your analysis and insights, not the verbatim test results.
 Respond only with the markdown content, no explanation or context for your response is necessary.
 Use the Test ID that is provided to form the Test Name e.g. "ClassImbalance" -> "Class Imbalance".
@@ -61,9 +62,9 @@ Test ID: `{test_name}`
 {test_description}
 </Test Docstring>
 
-<Test Results Summary>
+<Test Results Table(s)>
 {test_summary}
-</Test Results Summary>
+</Test Results Table(s)>
 """.strip()
 
 
