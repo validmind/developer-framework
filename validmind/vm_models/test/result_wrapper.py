@@ -7,7 +7,6 @@ Result Wrappers for test and metric results
 """
 import asyncio
 import json
-import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
@@ -19,7 +18,7 @@ from ... import api_client
 from ...ai import DescriptionFuture
 from ...input_registry import input_registry
 from ...logging import get_logger
-from ...utils import NumpyEncoder, display, md_to_html, run_async, test_id_to_name
+from ...utils import AI_REVISION_NAME, NumpyEncoder, display, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
@@ -31,31 +30,35 @@ logger = get_logger(__name__)
 
 
 async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
-    """
-    Update the metadata of a content item. By default we don't
-    override the existing metadata, but we can override it by
-    setting the VM_OVERRIDE_METADATA environment variable to True
-    """
-    should_update = False
+    """Create or Update a Metadata Object"""
+    parts = content_id.split("::")
+    content_id = parts[0]
+    revision_name = parts[1] if len(parts) > 1 else None
 
-    # check if the env variable is set to force overwriting metadata
-    if os.environ.get("VM_OVERRIDE_METADATA", "false").lower() == "true":
-        should_update = True
+    # we always want composite metric definitions to be updated
+    should_update = content_id.startswith("composite_metric_def:")
 
-    # if not set, check if the content_id is a composite metric def
-    if not should_update and content_id.startswith("composite_metric_def:"):
-        # we always want composite metric definitions to be updated
-        should_update = True
-
-    # if not set, lets check if the metadata already exists
-    if not should_update:
+    # if we are updating a metric or test description, we check if the text
+    # has changed from the last time it was logged, and only update if it has
+    if content_id.split(":", 1)[0] in ["metric_description", "test_description"]:
         try:
-            await api_client.get_metadata(content_id)
-        except Exception:  # TODO: this shouldn't be a catch-all
-            # if the metadata doesn't exist, we should create (update) it
+            md = await api_client.get_metadata(content_id)
+            # if there is an existing description, only update it if the new one
+            # is different and is an AI-generated description
+            should_update = (
+                md["text"] != text if revision_name == AI_REVISION_NAME else False
+            )
+            logger.debug(f"Check if description has changed: {should_update}")
+        except Exception:
+            # if exception, assume its not created yet TODO: don't catch all
             should_update = True
 
     if should_update:
+        if revision_name:
+            content_id = f"{content_id}::{revision_name}"
+
+        logger.debug(f"Updating metadata for `{content_id}`")
+
         await api_client.log_metadata(content_id, text, _json)
 
 
@@ -101,12 +104,6 @@ class ResultWrapper(ABC):
             self.output_template = output_template
 
         return self.to_widget()
-
-    def _markdown_description_to_html(self, description: str):
-        """
-        Convert a markdown string to html
-        """
-        return md_to_html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
@@ -277,9 +274,7 @@ class MetricResultWrapper(ResultWrapper):
                 metric_description = metric_description.get_description()
                 self.result_metadata[0]["text"] = metric_description
 
-            vbox_children.append(
-                HTML(value=self._markdown_description_to_html(metric_description))
-            )
+            vbox_children.append(HTML(value=metric_description))
 
         if self.metric:
             if self.output_template:
@@ -464,9 +459,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
                 metric_description = metric_description.get_description()
                 self.result_metadata[0]["text"] = metric_description
 
-            description_html.append(
-                self._markdown_description_to_html(metric_description)
-            )
+            description_html.append(metric_description)
 
         description_html.append(
             f"""
