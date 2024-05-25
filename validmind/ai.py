@@ -88,7 +88,7 @@ __ack = None
 __executor = concurrent.futures.ThreadPoolExecutor()
 
 
-def __get_client_and_model():
+def get_client_and_model():
     """Get model and client to use for generating interpretations
 
     On first call, it will look in the environment for the API key endpoint, model etc.
@@ -175,7 +175,7 @@ def generate_description(
     if not test_summary and not figures:
         raise ValueError("No summary or figures provided - cannot generate description")
 
-    client, model = __get_client_and_model()
+    client, model = get_client_and_model()
     # get last part of test id
     test_name = test_id.split(".")[-1]
     # truncate the test description to save time
@@ -274,7 +274,7 @@ def is_configured():
         return True
 
     try:
-        client, model = __get_client_and_model()
+        client, model = get_client_and_model()
         # send an empty message with max_tokens=1 to "ping" the API
         response = client.chat.completions.create(
             model=model,
