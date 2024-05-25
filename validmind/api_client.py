@@ -11,9 +11,9 @@ import asyncio
 import atexit
 import json
 import os
-import urllib.parse
 from io import BytesIO
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlencode, urljoin
 
 import aiohttp
 import requests
@@ -69,6 +69,14 @@ def get_api_project() -> Optional[str]:
     return _project
 
 
+def get_api_headers() -> Dict[str, str]:
+    return {
+        "X-API-KEY": _api_key,
+        "X-API-SECRET": _api_secret,
+        "X-PROJECT-CUID": _project,
+    }
+
+
 def init(
     project: Optional[str] = None,
     api_key: Optional[str] = None,
@@ -97,10 +105,7 @@ def init(
         # special case to detect when running a notebook with the standard init snippet
         # will override with environment variables so we don't have to keep updating
         # the notebook
-        api_host = None
-        api_key = None
-        api_secret = None
-        project = None
+        api_host = api_key = api_secret = project = None
 
     _project = project or os.getenv("VM_API_PROJECT")
 
@@ -114,8 +119,10 @@ def init(
         raise MissingAPICredentialsError()
 
     _api_host = api_host or os.getenv(
-        "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
+        "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking/"
     )
+    _api_host += "/" if not _api_host.endswith("/") else ""
+
     _run_cuid = os.getenv("VM_RUN_CUID", None)
 
     try:
@@ -147,7 +154,7 @@ async def _get_session() -> aiohttp.ClientSession:
 def __ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
-        f"{_api_host}/ping",
+        urljoin(_api_host, "ping"),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -196,7 +203,7 @@ async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> s
     params = params or {}
     params["run_cuid"] = _run_cuid
 
-    return f"{_api_host}/{endpoint}?{urllib.parse.urlencode(params)}"
+    return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
 
 
 async def _get(
@@ -539,7 +546,7 @@ def start_run() -> str:
     global _run_cuid
 
     r = requests.post(
-        f"{_api_host}/start_run",
+        urljoin(_api_host, "start_run"),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -555,3 +562,21 @@ def start_run() -> str:
     _run_cuid = test_run["cuid"]
 
     return test_run["cuid"]
+
+
+def get_ai_key() -> str:
+    """Calls the api to get an api key for our LLM proxy"""
+    r = requests.get(
+        urljoin(_api_host, "ai/key"),
+        headers={
+            "X-API-KEY": _api_key,
+            "X-API-SECRET": _api_secret,
+            "X-PROJECT-CUID": _project,
+        },
+    )
+
+    if r.status_code != 200:
+        logger.error("Could not get AI key from ValidMind API")
+        raise_api_error(r.text)
+
+    return r.json()
