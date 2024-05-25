@@ -5,8 +5,9 @@
 import concurrent.futures
 import os
 
-from openai import AzureOpenAI, OpenAI
+from openai import AzureOpenAI, Client, OpenAI
 
+from .api_client import get_ai_key
 from .logging import get_logger
 
 logger = get_logger(__name__)
@@ -125,7 +126,17 @@ def __get_client_and_model():
         logger.debug(f"Using Azure OpenAI {__model} for generating descriptions")
 
     else:
-        raise ValueError("OPENAI_API_KEY or AZURE_OPENAI_KEY must be set")
+        try:
+            response = get_ai_key()
+            __client = Client(base_url=response["url"], api_key=response["key"])
+            __model = "gpt-4o"  # TODO: backend should tell us which model to use
+            logger.debug(f"Using ValidMind {__model} for generating descriptions")
+        except Exception as e:
+            logger.debug(f"Failed to get API key: {e}")
+            raise ValueError(
+                "OPENAI_API_KEY, AZURE_OPENAI_KEY must be set, or your account "
+                "must be setup to use ValidMind's LLM in order to use LLM features"
+            )
 
     return __client, __model
 
