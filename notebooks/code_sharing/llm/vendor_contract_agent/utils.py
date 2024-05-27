@@ -13,7 +13,7 @@ from ipywidgets import HTML
 from openai import AssistantEventHandler, OpenAI
 from serpapi.google_search import GoogleSearch
 
-TOOL_FOLDER = os.environ.get("OPENAI_TOOL_FOLDER", "tool_definitions")
+TOOL_FOLDER = os.getenv("OPENAI_TOOL_FOLDER", "tool_definitions")
 
 CONTRACTS_DATA = "data/contracts.json"
 VENDORS_DATA = "data/vendors.json"
@@ -35,7 +35,7 @@ AGENT_MESSAGE_WRAPPER_HTML = """
 
 client = OpenAI()
 
-GoogleSearch.SERP_API_KEY = os.environ.get("SERP_API_KEY", "")
+GoogleSearch.SERP_API_KEY = os.getenv("SERP_API_KEY", "")
 
 db_connection = None
 print_lock = False
