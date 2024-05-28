@@ -21,6 +21,7 @@ class TestSuiteTest:
 
     test_id: str
     output_template: str = None
+    name: str = None
 
     _test_class: Test = None
     _test_instance: Test = None
@@ -39,6 +40,8 @@ class TestSuiteTest:
             self.test_id = test_id_or_obj["id"]
             self.output_template = test_id_or_obj.get("output_template")
 
+        self.name = test_id_to_name(self.test_id)
+
         try:
             self._test_class = load_test_class(self.test_id)
         except LoadTestError as e:
@@ -51,14 +54,6 @@ class TestSuiteTest:
             # The test suite runner will appropriately ignore this error
             # since _test_class is None
             logger.error(f"Failed to load test '{self.test_id}': {e}")
-
-    @property
-    def title(self):
-        return test_id_to_name(self.test_id)
-
-    @property
-    def name(self):
-        return self._test_class.name
 
     @property
     def test_type(self):
@@ -86,12 +81,12 @@ class TestSuiteTest:
             )
         except Exception as e:
             logger.error(
-                f"Failed to load test '{self._test_class.name}': "
+                f"Failed to load test '{self.test_id}': "
                 f"({e.__class__.__name__}) {e}"
             )
             self.result = FailedResultWrapper(
                 error=e,
-                message=f"Failed to load test '{self.test_id}'",
+                message=f"Failed to load test '{self.name}'",
                 result_id=self.test_id,
             )
 
@@ -107,7 +102,7 @@ class TestSuiteTest:
             # run the test and log the performance if LOG_LEVEL is set to DEBUG
             log_performance(
                 func=self._test_instance.run,
-                name=self._test_instance.name,
+                name=self.test_id,
                 logger=logger,
             )()  # this is a decorator so we need to call it
 
@@ -116,14 +111,13 @@ class TestSuiteTest:
                 raise e  # Re-raise the exception if we are in fail fast mode
 
             logger.error(
-                f"Failed to run test '{self._test_instance.name}': "
-                f"({e.__class__.__name__}) {e}"
+                f"Failed to run test '{self.test_id}': " f"({e.__class__.__name__}) {e}"
             )
             self.result = FailedResultWrapper(
                 name=f"Failed {self._test_instance.test_type}",
                 error=e,
-                message=f"Failed to run '{self._test_instance.name}'",
-                result_id=self._test_instance.name,
+                message=f"Failed to run '{self.name}'",
+                result_id=self.test_id,
             )
 
             return
@@ -132,8 +126,8 @@ class TestSuiteTest:
             self.result = FailedResultWrapper(
                 name=f"Failed {self._test_instance.test_type}",
                 error=None,
-                message=f"'{self._test_instance.name}' did not return a result",
-                result_id=self._test_instance.name,
+                message=f"'{self.name}' did not return a result",
+                result_id=self.test_id,
             )
 
             return
@@ -142,9 +136,8 @@ class TestSuiteTest:
             self.result = FailedResultWrapper(
                 name=f"Failed {self._test_instance.test_type}",
                 error=None,
-                message=f"'{self._test_instance.name}' returned an invalid result: "
-                f"{self._test_instance.result}",
-                result_id=self._test_instance.name,
+                message=f"{self.name} returned an invalid result: {self._test_instance.result}",
+                result_id=self.test_id,
             )
 
             return

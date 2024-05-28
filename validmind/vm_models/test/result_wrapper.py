@@ -7,7 +7,6 @@ Result Wrappers for test and metric results
 """
 import asyncio
 import json
-import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
@@ -19,7 +18,7 @@ from ... import api_client
 from ...ai import DescriptionFuture
 from ...input_registry import input_registry
 from ...logging import get_logger
-from ...utils import NumpyEncoder, display, md_to_html, run_async, test_id_to_name
+from ...utils import AI_REVISION_NAME, NumpyEncoder, display, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult
@@ -31,31 +30,35 @@ logger = get_logger(__name__)
 
 
 async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] = None):
-    """
-    Update the metadata of a content item. By default we don't
-    override the existing metadata, but we can override it by
-    setting the VM_OVERRIDE_METADATA environment variable to True
-    """
-    should_update = False
+    """Create or Update a Metadata Object"""
+    parts = content_id.split("::")
+    content_id = parts[0]
+    revision_name = parts[1] if len(parts) > 1 else None
 
-    # check if the env variable is set to force overwriting metadata
-    if os.environ.get("VM_OVERRIDE_METADATA", "false").lower() == "true":
-        should_update = True
+    # we always want composite metric definitions to be updated
+    should_update = content_id.startswith("composite_metric_def:")
 
-    # if not set, check if the content_id is a composite metric def
-    if not should_update and content_id.startswith("composite_metric_def:"):
-        # we always want composite metric definitions to be updated
-        should_update = True
-
-    # if not set, lets check if the metadata already exists
-    if not should_update:
+    # if we are updating a metric or test description, we check if the text
+    # has changed from the last time it was logged, and only update if it has
+    if content_id.split(":", 1)[0] in ["metric_description", "test_description"]:
         try:
-            await api_client.get_metadata(content_id)
-        except Exception:  # TODO: this shouldn't be a catch-all
-            # if the metadata doesn't exist, we should create (update) it
+            md = await api_client.get_metadata(content_id)
+            # if there is an existing description, only update it if the new one
+            # is different and is an AI-generated description
+            should_update = (
+                md["text"] != text if revision_name == AI_REVISION_NAME else False
+            )
+            logger.debug(f"Check if description has changed: {should_update}")
+        except Exception:
+            # if exception, assume its not created yet TODO: don't catch all
             should_update = True
 
     if should_update:
+        if revision_name:
+            content_id = f"{content_id}::{revision_name}"
+
+        logger.debug(f"Updating metadata for `{content_id}`")
+
         await api_client.log_metadata(content_id, text, _json)
 
 
@@ -101,12 +104,6 @@ class ResultWrapper(ABC):
             self.output_template = output_template
 
         return self.to_widget()
-
-    def _markdown_description_to_html(self, description: str):
-        """
-        Convert a markdown string to html
-        """
-        return md_to_html(description)
 
     def _summary_tables_to_widget(self, summary: ResultSummary):
         """
@@ -155,6 +152,55 @@ class ResultWrapper(ABC):
             tables.append(HTML(value=summary_table))
         return tables
 
+    def _validate_section_id_for_block(self, section_id: str, position: int = None):
+        """
+        Validate the section_id exits on the template before logging. We validate
+        if the section exists and if the user provided position is within the bounds
+        of the section. When the position is None, we assume it goes to the end of the section.
+        """
+        if section_id is None:
+            return
+
+        api_client.reload()
+        found = False
+        client_config = api_client.client_config
+
+        for section in client_config.documentation_template["sections"]:
+            if section["id"] == section_id:
+                found = True
+                break
+
+        if not found:
+            raise ValueError(
+                f"Section with id {section_id} not found in the model's document"
+            )
+
+        # Check if the block already exists in the section
+        block_definition = {
+            "content_id": self.result_id,
+            "content_type": (
+                "metric" if isinstance(self, MetricResultWrapper) else "test"
+            ),
+        }
+        blocks = section.get("contents", [])
+        for block in blocks:
+            if (
+                block["content_id"] == block_definition["content_id"]
+                and block["content_type"] == block_definition["content_type"]
+            ):
+                logger.info(
+                    f"Test driven block with content_id {block_definition['content_id']} already exists in the document's section"
+                )
+                return
+
+        # Validate that the position is within the bounds of the section
+        if position is not None:
+            num_blocks = len(blocks)
+            if position < 0 or position > num_blocks:
+                raise ValueError(
+                    f"Invalid position {position}. Must be between 0 and {num_blocks}"
+                )
+
     def show(self):
         """Display the result... May be overridden by subclasses"""
         display(self.to_widget())
@@ -164,9 +210,11 @@ class ResultWrapper(ABC):
         """Log the result... Must be overridden by subclasses"""
         raise NotImplementedError
 
-    def log(self):
+    def log(self, section_id: str = None, position: int = None):
         """Log the result... May be overridden by subclasses"""
-        run_async(self.log_async)
+
+        self._validate_section_id_for_block(section_id, position)
+        run_async(self.log_async, section_id=section_id, position=position)
 
 
 @dataclass
@@ -226,9 +274,7 @@ class MetricResultWrapper(ResultWrapper):
                 metric_description = metric_description.get_description()
                 self.result_metadata[0]["text"] = metric_description
 
-            vbox_children.append(
-                HTML(value=self._markdown_description_to_html(metric_description))
-            )
+            vbox_children.append(HTML(value=metric_description))
 
         if self.metric:
             if self.output_template:
@@ -327,7 +373,9 @@ class MetricResultWrapper(ResultWrapper):
 
         return self.metric.summary
 
-    async def log_async(self, unsafe=False):
+    async def log_async(
+        self, section_id: str = None, position: int = None, unsafe=False
+    ):
         tasks = []  # collect tasks to run in parallel (async)
 
         if self.metric:
@@ -339,6 +387,8 @@ class MetricResultWrapper(ResultWrapper):
                     metrics=[self.metric],
                     inputs=self.inputs,
                     output_template=self.output_template,
+                    section_id=section_id,
+                    position=position,
                 )
             )
 
@@ -409,9 +459,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
                 metric_description = metric_description.get_description()
                 self.result_metadata[0]["text"] = metric_description
 
-            description_html.append(
-                self._markdown_description_to_html(metric_description)
-            )
+            description_html.append(metric_description)
 
         description_html.append(
             f"""
@@ -433,8 +481,12 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
         return VBox(vbox_children)
 
-    async def log_async(self):
-        tasks = [api_client.log_test_result(self.test_results, self.inputs)]
+    async def log_async(self, section_id: str = None, position: int = None):
+        tasks = [
+            api_client.log_test_result(
+                self.test_results, self.inputs, section_id, position
+            )
+        ]
 
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))

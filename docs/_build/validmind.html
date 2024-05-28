@@ -147,7 +147,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;2.2.2&#39;</span>
+<span class="default_value">&#39;2.2.6&#39;</span>
 
         
     </div>
@@ -650,7 +650,7 @@ documentation or <code>vm.describe_test()</code> for more details on the inputs 
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">inputs</span>,</span><span class="param">	<span class="n">dataset_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
+        <span class="name">log_test_results</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResults</span><span class="p">]</span>,</span><span class="param">	<span class="n">inputs</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>:</span></span>
 
         
     </div>
@@ -666,8 +666,6 @@ running tests but can also be called directly if the user wants to run tests on 
 <ul>
 <li><strong>results (list):</strong>  A list of ThresholdTestResults objects</li>
 <li><strong>inputs (list):</strong>  A list of input keys (names) that were used to run the test</li>
-<li><strong>dataset_type (str, optional):</strong>  The type of dataset. Can be one of "training",
-"test", or "validation". Defaults to "training".</li>
 </ul>
 
 <h6 id="raises">Raises:</h6>

@@ -22,19 +22,19 @@ from aiohttp import FormData
 from .client_config import client_config
 from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
-from .utils import NumpyEncoder, md_to_html, run_async
+from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 # TODO: can't import types from vm_models because of circular dependency
 
 logger = get_logger(__name__)
 
-_api_key = os.environ.get("VM_API_KEY")
-_api_secret = os.environ.get("VM_API_SECRET")
-_api_host = os.environ.get("VM_API_HOST")
+_api_key = os.getenv("VM_API_KEY")
+_api_secret = os.getenv("VM_API_SECRET")
+_api_host = os.getenv("VM_API_HOST")
 
-_project = os.environ.get("VM_API_PROJECT")
-_run_cuid = os.environ.get("VM_RUN_CUID")
+_project = os.getenv("VM_API_PROJECT")
+_run_cuid = os.getenv("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
 
@@ -102,21 +102,21 @@ def init(
         api_secret = None
         project = None
 
-    _project = project or os.environ.get("VM_API_PROJECT")
+    _project = project or os.getenv("VM_API_PROJECT")
 
     if _project is None:
         raise MissingProjectIdError()
 
-    _api_key = api_key or os.environ.get("VM_API_KEY")
-    _api_secret = api_secret or os.environ.get("VM_API_SECRET")
+    _api_key = api_key or os.getenv("VM_API_KEY")
+    _api_secret = api_secret or os.getenv("VM_API_SECRET")
 
     if _api_key is None or _api_secret is None:
         raise MissingAPICredentialsError()
 
-    _api_host = api_host or os.environ.get(
+    _api_host = api_host or os.getenv(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
     )
-    _run_cuid = os.environ.get("VM_RUN_CUID", None)
+    _run_cuid = os.getenv("VM_RUN_CUID", None)
 
     try:
         __ping()
@@ -161,14 +161,20 @@ def __ping() -> Dict[str, Any]:
 
     init_sentry(client_info.get("sentry_config", {}))
 
+    # Only show this confirmation the first time we connect to the API
+    ack_connected = False
+    if client_config.project is None:
+        ack_connected = True
+
     client_config.project = client_info["project"]
     client_config.documentation_template = client_info.get("documentation_template", {})
     client_config.feature_flags = client_info.get("feature_flags", {})
 
-    logger.info(
-        f"Connected to ValidMind. Project: {client_config.project['name']}"
-        f" ({client_config.project['cuid']})"
-    )
+    if ack_connected:
+        logger.info(
+            f"Connected to ValidMind. Project: {client_config.project['name']}"
+            f" ({client_config.project['cuid']})"
+        )
 
 
 def reload():
@@ -343,7 +349,7 @@ async def log_metadata(
     """
     metadata_dict = {"content_id": content_id}
     if text is not None:
-        metadata_dict["text"] = md_to_html(text, mathml=True)
+        metadata_dict["text"] = text
     if _json is not None:
         metadata_dict["json"] = _json
 
@@ -358,7 +364,11 @@ async def log_metadata(
 
 
 async def log_metrics(
-    metrics: List[MetricResult], inputs: List[str], output_template: str = None
+    metrics: List[MetricResult],
+    inputs: List[str],
+    output_template: str = None,
+    section_id: str = None,
+    position: int = None,
 ) -> Dict[str, Any]:
     """Logs metrics to ValidMind API.
 
@@ -366,6 +376,8 @@ async def log_metrics(
         metrics (list): A list of MetricResult objects
         inputs (list): A list of input keys (names) that were used to run the test
         output_template (str): The optional output template for the test
+        section_id (str): The section ID add a test driven block to the documentation
+        position (int): The position in the section to add the test driven block
 
     Raises:
         Exception: If the API call fails
@@ -373,7 +385,14 @@ async def log_metrics(
     Returns:
         dict: The response from the API
     """
+    params = {}
+    if section_id:
+        params["section_id"] = section_id
+    if position is not None:
+        params["position"] = position
+
     data = []
+
     for metric in metrics:
         metric_data = {
             **metric.serialize(),
@@ -388,6 +407,7 @@ async def log_metrics(
     try:
         return await _post(
             "log_metrics",
+            params=params,
             data=json.dumps(data, cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
@@ -396,7 +416,10 @@ async def log_metrics(
 
 
 async def log_test_result(
-    result: ThresholdTestResults, inputs: List[str], dataset_type: str = "training"
+    result: ThresholdTestResults,
+    inputs: List[str],
+    section_id: str = None,
+    position: int = None,
 ) -> Dict[str, Any]:
     """Logs test results information
 
@@ -406,8 +429,8 @@ async def log_test_result(
     Args:
         result (validmind.ThresholdTestResults): A ThresholdTestResults object
         inputs (list): A list of input keys (names) that were used to run the test
-        dataset_type (str, optional): The type of dataset. Can be one of
-            "training", "test", or "validation". Defaults to "training".
+        section_id (str, optional): The section ID add a test driven block to the documentation
+        position (int): The position in the section to add the test driven block
 
     Raises:
         Exception: If the API call fails
@@ -415,10 +438,16 @@ async def log_test_result(
     Returns:
         dict: The response from the API
     """
+    params = {}
+    if section_id:
+        params["section_id"] = section_id
+    if position is not None:
+        params["position"] = position
+
     try:
         return await _post(
             "log_test_results",
-            params={"dataset_type": dataset_type},
+            params=params,
             data=json.dumps(
                 {
                     **result.serialize(),
@@ -434,7 +463,7 @@ async def log_test_result(
 
 
 def log_test_results(
-    results: List[ThresholdTestResults], inputs, dataset_type: str = "training"
+    results: List[ThresholdTestResults], inputs
 ) -> List[Callable[..., Dict[str, Any]]]:
     """Logs test results information
 
@@ -444,8 +473,6 @@ def log_test_results(
     Args:
         results (list): A list of ThresholdTestResults objects
         inputs (list): A list of input keys (names) that were used to run the test
-        dataset_type (str, optional): The type of dataset. Can be one of "training",
-          "test", or "validation". Defaults to "training".
 
     Raises:
         Exception: If the API call fails
@@ -456,7 +483,7 @@ def log_test_results(
     try:
         responses = []  # TODO: use asyncio.gather
         for result in results:
-            responses.append(run_async(log_test_result, result, inputs, dataset_type))
+            responses.append(run_async(log_test_result, result, inputs))
     except Exception as e:
         logger.error("Error logging test results to ValidMind API")
         raise e

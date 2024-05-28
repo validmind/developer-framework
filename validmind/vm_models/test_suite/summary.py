@@ -35,8 +35,14 @@ class TestSuiteSectionSummary:
         self._build_summary()
 
     def _add_description(self):
-        description = f'<div class="result">{md_to_html(self.description)}</div>'
-        self._widgets.append(widgets.HTML(value=description))
+        if not self.description:
+            return
+
+        self._widgets.append(
+            widgets.HTML(
+                value=f'<div class="result">{md_to_html(self.description)}</div>'
+            )
+        )
 
     def _add_tests_summary(self):
         children = []
@@ -45,9 +51,9 @@ class TestSuiteSectionSummary:
         for test in self.tests:
             children.append(test.result.to_widget())
             titles.append(
-                f"❌ {test.result.name}: {test.title} ({test.test_id})"
+                f"❌ {test.result.name}: {test.name} ({test.test_id})"
                 if isinstance(test.result, FailedResultWrapper)
-                else f"{test.result.name}: {test.title} ({test.test_id})"
+                else f"{test.result.name}: {test.name} ({test.test_id})"
             )
 
         self._widgets.append(widgets.Accordion(children=children, titles=titles))
@@ -71,6 +77,7 @@ class TestSuiteSummary:
     title: str
     description: str
     sections: List[TestSuiteSection]
+    show_link: bool = True
 
     _widgets: List[widgets.Widget] = None
 
@@ -100,8 +107,11 @@ class TestSuiteSummary:
         self._widgets.append(widgets.HTML(value=results_link))
 
     def _add_description(self):
-        description = f'<div class="result">{md_to_html(self.description)}</div>'
-        self._widgets.append(widgets.HTML(value=description))
+        self._widgets.append(
+            widgets.HTML(
+                value=f'<div class="result">{md_to_html(self.description)}</div>'
+            )
+        )
 
     def _add_sections_summary(self):
         children = []
@@ -145,7 +155,8 @@ class TestSuiteSummary:
         self._widgets = []
 
         self._add_title()
-        self._add_results_link()
+        if self.show_link:
+            self._add_results_link()
         self._add_description()
         if len(self.sections) == 1:
             self._add_top_level_section_summary()

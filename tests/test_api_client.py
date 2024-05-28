@@ -196,7 +196,7 @@ class TestAPIClient(unittest.TestCase):
             data=json.dumps(
                 {
                     "content_id": "1234",
-                    "text": md_to_html("Some Text"),
+                    "text": "Some Text",
                     "json": {"key": "value"},
                 }
             ),
@@ -226,7 +226,7 @@ class TestAPIClient(unittest.TestCase):
         self.run_async(api_client.log_test_result, result, ["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_test_results"
-        url += f"?dataset_type=training&run_cuid={os.environ['VM_RUN_CUID']}"
+        url += f"?run_cuid={os.environ['VM_RUN_CUID']}"
 
         mock_post.assert_called_with(
             url, data=json.dumps({"key": "value", "inputs": ["input1"]})
@@ -239,8 +239,8 @@ class TestAPIClient(unittest.TestCase):
 
         mock_log_test_result.assert_has_calls(
             [
-                call(results[0], ["input1"], "training"),
-                call(results[1], ["input1"], "training"),
+                call(results[0], ["input1"]),
+                call(results[1], ["input1"]),
             ]
         )
 
