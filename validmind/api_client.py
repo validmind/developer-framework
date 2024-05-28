@@ -498,7 +498,7 @@ def log_test_results(
     return responses
 
 
-def _log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+def log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
     """Logs input information - internal use for now (don't expose via public API)
 
     Args:

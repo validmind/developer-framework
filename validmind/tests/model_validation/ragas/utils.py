@@ -4,7 +4,7 @@
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
-from validmind.ai import get_client_and_model
+from validmind.ai.utils import get_client_and_model
 
 EMBEDDINGS_MODEL = "text-embedding-3-small"
 

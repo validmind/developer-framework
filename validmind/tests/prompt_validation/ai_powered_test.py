@@ -4,7 +4,7 @@
 
 import re
 
-from validmind.ai import get_client_and_model
+from validmind.ai.utils import get_client_and_model
 
 
 def call_model(
