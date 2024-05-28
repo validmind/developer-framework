@@ -121,7 +121,6 @@ def init(
     _api_host = api_host or os.getenv(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking/"
     )
-    _api_host += "/" if not _api_host.endswith("/") else ""
 
     _run_cuid = os.getenv("VM_RUN_CUID", None)
 
@@ -134,7 +133,7 @@ def init(
         raise e
 
 
-async def _get_session() -> aiohttp.ClientSession:
+def _get_session() -> aiohttp.ClientSession:
     """Initializes the async client session"""
     global __api_session
 
@@ -154,7 +153,7 @@ async def _get_session() -> aiohttp.ClientSession:
 def __ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
-        urljoin(_api_host, "ping"),
+        __get_url("ping", should_start_run=False),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -196,21 +195,35 @@ def reload():
         raise e
 
 
-async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
-    if not _run_cuid:
-        start_run()
+def __get_url(
+    endpoint: str,
+    params: Optional[Dict[str, str]] = None,
+    should_start_run: bool = True,
+) -> str:
+    global _api_host
 
     params = params or {}
-    params["run_cuid"] = _run_cuid
 
-    return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
+    if not _run_cuid and should_start_run:
+        start_run()
+
+    if should_start_run:
+        params["run_cuid"] = _run_cuid
+
+    if not _api_host.endswith("/"):
+        _api_host += "/"
+
+    if params:
+        return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
+
+    return urljoin(_api_host, endpoint)
 
 
 async def _get(
     endpoint: str, params: Optional[Dict[str, str]] = None
 ) -> Dict[str, Any]:
-    url = await __get_url(endpoint, params)
-    session = await _get_session()
+    url = __get_url(endpoint, params)
+    session = _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
     async with session.get(url) as r:
@@ -226,8 +239,8 @@ async def _post(
     data: Optional[Union[dict, FormData]] = None,
     files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
 ) -> Dict[str, Any]:
-    url = await __get_url(endpoint, params)
-    session = await _get_session()
+    url = __get_url(endpoint, params)
+    session = _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
     if not isinstance(data, (dict)) and files is not None:
@@ -546,7 +559,7 @@ def start_run() -> str:
     global _run_cuid
 
     r = requests.post(
-        urljoin(_api_host, "start_run"),
+        __get_url("start_run", should_start_run=False),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -567,7 +580,7 @@ def start_run() -> str:
 def get_ai_key() -> str:
     """Calls the api to get an api key for our LLM proxy"""
     r = requests.get(
-        urljoin(_api_host, "ai/key"),
+        __get_url("ai/key", should_start_run=False),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
