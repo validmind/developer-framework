@@ -15,10 +15,10 @@ import pandas as pd
 from ipywidgets import HTML, GridBox, Layout, VBox
 
 from ... import api_client
-from ...ai import DescriptionFuture
+from ...ai.test_descriptions import AI_REVISION_NAME, DescriptionFuture
 from ...input_registry import input_registry
 from ...logging import get_logger
-from ...utils import AI_REVISION_NAME, NumpyEncoder, display, run_async, test_id_to_name
+from ...utils import NumpyEncoder, display, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
 from .metric_result import MetricResult

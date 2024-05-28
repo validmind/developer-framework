@@ -9,7 +9,7 @@ Client interface for all data and model validation functions
 import pandas as pd
 import polars as pl
 
-from .api_client import _log_input as log_input
+from .api_client import log_input as log_input
 from .client_config import client_config
 from .errors import (
     GetTestSuiteError,
