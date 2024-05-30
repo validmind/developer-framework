@@ -11,7 +11,7 @@ avoid confusion with the "tests" in the general data science/modeling sense.
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional
 
-from ...utils import get_description_metadata
+from ...ai.test_descriptions import get_description_metadata
 from ..figure import Figure
 from .result_summary import ResultSummary, ResultTable
 from .result_wrapper import ThresholdTestResultWrapper

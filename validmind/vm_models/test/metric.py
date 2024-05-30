@@ -12,8 +12,8 @@ from typing import ClassVar, List, Optional, Union
 
 import pandas as pd
 
+from ...ai.test_descriptions import get_description_metadata
 from ...errors import MissingCacheResultsArgumentsError
-from ...utils import get_description_metadata
 from ..figure import Figure
 from .metric_result import MetricResult
 from .result_wrapper import MetricResultWrapper

@@ -13,9 +13,9 @@ from uuid import uuid4
 
 import pandas as pd
 
+from validmind.ai.test_descriptions import get_description_metadata
 from validmind.errors import MissingRequiredTestInputError
 from validmind.logging import get_logger
-from validmind.utils import get_description_metadata
 from validmind.vm_models import (
     Metric,
     MetricResult,

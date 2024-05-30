@@ -11,7 +11,7 @@ from ragas.metrics import faithfulness
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm", "rag_performance")
@@ -93,8 +93,7 @@ def Faithfulness(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df),
-        metrics=[faithfulness],
+        Dataset.from_pandas(df), metrics=[faithfulness], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["faithfulness"].to_list(), nbins=10)

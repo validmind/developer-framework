@@ -15,11 +15,11 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
-from .ai_powered_test import AIPoweredTest
+from .ai_powered_test import call_model, get_explanation, get_score
 
 
 @dataclass
-class NegativeInstruction(ThresholdTest, AIPoweredTest):
+class NegativeInstruction(ThresholdTest):
     """
     Evaluates and grades the use of affirmative, proactive language over negative instructions in LLM prompts.
 
@@ -96,12 +96,6 @@ Prompt:
 """
 '''.strip()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)  # Call ThresholdTest.__init__
-        AIPoweredTest.__init__(
-            self, *args, **kwargs
-        )  # Explicitly call AIPoweredTest.__init__
-
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [
@@ -125,14 +119,14 @@ Prompt:
         )
 
     def run(self):
-        response = self.call_model(
+        response = call_model(
             system_prompt=self.system_prompt,
             user_prompt=self.user_prompt.format(
                 prompt_to_test=self.inputs.model.prompt.template
             ),
         )
-        score = self.get_score(response)
-        explanation = self.get_explanation(response)
+        score = get_score(response)
+        explanation = get_explanation(response)
 
         passed = score > self.params["min_threshold"]
         results = [
