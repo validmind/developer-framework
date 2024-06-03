@@ -62,7 +62,6 @@ def TimeSeriesFrequency(dataset):
     figures = _frequency_plots(df)
 
     # Create the result summary table
-    passed = n_frequencies == 1
     result_df = pd.DataFrame(
         {"Variable": freq_df["Variable"], "Frequency": freq_df["Frequency"]}
     )
