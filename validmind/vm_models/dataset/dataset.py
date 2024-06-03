@@ -356,8 +356,8 @@ class VMDataset:
         return as_df(self.df[self.probability_column(model)])
 
     def target_classes(self):
-        """Returns the unique number of target classes for the target (Y) variable"""
-        return [str(i) for i in np.unique(self.y)]
+        """Returns the target class labels or unique values of the target column."""
+        return self.target_class_labels or [str(i) for i in np.unique(self.y)]
 
     def __str__(self):
         return (
