@@ -103,7 +103,7 @@ def ContextRecall(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 ["question", "contexts", "ground_truth", "context_recall"]
             ],
             "Aggregate Scores": [
