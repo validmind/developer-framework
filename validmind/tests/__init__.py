@@ -414,6 +414,7 @@ def run_test(
     inputs=None,
     output_template=None,
     show=True,
+    raw=False,
     **kwargs,
 ):
     """Run a test by test ID
@@ -469,6 +470,7 @@ def run_test(
         inputs=TestInput({**kwargs, **(inputs or {})}),
         output_template=output_template,
         params=params,
+        raw=raw,
     )
 
     test.run()

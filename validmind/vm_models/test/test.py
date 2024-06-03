@@ -43,6 +43,8 @@ class Test(TestUtils):
 
     output_template: str = None  # optional output template
 
+    raw: bool = False  # whether to add description metadata to the result
+
     def __post_init__(self):
         """
         Set default params if not provided

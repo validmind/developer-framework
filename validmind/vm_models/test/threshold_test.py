@@ -80,15 +80,19 @@ class ThresholdTest(Test):
 
         self.result = ThresholdTestResultWrapper(
             result_id=self.test_id,
-            result_metadata=[
-                get_description_metadata(
-                    test_id=self.test_id,
-                    default_description=self.description(),
-                    summary=result_summary.serialize(),
-                    figures=figures,
-                    prefix="test_description",
-                )
-            ],
+            result_metadata=(
+                [
+                    get_description_metadata(
+                        test_id=self.test_id,
+                        default_description=self.description(),
+                        summary=result_summary.serialize(),
+                        figures=figures,
+                        prefix="test_description",
+                    )
+                ]
+                if not self.raw
+                else []
+            ),
             inputs=self.get_accessed_inputs(),
             test_results=ThresholdTestResults(
                 test_name=self.test_id,
