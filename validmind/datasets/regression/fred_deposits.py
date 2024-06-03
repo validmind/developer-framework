@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import os
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(current_path, "datasets/fred")

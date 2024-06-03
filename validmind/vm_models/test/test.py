@@ -53,6 +53,9 @@ class Test(TestUtils):
             )
         self._ref_id = str(uuid4())
 
+        # backwards-compat for figures
+        self.key = f"{self.test_id}"
+
         # TODO: add validation for required inputs
         if self.default_params is None:
             self.default_params = {}

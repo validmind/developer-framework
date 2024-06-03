@@ -36,13 +36,6 @@ class Metric(Test):
     # Instance Variables
     result: MetricResultWrapper = None  # populated by cache_results() method
 
-    @property
-    def key(self):
-        """
-        Keep the key for compatibility reasons
-        """
-        return self._key if hasattr(self, "_key") else self.name
-
     @abstractmethod
     def summary(self, metric_value: Optional[Union[dict, list, pd.DataFrame]] = None):
         """
