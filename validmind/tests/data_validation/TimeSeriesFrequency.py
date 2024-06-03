@@ -56,12 +56,13 @@ def TimeSeriesFrequency(dataset):
         raise ValueError("Dataset must be provided with datetime index")
 
     freq_df = _identify_frequencies(df)
-    n_frequencies = len(freq_df["Frequency"].unique())
+    # n_frequencies = len(freq_df["Frequency"].unique())
 
     # Histogram for frequency plot
     figures = _frequency_plots(df)
 
     # Create the result summary table
+    # passed = n_frequencies == 1
     result_df = pd.DataFrame(
         {"Variable": freq_df["Variable"], "Frequency": freq_df["Frequency"]}
     )
