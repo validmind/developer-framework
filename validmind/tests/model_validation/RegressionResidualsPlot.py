@@ -80,7 +80,7 @@ class RegressionResidualsPlot(Metric):
         figures = [
             Figure(
                 for_object=self,
-                key=self.key,
+                key=f"{self.key}_distribution",
                 figure=fig,
             )
         ]
@@ -117,7 +117,7 @@ class RegressionResidualsPlot(Metric):
         figures.append(
             Figure(
                 for_object=self,
-                key=self.key,
+                key=f"{self.key}_scatter",
                 figure=fig,
             )
         )

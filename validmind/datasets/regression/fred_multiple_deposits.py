@@ -81,7 +81,7 @@ def fit_pymc_seasonality_model(df, target_column, n_order):
     linear_seasonality_posterior: posterior predictive samples
     """
 
-    pymc_df, t, y, y_max, fourier_features, coords = _process_df_for_pymc(
+    t, y, y_max, fourier_features, coords = _process_df_for_pymc(
         df, target_column, n_order
     )
 
@@ -140,7 +140,6 @@ def fit_pymc_seasonality_model(df, target_column, n_order):
     )
 
     return (
-        pymc_df,
         prior_likelihood,
         prior_seasonality,
         posterior_likelihood,
@@ -173,7 +172,7 @@ def _process_df_for_pymc(df, target_column, n_order):
 
     coords = {"fourier_features": np.arange(2 * n_order)}
 
-    return pymc_df, t, y, y_max, fourier_features, coords
+    return t, y, y_max, fourier_features, coords
 
 
 def process_and_train_random_forest(df, posterior_seasonality, target_column):

@@ -6,7 +6,7 @@
 import plotly.graph_objects as go
 
 
-def PyMCPlot(dataset, pymc_output, month_column, title):
+def PyMCPlot(dataset, pymc_output, title):
     """
     PyMC Plot
     """
@@ -18,7 +18,7 @@ def PyMCPlot(dataset, pymc_output, month_column, title):
     for sample in pymc_output.T:
         fig.add_trace(
             go.Scatter(
-                x=df[month_column],
+                x=df.index,
                 y=sample,
                 mode="lines",
                 line=dict(color="blue", width=1),
@@ -28,7 +28,7 @@ def PyMCPlot(dataset, pymc_output, month_column, title):
 
     fig.add_trace(
         go.Scatter(
-            x=df[month_column],
+            x=df.index,
             y=df[dataset.target_column],
             mode="lines+markers",
             marker=dict(color="black", size=5),

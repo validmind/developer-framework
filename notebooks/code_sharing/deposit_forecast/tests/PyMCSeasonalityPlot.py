@@ -6,7 +6,7 @@
 import plotly.graph_objects as go
 
 
-def PyMCSeasonalityPlot(dataset, seasonality, month_column, title):
+def PyMCSeasonalityPlot(dataset, seasonality, title):
     """
     PyMC Seasonality Plot
     """
@@ -18,7 +18,7 @@ def PyMCSeasonalityPlot(dataset, seasonality, month_column, title):
     for sample in seasonality.T:
         fig.add_trace(
             go.Scatter(
-                x=df[month_column],
+                x=df.index,
                 y=sample,
                 mode="lines",
                 line=dict(color="blue", width=1),
