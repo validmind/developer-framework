@@ -308,7 +308,7 @@ def run_async_check(func, *args, **kwargs):
             if task.get_name() == name:
                 return task
 
-        return run_async(func, name=name, *args, **kwargs)
+        return run_async(func, name=name, *args, **kwargs)  # noqa B026
 
     except RuntimeError:
         pass

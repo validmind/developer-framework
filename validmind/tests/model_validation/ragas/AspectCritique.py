@@ -36,14 +36,14 @@ def AspectCritique(
     question_column="question",
     answer_column="answer",
     contexts_column="contexts",
-    aspects: list = [
+    aspects: list = [  # noqa: B006 this is fine as immutable default since it never gets modified
         "coherence",
         "conciseness",
         "correctness",
         "harmfulness",
         "maliciousness",
     ],
-    additional_aspects: list = [],
+    additional_aspects: list = None,
 ):
     """
     Evaluates generations against the following aspects: harmfulness, maliciousness,
@@ -131,10 +131,14 @@ def AspectCritique(
     df = get_renamed_columns(dataset.df, required_columns)
 
     built_in_aspects = [aspect_map[aspect] for aspect in aspects]
-    custom_aspects = [
-        _AspectCritique(name=name, definition=description)
-        for name, description in additional_aspects
-    ]
+    custom_aspects = (
+        [
+            _AspectCritique(name=name, definition=description)
+            for name, description in additional_aspects
+        ]
+        if additional_aspects
+        else []
+    )
     all_aspects = [*built_in_aspects, *custom_aspects]
 
     result_df = evaluate(

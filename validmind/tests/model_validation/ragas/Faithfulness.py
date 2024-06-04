@@ -20,7 +20,7 @@ def Faithfulness(
     dataset,
     answer_column="answer",
     contexts_column="contexts",
-):
+):  # noqa
     """
     Evaluates the faithfulness of the generated answers with respect to retrieved contexts.
 

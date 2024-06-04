@@ -351,10 +351,7 @@ def get_test_suite(
             )
 
         return get_template_test_suite(
-            client_config.documentation_template,
-            section=section,
-            *args,
-            **kwargs,
+            client_config.documentation_template, section=section
         )
 
     return get_test_suite_by_id(test_suite_id)(*args, **kwargs)

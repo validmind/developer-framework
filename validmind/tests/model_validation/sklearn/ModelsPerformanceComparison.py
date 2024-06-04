@@ -75,7 +75,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         for class_name in classes:
             prf_dict = {}
             prf_dict["Class"] = class_name
-            for m, m_v in metric_value.items():
+            for m, _ in metric_value.items():
                 prf_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
                 prf_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
                 prf_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
@@ -85,7 +85,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         for class_name in avg_metrics:
             avg_dict = {}
             avg_dict["Class"] = class_name
-            for m, m_v in metric_value.items():
+            for m, _ in metric_value.items():
                 avg_dict[f"Precision- {m}"] = metric_value[m][class_name]["precision"]
                 avg_dict[f"Recall- {m}"] = metric_value[m][class_name]["recall"]
                 avg_dict[f"F1- {m}"] = metric_value[m][class_name]["f1-score"]
@@ -103,7 +103,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         for metric_name in ["accuracy", "roc_auc"]:
             acc_roc_auc_dict = {}
             acc_roc_auc_dict["Metric"] = metric_name
-            for m, m_v in metric_value.items():
+            for m, _ in metric_value.items():
                 acc_roc_auc_dict[f"accuracy- {m}"] = metric_value[m]["accuracy"]
                 acc_roc_auc_dict[f"roc_auc- {m}"] = metric_value[m]["roc_auc"]
             acc_roc_auc_table.append(acc_roc_auc_dict)

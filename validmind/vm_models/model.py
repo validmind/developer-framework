@@ -114,7 +114,7 @@ class VMModel(ABC):
 
         self.__post_init__()
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: B027
         """Allows child classes to add their own post-init logic"""
         pass
 

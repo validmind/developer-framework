@@ -34,7 +34,7 @@ class FunctionModel(VMModel):
     """
 
     def __post_init__(self):
-        if not getattr(self, "predict_fn") or not callable(self.predict_fn):
+        if not hasattr(self, "predict_fn") or not callable(self.predict_fn):
             raise ValueError("FunctionModel requires a callable predict_fn")
 
         self.name = self.name or self.predict_fn.__name__

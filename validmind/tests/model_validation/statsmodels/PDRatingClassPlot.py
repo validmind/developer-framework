@@ -83,7 +83,7 @@ class PDRatingClassPlot(Metric):
         fig = go.Figure()
 
         # Iterate through the sorted data and create a bar for each score bucket
-        for i, (bucket, rate) in enumerate(
+        for _, (bucket, rate) in enumerate(
             zip(rating_classes_sorted, default_rate_sorted)
         ):
             fig.add_trace(go.Bar(x=[bucket], y=[rate], name=bucket))

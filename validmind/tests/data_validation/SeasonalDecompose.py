@@ -204,7 +204,8 @@ class SeasonalDecompose(Metric):
                     )
                 else:
                     warnings.warn(
-                        f"No frequency could be inferred for variable '{col}'. Skipping seasonal decomposition and plots for this variable."
+                        f"No frequency could be inferred for variable '{col}'. "
+                        "Skipping seasonal decomposition and plots for this variable."
                     )
 
         return self.cache_results(results, figures=figures)

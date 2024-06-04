@@ -123,7 +123,7 @@ class ClusterPerformanceMetrics(ClusterPerformance):
         """
         table_records = []
         for result in raw_results:
-            for key, value in result.items():
+            for key, _ in result.items():
                 table_records.append(
                     {
                         "Metric": key,

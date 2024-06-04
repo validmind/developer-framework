@@ -21,7 +21,7 @@ def ContextPrecision(
     question_column: str = "question",
     contexts_column: str = "contexts",
     ground_truth_column: str = "ground_truth",
-):
+):  # noqa: B950
     """
     Context Precision is a metric that evaluates whether all of the ground-truth
     relevant items present in the contexts are ranked higher or not. Ideally all the
