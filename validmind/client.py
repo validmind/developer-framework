@@ -180,6 +180,7 @@ def init_model(
     attributes: dict = None,
     predict_fn: callable = None,
     __log=True,
+    **kwargs,
 ) -> VMModel:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -194,6 +195,7 @@ def init_model(
             this to the same key.
         attributes (dict): A dictionary of model attributes
         predict_fn (callable): A function that takes an input and returns a prediction
+        **kwargs: Additional arguments to pass to the model
 
     Raises:
         ValueError: If the model type is not supported
@@ -246,6 +248,7 @@ def init_model(
             input_id=input_id,
             model=model,  # Trained model instance
             predict_fn=predict_fn,
+            **kwargs,
         )
         metadata = get_model_info(vm_model)
     else:

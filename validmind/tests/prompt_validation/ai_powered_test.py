@@ -6,6 +6,19 @@ import re
 
 from validmind.ai.utils import get_client_and_model
 
+missing_prompt_message = """
+Cannot run prompt validation tests on a model with no prompt.
+You can set a prompt when creating a vm_model object like this:
+my_vm_model = vm.init_model(
+    predict_fn=call_model,
+    prompt=Prompt(
+        template="<your-prompt-here>",
+        variables=[],
+    ),
+    input_id="my_llm_model",
+)
+"""
+
 
 def call_model(
     system_prompt: str, user_prompt: str, temperature: float = 0.0, seed: int = 42
