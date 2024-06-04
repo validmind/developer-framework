@@ -59,7 +59,7 @@ class JarqueBera(Metric):
         """
         Calculates JB for each of the dataset features
         """
-        x_train = self.inputs.dataset.df
+        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
 
         jb_values = {}
         for col in x_train.columns:

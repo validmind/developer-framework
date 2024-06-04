@@ -50,7 +50,7 @@ class TabularDateTimeHistograms(Metric):
 
     metadata = {
         "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization"],
+        "tags": ["time_series_data", "visualization"],
     }
 
     def run(self):

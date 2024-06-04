@@ -62,7 +62,7 @@ class HeatmapFeatureCorrelations(Metric):
     }
 
     def run(self):
-        features = self.params["features"]
+        features = self.params.get("features")
         declutter = self.params.get("declutter", False)
         fontsize = self.params.get("fontsize", 13)
 

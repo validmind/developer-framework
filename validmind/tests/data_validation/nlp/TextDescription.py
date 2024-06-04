@@ -79,6 +79,10 @@ class TextDescription(Metric):
         "num_top_words": 3,
         "lang": "english",
     }
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization"],
+    }
 
     def general_text_metrics(self, df, text_column):
         nltk.download("punkt", quiet=True)
