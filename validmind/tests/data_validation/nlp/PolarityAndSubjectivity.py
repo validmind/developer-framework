@@ -27,6 +27,7 @@ def PolarityAndSubjectivity(dataset):
     Returns:
         plotly.graph_objs._figure.Figure: A Plotly scatter plot of polarity vs subjectivity.
     """
+
     # Function to calculate sentiment and subjectivity
     def analyze_sentiment(text):
         analysis = TextBlob(text)

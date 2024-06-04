@@ -123,9 +123,9 @@ class RegressionModelSensitivityPlot(Metric):
             pred,
         ) in predictions.items():  # Here, label is the key, pred is the value
             transformed_pred = self.integrate_diff(pred, start_value)
-            transformed_predictions[
-                label
-            ] = transformed_pred  # Store transformed dataframe in the new dictionary
+            transformed_predictions[label] = (
+                transformed_pred  # Store transformed dataframe in the new dictionary
+            )
 
         return transformed_predictions
 
@@ -169,8 +169,8 @@ class RegressionModelSensitivityPlot(Metric):
             for col in cols_to_shock:
                 temp_df = df.copy()
                 temp_df[col] = temp_df[col] * (1 + shock)
-                shocked_dfs[
-                    f"Shock of {shock} to {col}"
-                ] = temp_df  # Include shock value in the key
+                shocked_dfs[f"Shock of {shock} to {col}"] = (
+                    temp_df  # Include shock value in the key
+                )
 
         return shocked_dfs
