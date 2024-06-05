@@ -14,7 +14,7 @@ from validmind.vm_models.test.result_wrapper import (
     ThresholdTestResultWrapper,
 )
 
-from .run_test_utils import (
+from tests.run_test_utils import (
     setup_summarization_test_inputs,
     setup_tabular_test_inputs,
     setup_time_series_test_inputs,
