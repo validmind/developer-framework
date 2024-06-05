@@ -56,7 +56,7 @@ class RegressionModelsPerformanceComparison(Metric):
     """
 
     name = "models_performance_comparison"
-    required_inputs = ["model", "dataset"]
+    required_inputs = ["dataset", "models"]
 
     metadata = {
         "task_types": ["regression"],
@@ -117,10 +117,7 @@ class RegressionModelsPerformanceComparison(Metric):
                 "List of models must be provided as a `models` parameter to compare performance"
             )
 
-        all_models = [self.inputs.model]
-
-        if self.inputs.models is not None:
-            all_models.extend(self.inputs.models)
+        all_models = self.inputs.models
 
         results = {}
 

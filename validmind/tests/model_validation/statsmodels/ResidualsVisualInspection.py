@@ -70,7 +70,7 @@ class ResidualsVisualInspection(Metric):
     required_inputs = ["dataset"]
     metadata = {
         "task_types": ["regression"],
-        "tags": ["statsmodels", "visualization"],
+        "tags": ["time_series_data", "statsmodels", "visualization"],
     }
 
     @staticmethod

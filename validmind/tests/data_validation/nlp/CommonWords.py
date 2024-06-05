@@ -52,7 +52,7 @@ class CommonWords(Metric):
     """
 
     name = "common_words"
-    required_inputs = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["text_classification", "text_summarization"],
         "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],

@@ -48,7 +48,7 @@ class PiTPDHistogram(Metric):
     """
 
     name = "pit_pd_histogram"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"title": "Histogram of PiT Probability of Default"}
     metadata = {
         "task_types": ["classification"],
