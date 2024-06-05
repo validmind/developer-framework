@@ -60,7 +60,7 @@ class TextDescription(Metric):
     """
 
     name = "text_description"
-    required_inputs = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset"]
     default_params = {
         "unwanted_tokens": {
             "s",

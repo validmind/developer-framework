@@ -54,7 +54,7 @@ class Mentions(ThresholdTest):
 
     name = "mentions"
 
-    required_inputs = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset"]
     default_params = {"top_mentions": 25}
     metadata = {
         "task_types": ["text_classification", "text_summarization"],

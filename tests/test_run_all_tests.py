@@ -4,20 +4,21 @@ import time
 import unittest
 
 import matplotlib.pyplot as plt
-import xgboost as xgb
 
-from sklearn.ensemble import RandomForestClassifier
 from tabulate import tabulate
 from tqdm import tqdm
-
-import validmind as vm
-from validmind.datasets.classification import customer_churn as demo_dataset
 from validmind.logging import get_logger
+from validmind.tests import list_tests, load_test, run_test
 from validmind.vm_models.test.result_wrapper import (
     MetricResultWrapper,
     ThresholdTestResultWrapper,
 )
-from validmind.tests import list_tests, load_test, run_test
+
+from .run_test_utils import (
+    setup_summarization_test_inputs,
+    setup_tabular_test_inputs,
+    setup_time_series_test_inputs,
+)
 
 
 logger = get_logger(__name__)
@@ -40,13 +41,32 @@ KNOWN_FAILING_TESTS = [
     # Remove in_sample_datasetsm, out_of_sample_datasets inputs
     "validmind.model_validation.statsmodels.RegressionModelsPerformance",
     "validmind.model_validation.statsmodels.ScorecardHistogram",
+    # numpy.linalg.LinAlgError: SVD did not converge
+    "validmind.model_validation.statsmodels.DFGLSArch",
+    "validmind.model_validation.statsmodels.ZivotAndrewsArch",
+    # ValueError: This function does not handle missing values
+    "validmind.model_validation.statsmodels.ResidualsVisualInspection",
+    # statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
+    "validmind.model_validation.statsmodels.ADF",
+    "validmind.model_validation.statsmodels.ADFTest",
+    "validmind.model_validation.statsmodels.PhillipsPerronArch",
+    # ValueError: cannot convert float NaN to integer
+    "validmind.model_validation.statsmodels.KPSS",
+    # Can only compute partial correlations for lags up to 50% of the sample size
+    "validmind.data_validation.ACFandPACFPlot",
+    # ValueError: No datetime columns found in the dataset
+    "validmind.data_validation.TabularDateTimeHistograms",
 ]
 SKIPPED_TESTS = []
 SUCCESSFUL_TESTS = []
-TABULAR_DATASET_TASKS = [
-    "classification",
-    "regression",
-]
+
+# Harcode some tests that require specific inputs instead of trying to
+# guess from tags or task_types
+CUSTOM_TEST_INPUT_ASSIGNMENTS = {
+    "validmind.data_validation.DatasetDescription": "classification",
+    "validmind.data_validation.DatasetSplit": "classification",
+    "validmind.model_validation.ModelMetadata": "classification",
+}
 
 # Some tests require specific configurations. This is either expected and required
 # or we need to fix these tests so they can run with sane defaults
@@ -59,119 +79,14 @@ TEST_TO_PARAMS_CONFIG = {
     "validmind.data_validation.BivariateHistograms": "features_pairs_raw",
     "validmind.data_validation.BivariateScatterPlots": "features_pairs_raw",
 }
+
+# Global inputs and configurations for the tests
 TEST_CONFIG = {}
+TEST_INPUTS = {}
 
 
 class TestRunTest(unittest.TestCase):
     pass
-
-
-test_inputs = {}
-
-
-def _assign_features_pairs_config(raw_df, train_df=None, test_df=None):
-    """
-    Generates pairs of features for tests such as BivariateFeaturesBarPlots test
-    """
-    TEST_CONFIG["features_pairs_raw"] = {"features_pairs": {}}
-
-    for i in range(0, len(raw_df.columns)):
-        for j in range(i + 1, len(raw_df.columns)):
-            TEST_CONFIG["features_pairs_raw"]["features_pairs"][raw_df.columns[i]] = (
-                raw_df.columns[j]
-            )
-
-
-def _setup_tabular_test_inputs():
-    df = demo_dataset.load_data()
-    df = df.sample(1000)
-
-    train_df, validation_df, test_df = demo_dataset.preprocess(df)
-    x_train = train_df.drop(demo_dataset.target_column, axis=1)
-    y_train = train_df[demo_dataset.target_column]
-    x_val = validation_df.drop(demo_dataset.target_column, axis=1)
-    y_val = validation_df[demo_dataset.target_column]
-
-    classifier = xgb.XGBClassifier(early_stopping_rounds=10)
-    classifier.set_params(eval_metric=["error", "logloss", "auc"])
-    classifier.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=False)
-
-    classifier_rf = RandomForestClassifier()
-    classifier_rf.fit(x_train, y_train)
-
-    # Models
-    vm_classifier_model = vm.init_model(
-        classifier,
-        input_id="xgb_classifier",
-        __log=False,
-    )
-    vm_classifier_rf_model = vm.init_model(
-        classifier_rf,
-        input_id="rf_classifier",
-        __log=False,
-    )
-
-    # Datasets
-    vm_raw_dataset = vm.init_dataset(
-        dataset=df,
-        input_id="raw_dataset",
-        target_column=demo_dataset.target_column,
-        class_labels=demo_dataset.class_labels,
-        __log=False,
-    )
-    vm_train_ds = vm.init_dataset(
-        dataset=train_df,
-        input_id="train_dataset",
-        target_column=demo_dataset.target_column,
-        __log=False,
-    )
-    vm_test_ds = vm.init_dataset(
-        dataset=test_df,
-        input_id="test_dataset",
-        target_column=demo_dataset.target_column,
-        __log=False,
-    )
-
-    # Assign predictions for each model
-    vm_train_ds.assign_predictions(vm_classifier_model)
-    vm_train_ds.assign_predictions(vm_classifier_rf_model)
-
-    vm_test_ds.assign_predictions(vm_classifier_model)
-    vm_test_ds.assign_predictions(vm_classifier_rf_model)
-
-    _assign_features_pairs_config(df)
-
-    # Usage:
-    #
-    # For 1 dataset tests use the raw dataset (i.e. data quality tests)
-    # For 2 dataset/model tests, use model and test dataset
-    # For 3 two dataset tests, use both the training and test datasets (comparison tests)
-    test_inputs["classification"] = {
-        "single_dataset": {
-            "dataset": vm_raw_dataset,
-        },
-        "two_datasets": {
-            "datasets": [vm_train_ds, vm_test_ds],
-        },
-        "single_model": {
-            "model": vm_classifier_model,
-        },
-        "dataset_and_two_models": {
-            "dataset": vm_test_ds,
-            "models": [vm_classifier_model, vm_classifier_rf_model],
-        },
-        "model_and_dataset": {
-            "dataset": vm_test_ds,
-            "model": vm_classifier_model,
-        },
-        "model_and_two_datasets": {
-            "model": vm_classifier_model,
-            "datasets": [vm_train_ds, vm_test_ds],
-        },
-        "two_models": {
-            "models": [vm_classifier_model, vm_classifier_rf_model],
-        },
-    }
 
 
 def create_unit_test_func(vm_test_id, vm_test_class):
@@ -214,51 +129,52 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             return
 
         if (
-            "time_series_data" in vm_test_class.metadata["tags"]
-            and "tabular_data" not in vm_test_class.metadata["tags"]
-        ):
-            logger.debug(
-                "--- Skipping test - time series data tests not supported yet %s",
-                vm_test_id,
-            )
-            SKIPPED_TESTS.append(vm_test_id)
-            return
-
-        if (
             "llm" in vm_test_class.metadata["tags"]
-            or "nlp" in vm_test_class.metadata["tags"]
             or "embeddings" in vm_test_class.metadata["tags"]
         ):
             logger.debug(
-                "--- Skipping test - NLP/LLM tests not supported yet %s",
+                "--- Skipping test - LLM/Embedding tests not supported yet %s",
                 vm_test_id,
             )
             SKIPPED_TESTS.append(vm_test_id)
             return
 
         logger.debug(">>> Running test %s", vm_test_id)
-        inputs = test_inputs["classification"]
+
+        # Assume we'll load the classification (tabular) inputs in most cases
+        custom_test_input_assignment = CUSTOM_TEST_INPUT_ASSIGNMENTS.get(vm_test_id)
+        if custom_test_input_assignment:
+            inputs = TEST_INPUTS[custom_test_input_assignment]
+        elif (
+            "text_summarization" in vm_test_class.metadata["task_types"]
+            or "nlp" in vm_test_class.metadata["task_types"]
+        ):
+            inputs = TEST_INPUTS["text_summarization"]
+        elif "time_series_data" in vm_test_class.metadata["tags"]:
+            inputs = TEST_INPUTS["time_series"]
+        else:
+            inputs = TEST_INPUTS["classification"]
 
         # Build the single test inputs according to the required inputs
-        single_test_inputs = {}
+        single_TEST_INPUTS = {}
         if required_inputs == ["dataset"]:
-            single_test_inputs = inputs["single_dataset"]
+            single_TEST_INPUTS = inputs["single_dataset"]
         elif required_inputs == ["dataset", "model"]:
-            single_test_inputs = inputs["model_and_dataset"]
+            single_TEST_INPUTS = inputs["model_and_dataset"]
         elif required_inputs == ["datasets"]:
-            single_test_inputs = inputs["two_datasets"]
+            single_TEST_INPUTS = inputs["two_datasets"]
         elif required_inputs == ["datasets", "model"]:
-            single_test_inputs = inputs["model_and_two_datasets"]
+            single_TEST_INPUTS = inputs["model_and_two_datasets"]
         elif required_inputs == ["models"]:
-            single_test_inputs = inputs["two_models"]
+            single_TEST_INPUTS = inputs["two_models"]
         elif required_inputs == ["dataset", "models"]:
-            single_test_inputs = inputs["dataset_and_two_models"]
+            single_TEST_INPUTS = inputs["dataset_and_two_models"]
         elif required_inputs == ["model"]:
-            single_test_inputs = inputs["single_model"]
+            single_TEST_INPUTS = inputs["single_model"]
 
         test_kwargs = {
             "test_id": vm_test_id,
-            "inputs": single_test_inputs,
+            "inputs": single_TEST_INPUTS,
             "__log": False,
             "show": False,
         }
@@ -353,7 +269,9 @@ def create_test_summary_func():
 
 
 def create_unit_test_funcs_from_vm_tests():
-    _setup_tabular_test_inputs()
+    setup_tabular_test_inputs(TEST_INPUTS, TEST_CONFIG)
+    setup_summarization_test_inputs(TEST_INPUTS, TEST_CONFIG)
+    setup_time_series_test_inputs(TEST_INPUTS, TEST_CONFIG)
 
     for vm_test_id in tqdm(sorted(list_tests(pretty=False))):
         if vm_test_id in KNOWN_FAILING_TESTS:
