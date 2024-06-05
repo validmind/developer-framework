@@ -195,7 +195,19 @@ class VMDataset:
         probability_column: str = None,
         probability_values: list = None,
         prediction_probabilities: list = None,  # DEPRECATED: use probability_values
+        **kwargs,
     ):
+        """Assign predictions and probabilities to the dataset.
+
+        Args:
+            model (VMModel): The model used to generate the predictions.
+            prediction_column (str, optional): The name of the column containing the predictions. Defaults to None.
+            prediction_values (list, optional): The values of the predictions. Defaults to None.
+            probability_column (str, optional): The name of the column containing the probabilities. Defaults to None.
+            probability_values (list, optional): The values of the probabilities. Defaults to None.
+            prediction_probabilities (list, optional): DEPRECATED: The values of the probabilities. Defaults to None.
+            kwargs: Additional keyword arguments that will get passed through to the model's `predict` method.
+        """
         if prediction_probabilities is not None:
             warnings.warn(
                 "The `prediction_probabilities` argument is deprecated. Use `probability_values` instead.",
@@ -226,7 +238,9 @@ class VMDataset:
 
         if prediction_values is None:
             X = self.df if isinstance(model, (FunctionModel, PipelineModel)) else self.x
-            probability_values, prediction_values = compute_predictions(model, X)
+            probability_values, prediction_values = compute_predictions(
+                model, X, **kwargs
+            )
 
         prediction_column = prediction_column or f"{model.input_id}_prediction"
         self._add_column(prediction_column, prediction_values)

@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 @dataclass
 class Prompt:
     template: str
-    variables: list
+    variables: list = None
 
 
 class FoundationModel(FunctionModel):

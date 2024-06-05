@@ -66,4 +66,4 @@ def get_explanation(response: str):
     if not explanation:
         raise ValueError("Could not find explanation in response")
 
-    return explanation.group(1)
+    return explanation.group(1).strip().strip("```")

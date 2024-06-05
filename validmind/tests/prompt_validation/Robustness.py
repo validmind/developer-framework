@@ -120,7 +120,10 @@ Input:
             raise MissingRequiredTestInputError(missing_prompt_message)
 
         # TODO: add support for multi-variable prompts
-        if len(self.inputs.model.prompt.variables) > 1:
+        if (
+            not self.inputs.model.prompt.variables
+            or len(self.inputs.model.prompt.variables) > 1
+        ):
             raise SkipTestError(
                 "Robustness only supports single-variable prompts for now"
             )

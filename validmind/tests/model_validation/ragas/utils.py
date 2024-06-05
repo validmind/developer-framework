@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import os
+
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from validmind.ai.utils import get_client_and_model
@@ -11,15 +13,11 @@ EMBEDDINGS_MODEL = "text-embedding-3-small"
 
 def get_ragas_config():
     client, model = get_client_and_model()
-
-    ChatOpenAI(base_url=client.base_url, api_key=client.api_key, model=model)
-    OpenAIEmbeddings(
-        base_url=client.base_url, api_key=client.api_key, model=EMBEDDINGS_MODEL
-    )
+    os.environ["OPENAI_API_BASE"] = str(client.base_url)
 
     return {
-        "llm": client,
-        "embeddings": model,
+        "llm": ChatOpenAI(api_key=client.api_key, model=model),
+        "embeddings": OpenAIEmbeddings(api_key=client.api_key, model=EMBEDDINGS_MODEL),
     }
 
 

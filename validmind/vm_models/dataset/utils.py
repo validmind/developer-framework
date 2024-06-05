@@ -94,7 +94,7 @@ def _is_probabilties(output):
     return np.all((output >= 0) & (output <= 1)) and np.any((output > 0) & (output < 1))
 
 
-def compute_predictions(model, X) -> tuple:
+def compute_predictions(model, X, **kwargs) -> tuple:
     probability_values = None
 
     try:
@@ -108,7 +108,7 @@ def compute_predictions(model, X) -> tuple:
 
     try:
         logger.info("Running predict()... This may take a while")
-        prediction_values = model.predict(X)
+        prediction_values = model.predict(X, **kwargs)
         logger.info("Done running predict()")
     except MissingOrInvalidModelPredictFnError:
         raise MissingOrInvalidModelPredictFnError(
