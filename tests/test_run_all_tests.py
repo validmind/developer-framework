@@ -1,5 +1,6 @@
 """This is a test harness to run unit tests against the ValidMind tests"""
 
+import os
 import time
 import unittest
 
@@ -273,8 +274,13 @@ def create_unit_test_funcs_from_vm_tests():
     setup_summarization_test_inputs(TEST_INPUTS, TEST_CONFIG)
     setup_time_series_test_inputs(TEST_INPUTS, TEST_CONFIG)
 
-    for vm_test_id in tqdm(sorted(list_tests(pretty=False))):
-        if vm_test_id in KNOWN_FAILING_TESTS:
+    custom_test_ids = os.environ.get("TEST_IDS")
+    custom_test_ids = custom_test_ids.split(",") if custom_test_ids else None
+    tests_to_run = list_tests(pretty=False) if not custom_test_ids else custom_test_ids
+
+    for vm_test_id in tqdm(sorted(tests_to_run)):
+        # Only skip known failing tests if we're not running a custom set of tests
+        if custom_test_ids is None and vm_test_id in KNOWN_FAILING_TESTS:
             logger.debug("Skipping known failing test %s", vm_test_id)
             continue
 

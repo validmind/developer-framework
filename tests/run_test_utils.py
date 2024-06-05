@@ -151,14 +151,9 @@ def setup_time_series_test_inputs(test_inputs={}, test_config={}):
         __log=False,
     )
 
-    # Assign predictions for each model
-    # vm_train_ds.assign_predictions(vm_classifier_model)
+    # TODO: Assign predictions for each model
+    # e.g. vm_train_ds.assign_predictions(vm_classifier_model)
 
-    # Usage:
-    #
-    # For 1 dataset tests use the raw dataset (i.e. data quality tests)
-    # For 2 dataset/model tests, use model and test dataset
-    # For 3 two dataset tests, use both the training and test datasets (comparison tests)
     test_inputs["time_series"] = {
         "single_dataset": {
             "dataset": vm_raw_dataset,
