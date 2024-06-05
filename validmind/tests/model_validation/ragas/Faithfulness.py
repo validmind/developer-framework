@@ -20,7 +20,7 @@ def Faithfulness(
     dataset,
     answer_column="answer",
     contexts_column="contexts",
-):
+):  # noqa
     """
     Evaluates the faithfulness of the generated answers with respect to retrieved contexts.
 
@@ -101,7 +101,9 @@ def Faithfulness(
 
     return (
         {
-            "Scores": result_df[["contexts", "answer", "faithfulness"]],
+            "Scores (will not be uploaded to UI)": result_df[
+                ["contexts", "answer", "faithfulness"]
+            ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["faithfulness"].mean(),

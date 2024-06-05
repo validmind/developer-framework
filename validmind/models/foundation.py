@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 @dataclass
 class Prompt:
     template: str
-    variables: list
+    variables: list = None
 
 
 class FoundationModel(FunctionModel):
@@ -33,17 +33,21 @@ class FoundationModel(FunctionModel):
     """
 
     def __post_init__(self):
-        if not getattr(self, "predict_fn") or not callable(self.predict_fn):
-            raise ValueError("FoundationModel requires a callable predict_fn")
+        super().__post_init__()
 
-        self.name = self.name or self.predict_fn.__name__
+        if not hasattr(self, "prompt") or not isinstance(self.prompt, Prompt):
+            raise ValueError("FoundationModel requires a Prompt object")
 
     def _build_prompt(self, x: pd.DataFrame):
         """
         Builds the prompt for the model
         """
-        return self.prompt.template.format(
-            **{key: x[key] for key in self.prompt.variables}
+        return (
+            self.prompt.template.format(
+                **{key: x[key] for key in self.prompt.variables}
+            )
+            if self.prompt.variables
+            else self.prompt.template
         )
 
     def predict(self, X: pd.DataFrame):

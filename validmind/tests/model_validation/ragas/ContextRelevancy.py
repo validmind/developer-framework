@@ -96,7 +96,9 @@ def ContextRelevancy(
 
     return (
         {
-            "Scores": result_df[["question", "contexts", "context_relevancy"]],
+            "Scores (will not be uploaded to UI)": result_df[
+                ["question", "contexts", "context_relevancy"]
+            ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_relevancy"].mean(),

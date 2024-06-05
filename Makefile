@@ -11,7 +11,9 @@ format:
 	poetry run isort validmind
 
 lint:
-	poetry run flake8 validmind
+# don't check max line length for now since black already takes care of it
+# and flake8 is too strict where it doesn't need to be
+	poetry run flake8 validmind --config .flake8
 
 install:
 	poetry install --all-extras

@@ -2,6 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import os
+
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from validmind.ai.utils import get_client_and_model
@@ -11,28 +13,31 @@ EMBEDDINGS_MODEL = "text-embedding-3-small"
 
 def get_ragas_config():
     client, model = get_client_and_model()
-
-    ChatOpenAI(base_url=client.base_url, api_key=client.api_key, model=model)
-    OpenAIEmbeddings(
-        base_url=client.base_url, api_key=client.api_key, model=EMBEDDINGS_MODEL
-    )
+    os.environ["OPENAI_API_BASE"] = str(client.base_url)
 
     return {
-        "llm": client,
-        "embeddings": model,
+        "llm": ChatOpenAI(api_key=client.api_key, model=model),
+        "embeddings": OpenAIEmbeddings(api_key=client.api_key, model=EMBEDDINGS_MODEL),
     }
 
 
-def _udf_get_sub_col(x, root_col, sub_col):
-    if not isinstance(x, dict):
-        raise TypeError(f"Expected a dictionary in column '{root_col}', got {type(x)}.")
+def make_sub_col_udf(root_col, sub_col):
+    """Create a udf that extracts sub-column values from a dictionary."""
 
-    if sub_col not in x:
-        raise KeyError(
-            f"Sub-column '{sub_col}' not found in dictionary in column '{root_col}'."
-        )
+    def _udf_get_sub_col(x):
+        if not isinstance(x, dict):
+            raise TypeError(
+                f"Expected a dictionary in column '{root_col}', got {type(x)}."
+            )
 
-    return x[sub_col]
+        if sub_col not in x:
+            raise KeyError(
+                f"Sub-column '{sub_col}' not found in dictionary in column '{root_col}'."
+            )
+
+        return x[sub_col]
+
+    return _udf_get_sub_col
 
 
 def get_renamed_columns(df, column_map):
@@ -54,6 +59,7 @@ def get_renamed_columns(df, column_map):
     Returns:
         pd.DataFrame: The DataFrame with columns renamed.
     """
+
     new_df = df.copy()
 
     for new_name, source in column_map.items():
@@ -70,7 +76,7 @@ def get_renamed_columns(df, column_map):
 
             if root_col in new_df.columns:
                 new_df[new_name] = new_df[root_col].apply(
-                    lambda x: _udf_get_sub_col(x, root_col, sub_col)
+                    make_sub_col_udf(root_col, sub_col)
                 )
 
             else:

@@ -6,7 +6,7 @@ import os
 
 from openai import AzureOpenAI, Client, OpenAI
 
-from ..api_client import get_ai_key
+from ..api_client import get_ai_key, get_api_host
 from ..logging import get_logger
 
 logger = get_logger(__name__)
@@ -58,7 +58,15 @@ def get_client_and_model():
     else:
         try:
             response = get_ai_key()
-            __client = Client(base_url=response["url"], api_key=response["key"])
+            __client = Client(
+                base_url=(
+                    # TODO: improve this to be a bit more dynamic
+                    "http://localhost:4000/genai"
+                    if "localhost" in get_api_host()
+                    else f"{get_api_host()}/genai"
+                ),
+                api_key=response["key"],
+            )
             __model = "gpt-4o"  # TODO: backend should tell us which model to use
             logger.debug(f"Using ValidMind {__model} for generating descriptions")
         except Exception as e:

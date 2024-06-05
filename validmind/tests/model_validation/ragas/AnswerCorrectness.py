@@ -112,7 +112,7 @@ def AnswerCorrectness(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 ["question", "answer", "ground_truth", "answer_correctness"]
             ],
             "Aggregate Scores": [

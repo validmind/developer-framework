@@ -101,7 +101,9 @@ def AnswerSimilarity(
 
     return (
         {
-            "Scores": result_df[["answer", "ground_truth", "answer_similarity"]],
+            "Scores (will not be uploaded to UI)": result_df[
+                ["answer", "ground_truth", "answer_similarity"]
+            ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_similarity"].mean(),
