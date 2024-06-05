@@ -7,6 +7,7 @@ from typing import List
 
 import pandas as pd
 
+from validmind.errors import MissingRequiredTestInputError
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -15,7 +16,12 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
-from .ai_powered_test import call_model, get_explanation, get_score
+from .ai_powered_test import (
+    call_model,
+    get_explanation,
+    get_score,
+    missing_prompt_message,
+)
 
 
 @dataclass
@@ -108,6 +114,9 @@ Prompt:
         )
 
     def run(self):
+        if not hasattr(self.inputs.model, "prompt"):
+            raise MissingRequiredTestInputError(missing_prompt_message)
+
         response = call_model(
             system_prompt=self.system_prompt,
             user_prompt=self.user_prompt.format(

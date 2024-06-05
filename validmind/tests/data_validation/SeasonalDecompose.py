@@ -90,14 +90,18 @@ class SeasonalDecompose(Metric):
         dfs = [
             pd.DataFrame(series)
             .pipe(
-                lambda x: x.reset_index()
-                if not isinstance(x.index, pd.DatetimeIndex)
-                else x.reset_index().rename(columns={x.index.name: "Date"})
+                lambda x: (
+                    x.reset_index()
+                    if not isinstance(x.index, pd.DatetimeIndex)
+                    else x.reset_index().rename(columns={x.index.name: "Date"})
+                )
             )
             .assign(
-                Date=lambda x: x["Date"].astype(str)
-                if "Date" in x.columns
-                else x.index.astype(str)
+                Date=lambda x: (
+                    x["Date"].astype(str)
+                    if "Date" in x.columns
+                    else x.index.astype(str)
+                )
             )
             for series in results.values()
         ]
@@ -200,7 +204,8 @@ class SeasonalDecompose(Metric):
                     )
                 else:
                     warnings.warn(
-                        f"No frequency could be inferred for variable '{col}'. Skipping seasonal decomposition and plots for this variable."
+                        f"No frequency could be inferred for variable '{col}'. "
+                        "Skipping seasonal decomposition and plots for this variable."
                     )
 
         return self.cache_results(results, figures=figures)

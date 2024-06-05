@@ -52,6 +52,9 @@ class Test(TestUtils):
                 "test_id is missing. It must be passed when initializing the test"
             )
         self._ref_id = str(uuid4())
+        self.key = (
+            self.test_id
+        )  # for backwards compatibility - figures really should get keyed automatically
 
         # TODO: add validation for required inputs
         if self.default_params is None:

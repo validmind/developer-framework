@@ -109,7 +109,7 @@ def ContextEntityRecall(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 [
                     "contexts",
                     "ground_truth",

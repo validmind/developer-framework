@@ -31,10 +31,12 @@ class FunctionModel(VMModel):
             input features and return a prediction.
         input_id (str, optional): The input ID for the model. Defaults to None.
         name (str, optional): The name of the model. Defaults to the name of the predict_fn.
+        prompt (Prompt, optional): If using a prompt, the prompt object that defines the template
+            and the variables (if any). Defaults to None.
     """
 
     def __post_init__(self):
-        if not getattr(self, "predict_fn") or not callable(self.predict_fn):
+        if not hasattr(self, "predict_fn") or not callable(self.predict_fn):
             raise ValueError("FunctionModel requires a callable predict_fn")
 
         self.name = self.name or self.predict_fn.__name__

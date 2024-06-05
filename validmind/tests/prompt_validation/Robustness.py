@@ -7,7 +7,7 @@ from typing import List
 
 import pandas as pd
 
-from validmind.errors import SkipTestError
+from validmind.errors import MissingRequiredTestInputError, SkipTestError
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -16,7 +16,7 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
-from .ai_powered_test import call_model
+from .ai_powered_test import call_model, missing_prompt_message
 
 
 @dataclass
@@ -116,8 +116,14 @@ Input:
         )
 
     def run(self):
+        if not hasattr(self.inputs.model, "prompt"):
+            raise MissingRequiredTestInputError(missing_prompt_message)
+
         # TODO: add support for multi-variable prompts
-        if len(self.inputs.model.prompt.variables) > 1:
+        if (
+            not self.inputs.model.prompt.variables
+            or len(self.inputs.model.prompt.variables) > 1
+        ):
             raise SkipTestError(
                 "Robustness only supports single-variable prompts for now"
             )

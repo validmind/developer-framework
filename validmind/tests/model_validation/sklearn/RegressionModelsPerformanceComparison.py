@@ -94,7 +94,7 @@ class RegressionModelsPerformanceComparison(Metric):
         for metric_name in metrics:
             errors_dict = {}
             errors_dict["Errors"] = metric_name
-            for m, m_v in metric_value.items():
+            for m, _ in metric_value.items():
                 for metric in metrics:
                     res = re.findall(r"\(.*?\)", metric)
                     res[0][1:-1]

@@ -83,11 +83,14 @@ class TestSuiteRunner:
                     test_configs = test_configs.get("params", {})
                 else:
                     if (test_configs) and ("params" not in test_configs):
-                        """[DEPRECATED] Deprecated method for setting test parameters directly in the 'config' parameter"""
-                        logger.info(
-                            "Setting test parameters directly in the 'config' parameter of the run_documentation_tests() method is deprecated. "
-                            'Instead, use the new format of the config: config = {"test_id": {"params": {...}, "inputs": {...}}}'
+                        # [DEPRECATED] This is the old way of setting test parameters
+                        msg = (
+                            "Setting test parameters directly in the 'config' parameter"
+                            " of the run_documentation_tests() method is deprecated. "
+                            "Instead, use the new format of the config: "
+                            'config = {"test_id": {"params": {...}, "inputs": {...}}}'
                         )
+                        logger.warning(msg)
 
                 test.load(inputs=inputs, context=self.context, config=test_configs)
 
