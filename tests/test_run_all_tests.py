@@ -156,25 +156,25 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             inputs = TEST_INPUTS["classification"]
 
         # Build the single test inputs according to the required inputs
-        single_TEST_INPUTS = {}
+        single_test_inputs = {}
         if required_inputs == ["dataset"]:
-            single_TEST_INPUTS = inputs["single_dataset"]
+            single_test_inputs = inputs["single_dataset"]
         elif required_inputs == ["dataset", "model"]:
-            single_TEST_INPUTS = inputs["model_and_dataset"]
+            single_test_inputs = inputs["model_and_dataset"]
         elif required_inputs == ["datasets"]:
-            single_TEST_INPUTS = inputs["two_datasets"]
+            single_test_inputs = inputs["two_datasets"]
         elif required_inputs == ["datasets", "model"]:
-            single_TEST_INPUTS = inputs["model_and_two_datasets"]
+            single_test_inputs = inputs["model_and_two_datasets"]
         elif required_inputs == ["models"]:
-            single_TEST_INPUTS = inputs["two_models"]
+            single_test_inputs = inputs["two_models"]
         elif required_inputs == ["dataset", "models"]:
-            single_TEST_INPUTS = inputs["dataset_and_two_models"]
+            single_test_inputs = inputs["dataset_and_two_models"]
         elif required_inputs == ["model"]:
-            single_TEST_INPUTS = inputs["single_model"]
+            single_test_inputs = inputs["single_model"]
 
         test_kwargs = {
             "test_id": vm_test_id,
-            "inputs": single_TEST_INPUTS,
+            "inputs": single_test_inputs,
             "__log": False,
             "show": False,
         }
