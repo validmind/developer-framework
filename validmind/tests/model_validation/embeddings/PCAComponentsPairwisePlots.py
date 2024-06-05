@@ -10,7 +10,11 @@ import plotly.express as px
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+from validmind import tags, tasks
 
+
+@tags("visualization", "dimensionality_reduction", "embeddings")
+@tasks("text_qa", "text_generation", "text_summarization")
 def PCAComponentsPairwisePlots(dataset, model, n_components=3):
     """
     Generates scatter plots for pairwise combinations of principal component analysis (PCA) components of model embeddings.

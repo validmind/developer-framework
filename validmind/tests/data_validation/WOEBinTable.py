@@ -46,7 +46,7 @@ class WOEBinTable(Metric):
     """
 
     name = "woe_bin_table"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"breaks_adj": None}
     metadata = {
         "task_types": ["classification"],

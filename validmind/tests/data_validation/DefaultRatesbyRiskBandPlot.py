@@ -52,7 +52,7 @@ class DefaultRatesbyRiskBandPlot(Metric):
     """
 
     name = "default_rates_by_risk_band_plot"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"title": "Percentage of Total Accounts by Risk Band"}
     metadata = {
         "task_types": ["classification"],

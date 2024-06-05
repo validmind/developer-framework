@@ -58,7 +58,7 @@ class WOEBinPlots(Metric):
     """
 
     name = "woe_bin_plots"
-    required_context = ["dataset"]
+    required_inputs = ["dataset"]
     default_params = {"breaks_adj": None, "fig_height": 600, "fig_width": 500}
     metadata = {
         "task_types": ["classification"],
