@@ -9,7 +9,7 @@ Client interface for all data and model validation functions
 import pandas as pd
 import polars as pl
 
-from .api_client import _log_input as log_input
+from .api_client import log_input as log_input
 from .client_config import client_config
 from .errors import (
     GetTestSuiteError,
@@ -180,6 +180,7 @@ def init_model(
     attributes: dict = None,
     predict_fn: callable = None,
     __log=True,
+    **kwargs,
 ) -> VMModel:
     """
     Initializes a VM Model, which can then be passed to other functions
@@ -194,6 +195,7 @@ def init_model(
             this to the same key.
         attributes (dict): A dictionary of model attributes
         predict_fn (callable): A function that takes an input and returns a prediction
+        **kwargs: Additional arguments to pass to the model
 
     Raises:
         ValueError: If the model type is not supported
@@ -246,6 +248,7 @@ def init_model(
             input_id=input_id,
             model=model,  # Trained model instance
             predict_fn=predict_fn,
+            **kwargs,
         )
         metadata = get_model_info(vm_model)
     else:
@@ -351,10 +354,7 @@ def get_test_suite(
             )
 
         return get_template_test_suite(
-            client_config.documentation_template,
-            section=section,
-            *args,
-            **kwargs,
+            client_config.documentation_template, section=section
         )
 
     return get_test_suite_by_id(test_suite_id)(*args, **kwargs)

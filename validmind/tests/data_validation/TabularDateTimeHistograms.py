@@ -2,8 +2,8 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
+import plotly.graph_objects as go
 
 from validmind.vm_models import Figure, Metric
 
@@ -50,45 +50,41 @@ class TabularDateTimeHistograms(Metric):
 
     metadata = {
         "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization"],
+        "tags": ["time_series_data", "visualization"],
     }
 
     def run(self):
         df = self.inputs.dataset.df
 
-        # Extract datetime columns from the dataset
-        datetime_columns = df.select_dtypes(include=["datetime64"]).columns.tolist()
-
-        if len(datetime_columns) == 0:
-            raise ValueError("No datetime columns found in the dataset")
+        # Check if the index is a datetime type
+        if not isinstance(df.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError("Index must be a datetime type")
 
         figures = []
-        for col in datetime_columns:
-            plt.figure()
-            fig, _ = plt.subplots()
 
-            # Calculate the difference between consecutive dates and convert to days
-            date_diffs = df[col].sort_values().diff().dt.days.dropna()
+        # Calculate the difference between consecutive dates in the index
+        date_diffs = df.index.to_series().sort_values().diff().dt.days.dropna()
 
-            # Filter out 0 values
-            date_diffs = date_diffs[date_diffs != 0]
+        # Filter out 0 values
+        date_diffs = date_diffs[date_diffs != 0]
 
-            ax = sns.histplot(date_diffs, kde=False, bins=30)
-            plt.title(f"{col}", weight="bold", fontsize=20)
+        # Create a histogram using Plotly
+        fig = go.Figure()
+        fig.add_trace(go.Histogram(x=date_diffs, nbinsx=30))
+        fig.update_layout(
+            title="Index",
+            xaxis_title="Days Between Consecutive Dates",
+            yaxis_title="Frequency",
+            font=dict(size=18),
+        )
 
-            plt.xticks(fontsize=18)
-            plt.yticks(fontsize=18)
-            ax.set_xlabel("Days Between Consecutive Dates", fontsize=18)
-            ax.set_ylabel("Frequency", fontsize=18)
-            figures.append(
-                Figure(
-                    for_object=self,
-                    key=f"{self.key}:{col}",
-                    figure=fig,
-                )
+        figures.append(
+            Figure(
+                for_object=self,
+                key=f"{self.key}:index",
+                figure=fig,
             )
-
-        plt.close("all")
+        )
 
         return self.cache_results(
             figures=figures,

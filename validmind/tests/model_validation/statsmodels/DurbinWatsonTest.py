@@ -53,7 +53,7 @@ class DurbinWatsonTest(Metric):
         """
         Calculates DB for each of the dataset features
         """
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
         dw_values = {}
         for col in x_train.columns:
             dw_values[col] = durbin_watson(x_train[col].values)

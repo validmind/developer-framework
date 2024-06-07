@@ -87,7 +87,7 @@ class KolmogorovSmirnov(Metric):
         if data_distribution not in ["norm" or "exp"]:
             InvalidTestParametersError("Dist parameter must be either 'norm' or 'exp'")
 
-        x_train = self.inputs.dataset.df
+        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
         ks_values = {}
         for col in x_train.columns:
             ks_stat, p_value = kstest_normal(x_train[col].values, data_distribution)

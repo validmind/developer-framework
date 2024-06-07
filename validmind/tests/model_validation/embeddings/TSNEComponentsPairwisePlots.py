@@ -10,7 +10,11 @@ import plotly.express as px
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
+from validmind import tags, tasks
 
+
+@tags("visualization", "dimensionality_reduction", "embeddings")
+@tasks("text_qa", "text_generation", "text_summarization")
 def TSNEComponentsPairwisePlots(
     dataset,
     model,

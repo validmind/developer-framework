@@ -70,7 +70,7 @@ class Lilliefors(Metric):
         """
         Calculates Lilliefors test for each of the dataset features
         """
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
 
         lilliefors_values = {}
         for col in x_train.columns:

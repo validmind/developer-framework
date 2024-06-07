@@ -64,7 +64,7 @@ class IsolationForestOutliers(Metric):
 
     def run(self):
         if self.params["features_columns"] is None:
-            features_list = self.inputs.dataset.feature_columns
+            features_list = self.inputs.dataset.feature_columns_numeric
         else:
             features_list = self.params["features_columns"]
 
@@ -78,7 +78,7 @@ class IsolationForestOutliers(Metric):
                 + "training dataset feature columns"
             )
 
-        dataset = self.inputs.dataset.df
+        dataset = self.inputs.dataset.df[features_list]
 
         # Training with isolation forest algorithm
         clf = IsolationForest(

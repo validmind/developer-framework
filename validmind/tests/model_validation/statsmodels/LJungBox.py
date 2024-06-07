@@ -54,7 +54,7 @@ class LJungBox(Metric):
         """
         Calculates Ljung-Box test for each of the dataset features
         """
-        x_train = self.train_ds.df
+        x_train = self.inputs.dataset.df
 
         ljung_box_values = {}
         for col in x_train.columns:

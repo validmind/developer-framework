@@ -9,7 +9,11 @@ import pandas as pd
 import plotly.express as px
 from sklearn.metrics.pairwise import cosine_similarity
 
+from validmind import tags, tasks
 
+
+@tags("visualization", "dimensionality_reduction", "embeddings")
+@tasks("text_qa", "text_generation", "text_summarization")
 def CosineSimilarityComparison(dataset, models):
     """
     Computes pairwise cosine similarities between model embeddings and visualizes the results through bar charts,

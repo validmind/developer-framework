@@ -7,6 +7,7 @@ from typing import List
 
 import pandas as pd
 
+from validmind.errors import MissingRequiredTestInputError
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -15,11 +16,16 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
-from .ai_powered_test import AIPoweredTest
+from .ai_powered_test import (
+    call_model,
+    get_explanation,
+    get_score,
+    missing_prompt_message,
+)
 
 
 @dataclass
-class Delimitation(ThresholdTest, AIPoweredTest):
+class Delimitation(ThresholdTest):
     """
     Evaluates the proper use of delimiters in prompts provided to Large Language Models.
 
@@ -85,12 +91,6 @@ Prompt:
 """
 '''.strip()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)  # Call ThresholdTest.__init__
-        AIPoweredTest.__init__(
-            self, *args, **kwargs
-        )  # Explicitly call AIPoweredTest.__init__
-
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         result = results[0]
         results_table = [
@@ -114,14 +114,17 @@ Prompt:
         )
 
     def run(self):
-        response = self.call_model(
+        if not hasattr(self.inputs.model, "prompt"):
+            raise MissingRequiredTestInputError(missing_prompt_message)
+
+        response = call_model(
             system_prompt=self.system_prompt,
             user_prompt=self.user_prompt.format(
                 prompt_to_test=self.inputs.model.prompt.template
             ),
         )
-        score = self.get_score(response)
-        explanation = self.get_explanation(response)
+        score = get_score(response)
+        explanation = get_explanation(response)
 
         passed = score > self.params["min_threshold"]
         results = [
