@@ -11,7 +11,7 @@ from ragas.metrics import faithfulness
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm", "rag_performance")
@@ -20,7 +20,7 @@ def Faithfulness(
     dataset,
     answer_column="answer",
     contexts_column="contexts",
-):
+):  # noqa
     """
     Evaluates the faithfulness of the generated answers with respect to retrieved contexts.
 
@@ -93,8 +93,7 @@ def Faithfulness(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df),
-        metrics=[faithfulness],
+        Dataset.from_pandas(df), metrics=[faithfulness], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["faithfulness"].to_list(), nbins=10)
@@ -102,7 +101,9 @@ def Faithfulness(
 
     return (
         {
-            "Scores": result_df[["contexts", "answer", "faithfulness"]],
+            "Scores (will not be uploaded to UI)": result_df[
+                ["contexts", "answer", "faithfulness"]
+            ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["faithfulness"].mean(),

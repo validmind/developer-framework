@@ -7,7 +7,7 @@ from typing import List
 
 import pandas as pd
 
-from validmind.errors import SkipTestError
+from validmind.errors import MissingRequiredTestInputError, SkipTestError
 from validmind.vm_models import (
     ResultSummary,
     ResultTable,
@@ -16,11 +16,11 @@ from validmind.vm_models import (
     ThresholdTestResult,
 )
 
-from .ai_powered_test import AIPoweredTest
+from .ai_powered_test import call_model, missing_prompt_message
 
 
 @dataclass
-class Robustness(ThresholdTest, AIPoweredTest):
+class Robustness(ThresholdTest):
     """
     Assesses the robustness of prompts provided to a Large Language Model under varying conditions and contexts.
 
@@ -94,12 +94,6 @@ Prompt:
 Input:
 '''.strip()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)  # Call ThresholdTest.__init__
-        AIPoweredTest.__init__(
-            self, *args, **kwargs
-        )  # Explicitly call AIPoweredTest.__init__
-
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
             {
@@ -122,8 +116,14 @@ Input:
         )
 
     def run(self):
+        if not hasattr(self.inputs.model, "prompt"):
+            raise MissingRequiredTestInputError(missing_prompt_message)
+
         # TODO: add support for multi-variable prompts
-        if len(self.inputs.model.prompt.variables) > 1:
+        if (
+            not self.inputs.model.prompt.variables
+            or len(self.inputs.model.prompt.variables) > 1
+        ):
             raise SkipTestError(
                 "Robustness only supports single-variable prompts for now"
             )
@@ -138,7 +138,7 @@ Input:
         results = []
 
         for _ in range(self.params["num_tests"]):
-            response = self.call_model(
+            response = call_model(
                 system_prompt=self.system_prompt,
                 user_prompt=self.user_prompt.format(
                     variables="\n".join(self.inputs.model.prompt.variables),

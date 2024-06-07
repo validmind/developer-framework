@@ -66,7 +66,7 @@ class ClusterPerformance(Metric):
         y_true_test = y_true_test.astype(y_pred_test.dtype).flatten()
         results = []
         for metric_name, metric_fcn in metric_info.items():
-            for sample in samples:
+            for _ in samples:
                 train_value = metric_fcn(list(y_true_train), y_pred_train)
                 test_value = metric_fcn(list(y_true_test), y_pred_test)
             results.append(
@@ -85,7 +85,7 @@ class ClusterPerformance(Metric):
         """
         table_records = []
         for result in raw_results:
-            for key, value in result.items():
+            for key, _ in result.items():
                 table_records.append(
                     {
                         "Metric": key,

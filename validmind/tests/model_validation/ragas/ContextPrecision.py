@@ -11,7 +11,7 @@ from ragas.metrics import context_precision
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm", "retrieval_performance")
@@ -21,7 +21,7 @@ def ContextPrecision(
     question_column: str = "question",
     contexts_column: str = "contexts",
     ground_truth_column: str = "ground_truth",
-):
+):  # noqa: B950
     """
     Context Precision is a metric that evaluates whether all of the ground-truth
     relevant items present in the contexts are ranked higher or not. Ideally all the
@@ -95,8 +95,7 @@ def ContextPrecision(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df),
-        metrics=[context_precision],
+        Dataset.from_pandas(df), metrics=[context_precision], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["context_precision"].to_list(), nbins=10)
@@ -104,7 +103,7 @@ def ContextPrecision(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 ["question", "contexts", "ground_truth", "context_precision"]
             ],
             "Aggregate Scores": [

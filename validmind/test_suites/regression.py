@@ -32,17 +32,6 @@ class RegressionPerformance(TestSuite):
     ]
 
 
-class RegressionModelsComparison(TestSuite):
-    """
-    Test suite for regression models performance comparison
-    """
-
-    suite_id = "regression_models_comparison"
-    tests = [
-        "validmind.model_validation.sklearn.RegressionModelsPerformanceComparison",
-    ]
-
-
 class RegressionFullSuite(TestSuite):
     """
     Full test suite for regression models.
@@ -69,10 +58,5 @@ class RegressionFullSuite(TestSuite):
             "section_id": RegressionPerformance.suite_id,
             "section_description": RegressionPerformance.__doc__,
             "section_tests": RegressionPerformance.tests,
-        },
-        {
-            "section_id": RegressionModelsComparison.suite_id,
-            "section_description": RegressionModelsComparison.__doc__,
-            "section_tests": RegressionModelsComparison.tests,
         },
     ]

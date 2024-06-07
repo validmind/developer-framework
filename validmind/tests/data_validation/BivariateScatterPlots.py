@@ -2,10 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import itertools
 from dataclasses import dataclass
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.express as px
 
 from validmind.vm_models import Figure, Metric
 
@@ -23,7 +23,7 @@ class BivariateScatterPlots(Metric):
     biases and irregularities in the data.
 
     **Test Mechanism**: This metric operates by creating a scatter plot for each pair of the selected features in the
-    dataset. If the parameters "features_pairs" are not specified, an error will be thrown. The metric offers
+    dataset. If the parameters "selected_columns" are not specified, an error will be thrown. The metric offers
     flexibility by allowing the user to filter on a specific target class - specified by the "target_filter" parameter
     - for more granified insights. Each scatterplot is then color-coded based on the category of the target variable
     for better visual differentiation. The seaborn scatterplot library is used for generating the plots.
@@ -53,7 +53,7 @@ class BivariateScatterPlots(Metric):
 
     name = "bivariate_scatter_plots"
     required_inputs = ["dataset"]
-    default_params = {"features_pairs": None, "target_filter": None}
+    default_params = {"selected_columns": None}
     metadata = {
         "task_types": ["classification"],
         "tags": [
@@ -65,52 +65,49 @@ class BivariateScatterPlots(Metric):
         ],
     }
 
-    def plot_bivariate_scatter(self, features_pairs, target_filter):
-        status_var = self.inputs.dataset.target_column
+    def plot_bivariate_scatter(self, columns):
         figures = []
-        for x, y in features_pairs.items():
-            df = self.inputs.dataset.df
-            if target_filter is not None:
-                df = df[df[status_var] == target_filter]
+        df = self.inputs.dataset.df
 
-            plt.figure()
+        # Generate all pairs of columns
+        features_pairs = list(itertools.combinations(columns, 2))
 
-            # Scatterplot using seaborn, with color variation based on 'status_var'
-            # Create color mapping with rgba values, last value is alpha (transparency)
-            palette = {0: (0.8, 0.8, 0.8, 0.8), 1: "tab:red"}
-            plot = sns.scatterplot(
-                data=df, x=x, y=y, hue=status_var, palette=palette, alpha=1
+        for x, y in features_pairs:
+            fig = px.scatter(
+                df,
+                x=x,
+                y=y,
+                title=f"{x} and {y}",
+                labels={x: x, y: y},
+                opacity=0.7,
+                color_discrete_sequence=["blue"],  # Use the same color for all points
             )
-
-            # Change legend labels
-            legend_labels = [
-                "Category 1" if t.get_text() == "1" else "Category 2"
-                for t in plot.legend_.texts[1:]
-            ]
-            plot.legend_.texts[1:] = legend_labels
-
-            plt.title(x + " and " + y)
-            plt.xlabel(x)
-            plt.ylabel(y)
-            plt.show()
+            fig.update_traces(marker=dict(color="blue"))
 
             figures.append(
-                Figure(for_object=self, key=f"{self.key}:{x}_{y}", figure=plt.figure())
+                Figure(for_object=self, key=f"{self.key}:{x}_{y}", figure=fig)
             )
-
-        plt.close("all")
 
         return figures
 
     def run(self):
-        features_pairs = self.params["features_pairs"]
-        target_filter = self.params["target_filter"]
+        selected_columns = self.params["selected_columns"]
 
-        if features_pairs is None:
-            raise ValueError(
-                "The features_pairs parameter is required for this metric."
-            )
+        if selected_columns is None:
+            # Use all columns if selected_columns is not provided
+            selected_columns = self.inputs.dataset.df.columns.tolist()
+        else:
+            # Check if all selected columns exist in the dataframe
+            missing_columns = [
+                col
+                for col in selected_columns
+                if col not in self.inputs.dataset.df.columns
+            ]
+            if missing_columns:
+                raise ValueError(
+                    f"The following selected columns are not in the dataframe: {missing_columns}"
+                )
 
-        figures = self.plot_bivariate_scatter(features_pairs, target_filter)
+        figures = self.plot_bivariate_scatter(selected_columns)
 
         return self.cache_results(figures=figures)

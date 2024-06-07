@@ -60,7 +60,7 @@ class TextDescription(Metric):
     """
 
     name = "text_description"
-    required_inputs = ["dataset", "dataset.text_column"]
+    required_inputs = ["dataset"]
     default_params = {
         "unwanted_tokens": {
             "s",
@@ -78,6 +78,10 @@ class TextDescription(Metric):
         },
         "num_top_words": 3,
         "lang": "english",
+    }
+    metadata = {
+        "task_types": ["text_classification", "text_summarization"],
+        "tags": ["nlp", "text_data", "visualization"],
     }
 
     def general_text_metrics(self, df, text_column):

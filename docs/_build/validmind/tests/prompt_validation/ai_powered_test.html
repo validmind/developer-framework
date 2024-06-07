@@ -32,22 +32,13 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#AIPoweredTest">AIPoweredTest</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#AIPoweredTest.__init__">AIPoweredTest</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#AIPoweredTest.call_model">call_model</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#AIPoweredTest.get_score">get_score</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#AIPoweredTest.get_explanation">get_explanation</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#call_model">call_model</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_score">get_score</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_explanation">get_explanation</a>
             </li>
     </ul>
 
@@ -71,87 +62,62 @@
                 
                 
             </section>
-                <section id="AIPoweredTest">
-                    <div class="attr class">
+                <section id="call_model">
+                    <div class="attr function">
             
-    <span class="def">class</span>
-    <span class="name">AIPoweredTest</span>:
+        <span class="def">def</span>
+        <span class="name">call_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">user_prompt</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>,</span><span class="param">	<span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#AIPoweredTest"></a>
+    <a class="headerlink" href="#call_model"></a>
     
-            <div class="docstring"><p>Base class for tests powered by an LLM</p>
+            <div class="docstring"><p>Call LLM with the given prompts and return the response</p>
 </div>
 
 
-                            <div id="AIPoweredTest.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">AIPoweredTest</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#AIPoweredTest.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="AIPoweredTest.call_model" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_score">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">call_model</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">user_prompt</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">response</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#AIPoweredTest.call_model"></a>
+    <a class="headerlink" href="#get_score"></a>
     
-            <div class="docstring"><p>Call an LLM with the passed prompts and return the response. We're using GPT4 for now.</p>
-</div>
+            <div class="docstring"><p>Get just the score from the response string
+    TODO: use json response mode instead of this</p>
 
-
-                            </div>
-                            <div id="AIPoweredTest.get_score" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_score</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">response</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#AIPoweredTest.get_score"></a>
-    
-            <div class="docstring"><p>Get just the numeric data in the response string and convert it to an int</p>
-
-<pre><code>    e.g. "Score: 8
+<pre><code>e.g. "Score: 8
 </code></pre>
 
 <p>Explanation: <some-explanation>" -> 8</p>
 </div>
 
 
-                            </div>
-                            <div id="AIPoweredTest.get_explanation" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_explanation">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_explanation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">response</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_explanation</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">response</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#AIPoweredTest.get_explanation"></a>
+    <a class="headerlink" href="#get_explanation"></a>
     
-            <div class="docstring"><p>Get just the explanation from the response string</p>
+            <div class="docstring"><p>Get just the explanation from the response string
+    TODO: use json response mode instead of this</p>
 
-<pre><code>    e.g. "Score: 8
+<pre><code>e.g. "Score: 8
 </code></pre>
 
 <p>Explanation: <some-explanation>" -> "<some-explanation>"</p>
 </div>
 
 
-                            </div>
                 </section>
     </main>
 <script>

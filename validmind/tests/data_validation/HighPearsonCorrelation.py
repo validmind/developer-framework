@@ -65,9 +65,18 @@ class HighPearsonCorrelation(ThresholdTest):
     }
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
-        """
-        The high pearson correlation test returns results like these:
-        [{"values": {"correlations": [{"column": "NumOfProducts", "correlation": -0.3044645622389459}]}, "column": "Balance", "passed": false}]
+        """The high pearson correlation test returns results like these:
+        [
+            {
+                "values": {
+                    "correlations": [
+                        {"column": "NumOfProducts", "correlation": -0.3044645622389459}
+                    ]
+                },
+                "column": "Balance",
+                "passed": false,
+            }
+        ]
         """
         results_table = [
             {

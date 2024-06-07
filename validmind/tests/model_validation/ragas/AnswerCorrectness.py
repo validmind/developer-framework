@@ -11,7 +11,7 @@ from ragas.metrics import answer_correctness
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm")
@@ -104,7 +104,7 @@ def AnswerCorrectness(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df), metrics=[answer_correctness]
+        Dataset.from_pandas(df), metrics=[answer_correctness], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["answer_correctness"].to_list(), nbins=10)
@@ -112,7 +112,7 @@ def AnswerCorrectness(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 ["question", "answer", "ground_truth", "answer_correctness"]
             ],
             "Aggregate Scores": [

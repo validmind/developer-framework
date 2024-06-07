@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from validmind.errors import SkipTestError
 from validmind.logging import get_logger
 from validmind.vm_models import Figure, Metric
 
@@ -82,10 +83,14 @@ class RegressionFeatureSignificance(Metric):
         # Initialize a list to store figures
         figures = []
 
-        for i, fitted_model in enumerate(model_list):
+        for i, model in enumerate(model_list):
+
+            if model.library != "statsmodels":
+                raise SkipTestError("Only statsmodels are supported for this metric")
+
             # Get the coefficients and p-values from the model
-            coefficients = fitted_model.model.params
-            pvalues = fitted_model.model.pvalues
+            coefficients = model.model.params
+            pvalues = model.model.pvalues
 
             # Sort the variables by p-value in ascending order
             sorted_idx = pvalues.argsort()
@@ -122,7 +127,7 @@ class RegressionFeatureSignificance(Metric):
                     for_object=self,
                     key=f"{self.key}:{i}",
                     figure=fig,
-                    metadata={"model": str(fitted_model.model)},
+                    metadata={"model": str(model.model)},
                 )
             )
             plt.close("all")

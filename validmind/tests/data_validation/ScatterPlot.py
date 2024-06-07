@@ -51,7 +51,7 @@ class ScatterPlot(Metric):
     """
 
     name = "scatter_plot"
-    required_inputs = ["dataset", "dataset.target_column"]
+    required_inputs = ["dataset"]
     metadata = {
         "task_types": ["classification", "regression"],
         "tags": ["tabular_data", "visualization"],

@@ -18,7 +18,7 @@ from ragas.metrics.critique import (
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 aspect_map = {
     "coherence": coherence,
@@ -36,14 +36,14 @@ def AspectCritique(
     question_column="question",
     answer_column="answer",
     contexts_column="contexts",
-    aspects: list = [
+    aspects: list = [  # noqa: B006 this is fine as immutable default since it never gets modified
         "coherence",
         "conciseness",
         "correctness",
         "harmfulness",
         "maliciousness",
     ],
-    additional_aspects: list = [],
+    additional_aspects: list = None,
 ):
     """
     Evaluates generations against the following aspects: harmfulness, maliciousness,
@@ -131,13 +131,19 @@ def AspectCritique(
     df = get_renamed_columns(dataset.df, required_columns)
 
     built_in_aspects = [aspect_map[aspect] for aspect in aspects]
-    custom_aspects = [
-        _AspectCritique(name=name, definition=description)
-        for name, description in additional_aspects
-    ]
+    custom_aspects = (
+        [
+            _AspectCritique(name=name, definition=description)
+            for name, description in additional_aspects
+        ]
+        if additional_aspects
+        else []
+    )
     all_aspects = [*built_in_aspects, *custom_aspects]
 
-    result_df = evaluate(Dataset.from_pandas(df), metrics=all_aspects).to_pandas()
+    result_df = evaluate(
+        Dataset.from_pandas(df), metrics=all_aspects, **get_ragas_config()
+    ).to_pandas()
 
     df_melted = result_df.melt(
         id_vars=["question", "answer", "contexts"],

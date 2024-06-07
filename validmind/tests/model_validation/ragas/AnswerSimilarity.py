@@ -11,7 +11,7 @@ from ragas.metrics import answer_similarity
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm")
@@ -93,8 +93,7 @@ def AnswerSimilarity(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df),
-        metrics=[answer_similarity],
+        Dataset.from_pandas(df), metrics=[answer_similarity], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(x=result_df["answer_similarity"].to_list(), nbins=10)
@@ -102,7 +101,9 @@ def AnswerSimilarity(
 
     return (
         {
-            "Scores": result_df[["answer", "ground_truth", "answer_similarity"]],
+            "Scores (will not be uploaded to UI)": result_df[
+                ["answer", "ground_truth", "answer_similarity"]
+            ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_similarity"].mean(),

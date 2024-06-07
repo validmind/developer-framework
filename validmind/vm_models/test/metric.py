@@ -12,8 +12,8 @@ from typing import ClassVar, List, Optional, Union
 
 import pandas as pd
 
+from ...ai.test_descriptions import get_description_metadata
 from ...errors import MissingCacheResultsArgumentsError
-from ...utils import get_description_metadata
 from ..figure import Figure
 from .metric_result import MetricResult
 from .result_wrapper import MetricResultWrapper
@@ -35,13 +35,6 @@ class Metric(Test):
 
     # Instance Variables
     result: MetricResultWrapper = None  # populated by cache_results() method
-
-    @property
-    def key(self):
-        """
-        Keep the key for compatibility reasons
-        """
-        return self._key if hasattr(self, "_key") else self.name
 
     @abstractmethod
     def summary(self, metric_value: Optional[Union[dict, list, pd.DataFrame]] = None):

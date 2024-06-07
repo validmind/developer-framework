@@ -9,7 +9,10 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from validmind.errors import SkipTestError
+from validmind.logging import get_logger
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -56,7 +59,7 @@ class RegressionModelsPerformanceComparison(Metric):
     """
 
     name = "models_performance_comparison"
-    required_inputs = ["model", "dataset"]
+    required_inputs = ["dataset", "models"]
 
     metadata = {
         "task_types": ["regression"],
@@ -76,8 +79,14 @@ class RegressionModelsPerformanceComparison(Metric):
         results["Mean Squared Error (MSE)"] = mse_test
         results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
 
-        mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
-        results["Mean Absolute Percentage Error (MAPE)"] = mape_test
+        if np.any(y_true_test == 0):
+            logger.warning(
+                "y_true_test contains zero values. Skipping MAPE calculation to avoid division by zero."
+            )
+            results["Mean Absolute Percentage Error (MAPE)"] = None
+        else:
+            mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
+            results["Mean Absolute Percentage Error (MAPE)"] = mape_test
 
         mbd_test = np.mean(y_pred_test - y_true_test)
         results["Mean Bias Deviation (MBD)"] = mbd_test
@@ -94,7 +103,7 @@ class RegressionModelsPerformanceComparison(Metric):
         for metric_name in metrics:
             errors_dict = {}
             errors_dict["Errors"] = metric_name
-            for m, m_v in metric_value.items():
+            for m, _ in metric_value.items():
                 for metric in metrics:
                     res = re.findall(r"\(.*?\)", metric)
                     res[0][1:-1]
@@ -117,10 +126,7 @@ class RegressionModelsPerformanceComparison(Metric):
                 "List of models must be provided as a `models` parameter to compare performance"
             )
 
-        all_models = [self.inputs.model]
-
-        if self.inputs.models is not None:
-            all_models.extend(self.inputs.models)
+        all_models = self.inputs.models
 
         results = {}
 

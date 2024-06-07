@@ -11,9 +11,9 @@ import asyncio
 import atexit
 import json
 import os
-import urllib.parse
 from io import BytesIO
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from urllib.parse import urlencode, urljoin
 
 import aiohttp
 import requests
@@ -69,6 +69,14 @@ def get_api_project() -> Optional[str]:
     return _project
 
 
+def get_api_headers() -> Dict[str, str]:
+    return {
+        "X-API-KEY": _api_key,
+        "X-API-SECRET": _api_secret,
+        "X-PROJECT-CUID": _project,
+    }
+
+
 def init(
     project: Optional[str] = None,
     api_key: Optional[str] = None,
@@ -97,10 +105,7 @@ def init(
         # special case to detect when running a notebook with the standard init snippet
         # will override with environment variables so we don't have to keep updating
         # the notebook
-        api_host = None
-        api_key = None
-        api_secret = None
-        project = None
+        api_host = api_key = api_secret = project = None
 
     _project = project or os.getenv("VM_API_PROJECT")
 
@@ -114,8 +119,9 @@ def init(
         raise MissingAPICredentialsError()
 
     _api_host = api_host or os.getenv(
-        "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking"
+        "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking/"
     )
+
     _run_cuid = os.getenv("VM_RUN_CUID", None)
 
     try:
@@ -127,7 +133,7 @@ def init(
         raise e
 
 
-async def _get_session() -> aiohttp.ClientSession:
+def _get_session() -> aiohttp.ClientSession:
     """Initializes the async client session"""
     global __api_session
 
@@ -147,7 +153,7 @@ async def _get_session() -> aiohttp.ClientSession:
 def __ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
-        f"{_api_host}/ping",
+        __get_url("ping", should_start_run=False),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -189,21 +195,35 @@ def reload():
         raise e
 
 
-async def __get_url(endpoint: str, params: Optional[Dict[str, str]] = None) -> str:
-    if not _run_cuid:
-        start_run()
+def __get_url(
+    endpoint: str,
+    params: Optional[Dict[str, str]] = None,
+    should_start_run: bool = True,
+) -> str:
+    global _api_host
 
     params = params or {}
-    params["run_cuid"] = _run_cuid
 
-    return f"{_api_host}/{endpoint}?{urllib.parse.urlencode(params)}"
+    if not _run_cuid and should_start_run:
+        start_run()
+
+    if should_start_run:
+        params["run_cuid"] = _run_cuid
+
+    if not _api_host.endswith("/"):
+        _api_host += "/"
+
+    if params:
+        return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
+
+    return urljoin(_api_host, endpoint)
 
 
 async def _get(
     endpoint: str, params: Optional[Dict[str, str]] = None
 ) -> Dict[str, Any]:
-    url = await __get_url(endpoint, params)
-    session = await _get_session()
+    url = __get_url(endpoint, params)
+    session = _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
     async with session.get(url) as r:
@@ -219,8 +239,8 @@ async def _post(
     data: Optional[Union[dict, FormData]] = None,
     files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
 ) -> Dict[str, Any]:
-    url = await __get_url(endpoint, params)
-    session = await _get_session()
+    url = __get_url(endpoint, params)
+    session = _get_session()
     session.headers.update({"X-RUN-CUID": _run_cuid})
 
     if not isinstance(data, (dict)) and files is not None:
@@ -491,7 +511,7 @@ def log_test_results(
     return responses
 
 
-def _log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+def log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
     """Logs input information - internal use for now (don't expose via public API)
 
     Args:
@@ -539,7 +559,7 @@ def start_run() -> str:
     global _run_cuid
 
     r = requests.post(
-        f"{_api_host}/start_run",
+        __get_url("start_run", should_start_run=False),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -555,3 +575,22 @@ def start_run() -> str:
     _run_cuid = test_run["cuid"]
 
     return test_run["cuid"]
+
+
+def get_ai_key() -> str:
+    """Calls the api to get an api key for our LLM proxy"""
+    r = requests.get(
+        __get_url("ai/key", should_start_run=False),
+        headers={
+            "X-API-KEY": _api_key,
+            "X-API-SECRET": _api_secret,
+            "X-PROJECT-CUID": _project,
+        },
+    )
+
+    if r.status_code != 200:
+        # TODO: improve error handling when there's no Open AI API or AI key available
+        # logger.error("Could not get AI key from ValidMind API")
+        raise_api_error(r.text)
+
+    return r.json()

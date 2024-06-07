@@ -11,7 +11,7 @@ from ragas.metrics import context_entity_recall
 
 from validmind import tags, tasks
 
-from .utils import get_renamed_columns
+from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm", "retrieval_performance")
@@ -99,8 +99,7 @@ def ContextEntityRecall(
     df = get_renamed_columns(dataset.df, required_columns)
 
     result_df = evaluate(
-        Dataset.from_pandas(df),
-        metrics=[context_entity_recall],
+        Dataset.from_pandas(df), metrics=[context_entity_recall], **get_ragas_config()
     ).to_pandas()
 
     fig_histogram = px.histogram(
@@ -110,7 +109,7 @@ def ContextEntityRecall(
 
     return (
         {
-            "Scores": result_df[
+            "Scores (will not be uploaded to UI)": result_df[
                 [
                     "contexts",
                     "ground_truth",

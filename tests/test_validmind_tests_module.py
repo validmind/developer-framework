@@ -1,5 +1,5 @@
 """
-Unit tests for Validmind tests module
+Unit tests for ValidMind tests module
 """
 import unittest
 from unittest import TestCase

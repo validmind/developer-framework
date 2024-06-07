@@ -24,7 +24,7 @@ class MetadataModel(VMModel):
     """
 
     def __post_init__(self):
-        if not getattr(self, "attributes"):
+        if not hasattr(self, "attributes"):
             raise ValueError("MetadataModel requires attributes")
 
         self.name = self.name or "Metadata Model"
