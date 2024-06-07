@@ -4,9 +4,14 @@
 
 from dataclasses import dataclass
 
+import pandas as pd
 from arch.unitroot import DFGLS
+from numpy.linalg import LinAlgError
 
-from validmind.vm_models import Metric
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -59,14 +64,65 @@ class DFGLSArch(Metric):
         """
         dataset = self.inputs.dataset.df
 
-        dfgls_values = {}
-        for col in dataset.columns:
-            dfgls_out = DFGLS(dataset[col].values)
-            dfgls_values[col] = {
-                "stat": dfgls_out.stat,
-                "pvalue": dfgls_out.pvalue,
-                "usedlag": dfgls_out.lags,
-                "nobs": dfgls_out.nobs,
-            }
+        # Check if the dataset is a time series
+        if not isinstance(dataset.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError(
+                "Dataset index must be a datetime or period index for time series analysis."
+            )
 
-        return self.cache_results(dfgls_values)
+        # Preprocessing: Drop rows with any NaN values
+        if dataset.isnull().values.any():
+            logger.warning(
+                "Dataset contains missing values. Rows with NaNs will be dropped."
+            )
+            dataset = dataset.dropna()
+
+        # Convert to numeric and handle non-numeric data
+        dataset = dataset.apply(pd.to_numeric, errors="coerce")
+
+        # Initialize a list to store DFGLS results
+        dfgls_values = []
+
+        for col in dataset.columns:
+            try:
+                dfgls_out = DFGLS(dataset[col].values)
+                dfgls_values.append(
+                    {
+                        "Variable": col,
+                        "stat": dfgls_out.stat,
+                        "pvalue": dfgls_out.pvalue,
+                        "usedlag": dfgls_out.lags,
+                        "nobs": dfgls_out.nobs,
+                    }
+                )
+            except LinAlgError as e:
+                logger.error(
+                    f"SVD did not converge while processing column '{col}'. This could be due to numerical instability or multicollinearity. Error details: {e}"
+                )
+                dfgls_values.append(
+                    {
+                        "Variable": col,
+                        "stat": None,
+                        "pvalue": None,
+                        "usedlag": None,
+                        "nobs": None,
+                        "error": str(e),
+                    }
+                )
+
+        return self.cache_results({"dfgls_results": dfgls_values})
+
+    def summary(self, metric_value):
+        """
+        Build a table for summarizing the DFGLS results
+        """
+        dfgls_results = metric_value["dfgls_results"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=dfgls_results,
+                    metadata=ResultTableMetadata(title="DFGLS Test Results"),
+                )
+            ]
+        )
