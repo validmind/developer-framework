@@ -4,6 +4,7 @@
 
 import asyncio
 import difflib
+import inspect
 import json
 import math
 import re
@@ -458,3 +459,37 @@ def md_to_html(md: str, mathml=False) -> str:
     )
 
     return html
+
+
+def inspect_obj(obj):
+
+    # Filtering only attributes
+    print(len(f"Attributes:") * "-")
+    print("Attributes:")
+    print(len(f"Attributes:") * "-")
+
+    # Get only attributes (not methods)
+    attributes = [
+        attr
+        for attr in dir(obj)
+        if not callable(getattr(obj, attr)) and not attr.startswith("__")
+    ]
+    for attr in attributes:
+        print(f"{attr}")
+
+    # Filtering only methods using inspect and displaying their parameters
+    print("\nMethods with Parameters:")
+
+    # Get only methods (functions) using inspect.ismethod
+    methods = inspect.getmembers(obj, predicate=inspect.ismethod)
+    print(f"Methods:")
+    for name, method in methods:
+        # Get the signature of the method
+        sig = inspect.signature(method)
+        print(len(f"{name}") * "-")
+        print(f"{name}")
+        print(len(f"{name}") * "-")
+        print(f"Parameters:")
+        # Loop through the parameters and print detailed information
+        for param_name, param in sig.parameters.items():
+            print(f"{param_name} - ({param.default})")
