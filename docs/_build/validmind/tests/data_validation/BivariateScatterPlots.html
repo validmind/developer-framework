@@ -89,7 +89,7 @@ of the target variable, which could inform feature selection, model-building str
 biases and irregularities in the data.</p>
 
 <p><strong>Test Mechanism</strong>: This metric operates by creating a scatter plot for each pair of the selected features in the
-dataset. If the parameters "features_pairs" are not specified, an error will be thrown. The metric offers
+dataset. If the parameters "selected_columns" are not specified, an error will be thrown. The metric offers
 flexibility by allowing the user to filter on a specific target class - specified by the "target_filter" parameter</p>
 
 <ul>
@@ -146,7 +146,7 @@ introduce subjective bias.</li>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">plot_bivariate_scatter</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">features_pairs</span>, </span><span class="param"><span class="n">target_filter</span></span><span class="return-annotation">):</span></span>
+        <span class="name">plot_bivariate_scatter</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">columns</span></span><span class="return-annotation">):</span></span>
 
         
     </div>

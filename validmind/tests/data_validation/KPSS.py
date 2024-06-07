@@ -4,9 +4,13 @@
 
 from dataclasses import dataclass
 
+import pandas as pd
 from statsmodels.tsa.stattools import kpss
 
-from validmind.vm_models import Metric
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -64,14 +68,63 @@ class KPSS(Metric):
         """
         dataset = self.inputs.dataset.df
 
-        kpss_values = {}
-        for col in dataset.columns:
-            kpss_stat, pvalue, usedlag, critical_values = kpss(dataset[col].values)
-            kpss_values[col] = {
-                "stat": kpss_stat,
-                "pvalue": pvalue,
-                "usedlag": usedlag,
-                "critical_values": critical_values,
-            }
+        # Check if the dataset is a time series
+        if not isinstance(dataset.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError(
+                "Dataset index must be a datetime or period index for time series analysis."
+            )
 
-        return self.cache_results(kpss_values)
+        # Preprocessing: Drop rows with any NaN values
+        if dataset.isnull().values.any():
+            logger.warning(
+                "Dataset contains missing values. Rows with NaNs will be dropped."
+            )
+            dataset = dataset.dropna()
+
+        # Convert to numeric and handle non-numeric data
+        dataset = dataset.apply(pd.to_numeric, errors="coerce")
+
+        # Initialize a list to store KPSS results
+        kpss_values = []
+
+        for col in dataset.columns:
+            try:
+                kpss_stat, pvalue, usedlag, critical_values = kpss(dataset[col].values)
+                kpss_values.append(
+                    {
+                        "Variable": col,
+                        "stat": kpss_stat,
+                        "pvalue": pvalue,
+                        "usedlag": usedlag,
+                        "critical_values": critical_values,
+                    }
+                )
+            except Exception as e:
+                logger.error(f"Error processing column '{col}': {e}")
+                kpss_values.append(
+                    {
+                        "Variable": col,
+                        "stat": None,
+                        "pvalue": None,
+                        "usedlag": None,
+                        "critical_values": None,
+                        "error": str(e),
+                    }
+                )
+
+        return self.cache_results({"kpss_results": kpss_values})
+
+    def summary(self, metric_value):
+        """
+        Build a table for summarizing the KPSS results
+        """
+        kpss_results = metric_value["kpss_results"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=kpss_results,
+                    metadata=ResultTableMetadata(title="KPSS Test Results"),
+                )
+            ]
+        )
