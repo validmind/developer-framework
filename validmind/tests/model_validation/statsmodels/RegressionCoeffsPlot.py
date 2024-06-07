@@ -8,6 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from scipy import stats
 
+from validmind.errors import SkipTestError
 from validmind.vm_models import Figure, Metric
 
 
@@ -115,6 +116,9 @@ class RegressionCoeffsPlot(Metric):
             all_models.extend(self.inputs.models)
 
         for i, model in enumerate(all_models):
+            if model.library != "statsmodels":
+                raise SkipTestError("Only statsmodels are supported for this metric")
+
             model_name = f"Model {i+1}"
 
             fig, metric_values = self.plot_coefficients_with_ci(model, model_name)

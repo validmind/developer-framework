@@ -9,7 +9,10 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from validmind.errors import SkipTestError
+from validmind.logging import get_logger
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -76,8 +79,14 @@ class RegressionModelsPerformanceComparison(Metric):
         results["Mean Squared Error (MSE)"] = mse_test
         results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
 
-        mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
-        results["Mean Absolute Percentage Error (MAPE)"] = mape_test
+        if np.any(y_true_test == 0):
+            logger.warning(
+                "y_true_test contains zero values. Skipping MAPE calculation to avoid division by zero."
+            )
+            results["Mean Absolute Percentage Error (MAPE)"] = None
+        else:
+            mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
+            results["Mean Absolute Percentage Error (MAPE)"] = mape_test
 
         mbd_test = np.mean(y_pred_test - y_true_test)
         results["Mean Bias Deviation (MBD)"] = mbd_test

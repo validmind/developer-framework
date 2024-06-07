@@ -2,12 +2,18 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from pandas import DataFrame
+from dataclasses import dataclass
+
+import pandas as pd
 from statsmodels.tsa.stattools import adfuller
 
+from validmind.logging import get_logger
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
+logger = get_logger(__name__)
 
+
+@dataclass
 class ADF(Metric):
     """
     Assesses the stationarity of a time series dataset using the Augmented Dickey-Fuller (ADF) test.
@@ -53,7 +59,7 @@ class ADF(Metric):
     }
 
     def summary(self, metric_value: dict):
-        table = DataFrame.from_dict(metric_value, orient="index")
+        table = pd.DataFrame.from_dict(metric_value, orient="index")
         table = table.reset_index()
         table.columns = [
             "Feature",
@@ -83,18 +89,41 @@ class ADF(Metric):
         """
         dataset = self.inputs.dataset.df
 
+        # Check if the dataset is a time series
+        if not isinstance(dataset.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError(
+                "Dataset index must be a datetime or period index for time series analysis."
+            )
+
+        # Preprocessing: Drop rows with any NaN values
+        if dataset.isnull().values.any():
+            logger.warning(
+                "Dataset contains missing values. Rows with NaNs will be dropped."
+            )
+            dataset = dataset.dropna()
+
         adf_values = {}
         for col in dataset.columns:
-            adf, pvalue, usedlag, nobs, critical_values, icbest = adfuller(
-                dataset[col].values
-            )
-            adf_values[col] = {
-                "stat": adf,
-                "pvalue": pvalue,
-                "usedlag": usedlag,
-                "nobs": nobs,
-                "critical_values": critical_values,
-                "icbest": icbest,
-            }
+            try:
+                adf_result = adfuller(dataset[col].values)
+                adf_values[col] = {
+                    "ADF Statistic": adf_result[0],
+                    "P-Value": adf_result[1],
+                    "Used Lag": adf_result[2],
+                    "Number of Observations": adf_result[3],
+                    "Critical Values": adf_result[4],
+                    "IC Best": adf_result[5],
+                }
+            except Exception as e:
+                logger.error(f"Error processing column '{col}': {e}")
+                adf_values[col] = {
+                    "ADF Statistic": None,
+                    "P-Value": None,
+                    "Used Lag": None,
+                    "Number of Observations": None,
+                    "Critical Values": None,
+                    "IC Best": None,
+                    "Error": str(e),
+                }
 
         return self.cache_results(adf_values)
