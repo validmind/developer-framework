@@ -28,35 +28,12 @@ plt.show = lambda: None
 
 # These tests are expected to fail and need to be fixed
 KNOWN_FAILING_TESTS = [
-    "validmind.data_validation.BivariateScatterPlots",
-    "validmind.data_validation.DefaultRatesbyRiskBandPlot",
-    "validmind.data_validation.PiTCreditScoresHistogram",
-    "validmind.data_validation.PiTPDHistogram",
-    # Fix X_train["probability"] to use probability_column
-    "validmind.model_validation.statsmodels.PDRatingClassPlot",
-    # The tests below only work for statsmodels
-    "validmind.model_validation.statsmodels.FeatureImportanceAndSignificance",
+    # Only statsmodels are supported for these metrics
     "validmind.model_validation.statsmodels.RegressionCoeffsPlot",
-    "validmind.model_validation.statsmodels.RegressionFeatureSignificance",
     "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
-    # Remove in_sample_datasetsm, out_of_sample_datasets inputs
-    "validmind.model_validation.statsmodels.RegressionModelsPerformance",
-    "validmind.model_validation.statsmodels.ScorecardHistogram",
-    # numpy.linalg.LinAlgError: SVD did not converge
-    "validmind.model_validation.statsmodels.DFGLSArch",
-    "validmind.model_validation.statsmodels.ZivotAndrewsArch",
-    # ValueError: This function does not handle missing values
-    "validmind.model_validation.statsmodels.ResidualsVisualInspection",
-    # statsmodels.tools.sm_exceptions.MissingDataError: exog contains inf or nans
-    "validmind.model_validation.statsmodels.ADF",
-    "validmind.model_validation.statsmodels.ADFTest",
-    "validmind.model_validation.statsmodels.PhillipsPerronArch",
-    # ValueError: cannot convert float NaN to integer
-    "validmind.model_validation.statsmodels.KPSS",
-    # Can only compute partial correlations for lags up to 50% of the sample size
-    "validmind.data_validation.ACFandPACFPlot",
-    # ValueError: No datetime columns found in the dataset
-    "validmind.data_validation.TabularDateTimeHistograms",
+    "validmind.model_validation.statsmodels.RegressionFeatureSignificance",
+    # The number of observations is too small to use the Zivot-Andrews test
+    "validmind.data_validation.ZivotAndrewsArch",
 ]
 SKIPPED_TESTS = []
 SUCCESSFUL_TESTS = []
@@ -79,6 +56,7 @@ TEST_TO_PARAMS_CONFIG = {
     "validmind.data_validation.BivariateFeaturesBarPlots": "features_pairs_raw",
     "validmind.data_validation.BivariateHistograms": "features_pairs_raw",
     "validmind.data_validation.BivariateScatterPlots": "features_pairs_raw",
+    "validmind.model_validation.statsmodels.ScorecardHistogram": "score_column",
 }
 
 # Global inputs and configurations for the tests

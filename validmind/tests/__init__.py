@@ -30,7 +30,8 @@ from ..utils import (
     test_id_to_name,
 )
 from ..vm_models import TestContext, TestInput
-from .decorator import metric, tags, tasks
+from .decorator import tags, tasks
+from .decorator import test as test_decorator
 from .test_providers import LocalTestProvider, TestProvider
 
 logger = get_logger(__name__)
@@ -84,7 +85,6 @@ def _pretty_list_tests(tests, truncate=True):
         {
             "ID": test_id,
             "Name": test_id_to_name(test_id),
-            "Test Type": __test_classes[test_id].test_type,
             "Description": _test_description(__test_classes[test_id], truncate),
             "Required Inputs": __test_classes[test_id].required_inputs,
             "Params": __test_classes[test_id].default_params or {},
@@ -340,7 +340,7 @@ def load_test(test_id: str, reload=False):
         # if its a function, we decorate it and then load the class
         # TODO: simplify this as we move towards all functional metrics
         # "_" is used here so it doesn't conflict with other test ids
-        metric("_")(test)
+        test_decorator("_")(test)
         test = __custom_tests["_"]
 
     test.test_id = f"{test_id}:{result_id}" if result_id else test_id
@@ -365,7 +365,6 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
     details = {
         "ID": test_id,
         "Name": test_id_to_name(test_id),
-        "Test Type": test.test_type,
         "Required Inputs": test.required_inputs,
         "Params": test.default_params or {},
         "Description": inspect.getdoc(test).strip() or "",
@@ -451,7 +450,7 @@ def run_test(
 
     if unit_metrics:
         metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        test_id = f"validmind.composite_metric.{metric_id_name}"
+        test_id = f"validmind.composite_test.{metric_id_name}"
 
         error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
