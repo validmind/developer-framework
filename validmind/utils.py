@@ -462,11 +462,10 @@ def md_to_html(md: str, mathml=False) -> str:
 
 
 def inspect_obj(obj):
-
     # Filtering only attributes
-    print(len(f"Attributes:") * "-")
+    print(len("Attributes:") * "-")
     print("Attributes:")
-    print(len(f"Attributes:") * "-")
+    print(len("Attributes:") * "-")
 
     # Get only attributes (not methods)
     attributes = [
@@ -482,14 +481,14 @@ def inspect_obj(obj):
 
     # Get only methods (functions) using inspect.ismethod
     methods = inspect.getmembers(obj, predicate=inspect.ismethod)
-    print(f"Methods:")
+    print("Methods:")
     for name, method in methods:
         # Get the signature of the method
         sig = inspect.signature(method)
         print(len(f"{name}") * "-")
         print(f"{name}")
         print(len(f"{name}") * "-")
-        print(f"Parameters:")
+        print("Parameters:")
         # Loop through the parameters and print detailed information
         for param_name, param in sig.parameters.items():
             print(f"{param_name} - ({param.default})")
