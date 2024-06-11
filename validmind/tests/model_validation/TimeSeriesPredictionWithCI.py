@@ -7,7 +7,11 @@ import numpy as np
 import plotly.graph_objects as go
 from scipy.stats import norm
 
+from validmind import tags, tasks
 
+
+@tags("model_predictions", "visualization")
+@tasks("regression", "time_series_forecasting")
 def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
     """
     Plot actual vs predicted values for a time series with confidence intervals and compute breaches.

@@ -7,10 +7,13 @@ import pandas as pd
 from sklearn import metrics
 
 from validmind.logging import get_logger
+from validmind import tags, tasks
 
 logger = get_logger(__name__)
 
 
+@tags("model_performance", "sklearn")
+@tasks("regression", "time_series_forecasting")
 def RegressionErrorsComparison(datasets, models):
     """
     Compare regression error metrics for each model and generate a summary table

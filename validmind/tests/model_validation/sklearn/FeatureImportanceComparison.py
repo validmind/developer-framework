@@ -5,7 +5,11 @@
 import pandas as pd
 from sklearn.inspection import permutation_importance
 
+from validmind import tags, tasks
 
+
+@tags("model_explainability", "sklearn")
+@tasks("regression", "time_series_forecasting")
 def FeatureImportanceComparison(datasets, models, num_features=3):
     """
     Compare feature importance scores for each model and generate a summary table

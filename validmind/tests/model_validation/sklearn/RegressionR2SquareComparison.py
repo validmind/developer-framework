@@ -6,8 +6,11 @@ import pandas as pd
 from sklearn import metrics
 
 from validmind.tests.model_validation.statsmodels.statsutils import adj_r2_score
+from validmind import tags, tasks
 
 
+@tags("model_performance", "sklearn")
+@tasks("regression", "time_series_forecasting")
 def RegressionR2SquareComparison(datasets, models):
     """
     Compare R-Squared and Adjusted R-Squared values for each model and generate a summary table

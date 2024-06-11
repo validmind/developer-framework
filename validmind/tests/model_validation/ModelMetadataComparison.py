@@ -5,7 +5,11 @@
 import pandas as pd
 from validmind.utils import get_model_info
 
+from validmind import tags, tasks
 
+
+@tags("model_training", "metadata")
+@tasks("regression", "time_series_forecasting")
 def ModelMetadataComparison(models):
     """
     Compare metadata of different models and generate a summary table with the results.

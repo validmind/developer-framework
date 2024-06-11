@@ -5,7 +5,11 @@
 import plotly.express as px
 import pandas as pd
 
+from validmind import tags, tasks
 
+
+@tags("data_validation", "visualization")
+@tasks("regression", "time_series_forecasting")
 def TimeSeriesHistogram(dataset, nbins=30):
     """
     Visualizes distribution of time-series data using histograms and Kernel Density Estimation (KDE) lines.

@@ -5,7 +5,11 @@
 import plotly.graph_objects as go
 import plotly.express as px
 
+from validmind import tags, tasks
 
+
+@tags("model_predictions", "visualization")
+@tasks("regression", "time_series_forecasting")
 def TimeSeriesPredictionsPlot(datasets, models):
     """
     Plot actual vs predicted values for time series data and generate a visual comparison for each model.
