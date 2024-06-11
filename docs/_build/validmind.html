@@ -66,6 +66,9 @@
                     <a class="function" href="#tasks">tasks</a>
             </li>
             <li>
+                    <a class="function" href="#test">test</a>
+            </li>
+            <li>
                     <a class="function" href="#log_figure">log_figure</a>
             </li>
             <li>
@@ -147,7 +150,7 @@ and to upload to the ValidMind Platform.</p>
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;2.2.7&#39;</span>
+<span class="default_value">&#39;2.3.2&#39;</span>
 
         
     </div>
@@ -374,39 +377,7 @@ since xgb models saved in .json or .bin format can be loaded directly with eithe
     </div>
     <a class="headerlink" href="#metric"></a>
     
-            <div class="docstring"><p>Decorator for creating and registering metrics with the ValidMind framework.</p>
-
-<p>Creates a metric object and registers it with ValidMind under the provided ID. If
-no ID is provided, the function name will be used as to build one. So if the
-function name is <code>my_metric</code>, the metric will be registered under the ID
-<code>validmind.custom_metrics.my_metric</code>.</p>
-
-<p>This decorator works by creating a new <code>Metric</code> class will be created whose <code>run</code>
-method calls the decorated function. This function should take as arguments the
-inputs it requires (<code>dataset</code>, <code>datasets</code>, <code>model</code>, <code>models</code>) followed by any
-parameters. It can return any number of the following types:</p>
-
-<ul>
-<li>Table: Either a list of dictionaries or a pandas DataFrame</li>
-<li>Plot: Either a matplotlib figure or a plotly figure</li>
-<li>Scalar: A single number or string</li>
-</ul>
-
-<p>The function may also include a docstring. This docstring will be used and logged
-as the metric's description.</p>
-
-<h6 id="arguments">Arguments:</h6>
-
-<ul>
-<li><strong>func:</strong>  The function to decorate</li>
-<li><strong>test_id:</strong>  The identifier for the metric. If not provided, the function name is used.</li>
-</ul>
-
-<h6 id="returns">Returns:</h6>
-
-<blockquote>
-  <p>The decorated function.</p>
-</blockquote>
+            <div class="docstring"><p>DEPRECATED, use @vm.test instead</p>
 </div>
 
 
@@ -576,6 +547,53 @@ documentation or <code>vm.describe_test()</code> for more details on the inputs 
 <ul>
 <li><strong>*tasks:</strong>  The task types that the metric is designed for.</li>
 </ul>
+</div>
+
+
+                </section>
+                <section id="test">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func_or_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#test"></a>
+    
+            <div class="docstring"><p>Decorator for creating and registering metrics with the ValidMind framework.</p>
+
+<p>Creates a metric object and registers it with ValidMind under the provided ID. If
+no ID is provided, the function name will be used as to build one. So if the
+function name is <code>my_metric</code>, the metric will be registered under the ID
+<code>validmind.custom_metrics.my_metric</code>.</p>
+
+<p>This decorator works by creating a new <code>Metric</code> class will be created whose <code>run</code>
+method calls the decorated function. This function should take as arguments the
+inputs it requires (<code>dataset</code>, <code>datasets</code>, <code>model</code>, <code>models</code>) followed by any
+parameters. It can return any number of the following types:</p>
+
+<ul>
+<li>Table: Either a list of dictionaries or a pandas DataFrame</li>
+<li>Plot: Either a matplotlib figure or a plotly figure</li>
+<li>Scalar: A single number or string</li>
+</ul>
+
+<p>The function may also include a docstring. This docstring will be used and logged
+as the metric's description.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>func:</strong>  The function to decorate</li>
+<li><strong>test_id:</strong>  The identifier for the metric. If not provided, the function name is used.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The decorated function.</p>
+</blockquote>
 </div>
 
 

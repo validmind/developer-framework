@@ -11,7 +11,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from validmind import tags, tasks
 
 
-@tags("data_validation")
+@tags("nlp", "text_data", "data_validation")
 @tasks("nlp")
 def Sentiment(dataset):
     """

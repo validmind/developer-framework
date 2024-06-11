@@ -10,7 +10,7 @@ from textblob import TextBlob
 from validmind import tags, tasks
 
 
-@tags("data_validation")
+@tags("nlp", "text_data", "data_validation")
 @tasks("nlp")
 def PolarityAndSubjectivity(dataset):
     """

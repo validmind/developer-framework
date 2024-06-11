@@ -55,10 +55,12 @@ class FeaturesAUC(Metric):
     }
 
     def run(self):
-        x = self.inputs.dataset.x_df()
-        y = self.inputs.dataset.y_df()
+        dataset = self.inputs.dataset
+        x = dataset.x_df()
+        y = dataset.y_df()
+        n_targets = dataset.df[dataset.target_column].nunique()
 
-        if y.nunique() != 2:
+        if n_targets != 2:
             raise SkipTestError("FeaturesAUC metric requires a binary target variable.")
 
         aucs = pd.DataFrame(index=x.columns, columns=["AUC"])

@@ -589,7 +589,8 @@ def get_ai_key() -> str:
     )
 
     if r.status_code != 200:
-        logger.error("Could not get AI key from ValidMind API")
+        # TODO: improve error handling when there's no Open AI API or AI key available
+        # logger.error("Could not get AI key from ValidMind API")
         raise_api_error(r.text)
 
     return r.json()

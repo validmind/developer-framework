@@ -52,7 +52,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
     """
 
     name = "models_performance_comparison"
-    required_inputs = ["model", "models", "dataset"]
+    required_inputs = ["dataset", "models"]
     metadata = {
         "task_types": ["classification", "text_classification"],
         "tags": [
@@ -70,7 +70,7 @@ class ModelsPerformanceComparison(ClassifierPerformance):
         """
         results = []
         prf_table = []
-        classes = {str(i) for i in unique(self.y_true())}
+        classes = {str(i) for i in unique(self.inputs.dataset.y)}
 
         for class_name in classes:
             prf_dict = {}
@@ -122,10 +122,8 @@ class ModelsPerformanceComparison(ClassifierPerformance):
                 "List of models must be provided as a `models` parameter to compare performance"
             )
 
-        all_models = [self.inputs.model]
+        all_models = self.inputs.models
 
-        if self.inputs.models is not None:
-            all_models.extend(self.inputs.models)
         results = {}
         for idx, model in enumerate(all_models):
             y_true = self.inputs.dataset.y

@@ -2,9 +2,9 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import matplotlib.pyplot as plt
 import pandas as pd
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import plotly.graph_objects as go
+from statsmodels.tsa.stattools import acf, pacf
 
 from validmind.vm_models import Figure, Metric
 
@@ -77,37 +77,46 @@ class ACFandPACFPlot(Metric):
         for col in df.columns:
             series = df[col]
 
-            # Create subplots
-            fig, (ax1, ax2) = plt.subplots(1, 2)
-            width, _ = fig.get_size_inches()
-            fig.set_size_inches(width, 5)
+            # Calculate the maximum number of lags based on the size of the dataset
+            max_lags = min(40, len(series) // 2 - 1)
 
-            plot_acf(series, ax=ax1)
-            plot_pacf(series, ax=ax2)
+            # Calculate ACF and PACF values
+            acf_values = acf(series, nlags=max_lags)
+            pacf_values = pacf(series, nlags=max_lags)
 
-            # Get the current y-axis limits
-            ymin, ymax = ax1.get_ylim()
-            # Set new limits - adding a bit of space
-            ax1.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
+            # Create ACF plot using Plotly
+            acf_fig = go.Figure()
+            acf_fig.add_trace(go.Bar(x=list(range(len(acf_values))), y=acf_values))
+            acf_fig.update_layout(
+                title=f"ACF for {col}",
+                xaxis_title="Lag",
+                yaxis_title="ACF",
+                font=dict(size=18),
+            )
 
-            ymin, ymax = ax2.get_ylim()
-            ax2.set_ylim([ymin, ymax + 0.05 * (ymax - ymin)])
+            # Create PACF plot using Plotly
+            pacf_fig = go.Figure()
+            pacf_fig.add_trace(go.Bar(x=list(range(len(pacf_values))), y=pacf_values))
+            pacf_fig.update_layout(
+                title=f"PACF for {col}",
+                xaxis_title="Lag",
+                yaxis_title="PACF",
+                font=dict(size=18),
+            )
 
-            ax1.tick_params(axis="both", labelsize=18)
-            ax2.tick_params(axis="both", labelsize=18)
-            ax1.set_title(f"ACF for {col}", weight="bold", fontsize=20)
-            ax2.set_title(f"PACF for {col}", weight="bold", fontsize=20)
-            ax1.set_xlabel("Lag", fontsize=18)
-            ax2.set_xlabel("Lag", fontsize=18)
             figures.append(
                 Figure(
                     for_object=self,
-                    key=f"{self.key}:{col}",
-                    figure=fig,
+                    key=f"{self.key}:{col}_acf",
+                    figure=acf_fig,
                 )
             )
-
-            # Do this if you want to prevent the figure from being displayed
-            plt.close("all")
+            figures.append(
+                Figure(
+                    for_object=self,
+                    key=f"{self.key}:{col}_pacf",
+                    figure=pacf_fig,
+                )
+            )
 
         return self.cache_results(figures=figures)

@@ -25,12 +25,7 @@ from .embeddings import EmbeddingsFullSuite, EmbeddingsMetrics, EmbeddingsPerfor
 from .llm import LLMClassifierFullSuite, PromptValidation
 from .nlp import NLPClassifierFullSuite
 from .parameters_optimization import KmeansParametersOptimization
-from .regression import (
-    RegressionFullSuite,
-    RegressionMetrics,
-    RegressionModelsComparison,
-    RegressionPerformance,
-)
+from .regression import RegressionFullSuite, RegressionMetrics, RegressionPerformance
 from .statsmodels_timeseries import (
     RegressionModelDescription,
     RegressionModelsEvaluation,
@@ -72,7 +67,6 @@ core_test_suites = {
     RegressionMetrics.suite_id: RegressionMetrics,
     RegressionModelDescription.suite_id: RegressionModelDescription,
     RegressionModelsEvaluation.suite_id: RegressionModelsEvaluation,
-    RegressionModelsComparison.suite_id: RegressionModelsComparison,
     RegressionFullSuite.suite_id: RegressionFullSuite,
     RegressionPerformance.suite_id: RegressionPerformance,
     SummarizationMetrics.suite_id: SummarizationMetrics,
@@ -188,7 +182,6 @@ def describe_suite(test_suite_id: str, verbose=False):
                     "Test Suite Section": "",
                     "Test ID": item,
                     "Test Name": test.__name__,
-                    "Test Type": test.test_type,
                 }
             )
         elif isinstance(item, dict):
@@ -201,7 +194,6 @@ def describe_suite(test_suite_id: str, verbose=False):
                         "Test Suite Section": item["section_id"],
                         "Test ID": test_id,
                         "Test Name": test_id_to_name(test_id),
-                        "Test Type": test.test_type,
                     }
                 )
         else:

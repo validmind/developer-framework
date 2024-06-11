@@ -59,7 +59,7 @@ class RunsTest(Metric):
         """
         Calculates the run test for each of the dataset features
         """
-        x_train = self.inputs.dataset.df
+        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
 
         runs_test_values = {}
         for col in x_train.columns:
