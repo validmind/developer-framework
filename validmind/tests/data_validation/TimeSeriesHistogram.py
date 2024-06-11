@@ -51,10 +51,6 @@ def TimeSeriesHistogram(dataset, nbins=30):
 
     df = dataset.df
 
-    # Check if index is datetime
-    if not pd.api.types.is_datetime64_any_dtype(df.index):
-        raise ValueError("Index must be a datetime type")
-
     columns = list(dataset.df.columns)
 
     if not set(columns).issubset(set(df.columns)):
