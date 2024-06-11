@@ -182,7 +182,6 @@ def describe_suite(test_suite_id: str, verbose=False):
                     "Test Suite Section": "",
                     "Test ID": item,
                     "Test Name": test.__name__,
-                    "Test Type": test.test_type,
                 }
             )
         elif isinstance(item, dict):
@@ -195,7 +194,6 @@ def describe_suite(test_suite_id: str, verbose=False):
                         "Test Suite Section": item["section_id"],
                         "Test ID": test_id,
                         "Test Name": test_id_to_name(test_id),
-                        "Test Type": test.test_type,
                     }
                 )
         else:

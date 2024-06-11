@@ -60,7 +60,7 @@ from .client import (  # noqa: E402
     run_documentation_tests,
     run_test_suite,
 )
-from .tests.decorator import metric, tags, tasks
+from .tests.decorator import metric, tags, tasks, test
 from .utils import run_async  # noqa: E402
 
 
@@ -112,6 +112,7 @@ __all__ = [  # noqa
     "run_test_suite",
     "tags",
     "tasks",
+    "test",
     "tests",
     "test_suites",
     "vm_models",

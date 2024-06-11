@@ -73,9 +73,9 @@ class RegressionModelsCoeffs(Metric):
             raise ValueError("List of models must be provided in the models parameter")
 
         for model in self.inputs.models:
-            if model.class_ != "statsmodels" and model.class_ != "R":
+            if model.library != "statsmodels":
                 raise SkipTestError(
-                    "Only statsmodels and R models are supported for this metric"
+                    "Only statsmodels models are supported for this metric"
                 )
 
         coefficients = [m.regression_coefficients() for m in self.inputs.models]

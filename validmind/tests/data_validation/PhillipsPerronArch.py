@@ -4,9 +4,14 @@
 
 from dataclasses import dataclass
 
+import pandas as pd
 from arch.unitroot import PhillipsPerron
+from numpy.linalg import LinAlgError
 
-from validmind.vm_models import Metric
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -62,14 +67,63 @@ class PhillipsPerronArch(Metric):
         """
         dataset = self.inputs.dataset.df
 
-        pp_values = {}
-        for col in dataset.columns:
-            pp = PhillipsPerron(dataset[col].values)
-            pp_values[col] = {
-                "stat": pp.stat,
-                "pvalue": pp.pvalue,
-                "usedlag": pp.lags,
-                "nobs": pp.nobs,
-            }
+        # Check if the dataset is a time series
+        if not isinstance(dataset.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError(
+                "Dataset index must be a datetime or period index for time series analysis."
+            )
 
-        return self.cache_results(pp_values)
+        # Preprocessing: Drop rows with any NaN values
+        if dataset.isnull().values.any():
+            logger.warning(
+                "Dataset contains missing values. Rows with NaNs will be dropped."
+            )
+            dataset = dataset.dropna()
+
+        # Convert to numeric and handle non-numeric data
+        dataset = dataset.apply(pd.to_numeric, errors="coerce")
+
+        # Initialize a list to store Phillips-Perron results
+        pp_values = []
+
+        for col in dataset.columns:
+            try:
+                pp = PhillipsPerron(dataset[col].values)
+                pp_values.append(
+                    {
+                        "Variable": col,
+                        "stat": pp.stat,
+                        "pvalue": pp.pvalue,
+                        "usedlag": pp.lags,
+                        "nobs": pp.nobs,
+                    }
+                )
+            except LinAlgError as e:
+                logger.error(f"Error processing column '{col}': {e}")
+                pp_values.append(
+                    {
+                        "Variable": col,
+                        "stat": None,
+                        "pvalue": None,
+                        "usedlag": None,
+                        "nobs": None,
+                        "error": str(e),
+                    }
+                )
+
+        return self.cache_results({"phillips_perron_results": pp_values})
+
+    def summary(self, metric_value):
+        """
+        Build a table for summarizing the Phillips-Perron results
+        """
+        pp_results = metric_value["phillips_perron_results"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=pp_results,
+                    metadata=ResultTableMetadata(title="Phillips-Perron Test Results"),
+                )
+            ]
+        )

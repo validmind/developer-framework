@@ -4,9 +4,14 @@
 
 from dataclasses import dataclass
 
+import pandas as pd
 from arch.unitroot import ZivotAndrews
+from numpy.linalg import LinAlgError
 
-from validmind.vm_models import Metric
+from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -57,14 +62,63 @@ class ZivotAndrewsArch(Metric):
         """
         dataset = self.inputs.dataset.df
 
-        za_values = {}
-        for col in dataset.columns:
-            za = ZivotAndrews(dataset[col].values)
-            za_values[col] = {
-                "stat": za.stat,
-                "pvalue": za.pvalue,
-                "usedlag": za.lags,
-                "nobs": za.nobs,
-            }
+        # Check if the dataset is a time series
+        if not isinstance(dataset.index, (pd.DatetimeIndex, pd.PeriodIndex)):
+            raise ValueError(
+                "Dataset index must be a datetime or period index for time series analysis."
+            )
 
-        return self.cache_results(za_values)
+        # Preprocessing: Drop rows with any NaN values
+        if dataset.isnull().values.any():
+            logger.warning(
+                "Dataset contains missing values. Rows with NaNs will be dropped."
+            )
+            dataset = dataset.dropna()
+
+        # Convert to numeric and handle non-numeric data
+        dataset = dataset.apply(pd.to_numeric, errors="coerce")
+
+        # Initialize a list to store Zivot-Andrews results
+        za_values = []
+
+        for col in dataset.columns:
+            try:
+                za = ZivotAndrews(dataset[col].values)
+                za_values.append(
+                    {
+                        "Variable": col,
+                        "stat": za.stat,
+                        "pvalue": za.pvalue,
+                        "usedlag": za.lags,
+                        "nobs": za.nobs,
+                    }
+                )
+            except (LinAlgError, ValueError) as e:
+                logger.error(f"Error while processing column '{col}'. Details: {e}")
+                za_values.append(
+                    {
+                        "Variable": col,
+                        "stat": None,
+                        "pvalue": None,
+                        "usedlag": None,
+                        "nobs": None,
+                        "error": str(e),
+                    }
+                )
+
+        return self.cache_results({"zivot_andrews_results": za_values})
+
+    def summary(self, metric_value):
+        """
+        Build a table for summarizing the Zivot-Andrews results
+        """
+        za_results = metric_value["zivot_andrews_results"]
+
+        return ResultSummary(
+            results=[
+                ResultTable(
+                    data=za_results,
+                    metadata=ResultTableMetadata(title="Zivot-Andrews Test Results"),
+                )
+            ]
+        )
