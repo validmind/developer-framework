@@ -3,9 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
-from scipy.stats import kstest, norm
+from scipy.stats import kstest
 
 from validmind import tags, tasks
 
