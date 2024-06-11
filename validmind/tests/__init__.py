@@ -30,6 +30,7 @@ from ..utils import (
     test_id_to_name,
 )
 from ..vm_models import TestContext, TestInput
+from .__types__ import TestID
 from .decorator import tags, tasks
 from .decorator import test as test_decorator
 from .test_providers import LocalTestProvider, TestProvider
@@ -348,7 +349,7 @@ def load_test(test_id: str, reload=False):
     return test
 
 
-def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
+def describe_test(test_id: TestID = None, raw: bool = False, show: bool = True):
     """Get or show details about the test
 
     This function can be used to see test details including the test name, description,
@@ -406,7 +407,7 @@ def describe_test(test_id: str = None, raw: bool = False, show: bool = True):
 
 
 def run_test(
-    test_id: str = None,
+    test_id: TestID = None,
     name: str = None,
     unit_metrics: list = None,
     params: dict = None,
