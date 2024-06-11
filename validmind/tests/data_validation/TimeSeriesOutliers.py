@@ -90,7 +90,8 @@ class TimeSeriesOutliers(ThresholdTest):
         zScores = first_result.values["z-score"]
         dates = first_result.values["Date"]
         passFail = [
-            "Pass" if z < self.params["zscore_threshold"] else "Fail" for z in zScores
+            "Pass" if abs(z) < self.params["zscore_threshold"] else "Fail"
+            for z in zScores
         ]
 
         return ResultSummary(

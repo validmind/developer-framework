@@ -55,3 +55,163 @@ def load_data():
     df.columns = [target_column] + feature_columns
 
     return df
+
+
+# Convert data back to levels
+def convert_to_levels(diff_df, original_df, target_column):
+    """
+    Convert differenced data back to original levels.
+    """
+    previous_values = original_df[target_column].shift(1).dropna()
+    levels_df = diff_df.add(previous_values, axis=0)
+    return levels_df
+
+
+def get_demo_test_config(test_suite=None):
+
+    default_config = {}
+
+    default_config["validmind.data_validation.TimeSeriesDescription:raw_data"] = {
+        "inputs": {
+            "dataset": "raw_ds",
+        }
+    }
+    default_config["validmind.data_validation.TimeSeriesLinePlot:raw_data"] = {
+        "inputs": {
+            "dataset": "raw_ds",
+        }
+    }
+    default_config["validmind.data_validation.TimeSeriesMissingValues"] = {
+        "inputs": {
+            "dataset": "raw_ds",
+        }
+    }
+    default_config["validmind.data_validation.SeasonalDecompose"] = {
+        "inputs": {
+            "dataset": "raw_ds",
+        }
+    }
+    default_config[
+        "validmind.data_validation.TimeSeriesDescriptiveStatistics:preprocessed_data"
+    ] = {
+        "inputs": {
+            "dataset": "preprocessed_ds",
+        }
+    }
+    default_config["validmind.data_validation.TimeSeriesOutliers"] = {
+        "inputs": {
+            "dataset": "preprocessed_ds",
+        },
+        "params": {"zscore_threshold": 4},
+    }
+    default_config["validmind.data_validation.TimeSeriesHistogram"] = {
+        "inputs": {
+            "dataset": "preprocessed_ds",
+        },
+        "params": {"nbins": 100},
+    }
+    default_config["validmind.data_validation.DatasetSplit:Baseline_Model"] = {
+        "inputs": {
+            "datasets": ["train_baseline_ds", "test_baseline_ds"],
+        }
+    }
+    default_config["validmind.data_validation.DatasetSplit:Primary_Model"] = {
+        "inputs": {
+            "datasets": ["train_ds", "test_ds"],
+        }
+    }
+    default_config["validmind.model_validation.ModelMetadataComparison"] = {
+        "inputs": {
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config["validmind.model_validation.sklearn.RegressionErrorsComparison"] = {
+        "inputs": {
+            "datasets": ["test_baseline_ds", "test_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.RegressionR2SquareComparison"
+    ] = {
+        "inputs": {
+            "datasets": ["test_baseline_ds", "test_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.TimeSeriesPredictionsPlot:train_data"
+    ] = {
+        "inputs": {
+            "datasets": ["train_baseline_ds", "train_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config["validmind.model_validation.TimeSeriesPredictionsPlot:test_data"] = {
+        "inputs": {
+            "datasets": ["test_baseline_ds", "test_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.TimeSeriesPredictionWithCI:train_data"
+    ] = {
+        "inputs": {
+            "dataset": "train_ds",
+            "model": "primary_model",
+        }
+    }
+    default_config[
+        "validmind.model_validation.TimeSeriesPredictionWithCI:test_data"
+    ] = {
+        "inputs": {
+            "dataset": "test_ds",
+            "model": "primary_model",
+        }
+    }
+    default_config["validmind.model_validation.ModelPredictionResiduals:train_data"] = {
+        "inputs": {
+            "datasets": ["train_baseline_ds", "train_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config["validmind.model_validation.ModelPredictionResiduals:test_data"] = {
+        "inputs": {
+            "datasets": ["test_baseline_ds", "test_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.FeatureImportanceComparison:train_data"
+    ] = {
+        "inputs": {
+            "datasets": ["train_baseline_ds", "train_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.FeatureImportanceComparison:test_data"
+    ] = {
+        "inputs": {
+            "datasets": ["test_baseline_ds", "test_ds"],
+            "models": ["baseline_model", "primary_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.PermutationFeatureImportance:primary_model_train_data"
+    ] = {
+        "inputs": {
+            "dataset": "train_ds",
+            "model": "primary_model",
+        }
+    }
+    default_config[
+        "validmind.model_validation.sklearn.PermutationFeatureImportance:primary_model_test_data"
+    ] = {
+        "inputs": {
+            "dataset": "test_ds",
+            "model": "primary_model",
+        }
+    }
+
+    return default_config

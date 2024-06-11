@@ -121,7 +121,7 @@ class PermutationFeatureImportance(Metric):
             figures=[
                 Figure(
                     for_object=self,
-                    key="pfi",
+                    key=f"pfi_{self.inputs.dataset.input_id}_{self.inputs.model.input_id}",
                     figure=fig,
                 ),
             ],

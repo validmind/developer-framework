@@ -132,7 +132,6 @@ class SeasonalDecompose(Metric):
                 inferred_freq = pd.infer_freq(series.index)
 
                 if inferred_freq is not None:
-                    logger.info(f"Frequency of {col}: {inferred_freq}")
 
                     # Only take finite values to seasonal_decompose
                     sd = seasonal_decompose(
@@ -188,7 +187,7 @@ class SeasonalDecompose(Metric):
                     # Histogram with KDE
                     residuals = sd.resid.dropna()
                     fig.add_trace(
-                        go.Histogram(x=residuals, nbinsx=30, name="Residuals"),
+                        go.Histogram(x=residuals, nbinsx=100, name="Residuals"),
                         row=3,
                         col=1,
                     )
