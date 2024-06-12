@@ -226,6 +226,18 @@ def _get_save_func(func, test_id):
 
 
 def metric(func_or_id):
+    """
+    DEPRECATED, use @vm.test instead
+    """
+    # print a deprecation notice and call the test() function instead
+    logger.warning(
+        "The @vm.metric decorator is deprecated and will be removed in a future release. "
+        "Please use @vm.test instead."
+    )
+    return test(func_or_id)
+
+
+def test(func_or_id):
     """Decorator for creating and registering metrics with the ValidMind framework.
 
     Creates a metric object and registers it with ValidMind under the provided ID. If
