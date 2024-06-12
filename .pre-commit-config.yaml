@@ -5,19 +5,19 @@ repos:
     rev: v3.2.0
     hooks:
       - id: trailing-whitespace
-        args: ["--markdown-linebreak-ext=md"]
+        args: ['--markdown-linebreak-ext=md']
         # exclude docs/ tests/ and .github/ directories
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
         stages:
-          - "commit"
+          - 'commit'
       - id: end-of-file-fixer
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
         stages:
-          - "commit"
+          - 'commit'
       - id: check-yaml
         exclude: ^(.*/)?(docs|tests|\.github)(/.*)?$
         stages:
-          - "commit"
+          - 'commit'
       # Disabling while we do notebooks directory cleanup
       # - id: check-added-large-files
       #   args: [--maxkb=1024]
@@ -27,17 +27,24 @@ repos:
 
   - repo: local
     hooks:
+      - id: generate_test_id_types
+        name: Running make generate_test_id_types
+        entry: make generate-test-id-types
+        language: system
+        pass_filenames: false
+        stages:
+          - 'commit'
       - id: format
         name: Running make format
         entry: ./scripts/format_and_add.sh
         language: script
         pass_filenames: false
         stages:
-          - "commit"
+          - 'commit'
       - id: lint
         name: Running make lint
         entry: make lint
         language: system
         pass_filenames: false
         stages:
-          - "push"
+          - 'push'

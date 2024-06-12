@@ -47,6 +47,9 @@ version:
 	poetry version $(tag)
 	echo "__version__ = \"$$(poetry version -s)\"" > validmind/__version__.py
 
+generate-test-id-types:
+	poetry run python scripts/generate_test_id_type.py
+
 copyright:
 	poetry run python scripts/copyright_files.py
 

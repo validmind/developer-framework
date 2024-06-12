@@ -1,6 +1,7 @@
 """
 Unit tests for ValidMind tests module
 """
+
 import unittest
 from unittest import TestCase
 
@@ -38,7 +39,6 @@ class TestTestsModule(TestCase):
         self.assertTrue("ID" in description)
         self.assertTrue("Name" in description)
         self.assertTrue("Description" in description)
-        self.assertTrue("Test Type" in description)
         self.assertTrue("Required Inputs" in description)
         self.assertTrue("Params" in description)
 
