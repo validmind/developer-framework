@@ -101,7 +101,3 @@ def ModelPredictionResiduals(
     summary_df = pd.DataFrame(summary)
 
     return (summary_df, *figures)
-
-
-# Example usage
-# summary_df, *figures = ModelResiduals(datasets, models, nbins=50, p_value_threshold=0.01)
