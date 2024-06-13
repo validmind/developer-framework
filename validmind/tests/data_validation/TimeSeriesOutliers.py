@@ -4,11 +4,8 @@
 
 from dataclasses import dataclass
 
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from ydata_profiling.config import Settings
-from ydata_profiling.model.typeset import ProfilingTypeSet
+import plotly.graph_objects as go
 
 from validmind.vm_models import (
     Figure,
@@ -93,7 +90,8 @@ class TimeSeriesOutliers(ThresholdTest):
         zScores = first_result.values["z-score"]
         dates = first_result.values["Date"]
         passFail = [
-            "Pass" if z < self.params["zscore_threshold"] else "Fail" for z in zScores
+            "Pass" if abs(z) < self.params["zscore_threshold"] else "Fail"
+            for z in zScores
         ]
 
         return ResultSummary(
@@ -116,25 +114,26 @@ class TimeSeriesOutliers(ThresholdTest):
         )
 
     def run(self):
+        # Initialize the test_results list
+        test_results = []
+
         # Check if the index of dataframe is datetime
         is_datetime = pd.api.types.is_datetime64_any_dtype(self.inputs.dataset.df.index)
         if not is_datetime:
             raise ValueError("Dataset must be provided with datetime index")
 
-        # Validate threshold paremeter
+        # Validate threshold parameter
         if "zscore_threshold" not in self.params:
             raise ValueError("zscore_threshold must be provided in params")
         zscore_threshold = self.params["zscore_threshold"]
 
         temp_df = self.inputs.dataset.df.copy()
         # temp_df = temp_df.dropna()
-        typeset = ProfilingTypeSet(Settings())
-        dataset_types = typeset.infer_type(temp_df)
-        test_results = []
-        test_figures = []
-        num_features_columns = [
-            k for k, v in dataset_types.items() if str(v) == "Numeric"
-        ]
+
+        # Infer numeric columns
+        num_features_columns = temp_df.select_dtypes(
+            include=["number"]
+        ).columns.tolist()
 
         outliers_table = self.identify_outliers(
             temp_df[num_features_columns], zscore_threshold
@@ -196,49 +195,39 @@ class TimeSeriesOutliers(ThresholdTest):
             df (pandas.DataFrame): Input data with time series.
             outliers_table (pandas.DataFrame): DataFrame with identified outliers.
         Returns:
-            matplotlib.figure.Figure: A matplotlib figure object with subplots for each variable.
+            list: A list of Figure objects with subplots for each variable.
         """
-        sns.set(style="darkgrid")
-        columns = list(self.inputs.dataset.df.columns)
         figures = []
 
-        for col in columns:
-            plt.figure()
-            fig, _ = plt.subplots()
-            column_index_name = df.index.name
-            ax = sns.lineplot(data=df.reset_index(), x=column_index_name, y=col)
+        for col in df.columns:
+            fig = go.Figure()
+
+            fig.add_trace(go.Scatter(x=df.index, y=df[col], mode="lines", name=col))
 
             if not outliers_table.empty:
                 variable_outliers = outliers_table[outliers_table["Variable"] == col]
-                for idx, row in variable_outliers.iterrows():
-                    date = row["Date"]
-                    outlier_value = df.loc[date, col]
-                    ax.scatter(
-                        date,
-                        outlier_value,
-                        marker="o",
-                        s=100,
-                        c="red",
-                        label="Outlier" if idx == 0 else "",
+                fig.add_trace(
+                    go.Scatter(
+                        x=variable_outliers["Date"],
+                        y=df.loc[variable_outliers["Date"], col],
+                        mode="markers",
+                        marker=dict(color="red", size=10),
+                        name="Outlier",
                     )
+                )
 
-            plt.xticks(fontsize=18)
-            plt.yticks(fontsize=18)
-            ax.set_xlabel("")
-            ax.set_ylabel("")
-            ax.set_title(
-                f"Time Series with Outliers for {col}", weight="bold", fontsize=20
+            fig.update_layout(
+                title=f"Time Series with Outliers for {col}",
+                xaxis_title="Date",
+                yaxis_title=col,
             )
 
-            ax.legend()
             figures.append(
                 Figure(
                     for_object=self,
-                    key=f"{self.name}:{col}",
+                    key=f"{self.name}:{col}_{self.inputs.dataset.input_id}",
                     figure=fig,
                 )
             )
 
-        # Do this if you want to prevent the figure from being displayed
-        plt.close("all")
         return figures
