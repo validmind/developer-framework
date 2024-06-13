@@ -12,9 +12,9 @@ on:
   workflow_dispatch:
     inputs:
       note:
-        description: "Provide a description of the changes"
+        description: 'Provide a description of the changes'
         required: true
-        default: "Update docs"
+        default: 'Update docs'
 
 permissions:
   contents: read
@@ -27,23 +27,21 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
+
       - name: Install poetry
         run: pipx install poetry
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.11
         uses: actions/setup-python@v3
         with:
-          python-version: "3.8"
-          cache: "poetry"
+          python-version: '3.11'
+          cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry install --all-extras
 
       - name: Install PyTorch CPU
         run: poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
-
-      - name: Install OpenAI
-        run: poetry run pip install openai
 
       - name: Generate Docs
         run: make docs
@@ -52,5 +50,5 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           default_author: github_actions
-          message: "Generate docs"
-          add: "docs/_build/"
+          message: 'Generate docs'
+          add: 'docs/_build/'

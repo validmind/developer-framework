@@ -18,27 +18,43 @@ We believe in the power of collaboration and welcome contributions to the ValidM
 
 ### Install from PyPI
 
+To install the ValidMind Developer Framework and all optional dependencies, run:
+
+```bash
+pip install validmind[all]
+```
+
+To just install the core functionality without optional dependencies (some tests and models may not work), run:
+
 ```bash
 pip install validmind
 ```
 
-#### Install with Hugging Face `transformers` support
+#### Extra dependencies
 
-```bash
-pip install validmind[transformers]
-```
+- **Install with LLM Support**
 
-#### Install with PyTorch support
+    ```bash
+    pip install validmind[llm]
+    ```
 
-```bash
-pip install validmind[pytorch]
-```
+- **Install with Hugging Face `transformers` support**
 
-#### Install with R support (requires R to be installed)
+    ```bash
+    pip install validmind[transformers]
+    ```
 
-```bash
-pip install validmind[r-support]
-```
+- **Install with PyTorch support**
+
+    ```bash
+    pip install validmind[pytorch]
+    ```
+
+- **Install with R support (requires R to be installed)**
+
+    ```bash
+    pip install validmind[r-support]
+    ```
 
 ## How to contribute
 
