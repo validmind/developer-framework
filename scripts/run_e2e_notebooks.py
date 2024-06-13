@@ -7,7 +7,7 @@ Note: This script is meant to be run from the root of the repo
 
 Notebooks Tested:
  - notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb
- - notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb
+ - notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb
  - notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb
  - notebooks/code_samples/custom_tests/external_test_providers.ipynb
 
@@ -42,7 +42,7 @@ NOTEBOOKS_TO_RUN = [
         "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
         "project": DEFAULT_PROJECT_ID,
     },
-    "notebooks/code_samples/time_series/tutorial_time_series_forecasting.ipynb",
+    "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
     # "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     # TODO: fix the above when we have a regression template installed
     "notebooks/how_to/run_unit_metrics.ipynb",
