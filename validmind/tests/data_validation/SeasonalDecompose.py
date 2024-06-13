@@ -4,10 +4,10 @@
 
 import warnings
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from scipy import stats
 from statsmodels.tsa.seasonal import seasonal_decompose
 
@@ -132,7 +132,6 @@ class SeasonalDecompose(Metric):
                 inferred_freq = pd.infer_freq(series.index)
 
                 if inferred_freq is not None:
-                    logger.info(f"Frequency of {col}: {inferred_freq}")
 
                     # Only take finite values to seasonal_decompose
                     sd = seasonal_decompose(
@@ -142,58 +141,87 @@ class SeasonalDecompose(Metric):
 
                     results[col] = self.serialize_seasonal_decompose(sd)
 
-                    # Create subplots
-                    fig, axes = plt.subplots(3, 2)
-                    width, _ = fig.get_size_inches()
-                    fig.set_size_inches(width, 15)
-                    fig.subplots_adjust(hspace=0.3)
-                    fig.suptitle(
-                        f"Seasonal Decomposition for {col}",
-                        fontsize=20,
-                        weight="bold",
-                        y=0.95,
+                    # Create subplots using Plotly
+                    fig = make_subplots(
+                        rows=3,
+                        cols=2,
+                        subplot_titles=(
+                            "Observed",
+                            "Trend",
+                            "Seasonal",
+                            "Residuals",
+                            "Histogram and KDE of Residuals",
+                            "Normal Q-Q Plot of Residuals",
+                        ),
+                        vertical_spacing=0.1,
                     )
 
-                    # Original seasonal decomposition plots
                     # Observed
-                    sd.observed.plot(ax=axes[0, 0])
-                    axes[0, 0].set_title("Observed", fontsize=18)
-                    axes[0, 0].set_xlabel("")
-                    axes[0, 0].tick_params(axis="both", labelsize=18)
+                    fig.add_trace(
+                        go.Scatter(x=sd.observed.index, y=sd.observed, name="Observed"),
+                        row=1,
+                        col=1,
+                    )
 
                     # Trend
-                    sd.trend.plot(ax=axes[0, 1])
-                    axes[0, 1].set_title("Trend", fontsize=18)
-                    axes[0, 1].set_xlabel("")
-                    axes[0, 1].tick_params(axis="both", labelsize=18)
+                    fig.add_trace(
+                        go.Scatter(x=sd.trend.index, y=sd.trend, name="Trend"),
+                        row=1,
+                        col=2,
+                    )
 
                     # Seasonal
-                    sd.seasonal.plot(ax=axes[1, 0])
-                    axes[1, 0].set_title("Seasonal", fontsize=18)
-                    axes[1, 0].set_xlabel("")
-                    axes[1, 0].tick_params(axis="both", labelsize=18)
+                    fig.add_trace(
+                        go.Scatter(x=sd.seasonal.index, y=sd.seasonal, name="Seasonal"),
+                        row=2,
+                        col=1,
+                    )
 
                     # Residuals
-                    sd.resid.plot(ax=axes[1, 1])
-                    axes[1, 1].set_title("Residuals", fontsize=18)
-                    axes[1, 1].set_xlabel("")
-                    axes[1, 1].tick_params(axis="both", labelsize=18)
+                    fig.add_trace(
+                        go.Scatter(x=sd.resid.index, y=sd.resid, name="Residuals"),
+                        row=2,
+                        col=2,
+                    )
 
                     # Histogram with KDE
                     residuals = sd.resid.dropna()
-                    sns.histplot(residuals, kde=True, ax=axes[2, 0])
-                    axes[2, 0].set_title("Histogram and KDE of Residuals", fontsize=18)
-                    axes[2, 0].set_xlabel("")
-                    axes[2, 0].tick_params(axis="both", labelsize=18)
+                    fig.add_trace(
+                        go.Histogram(x=residuals, nbinsx=100, name="Residuals"),
+                        row=3,
+                        col=1,
+                    )
 
                     # Normal Q-Q plot
-                    stats.probplot(residuals, plot=axes[2, 1])
-                    axes[2, 1].set_title("Normal Q-Q Plot of Residuals", fontsize=18)
-                    axes[2, 1].set_xlabel("")
-                    axes[2, 1].tick_params(axis="both", labelsize=18)
+                    qq = stats.probplot(residuals, plot=None)
+                    qq_line_slope, qq_line_intercept = stats.linregress(
+                        qq[0][0], qq[0][1]
+                    )[:2]
+                    qq_line = qq_line_slope * np.array(qq[0][0]) + qq_line_intercept
 
-                    # Do this if you want to prevent the figure from being displayed
-                    plt.close("all")
+                    fig.add_trace(
+                        go.Scatter(
+                            x=qq[0][0], y=qq[0][1], mode="markers", name="QQ plot"
+                        ),
+                        row=3,
+                        col=2,
+                    )
+                    fig.add_trace(
+                        go.Scatter(
+                            x=qq[0][0],
+                            y=qq_line,
+                            mode="lines",
+                            name="QQ line",
+                        ),
+                        row=3,
+                        col=2,
+                    )
+
+                    fig.update_layout(
+                        height=1000,
+                        title_text=f"Seasonal Decomposition for {col}",
+                        showlegend=False,
+                    )
 
                     figures.append(
                         Figure(

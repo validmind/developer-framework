@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: ["*"]
+    branches: ['*']
 
 permissions:
   contents: read
@@ -34,18 +34,19 @@ jobs:
       #     docker-images: true
       #     swap-storage: true
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Install poetry
         run: pipx install poetry
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
-          cache: "poetry"
+          python-version: '3.8'
+          cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry env use python3.8 && poetry install --all-extras
 
       - name: Install PyTorch CPU
         run: poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu

@@ -15,24 +15,44 @@ permissions:
 
 jobs:
   integration:
+    # Don't rerun the integration tests after docs were generated
+    if: "!contains(github.event.head_commit.message, 'Generate docs')"
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
       - name: Install poetry
         run: pipx install poetry
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
-          cache: "poetry"
+          python-version: '3.11'
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry config virtualenvs.in-project true && poetry env use python3.11 && poetry install --all-extras
+
+      - name: Build the package
+        run: poetry build
+
+      - name: Remove Build Environment
+        run: rm -rf .venv
+
+      - name: Setup Virtual Environment
+        run: python -m venv sdist-venv
+
+      - name: Install Built Package
+        run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[all]"
+
+      - name: Install Additional Dependencies
+        run: sdist-venv/bin/pip install nbformat papermill jupyter
+
+      - name: Create Jupyter Kernel
+        run: sdist-venv/bin/python -m ipykernel install --user --name sdist-venv
 
       - name: Integration Tests
-        run: make test-integration
+        run: sdist-venv/bin/python scripts/run_e2e_notebooks.py --kernel sdist-venv
         env:
           NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
