@@ -34,17 +34,19 @@ import papermill as pm
 dotenv.load_dotenv()
 
 DEFAULT_PROJECT_ID = os.getenv(
-    "NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID", "clnt1f4qc00ap15lfts8ur7lw"
-)
+    "NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID", "cltnl29bz00051omgwepjgu1r"
+)  # Demo Account Dev Customer Churn Model
 
 NOTEBOOKS_TO_RUN = [
+    "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
     {
-        "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
-        "project": DEFAULT_PROJECT_ID,
+        "path": "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
+        "project": "cltnl8c7v001j1omgyzmjrzhj",  # Demo Account Dev Time-Series Model
     },
-    "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
-    # "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
-    # TODO: fix the above when we have a regression template installed
+    {
+        "path": "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
+        "project": "cltnl7t6t000x1omg706sdv0j",  # Demo Account Dev Regression Model
+    },
     "notebooks/how_to/run_unit_metrics.ipynb",
     "notebooks/code_samples/custom_tests/integrate_external_test_providers.ipynb",
     "notebooks/code_samples/custom_tests/implement_custom_tests.ipynb",
