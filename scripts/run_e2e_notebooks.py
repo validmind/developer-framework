@@ -38,7 +38,10 @@ DEFAULT_PROJECT_ID = os.getenv(
 )  # Demo Account Dev Customer Churn Model
 
 NOTEBOOKS_TO_RUN = [
-    "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
+    {
+        "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
+        "project": "cltnl29bz00051omgwepjgu1r",  # Demo Account Dev Customer Churn Model
+    },
     {
         "path": "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
         "project": "cltnl8c7v001j1omgyzmjrzhj",  # Demo Account Dev Time-Series Model
