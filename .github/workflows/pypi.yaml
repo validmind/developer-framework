@@ -16,17 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install poetry
+        run: pipx install poetry
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'poetry'
 
-      - name: Install poetry
-        run: pipx install poetry
-
       - name: Install Dependencies
-        run: poetry install
+        run: poetry env use python3.11 && poetry install
 
       - name: Install PyTorch CPU
         run: poetry run pip install torch --extra-index-url https://download.pytorch.org/whl/cpu
