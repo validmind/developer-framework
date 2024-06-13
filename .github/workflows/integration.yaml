@@ -4,16 +4,11 @@
 name: Integration Tests
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  #     - prod
-  #     - release-v1
-
   push:
-    branches: [main]
-  pull_request:
-    branches: ['*']
+    branches:
+      - main
+      - prod
+      - release-v1
 
 permissions:
   contents: read
