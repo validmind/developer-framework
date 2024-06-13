@@ -27,6 +27,12 @@ repos:
 
   - repo: local
     hooks:
+      - id: check_for_credentials
+        name: Check for exposed credentials
+        entry: make verify-exposed-credentials
+        language: system
+        stages:
+          - 'pre-commit'
       - id: generate_test_id_types
         name: Running make generate_test_id_types
         entry: make generate-test-id-types
