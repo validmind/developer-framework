@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import os
+
 import pandas as pd
 
 current_path = os.path.dirname(os.path.abspath(__file__))

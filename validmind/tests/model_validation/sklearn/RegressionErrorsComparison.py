@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 from sklearn import metrics
 
-from validmind.logging import get_logger
 from validmind import tags, tasks
+from validmind.logging import get_logger
 
 logger = get_logger(__name__)
 
