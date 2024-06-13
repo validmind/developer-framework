@@ -10,6 +10,7 @@ Notebooks Tested:
  - notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb
  - notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb
  - notebooks/code_samples/custom_tests/external_test_providers.ipynb
+ - notebooks/code_samples/custom_tests/implement_custom_tests.ipynb
 
 To add more notebooks to the list, simply add the path to the `NOTEBOOKS_TO_RUN` list.
 This will use the default project id for the notebook. If you want to use a different
