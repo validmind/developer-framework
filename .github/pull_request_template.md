@@ -9,6 +9,7 @@ PR instructions for release notes:
 - `highlight`
 - `enhancement`
 - `bug`
+- `chore`
 - `deprecation`
 - `documentation`
 

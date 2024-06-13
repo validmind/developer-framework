@@ -27,11 +27,28 @@ repos:
 
   - repo: local
     hooks:
+      - id: check_for_notebook_outputs
+        name: Check for notebook outputs
+        entry: make ensure-clean-notebooks
+        language: system
+        # only run if there are .ipynb files in the commit
+        types: [jupyter]
+        stages:
+          - 'pre-commit'
+      - id: check_for_credentials
+        name: Check for exposed credentials
+        entry: make verify-exposed-credentials
+        language: system
+        # only run if there are .ipynb files in the commit
+        types: [jupyter]
+        stages:
+          - 'pre-commit'
       - id: generate_test_id_types
         name: Running make generate_test_id_types
         entry: make generate-test-id-types
         language: system
         pass_filenames: false
+        types: [python]
         stages:
           - 'commit'
       - id: format
@@ -39,6 +56,7 @@ repos:
         entry: ./scripts/format_and_add.sh
         language: script
         pass_filenames: false
+        types: [python]
         stages:
           - 'commit'
       - id: lint
@@ -46,5 +64,6 @@ repos:
         entry: make lint
         language: system
         pass_filenames: false
+        types: [python]
         stages:
           - 'push'

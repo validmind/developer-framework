@@ -43,9 +43,15 @@ def check_notebook(root, file):
 
 any_error = False
 
+print(f"Checking notebooks in {notebooks_directory} for clear text credentials...")
+
 for root, dirs, files in os.walk(notebooks_directory):
     for file in files:
-        if file.endswith(".ipynb") and ".ipynb_checkpoints" not in root:
+        if (
+            file.endswith(".ipynb")
+            and ".ipynb_checkpoints" not in root
+            and "scratch" not in root
+        ):
             notebook_error = check_notebook(root, file)
             any_error = any_error or notebook_error
 

@@ -4,27 +4,27 @@ on:
   workflow_dispatch:
     inputs:
       custom_branch_name:
-        description: "Custom Branch Name (optional)"
+        description: 'Custom Branch Name (optional)'
         required: false
-        default: ""
+        default: ''
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Main Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: "main"
+          ref: 'main'
 
       - name: Install poetry
         run: pipx install poetry
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
-          cache: "poetry"
+          python-version: '3.11'
+          cache: 'poetry'
 
       - name: Get Application Version
         id: get_version
@@ -41,9 +41,9 @@ jobs:
           fi
 
       - name: Checkout Prod Branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: "prod"
+          ref: 'prod'
           fetch-depth: 0
 
       - name: Setup Git Config
