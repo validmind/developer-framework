@@ -25,11 +25,11 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v3
         with:
-          python-version: "3.8"
-          cache: "poetry"
+          python-version: '3.8'
+          cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry install
+        run: poetry install --all-extras
 
       - name: Integration Tests
         run: make test-integration
