@@ -32,13 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#TimeSeriesHistogram">TimeSeriesHistogram</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#TimeSeriesHistogram.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#TimeSeriesHistogram">TimeSeriesHistogram</a>
             </li>
     </ul>
 
@@ -63,10 +57,12 @@
                 
             </section>
                 <section id="TimeSeriesHistogram">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">TimeSeriesHistogram</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+                    <div class="attr function">
+                    <div class="decorator">@tags(&#39;data_validation&#39;, &#39;visualization&#39;)</div>
+        <div class="decorator">@tasks(&#39;regression&#39;, &#39;time_series_forecasting&#39;)</div>
+
+        <span class="def">def</span>
+        <span class="name">TimeSeriesHistogram</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">nbins</span><span class="o">=</span><span class="mi">30</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -81,7 +77,7 @@ to weather data. This analysis provides valuable insights into the probability d
 (kurtosis) underlying the data.</p>
 
 <p><strong>Test Mechanism</strong>: This test operates on a specific column within the dataset that is required to have a datetime
-type index. It goes through each column in the given dataset, creating a histogram with Seaborn's histplot
+type index. It goes through each column in the given dataset, creating a histogram with Plotly's histplot
 function. In cases where the dataset includes more than one time-series (i.e., more than one column with a datetime
 type index), a distinct histogram is plotted for each series. Additionally, a kernel density estimate (KDE) line is
 drawn for each histogram, providing a visualization of the data's underlying probability distribution. The x and
@@ -119,45 +115,6 @@ lost, marking a trade-off between precision and general overview.</li>
 </div>
 
 
-                            <div id="TimeSeriesHistogram.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TimeSeriesHistogram.run"></a>
-    
-            <div class="docstring"><p>Run the calculation and cache its results</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="TimeSeriesHistogram.__init__" class="function">Metric</dd>
-                <dd id="TimeSeriesHistogram.summary" class="function">summary</dd>
-                <dd id="TimeSeriesHistogram.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="TimeSeriesHistogram.description" class="function">description</dd>
-                <dd id="TimeSeriesHistogram.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="TimeSeriesHistogram.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="TimeSeriesHistogram.dataset" class="variable">dataset</dd>
-                <dd id="TimeSeriesHistogram.model" class="variable">model</dd>
-                <dd id="TimeSeriesHistogram.models" class="variable">models</dd>
-                <dd id="TimeSeriesHistogram.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
