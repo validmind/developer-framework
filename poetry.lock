@@ -7418,12 +7418,12 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 
 [extras]
 all = ["langchain-openai", "openai", "pycocoevalcap", "ragas", "rpy2", "torch", "transformers"]
+huggingface = ["transformers"]
 llm = ["langchain-openai", "openai", "pycocoevalcap", "ragas", "torch", "transformers"]
 pytorch = ["torch"]
 r-support = ["rpy2"]
-transformers = ["transformers"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<3.12"
-content-hash = "4eb59622b32a13b98395e0c49f3344b08607cb0280580219142eefc34ae53c6d"
+content-hash = "37605a3ebcc074330112c3a117f1c2c982da0ef672bfdd9627ed53bd0ba2f78d"
