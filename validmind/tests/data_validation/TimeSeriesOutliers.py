@@ -225,7 +225,7 @@ class TimeSeriesOutliers(ThresholdTest):
             figures.append(
                 Figure(
                     for_object=self,
-                    key=f"{self.name}:{col}",
+                    key=f"{self.name}:{col}_{self.inputs.dataset.input_id}",
                     figure=fig,
                 )
             )
