@@ -65,6 +65,19 @@ vm.init(
   api_secret = "{api_secret}",
   project = "{project_id}"
 )
+
+
+import logging
+import sys
+import site
+
+logger = logging.getLogger()
+
+# Print the path to the current Python interpreter
+logger.info("Python executable path: " + sys.executable)
+
+# Print the path to the site-packages directory
+logger.info("Site-packages path: " + str(site.getsitepackages()))
 """
 
 
