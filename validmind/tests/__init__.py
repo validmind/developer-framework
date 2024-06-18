@@ -486,7 +486,8 @@ def run_test(
 # 2. Support for threshold tests
 # 3. When combining figures it's important that the test produces figures annotates
 #       them correctly with the input names so they can be distinguished
-def run_comparison_test(
+# 4. Simplify, too complex :D - C901 'run_comparison_test' is too complex
+def run_comparison_test(  # noqa: C901
     test_id: TestID,
     input_grid: Dict[str, List[Any]],
     show=True,
