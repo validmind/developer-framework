@@ -8,9 +8,10 @@ import importlib
 import inspect
 import json
 import sys
+from itertools import product
 from pathlib import Path
 from pprint import pformat
-from typing import Dict
+from typing import Any, Dict, List
 from uuid import uuid4
 
 import pandas as pd
@@ -30,6 +31,7 @@ from ..utils import (
     test_id_to_name,
 )
 from ..vm_models import TestContext, TestInput
+from ..vm_models.test.result_wrapper import MetricResultWrapper
 from .__types__ import TestID
 from .decorator import tags, tasks
 from .decorator import test as test_decorator
@@ -477,6 +479,79 @@ def run_test(
         test.result.show()
 
     return test.result
+
+
+# TODO:
+# 1. How to combine `value`?
+# 2. Support for threshold tests
+# 3. When combining figures it's important that the test produces figures annotates
+#       them correctly with the input names so they can be distinguished
+def run_comparison_test(
+    test_id: TestID,
+    input_grid: Dict[str, List[Any]],
+    show=True,
+):
+    keys, values = zip(*input_grid.items())
+    input_groups = [dict(zip(keys, v)) for v in product(*values)]
+
+    merged_metric_result = None
+    merged_results = MetricResultWrapper(metric=merged_metric_result)
+
+    for input_group_index, inputs in enumerate(input_groups):
+        # Ensure we don't show the results for each individual test
+        result = run_test(test_id, inputs=inputs, show=False)
+
+        if merged_metric_result is None:
+            merged_metric_result = result
+            merged_results.name = merged_results.name
+            # Use the key and ref_id from the first result
+            merged_metric_result.key = result.metric.key
+            merged_metric_result.ref_id = result.metric.ref_id
+            merged_results.result_id = result.result_id
+        else:
+            merged_results.name = merged_results.name + "." + result.name
+
+        # TODO: how to combine inputs?
+        merged_results.inputs = result.inputs
+
+        # Combine the figures when available
+        if merged_results.figures is None:
+            merged_results.figures = result.figures
+        else:
+            merged_results.figures.extend(result.figures)
+
+        # Some metrics have no summary (e.g. when they only produce figures)
+        if result.metric.summary is None:
+            continue
+
+        # Add a new column to the results dataset that describes the inputs
+        input_description = []
+        for _, input in inputs.items():
+            if isinstance(input, str):
+                input_description.append(input)
+            else:
+                input_description.append(input.input_id)
+        input_description = ", ".join(input_description)
+
+        # Each element inside the table is a dict. We need to add the inputs key
+        # to the beginning of each dict.
+        for i, table in enumerate(result.metric.summary.results):
+            for j, row in enumerate(table.data):
+                new_dict = {"Inputs": input_description}
+                new_dict.update(row)
+                table.data[j] = new_dict
+
+        # Only merge results for the second and subsequent results
+        if input_group_index == 0:
+            continue
+
+        for i, table in enumerate(result.metric.summary.results):
+            merged_metric_result.metric.summary.results[i].data.extend(table.data)
+
+    if show:
+        merged_metric_result.show()
+
+    return merged_metric_result
 
 
 def register_test_provider(namespace: str, test_provider: TestProvider) -> None:

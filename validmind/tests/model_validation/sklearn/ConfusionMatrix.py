@@ -113,6 +113,17 @@ class ConfusionMatrix(Metric):
             height=600,
         )
 
+        # Add an annotation at the bottom of the heatmap
+        fig.add_annotation(
+            x=0.5,
+            y=-0.1,
+            xref="paper",
+            yref="paper",
+            text=f"Confusion Matrix for {self.inputs.model.input_id} on {self.inputs.dataset.input_id}",
+            showarrow=False,
+            font=dict(size=14),
+        )
+
         return self.cache_results(
             metric_value={
                 "confusion_matrix": cm,
