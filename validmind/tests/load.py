@@ -27,7 +27,7 @@ from ..utils import (
     md_to_html,
     test_id_to_name,
 )
-from .__store__ import get_test_ids, register_test
+from ._store import test_store, test_provider_store
 from .__types__ import TestID
 from .decorator import test as test_decorator
 from .utils import test_description
@@ -48,7 +48,7 @@ def __init__():
                 if path.parent.parent.stem == d
                 else f"validmind.{d}.{path.stem}"
             )
-            register_test(test_id)
+            test_store.register_test(test_id)
 
 
 def _pretty_list_tests(tests, truncate=True):
@@ -58,7 +58,7 @@ def _pretty_list_tests(tests, truncate=True):
             "Name": test_id_to_name(test_id),
             "Description": test_description(test, truncate),
             "Required Inputs": test.required_inputs,
-            "Params": test.default_params or {},
+            "Params": test.default_params,
         }
         for test_id, test in tests.items()
     ]
@@ -86,7 +86,10 @@ def list_tests(
     Returns:
         list or pandas.DataFrame: A list of all tests or a formatted table.
     """
-    tests = {test_id: load_test(test_id, reload=True) for test_id in get_test_ids()}
+    tests = {
+        test_id: load_test(test_id, reload=True)
+        for test_id in test_store.get_test_ids()
+    }
 
     # first search by the filter string since it's the most general search
     if filter is not None:
@@ -112,7 +115,8 @@ def list_tests(
         }
 
     if not pretty:
-        return tests
+        # only return test ids
+        return list(tests.keys())
 
     return _pretty_list_tests(tests, truncate=truncate)
 
@@ -161,8 +165,8 @@ def load_test(test_id: str, reload=False):
     namespace = test_id.split(".", 1)[0]
 
     # TODO: lets implement an extensible loading system instead of this ugly if/else
-    if test_id in __custom_tests:
-        test = __custom_tests[test_id]
+    if test_store.get_custom_test(test_id):
+        test = test_store.get_custom_test(test_id)
 
     elif test_id.startswith("validmind.composite_metric"):
         error, test = load_composite_metric(test_id)
@@ -170,13 +174,15 @@ def load_test(test_id: str, reload=False):
     elif namespace == "validmind":
         error, test = _load_validmind_test(test_id, reload=reload)
 
-    elif namespace in __test_providers:
+    elif test_provider_store.has_test_provider(namespace):
+        provider = test_provider_store.get_test_provider(namespace)
+
         try:
-            test = __test_providers[namespace].load_test(test_id.split(".", 1)[1])
+            test = provider.load_test(test_id.split(".", 1)[1])
         except Exception as e:
             error = (
                 f"Unable to load test {test_id} from test provider: "
-                f"{__test_providers[namespace]}\n Got Exception: {e}"
+                f"{provider}\n Got Exception: {e}"
             )
 
     else:
@@ -191,7 +197,7 @@ def load_test(test_id: str, reload=False):
         # TODO: simplify this as we move towards all functional metrics
         # "_" is used here so it doesn't conflict with other test ids
         test_decorator("_")(test)
-        test = __custom_tests["_"]
+        test = test_store.get_custom_test("_")
 
     test.test_id = f"{test_id}:{result_id}" if result_id else test_id
 
@@ -210,13 +216,13 @@ def describe_test(test_id: TestID = None, raw: bool = False, show: bool = True):
         raw (bool, optional): If True, returns a dictionary with the test details.
             Defaults to False.
     """
-    test = load_test(test_id)
+    test = load_test(test_id, reload=True)
 
     details = {
         "ID": test_id,
         "Name": test_id_to_name(test_id),
         "Required Inputs": test.required_inputs,
-        "Params": test.default_params or {},
+        "Params": test.default_params,
         "Description": inspect.getdoc(test).strip() or "",
     }
 

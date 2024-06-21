@@ -9,6 +9,8 @@ from typing import Protocol
 
 from validmind.logging import get_logger
 
+from ._store import test_provider_store
+
 logger = get_logger(__name__)
 
 
@@ -145,3 +147,13 @@ class LocalTestProvider:
             raise LocalTestProviderLoadTestError(
                 f"Failed to find the test class in the module. Error: {str(e)}"
             )
+
+
+def register_test_provider(namespace: str, test_provider: "TestProvider") -> None:
+    """Register an external test provider
+
+    Args:
+        namespace (str): The namespace of the test provider
+        test_provider (TestProvider): The test provider
+    """
+    test_provider_store.register_test_provider(namespace, test_provider)

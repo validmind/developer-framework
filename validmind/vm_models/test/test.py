@@ -19,8 +19,8 @@ class Test(TestUtils):
     # Class Variables
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes
-    tasks: List[str]  # should be overridden by leaf classes
-    tags: List[str]  # should be overridden by leaf classes
+    tasks: List[str] = None  # should be overridden by leaf classes
+    tags: List[str] = None  # should be overridden by leaf classes
 
     required_inputs: ClassVar[List[str]] = None  # should be overridden by leaf classes
     default_params: ClassVar[dict] = None  # should be overridden by leaf classes

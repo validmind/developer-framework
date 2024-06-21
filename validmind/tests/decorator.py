@@ -31,6 +31,8 @@ from validmind.vm_models.figure import (
 )
 from validmind.vm_models.test.result_wrapper import MetricResultWrapper
 
+from ._store import test_store
+
 logger = get_logger(__name__)
 
 
@@ -265,8 +267,6 @@ def test(func_or_id):
         The decorated function.
     """
 
-    from . import _register_custom_test
-
     def decorator(func):
         test_id = func_or_id or f"validmind.custom_metrics.{func.__name__}"
 
@@ -289,7 +289,7 @@ def test(func_or_id):
                 },
             },
         )
-        _register_custom_test(test_id, metric_class)
+        test_store.register_custom_test(test_id, metric_class)
 
         # special function to allow the function to be saved to a file
         func.save = _get_save_func(func, test_id)
