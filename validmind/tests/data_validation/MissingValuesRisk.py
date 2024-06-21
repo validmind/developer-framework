@@ -52,10 +52,8 @@ class MissingValuesRisk(Metric):
 
     name = "missing_values_risk"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "data_quality", "risk_analysis"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "data_quality", "risk_analysis"]
 
     def run(self):
         total_cells = self.inputs.dataset.df.size

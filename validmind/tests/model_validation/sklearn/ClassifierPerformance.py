@@ -58,15 +58,13 @@ class ClassifierPerformance(Metric):
 
     name = "classifier_performance"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+    ]
 
     def summary(self, metric_value: dict):
         """

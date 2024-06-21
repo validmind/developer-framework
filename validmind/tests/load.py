@@ -27,7 +27,7 @@ from ..utils import (
     md_to_html,
     test_id_to_name,
 )
-from .__store__ import register_test
+from .__store__ import get_test_ids, register_test
 from .__types__ import TestID
 from .decorator import test as test_decorator
 from .utils import test_description
@@ -54,13 +54,13 @@ def __init__():
 def _pretty_list_tests(tests, truncate=True):
     table = [
         {
-            "ID": test.test_id,
-            "Name": test_id_to_name(test.test_id),
+            "ID": test_id,
+            "Name": test_id_to_name(test_id),
             "Description": test_description(test, truncate),
             "Required Inputs": test.required_inputs,
             "Params": test.default_params or {},
         }
-        for test in [load_test(test_id) for test_id in tests]
+        for test_id, test in tests.items()
     ]
 
     return format_dataframe(pd.DataFrame(table))
@@ -86,59 +86,35 @@ def list_tests(
     Returns:
         list or pandas.DataFrame: A list of all tests or a formatted table.
     """
-    tests = 
+    tests = {test_id: load_test(test_id, reload=True) for test_id in get_test_ids()}
 
-    # first filter by the filter string since it's the most general search
+    # first search by the filter string since it's the most general search
     if filter is not None:
-        matched_by_id = [
-            test_id for test_id in tests if filter.lower() in test_id.lower()
-        ]
-        matched_by_task = [
-            test_id
-            for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and any(
-                filter.lower() in task.lower()
-                for task in __test_classes[test_id].metadata["task_types"]
-            )
-        ]
-        matched_by_tags = [
-            test_id
-            for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and any(
-                fuzzy_match(tag, filter.lower())
-                for tag in __test_classes[test_id].metadata["tags"]
-            )
-        ]
-
-        tests = list(set(matched_by_id + matched_by_task + matched_by_tags))
+        tests = {
+            test_id: test
+            for test_id, test in tests.items()
+            if filter.lower() in test_id.lower()
+            or any(filter.lower() in task.lower() for task in test.tasks)
+            or any(fuzzy_match(tag, filter.lower()) for tag in test.tags)
+        }
 
     # then filter by task type and tags since they are more specific
     if task is not None:
-        _load_tests(tests)
-
-        tests = [
-            test_id
-            for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and task in __test_classes[test_id].metadata["task_types"]
-        ]
+        tests = {
+            test_id: test for test_id, test in tests.items() if task in test.task_types
+        }
 
     if tags is not None:
-        _load_tests(tests)
+        tests = {
+            test_id: test
+            for test_id, test in tests.items()
+            if all(tag in test.tags for tag in tags)
+        }
 
-        tests = [
-            test_id
-            for test_id in tests
-            if hasattr(__test_classes[test_id], "metadata")
-            and all(tag in __test_classes[test_id].metadata["tags"] for tag in tags)
-        ]
+    if not pretty:
+        return tests
 
-    if pretty:
-        return _pretty_list_tests(tests, truncate=truncate)
-
-    return tests
+    return _pretty_list_tests(tests, truncate=truncate)
 
 
 def _load_validmind_test(test_id, reload=False):

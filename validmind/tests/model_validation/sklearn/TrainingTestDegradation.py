@@ -72,23 +72,20 @@ class TrainingTestDegradation(ThresholdTest):
         "max_threshold": 0.10,  # Maximum 10% degradation
     }
 
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
+    tasks = ["classification", "text_classification"]
+    tags = [
             "sklearn",
             "binary_classification",
             "multiclass_classification",
             "model_performance",
             "visualization",
-        ],
-    }
+        ]
 
     default_metrics = {
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
         "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
-        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
-    }
+        "f1": partial(metrics.f1_score, zero_division=0, average="micro")
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """

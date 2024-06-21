@@ -55,13 +55,11 @@ class FowlkesMallowsScore(ClusterPerformance):
 
     name = "fowlkes_mallows_score"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def metric_info(self):
         return {"Fowlkes-Mallows score": metrics.fowlkes_mallows_score}

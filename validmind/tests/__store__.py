@@ -12,6 +12,11 @@ __custom_tests = {}
 __test_providers = {}
 
 
+def get_test_ids() -> list:
+    """Get all registered test IDs"""
+    return list(__tests.keys())
+
+
 def register_test(test_id: str, test_class: object = None):
     """Register a test class"""
     __tests[test_id] = test_class

@@ -53,10 +53,8 @@ class DescriptiveStatistics(Metric):
 
     name = "descriptive_statistics"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "time_series_data"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "time_series_data"]
 
     def get_summary_statistics_numerical(self, df, numerical_fields):
         percentiles = [0.25, 0.5, 0.75, 0.90, 0.95]

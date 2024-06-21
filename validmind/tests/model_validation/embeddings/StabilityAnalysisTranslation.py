@@ -57,8 +57,7 @@ class StabilityAnalysisTranslation(StabilityAnalysis):
     default_params = {
         "source_lang": "en",
         "target_lang": "fr",
-        **StabilityAnalysis.default_params,
-    }
+        **StabilityAnalysis.default_params
 
     def perturb_data(self, data: str):
         if not isinstance(data, str):

@@ -85,9 +85,8 @@ class WeakspotsDiagnosis(ThresholdTest):
         },
     }
 
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
+    tasks = ["classification", "text_classification"]
+    tags = [
             "sklearn",
             "binary_classification",
             "multiclass_classification",
@@ -101,8 +100,7 @@ class WeakspotsDiagnosis(ThresholdTest):
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0),
         "recall": partial(metrics.recall_score, zero_division=0),
-        "f1": partial(metrics.f1_score, zero_division=0),
-    }
+        "f1": partial(metrics.f1_score, zero_division=0)
 
     def run(self):
         thresholds = self.params["thresholds"]

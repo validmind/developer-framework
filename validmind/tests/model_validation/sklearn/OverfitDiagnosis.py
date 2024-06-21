@@ -67,19 +67,16 @@ class OverfitDiagnosis(ThresholdTest):
     name = "overfit_regions"
     required_inputs = ["model", "datasets"]
     default_params = {"features_columns": None, "cut_off_percentage": 4}
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
+    tasks = ["classification", "text_classification"]
+    tags = [
             "sklearn",
             "binary_classification",
             "multiclass_classification",
             "model_diagnosis",
-        ],
-    }
+        ]
 
     default_metrics = {
-        "accuracy": metrics.accuracy_score,
-    }
+        "accuracy": metrics.accuracy_score
 
     def run(self):
         if "cut_off_percentage" not in self.params:

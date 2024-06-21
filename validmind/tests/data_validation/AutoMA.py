@@ -57,10 +57,8 @@ class AutoMA(Metric):
     name = "auto_ma"
     required_inputs = ["dataset"]
     default_params = {"max_ma_order": 3}
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "statsmodels", "forecasting", "statistical_test"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "statsmodels", "forecasting", "statistical_test"]
 
     def run(self):
         if "max_ma_order" not in self.params:

@@ -43,13 +43,11 @@ class RegressionErrors(Metric):
 
     name = "regression_errors"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def summary(self, raw_results):
         """

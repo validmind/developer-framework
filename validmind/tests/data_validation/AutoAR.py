@@ -61,10 +61,8 @@ class AutoAR(Metric):
     name = "auto_ar"
     required_inputs = ["dataset"]
     default_params = {"max_ar_order": 3}
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "statsmodels", "forecasting", "statistical_test"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "statsmodels", "forecasting", "statistical_test"]
 
     def run(self):
         if "max_ar_order" not in self.params:

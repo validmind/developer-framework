@@ -59,10 +59,8 @@ class HighPearsonCorrelation(ThresholdTest):
     name = "pearson_correlation"
     required_inputs = ["dataset"]
     default_params = {"max_threshold": 0.3}
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "data_quality", "correlation"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "data_quality", "correlation"]
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """The high pearson correlation test returns results like these:

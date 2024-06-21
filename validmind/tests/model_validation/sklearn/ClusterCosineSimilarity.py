@@ -57,13 +57,11 @@ class ClusterCosineSimilarity(Metric):
 
     name = "cluster_cosine_similarity"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def run(self):
         y_true_train = self.inputs.dataset.y

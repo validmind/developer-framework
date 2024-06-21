@@ -61,8 +61,7 @@ class StabilityAnalysisSynonyms(StabilityAnalysis):
     name = "Text Embeddings Stability Analysis to Synonym Swaps"
     default_params = {
         "probability": 0.02,  # probability of swapping a word with a synonym
-        **StabilityAnalysis.default_params,
-    }
+        **StabilityAnalysis.default_params
 
     def perturb_data(self, data):
         if not isinstance(data, str):

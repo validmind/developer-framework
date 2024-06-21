@@ -73,10 +73,8 @@ class ClassImbalance(ThresholdTest):
     name = "class_imbalance"
     required_inputs = ["dataset"]
     default_params = {"min_percent_threshold": 10}
-    metadata = {
-        "task_types": ["classification"],
-        "tags": ["tabular_data", "binary_classification", "multiclass_classification"],
-    }
+    tasks = ["classification"]
+    tags = ["tabular_data", "binary_classification", "multiclass_classification"]
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         return ResultSummary(

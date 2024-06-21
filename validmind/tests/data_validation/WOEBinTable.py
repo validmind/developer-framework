@@ -48,10 +48,8 @@ class WOEBinTable(Metric):
     name = "woe_bin_table"
     required_inputs = ["dataset"]
     default_params = {"breaks_adj": None}
-    metadata = {
-        "task_types": ["classification"],
-        "tags": ["tabular_data", "categorical_data"],
-    }
+    tasks = ["classification"]
+    tags = ["tabular_data", "categorical_data"]
 
     def run(self):
         target_column = self.inputs.dataset.target_column

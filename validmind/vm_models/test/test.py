@@ -7,20 +7,11 @@
 from abc import abstractmethod
 from dataclasses import dataclass
 from inspect import getdoc
-from typing import ClassVar, List, TypedDict
+from typing import ClassVar, List
 from uuid import uuid4
 
 from ..test_context import TestUtils
 from .result_wrapper import ResultWrapper
-
-
-class TestMetadata(TypedDict):
-    """
-    TestMetadata is a custom dict type that allows us to add metadata to tests
-    """
-
-    task_types: List[str]
-    tags: List[str]
 
 
 @dataclass
@@ -28,7 +19,8 @@ class Test(TestUtils):
     # Class Variables
     name: ClassVar[str] = ""  # should be overridden by leaf classes
     test_type: ClassVar[str]  # should be overridden by parent classes
-    metadata: ClassVar[TestMetadata]  # should be overridden by leaf classes
+    tasks: List[str]  # should be overridden by leaf classes
+    tags: List[str]  # should be overridden by leaf classes
 
     required_inputs: ClassVar[List[str]] = None  # should be overridden by leaf classes
     default_params: ClassVar[dict] = None  # should be overridden by leaf classes
@@ -59,6 +51,15 @@ class Test(TestUtils):
         # TODO: add validation for required inputs
         if self.default_params is None:
             self.default_params = {}
+
+        if self.required_inputs is None:
+            self.required_inputs = []
+
+        if self.tags is None:
+            self.tags = []
+
+        if self.tasks is None:
+            self.tasks = []
 
         self.params = {
             **(self.default_params or {}),

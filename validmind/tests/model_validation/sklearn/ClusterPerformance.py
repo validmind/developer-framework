@@ -51,13 +51,11 @@ class ClusterPerformance(Metric):
 
     name = "cluster_performance_metrics"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def cluser_performance_metrics(
         self, y_true_train, y_pred_train, y_true_test, y_pred_test, samples, metric_info

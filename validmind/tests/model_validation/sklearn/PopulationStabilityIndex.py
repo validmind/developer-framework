@@ -73,9 +73,8 @@ class PopulationStabilityIndex(Metric):
 
     name = "psi"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
+    tasks = ["classification", "text_classification"]
+    tags = [
             "sklearn",
             "binary_classification",
             "multiclass_classification",
@@ -84,8 +83,7 @@ class PopulationStabilityIndex(Metric):
     }
     default_params = {
         "num_bins": 10,
-        "mode": "fixed",
-    }
+        "mode": "fixed"
 
     def summary(self, metric_value):
         # Add a table with the PSI values for each feature

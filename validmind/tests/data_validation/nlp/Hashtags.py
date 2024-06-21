@@ -56,10 +56,8 @@ class Hashtags(ThresholdTest):
     name = "hashtags"
     required_inputs = ["dataset"]
     default_params = {"top_hashtags": 25}
-    metadata = {
-        "task_types": ["text_classification", "text_summarization"],
-        "tags": ["nlp", "text_data", "visualization", "frequency_analysis"],
-    }
+    tasks = ["text_classification", "text_summarization"]
+    tags = ["nlp", "text_data", "visualization", "frequency_analysis"]
 
     def run(self):
         # Can only run this test if we have a Dataset object

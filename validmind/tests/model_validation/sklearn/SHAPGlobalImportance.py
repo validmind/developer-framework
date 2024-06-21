@@ -65,9 +65,8 @@ class SHAPGlobalImportance(Metric):
 
     name = "shap"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
+    tasks = ["classification", "text_classification"]
+    tags = [
             "sklearn",
             "binary_classification",
             "multiclass_classification",
@@ -77,8 +76,7 @@ class SHAPGlobalImportance(Metric):
     }
     default_params = {
         "kernel_explainer_samples": 10,
-        "tree_or_linear_explainer_samples": 200,
-    }
+        "tree_or_linear_explainer_samples": 200
 
     def _generate_shap_plot(self, type_, shap_values, x_test):
         """
