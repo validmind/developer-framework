@@ -17,8 +17,6 @@ def list_tags():
     unique_tags = set()
 
     for test in list_tests(__as_class=True):
-        if not test.tags:
-            print(test.test_id)
         unique_tags.update(test.tags)
 
     return list(unique_tags)
@@ -35,8 +33,6 @@ def list_tasks_and_tags():
     task_tags_dict = {}
 
     for test in list_tests(__as_class=True):
-        if not test.tasks:
-            print(test.test_id)
         for task in test.tasks:
             task_tags_dict.setdefault(task, set()).update(test.tags)
 
@@ -58,8 +54,6 @@ def list_tasks():
     unique_tasks = set()
 
     for test in list_tests(__as_class=True):
-        if not test.tasks:
-            print(test.test_id)
         unique_tasks.update(test.tasks)
 
     return list(unique_tasks)
