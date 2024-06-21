@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 from itertools import product
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from validmind.errors import LoadTestError
 from validmind.unit_metrics import run_metric
@@ -24,6 +24,7 @@ def run_comparison_test(  # noqa: C901
     test_id: TestID,
     input_grid: Dict[str, List[Any]],
     show=True,
+    output_template: str = None,
 ):
     keys, values = zip(*input_grid.items())
     input_groups = [dict(zip(keys, v)) for v in product(*values)]
@@ -89,32 +90,47 @@ def run_comparison_test(  # noqa: C901
 
 def run_test(
     test_id: TestID = None,
+    params: Dict[str, Any] = None,
+    inputs: Dict[str, Any] = None,
+    input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]] = None,
     name: str = None,
-    unit_metrics: list = None,
-    params: dict = None,
-    inputs=None,
-    output_template=None,
-    show=True,
+    unit_metrics: List[TestID] = None,
+    output_template: str = None,
+    show: bool = True,
     **kwargs,
 ):
     """Run a test by test ID
 
     Args:
-        test_id (str, option): The test ID to run - required when running a single test
-            i.e. when not running multiple unit metrics
+        test_id (TestID, optional): The test ID to run. Not required if `unit_metrics` is provided.
+        params (dict, optional): A dictionary of parameters to pass into the test. Params
+            are used to customize the test behavior and are specific to each test. See the
+            test details for more information on the available parameters. Defaults to None.
+        inputs (Dict[str, Any], optional): A dictionary of test inputs to pass into the
+            test. Inputs are either models or datasets that have been initialized using
+            vm.init_model() or vm.init_dataset(). Defaults to None.
+        input_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional): To run
+            a comparison test, provide either a dictionary of inputs where the keys are
+            the input names and the values are lists of different inputs, or a list of
+            dictionaries where each dictionary is a set of inputs to run the test with.
+            This will run the test multiple times with different sets of inputs and then
+            combine the results into a single output. When passing a dictionary, the grid
+            will be created by taking the Cartesian product of the input lists. Its simply
+            a more convenient way of forming the input grid as opposed to passing a list of
+            all possible combinations. Defaults to None.
         name (str, optional): The name of the test (used to create a composite metric
             out of multiple unit metrics) - required when running multiple unit metrics
         unit_metrics (list, optional): A list of unit metric IDs to run as a composite
             metric - required when running multiple unit metrics
-        params (dict, optional): A dictionary of params to override the default params
-        inputs: A dictionary of test inputs to pass to the Test
-        output_template (str, optional): A template to use for customizing the output
+        output_template (str, optional): A jinja2 html template to customize the output
+            of the test. Defaults to None.
         show (bool, optional): Whether to display the results. Defaults to True.
-        **kwargs: Any extra arguments will be passed in via the TestInput object. i.e.:
+        **kwargs: Keyword inputs to pass into the test (same as `inputs` but as keyword
+            args instead of a dictionary):
             - dataset: A validmind Dataset object or a Pandas DataFrame
             - model: A model to use for the test
             - models: A list of models to use for the test
-            other inputs can be accessed inside the test via `self.inputs["input_name"]`
+            - dataset: A validmind Dataset object or a Pandas DataFrame
     """
     if not test_id and not name and not unit_metrics:
         raise ValueError(
@@ -123,6 +139,16 @@ def run_test(
 
     if (unit_metrics and not name) or (name and not unit_metrics):
         raise ValueError("`name` and `unit_metrics` must be provided together")
+
+    if (input_grid and kwargs) or (input_grid and inputs):
+        raise ValueError(
+            "When providing an `input_grid`, you cannot also provide `inputs` or `kwargs`"
+        )
+
+    if input_grid:
+        return run_comparison_test(
+            test_id, input_grid, output_template=output_template, show=show
+        )
 
     if test_id and test_id.startswith("validmind.unit_metrics"):
         # TODO: as we move towards a more unified approach to metrics
