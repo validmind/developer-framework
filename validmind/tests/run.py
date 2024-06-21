@@ -5,8 +5,14 @@
 from itertools import product
 from typing import Any, Dict, List
 
+from validmind.errors import LoadTestError
+from validmind.unit_metrics import run_metric
+from validmind.unit_metrics.composite import load_composite_metric
+from validmind.vm_models import TestContext, TestInput
+from validmind.vm_models.test.result_wrapper import MetricResultWrapper
+
 from .__types__ import TestID
-from ..vm_models.test.result_wrapper import MetricResultWrapper
+from .load import load_test
 
 
 # TODO:
@@ -14,11 +20,10 @@ from ..vm_models.test.result_wrapper import MetricResultWrapper
 # 2. Support for threshold tests
 # 3. When combining figures it's important that the test produces figures annotates
 #       them correctly with the input names so they can be distinguished
-def run_comparison_test(
+def run_comparison_test(  # noqa: C901
     test_id: TestID,
     input_grid: Dict[str, List[Any]],
     show=True,
-    run_test=None,
 ):
     keys, values = zip(*input_grid.items())
     input_groups = [dict(zip(keys, v)) for v in product(*values)]

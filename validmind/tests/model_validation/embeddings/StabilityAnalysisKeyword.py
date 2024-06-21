@@ -51,7 +51,8 @@ class StabilityAnalysisKeyword(StabilityAnalysis):
     name = "Text Embeddings Stability Analysis to Keyword Swaps"
     default_params = {
         "keyword_dict": None,  # set to none by default... this must be overridden
-        **StabilityAnalysis.default_params
+        **StabilityAnalysis.default_params,
+    }
 
     def perturb_data(self, data: str):
         if not isinstance(data, str):

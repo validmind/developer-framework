@@ -114,7 +114,8 @@ class StabilityAnalysisRandomNoise(StabilityAnalysis):
     name = "Text Embeddings Stability Analysis to Random Noise"
     default_params = {
         **StabilityAnalysis.default_params,
-        "probability": 0.02
+        "probability": 0.02,
+    }
 
     def perturb_data(self, data):
         if not isinstance(data, str):

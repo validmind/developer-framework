@@ -27,11 +27,10 @@ from ..utils import (
     md_to_html,
     test_id_to_name,
 )
-from ._store import test_store, test_provider_store
 from .__types__ import TestID
+from ._store import test_provider_store, test_store
 from .decorator import test as test_decorator
 from .utils import test_description
-
 
 logger = get_logger(__name__)
 
@@ -49,6 +48,9 @@ def __init__():
                 else f"validmind.{d}.{path.stem}"
             )
             test_store.register_test(test_id)
+
+
+__init__()
 
 
 def _pretty_list_tests(tests, truncate=True):
@@ -72,9 +74,9 @@ def list_tests(
     """List all tests in the tests directory.
 
     Args:
-        filter (str, optional): Find tests where the ID, task_type or tags match the
+        filter (str, optional): Find tests where the ID, tasks or tags match the
             filter string. Defaults to None.
-        task (str, optional): Find tests that match the task type. Can be used to
+        task (str, optional): Find tests that match the task. Can be used to
             narrow down matches from the filter string. Defaults to None.
         tags (list, optional): Find tests that match list of tags. Can be used to
             narrow down matches from the filter string. Defaults to None.
@@ -103,9 +105,7 @@ def list_tests(
 
     # then filter by task type and tags since they are more specific
     if task is not None:
-        tests = {
-            test_id: test for test_id, test in tests.items() if task in test.task_types
-        }
+        tests = {test_id: test for test_id, test in tests.items() if task in test.tasks}
 
     if tags is not None:
         tests = {
@@ -113,6 +113,9 @@ def list_tests(
             for test_id, test in tests.items()
             if all(tag in test.tags for tag in tags)
         }
+
+    if __as_class:
+        return list(tests.values())
 
     if not pretty:
         # only return test ids

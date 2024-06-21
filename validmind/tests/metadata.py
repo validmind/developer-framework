@@ -2,6 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
+from validmind.utils import format_dataframe
+
 from .load import list_tests
 
 
@@ -12,10 +16,10 @@ def list_tags():
 
     unique_tags = set()
 
-    for test_class in list_tests(__as_class=True):
-        if hasattr(test_class, "metadata") and "tags" in test_class.metadata:
-            for tag in test_class.metadata["tags"]:
-                unique_tags.add(tag)
+    for test in list_tests(__as_class=True):
+        if not test.tags:
+            print(test.test_id)
+        unique_tags.update(test.tags)
 
     return list(unique_tags)
 
@@ -30,34 +34,32 @@ def list_tasks_and_tags():
     """
     task_tags_dict = {}
 
-    for test_class in list_tests(__as_class=True):
-        if hasattr(test_class, "metadata"):
-            task_types = test_class.metadata.get("task_types", [])
-            tags = test_class.metadata.get("tags", [])
+    for test in list_tests(__as_class=True):
+        if not test.tasks:
+            print(test.test_id)
+        for task in test.tasks:
+            task_tags_dict.setdefault(task, set()).update(test.tags)
 
-            for task_type in task_types:
-                if task_type not in task_tags_dict:
-                    task_tags_dict[task_type] = set()
-                task_tags_dict[task_type].update(tags)
-
-    # Convert the dictionary into a DataFrame
-    task_tags_data = [
-        {"Task Type": task_type, "Tags": ", ".join(tags)}
-        for task_type, tags in task_tags_dict.items()
-    ]
-    return format_dataframe(pd.DataFrame(task_tags_data))
+    return format_dataframe(
+        pd.DataFrame(
+            [
+                {"Task": task, "Tags": ", ".join(tags)}
+                for task, tags in task_tags_dict.items()
+            ]
+        )
+    )
 
 
-def list_task_types():
+def list_tasks():
     """
-    List unique task types from all test classes.
+    List unique tasks from all test classes.
     """
 
-    unique_task_types = set()
+    unique_tasks = set()
 
-    for test_class in list_tests(__as_class=True):
-        if hasattr(test_class, "metadata") and "task_types" in test_class.metadata:
-            for task_type in test_class.metadata["task_types"]:
-                unique_task_types.add(task_type)
+    for test in list_tests(__as_class=True):
+        if not test.tasks:
+            print(test.test_id)
+        unique_tasks.update(test.tasks)
 
-    return list(unique_task_types)
+    return list(unique_tasks)

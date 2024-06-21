@@ -283,10 +283,8 @@ def test(func_or_id):
                 "required_inputs": list(inputs.keys()),
                 "default_params": {k: v["default"] for k, v in params.items()},
                 "__doc__": description,
-                "metadata": {
-                    "task_types": tasks,
-                    "tags": tags,
-                },
+                "tasks": tasks,
+                "tags": tags,
             },
         )
         test_store.register_custom_test(test_id, metric_class)
