@@ -62,11 +62,7 @@ class ClusterPerformanceMetrics(ClusterPerformance):
     name = "homogeneity_score"
     required_inputs = ["model", "datasets"]
     tasks = ["clustering"]
-    tags = [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tags = ["sklearn", "model_performance"]
     default_metrics = {
         "Homogeneity Score": metrics.homogeneity_score,
         "Completeness Score": metrics.completeness_score,
@@ -113,7 +109,8 @@ class ClusterPerformanceMetrics(ClusterPerformance):
         provides a score that ranges from 0 to 1, where a higher score indicates a better clustering result. A score of 1 signifies
         perfect agreement with the true class labels, while lower scores suggest less precise and recall clustering performance.
         The Fowlkes-Mallows score offers a balanced evaluation of clustering quality by considering both the ability to correctly
-        identify members of the same class (precision) and the ability to capture all members of the same class (recall)."""
+        identify members of the same class (precision) and the ability to capture all members of the same class (recall).""",
+    }
 
     def summary(self, raw_results):
         """

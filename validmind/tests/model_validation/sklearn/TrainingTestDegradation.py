@@ -74,18 +74,19 @@ class TrainingTestDegradation(ThresholdTest):
 
     tasks = ["classification", "text_classification"]
     tags = [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-            "visualization",
-        ]
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+        "visualization",
+    ]
 
     default_metrics = {
         "accuracy": metrics.accuracy_score,
         "precision": partial(metrics.precision_score, zero_division=0, average="micro"),
         "recall": partial(metrics.recall_score, zero_division=0, average="micro"),
-        "f1": partial(metrics.f1_score, zero_division=0, average="micro")
+        "f1": partial(metrics.f1_score, zero_division=0, average="micro"),
+    }
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """

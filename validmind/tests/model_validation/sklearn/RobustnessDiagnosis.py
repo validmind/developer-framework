@@ -77,15 +77,14 @@ class RobustnessDiagnosis(ThresholdTest):
     }
     tasks = ["classification", "text_classification"]
     tags = [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_diagnosis",
-            "visualization",
-        ]
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_diagnosis",
+        "visualization",
+    ]
 
-    default_metrics = {
-        "accuracy": metrics.accuracy_score
+    default_metrics = {"accuracy": metrics.accuracy_score}
 
     def run(self):
         # Validate X std deviation parameter
