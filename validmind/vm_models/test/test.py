@@ -35,6 +35,10 @@ class Test(TestUtils):
 
     output_template: str = None  # optional output template
 
+    generate_description: bool = (
+        True  # whether to generate a description when caching result
+    )
+
     def __post_init__(self):
         """
         Set default params if not provided

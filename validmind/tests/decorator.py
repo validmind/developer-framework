@@ -58,7 +58,9 @@ def _inspect_signature(test_func: callable):
     return inputs, params
 
 
-def _build_result(results, test_id, description, output_template, inputs):  # noqa: C901
+def _build_result(
+    results, test_id, description, output_template, inputs, generate_description=True
+):  # noqa: C901
     ref_id = str(uuid4())
     figure_metadata = {
         "_type": "metric",
@@ -133,6 +135,7 @@ def _build_result(results, test_id, description, output_template, inputs):  # no
                 default_description=description,
                 summary=result_summary.serialize(),
                 figures=figures,
+                should_generate=generate_description,
             )
         ],
         inputs=inputs,
@@ -161,6 +164,7 @@ def _get_run_method(func, inputs, params):
             description=inspect.getdoc(self),
             output_template=self.output_template,
             inputs=self.get_accessed_inputs(),
+            should_generate=self.generate_description,
         )
 
         return self.result

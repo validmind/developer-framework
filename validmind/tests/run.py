@@ -4,88 +4,196 @@
 
 from itertools import product
 from typing import Any, Dict, List, Union
+from uuid import uuid4
 
+import pandas as pd
+
+from validmind.ai.test_descriptions import get_description_metadata
 from validmind.errors import LoadTestError
 from validmind.unit_metrics import run_metric
 from validmind.unit_metrics.composite import load_composite_metric
-from validmind.vm_models import TestContext, TestInput
-from validmind.vm_models.test.result_wrapper import MetricResultWrapper
+from validmind.vm_models import (
+    Figure,
+    MetricResult,
+    ResultSummary,
+    ResultTable,
+    ResultTableMetadata,
+    TestContext,
+    TestInput,
+    ThresholdTestResults,
+)
+from validmind.vm_models.test.result_wrapper import (
+    MetricResultWrapper,
+    ThresholdTestResultWrapper,
+)
 
 from .__types__ import TestID
 from .load import load_test
 
 
+def _cartesian_product(input_grid: Dict[str, List[Any]]):
+    """Get all possible combinations for a set of inputs"""
+    return [dict(zip(input_grid, values)) for values in product(*input_grid.values())]
+
+
+def _combine_summaries(summaries: List[Dict[str, Any]]):
+    """Combine the summaries from multiple results
+
+    Constraint: The summaries must all have the same structure meaning that each has
+    the same number of tables in the same order with the same columns etc. This
+    should always be the case for comparison tests since its the same test run
+    multiple times with different inputs.
+    """
+
+    def combine_tables(table_index):
+        combined_df = pd.DataFrame()
+
+        for summary_obj in summaries:
+            serialized = summary_obj["summary"].results[table_index].serialize()
+            summary_df = pd.DataFrame(serialized["data"])
+            summary_df = pd.concat(
+                [pd.DataFrame(summary_obj["inputs"]), summary_df], axis=1
+            )
+            combined_df = pd.concat([combined_df, summary_df], ignore_index=True)
+
+        return ResultTable(
+            data=combined_df.to_dict(orient="records"),
+            metadata=ResultTableMetadata(
+                title=f"Comparison of multiple test results (table {table_index + 1})"
+            ),
+        )
+
+    return ResultSummary(
+        results=[
+            combine_tables(table_index)
+            for table_index in range(len(summaries[0]["summary"].results))
+        ]
+    )
+
+
+def _combine_figures(figure_lists: List[List[Any]]):
+    """Combine the figures from multiple results"""
+    if not figure_lists[0]:
+        return None
+
+    return [figure for figures in figure_lists for figure in figures]
+
+
+def metric_comparison(
+    results: List[MetricResultWrapper],
+    test_id: TestID,
+    input_groups: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    output_template: str = None,
+    generate_description: bool = True,
+):
+    """Build a comparison result for multiple metric results"""
+    merged_summary = _combine_summaries(
+        [
+            {"inputs": input_groups, "summary": result.metric.summary}
+            for result in results
+        ]
+    )
+    merged_figures = _combine_figures([result.figures for result in results])
+
+    return MetricResultWrapper(
+        result_id=test_id,
+        result_metadata=[
+            get_description_metadata(
+                test_id=test_id,
+                default_description=f"Comparison test result for {test_id}",
+                summary=merged_summary.serialize(),
+                figures=merged_figures,
+                should_generate=generate_description,
+            ),
+        ],
+        inputs=[input_name for group in input_groups for input_name in group.values()],
+        output_template=output_template,
+        metric=MetricResult(
+            key=test_id,
+            ref_id=str(uuid4()),
+            value=[],
+            summary=merged_summary,
+        ),
+        figures=merged_figures,
+    )
+
+
+def threshold_test_comparison(
+    results: List[ThresholdTestResultWrapper],
+    test_id: TestID,
+    input_groups: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    output_template: str = None,
+    generate_description: bool = True,
+):
+    """Build a comparison result for multiple threshold test results"""
+    merged_summary = _combine_summaries(
+        [
+            {"inputs": input_groups, "summary": result.test_results.summary}
+            for result in results
+        ]
+    )
+    merged_figures = _combine_figures([result.figures for result in results])
+
+    return ThresholdTestResultWrapper(
+        result_id=test_id,
+        result_metadata=[
+            get_description_metadata(
+                test_id=test_id,
+                default_description=f"Comparison test result for {test_id}",
+                summary=merged_summary.serialize(),
+                figures=merged_figures,
+                prefix="test_description",
+                should_generate=generate_description,
+            )
+        ],
+        inputs=[input_name for group in input_groups for input_name in group.values()],
+        output_template=output_template,
+        test_results=ThresholdTestResults(
+            test_name=test_id,
+            ref_id=str(uuid4()),
+            # TODO: when we have param_grid support, this will need to be updated
+            params=results[0].test_results.params,
+            passed=all(result.test_results.passed for result in results),
+            results=[],
+            summary=merged_summary,
+        ),
+        figures=merged_figures,
+    )
+
+
 # TODO:
 # 1. How to combine `value`?
-# 2. Support for threshold tests
 # 3. When combining figures it's important that the test produces figures annotates
 #       them correctly with the input names so they can be distinguished
 def run_comparison_test(  # noqa: C901
     test_id: TestID,
-    input_grid: Dict[str, List[Any]],
-    show=True,
+    input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    show: bool = True,
     output_template: str = None,
+    generate_description: bool = True,
 ):
-    keys, values = zip(*input_grid.items())
-    input_groups = [dict(zip(keys, v)) for v in product(*values)]
+    """Run a comparison test"""
+    if isinstance(input_grid, dict):
+        input_groups = _cartesian_product(input_grid)
+    else:
+        input_groups = input_grid
 
-    merged_metric_result = None
-    merged_results = MetricResultWrapper(metric=merged_metric_result)
+    results = [
+        run_test(test_id, inputs=inputs, show=False, __generate_description=False)
+        for inputs in input_groups
+    ]
 
-    for input_group_index, inputs in enumerate(input_groups):
-        result = run_test(test_id, inputs=inputs, show=False)
+    if isinstance(results[0], MetricResultWrapper):
+        func = metric_comparison
+    else:
+        func = threshold_test_comparison
 
-        if merged_metric_result is None:
-            merged_metric_result = result
-            merged_results.name = merged_results.name
-            # Use the key and ref_id from the first result
-            merged_metric_result.key = result.metric.key
-            merged_metric_result.ref_id = result.metric.ref_id
-            merged_results.result_id = result.result_id
-        else:
-            merged_results.name = merged_results.name + "." + result.name
-
-        # TODO: how to combine inputs?
-        merged_results.inputs = result.inputs
-
-        # Combine the figures when available
-        if merged_results.figures is None:
-            merged_results.figures = result.figures
-        else:
-            merged_results.figures.extend(result.figures)
-
-        # Some metrics have no summary (e.g. when they only produce figures)
-        if result.metric.summary is None:
-            continue
-
-        # Add a new column to the results dataset that describes the inputs
-        input_description = []
-        for _, input in inputs.items():
-            if isinstance(input, str):
-                input_description.append(input)
-            else:
-                input_description.append(input.input_id)
-        input_description = ", ".join(input_description)
-
-        # Each element inside the table is a dict. We need to add the inputs key
-        # to the beginning of each dict.
-        for i, table in enumerate(result.metric.summary.results):
-            for j, row in enumerate(table.data):
-                new_dict = {"Inputs": input_description}
-                new_dict.update(row)
-                table.data[j] = new_dict
-
-        # Only merge results for the second and subsequent results
-        if input_group_index == 0:
-            continue
-
-        for i, table in enumerate(result.metric.summary.results):
-            merged_metric_result.metric.summary.results[i].data.extend(table.data)
+    result = func(results, test_id, input_groups, output_template, generate_description)
 
     if show:
-        merged_metric_result.show()
+        result.show()
 
-    return merged_metric_result
+    return result
 
 
 def run_test(
@@ -97,8 +205,9 @@ def run_test(
     unit_metrics: List[TestID] = None,
     output_template: str = None,
     show: bool = True,
+    __generate_description: bool = True,
     **kwargs,
-):
+) -> Union[MetricResultWrapper, ThresholdTestResultWrapper]:
     """Run a test by test ID
 
     Args:
@@ -147,7 +256,11 @@ def run_test(
 
     if input_grid:
         return run_comparison_test(
-            test_id, input_grid, output_template=output_template, show=show
+            test_id,
+            input_grid,
+            output_template=output_template,
+            show=show,
+            generate_description=__generate_description,
         )
 
     if test_id and test_id.startswith("validmind.unit_metrics"):
@@ -176,6 +289,7 @@ def run_test(
         inputs=TestInput({**kwargs, **(inputs or {})}),
         output_template=output_template,
         params=params,
+        generate_description=__generate_description,
     )
 
     test.run()
