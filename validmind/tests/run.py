@@ -51,7 +51,11 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
             serialized = summary_obj["summary"].results[table_index].serialize()
             summary_df = pd.DataFrame(serialized["data"])
             summary_df = pd.concat(
-                [pd.DataFrame(summary_obj["inputs"]), summary_df], axis=1
+                [
+                    pd.DataFrame(summary_obj["inputs"], index=summary_df.index),
+                    summary_df,
+                ],
+                axis=1,
             )
             combined_df = pd.concat([combined_df, summary_df], ignore_index=True)
 
@@ -88,8 +92,8 @@ def metric_comparison(
     """Build a comparison result for multiple metric results"""
     merged_summary = _combine_summaries(
         [
-            {"inputs": input_groups, "summary": result.metric.summary}
-            for result in results
+            {"inputs": input_groups[i], "summary": result.metric.summary}
+            for i, result in enumerate(results)
         ]
     )
     merged_figures = _combine_figures([result.figures for result in results])
@@ -127,8 +131,8 @@ def threshold_test_comparison(
     """Build a comparison result for multiple threshold test results"""
     merged_summary = _combine_summaries(
         [
-            {"inputs": input_groups, "summary": result.test_results.summary}
-            for result in results
+            {"inputs": input_groups[i], "summary": result.test_results.summary}
+            for i, result in enumerate(results)
         ]
     )
     merged_figures = _combine_figures([result.figures for result in results])
