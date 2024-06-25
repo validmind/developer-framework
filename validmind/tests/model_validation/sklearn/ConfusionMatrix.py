@@ -55,16 +55,14 @@ class ConfusionMatrix(Metric):
 
     name = "confusion_matrix"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-            "visualization",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+        "visualization",
+    ]
 
     def run(self):
         y_true = self.inputs.dataset.y
@@ -111,6 +109,17 @@ class ConfusionMatrix(Metric):
             autosize=False,
             width=600,
             height=600,
+        )
+
+        # Add an annotation at the bottom of the heatmap
+        fig.add_annotation(
+            x=0.5,
+            y=-0.1,
+            xref="paper",
+            yref="paper",
+            text=f"Confusion Matrix for {self.inputs.model.input_id} on {self.inputs.dataset.input_id}",
+            showarrow=False,
+            font=dict(size=14),
         )
 
         return self.cache_results(

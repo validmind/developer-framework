@@ -60,13 +60,11 @@ class SilhouettePlot(Metric):
 
     name = "silhouette_plot"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def run(self):
         y_pred_train = self.inputs.dataset.y_pred(self.inputs.model)

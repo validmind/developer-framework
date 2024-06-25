@@ -41,9 +41,9 @@ def check_notebook(root, file, should_have_printed_outputs=False):
             and should_have_printed_outputs is False
             and len(cell.outputs) > 0
         ):
-            print(
-                f"Printed output detected in:\n\t[{file}][Cell #{i+1}] {cell_content}\n"
-            )
+            print(f"Found a notebook that should not have printed outputs:")
+            print(f"  - {os.path.join(root, file)} (Cell #{i+1})")
+            print("    Please remove all printed outputs from this notebook\n")
             notebook_error = True
 
         # Check if it should have printed outputs and has at least one.
@@ -55,11 +55,17 @@ def check_notebook(root, file, should_have_printed_outputs=False):
             has_printed_outputs = True
 
     if should_have_printed_outputs and has_printed_outputs is False:
-        print(f"Found a notebook that should have printed outputs:\n\t[{file}]\n")
+        print(f"Found a notebook that should have printed outputs:")
+        print(f"  - {os.path.join(root, file)}")
+        print(
+            "    Please execute the notebook and then save it with the outputs present\n"
+        )
         notebook_error = True
 
     return notebook_error
 
+
+print("Checking for printed outputs in notebooks...\n")
 
 any_error = False
 
@@ -77,14 +83,10 @@ for root, dirs, files in os.walk(notebooks_directory):
             any_error = any_error or notebook_error
 
 if any_error:
-    raise Exception(
-        """
-        Detected output issues in at least one notebook.
-        To fix these issues:
-
-        - Remove all printed outputs from problematic notebooks
-        - Ensure notebooks that should have an output are executed and saved
-        """
+    print(
+        "Detected output issues in at least one notebook..."
+        " Exiting with a non-zero exit code."
     )
+    exit(1)
 
 print("No printed outputs detected in notebooks.")

@@ -54,10 +54,8 @@ class SpreadPlot(Metric):
 
     name = "spread_plot"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "visualization"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "visualization"]
 
     @staticmethod
     def plot_spread(series1, series2, ax=None):

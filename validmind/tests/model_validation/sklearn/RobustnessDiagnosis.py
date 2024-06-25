@@ -75,20 +75,16 @@ class RobustnessDiagnosis(ThresholdTest):
         "scaling_factor_std_dev_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
         "accuracy_decay_threshold": 4,
     }
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_diagnosis",
-            "visualization",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_diagnosis",
+        "visualization",
+    ]
 
-    default_metrics = {
-        "accuracy": metrics.accuracy_score,
-    }
+    default_metrics = {"accuracy": metrics.accuracy_score}
 
     def run(self):
         # Validate X std deviation parameter

@@ -63,10 +63,8 @@ class IQROutliersBarPlot(Metric):
     name = "iqr_outliers_bar_plot"
     required_inputs = ["dataset"]
     default_params = {"threshold": 1.5, "num_features": None, "fig_width": 800}
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization", "numerical_data"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "visualization", "numerical_data"]
 
     def run(self):
         df = self.inputs.dataset.df

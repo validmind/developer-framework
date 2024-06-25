@@ -51,10 +51,8 @@ class ZivotAndrewsArch(Metric):
 
     name = "zivot_andrews"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "stationarity", "unit_root_test"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "stationarity", "unit_root_test"]
 
     def run(self):
         """

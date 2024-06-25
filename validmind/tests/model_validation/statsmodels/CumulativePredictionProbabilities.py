@@ -57,10 +57,9 @@ class CumulativePredictionProbabilities(Metric):
 
     name = "cumulative_prediction_probabilities"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["classification"],
-        "tags": ["logistic_regression", "visualization"],
-    }
+    tasks = ["classification"]
+    tags = ["logistic_regression", "visualization"]
+
     default_params = {"title": "Cumulative Probabilities"}
 
     @staticmethod

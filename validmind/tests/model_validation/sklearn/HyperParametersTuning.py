@@ -52,13 +52,8 @@ class HyperParametersTuning(Metric):
 
     name = "hyper_parameters_tuning"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["classification", "clustering"]
+    tags = ["sklearn", "model_performance"]
     default_params = {"param_grid": None, "scoring": None}
 
     def run(self):

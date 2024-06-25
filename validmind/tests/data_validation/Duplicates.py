@@ -55,10 +55,8 @@ class Duplicates(ThresholdTest):
     name = "duplicates"
     required_inputs = ["dataset"]
     default_params = {"min_threshold": 1}
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "data_quality", "text_data"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "data_quality", "text_data"]
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """
