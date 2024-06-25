@@ -10,17 +10,18 @@ import pandas as pd
 
 from validmind.ai.test_descriptions import get_description_metadata
 from validmind.errors import LoadTestError
+from validmind.logging import get_logger
 from validmind.unit_metrics import run_metric
 from validmind.unit_metrics.composite import load_composite_metric
 from validmind.vm_models import (
     MetricResult,
     ResultSummary,
     ResultTable,
-    ResultTableMetadata,
     TestContext,
     TestInput,
     ThresholdTestResults,
 )
+from validmind.vm_models.figure import is_matplotlib_figure, is_plotly_figure
 from validmind.vm_models.test.result_wrapper import (
     MetricResultWrapper,
     ThresholdTestResultWrapper,
@@ -28,6 +29,8 @@ from validmind.vm_models.test.result_wrapper import (
 
 from .__types__ import TestID
 from .load import load_test
+
+logger = get_logger(__name__)
 
 
 def _cartesian_product(input_grid: Dict[str, List[Any]]):
@@ -38,11 +41,19 @@ def _cartesian_product(input_grid: Dict[str, List[Any]]):
 def _combine_summaries(summaries: List[Dict[str, Any]]):
     """Combine the summaries from multiple results
 
+    Args:
+        summaries (List[Dict[str, Any]]): A list of dictionaries where each dictionary
+            has two keys: "inputs" and "summary". The "inputs" key should contain the
+            inputs used for the test and the "summary" key should contain the actual
+            summary object.
+
     Constraint: The summaries must all have the same structure meaning that each has
     the same number of tables in the same order with the same columns etc. This
     should always be the case for comparison tests since its the same test run
     multiple times with different inputs.
     """
+    if not summaries[0]["summary"]:
+        return None
 
     def combine_tables(table_index):
         combined_df = pd.DataFrame()
@@ -61,9 +72,7 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
 
         return ResultTable(
             data=combined_df.to_dict(orient="records"),
-            metadata=ResultTableMetadata(
-                title=f"Comparison of multiple test results (table {table_index + 1})"
-            ),
+            metadata=summaries[0]["summary"].results[table_index].metadata,
         )
 
     return ResultSummary(
@@ -74,10 +83,44 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
     )
 
 
-def _combine_figures(figure_lists: List[List[Any]]):
+def _update_plotly_titles(figures, input_groups, title_template):
+    current_title = figures[0].figure.layout.title.text
+
+    for i, figure in enumerate(figures):
+        figure.figure.layout.title.text = title_template.format(
+            current_title=f"{current_title} " if current_title else "",
+            input_description=", ".join(f"{k}={v}" for k, v in input_groups[i].items()),
+        )
+
+
+def _update_matplotlib_titles(figures, input_groups, title_template):
+    current_title = figures[0].figure.get_title()
+
+    for i, figure in enumerate(figures):
+        figure.figure.suptitle(
+            title_template.format(
+                current_title=f"{current_title} " if current_title else "",
+                input_description=" and ".join(
+                    f"{k}: {v}" for k, v in input_groups[i].items()
+                ),
+            )
+        )
+
+
+def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str, Any]]):
     """Combine the figures from multiple results"""
     if not figure_lists[0]:
         return None
+
+    title_template = "{current_title}({input_description})"
+
+    for i, figures in enumerate(list(zip(*figure_lists))):
+        if is_plotly_figure(figures[0].figure):
+            _update_plotly_titles(figures, input_groups, title_template)
+        elif is_matplotlib_figure(figures[0].figure):
+            _update_matplotlib_titles(figures, input_groups, title_template)
+        else:
+            logger.warning("Cannot properly annotate png figures")
 
     return [figure for figures in figure_lists for figure in figures]
 
@@ -96,7 +139,9 @@ def metric_comparison(
             for i, result in enumerate(results)
         ]
     )
-    merged_figures = _combine_figures([result.figures for result in results])
+    merged_figures = _combine_figures(
+        [result.figures for result in results], input_groups
+    )
 
     return MetricResultWrapper(
         result_id=test_id,
@@ -104,7 +149,7 @@ def metric_comparison(
             get_description_metadata(
                 test_id=test_id,
                 default_description=f"Comparison test result for {test_id}",
-                summary=merged_summary.serialize(),
+                summary=merged_summary.serialize() if merged_summary else None,
                 figures=merged_figures,
                 should_generate=generate_description,
             ),
@@ -135,7 +180,9 @@ def threshold_test_comparison(
             for i, result in enumerate(results)
         ]
     )
-    merged_figures = _combine_figures([result.figures for result in results])
+    merged_figures = _combine_figures(
+        [result.figures for result in results], input_groups
+    )
 
     return ThresholdTestResultWrapper(
         result_id=test_id,
@@ -143,7 +190,7 @@ def threshold_test_comparison(
             get_description_metadata(
                 test_id=test_id,
                 default_description=f"Comparison test result for {test_id}",
-                summary=merged_summary.serialize(),
+                summary=merged_summary.serialize() if merged_summary else None,
                 figures=merged_figures,
                 prefix="test_description",
                 should_generate=generate_description,
@@ -164,10 +211,7 @@ def threshold_test_comparison(
     )
 
 
-# TODO:
-# 3. When combining figures it's important that the test produces figures annotates
-#       them correctly with the input names so they can be distinguished
-def run_comparison_test(  # noqa: C901
+def run_comparison_test(
     test_id: TestID,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
     show: bool = True,
