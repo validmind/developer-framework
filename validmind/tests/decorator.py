@@ -58,9 +58,9 @@ def _inspect_signature(test_func: callable):
     return inputs, params
 
 
-def _build_result(
+def _build_result(  # noqa: C901
     results, test_id, description, output_template, inputs, generate_description=True
-):  # noqa: C901
+):
     ref_id = str(uuid4())
     figure_metadata = {
         "_type": "metric",
