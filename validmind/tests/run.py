@@ -13,7 +13,6 @@ from validmind.errors import LoadTestError
 from validmind.unit_metrics import run_metric
 from validmind.unit_metrics.composite import load_composite_metric
 from validmind.vm_models import (
-    Figure,
     MetricResult,
     ResultSummary,
     ResultTable,
@@ -162,7 +161,6 @@ def threshold_test_comparison(
 
 
 # TODO:
-# 1. How to combine `value`?
 # 3. When combining figures it's important that the test produces figures annotates
 #       them correctly with the input names so they can be distinguished
 def run_comparison_test(  # noqa: C901

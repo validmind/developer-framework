@@ -164,7 +164,7 @@ def _get_run_method(func, inputs, params):
             description=inspect.getdoc(self),
             output_template=self.output_template,
             inputs=self.get_accessed_inputs(),
-            should_generate=self.generate_description,
+            generate_description=self.generate_description,
         )
 
         return self.result
