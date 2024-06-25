@@ -47,6 +47,7 @@ class Test(TestUtils):
             raise Exception(
                 "test_id is missing. It must be passed when initializing the test"
             )
+
         self._ref_id = str(uuid4())
         self.key = (
             self.test_id
@@ -55,13 +56,10 @@ class Test(TestUtils):
         # TODO: add validation for required inputs
         if self.default_params is None:
             self.default_params = {}
-
         if self.required_inputs is None:
             self.required_inputs = []
-
         if self.tags is None:
             self.tags = []
-
         if self.tasks is None:
             self.tasks = []
 

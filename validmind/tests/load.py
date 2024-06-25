@@ -60,7 +60,7 @@ def _pretty_list_tests(tests, truncate=True):
             "Name": test_id_to_name(test_id),
             "Description": test_description(test, truncate),
             "Required Inputs": test.required_inputs,
-            "Params": test.default_params,
+            "Params": test.default_params or {},
         }
         for test_id, test in tests.items()
     ]
@@ -224,8 +224,8 @@ def describe_test(test_id: TestID = None, raw: bool = False, show: bool = True):
     details = {
         "ID": test_id,
         "Name": test_id_to_name(test_id),
-        "Required Inputs": test.required_inputs,
-        "Params": test.default_params,
+        "Required Inputs": test.required_inputs or [],
+        "Params": test.default_params or {},
         "Description": inspect.getdoc(test).strip() or "",
     }
 
