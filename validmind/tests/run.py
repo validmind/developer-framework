@@ -214,6 +214,7 @@ def threshold_test_comparison(
 def run_comparison_test(
     test_id: TestID,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    params: Dict[str, Any] = None,
     show: bool = True,
     output_template: str = None,
     generate_description: bool = True,
@@ -225,7 +226,13 @@ def run_comparison_test(
         input_groups = input_grid
 
     results = [
-        run_test(test_id, inputs=inputs, show=False, __generate_description=False)
+        run_test(
+            test_id,
+            inputs=inputs,
+            show=False,
+            params=params,
+            __generate_description=False,
+        )
         for inputs in input_groups
     ]
 
@@ -304,6 +311,7 @@ def run_test(
         return run_comparison_test(
             test_id,
             input_grid,
+            params=params,
             output_template=output_template,
             show=show,
             generate_description=__generate_description,
