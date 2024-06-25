@@ -6,8 +6,9 @@ import hashlib
 import json
 from importlib import import_module
 
-from ..tests.decorator import _build_result, _inspect_signature
-from ..utils import get_model_info, test_id_to_name
+from validmind.input_registry import input_registry
+from validmind.tests.decorator import _build_result, _inspect_signature
+from validmind.utils import get_model_info, test_id_to_name
 
 unit_metric_results_cache = {}
 
@@ -157,7 +158,10 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
         show (bool): Whether to display the results
         value_only (bool): Whether to return only the value
     """
-    inputs = inputs or {}
+    inputs = {
+        k: input_registry.get(v) if isinstance(v, str) else v
+        for k, v in (inputs or {}).items()
+    }
     params = params or {}
 
     cache_key = get_metric_cache_key(metric_id, params, inputs)
@@ -168,7 +172,11 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
 
         result = metric(
             **{k: v for k, v in inputs.items() if k in _inputs.keys()},
-            **{k: v for k, v in params.items() if k in _params.keys()},
+            **{
+                k: v
+                for k, v in params.items()
+                if k in _params.keys() or "kwargs" in _params.keys()
+            },
         )
         unit_metric_results_cache[cache_key] = (
             result,
