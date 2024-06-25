@@ -6,6 +6,7 @@ Usage:
 
  - path: path to a test file or directory containing test files
 """
+
 import os
 import shutil
 
@@ -26,7 +27,7 @@ def retrieve_test_description(path):
     existing_description_lines = []
     lines = file_contents.split("\n")
     for i, line in enumerate(lines):
-        if line.startswith("class"):
+        if line.startswith("class") or line.startswith("def"):
             # check if there is already a doc string for the class
             if '"""' in lines[i + 1]:
                 existing_description_lines.append(i + 1)
