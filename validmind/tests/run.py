@@ -89,7 +89,10 @@ def _update_plotly_titles(figures, input_groups, title_template):
     for i, figure in enumerate(figures):
         figure.figure.layout.title.text = title_template.format(
             current_title=f"{current_title} " if current_title else "",
-            input_description=", ".join(f"{k}={v}" for k, v in input_groups[i].items()),
+            input_description=", ".join(
+                f"{k}={v if isinstance(v, str) else v.input_id}"
+                for k, v in input_groups[i].items()
+            ),
         )
 
 
@@ -101,7 +104,8 @@ def _update_matplotlib_titles(figures, input_groups, title_template):
             title_template.format(
                 current_title=f"{current_title} " if current_title else "",
                 input_description=" and ".join(
-                    f"{k}: {v}" for k, v in input_groups[i].items()
+                    f"{k}: {v if isinstance(v, str) else v.input_id}"
+                    for k, v in input_groups[i].items()
                 ),
             )
         )
@@ -133,15 +137,29 @@ def metric_comparison(
     generate_description: bool = True,
 ):
     """Build a comparison result for multiple metric results"""
+    ref_id = str(uuid4())
+
+    input_group_strings = [
+        {k: v if isinstance(v, str) else v.input_id for k, v in group.items()}
+        for group in input_groups
+    ]
+
     merged_summary = _combine_summaries(
         [
-            {"inputs": input_groups[i], "summary": result.metric.summary}
+            {"inputs": input_group_strings[i], "summary": result.metric.summary}
             for i, result in enumerate(results)
         ]
     )
     merged_figures = _combine_figures(
         [result.figures for result in results], input_groups
     )
+
+    # Patch figure metadata so they are connected to the comparison result
+    if merged_figures and len(merged_figures):
+        for i, figure in enumerate(merged_figures):
+            figure.key = f"{figure.key}-{i}"
+            figure.metadata["_name"] = test_id
+            figure.metadata["_ref_id"] = ref_id
 
     return MetricResultWrapper(
         result_id=test_id,
@@ -154,11 +172,15 @@ def metric_comparison(
                 should_generate=generate_description,
             ),
         ],
-        inputs=[input_name for group in input_groups for input_name in group.values()],
+        inputs=[
+            input if isinstance(input, str) else input.input_id
+            for group in input_groups
+            for input in group.values()
+        ],
         output_template=output_template,
         metric=MetricResult(
             key=test_id,
-            ref_id=str(uuid4()),
+            ref_id=ref_id,
             value=[],
             summary=merged_summary,
         ),
@@ -174,15 +196,29 @@ def threshold_test_comparison(
     generate_description: bool = True,
 ):
     """Build a comparison result for multiple threshold test results"""
+    ref_id = str(uuid4())
+
+    input_group_strings = [
+        {k: v if isinstance(v, str) else v.input_id for k, v in group.items()}
+        for group in input_groups
+    ]
+
     merged_summary = _combine_summaries(
         [
-            {"inputs": input_groups[i], "summary": result.test_results.summary}
+            {"inputs": input_group_strings[i], "summary": result.test_results.summary}
             for i, result in enumerate(results)
         ]
     )
     merged_figures = _combine_figures(
         [result.figures for result in results], input_groups
     )
+
+    # Patch figure metadata so they are connected to the comparison result
+    if merged_figures and len(merged_figures):
+        for i, figure in enumerate(merged_figures):
+            figure.key = f"{figure.key}-{i}"
+            figure.metadata["_name"] = test_id
+            figure.metadata["_ref_id"] = ref_id
 
     return ThresholdTestResultWrapper(
         result_id=test_id,
@@ -196,11 +232,15 @@ def threshold_test_comparison(
                 should_generate=generate_description,
             )
         ],
-        inputs=[input_name for group in input_groups for input_name in group.values()],
+        inputs=[
+            input if isinstance(input, str) else input.input_id
+            for group in input_groups
+            for input in group.values()
+        ],
         output_template=output_template,
         test_results=ThresholdTestResults(
             test_name=test_id,
-            ref_id=str(uuid4()),
+            ref_id=ref_id,
             # TODO: when we have param_grid support, this will need to be updated
             params=results[0].test_results.params,
             passed=all(result.test_results.passed for result in results),
