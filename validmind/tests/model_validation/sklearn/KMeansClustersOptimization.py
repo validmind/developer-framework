@@ -60,13 +60,10 @@ class KMeansClustersOptimization(Metric):
 
     name = "clusters_optimize_elbow_method"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": ["sklearn", "model_performance", "kmeans"],
-    }
-    default_params = {
-        "n_clusters": None,
-    }
+    tasks = ["clustering"]
+    tags = ["sklearn", "model_performance", "kmeans"]
+
+    default_params = {"n_clusters": None}
 
     def run(self):
         n_clusters = self.params["n_clusters"]

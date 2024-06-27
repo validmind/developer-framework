@@ -38,9 +38,8 @@ def check_and_get_insertion_line(file_path, class_name):
 
 
 def insert_metadata_to_file(file_path):
-    metadata_snippet = """\n    metadata = {
-        "task_types": [],
-        "tags": [],
+    metadata_snippet = """\n    tasks = [
+    tags = [],
     }\n\n"""
 
     with open(file_path, "r") as f:

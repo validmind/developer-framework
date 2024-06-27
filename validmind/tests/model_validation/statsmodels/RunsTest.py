@@ -50,10 +50,8 @@ class RunsTest(Metric):
 
     name = "runs_test"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "statistical_test", "statsmodels"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "statistical_test", "statsmodels"]
 
     def run(self):
         """

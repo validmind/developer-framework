@@ -59,10 +59,8 @@ class GINITable(Metric):
 
     name = "gini_table"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["classification"],
-        "tags": ["visualization", "model_performance"],
-    }
+    tasks = ["classification"]
+    tags = ["visualization", "model_performance"]
 
     def run(self):
 

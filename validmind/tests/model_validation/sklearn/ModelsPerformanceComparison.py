@@ -53,16 +53,14 @@ class ModelsPerformanceComparison(ClassifierPerformance):
 
     name = "models_performance_comparison"
     required_inputs = ["dataset", "models"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-            "model_comparison",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+        "model_comparison",
+    ]
 
     def summary(self, metric_value: dict):
         """

@@ -218,6 +218,7 @@ def get_description_metadata(
     summary=None,
     figures=None,
     prefix="metric_description",
+    should_generate=True,
 ):
     """Get Metadata Dictionary for a Test or Metric Result
 
@@ -238,6 +239,7 @@ def get_description_metadata(
         summary (Any): The test summary or results to interpret
         figures (List[Figure]): The figures to attach to the test suite result
         prefix (str): The prefix to use for the content ID (Default: "metric_description")
+        should_generate (bool): Whether to generate the description or not (Default: True)
 
     Returns:
         dict: The metadata object to be logged with the test results
@@ -250,7 +252,12 @@ def get_description_metadata(
     # TODO: fix circular import
     from validmind.ai.utils import is_configured
 
-    if (summary or figures) and not env_disabled and is_configured():
+    if (
+        should_generate
+        and (summary or figures)
+        and not env_disabled
+        and is_configured()
+    ):
         revision_name = AI_REVISION_NAME
 
         # get description future and set it as the description in the metadata

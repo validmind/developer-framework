@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import os
+from urllib.parse import urljoin
 
 from openai import AzureOpenAI, Client, OpenAI
 
@@ -63,7 +64,7 @@ def get_client_and_model():
                     # TODO: improve this to be a bit more dynamic
                     "http://localhost:4000/genai"
                     if "localhost" in get_api_host()
-                    else f"{get_api_host()}/genai"
+                    else urljoin(get_api_host(), "/genai")
                 ),
                 api_key=response["key"],
             )

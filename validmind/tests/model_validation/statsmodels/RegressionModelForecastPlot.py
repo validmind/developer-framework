@@ -58,10 +58,8 @@ class RegressionModelForecastPlot(Metric):
     name = "regression_forecast_plot"
     required_inputs = ["models", "datasets"]
     default_params = {"start_date": None, "end_date": None}
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["forecasting", "visualization"],
-    }
+    tasks = ["regression"]
+    tags = ["forecasting", "visualization"]
 
     def run(self):
         start_date = self.params["start_date"]

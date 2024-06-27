@@ -58,10 +58,8 @@ class AutoARIMA(Metric):
 
     name = "auto_arima"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "forecasting", "model_selection", "statsmodels"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "forecasting", "model_selection", "statsmodels"]
 
     max_p = 3
     max_d = 2

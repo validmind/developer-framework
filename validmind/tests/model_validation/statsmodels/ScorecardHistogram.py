@@ -52,10 +52,9 @@ class ScorecardHistogram(Metric):
 
     name = "scorecard_histogram"
     required_inputs = ["datasets"]
-    metadata = {
-        "task_types": ["classification"],
-        "tags": ["tabular_data", "visualization", "credit_risk"],
-    }
+    tasks = ["classification"]
+    tags = ["tabular_data", "visualization", "credit_risk"]
+
     default_params = {
         "title": "Histogram of Scores",
         "score_column": "score",

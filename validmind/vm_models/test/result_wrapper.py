@@ -344,7 +344,8 @@ class MetricResultWrapper(ResultWrapper):
         """Check if the metric summary has columns from input datasets"""
         dataset_columns = set()
 
-        for input_id in self.inputs:
+        for input in self.inputs:
+            input_id = input if isinstance(input, str) else input.input_id
             input_obj = input_registry.get(input_id)
             if isinstance(input_obj, VMDataset):
                 dataset_columns.update(input_obj.columns)

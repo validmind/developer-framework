@@ -42,6 +42,7 @@ class CompositeMetric(Metric):
             params=self.params,
             output_template=self.output_template,
             show=False,
+            generate_description=self.generate_description,
         )
 
         return self.result
@@ -109,6 +110,7 @@ def run_metrics(
     params: dict = None,
     test_id: str = None,
     show: bool = True,
+    generate_description: bool = True,
 ) -> MetricResultWrapper:
     """Run a composite metric
 
@@ -209,6 +211,7 @@ def run_metrics(
                 test_id=test_id,
                 default_description=description,
                 summary=result_summary.serialize(),
+                should_generate=generate_description,
             ),
             {
                 "content_id": f"composite_metric_def:{test_id}:unit_metrics",

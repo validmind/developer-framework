@@ -46,10 +46,8 @@ class RegressionModelsCoeffs(Metric):
 
     name = "regression_models_coefficients"
     required_inputs = ["models"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["model_comparison"],
-    }
+    tasks = ["regression"]
+    tags = ["model_comparison"]
 
     def _build_model_summaries(self, all_coefficients):
         all_models_df = pd.DataFrame()

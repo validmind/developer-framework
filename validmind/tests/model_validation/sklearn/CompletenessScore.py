@@ -44,13 +44,11 @@ class CompletenessScore(ClusterPerformance):
 
     name = "homogeneity_score"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def metric_info(self):
         return {"Completeness Score": metrics.completeness_score}

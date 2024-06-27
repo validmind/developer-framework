@@ -52,10 +52,8 @@ class ScatterPlot(Metric):
 
     name = "scatter_plot"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "visualization"]
 
     def run(self):
         columns = list(self.inputs.dataset.df.columns)

@@ -43,10 +43,8 @@ class TabularCategoricalBarPlots(Metric):
 
     name = "tabular_categorical_bar_plots"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "visualization"]
 
     def run(self):
         df = self.inputs.dataset.df

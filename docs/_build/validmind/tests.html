@@ -41,6 +41,9 @@
                     <a class="function" href="#describe_test">describe_test</a>
             </li>
             <li>
+                    <a class="function" href="#run_test">run_test</a>
+            </li>
+            <li>
                     <a class="function" href="#register_test_provider">register_test_provider</a>
             </li>
             <li>
@@ -62,7 +65,31 @@
 
             </li>
             <li>
-                    <a class="variable" href="#metric">metric</a>
+                    <a class="class" href="#TestProvider">TestProvider</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TestProvider.__init__">TestProvider</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#TestProvider.load_test">load_test</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="function" href="#list_tags">list_tags</a>
+            </li>
+            <li>
+                    <a class="function" href="#list_tasks">list_tasks</a>
+            </li>
+            <li>
+                    <a class="function" href="#list_tasks_and_tags">list_tasks_and_tags</a>
+            </li>
+            <li>
+                    <a class="function" href="#test">test</a>
+            </li>
+            <li>
+                    <a class="function" href="#metric">metric</a>
             </li>
             <li>
                     <a class="function" href="#tags">tags</a>
@@ -93,7 +120,7 @@
                     <h1 class="modulename">
 <a href="./../validmind.html">validmind</a><wbr>.tests    </h1>
 
-                        <div class="docstring"><p>All Tests for ValidMind</p>
+                        <div class="docstring"><p>ValidMind Tests Module</p>
 </div>
 
                 
@@ -104,7 +131,7 @@
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">list_tests</span><span class="signature pdoc-code condensed">(<span class="param"><span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">task</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">tags</span><span class="o">=</span><span class="kc">None</span>, </span><span class="param"><span class="n">pretty</span><span class="o">=</span><span class="kc">True</span>, </span><span class="param"><span class="n">truncate</span><span class="o">=</span><span class="kc">True</span></span><span class="return-annotation">):</span></span>
+        <span class="name">list_tests</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">task</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">tags</span><span class="o">=</span><span class="kc">None</span>,</span><span class="param">	<span class="n">pretty</span><span class="o">=</span><span class="kc">True</span>,</span><span class="param">	<span class="n">truncate</span><span class="o">=</span><span class="kc">True</span>,</span><span class="param">	<span class="n">__as_class</span><span class="o">=</span><span class="kc">False</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -115,9 +142,9 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>filter (str, optional):</strong>  Find tests where the ID, task_type or tags match the
+<li><strong>filter (str, optional):</strong>  Find tests where the ID, tasks or tags match the
 filter string. Defaults to None.</li>
-<li><strong>task (str, optional):</strong>  Find tests that match the task type. Can be used to
+<li><strong>task (str, optional):</strong>  Find tests that match the task. Can be used to
 narrow down matches from the filter string. Defaults to None.</li>
 <li><strong>tags (list, optional):</strong>  Find tests that match list of tags. Can be used to
 narrow down matches from the filter string. Defaults to None.</li>
@@ -189,11 +216,62 @@ Defaults to False.</li>
 
 
                 </section>
+                <section id="run_test">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">run_test</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;validmind.prompt_validation.Bias&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Clarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Specificity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Robustness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.NegativeInstruction&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Conciseness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Delimitation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelPredictionResiduals&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.BertScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesPredictionsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RegardScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.BleuScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesPredictionWithCI&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RegressionResidualsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.FeaturesAUC&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ContextualRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.MeteorScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RougeScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelMetadata&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ClusterSizeDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TokenDisparity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ToxicityScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelMetadataComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesR2SquareBySegments&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EmbeddingsVisualization2D&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisRandomNoise&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.TSNEComponentsPairwisePlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.PCAComponentsPairwisePlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisTranslation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EuclideanDistanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.ClusterDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EuclideanDistanceHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisKeyword&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisSynonyms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.DescriptiveAnalytics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextEntityRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.Faithfulness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AspectCritique&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerSimilarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerCorrectness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextRelevancy&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextPrecision&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerRelevance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionModelsPerformanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.AdjustedMutualInformation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.SilhouettePlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RobustnessDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.AdjustedRandIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.SHAPGlobalImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ConfusionMatrix&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.HomogeneityScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.CompletenessScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.OverfitDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterPerformanceMetrics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PermutationFeatureImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.FowlkesMallowsScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumROCAUCScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterCosineSimilarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PrecisionRecallCurve&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClassifierPerformance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.VMeasure&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumF1Score&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ROCCurve&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionR2Square&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionErrors&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterPerformance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.FeatureImportanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.TrainingTestDegradation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionErrorsComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.HyperParametersTuning&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.KMeansClustersOptimization&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ModelsPerformanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.WeakspotsDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionR2SquareComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PopulationStabilityIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumAccuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelsCoeffs&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.BoxPierce&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionCoeffsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelSensitivityPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelForecastPlotLevels&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.ScorecardHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.LJungBox&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.JarqueBera&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.KolmogorovSmirnov&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.ShapiroWilk&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.CumulativePredictionProbabilities&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionFeatureSignificance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelSummary&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.Lilliefors&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RunsTest&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionPermutationFeatureImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.PredictionProbabilitiesHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.AutoARIMA&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.GINITable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelForecastPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.DurbinWatsonTest&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValuesRisk&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IQROutliersTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateFeaturesBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.Skewness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.Duplicates&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValuesBarPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DatasetDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ZivotAndrewsArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ScatterPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesOutliers&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularCategoricalBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoStationarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DescriptiveStatistics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ANOVAOneWayTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TargetRateBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.PearsonCorrelationMatrix&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.FeatureTargetCorrelationPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularNumericalHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IsolationForestOutliers&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ChiSquaredFeaturesTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HighCardinality&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.PhillipsPerronArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.RollingStatsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularDescriptionTables&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoMA&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.UniqueRows&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TooManyZeroValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HighPearsonCorrelation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ACFandPACFPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.WOEBinTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HeatmapFeatureCorrelations&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesFrequency&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DatasetSplit&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.SpreadPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesLinePlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.KPSS&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoSeasonality&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateScatterPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.EngleGrangerCoint&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesMissingValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.LaggedCorrelationHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.SeasonalDecompose&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.WOEBinPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ClassImbalance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IQROutliersBarPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DFGLSArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesDescriptiveStatistics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoAR&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularDateTimeHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ADF&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Toxicity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.PolarityAndSubjectivity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Punctuations&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Sentiment&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.CommonWords&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Hashtags&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.LanguageDetection&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Mentions&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.TextDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.StopWords&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">input_grid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">unit_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;validmind.prompt_validation.Bias&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Clarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Specificity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Robustness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.NegativeInstruction&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Conciseness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.prompt_validation.Delimitation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelPredictionResiduals&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.BertScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesPredictionsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RegardScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.BleuScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesPredictionWithCI&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RegressionResidualsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.FeaturesAUC&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ContextualRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.MeteorScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.RougeScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelMetadata&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ClusterSizeDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TokenDisparity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ToxicityScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ModelMetadataComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.TimeSeriesR2SquareBySegments&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EmbeddingsVisualization2D&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisRandomNoise&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.TSNEComponentsPairwisePlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.PCAComponentsPairwisePlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.CosineSimilarityHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisTranslation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EuclideanDistanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.ClusterDistribution&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.EuclideanDistanceHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisKeyword&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.StabilityAnalysisSynonyms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.embeddings.DescriptiveAnalytics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextEntityRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.Faithfulness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AspectCritique&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerSimilarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerCorrectness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextRecall&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextRelevancy&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.ContextPrecision&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.ragas.AnswerRelevance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionModelsPerformanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.AdjustedMutualInformation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.SilhouettePlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RobustnessDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.AdjustedRandIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.SHAPGlobalImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ConfusionMatrix&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.HomogeneityScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.CompletenessScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.OverfitDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterPerformanceMetrics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PermutationFeatureImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.FowlkesMallowsScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumROCAUCScore&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterCosineSimilarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PrecisionRecallCurve&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClassifierPerformance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.VMeasure&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumF1Score&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ROCCurve&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionR2Square&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionErrors&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ClusterPerformance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.FeatureImportanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.TrainingTestDegradation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionErrorsComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.HyperParametersTuning&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.KMeansClustersOptimization&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.ModelsPerformanceComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.WeakspotsDiagnosis&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.RegressionR2SquareComparison&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.PopulationStabilityIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.sklearn.MinimumAccuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelsCoeffs&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.BoxPierce&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionCoeffsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelSensitivityPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelForecastPlotLevels&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.ScorecardHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.LJungBox&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.JarqueBera&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.KolmogorovSmirnov&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.ShapiroWilk&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.CumulativePredictionProbabilities&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionFeatureSignificance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelSummary&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.Lilliefors&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RunsTest&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionPermutationFeatureImportance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.PredictionProbabilitiesHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.AutoARIMA&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.GINITable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.RegressionModelForecastPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.model_validation.statsmodels.DurbinWatsonTest&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValuesRisk&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IQROutliersTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateFeaturesBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.Skewness&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.Duplicates&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValuesBarPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DatasetDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ZivotAndrewsArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ScatterPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesOutliers&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularCategoricalBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoStationarity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DescriptiveStatistics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ANOVAOneWayTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TargetRateBarPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.PearsonCorrelationMatrix&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.FeatureTargetCorrelationPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularNumericalHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IsolationForestOutliers&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ChiSquaredFeaturesTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HighCardinality&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.MissingValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.PhillipsPerronArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.RollingStatsPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularDescriptionTables&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoMA&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.UniqueRows&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TooManyZeroValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HighPearsonCorrelation&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ACFandPACFPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.WOEBinTable&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.HeatmapFeatureCorrelations&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesFrequency&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DatasetSplit&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.SpreadPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesLinePlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.KPSS&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoSeasonality&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.BivariateScatterPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.EngleGrangerCoint&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesMissingValues&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesHistogram&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.LaggedCorrelationHeatmap&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.SeasonalDecompose&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.WOEBinPlots&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ClassImbalance&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.IQROutliersBarPlot&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.DFGLSArch&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TimeSeriesDescriptiveStatistics&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.AutoAR&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.TabularDateTimeHistograms&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.ADF&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Toxicity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.PolarityAndSubjectivity&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Punctuations&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Sentiment&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.CommonWords&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Hashtags&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.LanguageDetection&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.Mentions&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.TextDescription&#39;</span><span class="p">,</span> <span class="s1">&#39;validmind.data_validation.nlp.StopWords&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">show</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="n">__generate_description</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span><span class="p">,</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">ThresholdTestResultWrapper</span><span class="p">]</span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#run_test"></a>
+    
+            <div class="docstring"><p>Run a test by test ID</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_id (TestID, optional):</strong>  The test ID to run. Not required if <code>unit_metrics</code> is provided.</li>
+<li><strong>params (dict, optional):</strong>  A dictionary of parameters to pass into the test. Params
+are used to customize the test behavior and are specific to each test. See the
+test details for more information on the available parameters. Defaults to None.</li>
+<li><strong>inputs (Dict[str, Any], optional):</strong>  A dictionary of test inputs to pass into the
+test. Inputs are either models or datasets that have been initialized using
+vm.init_model() or vm.init_dataset(). Defaults to None.</li>
+<li><strong>input_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional):</strong>  To run
+a comparison test, provide either a dictionary of inputs where the keys are
+the input names and the values are lists of different inputs, or a list of
+dictionaries where each dictionary is a set of inputs to run the test with.
+This will run the test multiple times with different sets of inputs and then
+combine the results into a single output. When passing a dictionary, the grid
+will be created by taking the Cartesian product of the input lists. Its simply
+a more convenient way of forming the input grid as opposed to passing a list of
+all possible combinations. Defaults to None.</li>
+<li><strong>name (str, optional):</strong>  The name of the test (used to create a composite metric
+out of multiple unit metrics) - required when running multiple unit metrics</li>
+<li><strong>unit_metrics (list, optional):</strong>  A list of unit metric IDs to run as a composite
+metric - required when running multiple unit metrics</li>
+<li><strong>output_template (str, optional):</strong>  A jinja2 html template to customize the output
+of the test. Defaults to None.</li>
+<li><strong>show (bool, optional):</strong>  Whether to display the results. Defaults to True.</li>
+<li><strong>**kwargs:</strong>  Keyword inputs to pass into the test (same as <code>inputs</code> but as keyword
+args instead of a dictionary):
+<ul>
+<li>dataset: A validmind Dataset object or a Pandas DataFrame</li>
+<li>model: A model to use for the test</li>
+<li>models: A list of models to use for the test</li>
+<li>dataset: A validmind Dataset object or a Pandas DataFrame</li>
+</ul></li>
+</ul>
+</div>
+
+
+                </section>
                 <section id="register_test_provider">
                     <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">register_test_provider</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_provider</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">tests</span><span class="o">.</span><span class="n">test_providers</span><span class="o">.</span><span class="n">TestProvider</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">register_test_provider</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">test_provider</span><span class="p">:</span> <span class="n"><a href="#TestProvider">TestProvider</a></span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
         
     </div>
@@ -337,15 +415,179 @@ test = test_provider.load_test("my_namespace.my_test_class")
 
                             </div>
                 </section>
+                <section id="TestProvider">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">TestProvider</span><wbr>(<span class="base">typing.Protocol</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#TestProvider"></a>
+    
+            <div class="docstring"><p>Protocol for user-defined test providers</p>
+</div>
+
+
+                            <div id="TestProvider.__init__" class="classattr">
+                                <div class="attr function">
+            
+        <span class="name">TestProvider</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestProvider.__init__"></a>
+    
+    
+
+                            </div>
+                            <div id="TestProvider.load_test" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">load_test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#TestProvider.load_test"></a>
+    
+            <div class="docstring"><p>Load the test by test ID</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>test_id (str):</strong>  The test ID (does not contain the namespace under which
+the test is registered)</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>Test: A test class or function</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>FileNotFoundError:</strong>  If the test is not found</li>
+</ul>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="list_tags">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">list_tags</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#list_tags"></a>
+    
+            <div class="docstring"><p>List unique tags from all test classes.</p>
+</div>
+
+
+                </section>
+                <section id="list_tasks">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">list_tasks</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#list_tasks"></a>
+    
+            <div class="docstring"><p>List unique tasks from all test classes.</p>
+</div>
+
+
+                </section>
+                <section id="list_tasks_and_tags">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">list_tasks_and_tags</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#list_tasks_and_tags"></a>
+    
+            <div class="docstring"><p>List all task types and their associated tags, with one row per task type and
+all tags for a task type in one row.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>pandas.DataFrame: A DataFrame with 'Task Type' and concatenated 'Tags'.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="test">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">test</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func_or_id</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#test"></a>
+    
+            <div class="docstring"><p>Decorator for creating and registering metrics with the ValidMind framework.</p>
+
+<p>Creates a metric object and registers it with ValidMind under the provided ID. If
+no ID is provided, the function name will be used as to build one. So if the
+function name is <code>my_metric</code>, the metric will be registered under the ID
+<code>validmind.custom_metrics.my_metric</code>.</p>
+
+<p>This decorator works by creating a new <code>Metric</code> class will be created whose <code>run</code>
+method calls the decorated function. This function should take as arguments the
+inputs it requires (<code>dataset</code>, <code>datasets</code>, <code>model</code>, <code>models</code>) followed by any
+parameters. It can return any number of the following types:</p>
+
+<ul>
+<li>Table: Either a list of dictionaries or a pandas DataFrame</li>
+<li>Plot: Either a matplotlib figure or a plotly figure</li>
+<li>Scalar: A single number or string</li>
+</ul>
+
+<p>The function may also include a docstring. This docstring will be used and logged
+as the metric's description.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>func:</strong>  The function to decorate</li>
+<li><strong>test_id:</strong>  The identifier for the metric. If not provided, the function name is used.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The decorated function.</p>
+</blockquote>
+</div>
+
+
+                </section>
                 <section id="metric">
-                    <div class="attr variable">
-            <span class="name">metric</span>
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">metric</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">func_or_id</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#metric"></a>
     
-    
+            <div class="docstring"><p>DEPRECATED, use @vm.test instead</p>
+</div>
+
 
                 </section>
                 <section id="tags">

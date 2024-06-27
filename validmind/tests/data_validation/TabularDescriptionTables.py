@@ -57,10 +57,8 @@ class TabularDescriptionTables(Metric):
     name = "tabular_description_tables"
     required_inputs = ["dataset"]
 
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data"]
 
     def get_summary_statistics_numerical(self, numerical_fields):
         summary_stats = self.inputs.dataset.df[numerical_fields].describe().T

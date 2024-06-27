@@ -55,14 +55,12 @@ class RegressionPermutationFeatureImportance(Metric):
         "fontsize": 12,
         "figure_height": 500,
     }
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "statsmodels",
-            "feature_importance",
-            "visualization",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "statsmodels",
+        "feature_importance",
+        "visualization",
+    ]
 
     def run(self):
         x = self.inputs.dataset.x_df()

@@ -59,16 +59,14 @@ class ROCCurve(Metric):
 
     name = "roc_curve"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-            "visualization",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+        "visualization",
+    ]
 
     def run(self):
         if isinstance(self.inputs.model, FoundationModel):
@@ -109,7 +107,7 @@ class ROCCurve(Metric):
         )
 
         layout = go.Layout(
-            title="ROC Curve",
+            title=f"ROC Curve for {self.inputs.model.input_id} on {self.inputs.dataset.input_id}",
             xaxis=dict(title="False Positive Rate"),
             yaxis=dict(title="True Positive Rate"),
             width=700,
@@ -117,6 +115,7 @@ class ROCCurve(Metric):
         )
 
         fig = go.Figure(data=[trace0, trace1], layout=layout)
+
         return self.cache_results(
             metric_value={
                 "auc": auc,
