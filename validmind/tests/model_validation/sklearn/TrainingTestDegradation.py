@@ -72,16 +72,14 @@ class TrainingTestDegradation(ThresholdTest):
         "max_threshold": 0.10,  # Maximum 10% degradation
     }
 
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_performance",
-            "visualization",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_performance",
+        "visualization",
+    ]
 
     default_metrics = {
         "accuracy": metrics.accuracy_score,

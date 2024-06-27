@@ -110,6 +110,7 @@ class TestSuiteRunner:
 
     def _stop_progress_bar(self):
         self.pbar_description.value = "Test suite complete!"
+        self.pbar.close()
 
     async def log_results(self):
         """Logs the results of the test suite to ValidMind

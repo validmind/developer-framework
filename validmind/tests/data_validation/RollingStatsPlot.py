@@ -54,10 +54,8 @@ class RollingStatsPlot(Metric):
     name = "rolling_stats_plot"
     required_inputs = ["dataset"]
     default_params = {"window_size": 12}
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["time_series_data", "visualization", "stationarity"],
-    }
+    tasks = ["regression"]
+    tags = ["time_series_data", "visualization", "stationarity"]
 
     def plot_rolling_statistics(self, col, window_size=12):
         """

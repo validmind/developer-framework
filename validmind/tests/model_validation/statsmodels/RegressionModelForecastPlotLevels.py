@@ -64,10 +64,8 @@ class RegressionModelForecastPlotLevels(Metric):
     default_params = {
         "transformation": None,
     }
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["forecasting", "visualization"],
-    }
+    tasks = ["regression"]
+    tags = ["forecasting", "visualization"]
 
     def run(self):
         transformation = self.params["transformation"]

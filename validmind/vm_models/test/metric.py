@@ -78,11 +78,14 @@ class Metric(Test):
         self.result = MetricResultWrapper(
             result_id=self.test_id,
             result_metadata=[
-                get_description_metadata(
-                    test_id=self.test_id,
-                    default_description=self.description(),
-                    summary=metric.serialize()["summary"],
-                    figures=figures,
+                (
+                    get_description_metadata(
+                        test_id=self.test_id,
+                        default_description=self.description(),
+                        summary=metric.serialize()["summary"],
+                        figures=figures,
+                        should_generate=self.generate_description,
+                    )
                 )
             ],
             metric=metric,

@@ -51,15 +51,13 @@ class PhillipsPerronArch(Metric):
 
     name = "phillips_perron"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "time_series_data",
-            "forecasting",
-            "statistical_test",
-            "unit_root_test",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "time_series_data",
+        "forecasting",
+        "statistical_test",
+        "unit_root_test",
+    ]
 
     def run(self):
         """

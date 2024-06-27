@@ -47,16 +47,14 @@ class ADF(Metric):
 
     name = "adf"
     required_inputs = ["dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "time_series_data",
-            "statsmodels",
-            "forecasting",
-            "statistical_test",
-            "stationarity",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "time_series_data",
+        "statsmodels",
+        "forecasting",
+        "statistical_test",
+        "stationarity",
+    ]
 
     def summary(self, metric_value: dict):
         table = pd.DataFrame.from_dict(metric_value, orient="index")

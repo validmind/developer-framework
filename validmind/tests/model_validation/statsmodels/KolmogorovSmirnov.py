@@ -52,15 +52,13 @@ class KolmogorovSmirnov(Metric):
     name = "kolmogorov_smirnov"
     required_inputs = ["dataset"]
     default_params = {"dist": "norm"}
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": [
-            "tabular_data",
-            "data_distribution",
-            "statistical_test",
-            "statsmodels",
-        ],
-    }
+    tasks = ["classification", "regression"]
+    tags = [
+        "tabular_data",
+        "data_distribution",
+        "statistical_test",
+        "statsmodels",
+    ]
 
     def summary(self, metric_value):
         results_table = metric_value["metrics_summary"]

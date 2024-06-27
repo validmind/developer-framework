@@ -52,10 +52,8 @@ class TabularNumericalHistograms(Metric):
     name = "tabular_numerical_histograms"
     required_inputs = ["dataset"]
 
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "visualization"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "visualization"]
 
     def run(self):
         df = self.inputs.dataset.df

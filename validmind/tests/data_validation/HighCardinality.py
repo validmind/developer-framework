@@ -57,10 +57,8 @@ class HighCardinality(ThresholdTest):
         "percent_threshold": 0.1,
         "threshold_type": "percent",  # or "num"
     }
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "data_quality", "categorical_data"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "data_quality", "categorical_data"]
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         """

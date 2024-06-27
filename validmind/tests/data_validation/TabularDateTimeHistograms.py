@@ -48,10 +48,8 @@ class TabularDateTimeHistograms(Metric):
     name = "tabular_datetime_histograms"
     required_inputs = ["dataset"]
 
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["time_series_data", "visualization"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["time_series_data", "visualization"]
 
     def run(self):
         df = self.inputs.dataset.df

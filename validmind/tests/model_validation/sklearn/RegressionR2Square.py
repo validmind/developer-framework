@@ -43,13 +43,11 @@ class RegressionR2Square(Metric):
 
     name = "regression_errors_r2_square"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def summary(self, raw_results):
         """

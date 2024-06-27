@@ -51,13 +51,11 @@ class ClusterSizeDistribution(Metric):
 
     name = "cluster_size_distribution"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def run(self):
         y_true_train = self.inputs.dataset.y

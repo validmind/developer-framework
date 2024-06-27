@@ -51,10 +51,8 @@ class RegressionModelSummary(Metric):
 
     name = "regression_model_summary"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": ["model_metadata", "model_comparison"],
-    }
+    tasks = ["regression"]
+    tags = ["model_metadata", "model_comparison"]
 
     def run(self):
         X_columns = self.inputs.dataset.feature_columns

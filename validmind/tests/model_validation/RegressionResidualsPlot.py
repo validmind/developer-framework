@@ -52,12 +52,8 @@ class RegressionResidualsPlot(Metric):
 
     name = "regression_residuals_plot"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "model_performance",
-        ],
-    }
+    tasks = ["regression"]
+    tags = ["model_performance"]
     default_params = {"bin_size": 0.1}
 
     def run(self):

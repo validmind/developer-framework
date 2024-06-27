@@ -55,10 +55,8 @@ class MissingValuesBarPlot(Metric):
     name = "missing_values_bar_plot"
     required_inputs = ["dataset"]
     default_params = {"threshold": 80, "fig_height": 600}
-    metadata = {
-        "task_types": ["classification", "regression"],
-        "tags": ["tabular_data", "data_quality", "visualization"],
-    }
+    tasks = ["classification", "regression"]
+    tags = ["tabular_data", "data_quality", "visualization"]
 
     def run(self):
         threshold = self.params["threshold"]
