@@ -54,16 +54,14 @@ class BivariateScatterPlots(Metric):
     name = "bivariate_scatter_plots"
     required_inputs = ["dataset"]
     default_params = {"selected_columns": None}
-    metadata = {
-        "task_types": ["classification"],
-        "tags": [
-            "tabular_data",
-            "categorical_data",
-            "binary_classification",
-            "multiclass_classification",
-            "visualization",
-        ],
-    }
+    tasks = ["classification"]
+    tags = [
+        "tabular_data",
+        "categorical_data",
+        "binary_classification",
+        "multiclass_classification",
+        "visualization",
+    ]
 
     def plot_bivariate_scatter(self, columns):
         figures = []

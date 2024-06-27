@@ -57,15 +57,13 @@ class RegressionFeatureSignificance(Metric):
     required_inputs = ["models"]
 
     default_params = {"fontsize": 10, "p_threshold": 0.05}
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "statistical_test",
-            "model_interpretation",
-            "visualization",
-            "feature_importance",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "statistical_test",
+        "model_interpretation",
+        "visualization",
+        "feature_importance",
+    ]
 
     def run(self):
         fontsize = self.params["fontsize"]

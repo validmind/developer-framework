@@ -65,16 +65,14 @@ class SHAPGlobalImportance(Metric):
 
     name = "shap"
     required_inputs = ["model", "dataset"]
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "feature_importance",
-            "visualization",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "feature_importance",
+        "visualization",
+    ]
     default_params = {
         "kernel_explainer_samples": 10,
         "tree_or_linear_explainer_samples": 200,

@@ -61,13 +61,11 @@ class RegressionModelsPerformanceComparison(Metric):
     name = "models_performance_comparison"
     required_inputs = ["dataset", "models"]
 
-    metadata = {
-        "task_types": ["regression"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["regression"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def regression_errors(self, y_true_test, y_pred_test):
         mae_test = mean_absolute_error(y_true_test, y_pred_test)

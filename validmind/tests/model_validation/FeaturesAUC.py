@@ -45,14 +45,12 @@ class FeaturesAUC(Metric):
         "fontsize": 12,
         "figure_height": 500,
     }
-    metadata = {
-        "task_types": ["classification"],
-        "tags": [
-            "feature_importance",
-            "AUC",
-            "visualization",
-        ],
-    }
+    tasks = ["classification"]
+    tags = [
+        "feature_importance",
+        "AUC",
+        "visualization",
+    ]
 
     def run(self):
         dataset = self.inputs.dataset

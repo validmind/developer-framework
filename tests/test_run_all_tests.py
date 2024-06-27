@@ -39,7 +39,7 @@ SKIPPED_TESTS = []
 SUCCESSFUL_TESTS = []
 
 # Harcode some tests that require specific inputs instead of trying to
-# guess from tags or task_types
+# guess from tags or tasks
 CUSTOM_TEST_INPUT_ASSIGNMENTS = {
     "validmind.data_validation.DatasetDescription": "classification",
     "validmind.data_validation.DatasetSplit": "classification",
@@ -75,17 +75,11 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             f"{vm_test_id} missing required_inputs",
         )
         self.assertTrue(
-            hasattr(vm_test_class, "metadata"),
-            f"{vm_test_id} missing metadata",
+            len(vm_test_class.tasks) > 0,
+            f"{vm_test_id} missing tasks in metadata",
         )
         self.assertTrue(
-            "task_types" in vm_test_class.metadata
-            and len(vm_test_class.metadata["task_types"]) > 0,
-            f"{vm_test_id} missing task_types in metadata",
-        )
-        self.assertTrue(
-            "tags" in vm_test_class.metadata
-            and len(vm_test_class.metadata["tags"]) > 0,
+            len(vm_test_class.tags) > 0,
             f"{vm_test_id} missing tags in metadata",
         )
 
@@ -99,7 +93,7 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             return
 
         # Skip all of these tests until we fix them
-        if "clustering" in vm_test_class.metadata["task_types"]:
+        if "clustering" in vm_test_class.tasks:
             logger.debug(
                 "--- Skipping test - clustering tests not supported yet %s",
                 vm_test_id,
@@ -107,10 +101,7 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             SKIPPED_TESTS.append(vm_test_id)
             return
 
-        if (
-            "llm" in vm_test_class.metadata["tags"]
-            or "embeddings" in vm_test_class.metadata["tags"]
-        ):
+        if "llm" in vm_test_class.tags or "embeddings" in vm_test_class.tags:
             logger.debug(
                 "--- Skipping test - LLM/Embedding tests not supported yet %s",
                 vm_test_id,
@@ -125,11 +116,10 @@ def create_unit_test_func(vm_test_id, vm_test_class):
         if custom_test_input_assignment:
             inputs = TEST_INPUTS[custom_test_input_assignment]
         elif (
-            "text_summarization" in vm_test_class.metadata["task_types"]
-            or "nlp" in vm_test_class.metadata["task_types"]
+            "text_summarization" in vm_test_class.tasks or "nlp" in vm_test_class.tasks
         ):
             inputs = TEST_INPUTS["text_summarization"]
-        elif "time_series_data" in vm_test_class.metadata["tags"]:
+        elif "time_series_data" in vm_test_class.tags:
             inputs = TEST_INPUTS["time_series"]
         else:
             inputs = TEST_INPUTS["classification"]

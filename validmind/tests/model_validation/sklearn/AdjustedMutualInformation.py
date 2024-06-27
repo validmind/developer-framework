@@ -48,13 +48,11 @@ class AdjustedMutualInformation(ClusterPerformance):
 
     name = "adjusted_mutual_information"
     required_inputs = ["model", "datasets"]
-    metadata = {
-        "task_types": ["clustering"],
-        "tags": [
-            "sklearn",
-            "model_performance",
-        ],
-    }
+    tasks = ["clustering"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
     def metric_info(self):
         return {"Adjusted Mutual Information": metrics.adjusted_mutual_info_score}

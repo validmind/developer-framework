@@ -67,15 +67,13 @@ class OverfitDiagnosis(ThresholdTest):
     name = "overfit_regions"
     required_inputs = ["model", "datasets"]
     default_params = {"features_columns": None, "cut_off_percentage": 4}
-    metadata = {
-        "task_types": ["classification", "text_classification"],
-        "tags": [
-            "sklearn",
-            "binary_classification",
-            "multiclass_classification",
-            "model_diagnosis",
-        ],
-    }
+    tasks = ["classification", "text_classification"]
+    tags = [
+        "sklearn",
+        "binary_classification",
+        "multiclass_classification",
+        "model_diagnosis",
+    ]
 
     default_metrics = {
         "accuracy": metrics.accuracy_score,

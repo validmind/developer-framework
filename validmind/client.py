@@ -162,6 +162,7 @@ def init_dataset(
         raise UnsupportedDatasetError(
             "Only Pandas datasets and Tensor Datasets are supported at the moment."
         )
+
     if __log:
         log_input(
             name=input_id,

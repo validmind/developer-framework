@@ -60,10 +60,8 @@ class Robustness(ThresholdTest):
     name = "robustness"
     required_inputs = ["model"]
     default_params = {"num_tests": 10}
-    metadata = {
-        "task_types": ["text_classification", "text_summarization"],
-        "tags": ["llm", "zero_shot", "few_shot"],
-    }
+    tasks = ["text_classification", "text_summarization"]
+    tags = ["llm", "zero_shot", "few_shot"]
 
     system_prompt = '''
 You are a prompt evaluation researcher AI who is tasked with testing the robustness of LLM prompts.
