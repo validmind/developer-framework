@@ -22,6 +22,8 @@ CONTENT_TYPE_MAP = {
     "dynamic": "Dynamic Content",
     "text": "Text",
     "risk_assessment": "Risk Assessment",
+    "assessment_summary": "Assessment Summary",
+    "guideline": "Guideline Assessment",
 }
 
 
