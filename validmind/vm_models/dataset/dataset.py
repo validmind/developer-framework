@@ -139,13 +139,22 @@ class VMDataset:
         )
 
     def _add_column(self, column_name, column_values):
-        if len(column_values) != len(self.df):
-            raise ValueError(
-                "Length of values doesn't match number of rows in the DataFrame."
-            )
-
-        self.columns.append(column_name)
-        self.df[column_name] = column_values
+        if column_values.ndim == 1:
+            if len(column_values) != len(self.df):
+                raise ValueError(
+                    "Length of values doesn't match number of rows in the DataFrame."
+                )
+            self.columns.append(column_name)
+            self.df[column_name] = column_values
+        elif column_values.ndim == 2:
+            if column_values.shape[0] != len(self.df):
+                raise ValueError(
+                    "Number of rows in values doesn't match number of rows in the DataFrame."
+                )
+            self.columns.append(column_name)
+            self.df[column_name] = list(column_values)
+        else:
+            raise ValueError("Only 1D and 2D arrays are supported for column_values.")
 
     def _validate_assign_predictions(
         self,
