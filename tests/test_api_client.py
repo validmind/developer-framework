@@ -11,7 +11,7 @@ from aiohttp.formdata import FormData
 os.environ["VM_API_KEY"] = "your_api_key"
 os.environ["VM_API_SECRET"] = "your_api_secret"
 os.environ["VM_API_HOST"] = "your_api_host"
-os.environ["VM_API_PROJECT"] = "your_project"
+os.environ["VM_API_MODEL"] = "your_model"
 os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind.api_client as api_client
@@ -58,7 +58,7 @@ class TestAPIClient(unittest.TestCase):
     @patch("requests.get")
     def test_init_successful(self, mock_requests_get):
         mock_data = {
-            "project": {"name": "test_project", "cuid": os.environ["VM_API_PROJECT"]}
+            "project": {"name": "test_project", "cuid": os.environ["VM_API_MODEL"]}
         }
         mock_response = Mock(status_code=200, json=Mock(return_value=mock_data))
         mock_requests_get.return_value = mock_response
@@ -71,7 +71,7 @@ class TestAPIClient(unittest.TestCase):
             headers={
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_PROJECT"],
+                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
             },
         )
 
@@ -80,26 +80,26 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(config["VM_API_KEY"], "your_api_key")
         self.assertEqual(config["VM_API_SECRET"], "your_api_secret")
         self.assertEqual(config["VM_API_HOST"], "your_api_host")
-        self.assertEqual(config["VM_API_PROJECT"], "your_project")
+        self.assertEqual(config["VM_API_MODEL"], "your_model")
         self.assertEqual(config["VM_RUN_CUID"], "your_run_cuid")
 
     def test_get_api_host(self):
         host = api_client.get_api_host()
         self.assertEqual(host, "your_api_host")
 
-    def test_get_api_project(self):
-        project = api_client.get_api_project()
-        self.assertEqual(project, "your_project")
+    def test_get_api_model(self):
+        project = api_client.get_api_model()
+        self.assertEqual(project, "your_model")
 
     @patch("requests.get")
     def test_init_missing_project_id(self, mock_requests_get):
         mock_requests_get.return_value = Mock()
 
-        project = os.environ.pop("VM_API_PROJECT")
+        project = os.environ.pop("VM_API_MODEL")
         with self.assertRaises(MissingProjectIdError):
             api_client.init(project=None)
 
-        os.environ["VM_API_PROJECT"] = project
+        os.environ["VM_API_MODEL"] = project
 
         mock_requests_get.assert_not_called()
 
@@ -134,7 +134,7 @@ class TestAPIClient(unittest.TestCase):
             headers={
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_PROJECT"],
+                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
             },
         )
 
@@ -258,7 +258,7 @@ class TestAPIClient(unittest.TestCase):
             headers={
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_PROJECT"],
+                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
             },
         )
 
@@ -281,7 +281,7 @@ class TestAPIClient(unittest.TestCase):
             headers={
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_PROJECT"],
+                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
             },
         )
 

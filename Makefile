@@ -19,9 +19,6 @@ install:
 	poetry install --all-extras
 	poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
 
-# Quick target to run all checks
-check: copyright format lint test
-
 build:
 	poetry build
 
@@ -44,8 +41,12 @@ docs-serve:
 
 version:
 	@:$(call check_defined, tag, new semver version tag to use on pyproject.toml)
-	poetry version $(tag)
-	echo "__version__ = \"$$(poetry version -s)\"" > validmind/__version__.py
+	@poetry version $(tag)
+	@echo "__version__ = \"$$(poetry version -s)\"" > validmind/__version__.py
+	@echo "Version updated to $$(poetry version -s)"
+	@echo "Commiting changes to pyproject.toml and __version__.py with message: $$(poetry version -s)"
+	@git add pyproject.toml validmind/__version__.py
+	@git commit -m "$$(poetry version -s)"
 
 generate-test-id-types:
 	poetry run python scripts/generate_test_id_type.py
@@ -61,5 +62,8 @@ verify-exposed-credentials:
 
 ensure-clean-notebooks:
 	poetry run python scripts/ensure_clean_notebooks.py
+
+# Quick target to run all checks
+check: copyright format lint test verify-copyright verify-exposed-credentials ensure-clean-notebooks
 
 .PHONY: docs

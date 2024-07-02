@@ -1,6 +1,7 @@
 """
 Unit tests for the framewor's init() method
 """
+
 import os
 import unittest
 
@@ -56,13 +57,13 @@ class TestFrameworkInit(unittest.TestCase):
             os.environ.pop("VM_API_SECRET") if "VM_API_SECRET" in os.environ else ""
         )
         self.api_project = (
-            os.environ.pop("VM_API_PROJECT") if "VM_API_PROJECT" in os.environ else ""
+            os.environ.pop("VM_API_MODEL") if "VM_API_MODEL" in os.environ else ""
         )
 
     def tearDown(self):
         os.environ["VM_API_KEY"] = self.api_key
         os.environ["VM_API_SECRET"] = self.api_secret
-        os.environ["VM_API_PROJECT"] = self.api_project
+        os.environ["VM_API_MODEL"] = self.api_project
 
     def test_no_args(self):
         """

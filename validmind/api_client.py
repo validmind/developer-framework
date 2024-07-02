@@ -32,8 +32,7 @@ logger = get_logger(__name__)
 _api_key = os.getenv("VM_API_KEY")
 _api_secret = os.getenv("VM_API_SECRET")
 _api_host = os.getenv("VM_API_HOST")
-
-_project = os.getenv("VM_API_PROJECT")
+_model_cuid = os.getenv("VM_API_MODEL")
 _run_cuid = os.getenv("VM_RUN_CUID")
 
 __api_session: aiohttp.ClientSession = None
@@ -56,7 +55,7 @@ def get_api_config() -> Dict[str, Optional[str]]:
         "VM_API_KEY": _api_key,
         "VM_API_SECRET": _api_secret,
         "VM_API_HOST": _api_host,
-        "VM_API_PROJECT": _project,
+        "VM_API_MODEL": _model_cuid,
         "VM_RUN_CUID": _run_cuid,
     }
 
@@ -65,15 +64,15 @@ def get_api_host() -> Optional[str]:
     return _api_host
 
 
-def get_api_project() -> Optional[str]:
-    return _project
+def get_api_model() -> Optional[str]:
+    return _model_cuid
 
 
 def get_api_headers() -> Dict[str, str]:
     return {
         "X-API-KEY": _api_key,
         "X-API-SECRET": _api_secret,
-        "X-PROJECT-CUID": _project,
+        "X-PROJECT-CUID": _model_cuid,
     }
 
 
@@ -82,6 +81,7 @@ def init(
     api_key: Optional[str] = None,
     api_secret: Optional[str] = None,
     api_host: Optional[str] = None,
+    model: Optional[str] = None,
 ):
     """
     Initializes the API client instances and calls the /ping endpoint to ensure
@@ -91,7 +91,8 @@ def init(
     retrieve them from the environment variables `VM_API_KEY` and `VM_API_SECRET`.
 
     Args:
-        project (str): The project CUID
+        project (str, optional): The project CUID. Alias for model. Defaults to None.
+        model (str, optional): The model CUID. Defaults to None.
         api_key (str, optional): The API key. Defaults to None.
         api_secret (str, optional): The API secret. Defaults to None.
         api_host (str, optional): The API host. Defaults to None.
@@ -99,7 +100,7 @@ def init(
     Raises:
         ValueError: If the API key and secret are not provided
     """
-    global _api_key, _api_secret, _api_host, _run_cuid, _project
+    global _api_key, _api_secret, _api_host, _run_cuid, _model_cuid
 
     if api_key == "...":
         # special case to detect when running a notebook with the standard init snippet
@@ -107,9 +108,9 @@ def init(
         # the notebook
         api_host = api_key = api_secret = project = None
 
-    _project = project or os.getenv("VM_API_PROJECT")
+    _model_cuid = project or model or os.getenv("VM_API_MODEL")
 
-    if _project is None:
+    if _model_cuid is None:
         raise MissingProjectIdError()
 
     _api_key = api_key or os.getenv("VM_API_KEY")
@@ -143,7 +144,7 @@ def _get_session() -> aiohttp.ClientSession:
             {
                 "X-API-KEY": _api_key,
                 "X-API-SECRET": _api_secret,
-                "X-PROJECT-CUID": _project,
+                "X-PROJECT-CUID": _model_cuid,
             }
         )
 
@@ -157,7 +158,7 @@ def __ping() -> Dict[str, Any]:
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _project,
+            "X-PROJECT-CUID": _model_cuid,
         },
     )
     if r.status_code != 200:
@@ -172,13 +173,14 @@ def __ping() -> Dict[str, Any]:
     if client_config.project is None:
         ack_connected = True
 
+    # TODO: use model object when backend moves away from project
     client_config.project = client_info["project"]
     client_config.documentation_template = client_info.get("documentation_template", {})
     client_config.feature_flags = client_info.get("feature_flags", {})
 
     if ack_connected:
         logger.info(
-            f"Connected to ValidMind. Project: {client_config.project['name']}"
+            f"Connected to ValidMind... Current Model: {client_config.project['name']}"
             f" ({client_config.project['cuid']})"
         )
 
@@ -563,7 +565,7 @@ def start_run() -> str:
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _project,
+            "X-PROJECT-CUID": _model_cuid,
         },
     )
 
@@ -584,7 +586,7 @@ def get_ai_key() -> str:
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _project,
+            "X-PROJECT-CUID": _model_cuid,
         },
     )
 
