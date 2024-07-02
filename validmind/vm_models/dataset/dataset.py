@@ -154,9 +154,8 @@ class VMDataset:
                     "Number of rows in values doesn't match number of rows in the DataFrame."
                 )
             self.columns.append(column_name)
-            self.df[column_name] = (
-                column_values.tolist()
-            )  # Convert 2D NumPy array to list
+            self.df[column_name] = column_values.tolist()
+
         else:
             raise ValueError("Only 1D and 2D arrays are supported for column_values.")
 
