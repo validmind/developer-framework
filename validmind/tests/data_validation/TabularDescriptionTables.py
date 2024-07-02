@@ -94,9 +94,9 @@ class TabularDescriptionTables(Metric):
                 summary_stats.loc[column, "Num of Obs"] = int(
                     self.inputs.dataset.df[column].count()
                 )
-                summary_stats.loc[
-                    column, "Num of Unique Values"
-                ] = self.inputs.dataset.df[column].nunique()
+                summary_stats.loc[column, "Num of Unique Values"] = (
+                    self.inputs.dataset.df[column].nunique()
+                )
                 summary_stats.loc[column, "Unique Values"] = str(
                     self.inputs.dataset.df[column].unique()
                 )

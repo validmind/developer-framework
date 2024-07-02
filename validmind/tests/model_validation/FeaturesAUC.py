@@ -69,9 +69,9 @@ class FeaturesAUC(Metric):
                 auc_score = roc_auc_score(y, feature_values)
                 aucs.loc[column, "AUC"] = auc_score
             else:
-                aucs.loc[
-                    column, "AUC"
-                ] = np.nan  # Not enough unique values to calculate AUC
+                aucs.loc[column, "AUC"] = (
+                    np.nan
+                )  # Not enough unique values to calculate AUC
 
         # Sorting the AUC scores in descending order
         sorted_indices = aucs["AUC"].dropna().sort_values(ascending=False).index
