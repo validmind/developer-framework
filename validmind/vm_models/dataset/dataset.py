@@ -139,6 +139,8 @@ class VMDataset:
         )
 
     def _add_column(self, column_name, column_values):
+        column_values = np.array(column_values)
+
         if column_values.ndim == 1:
             if len(column_values) != len(self.df):
                 raise ValueError(
@@ -152,7 +154,9 @@ class VMDataset:
                     "Number of rows in values doesn't match number of rows in the DataFrame."
                 )
             self.columns.append(column_name)
-            self.df[column_name] = list(column_values)
+            self.df[column_name] = (
+                column_values.tolist()
+            )  # Convert 2D NumPy array to list
         else:
             raise ValueError("Only 1D and 2D arrays are supported for column_values.")
 
