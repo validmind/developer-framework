@@ -13,7 +13,7 @@ from aiohttp.formdata import FormData
 os.environ["VM_API_KEY"] = "your_api_key"
 os.environ["VM_API_SECRET"] = "your_api_secret"
 os.environ["VM_API_HOST"] = "your_api_host"
-os.environ["VM_API_PROJECT"] = "your_project"
+os.environ["VM_API_MODEL"] = "your_model"
 os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind as vm

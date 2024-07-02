@@ -19,9 +19,9 @@ class ThresholdTestResult:
 
     values: dict
     test_name: Optional[str] = None  # Optionally allow a name for an individual test
-    column: Optional[str] = (
-        None  # Optionally track the results for an individual column
-    )
+    column: Optional[
+        str
+    ] = None  # Optionally track the results for an individual column
     passed: Optional[bool] = None  # Optionally per-result pass/fail
 
     def serialize(self):
