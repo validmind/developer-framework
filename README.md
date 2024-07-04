@@ -12,7 +12,7 @@ We believe in the power of collaboration and welcome contributions to the ValidM
 
 - Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](https://docs.validmind.ai/guide/join-community.html)!
 
-- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/guide/get-started-developer-framework.html).
+- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/developer/get-started-developer-framework.html).
 
 ## Getting started
 
