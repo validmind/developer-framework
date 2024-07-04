@@ -17,5 +17,5 @@ If you are new to ValidMind, our platform enables organizations to identify, doc
 
 If this is your first time trying out ValidMind, you can make use of the following resources alongside our sample notebooks:
 
-- [Get started](https://docs.validmind.ai/guide/get-started.html) — The basics, including key concepts, and how our products work
+- [Get started](https://docs.validmind.ai/get-started/get-started.html) — The basics, including key concepts, and how our products work
 - [Get started with the ValidMind Developer Framework](https://docs.validmind.ai/developer/get-started-developer-framework.html) —  The path for developers, more code samples, and our developer reference
