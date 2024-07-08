@@ -6,6 +6,7 @@ Usage:
 
  - path: path to a test file or directory containing test files
 """
+
 import os
 import shutil
 
@@ -13,6 +14,15 @@ import click
 
 
 output_dir_path = "build/_test_descriptions"
+
+
+def is_test_function_signature(line, previous_line):
+    """
+    Test functions should have a @tags or @tasks decorator call on top of them
+    """
+    return line.startswith("def") and (
+        "@tags" in previous_line or "@tasks" in previous_line
+    )
 
 
 def retrieve_test_description(path):
@@ -25,8 +35,26 @@ def retrieve_test_description(path):
     # the description should be inserted after the class definition line
     existing_description_lines = []
     lines = file_contents.split("\n")
+
+    advance_to_next_line = False
     for i, line in enumerate(lines):
-        if line.startswith("class"):
+        previous_line = lines[i - 1] if i > 0 else ""
+
+        if advance_to_next_line or (
+            line.startswith("class") or is_test_function_signature(line, previous_line)
+        ):
+            # ensure this is not a multi-line function signature like this:
+            #
+            # def test_function(
+            #     arg1,
+            #     arg2
+            # ):
+            #
+            # we want to keep iterating until we find the closing parenthesis
+            if ")" not in line:
+                advance_to_next_line = True
+                continue
+
             # check if there is already a doc string for the class
             if '"""' in lines[i + 1]:
                 existing_description_lines.append(i + 1)
@@ -36,6 +64,8 @@ def retrieve_test_description(path):
                     if '"""' in lines[j]:
                         break
                     j += 1
+
+            advance_to_next_line = False
             break
 
     existing_description_lines = [

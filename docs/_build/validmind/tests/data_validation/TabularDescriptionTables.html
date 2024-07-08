@@ -32,37 +32,25 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#TabularDescriptionTables">TabularDescriptionTables</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.__init__">TabularDescriptionTables</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_summary_statistics_numerical">get_summary_statistics_numerical</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_summary_statistics_categorical">get_summary_statistics_categorical</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_summary_statistics_datetime">get_summary_statistics_datetime</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.summary">summary</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_categorical_columns">get_categorical_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_numerical_columns">get_numerical_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.get_datetime_columns">get_datetime_columns</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#TabularDescriptionTables.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#TabularDescriptionTables">TabularDescriptionTables</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_summary_statistics_numerical">get_summary_statistics_numerical</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_summary_statistics_categorical">get_summary_statistics_categorical</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_summary_statistics_datetime">get_summary_statistics_datetime</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_categorical_columns">get_categorical_columns</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_numerical_columns">get_numerical_columns</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_datetime_columns">get_datetime_columns</a>
             </li>
     </ul>
 
@@ -87,11 +75,12 @@
                 
             </section>
                 <section id="TabularDescriptionTables">
-                    <div class="attr class">
-                    <div class="decorator">@dataclass</div>
+                    <div class="attr function">
+                    <div class="decorator">@tags(&#39;tabular_data&#39;)</div>
+        <div class="decorator">@tasks(&#39;classification&#39;, &#39;regression&#39;)</div>
 
-    <span class="def">class</span>
-    <span class="name">TabularDescriptionTables</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+        <span class="def">def</span>
+        <span class="name">TabularDescriptionTables</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -151,152 +140,84 @@ chosen algorithm.</li>
 </div>
 
 
-                            <div id="TabularDescriptionTables.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">TabularDescriptionTables</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestInput</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tasks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_ref_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_section_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">generate_description</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#TabularDescriptionTables.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="TabularDescriptionTables.get_summary_statistics_numerical" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_summary_statistics_numerical">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_summary_statistics_numerical</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">numerical_fields</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_summary_statistics_numerical</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">numerical_fields</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_summary_statistics_numerical"></a>
+    <a class="headerlink" href="#get_summary_statistics_numerical"></a>
     
     
 
-                            </div>
-                            <div id="TabularDescriptionTables.get_summary_statistics_categorical" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_summary_statistics_categorical">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_summary_statistics_categorical</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">categorical_fields</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_summary_statistics_categorical</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">categorical_fields</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_summary_statistics_categorical"></a>
+    <a class="headerlink" href="#get_summary_statistics_categorical"></a>
     
     
 
-                            </div>
-                            <div id="TabularDescriptionTables.get_summary_statistics_datetime" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_summary_statistics_datetime">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_summary_statistics_datetime</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">datetime_fields</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_summary_statistics_datetime</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">datetime_fields</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_summary_statistics_datetime"></a>
+    <a class="headerlink" href="#get_summary_statistics_datetime"></a>
     
     
 
-                            </div>
-                            <div id="TabularDescriptionTables.summary" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_categorical_columns">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">metric_value</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_categorical_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.summary"></a>
+    <a class="headerlink" href="#get_categorical_columns"></a>
     
-            <div class="docstring"><p>Return the metric summary. Should be overridden by subclasses. Defaults to None.
-The metric summary allows renderers (e.g. Word and ValidMind UI) to display a
-short summary of the metric results.</p>
+    
 
-<p>We return None here because the metric summary is optional.</p>
-</div>
-
-
-                            </div>
-                            <div id="TabularDescriptionTables.get_categorical_columns" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_numerical_columns">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_categorical_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_numerical_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_categorical_columns"></a>
+    <a class="headerlink" href="#get_numerical_columns"></a>
     
     
 
-                            </div>
-                            <div id="TabularDescriptionTables.get_numerical_columns" class="classattr">
-                                <div class="attr function">
+                </section>
+                <section id="get_datetime_columns">
+                    <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_numerical_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
+        <span class="name">get_datetime_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_numerical_columns"></a>
+    <a class="headerlink" href="#get_datetime_columns"></a>
     
     
 
-                            </div>
-                            <div id="TabularDescriptionTables.get_datetime_columns" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_datetime_columns</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TabularDescriptionTables.get_datetime_columns"></a>
-    
-    
-
-                            </div>
-                            <div id="TabularDescriptionTables.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#TabularDescriptionTables.run"></a>
-    
-            <div class="docstring"><p>Run the calculation and cache its results</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="TabularDescriptionTables.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="TabularDescriptionTables.description" class="function">description</dd>
-                <dd id="TabularDescriptionTables.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="TabularDescriptionTables.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="TabularDescriptionTables.dataset" class="variable">dataset</dd>
-                <dd id="TabularDescriptionTables.model" class="variable">model</dd>
-                <dd id="TabularDescriptionTables.models" class="variable">models</dd>
-                <dd id="TabularDescriptionTables.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
