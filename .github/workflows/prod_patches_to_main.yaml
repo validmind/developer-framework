@@ -1,4 +1,4 @@
-name: Create Prod Release
+name: Bring Prod Hotfixes to Main
 
 permissions:
   contents: write
@@ -16,38 +16,33 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Main Branch
-        uses: actions/checkout@v4
+      - name: Checkout Prod Branch
+        uses: actions/checkout@v3
         with:
-          ref: "main"
+          ref: "prod"
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "poetry"
+      - name: Install jq (JSON Processor)
+        run: sudo apt-get install jq
 
       - name: Get Application Version
         id: get_version
         run: |
-          echo "APP_VERSION=$(poetry version -s)" >> $GITHUB_ENV
+          APP_VERSION=$(jq -r '.version' package.json)
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
       - name: Determine Branch Name
         id: set_branch_name
         run: |
           if [ -z "${{ github.event.inputs.custom_branch_name }}" ]; then
-            echo "BRANCH_NAME=prod-${{ env.APP_VERSION }}" >> $GITHUB_ENV
+            echo "BRANCH_NAME=prod-${{ env.APP_VERSION }}-to-main" >> $GITHUB_ENV
           else
             echo "BRANCH_NAME=${{ github.event.inputs.custom_branch_name }}" >> $GITHUB_ENV
           fi
 
-      - name: Checkout Prod Branch
-        uses: actions/checkout@v4
+      - name: Checkout Main Branch
+        uses: actions/checkout@v3
         with:
-          ref: "prod"
+          ref: "main"
           fetch-depth: 0
 
       - name: Setup Git Config
@@ -55,13 +50,13 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-      - name: Create Prod-Update Branch
+      - name: Create Main-Update Branch
         run: |
           git checkout -b ${{ env.BRANCH_NAME }}
 
-      - name: Merge Main into Prod-Update
+      - name: Merge Prod into Main-Update
         run: |
-          git merge --no-ff origin/main
+          git merge --no-ff origin/prod
 
       - name: Push to GitHub
         run: |
@@ -69,6 +64,6 @@ jobs:
 
       - name: Create Pull Request
         run: |
-          gh pr create --base prod --head ${{ env.BRANCH_NAME }} --title "Merge Main into Prod (${{env.BRANCH_NAME}})" --body "Merging changes from Main into Prod, branch ${{ env.BRANCH_NAME }}." --label "internal"
+          gh pr create --base main --head ${{ env.BRANCH_NAME }} --title "Merge Prod hotfixes into Main (${{env.BRANCH_NAME}})" --body "Merging hotfixes from Prod into Main, branch ${{ env.BRANCH_NAME }}." --label "internal"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
