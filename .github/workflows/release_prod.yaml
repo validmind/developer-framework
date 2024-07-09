@@ -1,12 +1,16 @@
 name: Create Prod Release
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   workflow_dispatch:
     inputs:
       custom_branch_name:
-        description: 'Custom Branch Name (optional)'
+        description: "Custom Branch Name (optional)"
         required: false
-        default: ''
+        default: ""
 
 jobs:
   release:
@@ -15,7 +19,7 @@ jobs:
       - name: Checkout Main Branch
         uses: actions/checkout@v4
         with:
-          ref: 'main'
+          ref: "main"
 
       - name: Install poetry
         run: pipx install poetry
@@ -23,8 +27,8 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'poetry'
+          python-version: "3.11"
+          cache: "poetry"
 
       - name: Get Application Version
         id: get_version
@@ -43,7 +47,7 @@ jobs:
       - name: Checkout Prod Branch
         uses: actions/checkout@v4
         with:
-          ref: 'prod'
+          ref: "prod"
           fetch-depth: 0
 
       - name: Setup Git Config

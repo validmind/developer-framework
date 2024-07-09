@@ -2,15 +2,14 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import pandas as pd
 
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+from validmind import tags, tasks
 
 
-@dataclass
-class TabularDescriptionTables(Metric):
+@tags("tabular_data")
+@tasks("classification", "regression")
+def TabularDescriptionTables(dataset):
     """
     Summarizes key descriptive statistics for numerical, categorical, and datetime variables in a dataset.
 
@@ -54,155 +53,104 @@ class TabularDescriptionTables(Metric):
     chosen algorithm.
     """
 
-    name = "tabular_description_tables"
-    required_inputs = ["dataset"]
+    numerical_fields = get_numerical_columns(dataset)
+    categorical_fields = get_categorical_columns(dataset)
+    datetime_fields = get_datetime_columns(dataset)
 
-    tasks = ["classification", "regression"]
-    tags = ["tabular_data"]
+    summary_stats_numerical = get_summary_statistics_numerical(
+        dataset, numerical_fields
+    )
+    summary_stats_categorical = get_summary_statistics_categorical(
+        dataset, categorical_fields
+    )
+    summary_stats_datetime = get_summary_statistics_datetime(dataset, datetime_fields)
 
-    def get_summary_statistics_numerical(self, numerical_fields):
-        summary_stats = self.inputs.dataset.df[numerical_fields].describe().T
-        summary_stats["Missing Values (%)"] = (
-            self.inputs.dataset.df[numerical_fields].isnull().mean() * 100
-        )
-        summary_stats["Data Type"] = self.inputs.dataset.df[
-            numerical_fields
-        ].dtypes.astype(str)
-        summary_stats = summary_stats[
-            ["count", "mean", "min", "max", "Missing Values (%)", "Data Type"]
-        ]
-        summary_stats.columns = [
-            "Num of Obs",
-            "Mean",
-            "Min",
-            "Max",
-            "Missing Values (%)",
-            "Data Type",
-        ]
-        summary_stats["Num of Obs"] = summary_stats["Num of Obs"].astype(int)
+    return (summary_stats_numerical, summary_stats_categorical, summary_stats_datetime)
+
+
+def get_summary_statistics_numerical(dataset, numerical_fields):
+    summary_stats = dataset.df[numerical_fields].describe().T
+    summary_stats["Missing Values (%)"] = (
+        dataset.df[numerical_fields].isnull().mean() * 100
+    )
+    summary_stats["Data Type"] = dataset.df[numerical_fields].dtypes.astype(str)
+    summary_stats = summary_stats[
+        ["count", "mean", "min", "max", "Missing Values (%)", "Data Type"]
+    ]
+    summary_stats.columns = [
+        "Num of Obs",
+        "Mean",
+        "Min",
+        "Max",
+        "Missing Values (%)",
+        "Data Type",
+    ]
+    summary_stats["Num of Obs"] = summary_stats["Num of Obs"].astype(int)
+    summary_stats = summary_stats.sort_values(by="Missing Values (%)", ascending=False)
+    summary_stats.reset_index(inplace=True)
+    summary_stats.rename(columns={"index": "Numerical Variable"}, inplace=True)
+    return summary_stats
+
+
+def get_summary_statistics_categorical(dataset, categorical_fields):
+    summary_stats = pd.DataFrame()
+    if categorical_fields:  # check if the list is not empty
+        for column in dataset.df[categorical_fields].columns:
+            summary_stats.loc[column, "Num of Obs"] = int(dataset.df[column].count())
+            summary_stats.loc[column, "Num of Unique Values"] = dataset.df[
+                column
+            ].nunique()
+            summary_stats.loc[column, "Unique Values"] = str(
+                dataset.df[column].unique()
+            )
+            summary_stats.loc[column, "Missing Values (%)"] = (
+                dataset.df[column].isnull().mean() * 100
+            )
+            summary_stats.loc[column, "Data Type"] = str(dataset.df[column].dtype)
+
         summary_stats = summary_stats.sort_values(
             by="Missing Values (%)", ascending=False
         )
         summary_stats.reset_index(inplace=True)
-        summary_stats.rename(columns={"index": "Numerical Variable"}, inplace=True)
-        return summary_stats
+        summary_stats.rename(columns={"index": "Categorical Variable"}, inplace=True)
+    return summary_stats
 
-    def get_summary_statistics_categorical(self, categorical_fields):
-        summary_stats = pd.DataFrame()
-        if categorical_fields:  # check if the list is not empty
-            for column in self.inputs.dataset.df[categorical_fields].columns:
-                summary_stats.loc[column, "Num of Obs"] = int(
-                    self.inputs.dataset.df[column].count()
-                )
-                summary_stats.loc[
-                    column, "Num of Unique Values"
-                ] = self.inputs.dataset.df[column].nunique()
-                summary_stats.loc[column, "Unique Values"] = str(
-                    self.inputs.dataset.df[column].unique()
-                )
-                summary_stats.loc[column, "Missing Values (%)"] = (
-                    self.inputs.dataset.df[column].isnull().mean() * 100
-                )
-                summary_stats.loc[column, "Data Type"] = str(
-                    self.inputs.dataset.df[column].dtype
-                )
 
-            summary_stats = summary_stats.sort_values(
-                by="Missing Values (%)", ascending=False
-            )
-            summary_stats.reset_index(inplace=True)
-            summary_stats.rename(
-                columns={"index": "Categorical Variable"}, inplace=True
-            )
-        return summary_stats
-
-    def get_summary_statistics_datetime(self, datetime_fields):
-        summary_stats = pd.DataFrame()
-        for column in self.inputs.dataset.df[datetime_fields].columns:
-            summary_stats.loc[column, "Num of Obs"] = int(
-                self.inputs.dataset.df[column].count()
-            )
-            summary_stats.loc[column, "Num of Unique Values"] = self.inputs.dataset.df[
-                column
-            ].nunique()
-            summary_stats.loc[column, "Earliest Date"] = self.inputs.dataset.df[
-                column
-            ].min()
-            summary_stats.loc[column, "Latest Date"] = self.inputs.dataset.df[
-                column
-            ].max()
-            summary_stats.loc[column, "Missing Values (%)"] = (
-                self.inputs.dataset.df[column].isnull().mean() * 100
-            )
-            summary_stats.loc[column, "Data Type"] = str(
-                self.inputs.dataset.df[column].dtype
-            )
-
-        if not summary_stats.empty:
-            summary_stats = summary_stats.sort_values(
-                by="Missing Values (%)", ascending=False
-            )
-        summary_stats.reset_index(inplace=True)
-        summary_stats.rename(columns={"index": "Datetime Variable"}, inplace=True)
-        return summary_stats
-
-    def summary(self, metric_value):
-        summary_stats_numerical = metric_value["numerical"]
-        summary_stats_categorical = metric_value["categorical"]
-        summary_stats_datetime = metric_value["datetime"]
-
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=summary_stats_numerical,
-                    metadata=ResultTableMetadata(title="Numerical Variables"),
-                ),
-                ResultTable(
-                    data=summary_stats_categorical,
-                    metadata=ResultTableMetadata(title="Categorical Variables"),
-                ),
-                ResultTable(
-                    data=summary_stats_datetime,
-                    metadata=ResultTableMetadata(title="Datetime Variables"),
-                ),
-            ]
+def get_summary_statistics_datetime(dataset, datetime_fields):
+    summary_stats = pd.DataFrame()
+    for column in dataset.df[datetime_fields].columns:
+        summary_stats.loc[column, "Num of Obs"] = int(dataset.df[column].count())
+        summary_stats.loc[column, "Num of Unique Values"] = dataset.df[column].nunique()
+        summary_stats.loc[column, "Earliest Date"] = dataset.df[column].min()
+        summary_stats.loc[column, "Latest Date"] = dataset.df[column].max()
+        summary_stats.loc[column, "Missing Values (%)"] = (
+            dataset.df[column].isnull().mean() * 100
         )
+        summary_stats.loc[column, "Data Type"] = str(dataset.df[column].dtype)
 
-    def get_categorical_columns(self):
-        categorical_columns = self.inputs.dataset.df.select_dtypes(
-            include=["object", "category"]
-        ).columns.tolist()
-        return categorical_columns
-
-    def get_numerical_columns(self):
-        numerical_columns = self.inputs.dataset.df.select_dtypes(
-            include=["int", "float", "uint8"]
-        ).columns.tolist()
-        return numerical_columns
-
-    def get_datetime_columns(self):
-        datetime_columns = self.inputs.dataset.df.select_dtypes(
-            include=["datetime"]
-        ).columns.tolist()
-        return datetime_columns
-
-    def run(self):
-        numerical_fields = self.get_numerical_columns()
-        categorical_fields = self.get_categorical_columns()
-        datetime_fields = self.get_datetime_columns()
-
-        summary_stats_numerical = self.get_summary_statistics_numerical(
-            numerical_fields
+    if not summary_stats.empty:
+        summary_stats = summary_stats.sort_values(
+            by="Missing Values (%)", ascending=False
         )
-        summary_stats_categorical = self.get_summary_statistics_categorical(
-            categorical_fields
-        )
-        summary_stats_datetime = self.get_summary_statistics_datetime(datetime_fields)
+    summary_stats.reset_index(inplace=True)
+    summary_stats.rename(columns={"index": "Datetime Variable"}, inplace=True)
+    return summary_stats
 
-        return self.cache_results(
-            {
-                "numerical": summary_stats_numerical.to_dict(orient="records"),
-                "categorical": summary_stats_categorical.to_dict(orient="records"),
-                "datetime": summary_stats_datetime.to_dict(orient="records"),
-            }
-        )
+
+def get_categorical_columns(dataset):
+    categorical_columns = dataset.df.select_dtypes(
+        include=["object", "category"]
+    ).columns.tolist()
+    return categorical_columns
+
+
+def get_numerical_columns(dataset):
+    numerical_columns = dataset.df.select_dtypes(
+        include=["int", "float", "uint8"]
+    ).columns.tolist()
+    return numerical_columns
+
+
+def get_datetime_columns(dataset):
+    datetime_columns = dataset.df.select_dtypes(include=["datetime"]).columns.tolist()
+    return datetime_columns
