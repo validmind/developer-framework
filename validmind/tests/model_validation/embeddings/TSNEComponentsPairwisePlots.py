@@ -53,7 +53,6 @@ def TSNEComponentsPairwisePlots(
     - t-SNE visualizations can be misleading if interpreted without considering the stochastic nature of the algorithm;
     two runs with the same parameters might yield different visual outputs, necessitating multiple runs for a consistent interpretation.
     """
-
     # Get embeddings from the dataset using the model
     embeddings = np.stack(dataset.y_pred(model))
 

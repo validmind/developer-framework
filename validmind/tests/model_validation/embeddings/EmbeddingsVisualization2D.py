@@ -54,7 +54,7 @@ class EmbeddingsVisualization2D(Metric):
         "perplexity": 30,
     }
     tasks = ["feature_extraction"]
-    tags = ["llm", "text_data", "text_embeddings", "visualization"]
+    tags = ["llm", "text_data", "embeddings", "visualization"]
 
     def run(self):
         cluster_column = self.params.get("cluster_column")

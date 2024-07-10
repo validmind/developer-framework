@@ -2,15 +2,22 @@
 Utility functions for running integration tests for run_test().
 """
 
+import ast
 import os
 
+import numpy as np
+import pandas as pd
 import validmind as vm
 import xgboost as xgb
 
+from transformers import pipeline
 from openai import OpenAI
+from sklearn.cluster import KMeans
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 
 from validmind.datasets.classification import customer_churn
+from validmind.datasets.cluster import digits as digits_dataset
 from validmind.datasets.nlp import cnn_dailymail
 from validmind.datasets.regression import fred
 from validmind.models import FoundationModel, Prompt
@@ -29,6 +36,18 @@ def assign_features_pairs_config(test_config, raw_df, train_df=None, test_df=Non
             test_config["features_pairs_raw"]["features_pairs"][raw_df.columns[i]] = (
                 raw_df.columns[j]
             )
+
+
+def string_to_numpy_array(array_string):
+    """
+    This is needed to convert string to numpy array for embedding tests
+    """
+    try:
+        array_list = ast.literal_eval(array_string)
+        return np.array(array_list)
+    except ValueError as e:
+        print(f"Error converting string to array: {e}")
+        return None
 
 
 def setup_tabular_test_inputs(test_inputs={}, test_config={}):
@@ -96,6 +115,9 @@ def setup_tabular_test_inputs(test_inputs={}, test_config={}):
     vm_test_ds.assign_predictions(vm_classifier_rf_model)
 
     assign_features_pairs_config(test_config, df)
+    test_config["kmeans_config"] = {
+        "n_clusters": [2, 3],
+    }
 
     # Usage:
     #
@@ -235,5 +257,142 @@ def setup_summarization_test_inputs(test_inputs={}, test_config={}):
         "model_and_dataset": {
             "dataset": vm_test_ds,
             "model": vm_model,
+        },
+    }
+
+
+def setup_embeddings_test_inputs(test_inputs={}, test_config={}):
+    """
+    Setup test inputs for embeddings
+
+    Args:
+        test_inputs (dict): Glogal test inputs to be updated
+        test_config (dict): Global test config to be updated
+    """
+    _, test_df = cnn_dailymail.load_data(source="offline", dataset_size="100")
+    # Use only 5 rows to speed up the test
+    test_df = test_df.head(5)
+
+    test_df["bert_embedding_model_prediction"] = test_df[
+        "bert_embedding_model_prediction"
+    ].apply(string_to_numpy_array)
+
+    # Dataset
+    vm_test_ds = vm.init_dataset(
+        dataset=test_df,
+        input_id="test_dataset",
+        text_column="article",
+        target_column="highlights",
+        __log=False,
+    )
+
+    # Model
+
+    embedding_model = pipeline(
+        "feature-extraction",
+        model="bert-base-uncased",
+        tokenizer="bert-base-uncased",
+        truncation=True,
+    )
+
+    vm_embedding_model = vm.init_model(
+        model=embedding_model,
+        input_id="bert_embedding_model",
+        __log=False,
+    )
+
+    # Assign precomputed predictions
+    vm_test_ds.assign_predictions(
+        vm_embedding_model, prediction_column="bert_embedding_model_prediction"
+    )
+
+    test_config["t_sne_config"] = {
+        "n_components": 2,
+        "perplexity": 1,
+    }
+    test_config["stability_analysis_keyword_config"] = {
+        "keyword_dict": {"finance": "financial"},
+    }
+
+    test_inputs["embeddings"] = {
+        "single_dataset": {
+            "dataset": vm_test_ds,
+        },
+        "model_and_dataset": {
+            "dataset": vm_test_ds,
+            "model": vm_embedding_model,
+        },
+    }
+
+
+def setup_clustering_test_inputs(test_inputs={}, test_config={}):
+    """
+    Setup test inputs for clustering
+
+    Args:
+        test_inputs (dict): Glogal test inputs to be updated
+        test_config (dict): Global test config to be updated
+    """
+    df = digits_dataset.load_data()
+    target_column = digits_dataset.target_column
+    train_df, validation_df, test_df = digits_dataset.preprocess(df)
+
+    x_train = train_df.drop(target_column, axis=1)
+    y_train = train_df[target_column]
+    x_val = validation_df.drop(target_column, axis=1)
+    y_val = validation_df[target_column]
+    x_test = test_df.drop(target_column, axis=1)
+    x_train = pd.concat([x_train, x_val], axis=0)
+    y_train = pd.concat([y_train, y_val], axis=0)
+
+    scaler = StandardScaler()
+    x_train = scaler.fit_transform(x_train)
+    x_val = scaler.fit_transform(x_val)
+    x_test = scaler.fit_transform(x_test)
+
+    model = KMeans(init="k-means++", n_clusters=10, n_init=4, random_state=0)
+    model = model.fit(x_train)
+
+    # Datasets
+    vm_train_ds = vm.init_dataset(
+        dataset=train_df,
+        input_id="train_dataset",
+        target_column=target_column,
+        __log=False,
+    )
+
+    vm_test_ds = vm.init_dataset(
+        dataset=test_df,
+        input_id="test_dataset",
+        target_column=target_column,
+        __log=False,
+    )
+
+    # Model
+    vm_model = vm.init_model(
+        model=model,
+        input_id="kmeans",
+        __log=False,
+    )
+
+    # Assign precomputed predictions
+    vm_train_ds.assign_predictions(vm_model)
+    vm_test_ds.assign_predictions(vm_model)
+
+    test_config["hyperparameter_tuning_config"] = {
+        "param_grid": {"n_clusters": range(40, 60)}
+    }
+
+    test_inputs["clustering"] = {
+        "single_dataset": {
+            "dataset": vm_test_ds,
+        },
+        "model_and_dataset": {
+            "dataset": vm_test_ds,
+            "model": vm_model,
+        },
+        "model_and_two_datasets": {
+            "model": vm_model,
+            "datasets": [vm_train_ds, vm_test_ds],
         },
     }

@@ -4,7 +4,11 @@
 
 from transformers import MarianMTModel, MarianTokenizer
 
+from validmind.logging import get_logger
+
 from .StabilityAnalysis import StabilityAnalysis
+
+logger = get_logger(__name__)
 
 
 class StabilityAnalysisTranslation(StabilityAnalysis):
@@ -61,8 +65,11 @@ class StabilityAnalysisTranslation(StabilityAnalysis):
     }
 
     def perturb_data(self, data: str):
-        if not isinstance(data, str):
-            return data
+        if len(data) > 512:
+            logger.info(
+                "Data length exceeds 512 tokens. Truncating data to 512 tokens."
+            )
+            data = data[:512]
 
         source_lang = self.params["source_lang"]
         target_lang = self.params["target_lang"]
