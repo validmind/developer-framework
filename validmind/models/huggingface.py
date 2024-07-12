@@ -56,7 +56,6 @@ class HFModel(VMModel):
             return [result["label"] for result in results]
         elif tasks[-1] == "feature_extraction":
             # Extract [CLS] token embedding for each input and return as list of lists
-            print(f"len(results): {len(results)}")
             return [embedding[0][0] for embedding in results]
         else:
             return results

@@ -16,6 +16,8 @@ from validmind.vm_models.test.result_wrapper import (
 )
 
 from tests.run_test_utils import (
+    setup_clustering_test_inputs,
+    setup_embeddings_test_inputs,
     setup_summarization_test_inputs,
     setup_tabular_test_inputs,
     setup_time_series_test_inputs,
@@ -34,6 +36,13 @@ KNOWN_FAILING_TESTS = [
     "validmind.model_validation.statsmodels.RegressionFeatureSignificance",
     # The number of observations is too small to use the Zivot-Andrews test
     "validmind.data_validation.ZivotAndrewsArch",
+    # These tests can be turned into comparison tests:
+    "validmind.model_validation.embeddings.CosineSimilarityComparison",
+    "validmind.model_validation.embeddings.EuclideanDistanceComparison",
+    # This is a base test class so it doesn't run on its own
+    "validmind.model_validation.sklearn.ClusterPerformance",
+    # ValueError: The `cluster_column` parameter must be provided
+    "validmind.model_validation.embeddings.EmbeddingsVisualization2D",
 ]
 SKIPPED_TESTS = []
 SUCCESSFUL_TESTS = []
@@ -57,6 +66,11 @@ TEST_TO_PARAMS_CONFIG = {
     "validmind.data_validation.BivariateHistograms": "features_pairs_raw",
     "validmind.data_validation.BivariateScatterPlots": "features_pairs_raw",
     "validmind.model_validation.statsmodels.ScorecardHistogram": "score_column",
+    # TODO: "ValueError: perplexity must be less than n_samples if using defaults"
+    "validmind.model_validation.embeddings.TSNEComponentsPairwisePlots": "t_sne_config",
+    "validmind.model_validation.sklearn.KMeansClustersOptimization": "kmeans_config",
+    "validmind.model_validation.sklearn.HyperParametersTuning": "hyperparameter_tuning_config",
+    "validmind.model_validation.embeddings.StabilityAnalysisKeyword": "stability_analysis_keyword_config",
 }
 
 # Global inputs and configurations for the tests
@@ -92,18 +106,9 @@ def create_unit_test_func(vm_test_id, vm_test_class):
             SKIPPED_TESTS.append(vm_test_id)
             return
 
-        # Skip all of these tests until we fix them
-        if "clustering" in vm_test_class.tasks:
+        if "llm" in vm_test_class.tags and "embeddings" not in vm_test_class.tags:
             logger.debug(
-                "--- Skipping test - clustering tests not supported yet %s",
-                vm_test_id,
-            )
-            SKIPPED_TESTS.append(vm_test_id)
-            return
-
-        if "llm" in vm_test_class.tags or "embeddings" in vm_test_class.tags:
-            logger.debug(
-                "--- Skipping test - LLM/Embedding tests not supported yet %s",
+                "--- Skipping test - LLM tests not supported yet %s",
                 vm_test_id,
             )
             SKIPPED_TESTS.append(vm_test_id)
@@ -113,16 +118,24 @@ def create_unit_test_func(vm_test_id, vm_test_class):
 
         # Assume we'll load the classification (tabular) inputs in most cases
         custom_test_input_assignment = CUSTOM_TEST_INPUT_ASSIGNMENTS.get(vm_test_id)
+        selected_test_inputs = None
+
         if custom_test_input_assignment:
-            inputs = TEST_INPUTS[custom_test_input_assignment]
+            selected_test_inputs = custom_test_input_assignment
+        elif "clustering" in vm_test_class.tasks:
+            selected_test_inputs = "clustering"
+        elif "embeddings" in vm_test_class.tags:
+            selected_test_inputs = "embeddings"
         elif (
             "text_summarization" in vm_test_class.tasks or "nlp" in vm_test_class.tasks
         ):
-            inputs = TEST_INPUTS["text_summarization"]
+            selected_test_inputs = "text_summarization"
         elif "time_series_data" in vm_test_class.tags:
-            inputs = TEST_INPUTS["time_series"]
+            selected_test_inputs = "time_series"
         else:
-            inputs = TEST_INPUTS["classification"]
+            selected_test_inputs = "classification"
+
+        inputs = TEST_INPUTS[selected_test_inputs]
 
         # Build the single test inputs according to the required inputs
         single_test_inputs = {}
@@ -194,7 +207,11 @@ def create_unit_test_func(vm_test_id, vm_test_class):
         # Finally, the test worked so we can add it to the list of successful tests
         # and note the time it took to run
         SUCCESSFUL_TESTS.append(
-            {"test_id": vm_test_id, "execution_time": execution_time}
+            {
+                "test_id": vm_test_id,
+                "test_input_types": selected_test_inputs,
+                "execution_time": execution_time,
+            }
         )
 
     return unit_test_func
@@ -218,18 +235,25 @@ def create_test_summary_func():
 
         test_summary = []
         for test in SUCCESSFUL_TESTS:
-            test_summary.append([test["test_id"], "SUCCESS", test["execution_time"]])
+            test_summary.append(
+                [
+                    test["test_id"],
+                    test["test_input_types"],
+                    "SUCCESS",
+                    test["execution_time"],
+                ]
+            )
 
         for test in KNOWN_FAILING_TESTS:
-            test_summary.append([test, "KNOWN FAILURE", None])
+            test_summary.append([test, None, "KNOWN FAILURE", None])
 
         for test in SKIPPED_TESTS:
-            test_summary.append([test, "SKIPPED", None])
+            test_summary.append([test, None, "SKIPPED", None])
 
         print(
             tabulate(
                 test_summary,
-                headers=["Test ID", "Status", "Execution Time"],
+                headers=["Test ID", "Type of Test Inputs", "Status", "Execution Time"],
                 tablefmt="pretty",
             )
         )
@@ -241,6 +265,8 @@ def create_unit_test_funcs_from_vm_tests():
     setup_tabular_test_inputs(TEST_INPUTS, TEST_CONFIG)
     setup_summarization_test_inputs(TEST_INPUTS, TEST_CONFIG)
     setup_time_series_test_inputs(TEST_INPUTS, TEST_CONFIG)
+    setup_embeddings_test_inputs(TEST_INPUTS, TEST_CONFIG)
+    setup_clustering_test_inputs(TEST_INPUTS, TEST_CONFIG)
 
     custom_test_ids = os.environ.get("TEST_IDS")
     custom_test_ids = custom_test_ids.split(",") if custom_test_ids else None
