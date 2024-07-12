@@ -52,7 +52,7 @@ class ClusterDistribution(Metric):
         "num_clusters": 5,
     }
     tasks = ["feature_extraction"]
-    tags = ["llm", "text_data", "text_embeddings", "visualization"]
+    tags = ["llm", "text_data", "embeddings", "visualization"]
 
     def run(self):
         # run kmeans clustering on embeddings

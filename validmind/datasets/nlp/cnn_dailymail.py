@@ -15,6 +15,7 @@ text_column = "article"
 target_column = "highlights"
 gpt_35_prediction_column = "gpt_35_prediction"
 t5_prediction = "t5_prediction"
+bert_embedding_prediction_column = "bert_embedding_model_prediction"
 
 # Define the path to the dataset directory
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -55,7 +56,15 @@ def load_data(source="online", dataset_size=None):
 
         # Load the dataset
         df = pd.read_csv(data_file)
-        df = df[["article", "highlights", "gpt_35_prediction", "t5_prediction"]]
+        df = df[
+            [
+                "article",
+                "highlights",
+                "gpt_35_prediction",
+                "t5_prediction",
+                "bert_embedding_model_prediction",
+            ]
+        ]
 
         train_df = df.sample(frac=0.7, random_state=42)
         test_df = df.drop(train_df.index)
