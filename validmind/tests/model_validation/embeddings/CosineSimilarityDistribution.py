@@ -51,7 +51,7 @@ class CosineSimilarityDistribution(Metric):
     name = "Text Embeddings Cosine Similarity Distribution"
     required_inputs = ["model", "dataset"]
     tasks = ["feature_extraction"]
-    tags = ["llm", "text_data", "text_embeddings", "visualization"]
+    tags = ["llm", "text_data", "embeddings", "visualization"]
 
     def run(self):
         # Compute cosine similarity

@@ -118,7 +118,7 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
 
     title_template = "{current_title}({input_description})"
 
-    for i, figures in enumerate(list(zip(*figure_lists))):
+    for figures in list(zip(*figure_lists)):
         if is_plotly_figure(figures[0].figure):
             _update_plotly_titles(figures, input_groups, title_template)
         elif is_matplotlib_figure(figures[0].figure):

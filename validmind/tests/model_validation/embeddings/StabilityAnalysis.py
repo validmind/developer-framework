@@ -30,7 +30,7 @@ class StabilityAnalysis(ThresholdTest):
         "mean_similarity_threshold": 0.7,
     }
     tasks = ["feature_extraction"]
-    tags = ["llm", "text_data", "text_embeddings", "visualization"]
+    tags = ["llm", "text_data", "embeddings", "visualization"]
 
     @abstractmethod
     def perturb_data(self, data: str) -> str:
@@ -62,7 +62,8 @@ class StabilityAnalysis(ThresholdTest):
 
     def run(self):
         # Perturb the test dataset
-        original = self.inputs.dataset.df
+        text_column = self.inputs.dataset.text_column
+        original = self.inputs.dataset.df[[text_column]]
         perturbed = original.copy()
         perturbed.update(
             perturbed.select_dtypes(include="object").applymap(self.perturb_data)
