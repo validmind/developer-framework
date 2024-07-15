@@ -60,8 +60,9 @@ class HyperParametersTuning(Metric):
         param_grid = self.params["param_grid"]
         if param_grid is None:
             raise SkipTestError(
-                "param_grid in dictnary format must be provide to run hyper parameter tuning"
+                "param_grid in dictonary format must be provided to run this test"
             )
+
         model = self.inputs.model.model
         estimators = GridSearchCV(
             model, param_grid=param_grid, scoring=self.params["scoring"]

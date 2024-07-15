@@ -10,9 +10,9 @@ The Developer Framework includes the Python client library, which is designed to
 
 We believe in the power of collaboration and welcome contributions to the ValidMind Developer Framework. If you've noticed a bug, have a feature request, or want to contribute a test, please create a pull request or submit an issue and refer to the [contributing guide](README.md#how-to-contribute) below.
 
-- Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](https://docs.validmind.ai/guide/join-community.html)!
+- Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](https://docs.validmind.ai/about/contributing/join-community.html)!
 
-- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/guide/get-started-developer-framework.html).
+- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/developer/get-started-developer-framework.html).
 
 ## Getting started
 
