@@ -4,7 +4,6 @@
 
 from dataclasses import dataclass
 
-import numpy as np
 import plotly.graph_objects as go
 
 from validmind.vm_models import Figure, Metric
@@ -62,22 +61,27 @@ class IQROutliersBarPlot(Metric):
 
     name = "iqr_outliers_bar_plot"
     required_inputs = ["dataset"]
-    default_params = {"threshold": 1.5, "num_features": None, "fig_width": 800}
+    default_params = {"threshold": 1.5, "fig_width": 800}
     tasks = ["classification", "regression"]
     tags = ["tabular_data", "visualization", "numerical_data"]
 
     def run(self):
         df = self.inputs.dataset.df
-        num_features = self.params["num_features"]
+
+        # Select numerical features
+        features = self.inputs.dataset.feature_columns_numeric
+
+        # Select non-binary features
+        features = [
+            feature
+            for feature in features
+            if len(self.inputs.dataset.df[feature].unique()) > 2
+        ]
+
         threshold = self.params["threshold"]
         fig_width = self.params["fig_width"]
 
-        # If num_features is None, use all numeric columns.
-        # Otherwise, only use the columns provided in num_features.
-        if num_features is None:
-            df = df.select_dtypes(include=[np.number])
-        else:
-            df = df[num_features]
+        df = df[features]
 
         return self.detect_and_visualize_outliers(df, threshold, fig_width)
 
@@ -97,6 +101,9 @@ class IQROutliersBarPlot(Metric):
         for col in num_cols:
             # Compute outliers
             outliers = self.compute_outliers(df[col], threshold)
+
+            if outliers.empty:
+                continue  # Skip plotting if there are no outliers
 
             Q1_count = outliers[
                 (outliers >= 0) & (outliers < outliers.quantile(0.25))

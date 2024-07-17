@@ -4,7 +4,6 @@
 
 from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
 
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
@@ -53,12 +52,22 @@ class IQROutliersTable(Metric):
 
     name = "iqr_outliers_table"
     required_inputs = ["dataset"]
-    default_params = {"features": None, "threshold": 1.5}
+    default_params = {"threshold": 1.5}
     tasks = ["classification", "regression"]
     tags = ["tabular_data", "numerical_data"]
 
     def run(self):
-        features = self.params["features"]
+
+        # Select numerical features
+        features = self.inputs.dataset.feature_columns_numeric
+
+        # Select non-binary features
+        features = [
+            feature
+            for feature in features
+            if len(self.inputs.dataset.df[feature].unique()) > 2
+        ]
+
         threshold = self.params["threshold"]
 
         df = self.inputs.dataset.df
@@ -80,9 +89,7 @@ class IQROutliersTable(Metric):
         upper_bound = Q3 + threshold * IQR
         return series[(series < lower_bound) | (series > upper_bound)]
 
-    def detect_and_analyze_outliers(self, df, features=None, threshold=1.5):
-        if features is None:
-            features = df.select_dtypes(include=[np.number]).columns.tolist()
+    def detect_and_analyze_outliers(self, df, features, threshold=1.5):
 
         outliers_summary = []
         for feature in features:
