@@ -29,8 +29,8 @@ mistune = "^3.0.2"
 nltk = "^3.8.1"
 numba = "<0.59.0" # TODO: https://github.com/validmind/developer-framework/pull/28
 numpy = "*"
-openai = {version = ">=1", optional = true}
-pandas = ">=1.1,<2" # TODO small issues blocking 2.0 but it would speed things up to use arrow backend
+openai = ">=1"
+pandas = ">=1.1,<2" # TODO: small issues blocking 2.0 but it would speed things up to use arrow backend
 plotly = "*"
 plotly-express = "*"
 polars = "*"
@@ -64,7 +64,6 @@ flake8 = "^4.0.1"
 ipykernel = "^6.22.0"
 isort = "^5.12.0"
 jupyter = "^1.0.0"
-openai = "^1.3.7"
 papermill = "^2.4.0"
 pdoc = "^14.4.0"
 pre-commit = "^3.3.3"
@@ -88,7 +87,6 @@ huggingface = ["transformers", "sentencepiece"]
 llm = [
   "torch",
   "transformers",
-  "openai",
   "pycocoevalcap",
   "ragas",
   "sentencepiece",
