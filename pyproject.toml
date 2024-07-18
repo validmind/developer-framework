@@ -74,7 +74,6 @@ twine = "^4.0.2"
 
 [tool.poetry.extras]
 all = [
-  "openai",
   "rpy2",
   "torch",
   "transformers",
