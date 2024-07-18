@@ -97,7 +97,9 @@ def _update_plotly_titles(figures, input_groups, title_template):
 
 
 def _update_matplotlib_titles(figures, input_groups, title_template):
-    current_title = figures[0].figure.get_title()
+    current_title = (
+        figures[0].figure._suptitle.get_text() if figures[0].figure._suptitle else ""
+    )
 
     for i, figure in enumerate(figures):
         figure.figure.suptitle(
