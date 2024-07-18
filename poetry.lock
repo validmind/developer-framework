@@ -7482,7 +7482,7 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["langchain-openai", "openai", "pycocoevalcap", "ragas", "rpy2", "sentencepiece", "torch", "transformers"]
+all = ["langchain-openai", "pycocoevalcap", "ragas", "rpy2", "sentencepiece", "torch", "transformers"]
 huggingface = ["sentencepiece", "transformers"]
 llm = ["langchain-openai", "pycocoevalcap", "ragas", "sentencepiece", "torch", "transformers"]
 pytorch = ["torch"]
@@ -7491,4 +7491,4 @@ r-support = ["rpy2"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<3.12"
-content-hash = "45036790398ed5572082de91c449c93cfc9e68fe073b9c2a7f32ab51cdc58e6b"
+content-hash = "d96593328c43583047b42925ececd746e446d0a2c4c0ec31203ba087f969b91a"
