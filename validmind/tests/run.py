@@ -89,22 +89,24 @@ def _update_plotly_titles(figures, input_groups, title_template):
     for i, figure in enumerate(figures):
         figure.figure.layout.title.text = title_template.format(
             current_title=f"{current_title} " if current_title else "",
-            input_description=", ".join(
-                f"{k}={v if isinstance(v, str) else v.input_id}"
+            input_description=" and ".join(
+                f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
                 for k, v in input_groups[i].items()
             ),
         )
 
 
 def _update_matplotlib_titles(figures, input_groups, title_template):
-    current_title = figures[0].figure.get_title()
+    current_title = (
+        figures[0].figure._suptitle.get_text() if figures[0].figure._suptitle else ""
+    )
 
     for i, figure in enumerate(figures):
         figure.figure.suptitle(
             title_template.format(
                 current_title=f"{current_title} " if current_title else "",
                 input_description=" and ".join(
-                    f"{k}: {v if isinstance(v, str) else v.input_id}"
+                    f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
                     for k, v in input_groups[i].items()
                 ),
             )
@@ -139,10 +141,20 @@ def metric_comparison(
     """Build a comparison result for multiple metric results"""
     ref_id = str(uuid4())
 
-    input_group_strings = [
-        {k: v if isinstance(v, str) else v.input_id for k, v in group.items()}
-        for group in input_groups
-    ]
+    input_group_strings = []
+
+    for group in input_groups:
+        new_group = {}
+        for k, v in group.items():
+            if isinstance(v, str):
+                new_group[k] = v
+            elif hasattr(v, "input_id"):
+                new_group[k] = v.input_id
+            elif isinstance(v, list) and all(hasattr(item, "input_id") for item in v):
+                new_group[k] = ", ".join([item.input_id for item in v])
+            else:
+                raise ValueError(f"Unsupported type for value: {v}")
+        input_group_strings.append(new_group)
 
     merged_summary = _combine_summaries(
         [
@@ -173,9 +185,11 @@ def metric_comparison(
             ),
         ],
         inputs=[
-            input if isinstance(input, str) else input.input_id
+            item.input_id if hasattr(item, "input_id") else item
             for group in input_groups
             for input in group.values()
+            for item in (input if isinstance(input, list) else [input])
+            if hasattr(item, "input_id") or isinstance(item, str)
         ],
         output_template=output_template,
         metric=MetricResult(
@@ -198,10 +212,20 @@ def threshold_test_comparison(
     """Build a comparison result for multiple threshold test results"""
     ref_id = str(uuid4())
 
-    input_group_strings = [
-        {k: v if isinstance(v, str) else v.input_id for k, v in group.items()}
-        for group in input_groups
-    ]
+    input_group_strings = []
+
+    for group in input_groups:
+        new_group = {}
+        for k, v in group.items():
+            if isinstance(v, str):
+                new_group[k] = v
+            elif hasattr(v, "input_id"):
+                new_group[k] = v.input_id
+            elif isinstance(v, list) and all(hasattr(item, "input_id") for item in v):
+                new_group[k] = ", ".join([item.input_id for item in v])
+            else:
+                raise ValueError(f"Unsupported type for value: {v}")
+        input_group_strings.append(new_group)
 
     merged_summary = _combine_summaries(
         [
