@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import context_relevancy
 
 from validmind import tags, tasks
 
@@ -74,6 +72,9 @@ def ContextRelevancy(
     }
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics import context_relevancy
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

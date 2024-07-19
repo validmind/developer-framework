@@ -4,14 +4,14 @@
 
 import os
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-
 from validmind.ai.utils import get_client_and_model
 
 EMBEDDINGS_MODEL = "text-embedding-3-small"
 
 
 def get_ragas_config():
+    from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+
     client, model = get_client_and_model()
     os.environ["OPENAI_API_BASE"] = str(client.base_url)
 

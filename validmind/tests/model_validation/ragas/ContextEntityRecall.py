@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import context_entity_recall
 
 from validmind import tags, tasks
 
@@ -85,6 +83,9 @@ def ContextEntityRecall(
     }
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics import context_entity_recall
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

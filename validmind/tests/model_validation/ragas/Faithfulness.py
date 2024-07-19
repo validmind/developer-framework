@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import faithfulness
 
 from validmind import tags, tasks
 
@@ -79,6 +77,9 @@ def Faithfulness(
     }
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics import faithfulness
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

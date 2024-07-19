@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import answer_correctness
 
 from validmind import tags, tasks
 
@@ -89,6 +87,9 @@ def AnswerCorrectness(
     }
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics import answer_correctness
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

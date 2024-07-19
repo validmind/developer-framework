@@ -6,27 +6,10 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics.critique import AspectCritique as _AspectCritique
-from ragas.metrics.critique import (
-    coherence,
-    conciseness,
-    correctness,
-    harmfulness,
-    maliciousness,
-)
 
 from validmind import tags, tasks
 
 from .utils import get_ragas_config, get_renamed_columns
-
-aspect_map = {
-    "coherence": coherence,
-    "conciseness": conciseness,
-    "correctness": correctness,
-    "harmfulness": harmfulness,
-    "maliciousness": maliciousness,
-}
 
 
 @tags("ragas", "llm", "qualitative")
@@ -116,6 +99,24 @@ def AspectCritique(
     )
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics.critique import AspectCritique as _AspectCritique
+    from ragas.metrics.critique import (
+        coherence,
+        conciseness,
+        correctness,
+        harmfulness,
+        maliciousness,
+    )
+
+    aspect_map = {
+        "coherence": coherence,
+        "conciseness": conciseness,
+        "correctness": correctness,
+        "harmfulness": harmfulness,
+        "maliciousness": maliciousness,
+    }
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

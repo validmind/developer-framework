@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import context_precision
 
 from validmind import tags, tasks
 
@@ -80,6 +78,9 @@ def ContextPrecision(
     }
     ```
     """
+    from ragas import evaluate
+    from ragas.metrics import context_precision
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,
