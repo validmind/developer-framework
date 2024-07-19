@@ -27,7 +27,8 @@ test_content_block_html = """
   <div id="expandable_instructions_{uuid}" style="display: {instructions_display};">
   <h4>Code:</h4>
     <pre>
-        <code class='language-python'>import validmind as vm
+        <code class='language-python'>
+import validmind as vm
 
 # inputs dictionary maps your inputs to the expected input names
 # keys are the expected input names and values are the actual inputs
