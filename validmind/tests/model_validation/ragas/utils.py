@@ -10,7 +10,11 @@ EMBEDDINGS_MODEL = "text-embedding-3-small"
 
 
 def get_ragas_config():
-    from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+    # import here since its an optional dependency
+    try:
+        from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     client, model = get_client_and_model()
     os.environ["OPENAI_API_BASE"] = str(client.base_url)

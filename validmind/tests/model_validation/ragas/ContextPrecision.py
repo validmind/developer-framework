@@ -78,8 +78,11 @@ def ContextPrecision(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import context_precision
+    try:
+        from ragas import evaluate
+        from ragas.metrics import context_precision
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",

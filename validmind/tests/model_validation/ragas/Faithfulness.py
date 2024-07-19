@@ -77,8 +77,11 @@ def Faithfulness(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import faithfulness
+    try:
+        from ragas import evaluate
+        from ragas.metrics import faithfulness
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",

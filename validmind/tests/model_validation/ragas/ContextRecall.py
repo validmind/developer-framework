@@ -78,8 +78,11 @@ def ContextRecall(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import context_recall
+    try:
+        from ragas import evaluate
+        from ragas.metrics import context_recall
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",

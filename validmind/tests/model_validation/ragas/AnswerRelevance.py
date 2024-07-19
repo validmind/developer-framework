@@ -91,8 +91,11 @@ def AnswerRelevance(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import answer_relevancy
+    try:
+        from ragas import evaluate
+        from ragas.metrics import answer_relevancy
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",

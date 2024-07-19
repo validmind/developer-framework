@@ -72,8 +72,11 @@ def ContextRelevancy(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import context_relevancy
+    try:
+        from ragas import evaluate
+        from ragas.metrics import context_relevancy
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",

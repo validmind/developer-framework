@@ -99,15 +99,18 @@ def AspectCritique(
     )
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics.critique import AspectCritique as _AspectCritique
-    from ragas.metrics.critique import (
-        coherence,
-        conciseness,
-        correctness,
-        harmfulness,
-        maliciousness,
-    )
+    try:
+        from ragas import evaluate
+        from ragas.metrics.critique import AspectCritique as _AspectCritique
+        from ragas.metrics.critique import (
+            coherence,
+            conciseness,
+            correctness,
+            harmfulness,
+            maliciousness,
+        )
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     aspect_map = {
         "coherence": coherence,

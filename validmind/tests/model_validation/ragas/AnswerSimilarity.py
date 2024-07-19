@@ -77,8 +77,11 @@ def AnswerSimilarity(
     }
     ```
     """
-    from ragas import evaluate
-    from ragas.metrics import answer_similarity
+    try:
+        from ragas import evaluate
+        from ragas.metrics import answer_similarity
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
     warnings.filterwarnings(
         "ignore",
