@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import answer_similarity
 
 from validmind import tags, tasks
 
@@ -79,6 +77,12 @@ def AnswerSimilarity(
     }
     ```
     """
+    try:
+        from ragas import evaluate
+        from ragas.metrics import answer_similarity
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,
