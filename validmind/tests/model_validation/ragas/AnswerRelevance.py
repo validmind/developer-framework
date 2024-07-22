@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import answer_relevancy
 
 from validmind import tags, tasks
 
@@ -93,6 +91,12 @@ def AnswerRelevance(
     }
     ```
     """
+    try:
+        from ragas import evaluate
+        from ragas.metrics import answer_relevancy
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,
