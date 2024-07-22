@@ -6,8 +6,6 @@ import warnings
 
 import plotly.express as px
 from datasets import Dataset
-from ragas import evaluate
-from ragas.metrics import context_precision
 
 from validmind import tags, tasks
 
@@ -80,6 +78,12 @@ def ContextPrecision(
     }
     ```
     """
+    try:
+        from ragas import evaluate
+        from ragas.metrics import context_precision
+    except ImportError:
+        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
+
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

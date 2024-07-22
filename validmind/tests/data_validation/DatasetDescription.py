@@ -161,7 +161,7 @@ class DatasetDescription(Metric):
                 .describe(percentiles=[0.25, 0.5, 0.75, 0.9, 0.95])
                 .to_dict()
             )
-        elif field_type == "Categorical":
+        elif field_type == "Categorical" or field_type == "Text":
             field["statistics"] = (
                 df[field["id"]].astype("category").describe().to_dict()
             )
