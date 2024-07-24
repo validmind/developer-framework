@@ -328,6 +328,9 @@ class VMDataset:
         Returns:
             pd.DataFrame: The dataset as a pandas DataFrame.
         """
+        # returns a copy with only feature, target and text columns to prevent
+        # accidental modification of the original dataset and inclusion of internal
+        # columns like prediction and probability columns in test results
         columns = self.feature_columns.copy()
         if self.target_column:
             columns.append(self.target_column)
