@@ -58,7 +58,7 @@ def get_api_config() -> Dict[str, Optional[str]]:
         "VM_API_HOST": _api_host,
         "VM_API_MODEL": _model_cuid,
         "VM_RUN_CUID": _run_cuid,
-        "X-MONITORING": _monitoring
+        "X-MONITORING": _monitoring,
     }
 
 
@@ -75,7 +75,7 @@ def get_api_headers() -> Dict[str, str]:
         "X-API-KEY": _api_key,
         "X-API-SECRET": _api_secret,
         "X-PROJECT-CUID": _model_cuid,
-        "X-MONITORING": _monitoring
+        "X-MONITORING": _monitoring,
     }
 
 
@@ -100,6 +100,7 @@ def init(
         api_key (str, optional): The API key. Defaults to None.
         api_secret (str, optional): The API secret. Defaults to None.
         api_host (str, optional): The API host. Defaults to None.
+        monitoring (str, optional): The ongoing monitoring flag. Defaults to False.
 
     Raises:
         ValueError: If the API key and secret are not provided

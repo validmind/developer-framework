@@ -72,6 +72,7 @@ class TestAPIClient(unittest.TestCase):
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
                 "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
+                "X-MONITORING": "False",
             },
         )
 
@@ -135,6 +136,8 @@ class TestAPIClient(unittest.TestCase):
                 "X-API-KEY": os.environ["VM_API_KEY"],
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
                 "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
+                "X-MONITORING": "False",
+
             },
         )
 
