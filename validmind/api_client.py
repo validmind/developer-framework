@@ -34,7 +34,7 @@ _api_secret = os.getenv("VM_API_SECRET")
 _api_host = os.getenv("VM_API_HOST")
 _model_cuid = os.getenv("VM_API_MODEL")
 _run_cuid = os.getenv("VM_RUN_CUID")
-_monitoring = "False"
+_monitoring = False
 
 __api_session: aiohttp.ClientSession = None
 
@@ -85,7 +85,7 @@ def init(
     api_secret: Optional[str] = None,
     api_host: Optional[str] = None,
     model: Optional[str] = None,
-    monitoring="False",
+    monitoring=False,
 ):
     """
     Initializes the API client instances and calls the /ping endpoint to ensure
@@ -166,7 +166,7 @@ def __ping() -> Dict[str, Any]:
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
             "X-PROJECT-CUID": _model_cuid,
-            "X-MONITORING": _monitoring,
+            "X-MONITORING": str(_monitoring),
         },
     )
     if r.status_code != 200:
