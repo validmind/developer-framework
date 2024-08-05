@@ -1,0 +1,67 @@
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def PredictionCorrelation(datasets):
+    """
+    This test shows the correlation pairs for each feature in the model and model predictions from
+    reference dataset and monitoring dataset. The primary goal in this test is to assess if correlation
+    pairs between predictions from reference to monitoring have changed significantly. If there is a large
+    change between correlation pairs then there is a heightened risk of target drift which can result in
+    lower performing models.
+
+    The primary goal is to assess the predictions and each individual feature in the two predictions in order
+    to detect a change in the relationship between target and feature.
+    """
+    df_corr = datasets[0].df.corr()
+    df_corr = df_corr[["model_probabilities"]]
+
+    df_corr2 = datasets[1].df.corr()
+    df_corr2 = df_corr2[["model_probabilities"]]
+
+    corr_final = df_corr.merge(df_corr2, left_index=True, right_index=True)
+    corr_final.columns = ["Reference Predictions", "Monitoring Predictions"]
+    corr_final = corr_final.drop(index=["model_prediction", "model_probabilities"])
+
+    n = len(corr_final)
+    r = np.arange(n)
+    width = 0.25
+
+    fig = plt.figure()
+
+    plt.bar(
+        r,
+        corr_final["Reference Predictions"],
+        color="b",
+        width=width,
+        edgecolor="black",
+        label="Reference Prediction Correlation",
+    )
+    plt.bar(
+        r + width,
+        corr_final["Monitoring Predictions"],
+        color="g",
+        width=width,
+        edgecolor="black",
+        label="Monitoring Prediction Correlation",
+    )
+
+    plt.xlabel("Features")
+    plt.ylabel("Correlation")
+    plt.title("Correlation between Predictions and Features")
+
+    features = corr_final.index.to_list()
+    plt.xticks(r + width / 2, features, rotation=45)
+    plt.legend()
+    plt.tight_layout()
+
+    corr_final["Features"] = corr_final.index
+    corr_final = corr_final[
+        ["Features", "Reference Predictions", "Monitoring Predictions"]
+    ]
+    return ({"Correlation Pair Table": corr_final}, fig)
