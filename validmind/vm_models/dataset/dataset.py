@@ -92,14 +92,14 @@ class VMDataset(VMInput):
             raise ValueError("Expected Numpy array for attribute raw_dataset")
         self.index = index
 
-        self.df = pd.DataFrame(self._raw_dataset, columns=columns).infer_objects()
+        self._df = pd.DataFrame(self._raw_dataset, columns=columns).infer_objects()
         # set index to dataframe
         if index is not None:
-            self.df.set_index(pd.Index(index), inplace=True)
-            self.df.index.name = index_name
+            self._df.set_index(pd.Index(index), inplace=True)
+            self._df.index.name = index_name
         # attempt to convert index to datatime
         if date_time_index:
-            self.df = convert_index_to_datetime(self.df)
+            self._df = convert_index_to_datetime(self._df)
 
         self.columns = columns or []
         self.column_aliases = {}
@@ -126,12 +126,12 @@ class VMDataset(VMInput):
             self.feature_columns = [col for col in self.columns if col not in excluded]
 
         self.feature_columns_numeric = (
-            self.df[self.feature_columns]
+            self._df[self.feature_columns]
             .select_dtypes(include=[np.number])
             .columns.tolist()
         )
         self.feature_columns_categorical = (
-            self.df[self.feature_columns]
+            self._df[self.feature_columns]
             .select_dtypes(include=[object, pd.Categorical])
             .columns.tolist()
         )
@@ -140,19 +140,19 @@ class VMDataset(VMInput):
         column_values = np.array(column_values)
 
         if column_values.ndim == 1:
-            if len(column_values) != len(self.df):
+            if len(column_values) != len(self._df):
                 raise ValueError(
                     "Length of values doesn't match number of rows in the DataFrame."
                 )
             self.columns.append(column_name)
-            self.df[column_name] = column_values
+            self._df[column_name] = column_values
         elif column_values.ndim == 2:
-            if column_values.shape[0] != len(self.df):
+            if column_values.shape[0] != len(self._df):
                 raise ValueError(
                     "Number of rows in values doesn't match number of rows in the DataFrame."
                 )
             self.columns.append(column_name)
-            self.df[column_name] = column_values.tolist()
+            self._df[column_name] = column_values.tolist()
 
         else:
             raise ValueError("Only 1D and 2D arrays are supported for column_values.")
@@ -290,10 +290,10 @@ class VMDataset(VMInput):
 
         # if the user passes a column name, we assume it has precomputed predictions
         if prediction_column:
-            prediction_values = self.df[prediction_column].values
+            prediction_values = self._df[prediction_column].values
 
             if probability_column:
-                probability_values = self.df[probability_column].values
+                probability_values = self._df[probability_column].values
 
         if prediction_values is None:
             X = self.df if isinstance(model, (FunctionModel, PipelineModel)) else self.x
@@ -368,6 +368,33 @@ class VMDataset(VMInput):
         )
 
     @property
+    def df(self) -> pd.DataFrame:
+        """
+        Returns the dataset as a pandas DataFrame.
+
+        Returns:
+            pd.DataFrame: The dataset as a pandas DataFrame.
+        """
+        # only include feature, text and target columns
+        # don't include internal pred and prob columns
+        columns = self.feature_columns.copy()
+
+        # text column can also be a feature column so don't add it twice
+        if self.text_column and self.text_column not in columns:
+            columns.append(self.text_column)
+
+        if self.extra_columns.extras:
+            # add user-defined extra columns
+            columns.extend(self.extra_columns.extras)
+
+        if self.target_column:
+            # shouldn't be a feature column but add this to be safe
+            assert self.target_column not in columns
+            columns.append(self.target_column)
+
+        return as_df(self._df[columns])
+
+    @property
     def x(self) -> np.ndarray:
         """
         Returns the input features (X) of the dataset.
@@ -375,7 +402,7 @@ class VMDataset(VMInput):
         Returns:
             np.ndarray: The input features.
         """
-        return self.df[self.feature_columns].to_numpy()
+        return self._df[self.feature_columns].to_numpy()
 
     @property
     def y(self) -> np.ndarray:
@@ -385,7 +412,7 @@ class VMDataset(VMInput):
         Returns:
             np.ndarray: The target variables.
         """
-        return self.df[self.target_column].to_numpy()
+        return self._df[self.target_column].to_numpy()
 
     def y_pred(self, model) -> np.ndarray:
         """Returns the predictions for a given model.
@@ -399,7 +426,7 @@ class VMDataset(VMInput):
         Returns:
             np.ndarray: The predictions for the model
         """
-        return np.stack(self.df[self.prediction_column(model)].values)
+        return np.stack(self._df[self.prediction_column(model)].values)
 
     def y_prob(self, model) -> np.ndarray:
         """Returns the probabilities for a given model.
@@ -410,23 +437,23 @@ class VMDataset(VMInput):
         Returns:
             np.ndarray: The probability variables.
         """
-        return self.df[self.probability_column(model)].values
+        return self._df[self.probability_column(model)].values
 
     def x_df(self):
         """Returns a dataframe containing only the feature columns"""
-        return as_df(self.df[self.feature_columns])
+        return as_df(self._df[self.feature_columns])
 
     def y_df(self) -> pd.DataFrame:
         """Returns a dataframe containing the target column"""
-        return as_df(self.df[self.target_column])
+        return as_df(self._df[self.target_column])
 
     def y_pred_df(self, model) -> pd.DataFrame:
         """Returns a dataframe containing the predictions for a given model"""
-        return as_df(self.df[self.prediction_column(model)])
+        return as_df(self._df[self.prediction_column(model)])
 
     def y_prob_df(self, model) -> pd.DataFrame:
         """Returns a dataframe containing the probabilities for a given model"""
-        return as_df(self.df[self.probability_column(model)])
+        return as_df(self._df[self.probability_column(model)])
 
     def target_classes(self):
         """Returns the target class labels or unique values of the target column."""
