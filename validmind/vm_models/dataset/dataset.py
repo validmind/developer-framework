@@ -197,13 +197,12 @@ class VMDataset(VMInput):
                 "Cannot use precomputed probabilities without precomputed predictions"
             )
 
-    def with_options(self, **kwargs):
+    def with_options(self, **kwargs) -> "VMDataset":
         """Support options provided when passing an input to run_test or run_test_suite
 
         Example:
         ```python
-        # when passing an input, you can use a dictionary and choose the input using the
-        # `input_id` key and then any other key will get passed to this method
+        # to only use a certain subset of columns in the dataset:
         run_test(
             "validmind.SomeTestID",
             inputs={
@@ -214,8 +213,16 @@ class VMDataset(VMInput):
             }
         )
 
-        # behind the scenes, this retrieves the dataset object (VMDataset) from the
-        # registry and then calls the `with_options` method with the remaining keys
+        # behind the scenes, this retrieves the dataset object (VMDataset) from the registry
+        # and then calls the `with_options()` method and passes `{"columns": ...}`
+        ```
+
+        Args:
+            **kwargs: Options:
+                - columns: Filter columns in the dataset
+
+        Returns:
+            VMDataset: A new instance of the dataset with only the specified columns
         """
         if "columns" in kwargs:
             # filter columns (create a temp copy of self with only specified columns)
@@ -227,17 +234,11 @@ class VMDataset(VMInput):
             new._set_feature_columns(
                 [col for col in new.feature_columns if col in columns]
             )
-            print(self.feature_columns, new.feature_columns)
             new.text_column = new.text_column if new.text_column in columns else None
-            print(self.text_column, new.text_column)
             new.target_column = (
                 new.target_column if new.target_column in columns else None
             )
-            print(self.target_column, new.target_column)
             new.extra_columns.extras = new.extra_columns.extras.intersection(columns)
-            print(self.extra_columns, new.extra_columns)
-            print(self.df)
-            print(new.df)
 
             return new
 
