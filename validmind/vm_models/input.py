@@ -4,7 +4,7 @@
 
 """Base class for ValidMind Input types"""
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class VMInput(ABC):
