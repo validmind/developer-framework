@@ -328,16 +328,24 @@ class VMDataset:
         Returns:
             pd.DataFrame: The dataset as a pandas DataFrame.
         """
-        # returns a copy with only feature, target and text columns to prevent
-        # accidental modification of the original dataset and inclusion of internal
-        # columns like prediction and probability columns in test results
+        # only include feature, text and target columns
+        # don't include internal pred and prob columns
         columns = self.feature_columns.copy()
-        if self.target_column:
-            columns.append(self.target_column)
-        if self.text_column:
+
+        # text column can also be a feature column so don't add it twice
+        if self.text_column and self.text_column not in columns:
             columns.append(self.text_column)
 
-        return self._df[columns].copy()
+        if self.extra_columns.extras:
+            # add user-defined extra columns
+            columns.extend(self.extra_columns.extras)
+
+        if self.target_column:
+            # shouldn't be a feature column but add this to be safe
+            assert self.target_column not in columns
+            columns.append(self.target_column)
+
+        return as_df(self._df[columns])
 
     @property
     def x(self) -> np.ndarray:

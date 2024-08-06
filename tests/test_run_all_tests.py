@@ -3,6 +3,7 @@
 import os
 import time
 import unittest
+from fnmatch import fnmatch
 
 import matplotlib.pyplot as plt
 
@@ -15,7 +16,7 @@ from validmind.vm_models.test.result_wrapper import (
     ThresholdTestResultWrapper,
 )
 
-from tests.run_test_utils import (
+from run_test_utils import (
     setup_clustering_test_inputs,
     setup_embeddings_test_inputs,
     setup_summarization_test_inputs,
@@ -271,6 +272,15 @@ def create_unit_test_funcs_from_vm_tests():
     custom_test_ids = os.environ.get("TEST_IDS")
     custom_test_ids = custom_test_ids.split(",") if custom_test_ids else None
     tests_to_run = list_tests(pretty=False) if not custom_test_ids else custom_test_ids
+
+    # allow filtering tests by wildcard using fnmatch
+    # e.g. only run tests that start with "validmind.data_validation"
+    # TEST_PATTERN="validmind.data_validation*"
+    test_pattern = os.environ.get("TEST_PATTERN")
+    if test_pattern:
+        tests_to_run = [
+            test_id for test_id in tests_to_run if fnmatch(test_id, test_pattern)
+        ]
 
     for vm_test_id in tqdm(sorted(tests_to_run)):
         # Only skip known failing tests if we're not running a custom set of tests
