@@ -83,32 +83,39 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
     )
 
 
-def _update_plotly_titles(figures, input_groups, title_template):
-    current_title = figures[0].figure.layout.title.text
+def _update_plotly_titles(figures, input_group, title_template):
+    for figure in figures:
 
-    for i, figure in enumerate(figures):
+        current_title = figure.figure.layout.title.text
+
+        input_description = " and ".join(
+            f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
+            for k, v in input_group.items()
+        )
+
         figure.figure.layout.title.text = title_template.format(
             current_title=f"{current_title} " if current_title else "",
-            input_description=" and ".join(
-                f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-                for k, v in input_groups[i].items()
-            ),
+            input_description=input_description,
         )
 
 
-def _update_matplotlib_titles(figures, input_groups, title_template):
-    current_title = (
-        figures[0].figure._suptitle.get_text() if figures[0].figure._suptitle else ""
-    )
+def _update_matplotlib_titles(figures, input_group, title_template):
 
-    for i, figure in enumerate(figures):
+    for figure in figures:
+
+        current_title = (
+            figure.figure._suptitle.get_text() if figure.figure._suptitle else ""
+        )
+
+        input_description = " and ".join(
+            f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
+            for k, v in input_group.items()
+        )
+
         figure.figure.suptitle(
             title_template.format(
                 current_title=f"{current_title} " if current_title else "",
-                input_description=" and ".join(
-                    f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-                    for k, v in input_groups[i].items()
-                ),
+                input_description=input_description,
             )
         )
 
@@ -120,11 +127,12 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
 
     title_template = "{current_title}({input_description})"
 
-    for figures in list(zip(*figure_lists)):
+    for idx, figures in enumerate(figure_lists):
+        input_group = input_groups[idx]
         if is_plotly_figure(figures[0].figure):
-            _update_plotly_titles(figures, input_groups, title_template)
+            _update_plotly_titles(figures, input_group, title_template)
         elif is_matplotlib_figure(figures[0].figure):
-            _update_matplotlib_titles(figures, input_groups, title_template)
+            _update_matplotlib_titles(figures, input_group, title_template)
         else:
             logger.warning("Cannot properly annotate png figures")
 
