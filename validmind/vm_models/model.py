@@ -7,10 +7,12 @@ Model class wrapper module
 """
 import importlib
 import inspect
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
+
+from .input import VMInput
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -77,7 +79,7 @@ class ModelAttributes:
         )
 
 
-class VMModel(ABC):
+class VMModel(VMInput):
     """
     An base class that wraps a trained model instance and its associated data.
 

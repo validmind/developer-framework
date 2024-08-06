@@ -6,6 +6,8 @@
 Central class to register inputs
 """
 
+from validmind.vm_models.input import VMInput
+
 from .errors import InvalidInputError
 
 
@@ -14,6 +16,12 @@ class InputRegistry:
         self.registry = {}
 
     def add(self, key, obj):
+        if not isinstance(obj, VMInput):
+            raise InvalidInputError(
+                f"Input object must be an instance of VMInput. "
+                f"Got {type(obj)} instead."
+            )
+
         self.registry[key] = obj
 
     def get(self, key):
