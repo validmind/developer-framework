@@ -16,6 +16,8 @@ logger = get_logger(__name__)
 
 @dataclass
 class ExtraColumns:
+    # TODO: this now holds internal (pred, prob and group_by) cols as well as
+    # user-defined extra columns. These should probably be separated.
     """Extra columns for the dataset."""
 
     extras: Set[str] = field(default_factory=set)

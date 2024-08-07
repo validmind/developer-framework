@@ -135,7 +135,8 @@ def init_dataset(
             model=model,
             index=index,
             index_name=index_name,
-            columns=columns,
+            # if no columns are passed, use the index
+            columns=columns or [i for i in range(dataset.shape[1])],
             target_column=target_column,
             feature_columns=feature_columns,
             text_column=text_column,

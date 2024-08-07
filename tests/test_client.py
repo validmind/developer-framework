@@ -76,7 +76,8 @@ class TestInitDataset(TestCase):
         df = pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
         vm_dataset = init_dataset(df, target_column="col1")
         self.assertIsInstance(vm_dataset.df, pd.DataFrame)
-        self.assertTrue(vm_dataset.df.equals(df))
+        # sort since order of columns may be different
+        self.assertTrue(vm_dataset.df.sort_index(axis=1).equals(df.sort_index(axis=1)))
 
     @mock.patch(
         "validmind.client.log_input",

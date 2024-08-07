@@ -124,12 +124,12 @@ class TestTabularDataset(TestCase):
         self.assertEqual(vm_dataset.prediction_column(vm_model), "logreg_prediction")
 
         # Check that the predictions are assigned to the dataset
-        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
+        self.assertTrue("logreg_prediction" in vm_dataset._df.columns)
         self.assertIsInstance(vm_dataset.y_pred(vm_model), np.ndarray)
         self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.DataFrame)
 
         # This model in particular will calculate probabilities as well
-        self.assertTrue("logreg_probabilities" in vm_dataset.df.columns)
+        self.assertTrue("logreg_probabilities" in vm_dataset._df.columns)
         self.assertIsInstance(vm_dataset.y_prob(vm_model), np.ndarray)
         self.assertIsInstance(vm_dataset.y_prob_df(vm_model), pd.DataFrame)
 
@@ -154,12 +154,12 @@ class TestTabularDataset(TestCase):
         self.assertEqual(vm_dataset.prediction_column(vm_model), "linreg_prediction")
 
         # Check that the predictions are assigned to the dataset
-        self.assertTrue("linreg_prediction" in vm_dataset.df.columns)
+        self.assertTrue("linreg_prediction" in vm_dataset._df.columns)
         self.assertIsInstance(vm_dataset.y_pred(vm_model), np.ndarray)
         self.assertIsInstance(vm_dataset.y_pred_df(vm_model), pd.DataFrame)
 
         # Linear models do not have probabilities
-        self.assertFalse("linreg_probabilities" in vm_dataset.df.columns)
+        self.assertFalse("linreg_probabilities" in vm_dataset._df.columns)
 
     def test_assign_predictions_with_multiple_models(self):
         """
@@ -191,8 +191,8 @@ class TestTabularDataset(TestCase):
 
         # Check that the predictions are assigned to the dataset and they match
         # their respective models
-        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
-        self.assertTrue("rf_prediction" in vm_dataset.df.columns)
+        self.assertTrue("logreg_prediction" in vm_dataset._df.columns)
+        self.assertTrue("rf_prediction" in vm_dataset._df.columns)
         np.testing.assert_array_equal(
             vm_dataset.y_pred(vm_lr_model), lr_model_predictions
         )
@@ -201,8 +201,8 @@ class TestTabularDataset(TestCase):
         )
 
         # This model in particular will calculate probabilities as well
-        self.assertTrue("logreg_probabilities" in vm_dataset.df.columns)
-        self.assertTrue("rf_probabilities" in vm_dataset.df.columns)
+        self.assertTrue("logreg_probabilities" in vm_dataset._df.columns)
+        self.assertTrue("rf_probabilities" in vm_dataset._df.columns)
 
     def test_assign_predictions_with_model_and_prediction_values(self):
         """
@@ -232,13 +232,13 @@ class TestTabularDataset(TestCase):
 
         self.assertEqual(vm_dataset.prediction_column(vm_lr_model), "logreg_prediction")
 
-        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
+        self.assertTrue("logreg_prediction" in vm_dataset._df.columns)
         np.testing.assert_array_equal(
             vm_dataset.y_pred(vm_lr_model), lr_model_predictions
         )
 
         # Probabilities are not auto-assigned if prediction_values are provided
-        self.assertTrue("logreg_probabilities" not in vm_dataset.df.columns)
+        self.assertTrue("logreg_probabilities" not in vm_dataset._df.columns)
 
     def test_assign_predictions_with_no_model_and_prediction_values(self):
         """
@@ -276,13 +276,13 @@ class TestTabularDataset(TestCase):
 
         self.assertEqual(vm_dataset.prediction_column(vm_lr_model), "logreg_prediction")
 
-        self.assertTrue("logreg_prediction" in vm_dataset.df.columns)
+        self.assertTrue("logreg_prediction" in vm_dataset._df.columns)
         np.testing.assert_array_equal(
             vm_dataset.y_pred(vm_lr_model), lr_model_predictions
         )
 
         # Probabilities are not auto-assigned if prediction_values are provided
-        self.assertTrue("logreg_probabilities" not in vm_dataset.df.columns)
+        self.assertTrue("logreg_probabilities" not in vm_dataset._df.columns)
 
 
 if __name__ == "__main__":
