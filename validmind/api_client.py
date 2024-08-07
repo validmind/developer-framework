@@ -34,6 +34,7 @@ _api_secret = os.getenv("VM_API_SECRET")
 _api_host = os.getenv("VM_API_HOST")
 _model_cuid = os.getenv("VM_API_MODEL")
 _run_cuid = os.getenv("VM_RUN_CUID")
+_monitoring = False
 
 __api_session: aiohttp.ClientSession = None
 
@@ -57,6 +58,7 @@ def get_api_config() -> Dict[str, Optional[str]]:
         "VM_API_HOST": _api_host,
         "VM_API_MODEL": _model_cuid,
         "VM_RUN_CUID": _run_cuid,
+        "X-MONITORING": _monitoring,
     }
 
 
@@ -73,6 +75,7 @@ def get_api_headers() -> Dict[str, str]:
         "X-API-KEY": _api_key,
         "X-API-SECRET": _api_secret,
         "X-PROJECT-CUID": _model_cuid,
+        "X-MONITORING": _monitoring,
     }
 
 
@@ -82,6 +85,7 @@ def init(
     api_secret: Optional[str] = None,
     api_host: Optional[str] = None,
     model: Optional[str] = None,
+    monitoring=False,
 ):
     """
     Initializes the API client instances and calls the /ping endpoint to ensure
@@ -96,11 +100,12 @@ def init(
         api_key (str, optional): The API key. Defaults to None.
         api_secret (str, optional): The API secret. Defaults to None.
         api_host (str, optional): The API host. Defaults to None.
+        monitoring (str, optional): The ongoing monitoring flag. Defaults to False.
 
     Raises:
         ValueError: If the API key and secret are not provided
     """
-    global _api_key, _api_secret, _api_host, _run_cuid, _model_cuid
+    global _api_key, _api_secret, _api_host, _run_cuid, _model_cuid, _monitoring
 
     if api_key == "...":
         # special case to detect when running a notebook with the standard init snippet
@@ -124,6 +129,8 @@ def init(
     )
 
     _run_cuid = os.getenv("VM_RUN_CUID", None)
+
+    _monitoring = monitoring
 
     try:
         __ping()
@@ -159,6 +166,7 @@ def __ping() -> Dict[str, Any]:
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
             "X-PROJECT-CUID": _model_cuid,
+            "X-MONITORING": str(_monitoring),
         },
     )
     if r.status_code != 200:
