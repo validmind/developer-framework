@@ -1,0 +1,160 @@
+# Copyright © 2023-2024 ValidMind Inc. All rights reserved.
+# See the LICENSE file in the root of this repository for details.
+# SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from validmind import tags, tasks
+
+
+@tags("visualization")
+@tasks("monitoring")
+def FeatureDrift(
+    datasets, bins=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], feature_columns=None
+):
+
+    """
+    PSI is a measure of how much a population has shifted over time or between two different
+    samples of a population in a single number. It does this by bucketing the two distributions
+    and comparing the percents of items in each of the buckets, resulting in a single number
+    you can use to understand how different the populations are. The common interpretations
+    of the PSI result are:
+
+    PSI < 0.1: no significant population change
+    PSI < 0.2: moderate population change
+    PSI >= 0.2: significant population change
+
+    """
+
+    # Feature columns for both datasets should be the same if not given
+    default_feature_columns = datasets[0].feature_columns
+    feature_columns = feature_columns or default_feature_columns
+
+    x_train_df = datasets[0].x_df()
+    x_test_df = datasets[1].x_df()
+
+    quantiles_train = x_train_df[feature_columns].quantile(
+        bins, method="single", interpolation="nearest"
+    )
+    PSI_QUANTILES = quantiles_train.to_dict()
+
+    PSI_BUCKET_FRAC, col, n = get_psi_buckets(
+        x_test_df, x_train_df, feature_columns, bins, PSI_QUANTILES
+    )
+
+    def nest(d: dict) -> dict:
+        result = {}
+        for key, value in d.items():
+            target = result
+            for k in key[:-1]:  # traverse all keys but the last
+                target = target.setdefault(k, {})
+            target[key[-1]] = value
+        return result
+
+    PSI_BUCKET_FRAC = nest(PSI_BUCKET_FRAC)
+
+    PSI_SCORES = {}
+    for col in feature_columns:
+        psi = 0
+        for n in bins:
+            actual = PSI_BUCKET_FRAC["test"][col][n]
+            expected = PSI_BUCKET_FRAC["train"][col][n]
+            psi_of_bucket = (actual - expected) * np.log(
+                (actual + 1e-6) / (expected + 1e-6)
+            )
+            psi += psi_of_bucket
+        PSI_SCORES[col] = psi
+
+    psi_df = pd.DataFrame(list(PSI_SCORES.items()), columns=["Features", "PSI Score"])
+
+    psi_df.sort_values(by=["PSI Score"], inplace=True, ascending=False)
+
+    psi_table = [
+        {"Features": values["Features"], "PSI Score": values["PSI Score"]}
+        for i, values in enumerate(psi_df.to_dict(orient="records"))
+    ]
+
+    save_fig = plot_hist(PSI_BUCKET_FRAC, bins)
+
+    final_psi = pd.DataFrame(psi_table)
+
+    return (final_psi, *save_fig)
+
+
+def get_psi_buckets(x_test_df, x_train_df, feature_columns, bins, PSI_QUANTILES):
+    DATA = {"test": x_test_df, "train": x_train_df}
+    PSI_BUCKET_FRAC = {}
+    for table in DATA.keys():
+        total_count = DATA[table].shape[0]
+        for col in feature_columns:
+            count_sum = 0
+            for n in bins:
+                if n == 0:
+                    bucket_count = (DATA[table][col] < PSI_QUANTILES[col][n]).sum()
+                elif n < 9:
+                    bucket_count = (
+                        total_count
+                        - count_sum
+                        - ((DATA[table][col] >= PSI_QUANTILES[col][n]).sum())
+                    )
+                elif n == 9:
+                    bucket_count = total_count - count_sum
+                count_sum += bucket_count
+                PSI_BUCKET_FRAC[table, col, n] = bucket_count / total_count
+    return PSI_BUCKET_FRAC, col, n
+
+
+def plot_hist(PSI_BUCKET_FRAC, bins):
+    # add graphical output
+
+    bin_table_psi = pd.DataFrame(PSI_BUCKET_FRAC)
+    save_fig = []
+    for i in range(len(bin_table_psi)):
+
+        x = pd.DataFrame(
+            bin_table_psi.iloc[i]["test"].items(),
+            columns=["Bin", "Population % Reference"],
+        )
+        y = pd.DataFrame(
+            bin_table_psi.iloc[i]["train"].items(),
+            columns=["Bin", "Population % Monitoring"],
+        )
+        xy = x.merge(y, on="Bin")
+        xy.index = xy["Bin"]
+        xy = xy.drop(columns="Bin", axis=1)
+        feature_name = bin_table_psi.index[i]
+
+        n = len(bins)
+        r = np.arange(n)
+        width = 0.25
+
+        fig = plt.figure()
+
+        plt.bar(
+            r,
+            xy["Population % Reference"],
+            color="b",
+            width=width,
+            edgecolor="black",
+            label="Reference {0}".format(feature_name),
+        )
+        plt.bar(
+            r + width,
+            xy["Population % Monitoring"],
+            color="g",
+            width=width,
+            edgecolor="black",
+            label="Monitoring {0}".format(feature_name),
+        )
+
+        plt.xlabel("Bin")
+        plt.ylabel("Population %")
+        plt.title("Histogram of Population Differences {0}".format(feature_name))
+        plt.legend()
+        plt.tight_layout()
+        plt.close()
+        save_fig.append(fig)
+    return save_fig

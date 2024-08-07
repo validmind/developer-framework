@@ -8,8 +8,8 @@ import seaborn as sns
 from validmind import tags, tasks
 
 
-@tags("monitoring", "visualization")
-@tasks("classification")
+@tags("visualization")
+@tasks("monitoring")
 def TargetPredictionDistributionPlot(datasets, model):
     """
     This test provides the prediction distributions from the reference dataset and the new monitoring dataset.

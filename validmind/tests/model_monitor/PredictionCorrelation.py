@@ -6,7 +6,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from validmind import tags, tasks
 
+
+@tags("visualization")
+@tasks("monitoring")
 def PredictionCorrelation(datasets):
     """
     This test shows the correlation pairs for each feature in the model and model predictions from
