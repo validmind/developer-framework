@@ -126,9 +126,18 @@ class ClassifierPerformance(Metric):
             output_dict=True,
             zero_division=0,
         )
-        report["roc_auc"] = multiclass_roc_auc_score(
-            self.inputs.dataset.y,
-            self.inputs.dataset.y_pred(self.inputs.model),
-        )
+
+        y_true = self.inputs.dataset.y
+
+        if len(unique(y_true)) > 2:
+            y_pred = self.inputs.dataset.y_pred(self.inputs.model)
+            y_true = y_true.astype(y_pred.dtype)
+            roc_auc = self.multiclass_roc_auc_score(y_true, y_pred)
+        else:
+            y_prob = self.inputs.dataset.y_prob(self.inputs.model)
+            y_true = y_true.astype(y_prob.dtype).flatten()
+            roc_auc = roc_auc_score(y_true, y_prob)
+
+        report["roc_auc"] = roc_auc
 
         return self.cache_results(report)
