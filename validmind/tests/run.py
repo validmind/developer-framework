@@ -83,14 +83,24 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
     )
 
 
+def _get_input_id(v):
+    if isinstance(v, str):
+        return v  # If v is a string, return it as is.
+    elif isinstance(v, list) and all(hasattr(item, "input_id") for item in v):
+        # If v is a list and all items have an input_id attribute, join their input_id values.
+        return ", ".join(item.input_id for item in v)
+    elif hasattr(v, "input_id"):
+        return v.input_id  # If v has an input_id attribute, return it.
+    return str(v)  # Otherwise, return the string representation of v.
+
+
 def _update_plotly_titles(figures, input_group, title_template):
     for figure in figures:
 
         current_title = figure.figure.layout.title.text
 
         input_description = " and ".join(
-            f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-            for k, v in input_group.items()
+            f"{key}: {_get_input_id(value)}" for key, value in input_group.items()
         )
 
         figure.figure.layout.title.text = title_template.format(
@@ -100,7 +110,6 @@ def _update_plotly_titles(figures, input_group, title_template):
 
 
 def _update_matplotlib_titles(figures, input_group, title_template):
-
     for figure in figures:
 
         current_title = (
@@ -108,8 +117,7 @@ def _update_matplotlib_titles(figures, input_group, title_template):
         )
 
         input_description = " and ".join(
-            f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-            for k, v in input_group.items()
+            f"{key}: {_get_input_id(value)}" for key, value in input_group.items()
         )
 
         figure.figure.suptitle(
