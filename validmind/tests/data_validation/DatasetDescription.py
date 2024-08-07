@@ -134,6 +134,7 @@ class DatasetDescription(Metric):
                     )
             else:
                 vm_dataset_variables[column] = {"id": column, "type": str(type)}
+
         return list(vm_dataset_variables.values())
 
     def describe_dataset_field(self, df, field):
