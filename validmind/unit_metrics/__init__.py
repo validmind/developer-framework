@@ -80,7 +80,7 @@ def _serialize_dataset(dataset, model):
         and pre-computed prediction columns, addressing potential hash collisions.
     """
     return _fast_hash(
-        dataset.df[
+        dataset._df[
             [
                 *dataset.feature_columns,
                 dataset.target_column,

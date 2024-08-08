@@ -152,6 +152,7 @@ def _get_session() -> aiohttp.ClientSession:
                 "X-API-KEY": _api_key,
                 "X-API-SECRET": _api_secret,
                 "X-PROJECT-CUID": _model_cuid,
+                "X-MONITORING": str(_monitoring),
             }
         )
 
