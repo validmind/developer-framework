@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List
 
 import pandas as pd
-from numpy import unique
+import numpy as np
 from sklearn import metrics, preprocessing
 
 from validmind.vm_models import (
@@ -101,7 +101,7 @@ class MinimumROCAUCScore(ThresholdTest):
     def run(self):
         y_true = self.inputs.dataset.y
 
-        if len(unique(y_true)) > 2:
+        if len(np.unique(y_true)) > 2:
             class_pred = self.inputs.dataset.y_pred(self.inputs.model)
             y_true = y_true.astype(class_pred.dtype)
             roc_auc = self.multiclass_roc_auc_score(y_true, class_pred)
