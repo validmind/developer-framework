@@ -71,7 +71,7 @@ class ClassifierPerformance(Metric):
         When building a multi-class summary we need to calculate weighted average,
         macro average and per class metrics.
         """
-        classes = {str(i) for i in unique(self.inputs.dataset.y)}
+        classes = {str(i) for i in np.unique(self.inputs.dataset.y)}
         pr_f1_table = [
             {
                 "Class": class_name,
