@@ -26,10 +26,10 @@ def PredictionCorrelation(datasets, model):
     prediction_prob_column = f"{model.input_id}_probabilities"
     prediction_column = f"{model.input_id}_prediction"
 
-    df_corr = datasets[0].df.corr()
+    df_corr = datasets[0]._df.corr()
     df_corr = df_corr[[prediction_prob_column]]
 
-    df_corr2 = datasets[1].df.corr()
+    df_corr2 = datasets[1]._df.corr()
     df_corr2 = df_corr2[[prediction_prob_column]]
 
     corr_final = df_corr.merge(df_corr2, left_index=True, right_index=True)

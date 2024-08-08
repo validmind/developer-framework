@@ -20,8 +20,8 @@ def PredictionAcrossEachFeature(datasets, model):
     observed during the training of the model.
     """
 
-    df_reference = datasets[0].df
-    df_monitoring = datasets[1].df
+    df_reference = datasets[0]._df 
+    df_monitoring = datasets[1]._df 
 
     figures_to_save = []
     for column in df_reference:
