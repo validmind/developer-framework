@@ -7,6 +7,7 @@ Dataset class wrapper
 """
 
 import warnings
+from copy import deepcopy
 
 import numpy as np
 import pandas as pd
@@ -14,6 +15,7 @@ import polars as pl
 
 from validmind.logging import get_logger
 from validmind.models import FunctionModel, PipelineModel
+from validmind.vm_models.input import VMInput
 from validmind.vm_models.model import VMModel
 
 from .utils import ExtraColumns, as_df, compute_predictions, convert_index_to_datetime
@@ -21,7 +23,7 @@ from .utils import ExtraColumns, as_df, compute_predictions, convert_index_to_da
 logger = get_logger(__name__)
 
 
-class VMDataset:
+class VMDataset(VMInput):
     """Base class for VM datasets
 
     Child classes should be used to support new dataset types (tensor, polars etc)
@@ -60,7 +62,6 @@ class VMDataset:
         text_column: str = None,
         extra_columns: dict = None,
         target_class_labels: dict = None,
-        options: dict = None,
     ):
         """
         Initializes a VMDataset instance.
@@ -77,7 +78,6 @@ class VMDataset:
             feature_columns (str, optional): The feature column names of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for nlp tasks. Defaults to None.
             target_class_labels (Dict, optional): The class labels for the target columns. Defaults to None.
-            options (Dict, optional): Additional options for the dataset. Defaults to None.
         """
         # initialize input_id
         self.input_id = input_id
@@ -100,8 +100,6 @@ class VMDataset:
         # attempt to convert index to datatime
         if date_time_index:
             self._df = convert_index_to_datetime(self._df)
-
-        self.options = options
 
         self.columns = columns or []
         self.column_aliases = {}
@@ -197,6 +195,56 @@ class VMDataset:
         ):
             raise ValueError(
                 "Cannot use precomputed probabilities without precomputed predictions"
+            )
+
+    def with_options(self, **kwargs) -> "VMDataset":
+        """Support options provided when passing an input to run_test or run_test_suite
+
+        Example:
+        ```python
+        # to only use a certain subset of columns in the dataset:
+        run_test(
+            "validmind.SomeTestID",
+            inputs={
+                "dataset": {
+                    "input_id": "my_dataset_id",
+                    "columns": ["col1", "col2"],
+                }
+            }
+        )
+
+        # behind the scenes, this retrieves the dataset object (VMDataset) from the registry
+        # and then calls the `with_options()` method and passes `{"columns": ...}`
+        ```
+
+        Args:
+            **kwargs: Options:
+                - columns: Filter columns in the dataset
+
+        Returns:
+            VMDataset: A new instance of the dataset with only the specified columns
+        """
+        if "columns" in kwargs:
+            # filter columns (create a temp copy of self with only specified columns)
+            # TODO: need a more robust mechanism for this as we expand on this feature
+            columns = kwargs.pop("columns")
+
+            new = deepcopy(self)
+
+            new._set_feature_columns(
+                [col for col in new.feature_columns if col in columns]
+            )
+            new.text_column = new.text_column if new.text_column in columns else None
+            new.target_column = (
+                new.target_column if new.target_column in columns else None
+            )
+            new.extra_columns.extras = new.extra_columns.extras.intersection(columns)
+
+            return new
+
+        if kwargs:
+            raise NotImplementedError(
+                f"Options {kwargs} are not supported for this input"
             )
 
     def assign_predictions(
@@ -444,7 +492,6 @@ class DataFrameDataset(VMDataset):
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
-        options: dict = None,
         date_time_index: bool = False,
     ):
         """
@@ -459,7 +506,6 @@ class DataFrameDataset(VMDataset):
             feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for NLP tasks. Defaults to None.
             target_class_labels (dict, optional): The class labels for the target columns. Defaults to None.
-            options (dict, optional): Additional options for the dataset. Defaults to None.
             date_time_index (bool, optional): Whether to use date-time index. Defaults to False.
         """
         index = None
@@ -478,7 +524,6 @@ class DataFrameDataset(VMDataset):
             feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
-            options=options,
             date_time_index=date_time_index,
         )
 
@@ -498,7 +543,6 @@ class PolarsDataset(VMDataset):
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
-        options: dict = None,
         date_time_index: bool = False,
     ):
         """
@@ -513,7 +557,6 @@ class PolarsDataset(VMDataset):
             feature_columns (list, optional): The feature columns of the dataset. Defaults to None.
             text_column (str, optional): The text column name of the dataset for NLP tasks. Defaults to None.
             target_class_labels (dict, optional): The class labels for the target columns. Defaults to None.
-            options (dict, optional): Additional options for the dataset. Defaults to None.
             date_time_index (bool, optional): Whether to use date-time index. Defaults to False.
         """
         super().__init__(
@@ -528,7 +571,6 @@ class PolarsDataset(VMDataset):
             feature_columns=feature_columns,
             text_column=text_column,
             target_class_labels=target_class_labels,
-            options=options,
             date_time_index=date_time_index,
         )
 
@@ -551,7 +593,6 @@ class TorchDataset(VMDataset):
         feature_columns: list = None,
         text_column: str = None,
         target_class_labels: dict = None,
-        options: dict = None,
     ):
         """
         Initializes a TorchDataset instance.
@@ -609,5 +650,4 @@ class TorchDataset(VMDataset):
             text_column=text_column,
             extra_columns=extra_columns,
             target_class_labels=target_class_labels,
-            options=options,
         )
