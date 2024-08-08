@@ -48,7 +48,6 @@ def init_dataset(
     index_name: str = None,
     date_time_index: bool = False,
     columns: list = None,
-    options: dict = None,
     text_column: str = None,
     target_column: str = None,
     feature_columns: list = None,
@@ -72,7 +71,6 @@ def init_dataset(
     Args:
         dataset : dataset from various python libraries
         model (VMModel): ValidMind model object
-        options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
         feature_columns (list): A list of names of feature columns in the dataset
@@ -135,7 +133,8 @@ def init_dataset(
             model=model,
             index=index,
             index_name=index_name,
-            columns=columns,
+            # if no columns are passed, use the index
+            columns=columns or [i for i in range(dataset.shape[1])],
             target_column=target_column,
             feature_columns=feature_columns,
             text_column=text_column,

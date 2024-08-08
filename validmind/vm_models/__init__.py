@@ -8,6 +8,7 @@ Models entrypoint
 
 from .dataset.dataset import VMDataset
 from .figure import Figure
+from .input import VMInput
 from .model import R_MODEL_TYPES, ModelAttributes, VMModel
 from .test.metric import Metric
 from .test.metric_result import MetricResult
@@ -20,6 +21,7 @@ from .test_suite.runner import TestSuiteRunner
 from .test_suite.test_suite import TestSuite
 
 __all__ = [
+    "VMInput",
     "VMDataset",
     "VMModel",
     "Figure",
