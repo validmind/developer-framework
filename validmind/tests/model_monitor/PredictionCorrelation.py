@@ -11,7 +11,7 @@ from validmind import tags, tasks
 
 @tags("visualization")
 @tasks("monitoring")
-def PredictionCorrelation(datasets):
+def PredictionCorrelation(datasets, model):
     """
     This test shows the correlation pairs for each feature in the model and model predictions from
     reference dataset and monitoring dataset. The primary goal in this test is to assess if correlation
@@ -22,15 +22,19 @@ def PredictionCorrelation(datasets):
     The primary goal is to assess the predictions and each individual feature in the two predictions in order
     to detect a change in the relationship between target and feature.
     """
+
+    prediction_prob_column = f"{model.input_id}_probabilities"
+    prediction_column = f"{model.input_id}_prediction"
+
     df_corr = datasets[0].df.corr()
-    df_corr = df_corr[["model_probabilities"]]
+    df_corr = df_corr[[prediction_prob_column]]
 
     df_corr2 = datasets[1].df.corr()
-    df_corr2 = df_corr2[["model_probabilities"]]
+    df_corr2 = df_corr2[[prediction_prob_column]]
 
     corr_final = df_corr.merge(df_corr2, left_index=True, right_index=True)
     corr_final.columns = ["Reference Predictions", "Monitoring Predictions"]
-    corr_final = corr_final.drop(index=["model_prediction", "model_probabilities"])
+    corr_final = corr_final.drop(index=[prediction_column, prediction_prob_column])
 
     n = len(corr_final)
     r = np.arange(n)
