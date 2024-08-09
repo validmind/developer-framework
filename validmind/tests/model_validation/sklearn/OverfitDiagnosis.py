@@ -185,7 +185,7 @@ def _plot_overfit_regions(
 
 # TODO: make this a functional test instead of class-based when appropriate
 # simply have to remove the class and rename this func to OverfitDiagnosis
-def overfit_diagnosis(
+def overfit_diagnosis(  # noqa: C901
     model: VMModel,
     datasets: List[VMDataset],
     metric: str = None,
