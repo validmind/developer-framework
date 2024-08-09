@@ -2,9 +2,9 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from numpy import unique
 from sklearn.metrics import roc_auc_score
 from sklearn.preprocessing import LabelBinarizer
-from numpy import unique
 
 from validmind import tags, tasks
 
