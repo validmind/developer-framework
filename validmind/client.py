@@ -248,6 +248,7 @@ def init_model(
             input_id=input_id,
             model=model,  # Trained model instance
             predict_fn=predict_fn,
+            attributes=ModelAttributes.from_dict(attributes),
             **kwargs,
         )
         metadata = get_model_info(vm_model)
