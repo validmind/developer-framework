@@ -12,6 +12,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn import metrics
 
+from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -223,7 +224,12 @@ class RobustnessDiagnosis(ThresholdTest):
         results["Dataset Type"].append(dataset_type)
         results["Perturbation Size"].append(x_std_dev)
         results["Records"].append(df.shape[0])
-        y_proba = self.inputs.model.predict_proba(df)
+
+        try:
+            y_proba = self.inputs.model.predict_proba(df)
+        except MissingOrInvalidModelPredictFnError:
+            y_proba = self.inputs.model.predict(df)
+
         results["AUC"].append(metrics.roc_auc_score(y_true, y_proba))
 
     def _add_noise_std_dev(
