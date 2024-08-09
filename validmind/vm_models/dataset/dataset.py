@@ -393,7 +393,8 @@ class VMDataset(VMInput):
             assert self.target_column not in columns
             columns.append(self.target_column)
 
-        return as_df(self._df[columns])
+        # return a copy to prevent accidental modification
+        return as_df(self._df[columns]).copy()
 
     @property
     def x(self) -> np.ndarray:

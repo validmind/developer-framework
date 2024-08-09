@@ -260,14 +260,14 @@ def fix_test_description(path):
     description = indent_and_wrap(description.strip())
 
     # insert the description into the test code
-    # the description should be inserted after the class definition line
-    class_definition_line = None
+    # the description should be inserted after the class or function definition line
+    definition_line = None
     existing_description_lines = []
     lines = file_contents.split("\n")
     for i, line in enumerate(lines):
-        if line.startswith("class"):
-            class_definition_line = i
-            # check if there is already a doc string for the class
+        if line.startswith("class") or line.startswith("def"):
+            definition_line = i
+            # check if there is already a doc string for the class or function
             if '"""' in lines[i + 1]:
                 existing_description_lines.append(i + 1)
                 j = i + 2
@@ -278,15 +278,15 @@ def fix_test_description(path):
                     j += 1
             break
 
-    if class_definition_line is None:
-        raise ValueError("Could not find class definition line")
+    if definition_line is None:
+        raise ValueError("Could not find class or function definition line")
 
     # remove any existing description lines
     for i in reversed(existing_description_lines):
         lines.pop(i)
 
     # insert the new description lines
-    lines.insert(class_definition_line + 1, f'    """\n{description}\n    """')
+    lines.insert(definition_line + 1, f'    """\n{description}\n    """')
 
     # write the updated file contents back to the file
     with open(path, "w") as f:

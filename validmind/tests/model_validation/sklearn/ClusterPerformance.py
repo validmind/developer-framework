@@ -57,7 +57,7 @@ class ClusterPerformance(Metric):
         "model_performance",
     ]
 
-    def cluser_performance_metrics(
+    def cluster_performance_metrics(
         self, y_true_train, y_pred_train, y_true_test, y_pred_test, samples, metric_info
     ):
         y_true_train = y_true_train.astype(y_pred_train.dtype).flatten()
@@ -107,7 +107,7 @@ class ClusterPerformance(Metric):
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
         samples = ["train", "test"]
-        results = self.cluser_performance_metrics(
+        results = self.cluster_performance_metrics(
             y_true_train,
             class_pred_train,
             y_true_test,

@@ -364,7 +364,7 @@ def get_model_info(model):
     if language is None:
         language = f"Python {python_version()}"
 
-    if framework_version is None:
+    if framework_version == "N/A" or framework_version is None:
         try:
             framework_version = sys.modules[framework].__version__
         except (KeyError, AttributeError):

@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from numpy import unique
+import numpy as np
 from sklearn.metrics import classification_report, roc_auc_score
 from sklearn.preprocessing import LabelBinarizer
 
@@ -71,7 +71,7 @@ class ClassifierPerformance(Metric):
         When building a multi-class summary we need to calculate weighted average,
         macro average and per class metrics.
         """
-        classes = {str(i) for i in unique(self.inputs.dataset.y)}
+        classes = {str(i) for i in np.unique(self.inputs.dataset.y)}
         pr_f1_table = [
             {
                 "Class": class_name,
@@ -126,9 +126,18 @@ class ClassifierPerformance(Metric):
             output_dict=True,
             zero_division=0,
         )
-        report["roc_auc"] = multiclass_roc_auc_score(
-            self.inputs.dataset.y,
-            self.inputs.dataset.y_pred(self.inputs.model),
-        )
+
+        y_true = self.inputs.dataset.y
+
+        if len(np.unique(y_true)) > 2:
+            y_pred = self.inputs.dataset.y_pred(self.inputs.model)
+            y_true = y_true.astype(y_pred.dtype)
+            roc_auc = self.multiclass_roc_auc_score(y_true, y_pred)
+        else:
+            y_prob = self.inputs.dataset.y_prob(self.inputs.model)
+            y_true = y_true.astype(y_prob.dtype).flatten()
+            roc_auc = roc_auc_score(y_true, y_prob)
+
+        report["roc_auc"] = roc_auc
 
         return self.cache_results(report)
