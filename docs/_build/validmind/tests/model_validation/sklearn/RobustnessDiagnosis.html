@@ -96,15 +96,15 @@ real-world scenarios where the input data might be incomplete or corrupted.</p>
 
 <p>This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
 input features of both the training and testing datasets. The model performance in the face of these perturbed
-features is then evaluated using metrics (default: 'accuracy'). This process is iterated over a range of scale
-factors. The resulting accuracy trend against the amount of noise introduced is illustrated with a line chart. A
-predetermined threshold determines what level of accuracy decay due to perturbation is considered acceptable.</p>
+features is then evaluated using the ROC_AUC score. This process is iterated over a range of scale
+factors. The resulting auc trend against the amount of noise introduced is illustrated with a line chart. A
+predetermined threshold determines what level of auc decay due to perturbation is considered acceptable.</p>
 
 <p><strong>Signs of High Risk</strong>:</p>
 
 <ul>
-<li>Substantial decreases in accuracy when noise is introduced to feature inputs.</li>
-<li>The decay in accuracy surpasses the configured threshold, indicating that the model is not robust against input
+<li>Substantial decreases in auc when noise is introduced to feature inputs.</li>
+<li>The decay in auc surpasses the configured threshold, indicating that the model is not robust against input
 noise.</li>
 <li>Instances where one or more elements provided in the features list don't match with the training dataset's
 numerical feature columns.</li>
@@ -122,15 +122,12 @@ insights into the model's stability.</li>
 <p><strong>Limitations</strong>:</p>
 
 <ul>
+<li>The default threshold for auc decay is set to 0.05, which is unlikely to be optimal for most use cases and
+should be adjusted based on domain expertise to suit the needs of the specific model.</li>
 <li>Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
 analysis of robustness.</li>
-<li>The default metric used is accuracy, which might not always give the best measure of a model's success,
-particularly for imbalanced datasets.</li>
 <li>The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
 corruption or incompleteness in real-world scenarios.</li>
-<li>There might be a requirement to fine-tune the set decay threshold for accuracy with the help of domain knowledge
-or specific project requisites.</li>
-<li>The robustness test might not deliver the expected results for datasets with a text column.</li>
 </ul>
 </div>
 
@@ -166,7 +163,7 @@ or specific project requisites.</li>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">_</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
