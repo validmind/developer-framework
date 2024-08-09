@@ -363,7 +363,6 @@ class OverfitDiagnosis(ThresholdTest):
     ]
 
     def run(self):
-        print(self.params)
         func_result = overfit_diagnosis(
             self.inputs.model,
             self.inputs.datasets,
