@@ -9,6 +9,7 @@ import importlib
 import inspect
 from abc import abstractmethod
 from dataclasses import dataclass
+from enum import Enum
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 
@@ -38,6 +39,14 @@ R_MODEL_METHODS = [
 ]
 
 
+class ModelTask(Enum):
+    """Model task enums"""
+
+    # TODO: add more tasks
+    CLASSIFICATION = "classification"
+    REGRESSION = "regression"
+
+
 class ModelPipeline:
     """Helper class for chaining models together
 
@@ -65,6 +74,7 @@ class ModelAttributes:
     framework: str = None
     framework_version: str = None
     language: str = None
+    task: ModelTask = None
 
     @classmethod
     def from_dict(cls, data):
@@ -76,6 +86,7 @@ class ModelAttributes:
             framework=data.get("framework"),
             framework_version=data.get("framework_version"),
             language=data.get("language"),
+            task=ModelTask(data.get("task")) if data.get("task") else None,
         )
 
 
