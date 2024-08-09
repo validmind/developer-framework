@@ -168,7 +168,9 @@ def _plot_overfit_regions(
     return fig
 
 
-def OverfitDiagnosis(model, datasets, metric=None, cut_off_threshold=DEFAULT_THRESHOLD):
+def OverfitDiagnosis(  # noqa: C901
+    model, datasets, metric=None, cut_off_threshold=DEFAULT_THRESHOLD
+):
     """Identify overfit regions in a model's predictions.
 
     This test compares the model's performance on training versus test data, grouped by
