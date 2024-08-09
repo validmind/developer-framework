@@ -2,13 +2,18 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from typing import List
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn import metrics
 
-from validmind.vm_models import Figure
+from validmind.logging import get_logger
+from validmind.vm_models import Figure, VMDataset, VMModel
+
+logger = get_logger(__name__)
 
 DEFAULT_THRESHOLD = 0.04
 PERFORMANCE_METRICS = {
@@ -169,7 +174,10 @@ def _plot_overfit_regions(
 
 
 def OverfitDiagnosis(  # noqa: C901
-    model, datasets, metric=None, cut_off_threshold=DEFAULT_THRESHOLD
+    model: VMModel,
+    datasets: List[VMDataset],
+    metric: str = None,
+    cut_off_threshold: float = DEFAULT_THRESHOLD,
 ):
     """Identify overfit regions in a model's predictions.
 
@@ -201,12 +209,12 @@ def OverfitDiagnosis(  # noqa: C901
     # Set default metric if not provided
     if metric is None:
         metric = "auc" if is_classification else "mse"
-        print(
+        logger.info(
             f"Using default {'classification' if is_classification else 'regression'} metric: {metric}"
         )
 
-    if cut_off_threshold == 0.04:
-        print("Using default cut-off threshold of 0.04")
+    if id(cut_off_threshold) == id(DEFAULT_THRESHOLD):
+        logger.info("Using default cut-off threshold of 0.04")
 
     metric = metric.lower()
     try:
