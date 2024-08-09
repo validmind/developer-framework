@@ -119,7 +119,7 @@ class VMModel(VMInput):
 
         self.name = name or self.__class__.__name__
 
-        self.attributes = attributes
+        self.attributes = attributes or ModelAttributes()
 
         # set any additional attributes passed in (likely for subclasses)
         for key, value in kwargs.items():
