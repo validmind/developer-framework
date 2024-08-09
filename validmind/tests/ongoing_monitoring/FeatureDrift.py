@@ -15,18 +15,42 @@ from validmind import tags, tasks
 def FeatureDrift(
     datasets, bins=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], feature_columns=None
 ):
-
     """
-    PSI is a measure of how much a population has shifted over time or between two different
-    samples of a population in a single number. It does this by bucketing the two distributions
-    and comparing the percents of items in each of the buckets, resulting in a single number
-    you can use to understand how different the populations are. The common interpretations
-    of the PSI result are:
+    **Purpose**:
 
-    PSI < 0.1: no significant population change
-    PSI < 0.2: moderate population change
-    PSI >= 0.2: significant population change
+    The Feature Drift test aims to evaluate how much the distribution of features has shifted over time between two
+    datasets, typically training and monitoring datasets. It uses the Population Stability Index (PSI) to quantify this
+    change, providing insights into the model's robustness and the necessity for retraining or feature engineering.
 
+    **Test Mechanism**:
+
+    This test calculates the PSI by:
+    - Bucketing the distributions of each feature in both datasets.
+    - Comparing the percentage of observations in each bucket between the two datasets.
+    - Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
+
+    The PSI score is interpreted as:
+    - PSI < 0.1: No significant population change.
+    - PSI < 0.2: Moderate population change.
+    - PSI >= 0.2: Significant population change.
+
+    **Signs of High Risk**:
+
+    - PSI >= 0.2 for any feature, indicating a significant distribution shift.
+    - Consistently high PSI scores across multiple features.
+    - Sudden spikes in PSI in recent monitoring data compared to historical data.
+
+    **Strengths**:
+
+    - Provides a quantitative measure of feature distribution changes.
+    - Easily interpretable thresholds for decision-making.
+    - Helps in early detection of data drift, prompting timely interventions.
+
+    **Limitations**:
+
+    - May not capture more intricate changes in data distribution nuances.
+    - Assumes that bucket thresholds (quantiles) adequately represent distribution shifts.
+    - PSI score interpretation can be overly simplistic for complex datasets.
     """
 
     # Feature columns for both datasets should be the same if not given
@@ -108,8 +132,6 @@ def get_psi_buckets(x_test_df, x_train_df, feature_columns, bins, PSI_QUANTILES)
 
 
 def plot_hist(PSI_BUCKET_FRAC, bins):
-    # add graphical output
-
     bin_table_psi = pd.DataFrame(PSI_BUCKET_FRAC)
     save_fig = []
     for i in range(len(bin_table_psi)):
