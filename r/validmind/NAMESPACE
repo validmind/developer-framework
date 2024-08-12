@@ -2,7 +2,10 @@
 
 export(display_report)
 export(process_result)
+export(register_test)
+export(run_test)
 export(vm)
+import(reticulate)
 importFrom(DT,datatable)
 importFrom(base64enc,dataURI)
 importFrom(dplyr,"%>%")
