@@ -26,6 +26,8 @@ from validmind.vm_models import (
 logger = get_logger(__name__)
 
 DEFAULT_THRESHOLD = 0.04
+DEFAULT_CLASSIFICATION_METRIC = "auc"
+DEFAULT_REGRESSION_METRIC = "r2"
 PERFORMANCE_METRICS = {
     "accuracy": {
         "function": metrics.accuracy_score,
@@ -199,7 +201,7 @@ def overfit_diagnosis(  # noqa: C901
 
     This test works for both classification and regression models and with a variety of
     performance metrics. By default, it uses the AUC metric for classification models and
-    the MSE metric for regression models. The threshold for identifying overfit regions
+    the R2 metric for regression models. The threshold for identifying overfit regions
     defaults to 0.04 but should be adjusted based on the specific use case.
 
     ## Inputs
@@ -220,7 +222,11 @@ def overfit_diagnosis(  # noqa: C901
 
     # Set default metric if not provided
     if metric is None:
-        metric = "auc" if is_classification else "mse"
+        metric = (
+            DEFAULT_CLASSIFICATION_METRIC
+            if is_classification
+            else DEFAULT_REGRESSION_METRIC
+        )
         logger.info(
             f"Using default {'classification' if is_classification else 'regression'} metric: {metric}"
         )
