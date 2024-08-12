@@ -6,10 +6,12 @@ from dataclasses import dataclass
 from typing import List
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn import metrics
 
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -17,321 +19,383 @@ from validmind.vm_models import (
     ResultTableMetadata,
     ThresholdTest,
     ThresholdTestResult,
+    VMDataset,
+    VMModel,
 )
+
+logger = get_logger(__name__)
+
+DEFAULT_THRESHOLD = 0.04
+DEFAULT_CLASSIFICATION_METRIC = "auc"
+DEFAULT_REGRESSION_METRIC = "r2"
+PERFORMANCE_METRICS = {
+    "accuracy": {
+        "function": metrics.accuracy_score,
+        "is_classification": True,
+        "is_lower_better": False,
+    },
+    "auc": {
+        "function": metrics.roc_auc_score,
+        "is_classification": True,
+        "is_lower_better": False,
+    },
+    "f1": {
+        "function": metrics.f1_score,
+        "is_classification": True,
+        "is_lower_better": False,
+    },
+    "precision": {
+        "function": metrics.precision_score,
+        "is_classification": True,
+        "is_lower_better": False,
+    },
+    "recall": {
+        "function": metrics.recall_score,
+        "is_classification": True,
+        "is_lower_better": False,
+    },
+    "mse": {
+        "function": metrics.mean_squared_error,
+        "is_classification": False,
+        "is_lower_better": True,
+    },
+    "mae": {
+        "function": metrics.mean_absolute_error,
+        "is_classification": False,
+        "is_lower_better": True,
+    },
+    "r2": {
+        "function": metrics.r2_score,
+        "is_classification": False,
+        "is_lower_better": False,
+    },
+    "mape": {
+        "function": metrics.mean_absolute_percentage_error,
+        "is_classification": False,
+        "is_lower_better": True,
+    },
+}
+
+
+def _prepare_results(
+    results_train: dict, results_test: dict, metric: str
+) -> pd.DataFrame:
+    results_train = pd.DataFrame(results_train)
+    results_test = pd.DataFrame(results_test)
+    results = results_train.copy()
+    results.rename(
+        columns={"shape": "training records", f"{metric}": f"training {metric}"},
+        inplace=True,
+    )
+    results[f"test {metric}"] = results_test[metric]
+
+    # Adjust gap calculation based on metric directionality
+    if PERFORMANCE_METRICS[metric]["is_lower_better"]:
+        results["gap"] = results[f"test {metric}"] - results[f"training {metric}"]
+    else:
+        results["gap"] = results[f"training {metric}"] - results[f"test {metric}"]
+
+    return results
+
+
+def _compute_metrics(
+    results: dict,
+    region: str,
+    df_region: pd.DataFrame,
+    target_column: str,
+    prob_column: str,
+    pred_column: str,
+    feature_column: str,
+    metric: str,
+    is_classification: bool,
+) -> None:
+    results["slice"].append(str(region))
+    results["shape"].append(df_region.shape[0])
+    results["feature"].append(feature_column)
+
+    # Check if any records
+    if df_region.empty:
+        results[metric].append(0)
+        return
+
+    metric_func = PERFORMANCE_METRICS[metric]["function"]
+    y_true = df_region[target_column].values
+
+    # AUC requires probability scores
+    if is_classification and metric == "auc":
+        # if only one class is present in the data, return 0
+        if len(np.unique(y_true)) == 1:
+            results[metric].append(0)
+            return
+
+        score = metric_func(y_true, df_region[prob_column].values)
+
+    # All other classification metrics
+    elif is_classification:
+        score = metric_func(y_true, df_region[pred_column].values)
+
+    # Regression metrics
+    else:
+        score = metric_func(y_true, df_region[pred_column].values)
+
+    results[metric].append(score)
+
+
+def _plot_overfit_regions(
+    df: pd.DataFrame, feature_column: str, threshold: float, metric: str
+) -> plt.Figure:
+    fig, ax = plt.subplots()
+    barplot = sns.barplot(data=df, x="slice", y="gap", ax=ax)
+    ax.tick_params(axis="x", rotation=90)
+
+    # Draw threshold line
+    axhline = ax.axhline(
+        y=threshold,
+        color="red",
+        linestyle="--",
+        linewidth=1,
+        label=f"Cut-Off Threshold: {threshold}",
+    )
+    ax.tick_params(axis="x", labelsize=20)
+    ax.tick_params(axis="y", labelsize=20)
+
+    ax.set_ylabel(f"{metric.upper()} Gap", weight="bold", fontsize=18)
+    ax.set_xlabel("Slice/Segments", weight="bold", fontsize=18)
+    ax.set_title(
+        f"Overfit regions in feature column: {feature_column}",
+        weight="bold",
+        fontsize=20,
+        wrap=True,
+    )
+
+    handles, labels = barplot.get_legend_handles_labels()
+    handles.append(axhline)
+    labels.append(axhline.get_label())
+
+    barplot.legend(
+        handles=handles[:-1],
+        labels=labels,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.1),
+        ncol=len(handles),
+    )
+
+    plt.close("all")
+
+    return fig
+
+
+# TODO: make this a functional test instead of class-based when appropriate
+# simply have to remove the class and rename this func to OverfitDiagnosis
+def overfit_diagnosis(  # noqa: C901
+    model: VMModel,
+    datasets: List[VMDataset],
+    metric: str = None,
+    cut_off_threshold: float = DEFAULT_THRESHOLD,
+):
+    """Identify overfit regions in a model's predictions.
+
+    This test compares the model's performance on training versus test data, grouped by
+    feature columns. It calculates the difference between the training and test performance
+    for each group and identifies regions where the difference exceeds a specified threshold.
+
+    This test works for both classification and regression models and with a variety of
+    performance metrics. By default, it uses the AUC metric for classification models and
+    the R2 metric for regression models. The threshold for identifying overfit regions
+    defaults to 0.04 but should be adjusted based on the specific use case.
+
+    ## Inputs
+    - `model` (VMModel): The ValidMind model object to evaluate.
+    - `datasets` (List[VMDataset]): A list of two VMDataset objects where the first dataset
+        is the training data and the second dataset is the test data.
+
+    ## Parameters
+    - `metric` (str, optional): The performance metric to use for evaluation. Choose from:
+        'accuracy', 'auc', 'f1', 'precision', 'recall', 'mse', 'mae', 'r2', 'mape'.
+        Defaults to 'auc' for classification models and 'mse' for regression models.
+    - `cut_off_threshold` (float, optional): The threshold for identifying overfit regions.
+        Defaults to 0.04.
+    """
+
+    # Determine if it's a classification or regression model
+    is_classification = bool(datasets[0].probability_column(model))
+
+    # Set default metric if not provided
+    if metric is None:
+        metric = (
+            DEFAULT_CLASSIFICATION_METRIC
+            if is_classification
+            else DEFAULT_REGRESSION_METRIC
+        )
+        logger.info(
+            f"Using default {'classification' if is_classification else 'regression'} metric: {metric}"
+        )
+
+    if id(cut_off_threshold) == id(DEFAULT_THRESHOLD):
+        logger.info("Using default cut-off threshold of 0.04")
+
+    metric = metric.lower()
+    try:
+        _metric = PERFORMANCE_METRICS[metric.lower()]
+    except KeyError:
+        raise ValueError(
+            f"Invalid metric. Choose from: {', '.join(PERFORMANCE_METRICS.keys())}"
+        )
+
+    if is_classification and not _metric["is_classification"]:
+        raise ValueError(f"Cannot use regression metric ({metric}) for classification.")
+    elif not is_classification and _metric["is_classification"]:
+        raise ValueError(f"Cannot use classification metric ({metric}) for regression.")
+
+    train_df = datasets[0].df
+    test_df = datasets[1].df
+
+    pred_column = f"{datasets[0].target_column}_pred"
+    prob_column = f"{datasets[0].target_column}_prob"
+
+    train_df[pred_column] = datasets[0].y_pred(model)
+    test_df[pred_column] = datasets[1].y_pred(model)
+
+    if is_classification:
+        train_df[prob_column] = datasets[0].y_prob(model)
+        test_df[prob_column] = datasets[1].y_prob(model)
+
+    test_results = []
+    test_figures = []
+    results_headers = ["slice", "shape", "feature", metric]
+
+    for feature_column in datasets[0].feature_columns:
+        bins = 10
+        if feature_column in datasets[0].feature_columns_categorical:
+            bins = len(train_df[feature_column].unique())
+        train_df["bin"] = pd.cut(train_df[feature_column], bins=bins)
+
+        results_train = {k: [] for k in results_headers}
+        results_test = {k: [] for k in results_headers}
+
+        for region, df_region in train_df.groupby("bin"):
+            _compute_metrics(
+                results=results_train,
+                region=region,
+                df_region=df_region,
+                feature_column=feature_column,
+                target_column=datasets[0].target_column,
+                prob_column=prob_column,
+                pred_column=pred_column,
+                metric=metric,
+                is_classification=is_classification,
+            )
+            df_test_region = test_df[
+                (test_df[feature_column] > region.left)
+                & (test_df[feature_column] <= region.right)
+            ]
+            _compute_metrics(
+                results=results_test,
+                region=region,
+                df_region=df_test_region,
+                feature_column=feature_column,
+                target_column=datasets[1].target_column,
+                prob_column=prob_column,
+                pred_column=pred_column,
+                metric=metric,
+                is_classification=is_classification,
+            )
+
+        results = _prepare_results(results_train, results_test, metric)
+
+        fig = _plot_overfit_regions(results, feature_column, cut_off_threshold, metric)
+        test_figures.append(
+            Figure(
+                key=f"overfit_diagnosis:{metric}:{feature_column}",
+                figure=fig,
+                metadata={
+                    "metric": metric,
+                    "cut_off_threshold": cut_off_threshold,
+                    "feature": feature_column,
+                },
+            )
+        )
+
+        for _, row in results[results["gap"] > cut_off_threshold].iterrows():
+            test_results.append(
+                {
+                    "Feature": feature_column,
+                    "Slice": row["slice"],
+                    "Number of Records": row["training records"],
+                    f"Training {metric.upper()}": row[f"training {metric}"],
+                    f"Test {metric.upper()}": row[f"test {metric}"],
+                    "Gap": row["gap"],
+                }
+            )
+
+    return {"Overfit Diagnosis": test_results}, *test_figures
 
 
 @dataclass
 class OverfitDiagnosis(ThresholdTest):
-    """
-    Detects and visualizes overfit regions in an ML model by comparing performance on training and test datasets.
+    """Identify overfit regions in a model's predictions.
 
-    **Purpose**: The OverfitDiagnosis test is devised to detect areas within a Machine Learning model that might be
-    prone to overfitting. It achieves this by comparing the model's performance on both the training and testing
-    datasets. These datasets are broken down into distinct sections defined by a Feature Space. Areas, where the model
-    underperforms by displaying high residual values or a significant amount of overfitting, are highlighted, prompting
-    actions for mitigation using regularization techniques such as L1 or L2 regularization, Dropout, Early Stopping or
-    data augmentation.
+    This test compares the model's performance on training versus test data, grouped by
+    feature columns. It calculates the difference between the training and test performance
+    for each group and identifies regions where the difference exceeds a specified threshold.
 
-    **Test Mechanism**: The metric conducts the test by executing the method 'run' on the default parameters and
-    metrics with 'accuracy' as the specified metric. It segments the feature space by binning crucial feature columns
-    from both the training and testing datasets. Then, the method computes the prediction results for each defined
-    region. Subsequently, the prediction's efficacy is evaluated, i.e., the model's performance gap (defined as the
-    discrepancy between the actual and the model's predictions) for both datasets is calculated and compared with a
-    preset cut-off value for the overfitting condition. A test failure presents an overfit model, whereas a pass
-    signifies a fit model. Meanwhile, the function also prepares figures further illustrating the regions with
-    overfitting.
+    This test works for both classification and regression models and with a variety of
+    performance metrics. By default, it uses the AUC metric for classification models and
+    the MSE metric for regression models. The threshold for identifying overfit regions
+    defaults to 0.04 but should be adjusted based on the specific use case.
 
-    **Signs of High Risk**: Indicators of a high-risk model are:
-    - A high 'gap' value indicating discrepancies in the training and testing data accuracy signals an overfit model.
-    - Multiple or vast overfitting zones within the feature space suggest overcomplication of the model.
+    ## Inputs
+    - `model` (VMModel): The ValidMind model object to evaluate.
+    - `datasets` (List[VMDataset]): A list of two VMDataset objects where the first dataset
+        is the training data and the second dataset is the test data.
 
-    **Strengths**:
-    - Presents a visual perspective by plotting regions with overfit issues, simplifying understanding of the model
-    structure.
-    - Permits a feature-focused assessment, which promotes specific, targeted modifications to the model.
-    - Caters to modifications of the testing parameters such as 'cut_off_percentage' and 'features_column' enabling a
-    personalized analysis.
-    - Handles both numerical and categorical features.
-
-    **Limitations**:
-    - Does not currently support regression tasks and is limited to classification tasks only.
-    - Ineffectual for text-based features, which in turn restricts its usage for Natural Language Processing models.
-    - Primarily depends on the bins setting, responsible for segmenting the feature space. Different bin configurations
-    might yield varying results.
-    - Utilization of a fixed cut-off percentage for making overfitting decisions, set arbitrarily, leading to a
-    possible risk of inaccuracy.
-    - Limitation of performance metrics to accuracy alone might prove inadequate for detailed examination, especially
-    for imbalanced datasets.
+    ## Parameters
+    - `metric` (str, optional): The performance metric to use for evaluation. Choose from:
+        'accuracy', 'auc', 'f1', 'precision', 'recall', 'mse', 'mae', 'r2', 'mape'.
+        Defaults to 'auc' for classification models and 'mse' for regression models.
+    - `cut_off_threshold` (float, optional): The threshold for identifying overfit regions.
+        Defaults to 0.04.
     """
 
-    name = "overfit_regions"
     required_inputs = ["model", "datasets"]
-    default_params = {"features_columns": None, "cut_off_percentage": 4}
-    tasks = ["classification", "text_classification"]
+    default_params = {"metric": None, "cut_off_threshold": DEFAULT_THRESHOLD}
+    tasks = ["classification", "regression"]
     tags = [
         "sklearn",
         "binary_classification",
         "multiclass_classification",
+        "linear_regression",
         "model_diagnosis",
     ]
 
-    default_metrics = {
-        "accuracy": metrics.accuracy_score,
-    }
-
     def run(self):
-        if "cut_off_percentage" not in self.params:
-            raise ValueError("cut_off_percentage must be provided in params")
-        cut_off_percentage = self.params["cut_off_percentage"]
-
-        if "features_columns" not in self.params:
-            raise ValueError("features_columns must be provided in params")
-
-        if self.params["features_columns"] is None:
-            features_list = self.inputs.datasets[0].feature_columns
-        else:
-            features_list = self.params["features_columns"]
-
-        if self.inputs.datasets[0].text_column in features_list:
-            raise ValueError(
-                "Skiping Overfit Diagnosis test for the dataset with text column"
-            )
-
-        # Check if all elements from features_list are present in the feature columns
-        all_present = all(
-            elem in self.inputs.datasets[0].feature_columns for elem in features_list
+        func_result = overfit_diagnosis(
+            self.inputs.model,
+            self.inputs.datasets,
+            metric=self.params["metric"],
+            cut_off_threshold=self.params["cut_off_threshold"],
         )
-        if not all_present:
-            raise ValueError(
-                "The list of feature columns provided do not match with training dataset feature columns"
-            )
 
-        if not isinstance(features_list, list):
-            raise ValueError(
-                "features_columns must be a list of features you would like to test"
-            )
-
-        target_column = self.inputs.datasets[0].target_column
-        prediction_column = f"{target_column}_pred"
-
-        # Add prediction column in the training dataset
-        train_df = self.inputs.datasets[0].df.copy()
-        train_class_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
-        train_df[prediction_column] = train_class_pred
-
-        # Add prediction column in the test dataset
-        test_df = self.inputs.datasets[1].df.copy()
-        test_class_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
-        test_df[prediction_column] = test_class_pred
-
-        test_results = []
-        test_figures = []
-        results_headers = ["slice", "shape", "feature"]
-        results_headers.extend(self.default_metrics.keys())
-
-        for feature_column in features_list:
-            bins = 10
-            if feature_column in self.inputs.datasets[0].feature_columns_categorical:
-                bins = len(train_df[feature_column].unique())
-            train_df["bin"] = pd.cut(train_df[feature_column], bins=bins)
-
-            results_train = {k: [] for k in results_headers}
-            results_test = {k: [] for k in results_headers}
-
-            for region, df_region in train_df.groupby("bin"):
-                self._compute_metrics(
-                    results_train,
-                    region,
-                    df_region,
-                    target_column,
-                    prediction_column,
-                    feature_column,
-                )
-                df_test_region = test_df[
-                    (test_df[feature_column] > region.left)
-                    & (test_df[feature_column] <= region.right)
-                ]
-                self._compute_metrics(
-                    results_test,
-                    region,
-                    df_test_region,
-                    target_column,
-                    prediction_column,
-                    feature_column,
-                )
-
-            results = self._prepare_results(results_train, results_test)
-
-            fig = self._plot_overfit_regions(
-                results, feature_column, "accuracy", threshold=cut_off_percentage
-            )
-            # We're currently plotting accuracy gap only
-            test_figures.append(
-                Figure(
-                    for_object=self,
-                    key=f"{self.name}:accuracy:{feature_column}",
-                    figure=fig,
-                    metadata={
-                        "metric": "accuracy",
-                        "cut_off_percentage": cut_off_percentage,
-                        "feature": feature_column,
-                    },
-                )
-            )
-
-            results = results[results["gap"] > cut_off_percentage]
-            passed = results.empty
-            results = results.to_dict(orient="records")
-            test_results.append(
-                ThresholdTestResult(
-                    test_name="accuracy",
-                    column=feature_column,
-                    passed=passed,
-                    values={"records": results},
-                )
-            )
         return self.cache_results(
-            test_results,
-            passed=all([r.passed for r in test_results]),
-            figures=test_figures,
+            test_results_list=[
+                ThresholdTestResult(
+                    test_name=self.params["metric"],
+                    column=row["Feature"],
+                    passed=False,
+                    values={k: v for k, v in row.items()},
+                )
+                for row in func_result[0]["Overfit Diagnosis"]
+            ],
+            passed=(not func_result[0]["Overfit Diagnosis"]),
+            figures=func_result[1:],
         )
 
-    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
-        results_table = [
-            record for result in results for record in result.values["records"]
-        ]
+    def summary(self, results, _):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
-                    metadata=ResultTableMetadata(title="Overfit Regions Data"),
+                    data=[result.values for result in results],
+                    metadata=ResultTableMetadata(title="Overfit Diagnosis"),
                 )
-            ]
+            ],
         )
-
-    def _prepare_results(self, results_train: dict, results_test: dict) -> pd.DataFrame:
-        """
-        Prepares and returns a DataFrame with training and testing results.
-        Args:
-            results_train (dict): A dictionary containing training results.
-            results_test (dict): A dictionary containing testing results.
-        Returns:
-            pd.DataFrame: A DataFrame containing the following columns:
-                - 'shape': The number of training records used.
-                - 'slice': The name of the region being evaluated.
-                - 'training accuracy': The accuracy achieved on the training data (in percentage).
-                - 'test accuracy': The accuracy achieved on the testing data (in percentage).
-                - 'gap': The difference between the training and testing accuracies (in percentage).
-        """
-
-        results_train = pd.DataFrame(results_train)
-        results_test = pd.DataFrame(results_test)
-        results = results_train.copy()
-        results.rename(
-            columns={"shape": "training records", "accuracy": "training accuracy"},
-            inplace=True,
-        )
-        results["training accuracy"] = results["training accuracy"] * 100
-        results["test accuracy"] = results_test["accuracy"] * 100
-        results["gap"] = results["training accuracy"] - results["test accuracy"]
-
-        return results
-
-    def _compute_metrics(
-        self,
-        results: dict,
-        region: str,
-        df_region: pd.DataFrame,
-        target_column: str,
-        prediction_column: str,
-        feature_column: str,
-    ) -> None:
-        """
-        Computes and appends the evaluation metrics for a given region.
-        Args:
-            results (dict): A dictionary containing the evaluation results for all regions.
-            region (str): The name of the region being evaluated.
-            df_region (pd.DataFrame): The DataFrame containing the region-specific data.
-            target_column (str): The name of the target column in the DataFrame.
-            prediction_column (str): The name of the column containing the model's predictions.
-        Returns:
-            None
-        """
-
-        results["slice"].append(str(region))
-        results["shape"].append(df_region.shape[0])
-        results["feature"].append(feature_column)
-
-        # Check if df_region is an empty dataframe and if so, append 0 to all metrics
-        if df_region.empty:
-            for metric in self.default_metrics.keys():
-                results[metric].append(0)
-            return
-
-        y_true = df_region[target_column].values
-        y_prediction = (
-            df_region[prediction_column].astype(df_region[target_column].dtypes).values
-        )
-
-        for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true, y_prediction))
-
-    def _plot_overfit_regions(
-        self, df: pd.DataFrame, feature_column: str, metric: str, threshold: float
-    ) -> plt.Figure:
-        """
-        Plots the overfit regions of a given DataFrame.
-        Args:
-            df (pd.DataFrame): A DataFrame containing the data to plot.
-            feature_column (str): The name of the feature column to plot.
-            threshold (float): The threshold value for the gap, above which a region is considered to be overfit.
-        Returns:
-            plt.Figure: A matplotlib Figure object containing the plot.
-        """
-
-        # Create a bar plot using seaborn library
-        fig, ax = plt.subplots()
-        barplot = sns.barplot(data=df, x="slice", y="gap", ax=ax)
-        ax.tick_params(axis="x", rotation=90)
-        # Draw threshold line
-        axhline = ax.axhline(
-            y=threshold,
-            color="red",
-            linestyle="--",
-            linewidth=1,
-            label=f"Cut-Off Percentage: {threshold}%",
-        )
-        ax.tick_params(axis="x", labelsize=20)
-        ax.tick_params(axis="y", labelsize=20)
-
-        ax.set_ylabel(f"{metric.capitalize()} Gap (%)", weight="bold", fontsize=18)
-        ax.set_xlabel("Slice/Segments", weight="bold", fontsize=18)
-        ax.set_title(
-            f"Overfit regions in feature column: {feature_column}",
-            weight="bold",
-            fontsize=20,
-            wrap=True,
-        )
-
-        # Get the legend handles and labels from the barplot
-        handles, labels = barplot.get_legend_handles_labels()
-
-        # Append the axhline handle and label
-        handles.append(axhline)
-        labels.append(axhline.get_label())
-
-        # Create a legend with both hue and axhline labels, the threshold line
-        # will show up twice so remove the first element
-        # barplot.legend(handles=handles[:-1], labels=labels, loc="upper right")
-        barplot.legend(
-            handles=handles[:-1],
-            labels=labels,
-            loc="upper center",
-            bbox_to_anchor=(0.5, 0.1),
-            ncol=len(handles),
-        )
-
-        # Do this if you want to prevent the figure from being displayed
-        plt.close("all")
-
-        return fig
