@@ -405,7 +405,7 @@ def run_test(
 
     if unit_metrics:
         metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        test_id = f"validmind.composite_test.{metric_id_name}"
+        test_id = f"validmind.composite_metric.{metric_id_name}"
 
         error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
