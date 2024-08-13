@@ -56,7 +56,6 @@ TestID = Literal[
     "validmind.model_validation.ragas.AnswerSimilarity",
     "validmind.model_validation.ragas.AnswerCorrectness",
     "validmind.model_validation.ragas.ContextRecall",
-    "validmind.model_validation.ragas.ContextRelevancy",
     "validmind.model_validation.ragas.ContextPrecision",
     "validmind.model_validation.ragas.AnswerRelevance",
     "validmind.model_validation.sklearn.RegressionModelsPerformanceComparison",

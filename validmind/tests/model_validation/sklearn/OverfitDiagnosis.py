@@ -25,51 +25,48 @@ from validmind.vm_models import (
 
 logger = get_logger(__name__)
 
+# TODO: A couple of improvements here could be to:
+# 1. Allow the test to use multiple metrics at once
+# 2. Allow custom functions for computing performance
+
 DEFAULT_THRESHOLD = 0.04
+DEFAULT_CLASSIFICATION_METRIC = "auc"
+DEFAULT_REGRESSION_METRIC = "mse"
 PERFORMANCE_METRICS = {
     "accuracy": {
         "function": metrics.accuracy_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "auc": {
         "function": metrics.roc_auc_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "f1": {
         "function": metrics.f1_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "precision": {
         "function": metrics.precision_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "recall": {
         "function": metrics.recall_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "mse": {
         "function": metrics.mean_squared_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "mae": {
         "function": metrics.mean_absolute_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "r2": {
         "function": metrics.r2_score,
-        "is_classification": False,
         "is_lower_better": False,
     },
     "mape": {
         "function": metrics.mean_absolute_percentage_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
 }
@@ -123,20 +120,13 @@ def _compute_metrics(
     if is_classification and metric == "auc":
         # if only one class is present in the data, return 0
         if len(np.unique(y_true)) == 1:
-            results[metric].append(0)
-            return
+            return results[metric].append(0)
 
-        score = metric_func(y_true, df_region[prob_column].values)
+        return results[metric].append(
+            metric_func(y_true, df_region[prob_column].values)
+        )
 
-    # All other classification metrics
-    elif is_classification:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    # Regression metrics
-    else:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    results[metric].append(score)
+    return results[metric].append(metric_func(y_true, df_region[pred_column].values))
 
 
 def _plot_overfit_regions(
@@ -219,27 +209,18 @@ def overfit_diagnosis(  # noqa: C901
     is_classification = bool(datasets[0].probability_column(model))
 
     # Set default metric if not provided
-    if metric is None:
-        metric = "auc" if is_classification else "mse"
+    if not metric:
+        metric = (
+            DEFAULT_CLASSIFICATION_METRIC
+            if is_classification
+            else DEFAULT_REGRESSION_METRIC
+        )
         logger.info(
             f"Using default {'classification' if is_classification else 'regression'} metric: {metric}"
         )
 
     if id(cut_off_threshold) == id(DEFAULT_THRESHOLD):
         logger.info("Using default cut-off threshold of 0.04")
-
-    metric = metric.lower()
-    try:
-        _metric = PERFORMANCE_METRICS[metric.lower()]
-    except KeyError:
-        raise ValueError(
-            f"Invalid metric. Choose from: {', '.join(PERFORMANCE_METRICS.keys())}"
-        )
-
-    if is_classification and not _metric["is_classification"]:
-        raise ValueError(f"Cannot use regression metric ({metric}) for classification.")
-    elif not is_classification and _metric["is_classification"]:
-        raise ValueError(f"Cannot use classification metric ({metric}) for regression.")
 
     train_df = datasets[0].df
     test_df = datasets[1].df
