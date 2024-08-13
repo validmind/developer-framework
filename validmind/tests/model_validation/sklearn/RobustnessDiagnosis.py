@@ -342,7 +342,7 @@ class RobustnessDiagnosis(ThresholdTest):
                 ThresholdTestResult(
                     test_name=self.params["metric"],
                     passed=results["Passed"].all(),
-                    values=results,
+                    values=results.to_dict(orient="records"),
                 )
             ],
             figures=[
@@ -376,4 +376,4 @@ class RobustnessDiagnosis(ThresholdTest):
         for test_result in self.result.test_results.results:
             assert "values" in test_result.__dict__
             assert "passed" in test_result.__dict__
-            assert isinstance(test_result.values, pd.DataFrame)
+            assert isinstance(test_result.values, list)
