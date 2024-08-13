@@ -132,7 +132,7 @@ def AspectCritique(
         "contexts": contexts_column,
     }
 
-    df = get_renamed_columns(dataset.df, required_columns)
+    df = get_renamed_columns(dataset._df, required_columns)
 
     built_in_aspects = [aspect_map[aspect] for aspect in aspects]
     custom_aspects = (

@@ -109,7 +109,7 @@ def AnswerRelevance(
         "contexts": contexts_column,
     }
 
-    df = get_renamed_columns(dataset.df, required_columns)
+    df = get_renamed_columns(dataset._df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=[answer_relevancy], **get_ragas_config()
