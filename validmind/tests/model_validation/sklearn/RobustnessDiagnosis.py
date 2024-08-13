@@ -376,4 +376,4 @@ class RobustnessDiagnosis(ThresholdTest):
         for test_result in self.result.test_results.results:
             assert "values" in test_result.__dict__
             assert "passed" in test_result.__dict__
-            assert isinstance(test_result.values, dict)
+            assert isinstance(test_result.values, list)
