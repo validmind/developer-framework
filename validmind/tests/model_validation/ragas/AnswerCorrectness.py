@@ -105,7 +105,7 @@ def AnswerCorrectness(
         "ground_truth": ground_truth_column,
     }
 
-    df = get_renamed_columns(dataset.df, required_columns)
+    df = get_renamed_columns(dataset._df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=[answer_correctness], **get_ragas_config()

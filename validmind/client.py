@@ -240,6 +240,11 @@ def init_model(
         vm_model = class_obj(
             pipeline=model,
             input_id=input_id,
+            attributes=(
+                ModelAttributes.from_dict(attributes)
+                if attributes
+                else ModelAttributes()
+            ),
         )
         # TODO: Add metadata for pipeline model
         metadata = get_model_info(vm_model)
@@ -248,6 +253,7 @@ def init_model(
             input_id=input_id,
             model=model,  # Trained model instance
             predict_fn=predict_fn,
+            attributes=ModelAttributes.from_dict(attributes) if attributes else None,
             **kwargs,
         )
         metadata = get_model_info(vm_model)
