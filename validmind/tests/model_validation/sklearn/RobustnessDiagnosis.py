@@ -14,6 +14,7 @@ import seaborn as sns
 from sklearn import metrics
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -25,7 +26,10 @@ from validmind.vm_models import (
     VMModel,
 )
 
+logger = get_logger(__name__)
+
 DEFAULT_DECAY_THRESHOLD = 0.05
+DEFAULT_STD_DEV_LIST = [0.1, 0.2, 0.3, 0.4, 0.5]
 DEFAULT_CLASSIFICATION_METRIC = "auc"
 DEFAULT_REGRESSION_METRIC = "mse"
 PERFORMANCE_METRICS = {
@@ -189,14 +193,27 @@ def robustness_diagnosis(
     model: VMModel,
     datasets: List[VMDataset],
     metric: str = None,
-    scaling_factor_std_dev_list: List[float] = None,
-    performance_decay_threshold: float = None,
+    scaling_factor_std_dev_list: List[float] = DEFAULT_STD_DEV_LIST,
+    performance_decay_threshold: float = DEFAULT_DECAY_THRESHOLD,
 ):
-    metric = metric or (
-        DEFAULT_CLASSIFICATION_METRIC
-        if datasets[0].probability_column(model)
-        else DEFAULT_REGRESSION_METRIC
-    )
+    if not metric:
+        metric = (
+            DEFAULT_CLASSIFICATION_METRIC
+            if datasets[0].probability_column(model)
+            else DEFAULT_REGRESSION_METRIC
+        )
+        logger.info(f"Using default metric ({metric.upper()}) for robustness diagnosis")
+
+    if id(scaling_factor_std_dev_list) == id(DEFAULT_STD_DEV_LIST):
+        logger.info(
+            f"Using default scaling factors for the standard deviation of the noise: {DEFAULT_STD_DEV_LIST}"
+        )
+
+    if id(performance_decay_threshold) == id(DEFAULT_DECAY_THRESHOLD):
+        logger.info(
+            f"Using default performance decay threshold of {DEFAULT_DECAY_THRESHOLD}"
+        )
+
     results = [{} for _ in range(len(datasets))]
 
     # add baseline results (no perturbation)
@@ -300,7 +317,7 @@ class RobustnessDiagnosis(ThresholdTest):
     required_inputs = ["model", "datasets"]
     default_params = {
         "metric": None,
-        "scaling_factor_std_dev_list": [0.1, 0.2, 0.3, 0.4, 0.5],
+        "scaling_factor_std_dev_list": DEFAULT_STD_DEV_LIST,
         "performance_decay_threshold": DEFAULT_DECAY_THRESHOLD,
     }
     tasks = ["classification", "regression"]
