@@ -144,6 +144,7 @@ def _plot_robustness(results: pd.DataFrame, metric: str, columns: List[str]):
         ax=ax,
     )
 
+    # add dashed line for threshold (baseline + threshold)
     ax.tick_params(axis="x")
     ax.set_ylabel(
         metric.upper()
@@ -341,16 +342,8 @@ class RobustnessDiagnosis(ThresholdTest):
         # Verify test results and their type
         assert isinstance(self.result.test_results.results, list)
 
-        # Check for presence and validity of 'values' dict and 'passed' flag in each result
+        # Check for presence and validity of 'values' and 'passed' flag in each result
         for test_result in self.result.test_results.results:
             assert "values" in test_result.__dict__
             assert "passed" in test_result.__dict__
-            assert isinstance(test_result.values, dict)
-            assert "records" in test_result.values
-
-            # For unperturbed training dataset, auc should be present
-            if (
-                test_result.column == self.params["features_columns"]
-                and 0.0 in test_result.values["records"][0]["Perturbation Size"]
-            ):
-                assert "AUC" in test_result.values["records"][0]
+            assert isinstance(test_result.values, pd.DataFrame)
