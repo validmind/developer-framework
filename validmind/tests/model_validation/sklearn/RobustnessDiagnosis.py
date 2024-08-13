@@ -145,7 +145,16 @@ def _plot_robustness(results: pd.DataFrame, metric: str, columns: List[str]):
     )
 
     ax.tick_params(axis="x")
-    ax.set_ylabel(metric.upper(), weight="bold", fontsize=18)
+    ax.set_ylabel(
+        metric.upper()
+        + (
+            " (lower is better)"
+            if PERFORMANCE_METRICS[metric]["is_lower_better"]
+            else " (higher is better)"
+        ),
+        weight="bold",
+        fontsize=18,
+    )
     ax.legend(fontsize=18)
     ax.set_xlabel(
         "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
