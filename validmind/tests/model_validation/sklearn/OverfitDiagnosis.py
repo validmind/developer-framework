@@ -129,20 +129,13 @@ def _compute_metrics(
     if is_classification and metric == "auc":
         # if only one class is present in the data, return 0
         if len(np.unique(y_true)) == 1:
-            results[metric].append(0)
-            return
+            return results[metric].append(0)
 
-        score = metric_func(y_true, df_region[prob_column].values)
+        return results[metric].append(
+            metric_func(y_true, df_region[prob_column].values)
+        )
 
-    # All other classification metrics
-    elif is_classification:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    # Regression metrics
-    else:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    results[metric].append(score)
+    return results[metric].append(metric_func(y_true, df_region[pred_column].values))
 
 
 def _plot_overfit_regions(
@@ -225,7 +218,7 @@ def overfit_diagnosis(  # noqa: C901
     is_classification = bool(datasets[0].probability_column(model))
 
     # Set default metric if not provided
-    if metric is None:
+    if not metric:
         metric = (
             DEFAULT_CLASSIFICATION_METRIC
             if is_classification
@@ -237,19 +230,6 @@ def overfit_diagnosis(  # noqa: C901
 
     if id(cut_off_threshold) == id(DEFAULT_THRESHOLD):
         logger.info("Using default cut-off threshold of 0.04")
-
-    metric = metric.lower()
-    try:
-        _metric = PERFORMANCE_METRICS[metric.lower()]
-    except KeyError:
-        raise ValueError(
-            f"Invalid metric. Choose from: {', '.join(PERFORMANCE_METRICS.keys())}"
-        )
-
-    if is_classification and not _metric["is_classification"]:
-        raise ValueError(f"Cannot use regression metric ({metric}) for classification.")
-    elif not is_classification and _metric["is_classification"]:
-        raise ValueError(f"Cannot use classification metric ({metric}) for regression.")
 
     train_df = datasets[0].df
     test_df = datasets[1].df
