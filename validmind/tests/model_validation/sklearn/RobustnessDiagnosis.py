@@ -127,9 +127,12 @@ def _combine_results(results: List[dict]):
     return pd.DataFrame(final_results)
 
 
-def _plot_robustness(results: pd.DataFrame, metric: str, columns: List[str]):
+def _plot_robustness(
+    results: pd.DataFrame, metric: str, threshold: float, columns: List[str]
+):
     fig, ax = plt.subplots()
 
+    pallete = sns.color_palette("muted", len(results["Dataset"].unique()))
     sns.lineplot(
         data=results,
         x="Perturbation Size",
@@ -140,22 +143,29 @@ def _plot_robustness(results: pd.DataFrame, metric: str, columns: List[str]):
         markers=True,
         markersize=10,
         dashes=False,
-        palette=["red", "blue"],
+        palette=pallete,
         ax=ax,
     )
 
-    # add dashed line for threshold (baseline + threshold)
+    if PERFORMANCE_METRICS[metric]["is_lower_better"]:
+        y_label = f"{metric.upper()} (lower is better)"
+    else:
+        threshold = -threshold
+        y_label = f"{metric.upper()} (higher is better)"
+
+    # add dotted threshold line
+    for i in range(len(results["Dataset"].unique())):
+        baseline = results[results["Dataset"] == results["Dataset"].unique()[i]][
+            metric.upper()
+        ].iloc[0]
+        ax.axhline(
+            y=baseline + threshold,
+            color=pallete[i],
+            linestyle="dotted",
+        )
+
     ax.tick_params(axis="x")
-    ax.set_ylabel(
-        metric.upper()
-        + (
-            " (lower is better)"
-            if PERFORMANCE_METRICS[metric]["is_lower_better"]
-            else " (higher is better)"
-        ),
-        weight="bold",
-        fontsize=18,
-    )
+    ax.set_ylabel(y_label, weight="bold", fontsize=18)
     ax.legend(fontsize=18)
     ax.set_xlabel(
         "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
@@ -236,7 +246,10 @@ def robustness_diagnosis(
 
     results_df = _combine_results(results)
     fig = _plot_robustness(
-        results=results_df, metric=metric, columns=datasets[0].feature_columns_numeric
+        results=results_df,
+        metric=metric,
+        threshold=performance_decay_threshold,
+        columns=datasets[0].feature_columns_numeric,
     )
 
     # rename perturbation size for baseline
