@@ -342,7 +342,7 @@ class RobustnessDiagnosis(ThresholdTest):
                 ThresholdTestResult(
                     test_name=self.params["metric"],
                     passed=results["Passed"].all(),
-                    values=results,
+                    values=results.to_dict(orient="records"),
                 )
             ],
             figures=[
