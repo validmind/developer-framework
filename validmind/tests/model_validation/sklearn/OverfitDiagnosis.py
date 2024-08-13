@@ -35,47 +35,38 @@ DEFAULT_REGRESSION_METRIC = "mse"
 PERFORMANCE_METRICS = {
     "accuracy": {
         "function": metrics.accuracy_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "auc": {
         "function": metrics.roc_auc_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "f1": {
         "function": metrics.f1_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "precision": {
         "function": metrics.precision_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "recall": {
         "function": metrics.recall_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "mse": {
         "function": metrics.mean_squared_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "mae": {
         "function": metrics.mean_absolute_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "r2": {
         "function": metrics.r2_score,
-        "is_classification": False,
         "is_lower_better": False,
     },
     "mape": {
         "function": metrics.mean_absolute_percentage_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
 }
