@@ -32,6 +32,9 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="function" href="#robustness_diagnosis">robustness_diagnosis</a>
+            </li>
+            <li>
                     <a class="class" href="#RobustnessDiagnosis">RobustnessDiagnosis</a>
                             <ul class="memberlist">
                         <li>
@@ -71,6 +74,19 @@
                 
                 
             </section>
+                <section id="robustness_diagnosis">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">robustness_diagnosis</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>,</span><span class="param">	<span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span><span class="p">]</span>,</span><span class="param">	<span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">scaling_factor_std_dev_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>,</span><span class="param">	<span class="n">performance_decay_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#robustness_diagnosis"></a>
+    
+    
+
+                </section>
                 <section id="RobustnessDiagnosis">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -82,52 +98,44 @@
     </div>
     <a class="headerlink" href="#RobustnessDiagnosis"></a>
     
-            <div class="docstring"><p>Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
-performance.</p>
+            <div class="docstring"><p>Evaluate the robustness of a machine learning model to noise</p>
 
-<p><strong>Purpose</strong>:</p>
+<p>Robustness refers to a model's ability to maintain a high level of performance in
+the face of perturbations or changes (particularly noise) added to its input data.
+This test is designed to help gauge how well the model can handle potential real-
+world scenarios where the input data might be incomplete or corrupted.</p>
 
-<p>The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a
-model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
-noise—added to its input data. This test is designed to help gauge how well the model can handle potential
-real-world scenarios where the input data might be incomplete or corrupted.</p>
+<h2 id="test-methodology">Test Methodology</h2>
 
-<p><strong>Test Mechanism</strong>:</p>
+<p>This test is conducted by adding Gaussian noise, proportional to a particular standard
+deviation scale, to numeric input features of the input datasets. The model's
+performance on the perturbed data is then evaluated using a user-defined metric or the
+default metric of AUC for classification tasks and MSE for regression tasks. The results
+are then plotted to visualize the model's performance decay as the perturbation size
+increases.</p>
 
-<p>This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
-input features of both the training and testing datasets. The model performance in the face of these perturbed
-features is then evaluated using the ROC_AUC score. This process is iterated over a range of scale
-factors. The resulting auc trend against the amount of noise introduced is illustrated with a line chart. A
-predetermined threshold determines what level of auc decay due to perturbation is considered acceptable.</p>
+<p>When using this test, it is highly recommended to tailor the performance metric, list
+of scaling factors for the standard deviation of the noise, and the performance decay
+threshold to the specific use case of the model being evaluated.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<p><strong>Inputs</strong>:</p>
 
 <ul>
-<li>Substantial decreases in auc when noise is introduced to feature inputs.</li>
-<li>The decay in auc surpasses the configured threshold, indicating that the model is not robust against input
-noise.</li>
-<li>Instances where one or more elements provided in the features list don't match with the training dataset's
-numerical feature columns.</li>
+<li>model (VMModel): The trained model to be evaluated.</li>
+<li>datasets (List[VMDataset]): A list of datasets to evaluate the model against.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h2 id="parameters">Parameters</h2>
 
 <ul>
-<li>Provides an empirical measure of the model's performance in tackling noise or data perturbations, revealing
-insights into the model's stability.</li>
-<li>Offers flexibility with the ability to choose specific features to perturb and control the level of noise applied.</li>
-<li>Detailed results visualization helps in interpreting the outcome of robustness testing.</li>
-</ul>
-
-<p><strong>Limitations</strong>:</p>
-
-<ul>
-<li>The default threshold for auc decay is set to 0.05, which is unlikely to be optimal for most use cases and
-should be adjusted based on domain expertise to suit the needs of the specific model.</li>
-<li>Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
-analysis of robustness.</li>
-<li>The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
-corruption or incompleteness in real-world scenarios.</li>
+<li>metric (str, optional): The performance metric to be used for evaluation. If not
+provided, the default metric is used based on the task of the model. Default values
+are "auc" for classification tasks and "mse" for regression tasks.</li>
+<li>scaling_factor_std_dev_list (List[float], optional): A list of scaling factors for
+the standard deviation of the noise to be added to the input features. The default
+values are [0.1, 0.2, 0.3, 0.4, 0.5].</li>
+<li>performance_decay_threshold (float, optional): The threshold for the performance
+decay of the model. The default value is 0.05.</li>
 </ul>
 </div>
 
