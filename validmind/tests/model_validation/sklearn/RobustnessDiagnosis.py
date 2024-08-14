@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from operator import add
 from typing import List, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import seaborn as sns
 from sklearn import metrics
 
@@ -134,22 +134,26 @@ def _combine_results(results: List[dict]):
 def _plot_robustness(
     results: pd.DataFrame, metric: str, threshold: float, columns: List[str]
 ):
-    fig, ax = plt.subplots()
+    fig = go.Figure()
 
-    pallete = sns.color_palette("muted", len(results["Dataset"].unique()))
-    sns.lineplot(
-        data=results,
-        x="Perturbation Size",
-        y=metric.upper(),
-        hue="Dataset",
-        style="Dataset",
-        linewidth=3,
-        markers=True,
-        markersize=10,
-        dashes=False,
-        palette=pallete,
-        ax=ax,
-    )
+    datasets = results["Dataset"].unique()
+    pallete = [
+        f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+        for r, g, b in sns.color_palette("husl", len(datasets))
+    ]
+
+    for i, dataset in enumerate(datasets):
+        dataset_results = results[results["Dataset"] == dataset]
+        fig.add_trace(
+            go.Scatter(
+                x=dataset_results["Perturbation Size"],
+                y=dataset_results[metric.upper()],
+                mode="lines+markers",
+                name=dataset,
+                line=dict(width=3, color=pallete[i]),
+                marker=dict(size=10),
+            )
+        )
 
     if PERFORMANCE_METRICS[metric]["is_lower_better"]:
         y_label = f"{metric.upper()} (lower is better)"
@@ -157,32 +161,62 @@ def _plot_robustness(
         threshold = -threshold
         y_label = f"{metric.upper()} (higher is better)"
 
-    # add dotted threshold line
-    for i in range(len(results["Dataset"].unique())):
-        baseline = results[results["Dataset"] == results["Dataset"].unique()[i]][
-            metric.upper()
-        ].iloc[0]
-        ax.axhline(
-            y=baseline + threshold,
-            color=pallete[i],
-            linestyle="dotted",
+    # add threshold lines
+    for i, dataset in enumerate(datasets):
+        baseline = results[results["Dataset"] == dataset][metric.upper()].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=results["Perturbation Size"].unique(),
+                y=[baseline + threshold] * len(results["Perturbation Size"].unique()),
+                mode="lines",
+                name=f"threshold_{dataset}",
+                line=dict(dash="dash", width=2, color=pallete[i]),
+                showlegend=True,
+            )
         )
 
-    ax.tick_params(axis="x")
-    ax.set_ylabel(y_label, weight="bold", fontsize=18)
-    ax.legend(fontsize=18)
-    ax.set_xlabel(
-        "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
-    )
-    ax.set_title(
-        f"Perturbed Features: {', '.join(columns)}",
-        weight="bold",
-        fontsize=20,
-        wrap=True,
-    )
+    columns_lines = [""]
+    for column in columns:
+        # keep adding to the last line in list until character limit (40)
+        if len(columns_lines[-1]) + len(column) < 40:
+            columns_lines[-1] += f"{column}, "
+        else:
+            columns_lines.append(f"{column}, ")
 
-    # prevent the figure from being displayed
-    plt.close("all")
+    fig.update_layout(
+        title=dict(
+            text=(
+                "Robustness Analysis<br><sup>As determined by calculating "
+                f"{metric.upper()} decay in the presence of random gaussian noise</sup>"
+            ),
+            x=0.5,
+            xanchor="center",
+        ),
+        xaxis_title=dict(
+            text="Perturbation Size (X * Standard Deviation)",
+        ),
+        yaxis_title=dict(text=y_label),
+        plot_bgcolor="white",
+        margin=dict(t=60, b=80, r=20, l=60),
+        xaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        yaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        annotations=[
+            go.layout.Annotation(
+                text=f"Perturbed Features:<br><sup>{'<br>'.join(columns_lines)}</sup>",
+                align="left",
+                font=dict(size=14),
+                bordercolor="lightgrey",
+                borderwidth=1,
+                borderpad=4,
+                showarrow=False,
+                x=1.025,
+                xref="paper",
+                xanchor="left",
+                y=-0.15,
+                yref="paper",
+            )
+        ],
+    )
 
     return fig
 
@@ -279,39 +313,39 @@ def robustness_diagnosis(
 
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
-    """Evaluate the robustness of a machine learning model to noise
+    # """Evaluate the robustness of a machine learning model to noise
 
-    Robustness refers to a model's ability to maintain a high level of performance in
-    the face of perturbations or changes (particularly noise) added to its input data.
-    This test is designed to help gauge how well the model can handle potential real-
-    world scenarios where the input data might be incomplete or corrupted.
+    # Robustness refers to a model's ability to maintain a high level of performance in
+    # the face of perturbations or changes (particularly noise) added to its input data.
+    # This test is designed to help gauge how well the model can handle potential real-
+    # world scenarios where the input data might be incomplete or corrupted.
 
-    ## Test Methodology
-    This test is conducted by adding Gaussian noise, proportional to a particular standard
-    deviation scale, to numeric input features of the input datasets. The model's
-    performance on the perturbed data is then evaluated using a user-defined metric or the
-    default metric of AUC for classification tasks and MSE for regression tasks. The results
-    are then plotted to visualize the model's performance decay as the perturbation size
-    increases.
+    # ## Test Methodology
+    # This test is conducted by adding Gaussian noise, proportional to a particular standard
+    # deviation scale, to numeric input features of the input datasets. The model's
+    # performance on the perturbed data is then evaluated using a user-defined metric or the
+    # default metric of AUC for classification tasks and MSE for regression tasks. The results
+    # are then plotted to visualize the model's performance decay as the perturbation size
+    # increases.
 
-    When using this test, it is highly recommended to tailor the performance metric, list
-    of scaling factors for the standard deviation of the noise, and the performance decay
-    threshold to the specific use case of the model being evaluated.
+    # When using this test, it is highly recommended to tailor the performance metric, list
+    # of scaling factors for the standard deviation of the noise, and the performance decay
+    # threshold to the specific use case of the model being evaluated.
 
-    **Inputs**:
-    - model (VMModel): The trained model to be evaluated.
-    - datasets (List[VMDataset]): A list of datasets to evaluate the model against.
+    # **Inputs**:
+    # - model (VMModel): The trained model to be evaluated.
+    # - datasets (List[VMDataset]): A list of datasets to evaluate the model against.
 
-    ## Parameters
-    - metric (str, optional): The performance metric to be used for evaluation. If not
-        provided, the default metric is used based on the task of the model. Default values
-        are "auc" for classification tasks and "mse" for regression tasks.
-    - scaling_factor_std_dev_list (List[float], optional): A list of scaling factors for
-        the standard deviation of the noise to be added to the input features. The default
-        values are [0.1, 0.2, 0.3, 0.4, 0.5].
-    - performance_decay_threshold (float, optional): The threshold for the performance
-        decay of the model. The default value is 0.05.
-    """
+    # ## Parameters
+    # - metric (str, optional): The performance metric to be used for evaluation. If not
+    #     provided, the default metric is used based on the task of the model. Default values
+    #     are "auc" for classification tasks and "mse" for regression tasks.
+    # - scaling_factor_std_dev_list (List[float], optional): A list of scaling factors for
+    #     the standard deviation of the noise to be added to the input features. The default
+    #     values are [0.1, 0.2, 0.3, 0.4, 0.5].
+    # - performance_decay_threshold (float, optional): The threshold for the performance
+    #     decay of the model. The default value is 0.05.
+    # """
 
     name = "robustness"
     required_inputs = ["model", "datasets"]
