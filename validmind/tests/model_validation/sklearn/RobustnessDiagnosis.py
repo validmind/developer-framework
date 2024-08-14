@@ -132,7 +132,7 @@ def _combine_results(results: List[dict]):
 
 
 def _plot_robustness(
-    results: pd.DataFrame, metric: str, threshold: float, columns: List[str]
+    results: pd.DataFrame, metric: str, threshold: float, columns: List[str], model: str
 ):
     fig = go.Figure()
 
@@ -186,9 +186,10 @@ def _plot_robustness(
     fig.update_layout(
         title=dict(
             text=(
-                "Robustness Analysis<br><sup>As determined by calculating "
+                f"Model Robustness for '{model}'<br><sup>As determined by calculating "
                 f"{metric.upper()} decay in the presence of random gaussian noise</sup>"
             ),
+            font=dict(size=20),
             x=0.5,
             xanchor="center",
         ),
@@ -301,6 +302,7 @@ def robustness_diagnosis(
         metric=metric,
         threshold=performance_decay_threshold,
         columns=datasets[0].feature_columns_numeric,
+        model=model.input_id,
     )
 
     # rename perturbation size for baseline
