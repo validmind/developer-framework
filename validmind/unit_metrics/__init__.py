@@ -152,7 +152,7 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
     """Run a single metric and cache the results
 
     Args:
-        metric_id (str): The metric id (e.g. 'validmind.unit_metrics.classification.sklearn.F1')
+        metric_id (str): The metric id (e.g. 'validmind.unit_metrics.classification.F1')
         inputs (dict): A dictionary of the metric inputs
         params (dict): A dictionary of the metric parameters
         show (bool): Whether to display the results
