@@ -12,7 +12,6 @@ from validmind import tags, tasks
 @tasks("classification")
 @tags("classification")
 def ROC_AUC(model, dataset, **kwargs):
-
     y_true = dataset.y
 
     if len(unique(y_true)) > 2:

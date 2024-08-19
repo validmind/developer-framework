@@ -63,17 +63,61 @@ async def update_metadata(content_id: str, text: str, _json: Union[Dict, List] =
 
 
 def plot_figures(figures: List[Figure]) -> None:
-    """
-    Plot figures to a ipywidgets GridBox
-    """
-
+    """Plot figures to a ipywidgets GridBox"""
     plots = [figure.to_widget() for figure in figures]
-
     num_columns = 2 if len(figures) > 1 else 1
+
     return GridBox(
         plots,
         layout=Layout(grid_template_columns=f"repeat({num_columns}, 1fr)"),
     )
+
+
+def _summary_tables_to_widget(summary: ResultSummary):
+    """Convert summary (list of json tables) into ipywidgets"""
+    widgets = []
+
+    for table in summary.results:
+        if table.metadata and table.metadata.title:
+            widgets.append(HTML(f"<h4>{table.metadata.title}</h4>"))
+
+        df_html = (
+            pd.DataFrame(table.data)
+            .style.format(precision=4)
+            .hide(axis="index")
+            .set_table_styles(
+                [
+                    {
+                        "selector": "",
+                        "props": [("width", "100%")],
+                    },
+                    {
+                        "selector": "th",
+                        "props": [("text-align", "left")],
+                    },
+                    {
+                        "selector": "tbody tr:nth-child(even)",
+                        "props": [("background-color", "#FFFFFF")],
+                    },
+                    {
+                        "selector": "tbody tr:nth-child(odd)",
+                        "props": [("background-color", "#F5F5F5")],
+                    },
+                    {
+                        "selector": "td, th",
+                        "props": [
+                            ("padding-left", "5px"),
+                            ("padding-right", "5px"),
+                        ],
+                    },
+                ]
+            )
+            .set_properties(**{"text-align": "left"})
+            .to_html(escape=False)
+        )
+        widgets.append(HTML(df_html))
+
+    return widgets
 
 
 @dataclass
@@ -104,53 +148,6 @@ class ResultWrapper(ABC):
             self.output_template = output_template
 
         return self.to_widget()
-
-    def _summary_tables_to_widget(self, summary: ResultSummary):
-        """
-        Create an ipywdiget representation of the summary tables
-        """
-        tables = []
-        for table in summary.results:
-            # Explore advanced styling
-            summary_table = (
-                pd.DataFrame(table.data)
-                .style.format(precision=4)
-                .hide(axis="index")
-                .set_table_styles(
-                    [
-                        {
-                            "selector": "",
-                            "props": [("width", "100%")],
-                        },
-                        {
-                            "selector": "th",
-                            "props": [("text-align", "left")],
-                        },
-                        {
-                            "selector": "tbody tr:nth-child(even)",
-                            "props": [("background-color", "#FFFFFF")],
-                        },
-                        {
-                            "selector": "tbody tr:nth-child(odd)",
-                            "props": [("background-color", "#F5F5F5")],
-                        },
-                        {
-                            "selector": "td, th",
-                            "props": [
-                                ("padding-left", "5px"),
-                                ("padding-right", "5px"),
-                            ],
-                        },
-                    ]
-                )
-                .set_properties(**{"text-align": "left"})
-                .to_html(escape=False)
-            )  # table.data is an orient=records dump
-
-            if table.metadata and table.metadata.title:
-                tables.append(HTML(value=f"<h3>{table.metadata.title}</h3>"))
-            tables.append(HTML(value=summary_table))
-        return tables
 
     def _validate_section_id_for_block(self, section_id: str, position: int = None):
         """
@@ -244,9 +241,11 @@ class MetricResultWrapper(ResultWrapper):
     """
 
     name: str = "Metric"
-    figures: Optional[List[Figure]] = None
+    scalar: Optional[Union[int, float]] = None
     metric: Optional[MetricResult] = None
-    inputs: List[str] = None
+    figures: Optional[List[Figure]] = None
+    inputs: List[str] = None  # List of input ids
+    params: Dict = None
 
     def __repr__(self) -> str:
         if self.metric:
@@ -254,18 +253,12 @@ class MetricResultWrapper(ResultWrapper):
         else:
             return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
 
-    def __str__(self) -> str:
-        if self.metric:
-            return f'{self.__class__.__name__}(result_id="{self.result_id}", metric, figures)'
-        else:
-            return f"{self.__class__.__name__}(result_id={self.result_id}, figures)"
-
     def to_widget(self):
         if self.metric and self.metric.key == "dataset_description":
             return ""
 
         vbox_children = [
-            HTML(value=f"<h1>{test_id_to_name(self.result_id)}</h1>"),
+            HTML(f"<h1>{test_id_to_name(self.result_id)}</h1>"),
         ]
 
         if self.result_metadata:
@@ -274,69 +267,33 @@ class MetricResultWrapper(ResultWrapper):
                 metric_description = metric_description.get_description()
                 self.result_metadata[0]["text"] = metric_description
 
-            vbox_children.append(HTML(value=metric_description))
+            vbox_children.append(HTML(metric_description))
+
+        if self.scalar is not None:
+            vbox_children.append(
+                HTML(
+                    "<h3>Unit Metrics</h3>"
+                    f"<p>`<code>{self.result_id}</code>`: <i>{self.scalar}</i></p>"
+                )
+            )
 
         if self.metric:
+            vbox_children.append(HTML(f"<h3>Tables</h3>"))
             if self.output_template:
-                rendered_output = OutputTemplate(self.output_template).render(
-                    value=self.metric.value
+                vbox_children.append(
+                    HTML(
+                        OutputTemplate(self.output_template).render(
+                            value=self.metric.value
+                        )
+                    )
                 )
-                vbox_children.append(HTML(rendered_output))
             elif self.metric.summary:
-                tables = self._summary_tables_to_widget(self.metric.summary)
-                vbox_children.extend(tables)
+                vbox_children.extend(_summary_tables_to_widget(self.metric.summary))
 
         if self.figures:
-            vbox_children.append(HTML(value="<h3>Plots</h3>"))
+            vbox_children.append(HTML("<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
-
-        vbox_children.append(
-            HTML(
-                value="""
-        <style>
-            .metric-result {
-                background-color: #F5F5F5;
-                border: 1px solid #e0e0e0;
-                border-radius: 4px;
-                padding: 10px;
-                margin: 10px 0;
-            }
-            .metric-result-body {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                gap: 10px;
-            }
-            .metric-body-column {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                width: 33%;
-            }
-            .metric-body-column-title {
-                font-size: 16px;
-                font-weight: 600;
-            }
-            .metric-value {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                margin-top: 15px;
-            }
-            .metric-value-title {
-                font-size: 16px;
-                font-weight: 600;
-            }
-            .metric-value-value {
-                font-size: 14px;
-                font-weight: 500;
-                margin-top: 10px;
-            }
-        </style>
-        """
-            )
-        )
 
         return VBox(vbox_children)
 
@@ -378,6 +335,17 @@ class MetricResultWrapper(ResultWrapper):
         self, section_id: str = None, position: int = None, unsafe=False
     ):
         tasks = []  # collect tasks to run in parallel (async)
+
+        if self.scalar is not None:
+            # scalars (unit metrics) are logged as key-value pairs associated with the inventory model
+            tasks.append(
+                api_client.log_metric(
+                    key=self.result_id,
+                    value=self.scalar,
+                    inputs=self.inputs,
+                    params=self.params,
+                )
+            )
 
         if self.metric:
             if self.metric.summary and not unsafe:
@@ -433,24 +401,13 @@ class ThresholdTestResultWrapper(ResultWrapper):
         else:
             return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
 
-    def __str__(self) -> str:
-        if self.test_results:
-            return (
-                f'{self.__class__.__name__}(result_id="{self.result_id}", test_results)'
-            )
-        else:
-            return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
-
     def to_widget(self):
         vbox_children = []
         description_html = []
 
-        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
-
-        test_title = test_id_to_name(self.test_results.test_name)
         description_html.append(
             f"""
-            <h1>{test_title} {"✅" if self.test_results.passed else "❌"}</h1>
+            <h1>{test_id_to_name(self.test_results.test_name)} {"✅" if self.test_results.passed else "❌"}</h1>
             """
         )
 
@@ -462,6 +419,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
             description_html.append(metric_description)
 
+        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
         description_html.append(
             f"""
                 <h4>Test Parameters</h4>
@@ -469,14 +427,14 @@ class ThresholdTestResultWrapper(ResultWrapper):
             """
         )
 
-        vbox_children.append(HTML(value="".join(description_html)))
+        vbox_children.append(HTML("".join(description_html)))
 
         if self.test_results.summary:
-            tables = self._summary_tables_to_widget(self.test_results.summary)
-            vbox_children.extend(tables)
+            vbox_children.append(HTML("<h3>Tables</h3>"))
+            vbox_children.extend(_summary_tables_to_widget(self.test_results.summary))
 
         if self.figures:
-            vbox_children.append(HTML(value="<h3>Plots</h3>"))
+            vbox_children.append(HTML("<h3>Plots</h3>"))
             plot_widgets = plot_figures(self.figures)
             vbox_children.append(plot_widgets)
 
@@ -491,6 +449,7 @@ class ThresholdTestResultWrapper(ResultWrapper):
 
         if self.figures:
             tasks.append(api_client.log_figures(self.figures))
+
         if hasattr(self, "result_metadata") and self.result_metadata:
             description = self.result_metadata[0].get("text", "")
             if isinstance(description, DescriptionFuture):

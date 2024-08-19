@@ -9,6 +9,7 @@
 
 import inspect
 import os
+from typing import Any, Dict, List, Tuple, Union
 from uuid import uuid4
 
 import pandas as pd
@@ -59,7 +60,13 @@ def _inspect_signature(test_func: callable):
 
 
 def _build_result(  # noqa: C901
-    results, test_id, description, output_template, inputs, generate_description=True
+    results: Union[Any, Tuple[Any, ...]],
+    test_id: str,
+    description: str,
+    inputs: List[str],
+    params: Dict[str, Any],
+    output_template: str = None,
+    generate_description: bool = True,
 ):
     ref_id = str(uuid4())
     figure_metadata = {
@@ -70,14 +77,17 @@ def _build_result(  # noqa: C901
 
     tables = []
     figures = []
+    scalars = []
 
-    def process_item(item):
+    def process_result_item(item):
         # TOOD: build out a more robust/extensible system for this
         # TODO: custom type handlers would be really cool
 
-        # unit metrics (scalar values) - show in a simple table for now
-        if isinstance(item, int) or isinstance(item, float) or isinstance(item, str):
-            tables.append(ResultTable(data=[{test_id.split(".")[-1]: item}]))
+        # unit metrics (scalar values) - for now only one per test
+        if isinstance(item, int) or isinstance(item, float):
+            if scalars:
+                raise ValueError("Only one unit metric may be returned per test.")
+            scalars.append(item)
 
         # plots
         elif isinstance(item, Figure):
@@ -114,46 +124,55 @@ def _build_result(  # noqa: C901
     # if the results are a tuple, process each item as a separate result
     if isinstance(results, tuple):
         for item in results:
-            process_item(item)
+            process_result_item(item)
     else:
-        process_item(results)
-
-    result_summary = ResultSummary(results=tables)
+        process_result_item(results)
 
     return MetricResultWrapper(
         result_id=test_id,
-        metric=MetricResult(
-            key=test_id,
-            ref_id=ref_id,
-            value="Empty",
-            summary=result_summary,
+        scalar=scalars[0] if scalars else None,
+        metric=(
+            MetricResult(
+                key=test_id,
+                ref_id=ref_id,
+                value="Empty",
+                summary=ResultSummary(results=tables),
+            )
+            if tables
+            else None
         ),
         figures=figures,
-        result_metadata=[
-            get_description_metadata(
-                test_id=test_id,
-                default_description=description,
-                summary=result_summary.serialize(),
-                figures=figures,
-                should_generate=generate_description,
-            )
-        ],
+        result_metadata=(
+            [
+                get_description_metadata(
+                    test_id=test_id,
+                    default_description=description,
+                    summary=ResultSummary(results=tables).serialize(),
+                    figures=figures,
+                    should_generate=generate_description,
+                )
+            ]  # TODO: make this work for non-tabular results
+            if tables
+            else None
+        ),
         inputs=inputs,
+        params=params,
         output_template=output_template,
     )
 
 
-def _get_run_method(func, inputs, params):
+def _get_run_method(func, func_inputs, func_params):
     def run(self: Metric):
         input_kwargs = {}
-        for k in inputs.keys():
+        for key in func_inputs.keys():
             try:
-                input_kwargs[k] = getattr(self.inputs, k)
+                input_kwargs[key] = getattr(self.inputs, key)
             except AttributeError:
-                raise MissingRequiredTestInputError(f"Missing required input: {k}.")
+                raise MissingRequiredTestInputError(f"Missing required input: {key}.")
 
         param_kwargs = {
-            k: self.params.get(k, params[k]["default"]) for k in params.keys()
+            key: self.params.get(key, func_params[key]["default"])
+            for key in func_params.keys()
         }
 
         raw_results = func(**input_kwargs, **param_kwargs)
@@ -162,8 +181,9 @@ def _get_run_method(func, inputs, params):
             results=raw_results,
             test_id=self.test_id,
             description=inspect.getdoc(self),
+            inputs=input_kwargs,
+            params=param_kwargs,
             output_template=self.output_template,
-            inputs=self.get_accessed_inputs(),
             generate_description=self.generate_description,
         )
 
