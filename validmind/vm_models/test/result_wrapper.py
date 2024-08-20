@@ -273,7 +273,9 @@ class MetricResultWrapper(ResultWrapper):
             vbox_children.append(
                 HTML(
                     "<h3>Unit Metrics</h3>"
-                    f"<p>`<code>{self.result_id}</code>`: <i>{self.scalar}</i></p>"
+                    f"<p>{test_id_to_name(self.result_id)} "
+                    f"(<i>{self.result_id}</i>): "
+                    f"<code>{self.scalar}</code></p>"
                 )
             )
 
@@ -339,7 +341,7 @@ class MetricResultWrapper(ResultWrapper):
         if self.scalar is not None:
             # scalars (unit metrics) are logged as key-value pairs associated with the inventory model
             tasks.append(
-                api_client.log_metric(
+                api_client.alog_metric(
                     key=self.result_id,
                     value=self.scalar,
                     inputs=self.inputs,
@@ -379,7 +381,7 @@ class MetricResultWrapper(ResultWrapper):
                     )
                 )
 
-        await asyncio.gather(*tasks)
+        return await asyncio.gather(*tasks)
 
 
 @dataclass

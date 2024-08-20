@@ -555,11 +555,46 @@ def log_input(input_id: str, type: str, metadata: Dict[str, Any]) -> Dict[str, A
         raise e
 
 
+async def alog_metric(
+    key: str,
+    value: float,
+    inputs: Optional[List[str]] = None,
+    params: Optional[Dict[str, Any]] = None,
+    recorded_at: Optional[str] = None,
+) -> None:
+    """See log_metric for details"""
+    if not key or not isinstance(key, str):
+        raise ValueError("`key` must be a non-empty string")
+
+    if not value or not isinstance(value, (int, float)):
+        raise ValueError("`value` must be a scalar (int or float)")
+
+    try:
+        return await _post(
+            "log_unit_metric",
+            data=json.dumps(
+                {
+                    "key": key,
+                    "value": value,
+                    "inputs": inputs or [],
+                    "params": params or {},
+                    "recorded_at": recorded_at,
+                },
+                cls=NumpyEncoder,
+                allow_nan=False,
+            ),
+        )
+    except Exception as e:
+        logger.error("Error logging metric to ValidMind API")
+        raise e
+
+
 def log_metric(
     key: str,
     value: float,
     inputs: Optional[List[str]] = None,
     params: Optional[Dict[str, Any]] = None,
+    recorded_at: Optional[str] = None,
 ) -> None:
     """Logs a unit metric
 
@@ -574,31 +609,10 @@ def log_metric(
         value (float): The metric value
         inputs (list, optional): A list of input IDs that were used to compute the metric.
         params (dict, optional): Dictionary of parameters used to compute the metric.
+        recorded_at (str, optional): The timestamp of the metric. Server will use
+            current time if not provided.
     """
-    if not key or not isinstance(key, str):
-        raise ValueError("`key` must be a non-empty string")
-
-    if not value or not isinstance(value, (int, float)):
-        raise ValueError("`value` must be a scalar (int or float)")
-
-    try:
-        run_async(
-            _post,
-            "log_unit_metric",
-            data=json.dumps(
-                {
-                    "key": key,
-                    "value": value,
-                    "inputs": inputs or [],
-                    "params": params or {},
-                },
-                cls=NumpyEncoder,
-                allow_nan=False,
-            ),
-        )
-    except Exception as e:
-        logger.error("Error logging metric to ValidMind API")
-        raise e
+    run_async(alog_metric, key, value, inputs, params, recorded_at)
 
 
 def start_run() -> str:

@@ -2,8 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import glob
 import hashlib
 import json
+import os
 from importlib import import_module
 
 from validmind.input_registry import input_registry
@@ -43,6 +45,23 @@ def _get_metric_cache_key(metric_id, inputs, params):
         )
 
     return hashlib.md5("_".join(cache_elements).encode()).hexdigest()
+
+
+def list_metrics():
+    """List all available metrics
+
+    Returns:
+        list: A list of metric ids
+    """
+    # current directory of this file is the __init__.py file in the validmind/unit_metrics directory
+    # glob for all metrics in the unit_metrics directory (indicated by capitalized python files)
+    # recursive since we want to include subdirectories
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+    return [
+        f"{__name__}.{os.path.relpath(metric, curr_dir).replace('/', '.')[:-3]}"
+        for metric in glob.glob(f"{curr_dir}/**/*.py", recursive=True)
+        if os.path.isfile(metric) and os.path.basename(metric)[0].isupper()
+    ]
 
 
 def load_metric(metric_id):
