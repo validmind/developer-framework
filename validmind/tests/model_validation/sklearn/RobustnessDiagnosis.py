@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from operator import add
 from typing import List, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import seaborn as sns
 from sklearn import metrics
 
@@ -132,24 +132,28 @@ def _combine_results(results: List[dict]):
 
 
 def _plot_robustness(
-    results: pd.DataFrame, metric: str, threshold: float, columns: List[str]
+    results: pd.DataFrame, metric: str, threshold: float, columns: List[str], model: str
 ):
-    fig, ax = plt.subplots()
+    fig = go.Figure()
 
-    pallete = sns.color_palette("muted", len(results["Dataset"].unique()))
-    sns.lineplot(
-        data=results,
-        x="Perturbation Size",
-        y=metric.upper(),
-        hue="Dataset",
-        style="Dataset",
-        linewidth=3,
-        markers=True,
-        markersize=10,
-        dashes=False,
-        palette=pallete,
-        ax=ax,
-    )
+    datasets = results["Dataset"].unique()
+    pallete = [
+        f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+        for r, g, b in sns.color_palette("husl", len(datasets))
+    ]
+
+    for i, dataset in enumerate(datasets):
+        dataset_results = results[results["Dataset"] == dataset]
+        fig.add_trace(
+            go.Scatter(
+                x=dataset_results["Perturbation Size"],
+                y=dataset_results[metric.upper()],
+                mode="lines+markers",
+                name=dataset,
+                line=dict(width=3, color=pallete[i]),
+                marker=dict(size=10),
+            )
+        )
 
     if PERFORMANCE_METRICS[metric]["is_lower_better"]:
         y_label = f"{metric.upper()} (lower is better)"
@@ -157,32 +161,63 @@ def _plot_robustness(
         threshold = -threshold
         y_label = f"{metric.upper()} (higher is better)"
 
-    # add dotted threshold line
-    for i in range(len(results["Dataset"].unique())):
-        baseline = results[results["Dataset"] == results["Dataset"].unique()[i]][
-            metric.upper()
-        ].iloc[0]
-        ax.axhline(
-            y=baseline + threshold,
-            color=pallete[i],
-            linestyle="dotted",
+    # add threshold lines
+    for i, dataset in enumerate(datasets):
+        baseline = results[results["Dataset"] == dataset][metric.upper()].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=results["Perturbation Size"].unique(),
+                y=[baseline + threshold] * len(results["Perturbation Size"].unique()),
+                mode="lines",
+                name=f"threshold_{dataset}",
+                line=dict(dash="dash", width=2, color=pallete[i]),
+                showlegend=True,
+            )
         )
 
-    ax.tick_params(axis="x")
-    ax.set_ylabel(y_label, weight="bold", fontsize=18)
-    ax.legend(fontsize=18)
-    ax.set_xlabel(
-        "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
-    )
-    ax.set_title(
-        f"Perturbed Features: {', '.join(columns)}",
-        weight="bold",
-        fontsize=20,
-        wrap=True,
-    )
+    columns_lines = [""]
+    for column in columns:
+        # keep adding to the last line in list until character limit (40)
+        if len(columns_lines[-1]) + len(column) < 40:
+            columns_lines[-1] += f"{column}, "
+        else:
+            columns_lines.append(f"{column}, ")
 
-    # prevent the figure from being displayed
-    plt.close("all")
+    fig.update_layout(
+        title=dict(
+            text=(
+                f"Model Robustness for '{model}'<br><sup>As determined by calculating "
+                f"{metric.upper()} decay in the presence of random gaussian noise</sup>"
+            ),
+            font=dict(size=20),
+            x=0.5,
+            xanchor="center",
+        ),
+        xaxis_title=dict(
+            text="Perturbation Size (X * Standard Deviation)",
+        ),
+        yaxis_title=dict(text=y_label),
+        plot_bgcolor="white",
+        margin=dict(t=60, b=80, r=20, l=60),
+        xaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        yaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        annotations=[
+            go.layout.Annotation(
+                text=f"Perturbed Features:<br><sup>{'<br>'.join(columns_lines)}</sup>",
+                align="left",
+                font=dict(size=14),
+                bordercolor="lightgrey",
+                borderwidth=1,
+                borderpad=4,
+                showarrow=False,
+                x=1.025,
+                xref="paper",
+                xanchor="left",
+                y=-0.15,
+                yref="paper",
+            )
+        ],
+    )
 
     return fig
 
@@ -267,6 +302,7 @@ def robustness_diagnosis(
         metric=metric,
         threshold=performance_decay_threshold,
         columns=datasets[0].feature_columns_numeric,
+        model=model.input_id,
     )
 
     # rename perturbation size for baseline
