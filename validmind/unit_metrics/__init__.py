@@ -10,7 +10,6 @@ from importlib import import_module
 
 from validmind.input_registry import input_registry
 from validmind.tests.decorator import _build_result, _inspect_signature
-from validmind.utils import test_id_to_name
 
 unit_metric_results_cache = {}
 

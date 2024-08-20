@@ -280,7 +280,7 @@ class MetricResultWrapper(ResultWrapper):
             )
 
         if self.metric:
-            vbox_children.append(HTML(f"<h3>Tables</h3>"))
+            vbox_children.append(HTML("<h3>Tables</h3>"))
             if self.output_template:
                 vbox_children.append(
                     HTML(
