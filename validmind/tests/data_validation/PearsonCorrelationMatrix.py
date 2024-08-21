@@ -2,15 +2,15 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
 
 import plotly.graph_objects as go
 
-from validmind.vm_models import Figure, Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class PearsonCorrelationMatrix(Metric):
+@tags("tabular_data", "numerical_data", "correlation")
+@tasks("classification", "regression")
+def PearsonCorrelationMatrix(dataset):
     """
     Evaluates linear dependency between numerical variables in a dataset via a Pearson Correlation coefficient heat map.
 
@@ -48,57 +48,41 @@ class PearsonCorrelationMatrix(Metric):
     missed if they have a correlation coefficient less than this value.
     """
 
-    name = "pearson_correlation_matrix"
-    required_inputs = ["dataset"]
-    tasks = ["classification", "regression"]
-    tags = ["tabular_data", "numerical_data", "correlation"]
+    corr_matrix = dataset.df.corr(numeric_only=True)
+    heatmap = go.Heatmap(
+        z=corr_matrix.values,
+        x=list(corr_matrix.columns),
+        y=list(corr_matrix.index),
+        colorscale="rdbu",
+        zmin=-1,
+        zmax=1,
+    )
 
-    def run(self):
-        columns = self.params.get("columns", list(self.inputs.dataset.df.columns))
-
-        corr_matrix = self.inputs.dataset.df[columns].corr(numeric_only=True)
-        heatmap = go.Heatmap(
-            z=corr_matrix.values,
-            x=list(corr_matrix.columns),
-            y=list(corr_matrix.index),
-            colorscale="rdbu",
-            zmin=-1,
-            zmax=1,
-        )
-
-        annotations = []
-        for i, row in enumerate(corr_matrix.values):
-            for j, value in enumerate(row):
-                color = "#ffffff" if abs(value) > 0.7 else "#000000"
-                annotations.append(
-                    go.layout.Annotation(
-                        text=str(round(value, 2)),
-                        x=corr_matrix.columns[j],
-                        y=corr_matrix.index[i],
-                        showarrow=False,
-                        font=dict(color=color),
-                    )
+    annotations = []
+    for i, row in enumerate(corr_matrix.values):
+        for j, value in enumerate(row):
+            color = "#ffffff" if abs(value) > 0.7 else "#000000"
+            annotations.append(
+                go.layout.Annotation(
+                    text=str(round(value, 2)),
+                    x=corr_matrix.columns[j],
+                    y=corr_matrix.index[i],
+                    showarrow=False,
+                    font=dict(color=color),
                 )
+            )
 
-        layout = go.Layout(
-            annotations=annotations,
-            xaxis=dict(side="top"),
-            yaxis=dict(scaleanchor="x", scaleratio=1),
-            width=800,
-            height=800,
-            autosize=True,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-        )
+    layout = go.Layout(
+        annotations=annotations,
+        xaxis=dict(side="top"),
+        yaxis=dict(scaleanchor="x", scaleratio=1),
+        width=800,
+        height=800,
+        autosize=True,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+    )
 
-        fig = go.Figure(data=[heatmap], layout=layout)
+    fig = go.Figure(data=[heatmap], layout=layout)
 
-        return self.cache_results(
-            figures=[
-                Figure(
-                    for_object=self,
-                    key=self.key,
-                    figure=fig,
-                )
-            ]
-        )
+    return fig

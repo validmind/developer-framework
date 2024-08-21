@@ -323,6 +323,7 @@ class VMDataset(VMInput):
 
         if column_name and column_name in self.feature_columns:
             self.feature_columns.remove(column_name)
+            self._set_feature_columns(self.feature_columns)
 
         return self.extra_columns.prediction_column(model, column_name)
 
@@ -333,6 +334,7 @@ class VMDataset(VMInput):
 
         if column_name and column_name in self.feature_columns:
             self.feature_columns.remove(column_name)
+            self._set_feature_columns(self.feature_columns)
 
         return self.extra_columns.probability_column(model, column_name)
 
