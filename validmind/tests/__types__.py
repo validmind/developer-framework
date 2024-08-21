@@ -33,7 +33,7 @@ TestID = Literal[
     "validmind.model_validation.ClusterSizeDistribution",
     "validmind.model_validation.TokenDisparity",
     "validmind.model_validation.ToxicityScore",
-    "validmind.model_validation.ModelMetadataComparison",
+    "validmind.model_validation.ModelMetadata",
     "validmind.model_validation.TimeSeriesR2SquareBySegments",
     "validmind.model_validation.embeddings.CosineSimilarityComparison",
     "validmind.model_validation.embeddings.EmbeddingsVisualization2D",

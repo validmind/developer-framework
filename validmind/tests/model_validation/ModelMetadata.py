@@ -2,66 +2,36 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import pandas as pd
 
+from validmind import tags, tasks
 from validmind.utils import get_model_info
-from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 
-@dataclass
-class ModelMetadata(Metric):
+@tags("model_training", "metadata")
+@tasks("regression", "time_series_forecasting")
+def ModelMetadata(model):
     """
-    Extracts and summarizes critical metadata from a machine learning model instance for comprehensive analysis.
+    Compare metadata of different models and generate a summary table with the results.
 
-    **Purpose:**
-    This test is designed to collect and summarize important metadata related to a particular machine learning model.
-    Such metadata includes the model's architecture (modeling technique), the version and type of modeling framework
-    used, and the programming language the model is written in.
+    **Purpose**: The purpose of this function is to compare the metadata of different models, including information about their architecture, framework, framework version, and programming language.
 
-    **Test Mechanism:**
-    The mechanism of this test consists of extracting information from the model instance. It tries to extract the
-    model information such as the modeling technique used, the modeling framework version, and the programming
-    language. It decorates this information into a data frame and returns a summary of the results.
+    **Test Mechanism**: The function retrieves the metadata for each model using `get_model_info`, renames columns according to a predefined set of labels, and compiles this information into a summary table.
 
-    **Signs of High Risk:**
+    **Signs of High Risk**:
+    - Inconsistent or missing metadata across models can indicate potential issues in model documentation or management.
+    - Significant differences in framework versions or programming languages might pose challenges in model integration and deployment.
 
-    - High risk could be determined by a lack of documentation or inscrutable metadata for the model.
-    - Unidentifiable language, outdated or unsupported versions of modeling frameworks, or undisclosed model
-    architectures reflect risky situations, as they could hinder future reproducibility, support, and debugging of the
-    model.
+    **Strengths**:
+    - Provides a clear comparison of essential model metadata.
+    - Standardizes metadata labels for easier interpretation and comparison.
+    - Helps identify potential compatibility or consistency issues across models.
 
-    **Strengths:**
-
-    - The strengths of this test lie in the increased transparency and understanding it brings regarding the model's
-    setup.
-    - Knowing the model's architecture, the specific modeling framework version used, and the language involved,
-    provides multiple benefits: supports better error understanding and debugging, facilitates model reuse, aids
-    compliance of software policies, and assists in planning for model obsolescence due to evolving or discontinuing
-    software and dependencies.
-
-    **Limitations:**
-
-    - Notably, this test is largely dependent on the compliance and correctness of information provided by the model or
-    the model developer.
-    - If the model's built-in methods for describing its architecture, framework or language are incorrect or lack
-    necessary information, this test will hold limitations.
-    - Moreover, it is not designed to directly evaluate the performance or accuracy of the model, rather it provides
-    supplementary information which aids in comprehensive analysis.
+    **Limitations**:
+    - Assumes that the `get_model_info` function returns all necessary metadata fields.
+    - Relies on the correctness and completeness of the metadata provided by each model.
+    - Does not include detailed parameter information, focusing instead on high-level metadata.
     """
-
-    name = "model_metadata"
-    required_inputs = ["model"]
-    tasks = [
-        "classification",
-        "regression",
-        "text_classification",
-        "text_summarization",
-    ]
-
-    tags = ["model_metadata"]
-
     column_labels = {
         "architecture": "Modeling Technique",
         "framework": "Modeling Framework",
@@ -69,22 +39,21 @@ class ModelMetadata(Metric):
         "language": "Programming Language",
     }
 
-    def summary(self, metric_value):
-        df = pd.DataFrame(metric_value.items(), columns=["Attribute", "Value"])
-        # Don't serialize the params attribute
-        df = df[df["Attribute"] != "params"]
-        df["Attribute"] = df["Attribute"].map(self.column_labels)
-
-        return ResultSummary(
-            results=[
-                ResultTable(data=df.to_dict(orient="records")),
-            ]
-        )
-
-    def run(self):
+    def extract_and_rename_metadata(model):
         """
-        Extracts model metadata from a model object instance
+        Extracts metadata for a single model and renames columns based on predefined labels.
         """
-        model_info = get_model_info(self.inputs.model)
+        model_info = get_model_info(model)
+        renamed_info = {
+            column_labels.get(k, k): v for k, v in model_info.items() if k != "params"
+        }
+        renamed_info["Model Name"] = model.input_id
+        return renamed_info
 
-        return self.cache_results(model_info)
+    # Collect metadata for all models
+    metadata_list = [extract_and_rename_metadata(model) for model in models]
+
+    # Create a DataFrame from the collected metadata
+    metadata_df = pd.DataFrame(metadata_list)
+
+    return metadata_df

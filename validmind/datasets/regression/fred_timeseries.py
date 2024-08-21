@@ -135,9 +135,14 @@ def get_demo_test_config(test_suite=None):
             "datasets": ["train_diff_ds", "test_diff_ds"],
         }
     }
-    default_config["validmind.model_validation.ModelMetadataComparison"] = {
+    default_config["validmind.model_validation.ModelMetadata:random_forest"] = {
         "inputs": {
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "model": ["random_forests_model"],
+        }
+    }
+    default_config["validmind.model_validation.ModelMetadata:gradient_boosting"] = {
+        "inputs": {
+            "model": ["gradient_boosting_model"],
         }
     }
     default_config[
@@ -210,13 +215,17 @@ def get_demo_test_config(test_suite=None):
             "models": ["gradient_boosting_model"],
         }
     }
-    default_config["validmind.model_validation.TimeSeriesPredictionsPlot:test_data_rfm"] = {
+    default_config[
+        "validmind.model_validation.TimeSeriesPredictionsPlot:test_data_rfm"
+    ] = {
         "inputs": {
             "datasets": ["test_ds"],
             "models": ["random_forests_model"],
         }
     }
-    default_config["validmind.model_validation.TimeSeriesPredictionsPlot:test_data_gbm"] = {
+    default_config[
+        "validmind.model_validation.TimeSeriesPredictionsPlot:test_data_gbm"
+    ] = {
         "inputs": {
             "datasets": ["test_ds"],
             "models": ["gradient_boosting_model"],
