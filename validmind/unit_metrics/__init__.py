@@ -7,9 +7,13 @@ import hashlib
 import json
 import os
 from importlib import import_module
+from textwrap import dedent
+
+from IPython.display import Markdown, display
 
 from validmind.input_registry import input_registry
 from validmind.tests.decorator import _build_result, _inspect_signature
+from validmind.utils import test_id_to_name
 
 unit_metric_results_cache = {}
 
@@ -44,6 +48,41 @@ def _get_metric_cache_key(metric_id, inputs, params):
         )
 
     return hashlib.md5("_".join(cache_elements).encode()).hexdigest()
+
+
+def describe_metric(metric_id, raw=False):
+    """Describe a metric
+
+    Args:
+        metric_id (str): The metric id (e.g. 'validmind.unit_metrics.classification.F1')
+        raw (bool): Whether to return the description as a dictionary
+
+    Returns:
+        dict: A dictionary containing the metric description
+    """
+    metric = load_metric(metric_id)
+    inputs, params = _inspect_signature(metric)
+
+    if raw:
+        return {
+            "id": metric_id,
+            "description": metric.__doc__,
+            "inputs": inputs,
+            "params": params,
+        }
+
+    inputs = ", ".join(inputs.keys())
+    params = ", ".join(params.keys())
+    description_md = f"""
+    ### {test_id_to_name(metric_id)} (*'{metric_id}'*)
+
+    {metric.__doc__ or ""}
+
+    **Inputs**: {inputs}
+
+    **Parameters**: {params}
+    """
+    display(Markdown(dedent(description_md)))
 
 
 def list_metrics():
@@ -124,6 +163,7 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
         description="",
         inputs=cached_result[1],
         params=cached_result[2],
+        generate_description=False,
     )
 
     if show:

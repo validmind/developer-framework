@@ -4,6 +4,7 @@
 
 import os
 from concurrent.futures import ThreadPoolExecutor
+from typing import Union
 
 from validmind.utils import md_to_html
 
@@ -110,10 +111,11 @@ def generate_description(
     test_id: str,
     test_description: str,
     test_summary: str,
+    metric: Union[float, int] = None,
     figures: list = None,
 ):
     """Generate the description for the test results"""
-    if not test_summary and not figures:
+    if not test_summary and not figures and not metric:
         raise ValueError("No summary or figures provided - cannot generate description")
 
     # TODO: fix circular import
@@ -129,6 +131,13 @@ def generate_description(
         if len(test_description) > 500
         else test_description
     )
+
+    if metric:
+        metric_summary = f"**Metric Value**: {metric}"
+        if test_summary:
+            test_summary = metric_summary + "\n" + test_summary
+        else:
+            test_summary = metric_summary
 
     if test_summary:
         logger.debug(
@@ -198,11 +207,12 @@ def background_generate_description(
     test_description: str,
     test_summary: str,
     figures: list = None,
+    metric: Union[int, float] = None,
 ):
     def wrapped():
         try:
             return generate_description(
-                test_id, test_description, test_summary, figures
+                test_id, test_description, test_summary, figures, metric
             )
         except Exception as e:
             logger.error(f"Failed to generate description: {e}")
@@ -217,6 +227,7 @@ def get_description_metadata(
     default_description,
     summary=None,
     figures=None,
+    metric=None,
     prefix="metric_description",
     should_generate=True,
 ):
@@ -238,6 +249,7 @@ def get_description_metadata(
         default_description (str): The default description for the test
         summary (Any): The test summary or results to interpret
         figures (List[Figure]): The figures to attach to the test suite result
+        metric (Union[int, float]): Unit metrics attached to the test result
         prefix (str): The prefix to use for the content ID (Default: "metric_description")
         should_generate (bool): Whether to generate the description or not (Default: True)
 
@@ -267,6 +279,7 @@ def get_description_metadata(
             test_description=default_description,
             test_summary=summary,
             figures=figures,
+            metric=metric,
         )
 
     else:

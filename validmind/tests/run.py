@@ -17,6 +17,7 @@ from validmind.vm_models import (
     MetricResult,
     ResultSummary,
     ResultTable,
+    ResultTableMetadata,
     TestContext,
     TestInput,
     ThresholdTestResults,
@@ -147,6 +148,25 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
     return [figure for figures in figure_lists for figure in figures]
 
 
+def _combine_unit_metrics(results: List[MetricResultWrapper]):
+    if not results[0].scalar:
+        return
+
+    for result in results:
+        table = ResultTable(
+            data=[{"value": result.scalar}],
+            metadata=ResultTableMetadata(title="Unit Metrics"),
+        )
+        if not result.metric:
+            result.metric = MetricResult(
+                key=result.result_id,
+                value=result.scalar,
+                summary=ResultSummary(results=[table]),
+            )
+        else:
+            result.metric.summary.results.append(table)
+
+
 def metric_comparison(
     results: List[MetricResultWrapper],
     test_id: TestID,
@@ -171,6 +191,9 @@ def metric_comparison(
             else:
                 raise ValueError(f"Unsupported type for value: {v}")
         input_group_strings.append(new_group)
+
+    # handle unit metrics (scalar values) by adding it to the summary
+    _combine_unit_metrics(results)
 
     merged_summary = _combine_summaries(
         [
@@ -294,6 +317,8 @@ def threshold_test_comparison(
 def run_comparison_test(
     test_id: TestID,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    name: str = None,
+    unit_metrics: List[TestID] = None,
     params: Dict[str, Any] = None,
     show: bool = True,
     output_template: str = None,
@@ -308,6 +333,8 @@ def run_comparison_test(
     results = [
         run_test(
             test_id,
+            name=name,
+            unit_metrics=unit_metrics,
             inputs=inputs,
             show=False,
             params=params,
@@ -387,33 +414,34 @@ def run_test(
             "When providing an `input_grid`, you cannot also provide `inputs` or `kwargs`"
         )
 
+    if unit_metrics:
+        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
+        test_id = f"validmind.composite_metric.{metric_id_name}" or test_id
+
     if input_grid:
         return run_comparison_test(
             test_id,
             input_grid,
+            name=name,
+            unit_metrics=unit_metrics,
             params=params,
             output_template=output_template,
             show=show,
             generate_description=__generate_description,
         )
 
-    if test_id and test_id.startswith("validmind.unit_metrics"):
+    if test_id.startswith("validmind.unit_metrics"):
         # TODO: as we move towards a more unified approach to metrics
         # we will want to make everything functional and remove the
         # separation between unit metrics and "normal" metrics
         return run_metric(test_id, inputs=inputs, params=params, show=show)
 
     if unit_metrics:
-        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        test_id = f"validmind.composite_metric.{metric_id_name}"
-
         error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
         )
-
         if error:
             raise LoadTestError(error)
-
     else:
         TestClass = load_test(test_id, reload=True)
 

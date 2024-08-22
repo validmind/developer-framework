@@ -23,6 +23,8 @@ from validmind.vm_models import (
     ResultSummary,
     ResultTable,
     ResultTableMetadata,
+    VMDataset,
+    VMModel,
 )
 from validmind.vm_models.figure import (
     Figure,
@@ -37,24 +39,30 @@ from ._store import test_store
 logger = get_logger(__name__)
 
 
-def _inspect_signature(test_func: callable):
-    input_keys = ["dataset", "datasets", "model", "models"]
+_input_type_map = {
+    "dataset": VMDataset,
+    "datasets": List[VMDataset],
+    "model": VMModel,
+    "models": List[VMModel],
+}
 
+
+def _inspect_signature(test_func: callable):
     inputs = {}
     params = {}
 
     for name, arg in inspect.signature(test_func).parameters.items():
-        if name in input_keys:
-            target_dict = inputs
+        if name in _input_type_map:
+            inputs[name] = {
+                "type": _input_type_map[name],
+            }
         else:
-            target_dict = params
-
-        target_dict[name] = {
-            "type": arg.annotation,
-            "default": (
-                arg.default if arg.default is not inspect.Parameter.empty else None
-            ),
-        }
+            params[name] = {
+                "type": arg.annotation,
+                "default": (
+                    arg.default if arg.default is not inspect.Parameter.empty else None
+                ),
+            }
 
     return inputs, params
 
@@ -151,9 +159,7 @@ def _build_result(  # noqa: C901
                     figures=figures,
                     should_generate=generate_description,
                 )
-            ]  # TODO: make this work for non-tabular results
-            if tables
-            else None
+            ]
         ),
         inputs=inputs,
         params=params,
