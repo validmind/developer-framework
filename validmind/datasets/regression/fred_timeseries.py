@@ -178,19 +178,41 @@ def get_demo_test_config(test_suite=None):
         }
     }
     default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data"
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data_rfm"
     ] = {
         "inputs": {
-            "datasets": ["train_ds", "train_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "datasets": ["train_ds"],
+            "models": ["random_forests_model"],
         }
     }
     default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data"
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data_gbm"
     ] = {
         "inputs": {
-            "datasets": ["test_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "datasets": ["train_ds"],
+            "models": ["gradient_boosting_model"],
+        }
+    }
+    default_config[
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data_rfm"
+    ] = {
+        "inputs": {
+            "datasets": ["test_ds"],
+            "models": ["random_forests_model"],
+        },
+        "params": {
+            "segments": {
+                "start_date": ["2012-11-01", "2018-02-01"],
+                "end_date": ["2018-01-01", "2023-03-01"],
+            }
+        },
+    }
+    default_config[
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data_gbm"
+    ] = {
+        "inputs": {
+            "datasets": ["test_ds"],
+            "models": ["gradient_boosting_model"],
         },
         "params": {
             "segments": {

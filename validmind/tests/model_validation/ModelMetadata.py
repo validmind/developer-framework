@@ -51,7 +51,7 @@ def ModelMetadata(model):
         return renamed_info
 
     # Collect metadata for all models
-    metadata_list = [extract_and_rename_metadata(model) for model in models]
+    metadata_list = [extract_and_rename_metadata(model)]
 
     # Create a DataFrame from the collected metadata
     metadata_df = pd.DataFrame(metadata_list)
