@@ -2,140 +2,90 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
 
 import pandas as pd
 from scipy.stats import chi2_contingency
 
-from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
+from validmind import tags, tasks
 
 
-@dataclass
-class ChiSquaredFeaturesTable(Metric):
+@tags("tabular_data", "categorical_data", "statistical_test")
+@tasks("classification")
+def ChiSquaredFeaturesTable(dataset, p_threshold=0.05):
     """
-    Executes Chi-Squared test for each categorical feature against a target column to assess significant association.
+    Executes a Chi-Squared test of independence for each categorical feature against a target column to assess the
+    significance of their association.
 
-    **Purpose**: The `ChiSquaredFeaturesTable` metric is used to carry out a Chi-Squared test of independence for each
-    categorical feature variable against a designated target column. The primary goal is to determine if a significant
-    association exists between the categorical features and the target variable. This method typically finds its use in
-    the context of Model Risk Management to understand feature relevance and detect potential bias in a classification
-    model.
+    **Purpose**: The `ChiSquaredFeaturesTable` function is designed to evaluate the relationship between categorical
+    features and a target variable in a dataset. It performs a Chi-Squared test of independence for each categorical
+    feature to determine whether a statistically significant association exists with the target variable. This is
+    particularly useful in Model Risk Management for understanding the relevance of features and identifying potential
+    biases in a classification model.
 
-    **Test Mechanism**: The testing process generates a contingency table for each categorical variable and the target
-    variable, after which a Chi-Squared test is performed. Using this approach, the Chi-Squared statistic and the
-    p-value for each feature are calculated. The p-value threshold is a modifiable parameter, and a test will qualify
-    as passed if the p-value is less than or equal to this threshold. If not, the test is labeled as failed. The
-    outcome for each feature - comprising the variable name, Chi-squared statistic, p-value, threshold, and pass/fail
-    status - is incorporated into a final summary table.
+    **Test Mechanism**: The function creates a contingency table for each categorical feature and the target variable,
+    then applies the Chi-Squared test to compute the Chi-squared statistic and the p-value. The results for each feature
+    include the variable name, Chi-squared statistic, p-value, p-value threshold, and a pass/fail status based on whether
+    the p-value is below the specified threshold. The output is a DataFrame summarizing these results, sorted by p-value
+    to highlight the most statistically significant associations.
 
     **Signs of High Risk**:
-    - High p-values (greater than the set threshold) for specific variables could indicate a high risk.
-    - These high p-values allude to the absence of a statistically significant relationship between the feature and the
-    target variables, resulting in a 'Fail' status.
-    - A categorical feature lacking a relevant association with the target variable could be a warning that the machine
-    learning model might not be performing optimally.
+    - High p-values (greater than the set threshold) indicate a lack of significant association between a feature and the
+    target variable, resulting in a 'Fail' status.
+    - Features with a 'Fail' status might not be relevant for the model, which could negatively impact model performance.
 
     **Strengths**:
-    - The test allows for a comprehensive understanding of the interaction between a model's input features and the
-    target output, thus validating the relevance of categorical features.
-    - It also produces an unambiguous 'Pass/Fail' output for each categorical feature.
-    - The opportunity to adjust the p-value threshold contributes to flexibility in accommodating different statistical
-    standards.
+    - Provides a clear, statistical assessment of the relationship between categorical features and the target variable.
+    - Produces an easily interpretable summary with a 'Pass/Fail' outcome for each feature, helping in feature selection.
+    - The p-value threshold is adjustable, allowing for flexibility in statistical rigor.
 
     **Limitations**:
-    - The metric presupposes that data is tabular and categorical, which may not always be the case with all datasets.
-    - It is distinctively designed for classification tasks, hence unsuitable for regression scenarios.
-    - The Chi-squared test, akin to any hypothesis testing-based test, cannot identify causal relationships, but only
-    associations.
-    - Furthermore, the test hinges on an adjustable p-value threshold, and varying threshold selections might lead to
-    different conclusions regarding feature relevance.
+    - Assumes the dataset is tabular and consists of categorical variables, which may not be suitable for all datasets.
+    - The test is designed for classification tasks and is not applicable to regression problems.
+    - As with all hypothesis tests, the Chi-Squared test can only detect associations, not causal relationships.
+    - The choice of p-value threshold can affect the interpretation of feature relevance, and different thresholds may
+    lead to different conclusions.
     """
 
-    name = "chi_squared_features_table"
-    required_inputs = ["dataset"]
-    default_params = {"cat_features": None, "p_threshold": 0.05}
-    tasks = ["classification"]
-    tags = [
-        "tabular_data",
-        "categorical_data",
-        "statistical_test",
-        "binary_classification",
-        "multiclass_classification",
-    ]
+    target_column = dataset.target_column
 
-    def run(self):
-        target_column = self.inputs.dataset.target_column
-        cat_features = self.params["cat_features"]
-        p_threshold = self.params["p_threshold"]
+    features = dataset.feature_columns_categorical
 
-        # Ensure cat_features is provided
-        if not cat_features:
-            cat_features = self.inputs.dataset.feature_columns_categorical
+    results_df = _chi_squared_categorical_feature_selection(
+        dataset.df, features, target_column, p_threshold
+    )
 
-        df = self.inputs.dataset.df
+    return results_df
 
-        chi_squared_results = self.chi_squared_categorical_feature_selection(
-            df, cat_features, target_column, p_threshold
+
+def _chi_squared_categorical_feature_selection(df, features, target, p_threshold):
+
+    results = []
+
+    for var in features:
+        # Create a contingency table
+        contingency_table = pd.crosstab(df[var], df[target])
+
+        # Perform the Chi-Square test
+        chi2, p, _, _ = chi2_contingency(contingency_table)
+
+        # Add the result to the list of results
+        results.append(
+            [var, chi2, p, p_threshold, "Pass" if p <= p_threshold else "Fail"]
         )
 
-        return self.cache_results(
-            {
-                "chi_squared_results": chi_squared_results.to_dict(orient="records"),
-            }
-        )
+    # Convert results to a DataFrame and return
+    results_df = pd.DataFrame(
+        results,
+        columns=[
+            "Variable",
+            "Chi-squared statistic",
+            "p-value",
+            "Threshold",
+            "Pass/Fail",
+        ],
+    )
 
-    def chi_squared_categorical_feature_selection(
-        self, df, cat_features, target, p_threshold
-    ):
-        # Ensure the columns exist in the dataframe
-        for var in cat_features:
-            if var not in df.columns:
-                raise ValueError(f"The column '{var}' does not exist in the dataframe.")
-        if target not in df.columns:
-            raise ValueError(
-                f"The target column '{target}' does not exist in the dataframe."
-            )
+    # Sort by p-value in ascending order
+    results_df = results_df.sort_values(by="p-value")
 
-        results = []
-
-        for var in cat_features:
-            # Create a contingency table
-            contingency_table = pd.crosstab(df[var], df[target])
-
-            # Perform the Chi-Square test
-            chi2, p, _, _ = chi2_contingency(contingency_table)
-
-            # Add the result to the list of results
-            results.append(
-                [var, chi2, p, p_threshold, "Pass" if p <= p_threshold else "Fail"]
-            )
-
-        # Convert results to a DataFrame and return
-        results_df = pd.DataFrame(
-            results,
-            columns=[
-                "Variable",
-                "Chi-squared statistic",
-                "p-value",
-                "Threshold",
-                "Pass/Fail",
-            ],
-        )
-
-        # Sort by p-value in ascending order
-        results_df = results_df.sort_values(by="p-value")
-
-        return results_df
-
-    def summary(self, metric_value):
-        chi_squared_results_table = metric_value["chi_squared_results"]
-        return ResultSummary(
-            results=[
-                ResultTable(
-                    data=chi_squared_results_table,
-                    metadata=ResultTableMetadata(
-                        title="Chi-Squared Test Results for Categorical Features"
-                    ),
-                )
-            ]
-        )
+    return results_df

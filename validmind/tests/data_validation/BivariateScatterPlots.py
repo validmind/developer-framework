@@ -3,109 +3,72 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import itertools
-from dataclasses import dataclass
-
 import plotly.express as px
 
-from validmind.vm_models import Figure, Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class BivariateScatterPlots(Metric):
+@tags("tabular_data", "numerical_data", "visualization")
+@tasks("classification")
+def BivariateScatterPlots(dataset):
     """
-    Generates bivariate scatterplots to visually inspect relationships between pairs of predictor variables in machine
-    learning classification tasks.
+    Generates bivariate scatterplots to visually inspect relationships between pairs of numerical predictor variables
+    in machine learning classification tasks.
 
-    **Purpose**: This metric is intended for visual inspection and monitoring of relationships between pairs of
-    variables in a machine learning model targeting classification tasks. It is especially useful for understanding how
-    predictor variables (features) behave in relation to each other and how they are distributed for different classes
-    of the target variable, which could inform feature selection, model-building strategies, and even alert to possible
-    biases and irregularities in the data.
+    **Purpose**: This function is intended for visual inspection and monitoring of relationships between pairs of
+    numerical variables in a machine learning model targeting classification tasks. It helps in understanding how
+    predictor variables (features) interact with each other, which can inform feature selection, model-building
+    strategies, and identify potential biases or irregularities in the data.
 
-    **Test Mechanism**: This metric operates by creating a scatter plot for each pair of the selected features in the
-    dataset. If the parameters "selected_columns" are not specified, an error will be thrown. The metric offers
-    flexibility by allowing the user to filter on a specific target class - specified by the "target_filter" parameter
-    - for more granified insights. Each scatterplot is then color-coded based on the category of the target variable
-    for better visual differentiation. The seaborn scatterplot library is used for generating the plots.
+    **Test Mechanism**: The function creates scatter plots for each pair of numerical features in the dataset. It first
+    filters out non-numerical and binary features, ensuring the plots focus on meaningful numerical relationships. The
+    resulting scatterplots are color-coded uniformly to avoid visual distraction, and the function returns a tuple of
+    Plotly figure objects, each representing a scatter plot for a pair of features.
 
     **Signs of High Risk**:
-    - Visual patterns which might suggest non-linear relationships, substantial skewness, multicollinearity,
-    clustering, or isolated outlier points in the scatter plot.
-    - Such issues could affect the assumptions and performance of some models, especially the ones assuming linearity
-    like linear regression or logistic regression.
+    - Visual patterns suggesting non-linear relationships, multicollinearity, clustering, or outlier points in the
+    scatter plots.
+    - Such issues could affect the assumptions and performance of certain models, especially those assuming linearity,
+    like logistic regression.
 
     **Strengths**:
-    - Scatterplots are simple and intuitive for users to understand, providing a visual tool to pinpoint complex
-    relationships between two variables.
-    - They are useful for outlier detection, identification of variable associations and trends, including non-linear
-    patterns which can be overlooked by other linear-focused metrics or tests.
-    - The implementation also supports visualizing binary or multi-class classification datasets.
+    - Scatterplots provide an intuitive and visual tool to explore relationships between two variables.
+    - They are useful for identifying outliers, variable associations, and trends, including non-linear patterns.
+    - Supports visualization of binary or multi-class classification datasets, focusing on numerical features.
 
     **Limitations**:
-    - Scatterplots are limited to bivariate analysis - the relationship of two variables at a time - and might not
-    reveal the full picture in higher dimensions or where interactions are present.
-    - They are not ideal for very large datasets as points will overlap and render the visualization less informative.
-    - Scatterplots are more of an exploratory tool rather than a formal statistical test, so they don't provide any
-    quantitative measure of model quality or performance.
-    - Interpretation of scatterplots relies heavily on the domain knowledge and judgment of the viewer, which can
-    introduce subjective bias.
+    - Scatterplots are limited to bivariate analysis, showing relationships between only two variables at a time.
+    - Not ideal for very large datasets where overlapping points can reduce the clarity of the visualization.
+    - Scatterplots are exploratory tools and do not provide quantitative measures of model quality or performance.
+    - Interpretation is subjective and relies on the domain knowledge and judgment of the viewer.
     """
+    figures = []
 
-    name = "bivariate_scatter_plots"
-    required_inputs = ["dataset"]
-    default_params = {"selected_columns": None}
-    tasks = ["classification"]
-    tags = [
-        "tabular_data",
-        "categorical_data",
-        "binary_classification",
-        "multiclass_classification",
-        "visualization",
+    # Select numerical features
+    features = dataset.feature_columns_numeric
+
+    # Select non-binary features
+    features = [
+        feature for feature in features if len(dataset.df[feature].unique()) > 2
     ]
 
-    def plot_bivariate_scatter(self, columns):
-        figures = []
-        df = self.inputs.dataset.df
+    df = dataset.df[features]
 
-        # Generate all pairs of columns
-        features_pairs = list(itertools.combinations(columns, 2))
+    # Generate all pairs of columns
+    features_pairs = list(itertools.combinations(df.columns, 2))
 
-        for x, y in features_pairs:
-            fig = px.scatter(
-                df,
-                x=x,
-                y=y,
-                title=f"{x} and {y}",
-                labels={x: x, y: y},
-                opacity=0.7,
-                color_discrete_sequence=["blue"],  # Use the same color for all points
-            )
-            fig.update_traces(marker=dict(color="blue"))
+    for x, y in features_pairs:
+        fig = px.scatter(
+            df,
+            x=x,
+            y=y,
+            title=f"{x} and {y}",
+            labels={x: x, y: y},
+            opacity=0.7,
+            color_discrete_sequence=["blue"],  # Use the same color for all points
+        )
+        fig.update_traces(marker=dict(color="blue"))
 
-            figures.append(
-                Figure(for_object=self, key=f"{self.key}:{x}_{y}", figure=fig)
-            )
+        figures.append(fig)
 
-        return figures
-
-    def run(self):
-        selected_columns = self.params["selected_columns"]
-
-        if selected_columns is None:
-            # Use all columns if selected_columns is not provided
-            selected_columns = self.inputs.dataset.df.columns.tolist()
-        else:
-            # Check if all selected columns exist in the dataframe
-            missing_columns = [
-                col
-                for col in selected_columns
-                if col not in self.inputs.dataset.df.columns
-            ]
-            if missing_columns:
-                raise ValueError(
-                    f"The following selected columns are not in the dataframe: {missing_columns}"
-                )
-
-        figures = self.plot_bivariate_scatter(selected_columns)
-
-        return self.cache_results(figures=figures)
+    return tuple(figures)
