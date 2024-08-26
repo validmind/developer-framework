@@ -58,7 +58,7 @@ class GINITable(Metric):
     """
 
     name = "gini_table"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["classification"]
     tags = ["visualization", "model_performance"]
 
@@ -78,29 +78,29 @@ class GINITable(Metric):
         metrics_dict = {"Dataset": [], "AUC": [], "GINI": [], "KS": []}
 
         # Iterate over each dataset in the inputs
-        for _, dataset in enumerate(self.inputs.datasets):
-            dataset_label = (
-                dataset.input_id
-            )  # Use input_id as the label for each dataset
-            metrics_dict["Dataset"].append(dataset_label)
+        dataset = self.inputs.dataset:
+        dataset_label = (
+            dataset.input_id
+        )  # Use input_id as the label for each dataset
+        metrics_dict["Dataset"].append(dataset_label)
 
-            # Retrieve y_true and y_pred for the current dataset
-            y_true = np.ravel(dataset.y)  # Flatten y_true to make it one-dimensional
-            y_prob = dataset.y_prob(self.inputs.model)
+        # Retrieve y_true and y_pred for the current dataset
+        y_true = np.ravel(dataset.y)  # Flatten y_true to make it one-dimensional
+        y_prob = dataset.y_prob(self.inputs.model)
 
-            # Compute metrics
-            y_true = np.array(y_true, dtype=float)
-            y_prob = np.array(y_prob, dtype=float)
+        # Compute metrics
+        y_true = np.array(y_true, dtype=float)
+        y_prob = np.array(y_prob, dtype=float)
 
-            fpr, tpr, _ = roc_curve(y_true, y_prob)
-            ks = max(tpr - fpr)
-            auc = roc_auc_score(y_true, y_prob)
-            gini = 2 * auc - 1
+        fpr, tpr, _ = roc_curve(y_true, y_prob)
+        ks = max(tpr - fpr)
+        auc = roc_auc_score(y_true, y_prob)
+        gini = 2 * auc - 1
 
-            # Add the metrics to the dictionary
-            metrics_dict["AUC"].append(auc)
-            metrics_dict["GINI"].append(gini)
-            metrics_dict["KS"].append(ks)
+        # Add the metrics to the dictionary
+        metrics_dict["AUC"].append(auc)
+        metrics_dict["GINI"].append(gini)
+        metrics_dict["KS"].append(ks)
 
         # Create a DataFrame to store and return the results
         metrics_df = pd.DataFrame(metrics_dict)
