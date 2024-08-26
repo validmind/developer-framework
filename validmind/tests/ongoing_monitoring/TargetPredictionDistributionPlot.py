@@ -12,29 +12,32 @@ from validmind import tags, tasks
 @tasks("monitoring")
 def TargetPredictionDistributionPlot(datasets, model):
     """
-    **Purpose:**
-    This test provides the prediction distributions from the reference dataset and the new monitoring dataset. If there
-    are significant differences in the distributions, it might indicate different underlying data characteristics that
-    warrant further investigation into the root causes.
+    Assesses differences in prediction distributions between a reference dataset and a monitoring dataset to identify
+    potential data drift.
 
-    **Test Mechanism:**
-    The methodology involves generating Kernel Density Estimation (KDE) plots for the prediction probabilities from
-    both the reference and monitoring datasets. By comparing these KDE plots, one can visually assess any significant
-    differences in the prediction distributions between the two datasets.
+    **Purpose**:
+    - To evaluate potential changes in the prediction distributions between the reference and new monitoring datasets.
+    - To identify underlying shifts in data characteristics that warrant further investigation.
 
-    **Signs of High Risk:**
-    - Significant divergence between the distribution curves of the reference and monitoring predictions
-    - Unusual shifts or bimodal distribution in the monitoring predictions compared to the reference predictions
+    **Test Mechanism**:
+    - Generate Kernel Density Estimation (KDE) plots for prediction probabilities from both the reference and
+    monitoring datasets.
+    - Visually compare the KDE plots to assess significant differences in the prediction distributions between the two
+    datasets.
 
-    **Strengths:**
-    - Visual representation makes it easy to spot differences in prediction distributions
-    - Useful for identifying potential data drift or changes in underlying data characteristics
-    - Simple and efficient to implement using standard plotting libraries
+    **Signs of High Risk**:
+    - Significant divergence between the distribution curves of reference and monitoring predictions.
+    - Unusual shifts or bimodal distribution in the monitoring predictions compared to the reference predictions.
 
-    **Limitations:**
-    - Subjective interpretation of the visual plots
-    - Might not pinpoint the exact cause of distribution changes
-    - Less effective if the differences in distributions are subtle and not easily visible
+    **Strengths**:
+    - Visual representation makes it easy to spot differences in prediction distributions.
+    - Useful for identifying potential data drift or changes in underlying data characteristics.
+    - Simple and efficient to implement using standard plotting libraries.
+
+    **Limitations**:
+    - Subjective interpretation of the visual plots.
+    - Might not pinpoint the exact cause of distribution changes.
+    - Less effective if the differences in distributions are subtle and not easily visible.
     """
 
     pred_ref = datasets[0].y_prob_df(model)

@@ -13,30 +13,33 @@ from validmind import tags, tasks
 @tasks("monitoring")
 def PredictionCorrelation(datasets, model):
     """
-    **Purpose:**
-    The test is used to assess the correlation pairs for each feature between model predictions from reference and
-    monitoring datasets. The primary goal is to detect significant changes in these pairs, which may signal target
-    drift, leading to lower model performance.
+    Assesses correlation changes between model predictions from reference and monitoring datasets to detect potential
+    target drift.
 
-    **Test Mechanism:**
-    The test calculates the correlation of each feature with model predictions for both reference and monitoring
-    datasets. The test then compares these correlations side-by-side via a bar plot and a correlation table. Features
-    with significant changes in correlation pairs highlight potential risks of model drift.
+    **Purpose**:
+    - To evaluate the changes in correlation pairs between model predictions and features from reference and monitoring
+    datasets.
+    - To identify significant shifts that may indicate target drift, potentially affecting model performance.
 
-    **Signs of High Risk:**
+    **Test Mechanism**:
+    - Calculate the correlation of each feature with model predictions for both reference and monitoring datasets.
+    - Compare these correlations side-by-side using a bar plot and a correlation table.
+    - Highlight significant changes in correlation pairs to signal possible model drift.
+
+    **Signs of High Risk**:
     - Significant changes in correlation pairs between the reference and monitoring predictions.
-    - Notable correlation differences indicating a potential shift in the relationship between features and the target
-    variable.
+    - Notable differences in correlation values, indicating a possible shift in the relationship between features and
+    the target variable.
 
-    **Strengths:**
-    - Allows for visual identification of drift in feature relationships with model predictions.
-    - Comparison via a clear bar plot assists in understanding model stability over time.
-    - Helps in early detection of target drift, enabling timely interventions.
+    **Strengths**:
+    - Provides visual identification of drift in feature relationships with model predictions.
+    - Clear bar plot comparison aids in understanding model stability over time.
+    - Enables early detection of target drift, facilitating timely interventions.
 
-    **Limitations:**
-    - May require substantial reference and monitoring data for accurate comparison.
-    - Correlation does not imply causation, and other factors might influence changes.
-    - The method solely focuses on linear relationships, potentially missing non-linear interactions.
+    **Limitations**:
+    - Requires substantial reference and monitoring data for accurate comparison.
+    - Correlation does not imply causation; other factors may influence changes.
+    - Focuses solely on linear relationships, potentially missing non-linear interactions.
     """
 
     prediction_prob_column = f"{model.input_id}_probabilities"
