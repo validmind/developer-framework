@@ -78,7 +78,7 @@ class GINITable(Metric):
         metrics_dict = {"Dataset": [], "AUC": [], "GINI": [], "KS": []}
 
         # Iterate over each dataset in the inputs
-        dataset = self.inputs.dataset:
+        dataset = self.inputs.dataset
         dataset_label = (
             dataset.input_id
         )  # Use input_id as the label for each dataset
