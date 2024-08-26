@@ -26,16 +26,16 @@ def FeatureDrift(
 
     ### Test Mechanism
 
-    This test calculates the PSI by: 
+    This test calculates the PSI by:
 
-    - Bucketing the distributions of each feature in both datasets. 
-    - Comparing the percentage of observations in each bucket between the two datasets. 
+    - Bucketing the distributions of each feature in both datasets.
+    - Comparing the percentage of observations in each bucket between the two datasets.
     - Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
 
-    The PSI score is interpreted as: 
+    The PSI score is interpreted as:
 
-    - PSI < 0.1: No significant population change. 
-    - PSI < 0.2: Moderate population change. 
+    - PSI < 0.1: No significant population change.
+    - PSI < 0.2: Moderate population change.
     - PSI >= 0.2: Significant population change.
 
     ### Signs of High Risk

@@ -19,7 +19,7 @@ def TargetPredictionDistributionPlot(datasets, model):
 
     The Target Prediction Distribution Plot test aims to evaluate potential changes in the prediction distributions
     between the reference and new monitoring datasets. It seeks to identify underlying shifts in data characteristics
-    that warrant further investigation. 
+    that warrant further investigation.
 
     ### Test Mechanism
 
