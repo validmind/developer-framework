@@ -79,9 +79,7 @@ class GINITable(Metric):
 
         # Iterate over each dataset in the inputs
         dataset = self.inputs.dataset
-        dataset_label = (
-            dataset.input_id
-        )  # Use input_id as the label for each dataset
+        dataset_label = dataset.input_id  # Use input_id as the label for each dataset
         metrics_dict["Dataset"].append(dataset_label)
 
         # Retrieve y_true and y_pred for the current dataset

@@ -69,8 +69,8 @@ class ClusterPerformance(Metric):
         raise NotImplementedError
 
     def run(self):
-        y_true_train = self.inputs.datasets[0].y
-        class_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model)
+        y_true_train = self.inputs.dataset.y
+        class_pred_train = self.inputs.dataset.y_pred(self.inputs.model)
         y_true_train = y_true_train.astype(class_pred_train.dtype)
 
         results = self.cluster_performance_metrics(

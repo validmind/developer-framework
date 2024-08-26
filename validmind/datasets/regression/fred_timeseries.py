@@ -180,35 +180,11 @@ def get_demo_test_config(test_suite=None):
         },
     }
     default_config[
-        "validmind.model_validation.TimeSeriesPredictionsPlot:train_data_rfm"
+        "validmind.model_validation.TimeSeriesPredictionsPlot:train_data"
     ] = {
-        "inputs": {
-            "datasets": ["train_ds"],
-            "models": ["random_forests_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionsPlot:train_data_gbm"
-    ] = {
-        "inputs": {
-            "datasets": ["train_ds"],
-            "models": ["gradient_boosting_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionsPlot:test_data_rfm"
-    ] = {
-        "inputs": {
-            "datasets": ["test_ds"],
-            "models": ["random_forests_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionsPlot:test_data_gbm"
-    ] = {
-        "inputs": {
-            "datasets": ["test_ds"],
-            "models": ["gradient_boosting_model"],
+        "input_grid": {
+            "datasets": ["train_ds", "test_data"],
+            "models": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config[

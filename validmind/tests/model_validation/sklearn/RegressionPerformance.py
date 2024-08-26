@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 @tasks("regression")
 def RegressionPerformance(dataset, model):
     """
-    Compares and evaluates the performance of multiple regression models using five different metrics: MAE, MSE, RMSE,
+    Evaluates the performance of regression model using five different metrics: MAE, MSE, RMSE,
     MAPE, and MBD.
 
     **1. Purpose:**
@@ -56,14 +56,9 @@ def RegressionPerformance(dataset, model):
     - The test could exhibit performance limitations if a large number of models is input for comparison.
     """
 
-    result = regression_errors(
-        y_true_test=dataset.y,
-        y_pred_test=dataset.y_pred(model),
-    )
-    return result
+    y_true_test = np.array(dataset.y)
+    y_pred_test = np.array(dataset.y_pred(model))
 
-
-def regression_errors(self, y_true_test, y_pred_test):
     mae_test = mean_absolute_error(y_true_test, y_pred_test)
 
     results = {}

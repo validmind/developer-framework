@@ -69,8 +69,8 @@ class RegressionErrors(Metric):
         return results
 
     def run(self):
-        y_train_true = self.inputs.datasets[0].y
-        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
+        y_train_true = self.inputs.dataset.y
+        y_train_pred = self.inputs.dataset.y_pred(self.inputs.model)
         y_train_true = y_train_true.astype(y_train_pred.dtype)
 
         results = self.regression_errors(y_train_true, y_train_pred)

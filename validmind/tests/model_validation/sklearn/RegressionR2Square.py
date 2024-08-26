@@ -50,8 +50,8 @@ class RegressionR2Square(Metric):
     ]
 
     def run(self):
-        y_train_true = self.inputs.datasets[0].y
-        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
+        y_train_true = self.inputs.dataset.y
+        y_train_pred = self.inputs.dataset.y_pred(self.inputs.model)
         y_train_true = y_train_true.astype(y_train_pred.dtype)
 
         r2s_train = metrics.r2_score(y_train_true, y_train_pred)
@@ -59,7 +59,7 @@ class RegressionR2Square(Metric):
         results = []
         results.append({"R-squared (R2) Score": r2s_train})
 
-        X_columns = self.inputs.datasets[0].feature_columns
+        X_columns = self.inputs.dataset.feature_columns
         adj_r2_train = adj_r2_score(
             y_train_true, y_train_pred, len(y_train_true), len(X_columns)
         )
