@@ -62,11 +62,11 @@ def RegressionPerformance(dataset, model):
     mae_test = mean_absolute_error(y_true_test, y_pred_test)
 
     results = {}
-    results["Mean Absolute Error (MAE)"] = mae_test
+    results["Mean Absolute Error (MAE)"] = list(mae_test)
 
     mse_test = mean_squared_error(y_true_test, y_pred_test)
-    results["Mean Squared Error (MSE)"] = mse_test
-    results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
+    results["Mean Squared Error (MSE)"] = list(mse_test)
+    results["Root Mean Squared Error (RMSE)"] = list(np.sqrt(mse_test))
 
     if np.any(y_true_test == 0):
         logger.warning(
@@ -75,9 +75,9 @@ def RegressionPerformance(dataset, model):
         results["Mean Absolute Percentage Error (MAPE)"] = None
     else:
         mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
-        results["Mean Absolute Percentage Error (MAPE)"] = mape_test
+        results["Mean Absolute Percentage Error (MAPE)"] = list(mape_test)
 
     mbd_test = np.mean(y_pred_test - y_true_test)
-    results["Mean Bias Deviation (MBD)"] = mbd_test
+    results["Mean Bias Deviation (MBD)"] = list(mbd_test)
 
     return results
