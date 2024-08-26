@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from validmind.vm_models import Metric, ResultSummary, ResultTable
+from validmind.vm_models import Metric
 
 
 @dataclass
@@ -50,49 +50,20 @@ class ClusterPerformance(Metric):
     """
 
     name = "cluster_performance_metrics"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = [
         "sklearn",
         "model_performance",
     ]
 
-    def cluster_performance_metrics(
-        self, y_true_train, y_pred_train, y_true_test, y_pred_test, samples, metric_info
-    ):
+    def cluster_performance_metrics(self, y_true_train, y_pred_train, metric_info):
         y_true_train = y_true_train.astype(y_pred_train.dtype).flatten()
-        y_true_test = y_true_test.astype(y_pred_test.dtype).flatten()
         results = []
         for metric_name, metric_fcn in metric_info.items():
-            for _ in samples:
-                train_value = metric_fcn(list(y_true_train), y_pred_train)
-                test_value = metric_fcn(list(y_true_test), y_pred_test)
-            results.append(
-                {
-                    metric_name: {
-                        "train": train_value,
-                        "test": test_value,
-                    }
-                }
-            )
+            train_value = metric_fcn(list(y_true_train), y_pred_train)
+            results.append({metric_name: train_value})
         return results
-
-    def summary(self, raw_results):
-        """
-        Returns a summarized representation of the dataset split information
-        """
-        table_records = []
-        for result in raw_results:
-            for key, _ in result.items():
-                table_records.append(
-                    {
-                        "Metric": key,
-                        "TRAIN": result[key]["train"],
-                        "TEST": result[key]["test"],
-                    }
-                )
-
-        return ResultSummary(results=[ResultTable(data=table_records)])
 
     def metric_info(self):
         raise NotImplementedError
@@ -102,17 +73,9 @@ class ClusterPerformance(Metric):
         class_pred_train = self.inputs.datasets[0].y_pred(self.inputs.model)
         y_true_train = y_true_train.astype(class_pred_train.dtype)
 
-        y_true_test = self.inputs.datasets[1].y
-        class_pred_test = self.inputs.datasets[1].y_pred(self.inputs.model)
-        y_true_test = y_true_test.astype(class_pred_test.dtype)
-
-        samples = ["train", "test"]
         results = self.cluster_performance_metrics(
             y_true_train,
             class_pred_train,
-            y_true_test,
-            class_pred_test,
-            samples,
             self.metric_info(),
         )
         return self.cache_results(metric_value=results)

@@ -11,11 +11,11 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableM
 
 
 @dataclass
-class RegressionModelsCoeffs(Metric):
+class RegressionModelCoeffs(Metric):
     """
     Compares feature importance by evaluating and contrasting coefficients of different regression models.
 
-    **Purpose**: The 'RegressionModelsCoeffs' metric is utilized to evaluate and compare coefficients of different
+    **Purpose**: The 'RegressionModelCoeffs' metric is utilized to evaluate and compare coefficients of different
     regression models trained on the same dataset. By examining how each model weighted the importance of different
     features during training, this metric provides key insights into which factors have the most impact on the model's
     predictions and how these patterns differ across models.
@@ -44,8 +44,8 @@ class RegressionModelsCoeffs(Metric):
     - The computed coefficients might not lead to effective performance on unseen data
     """
 
-    name = "regression_models_coefficients"
-    required_inputs = ["models"]
+    name = "regression_models_coefficient"
+    required_inputs = ["model"]
     tasks = ["regression"]
     tags = ["model_comparison"]
 
@@ -67,16 +67,15 @@ class RegressionModelsCoeffs(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.inputs.models or len(self.inputs.models) == 0:
-            raise ValueError("List of models must be provided in the models parameter")
+        if not self.inputs.model or len(self.inputs.model) == 0:
+            raise ValueError("List of model must be provided in the models parameter")
 
-        for model in self.inputs.models:
-            if model.library != "statsmodels":
-                raise SkipTestError(
-                    "Only statsmodels models are supported for this metric"
-                )
+        if model.library != "statsmodels":
+            raise SkipTestError(
+                "Only statsmodels models are supported for this metric"
+            )
 
-        coefficients = [m.regression_coefficients() for m in self.inputs.models]
+        coefficients = [self.input.model.regression_coefficients()]
         all_models_summary = self._build_model_summaries(coefficients)
 
         return self.cache_results(

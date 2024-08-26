@@ -49,7 +49,7 @@ class VMeasure(ClusterPerformance):
     """
 
     name = "v_measure_score"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = [
         "sklearn",

@@ -47,7 +47,7 @@ class AdjustedMutualInformation(ClusterPerformance):
     """
 
     name = "adjusted_mutual_information"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = [
         "sklearn",

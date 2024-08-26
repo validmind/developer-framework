@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 from sklearn import metrics
 
-from validmind.vm_models import Metric, ResultSummary, ResultTable
+from validmind.vm_models import Metric
 
 
 @dataclass
@@ -42,88 +42,30 @@ class RegressionErrors(Metric):
     """
 
     name = "regression_errors"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["regression"]
     tags = [
         "sklearn",
         "model_performance",
     ]
 
-    def summary(self, raw_results):
-        """
-        Returns a summarized representation of the dataset split information
-        """
-        table_records = []
-        for result in raw_results:
-            for key, _ in result.items():
-                table_records.append(
-                    {
-                        "Metric": key,
-                        "TRAIN": result[key]["train"],
-                        "TEST": result[key]["test"],
-                    }
-                )
-
-        return ResultSummary(results=[ResultTable(data=table_records)])
-
-    def regression_errors(
-        self, y_true_train, class_pred_train, y_true_test, class_pred_test
-    ):
+    def regression_errors(self, y_true_train, class_pred_train):
         mae_train = metrics.mean_absolute_error(y_true_train, class_pred_train)
-        mae_test = metrics.mean_absolute_error(y_true_test, class_pred_test)
 
         results = []
-        results.append(
-            {
-                "Mean Absolute Error (MAE)": {
-                    "train": mae_train,
-                    "test": mae_test,
-                }
-            }
-        )
+        results.append({"Mean Absolute Error (MAE)": mae_train})
 
         mse_train = metrics.mean_squared_error(y_true_train, class_pred_train)
-        mse_test = metrics.mean_squared_error(y_true_test, class_pred_test)
-        results.append(
-            {
-                "Mean Squared Error (MSE)": {
-                    "train": mse_train,
-                    "test": mse_test,
-                }
-            }
-        )
-        results.append(
-            {
-                "Root Mean Squared Error (RMSE)": {
-                    "train": np.sqrt(mse_train),
-                    "test": np.sqrt(mse_test),
-                }
-            }
-        )
+        results.append({"Mean Squared Error (MSE)": mse_train})
+        results.append({"Root Mean Squared Error (RMSE)": np.sqrt(mse_train)})
 
         mape_train = (
             np.mean(np.abs((y_true_train - class_pred_train) / y_true_train)) * 100
         )
-        mape_test = np.mean(np.abs((y_true_test - class_pred_test) / y_true_test)) * 100
-        results.append(
-            {
-                "Mean Absolute Percentage Error (MAPE)": {
-                    "train": mape_train,
-                    "test": mape_test,
-                }
-            }
-        )
+        results.append({"Mean Absolute Percentage Error (MAPE)": mape_train})
 
         mbd_train = np.mean(class_pred_train - y_true_train)
-        mbd_test = np.mean(class_pred_test - y_true_test)
-        results.append(
-            {
-                "Mean Bias Deviation (MBD)": {
-                    "train": mbd_train,
-                    "test": mbd_test,
-                }
-            }
-        )
+        results.append({"Mean Bias Deviation (MBD)": mbd_train})
         return results
 
     def run(self):
@@ -131,12 +73,6 @@ class RegressionErrors(Metric):
         y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
         y_train_true = y_train_true.astype(y_train_pred.dtype)
 
-        y_test_true = self.inputs.datasets[1].y
-        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
-        y_test_true = y_test_true.astype(y_test_pred.dtype)
-
-        results = self.regression_errors(
-            y_train_true, y_train_pred, y_test_true, y_test_pred
-        )
+        results = self.regression_errors(y_train_true, y_train_pred)
 
         return self.cache_results(metric_value=results)

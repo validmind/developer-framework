@@ -145,74 +145,32 @@ def get_demo_test_config(test_suite=None):
             "model": ["gradient_boosting_model"],
         }
     }
-    default_config[
-        "validmind.model_validation.sklearn.RegressionErrorsComparison:train_data"
-    ] = {
-        "inputs": {
-            "datasets": ["train_ds", "train_ds"],
+    default_config["validmind.model_validation.sklearn.RegressionErrors"] = {
+        "input_grid": {
+            "datasets": ["train_ds", "test_ds"],
             "models": ["random_forests_model", "gradient_boosting_model"],
         }
     }
-    default_config[
-        "validmind.model_validation.sklearn.RegressionErrorsComparison:test_data"
-    ] = {
-        "inputs": {
-            "datasets": ["test_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+    default_config["validmind.model_validation.sklearn.RegressionR2Square"] = {
+        "input_grid": {
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config[
-        "validmind.model_validation.sklearn.RegressionR2SquareComparison:train_data"
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data"
     ] = {
-        "inputs": {
-            "datasets": ["train_ds", "train_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+        "input_grid": {
+            "dataset": ["train_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config[
-        "validmind.model_validation.sklearn.RegressionR2SquareComparison:test_data"
+        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data"
     ] = {
-        "inputs": {
-            "datasets": ["test_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data_rfm"
-    ] = {
-        "inputs": {
-            "datasets": ["train_ds"],
-            "models": ["random_forests_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:train_data_gbm"
-    ] = {
-        "inputs": {
-            "datasets": ["train_ds"],
-            "models": ["gradient_boosting_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data_rfm"
-    ] = {
-        "inputs": {
+        "input_grid": {
             "datasets": ["test_ds"],
-            "models": ["random_forests_model"],
-        },
-        "params": {
-            "segments": {
-                "start_date": ["2012-11-01", "2018-02-01"],
-                "end_date": ["2018-01-01", "2023-03-01"],
-            }
-        },
-    }
-    default_config[
-        "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data_gbm"
-    ] = {
-        "inputs": {
-            "datasets": ["test_ds"],
-            "models": ["gradient_boosting_model"],
+            "models": ["random_forests_model", "gradient_boosting_model"],
         },
         "params": {
             "segments": {
@@ -282,19 +240,11 @@ def get_demo_test_config(test_suite=None):
         }
     }
     default_config[
-        "validmind.model_validation.sklearn.FeatureImportanceComparison:train_data"
+        "validmind.model_validation.sklearn.FeatureImportance:Comparison"
     ] = {
-        "inputs": {
-            "datasets": ["train_ds", "train_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.sklearn.FeatureImportanceComparison:test_data"
-    ] = {
-        "inputs": {
-            "datasets": ["test_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+        "input_grid": {
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config[

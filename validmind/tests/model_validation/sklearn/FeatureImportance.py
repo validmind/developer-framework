@@ -10,9 +10,9 @@ from validmind import tags, tasks
 
 @tags("model_explainability", "sklearn")
 @tasks("regression", "time_series_forecasting")
-def FeatureImportanceComparison(datasets, models, num_features=3):
+def FeatureImportance(dataset, model, num_features=3):
     """
-    Compare feature importance scores for each model and generate a summary table
+    Compute feature importance scores for a given model and generate a summary table
     with the top important features.
 
     **Purpose**: The purpose of this function is to compare the feature importance scores for different models applied to various datasets.
@@ -36,47 +36,45 @@ def FeatureImportanceComparison(datasets, models, num_features=3):
     """
     results_list = []
 
-    for dataset, model in zip(datasets, models):
-        x = dataset.x_df()
-        y = dataset.y_df()
+    x = dataset.x_df()
+    y = dataset.y_df()
 
-        pfi_values = permutation_importance(
-            model.model,
-            x,
-            y,
-            random_state=0,
-            n_jobs=-2,
-        )
+    pfi_values = permutation_importance(
+        model.model,
+        x,
+        y,
+        random_state=0,
+        n_jobs=-2,
+    )
 
-        # Create a dictionary to store PFI scores
-        pfi = {
-            column: pfi_values["importances_mean"][i]
-            for i, column in enumerate(x.columns)
-        }
+    # Create a dictionary to store PFI scores
+    pfi = {
+        column: pfi_values["importances_mean"][i] for i, column in enumerate(x.columns)
+    }
 
-        # Sort features by their importance
-        sorted_features = sorted(pfi.items(), key=lambda item: item[1], reverse=True)
+    # Sort features by their importance
+    sorted_features = sorted(pfi.items(), key=lambda item: item[1], reverse=True)
 
-        # Extract the top `num_features` features
-        top_features = sorted_features[:num_features]
+    # Extract the top `num_features` features
+    top_features = sorted_features[:num_features]
 
-        # Prepare the result for the current model and dataset
-        result = {
-            "Model": model.input_id,
-            "Dataset": dataset.input_id,
-        }
+    # Prepare the result for the current model and dataset
+    result = {
+        "Model": model.input_id,
+        "Dataset": dataset.input_id,
+    }
 
-        # Dynamically add feature columns to the result
-        for i in range(num_features):
-            if i < len(top_features):
-                result[
-                    f"Feature {i + 1}"
-                ] = f"[{top_features[i][0]}; {top_features[i][1]:.4f}]"
-            else:
-                result[f"Feature {i + 1}"] = None
+    # Dynamically add feature columns to the result
+    for i in range(num_features):
+        if i < len(top_features):
+            result[
+                f"Feature {i + 1}"
+            ] = f"[{top_features[i][0]}; {top_features[i][1]:.4f}]"
+        else:
+            result[f"Feature {i + 1}"] = None
 
-        # Append the result to the list
-        results_list.append(result)
+    # Append the result to the list
+    results_list.append(result)
 
     # Convert the results list to a DataFrame
     results_df = pd.DataFrame(results_list)

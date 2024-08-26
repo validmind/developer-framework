@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from sklearn import metrics
 
 from validmind.tests.model_validation.statsmodels.statsutils import adj_r2_score
-from validmind.vm_models import Metric, ResultSummary, ResultTable
+from validmind.vm_models import Metric
 
 
 @dataclass
@@ -42,65 +42,30 @@ class RegressionR2Square(Metric):
     """
 
     name = "regression_errors_r2_square"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["regression"]
     tags = [
         "sklearn",
         "model_performance",
     ]
 
-    def summary(self, raw_results):
-        """
-        Returns a summarized representation of the dataset split information
-        """
-        table_records = []
-        for result in raw_results:
-            for key, _ in result.items():
-                table_records.append(
-                    {
-                        "Metric": key,
-                        "TRAIN": result[key]["train"],
-                        "TEST": result[key]["test"],
-                    }
-                )
-
-        return ResultSummary(results=[ResultTable(data=table_records)])
-
     def run(self):
         y_train_true = self.inputs.datasets[0].y
         y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
         y_train_true = y_train_true.astype(y_train_pred.dtype)
 
-        y_test_true = self.inputs.datasets[1].y
-        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
-        y_test_true = y_test_true.astype(y_test_pred.dtype)
-
         r2s_train = metrics.r2_score(y_train_true, y_train_pred)
-        r2s_test = metrics.r2_score(y_test_true, y_test_pred)
 
         results = []
-        results.append(
-            {
-                "R-squared (R2) Score": {
-                    "train": r2s_train,
-                    "test": r2s_test,
-                }
-            }
-        )
+        results.append({"R-squared (R2) Score": r2s_train})
 
         X_columns = self.inputs.datasets[0].feature_columns
         adj_r2_train = adj_r2_score(
             y_train_true, y_train_pred, len(y_train_true), len(X_columns)
         )
-        adj_r2_test = adj_r2_score(
-            y_test_true, y_test_pred, len(y_test_true), len(X_columns)
-        )
         results.append(
             {
-                "Adjusted R-squared (R2) Score": {
-                    "train": adj_r2_train,
-                    "test": adj_r2_test,
-                }
+                "Adjusted R-squared (R2) Score": adj_r2_train,
             }
         )
         return self.cache_results(metric_value=results)
