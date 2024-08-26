@@ -4,6 +4,7 @@
 
 
 import numpy as np
+import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from validmind import tags, tasks
@@ -80,4 +81,4 @@ def RegressionPerformance(dataset, model):
     mbd_test = np.mean(y_pred_test - y_true_test)
     results["Mean Bias Deviation (MBD)"] = mbd_test
 
-    return results
+    return pd.DataFrame(results)
