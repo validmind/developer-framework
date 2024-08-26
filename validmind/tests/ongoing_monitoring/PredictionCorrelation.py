@@ -16,27 +16,32 @@ def PredictionCorrelation(datasets, model):
     Assesses correlation changes between model predictions from reference and monitoring datasets to detect potential
     target drift.
 
-    **Purpose**:
+    ### Purpose
+
     - To evaluate the changes in correlation pairs between model predictions and features from reference and monitoring
     datasets.
     - To identify significant shifts that may indicate target drift, potentially affecting model performance.
 
-    **Test Mechanism**:
+    ### Test Mechanism
+
     - Calculate the correlation of each feature with model predictions for both reference and monitoring datasets.
     - Compare these correlations side-by-side using a bar plot and a correlation table.
     - Highlight significant changes in correlation pairs to signal possible model drift.
 
-    **Signs of High Risk**:
+    ### Signs of High Risk
+
     - Significant changes in correlation pairs between the reference and monitoring predictions.
     - Notable differences in correlation values, indicating a possible shift in the relationship between features and
     the target variable.
 
-    **Strengths**:
+    ### Strengths
+
     - Provides visual identification of drift in feature relationships with model predictions.
     - Clear bar plot comparison aids in understanding model stability over time.
     - Enables early detection of target drift, facilitating timely interventions.
 
-    **Limitations**:
+    ### Limitations
+
     - Requires substantial reference and monitoring data for accurate comparison.
     - Correlation does not imply causation; other factors may influence changes.
     - Focuses solely on linear relationships, potentially missing non-linear interactions.

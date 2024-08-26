@@ -15,26 +15,31 @@ def TargetPredictionDistributionPlot(datasets, model):
     Assesses differences in prediction distributions between a reference dataset and a monitoring dataset to identify
     potential data drift.
 
-    **Purpose**:
+    ### Purpose
+
     - To evaluate potential changes in the prediction distributions between the reference and new monitoring datasets.
     - To identify underlying shifts in data characteristics that warrant further investigation.
 
-    **Test Mechanism**:
+    ### Test Mechanism
+
     - Generate Kernel Density Estimation (KDE) plots for prediction probabilities from both the reference and
     monitoring datasets.
     - Visually compare the KDE plots to assess significant differences in the prediction distributions between the two
     datasets.
 
-    **Signs of High Risk**:
+    ### Signs of High Risk
+
     - Significant divergence between the distribution curves of reference and monitoring predictions.
     - Unusual shifts or bimodal distribution in the monitoring predictions compared to the reference predictions.
 
-    **Strengths**:
+    ### Strengths
+
     - Visual representation makes it easy to spot differences in prediction distributions.
     - Useful for identifying potential data drift or changes in underlying data characteristics.
     - Simple and efficient to implement using standard plotting libraries.
 
-    **Limitations**:
+    ### Limitations
+
     - Subjective interpretation of the visual plots.
     - Might not pinpoint the exact cause of distribution changes.
     - Less effective if the differences in distributions are subtle and not easily visible.

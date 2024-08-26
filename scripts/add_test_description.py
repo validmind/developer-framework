@@ -78,7 +78,7 @@ You will populate each section according to the following guidelines:
 5. Limitations: List or describe the limitations or disadvantages of this test, including any potential bias or areas it might not fully address
 
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test.
-Respond with a markdown description where each section name is in bold and is followed by a colon and then the content for that section.
+Respond with a markdown description where each section name is in header 3 format and then the content for that section. Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
 For sections 3-5, the content should be a list of bullet points unless the section has only one or two items, in which case it can be a paragraph.
 Respond only with the description and don't include any explanation or other text. Additionally, avoid using enclosing markdown syntax like ```markdown
 """.strip()
@@ -140,7 +140,7 @@ These sections have been populated with content according to the following guide
 The following prompt was given to GPT4 to generate the descriptions:
 '''
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test.
-Respond with a markdown description where each section name is in bold and is followed by a colon and then the content for that section.
+Respond with a markdown description where each section name is in header 3 format and then the content for that section. Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
 For sections 3-5, the content should be a list of bullet points unless the section has only one or two items, in which case it can be a paragraph.
 Respond only with the description and don't include any explanation or other text. Additionally, avoid using enclosing markdown syntax like ```markdown
 '''

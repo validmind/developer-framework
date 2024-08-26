@@ -18,28 +18,33 @@ def FeatureDrift(
     """
     Evaluates changes in feature distribution over time to identify potential model drift.
 
-    **Purpose**:
+    ### Purpose
+
     - To evaluate how much the distribution of features has shifted over time between two datasets, typically training
     and monitoring datasets.
     - To provide insights into the model's robustness and the necessity for retraining or feature engineering.
 
-    **Test Mechanism**:
+    ### Test Mechanism
+
     - Bucketing the distributions of each feature in both datasets.
     - Comparing the percentage of observations in each bucket between the two datasets.
     - Aggregating the differences across all buckets for each feature to produce the Population Stability Index (PSI)
     score for that feature.
 
-    **Signs of High Risk**:
+    ### Signs of High Risk
+
     - PSI >= 0.2 for any feature, indicating a significant distribution shift.
     - Consistently high PSI scores across multiple features.
     - Sudden spikes in PSI in recent monitoring data compared to historical data.
 
-    **Strengths**:
+    ### Strengths
+
     - Provides a quantitative measure of feature distribution changes.
     - Easily interpretable thresholds for decision-making.
     - Helps in early detection of data drift, prompting timely interventions.
 
-    **Limitations**:
+    ### Limitations
+
     - May not capture more intricate changes in data distribution nuances.
     - Assumes that bucket thresholds (quantiles) adequately represent distribution shifts.
     - PSI score interpretation can be overly simplistic for complex datasets.
