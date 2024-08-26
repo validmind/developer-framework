@@ -57,7 +57,7 @@ class PredictionProbabilitiesHistogram(Metric):
     """
 
     name = "prediction_probabilities_histogram"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["classification"]
     tags = ["tabular_data", "visualization", "credit_risk", "logistic_regression"]
 
@@ -106,18 +106,18 @@ class PredictionProbabilitiesHistogram(Metric):
         return figures
 
     def run(self):
-        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
-        target_column = self.inputs.datasets[0].target_column
+        dataset_titles = [self.inputs.dataset.input_id]
+        target_column = self.inputs.dataset.target_column
         title = self.params.get("title", self.default_params["title"])
 
         dataframes = []
         metric_value = {"prob_histogram": {}}
-        for _, dataset in enumerate(self.inputs.datasets):
-            df = dataset.df.copy()
-            y_prob = dataset.y_prob(self.inputs.model)
-            df["probabilities"] = y_prob
-            dataframes.append(df)
-            metric_value["prob_histogram"][dataset.input_id] = list(df["probabilities"])
+        dataset = self.inputs.dataset
+        df = dataset.df.copy()
+        y_prob = dataset.y_prob(self.inputs.model)
+        df["probabilities"] = y_prob
+        dataframes.append(df)
+        metric_value["prob_histogram"][dataset.input_id] = list(df["probabilities"])
 
         figures = self.plot_prob_histogram(
             dataframes, dataset_titles, target_column, title

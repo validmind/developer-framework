@@ -54,7 +54,7 @@ class RegressionFeatureSignificance(Metric):
     """
 
     name = "regression_feature_significance"
-    required_inputs = ["models"]
+    required_inputs = ["model"]
 
     default_params = {"fontsize": 10, "p_threshold": 0.05}
     tasks = ["regression"]
@@ -70,10 +70,10 @@ class RegressionFeatureSignificance(Metric):
         p_threshold = self.params["p_threshold"]
 
         # Check models list is not empty
-        if not self.inputs.models:
-            raise ValueError("List of models must be provided in the models parameter")
+        if not self.inputs.model:
+            raise ValueError("Model must be provided in the models parameter")
 
-        figures = self._plot_pvalues(self.inputs.models, fontsize, p_threshold)
+        figures = self._plot_pvalues(self.inputs.model, fontsize, p_threshold)
 
         return self.cache_results(figures=figures)
 

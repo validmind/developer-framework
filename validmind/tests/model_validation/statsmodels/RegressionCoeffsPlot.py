@@ -54,7 +54,7 @@ class RegressionCoeffsPlot(Metric):
     """
 
     name = "regression_coeffs_plot"
-    required_inputs = ["models"]
+    required_inputs = ["model"]
     tasks = ["regression"]
     tags = ["tabular_data", "visualization", "model_interpretation"]
 
@@ -103,15 +103,15 @@ class RegressionCoeffsPlot(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.inputs.models:
-            raise ValueError("List of models must be provided in the models parameter")
+        if not self.inputs.model:
+            raise ValueError("Mmodel must be provided in the models parameter")
 
         all_models = []
         all_figures = []
         all_metric_values = []
 
         if self.inputs.models is not None:
-            all_models.extend(self.inputs.models)
+            all_models.extend(self.inputs.model)
 
         for i, model in enumerate(all_models):
             if model.library != "statsmodels":

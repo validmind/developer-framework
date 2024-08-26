@@ -33,7 +33,7 @@ plt.show = lambda: None
 KNOWN_FAILING_TESTS = [
     # Only statsmodels are supported for these metrics
     "validmind.model_validation.statsmodels.RegressionCoeffsPlot",
-    "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
+    "validmind.model_validation.statsmodels.RegressionModelCoeffs",
     "validmind.model_validation.statsmodels.RegressionFeatureSignificance",
     # The number of observations is too small to use the Zivot-Andrews test
     "validmind.data_validation.ZivotAndrewsArch",
