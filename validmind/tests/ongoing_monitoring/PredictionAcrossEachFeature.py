@@ -17,16 +17,15 @@ def PredictionAcrossEachFeature(datasets, model):
 
     ### Purpose
 
-    - To visually compare model predictions for each feature between reference (training) and monitoring (production)
-    datasets.
-    - To identify significant differences in prediction patterns for further investigation.
+    The Prediction Across Each Feature test aims to visually compare model predictions for each feature between
+    reference (training) and monitoring (production) datasets. It helps identify significant differences in prediction
+    patterns for further investigation and ensures the model's consistency and stability over time.
 
     ### Test Mechanism
 
-    - The test generates scatter plots for each feature, comparing prediction probabilities between the reference and
-    monitoring datasets.
-    - Each plot consists of two subplots: one for reference data and one for monitoring data, enabling visual
-    comparison of the model's predictive behavior.
+    The test generates scatter plots for each feature, comparing prediction probabilities between the reference and
+    monitoring datasets. Each plot consists of two subplots: one for reference data and one for monitoring data,
+    enabling visual comparison of the model's predictive behavior.
 
     ### Signs of High Risk
 

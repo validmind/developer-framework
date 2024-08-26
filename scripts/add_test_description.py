@@ -46,13 +46,20 @@ Example description for a "Feature Drift" test:
 Evaluates changes in feature distribution over time to identify potential model drift.
 
 **Purpose**:
-- To evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets.
-- To provide insights into the model's robustness and the necessity for retraining or feature engineering.
+The Feature Drift test aims to evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets. It uses the Population Stability Index (PSI) to quantify this change, providing insights into the model’s robustness and the necessity for retraining or feature engineering.
 
 **Test Mechanism**:
-- Bucketing the distributions of each feature in both datasets.
-- Comparing the percentage of observations in each bucket between the two datasets.
-- Aggregating the differences across all buckets for each feature to produce the Population Stability Index (PSI) score for that feature.
+This test calculates the PSI by: 
+
+- Bucketing the distributions of each feature in both datasets. 
+- Comparing the percentage of observations in each bucket between the two datasets. 
+- Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
+
+The PSI score is interpreted as: 
+
+- PSI < 0.1: No significant population change. 
+- PSI < 0.2: Moderate population change. 
+- PSI >= 0.2: Significant population change.
 
 **Signs of High Risk**:
 - PSI >= 0.2 for any feature, indicating a significant distribution shift.
@@ -78,7 +85,9 @@ You will populate each section according to the following guidelines:
 5. Limitations: List or describe the limitations or disadvantages of this test, including any potential bias or areas it might not fully address
 
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test.
-Respond with a markdown description where each section name is in header 3 format and then the content for that section. Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
+Respond with a markdown description where each section name is in header 3 format and then the content for that section. 
+Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
+For sections 1-2, make sure the content is in full sentences and paragraph form.
 For sections 3-5, the content should be a list of bullet points unless the section has only one or two items, in which case it can be a paragraph.
 Respond only with the description and don't include any explanation or other text. Additionally, avoid using enclosing markdown syntax like ```markdown
 """.strip()
@@ -106,13 +115,20 @@ Example description for a "Feature Drift" test:
 Evaluates changes in feature distribution over time to identify potential model drift.
 
 **Purpose**:
-- To evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets.
-- To provide insights into the model's robustness and the necessity for retraining or feature engineering.
+The Feature Drift test aims to evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets. It uses the Population Stability Index (PSI) to quantify this change, providing insights into the model’s robustness and the necessity for retraining or feature engineering.
 
 **Test Mechanism**:
-- Bucketing the distributions of each feature in both datasets.
-- Comparing the percentage of observations in each bucket between the two datasets.
-- Aggregating the differences across all buckets for each feature to produce the Population Stability Index (PSI) score for that feature.
+This test calculates the PSI by: 
+
+- Bucketing the distributions of each feature in both datasets. 
+- Comparing the percentage of observations in each bucket between the two datasets. 
+- Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
+
+The PSI score is interpreted as: 
+
+- PSI < 0.1: No significant population change. 
+- PSI < 0.2: Moderate population change. 
+- PSI >= 0.2: Significant population change.
 
 **Signs of High Risk**:
 - PSI >= 0.2 for any feature, indicating a significant distribution shift.
@@ -140,7 +156,9 @@ These sections have been populated with content according to the following guide
 The following prompt was given to GPT4 to generate the descriptions:
 '''
 Ensure that each section is populated with succinct, clear, and relevant information pertaining to the test.
-Respond with a markdown description where each section name is in header 3 format and then the content for that section. Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
+Respond with a markdown description where each section name is in header 3 format and then the content for that section. 
+Make sure to also remove the colon from the end of the header 3 section names and add a line break in between the section name and the section content.
+For sections 1-2, make sure the content is in full sentences and paragraph form.
 For sections 3-5, the content should be a list of bullet points unless the section has only one or two items, in which case it can be a paragraph.
 Respond only with the description and don't include any explanation or other text. Additionally, avoid using enclosing markdown syntax like ```markdown
 '''

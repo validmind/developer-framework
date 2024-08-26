@@ -17,15 +17,15 @@ def TargetPredictionDistributionPlot(datasets, model):
 
     ### Purpose
 
-    - To evaluate potential changes in the prediction distributions between the reference and new monitoring datasets.
-    - To identify underlying shifts in data characteristics that warrant further investigation.
+    The Target Prediction Distribution Plot test aims to evaluate potential changes in the prediction distributions
+    between the reference and new monitoring datasets. It seeks to identify underlying shifts in data characteristics
+    that warrant further investigation. 
 
     ### Test Mechanism
 
-    - Generate Kernel Density Estimation (KDE) plots for prediction probabilities from both the reference and
-    monitoring datasets.
-    - Visually compare the KDE plots to assess significant differences in the prediction distributions between the two
-    datasets.
+    This test generates Kernel Density Estimation (KDE) plots for prediction probabilities from both the reference and
+    monitoring datasets. By visually comparing the KDE plots, it assesses significant differences in the prediction
+    distributions between the two datasets.
 
     ### Signs of High Risk
 
