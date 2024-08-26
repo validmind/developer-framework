@@ -49,13 +49,13 @@ Evaluates changes in feature distribution over time to identify potential model 
 The Feature Drift test aims to evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets. It uses the Population Stability Index (PSI) to quantify this change, providing insights into the model’s robustness and the necessity for retraining or feature engineering.
 
 **Test Mechanism**:
-This test calculates the PSI by: 
+This test calculates the PSI by:
 
 - Bucketing the distributions of each feature in both datasets. 
 - Comparing the percentage of observations in each bucket between the two datasets. 
 - Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
 
-The PSI score is interpreted as: 
+The PSI score is interpreted as:
 
 - PSI < 0.1: No significant population change. 
 - PSI < 0.2: Moderate population change. 
@@ -118,13 +118,13 @@ Evaluates changes in feature distribution over time to identify potential model 
 The Feature Drift test aims to evaluate how much the distribution of features has shifted over time between two datasets, typically training and monitoring datasets. It uses the Population Stability Index (PSI) to quantify this change, providing insights into the model’s robustness and the necessity for retraining or feature engineering.
 
 **Test Mechanism**:
-This test calculates the PSI by: 
+This test calculates the PSI by:
 
 - Bucketing the distributions of each feature in both datasets. 
 - Comparing the percentage of observations in each bucket between the two datasets. 
 - Aggregating the differences across all buckets for each feature to produce the PSI score for that feature.
 
-The PSI score is interpreted as: 
+The PSI score is interpreted as:
 
 - PSI < 0.1: No significant population change. 
 - PSI < 0.2: Moderate population change. 
