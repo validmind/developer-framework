@@ -70,7 +70,7 @@ class RegressionModelCoeffs(Metric):
         if not self.inputs.model or len(self.inputs.model) == 0:
             raise ValueError("List of model must be provided in the models parameter")
 
-        if model.library != "statsmodels":
+        if self.inputs.model.library != "statsmodels":
             raise SkipTestError(
                 "Only statsmodels models are supported for this metric"
             )
