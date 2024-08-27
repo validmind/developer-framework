@@ -96,7 +96,7 @@ class RegressionPerformance(Metric):
         This summary varies depending if we're evaluating a binary or multi-class model
         """
         results = []
-        metrics = metric_value["model_0"].keys()
+        metrics = metric_value[self.inputs.model.input_id].keys()
         error_table = []
         for metric_name in metrics:
             errors_dict = {}
