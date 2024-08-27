@@ -61,54 +61,49 @@ def random_insertion(word_list):
 
 class StabilityAnalysisRandomNoise(StabilityAnalysis):
     """
-    Evaluate robustness of embeddings models to random noise introduced by using
-    a `probability` parameter to choose random locations in the text to apply
-    random perturbations. These perturbations include:
+    Assesses the robustness of text embeddings models to random noise introduced via text perturbations.
 
-    - Swapping two adjacent words
-    - Introducing a random typo in a word
-    - Deleting a random word
-    - Inserting a random word at a random position
+    ### Purpose
 
-    **Purpose:**
-    The purpose of the stability analysis is to evaluate the robustness of a text embeddings model to random noise.
-    Random perturbations such as swapping adjacent words, introducing random typos, deleting random words, or inserting
-    random words at random positions in the text are introduced, to gauge the model's performance and stability.
+    The purpose of this test is to evaluate the robustness of a text embeddings model to random noise. It introduces
+    perturbations such as swapping adjacent words, inserting typos, deleting words, or inserting random words within
+    the text to determine how well the model performs under such noisy conditions.
 
-    **Test Mechanism:**
-    The test mechanism includes a series of function-defined random perturbations like swapping two words
-    `random_swap`, introducing a typo in a word `introduce_typo`, deleting a random word `random_deletion`, and
-    inserting a random word at a random position `random_insertion`. A probability parameter determines the likelihood
-    or frequency of these perturbations within the text data.
+    ### Test Mechanism
 
-    The `perturb_data` function initally tokenizes the string data based on spaces then applies selected random
-    perturbations based on the provided probability for each word in the text.
+    The test applies a series of pre-defined random perturbations to the text data. These perturbations include:
 
-    **Signs of High Risk:**
-    - High error rates in model predictions or classifications after the introduction of the random noise
-    - Greater sensitivity to certain types and degrees of noise such as typographical errors, insertion or deletion of
-    words
-    - Significant change in loss function or accuracy metric
-    - Inconsistency in model outputs for slightly perturbed inputs
+    - Swapping two adjacent words using the `random_swap` function.
+    - Introducing a typo in a word using the `introduce_typo` function.
+    - Deleting a word using the `random_deletion` function.
+    - Inserting a random word at a random position using the `random_insertion` function.
 
-    **Strengths:**
-    - Measures model robustness against noise thereby reflecting real-world scenarios where data may contain errors or
+    A probability parameter dictates the likelihood of each perturbation being applied to the words in the text. The
+    text is initially tokenized into words, and selected perturbations are applied based on this probability.
+
+    ### Signs of High Risk
+
+    - High error rates in model predictions or classifications after the introduction of random noise.
+    - Greater sensitivity to specific types of noise, such as typographical errors or word deletions.
+    - Significant change in loss function or accuracy metrics.
+    - Inconsistent model outputs for slightly perturbed inputs.
+
+    ### Strengths
+
+    - Measures model robustness against noise, reflecting real-world scenarios where data may contain errors or
     inconsistencies.
-    - Easy to implement with adjustable perturbation severity through probability parameter.
-    - Enables identification of model sensitivity to certain noise types, providing grounding for model improvement.
+    - Easy to implement with adjustable perturbation severity through a probability parameter.
+    - Identifies model sensitivity to specific types of noise, offering insights for model improvement.
     - Useful for testing models designed to handle text data.
 
-    **Limitations:**
-    - The test might not be effective for models that have been designed with a high resistance to noise or models that
-    are inherently designed to handle such perturbations.
-    - Pseudo-randomness may not accurately represent real-world distribution of noise or typographical errors, which
-    could be biased towards certain types of errors or malware injections.
-    - Highly dependent on the probability parameter to introduce noise, with artificial adjusting required to achieve
-    an optimal balance.
-    - Only validates the model's performance against noise in input data, not its ability to capture complex language
-    structures or semantics.
-    - Does not guarantee the model's performance in new, unseen, real-world data beyond what is represented by the
-    noise-introduced test data.
+    ### Limitations
+
+    - May be ineffective for models that are inherently resistant to noise or designed to handle such perturbations.
+    - Pseudo-randomness may not accurately represent the real-world distribution of noise or typographical errors.
+    - Highly dependent on the probability parameter, requiring fine-tuning to achieve an optimal balance.
+    - Only assesses performance against noise in input data, not the ability to capture complex language structures or
+    semantics.
+    - Does not guarantee model performance on new, unseen, real-world data beyond the generated noisy test data.
     """
 
     name = "Text Embeddings Stability Analysis to Random Noise"
