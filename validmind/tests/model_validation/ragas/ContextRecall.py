@@ -107,9 +107,9 @@ def ContextRecall(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "contexts", "ground_truth", "context_recall"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "contexts", "ground_truth", "context_recall"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_recall"].mean(),
@@ -117,7 +117,7 @@ def ContextRecall(
                     "Max Score": result_df["context_recall"].max(),
                     "Min Score": result_df["context_recall"].min(),
                     "Standard Deviation": result_df["context_recall"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

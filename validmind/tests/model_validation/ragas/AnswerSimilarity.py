@@ -105,9 +105,9 @@ def AnswerSimilarity(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["answer", "ground_truth", "answer_similarity"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["answer", "ground_truth", "answer_similarity"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_similarity"].mean(),
@@ -115,7 +115,7 @@ def AnswerSimilarity(
                     "Max Score": result_df["answer_similarity"].max(),
                     "Min Score": result_df["answer_similarity"].min(),
                     "Standard Deviation": result_df["answer_similarity"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

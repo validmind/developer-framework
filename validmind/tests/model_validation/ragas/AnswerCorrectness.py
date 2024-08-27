@@ -116,9 +116,9 @@ def AnswerCorrectness(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "answer", "ground_truth", "answer_correctness"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "answer", "ground_truth", "answer_correctness"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_correctness"].mean(),
@@ -126,7 +126,7 @@ def AnswerCorrectness(
                     "Max Score": result_df["answer_correctness"].max(),
                     "Min Score": result_df["answer_correctness"].min(),
                     "Standard Deviation": result_df["answer_correctness"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

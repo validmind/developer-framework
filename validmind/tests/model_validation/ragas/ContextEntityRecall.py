@@ -113,13 +113,13 @@ def ContextEntityRecall(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                [
-                    "contexts",
-                    "ground_truth",
-                    "context_entity_recall",
-                ]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     [
+            #         "contexts",
+            #         "ground_truth",
+            #         "context_entity_recall",
+            #     ]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_entity_recall"].mean(),
@@ -127,7 +127,7 @@ def ContextEntityRecall(
                     "Max Score": result_df["context_entity_recall"].max(),
                     "Min Score": result_df["context_entity_recall"].min(),
                     "Standard Deviation": result_df["context_entity_recall"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

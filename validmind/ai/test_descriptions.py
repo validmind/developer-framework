@@ -212,7 +212,11 @@ def background_generate_description(
     def wrapped():
         try:
             return generate_description(
-                test_id, test_description, test_summary, figures, metric
+                test_id=test_id,
+                test_description=test_description,
+                test_summary=test_summary,
+                figures=figures,
+                metric=metric,
             )
         except Exception as e:
             logger.error(f"Failed to generate description: {e}")
