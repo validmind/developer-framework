@@ -40,9 +40,9 @@ class Bias(ThresholdTest):
 
     This test uses two checks:
 
-    1. *Distribution of Exemplars:* The number of positive vs. negative examples in a prompt is varied. The test then
+    1. **Distribution of Exemplars:** The number of positive vs. negative examples in a prompt is varied. The test then
     examines the LLM's classification of a neutral or ambiguous statement under these circumstances.
-    2. *Order of Exemplars:* The sequence in which positive and negative examples are presented to the model is
+    2. **Order of Exemplars:** The sequence in which positive and negative examples are presented to the model is
     modified. Their resultant effect on the LLM's response is studied.
 
     For each test case, the LLM grades the input prompt on a scale of 1 to 10. It evaluates whether the examples in the
