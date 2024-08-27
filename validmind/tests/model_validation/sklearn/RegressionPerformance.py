@@ -2,22 +2,23 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import re
+from dataclasses import dataclass
 
 import numpy as np
-import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-from validmind import tags, tasks
+from validmind.errors import SkipTestError
 from validmind.logging import get_logger
+from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 logger = get_logger(__name__)
 
 
-@tags("sklearn", "model_performance")
-@tasks("regression")
-def RegressionPerformance(dataset, model):
+@dataclass
+class RegressionPerformance(Metric):
     """
-    Evaluates the performance of regression model using five different metrics: MAE, MSE, RMSE,
+    Compares and evaluates the performance of multiple regression models using five different metrics: MAE, MSE, RMSE,
     MAPE, and MBD.
 
     **1. Purpose:**
@@ -57,28 +58,81 @@ def RegressionPerformance(dataset, model):
     - The test could exhibit performance limitations if a large number of models is input for comparison.
     """
 
-    y_true_test = dataset.y
-    y_pred_test = dataset.y_pred(model)
-    y_true_test = y_true_test.astype(y_pred_test.dtype)
-    mae_test = mean_absolute_error(y_true_test, y_pred_test)
+    name = "regression_performance"
+    required_inputs = ["dataset", "model"]
 
-    results = {}
-    results["Mean Absolute Error (MAE)"] = mae_test
+    tasks = ["regression"]
+    tags = [
+        "sklearn",
+        "model_performance",
+    ]
 
-    mse_test = mean_squared_error(y_true_test, y_pred_test)
-    results["Mean Squared Error (MSE)"] = mse_test
-    results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
+    def regression_errors(self, y_true_test, y_pred_test):
+        mae_test = mean_absolute_error(y_true_test, y_pred_test)
 
-    if np.any(y_true_test == 0):
-        logger.warning(
-            "y_true_test contains zero values. Skipping MAPE calculation to avoid division by zero."
+        results = {}
+        results["Mean Absolute Error (MAE)"] = mae_test
+
+        mse_test = mean_squared_error(y_true_test, y_pred_test)
+        results["Mean Squared Error (MSE)"] = mse_test
+        results["Root Mean Squared Error (RMSE)"] = np.sqrt(mse_test)
+
+        if np.any(y_true_test == 0):
+            logger.warning(
+                "y_true_test contains zero values. Skipping MAPE calculation to avoid division by zero."
+            )
+            results["Mean Absolute Percentage Error (MAPE)"] = None
+        else:
+            mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
+            results["Mean Absolute Percentage Error (MAPE)"] = mape_test
+
+        mbd_test = np.mean(y_pred_test - y_true_test)
+        results["Mean Bias Deviation (MBD)"] = mbd_test
+
+        return results
+
+    def summary(self, metric_value: dict):
+        """
+        This summary varies depending if we're evaluating a binary or multi-class model
+        """
+        results = []
+        metrics = metric_value["model_0"].keys()
+        error_table = []
+        for metric_name in metrics:
+            errors_dict = {}
+            errors_dict["Errors"] = metric_name
+            for m, _ in metric_value.items():
+                for metric in metrics:
+                    res = re.findall(r"\(.*?\)", metric)
+                    res[0][1:-1]
+                    errors_dict[f"{res[0][1:-1]}-{m}"] = metric_value[m][metric]
+            error_table.append(errors_dict)
+
+        results.append(
+            ResultTable(
+                data=error_table,
+                metadata=ResultTableMetadata(title="Regression Errors Comparison"),
+            )
         )
-        results["Mean Absolute Percentage Error (MAPE)"] = None
-    else:
-        mape_test = np.mean(np.abs((y_true_test - y_pred_test) / y_true_test)) * 100
-        results["Mean Absolute Percentage Error (MAPE)"] = mape_test
 
-    mbd_test = np.mean(y_pred_test - y_true_test)
-    results["Mean Bias Deviation (MBD)"] = mbd_test
+        return ResultSummary(results=results)
 
-    return pd.DataFrame(results)
+    def run(self):
+        # Check models list is not empty
+        if not self.inputs.model:
+            raise SkipTestError(
+                "Model must be provided as a `models` parameter to compare performance"
+            )
+
+        all_models = self.inputs.model
+
+        results = {}
+
+        for idx, model in enumerate(all_models):
+            result = self.regression_errors(
+                y_true_test=self.inputs.dataset.y,
+                y_pred_test=self.inputs.dataset.y_pred(model),
+            )
+            results["model_" + str(idx)] = result
+
+        return self.cache_results(results)
