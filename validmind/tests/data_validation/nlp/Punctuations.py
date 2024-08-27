@@ -35,23 +35,23 @@ class Punctuations(Metric):
 
     ### Signs of High Risk
 
-    - High risk can be indicated by the excessive or unusual frequency of specific punctuation marks, potentially
-    denoting dubious quality, data corruption, or skewed data.
+    - Excessive or unusual frequency of specific punctuation marks, potentially denoting dubious quality, data
+    corruption, or skewed data.
 
     ### Strengths
 
-    - The Punctuations Metric provides valuable insights into the distribution of punctuation usage in a text dataset.
-    - This insight can be important in validating the quality, consistency, and nature of the data.
-    - It can provide hints about the style or tonality of the text corpus. For example, frequent usage of exclamation
-    marks may suggest a more informal and emotional context.
+    - Provides valuable insights into the distribution of punctuation usage in a text dataset.
+    - Important in validating the quality, consistency, and nature of the data.
+    - Can provide hints about the style or tonality of the text corpus, such as informal and emotional context
+    indicated by frequent exclamation marks.
 
     ### Limitations
 
-    - The metric focuses solely on punctuation usage and can miss other important textual characteristics.
-    - It's important not to make general cultural or tonality assumptions based solely on punctuation distribution,
-    since these can vary greatly across different languages and contexts.
-    - The metric may be less effective with languages that use non-standard or different punctuation.
-    - The visualization may lack interpretability when there are many unique punctuation marks in the dataset.
+    - Focuses solely on punctuation usage, potentially missing other important textual characteristics.
+    - General cultural or tonality assumptions based on punctuation distribution can be misguiding, as these vary
+    across different languages and contexts.
+    - Less effective with languages that use non-standard or different punctuation.
+    - Visualization may lack interpretability when there are many unique punctuation marks in the dataset.
     """
 
     name = "punctuations"

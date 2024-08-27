@@ -17,7 +17,7 @@ from validmind import tags, tasks
 @tasks("text_classification", "text_summarization")
 def LanguageDetection(dataset):
     """
-    Detects the language of each text entry in a dataset and visualizes the distribution of languages as a histogram.
+    Assesses the diversity of languages in a textual dataset by detecting and visualizing the distribution of languages.
 
     ### Purpose
 
