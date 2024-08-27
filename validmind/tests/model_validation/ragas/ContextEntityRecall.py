@@ -127,7 +127,7 @@ def ContextEntityRecall(
                     "Max Score": result_df["context_entity_recall"].max(),
                     "Min Score": result_df["context_entity_recall"].min(),
                     "Standard Deviation": result_df["context_entity_recall"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

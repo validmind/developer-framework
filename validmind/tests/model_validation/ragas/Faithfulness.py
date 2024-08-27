@@ -115,7 +115,7 @@ def Faithfulness(
                     "Max Score": result_df["faithfulness"].max(),
                     "Min Score": result_df["faithfulness"].min(),
                     "Standard Deviation": result_df["faithfulness"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

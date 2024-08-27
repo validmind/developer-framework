@@ -115,7 +115,7 @@ def AnswerSimilarity(
                     "Max Score": result_df["answer_similarity"].max(),
                     "Min Score": result_df["answer_similarity"].min(),
                     "Standard Deviation": result_df["answer_similarity"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

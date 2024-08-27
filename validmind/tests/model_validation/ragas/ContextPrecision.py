@@ -117,7 +117,7 @@ def ContextPrecision(
                     "Max Score": result_df["context_precision"].max(),
                     "Min Score": result_df["context_precision"].min(),
                     "Standard Deviation": result_df["context_precision"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

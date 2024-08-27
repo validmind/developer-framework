@@ -126,7 +126,7 @@ def AnswerCorrectness(
                     "Max Score": result_df["answer_correctness"].max(),
                     "Min Score": result_df["answer_correctness"].min(),
                     "Standard Deviation": result_df["answer_correctness"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },
