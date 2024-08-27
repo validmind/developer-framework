@@ -20,68 +20,46 @@ def ContextEntityRecall(
     ground_truth_column: str = "ground_truth",
 ):
     """
-    Evaluates the context entity recall for dataset entries and visualizes the results.
+    Assesses the recall of entities from the context provided in relation to ground truth data to measure retrieval
+    performance.
 
-    ### Overview
+    ### Purpose
 
-    This metric gives the measure of recall of the retrieved context, based on the
-    number of entities present in both `ground_truths` and `contexts` relative to the
-    number of entities present in the `ground_truths` alone. Simply put, it is a measure
-    of what fraction of entities are recalled from `ground_truths`. This metric is
-    useful in fact-based use cases like tourism help desk, historical QA, etc. This
-    metric can help evaluate the retrieval mechanism for entities, based on comparison
-    with entities present in `ground_truths`, because in cases where entities matter,
-    we need the `contexts` which cover them.
+    The Context Entity Recall test aims to evaluate the effectiveness of context retrieval in recalling entities from
+    ground truth data. This metric is particularly valuable in fact-based applications such as tourism help desks and
+    historical question answering (QA), where accurately recalling entities from contexts is critical. By comparing
+    entities in the contexts against those in the ground truth, this test provides a measure of the retrieval
+    mechanism's success.
 
-    ### Formula
+    ### Test Mechanism
 
-    To compute this metric, we use two sets, $GE$ and $CE$, representing the set of
-    entities present in `ground_truths` and set of entities present in `contexts`
-    respectively. We then take the number of elements in intersection of these sets and
-    divide it by the number of elements present in the $GE$, given by the formula:
+    This test calculates the Context Entity Recall by:
 
-    $$
-    \\text{context entity recall} = \\frac{| CE \\cap GE |}{| GE |}
-    $$
+    - Identifying two sets: GE (entities in ground truth) and CE (entities in context).
+    - Computing the intersection of these sets.
+    - Dividing the size of the intersection by the size of the GE set, according to the formula:
+      \[
+      \text{context entity recall} = \frac{|CE \cap GE|}{|GE|}
+      \]
+    - Generating a histogram and box plot to visualize context entity recall scores across the dataset.
 
-    ### Configuring Columns
+    ### Signs of High Risk
 
-    This metric requires the following columns in your dataset:
-    - `contexts` (List[str]): A list of text contexts which will be evaluated to make
-    sure if they contain the entities present in the ground truth.
-    - `ground_truth` (str): The ground truth text from which the entities will be
-    extracted and compared with the entities in the `contexts`.
+    - Low context entity recall scores across most data points.
+    - High variance in context entity recall scores, indicating inconsistency in retrieval.
+    - Mean or median context entity recall scores significantly below expected thresholds for the application.
 
-    If the above data is not in the appropriate column, you can specify different column
-    names for these fields using the parameters `contexts_column`, and `ground_truth_column`.
+    ### Strengths
 
-    For example, if your dataset has this data stored in different columns, you can
-    pass the following parameters:
-    ```python
-    {
-        "contexts_column": "context_info"
-        "ground_truth_column": "my_ground_truth_col",
-    }
-    ```
+    - Provides a quantitative measure of retrieval performance.
+    - Useful for evaluating fact-based retrieval mechanisms.
+    - Helps in visually assessing the distribution and variability of recall scores.
 
-    If the data is stored as a dictionary in another column, specify the column and key
-    like this:
-    ```python
-    pred_col = dataset.prediction_column(model)
-    params = {
-        "contexts_column": f"{pred_col}.contexts",
-        "ground_truth_column": "my_ground_truth_col",
-    }
-    ```
+    ### Limitations
 
-    For more complex situations, you can use a function to extract the data:
-    ```python
-    pred_col = dataset.prediction_column(model)
-    params = {
-        "contexts_column": lambda row: [row[pred_col]["context_message"]],
-        "ground_truth_column": "my_ground_truth_col",
-    }
-    ```
+    - Dependent on the accuracy of entity extraction from both contexts and ground truth.
+    - May not capture context relevance beyond entity recall.
+    - Assumes that entities are defined and extracted consistently across both contexts and ground truth.
     """
     try:
         from ragas import evaluate
