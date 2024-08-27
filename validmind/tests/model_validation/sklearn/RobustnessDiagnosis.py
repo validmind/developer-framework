@@ -315,39 +315,42 @@ def robustness_diagnosis(
 
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
-    """Evaluate the robustness of a machine learning model to noise.
+    """
+    Assesses the robustness of a machine learning model by evaluating performance decay under noisy conditions.
 
-    Robustness refers to a model's ability to maintain a high level of performance in
-    the face of perturbations or changes (particularly noise) added to its input data.
-    This test is designed to help gauge how well the model can handle potential real-
-    world scenarios where the input data might be incomplete or corrupted.
+    ### Purpose
 
-    ## Test Methodology
-    This test is conducted by adding Gaussian noise, proportional to a particular standard
-    deviation scale, to numeric input features of the input datasets. The model's
-    performance on the perturbed data is then evaluated using a user-defined metric or the
-    default metric of AUC for classification tasks and MSE for regression tasks. The results
-    are then plotted to visualize the model's performance decay as the perturbation size
-    increases.
+    The Robustness Diagnosis test aims to evaluate the resilience of a machine learning model when subjected to
+    perturbations or noise in its input data. This is essential for understanding the model's ability to handle
+    real-world scenarios where data may be imperfect or corrupted.
 
-    When using this test, it is highly recommended to tailor the performance metric, list
-    of scaling factors for the standard deviation of the noise, and the performance decay
-    threshold to the specific use case of the model being evaluated.
+    ### Test Mechanism
 
-    ## Inputs
+    This test introduces Gaussian noise to the numeric input features of the datasets at varying scales of standard
+    deviation. The performance of the model is then measured using a specified metric. The process includes:
 
-    - `model` (VMModel): The trained model to be evaluated.
-    - `datasets` (List[VMDataset]): A list of datasets to evaluate the model against.
+    - Adding Gaussian noise to numerical input features based on scaling factors.
+    - Evaluating the model's performance on the perturbed data using metrics like AUC for classification tasks and MSE
+    for regression tasks.
+    - Aggregating and plotting the results to visualize performance decay relative to perturbation size.
 
-    ## Parameters
-    - `metric` (str, optional): The performance metric to be used for evaluation. If not
-        provided, the default metric is used based on the task of the model. Default values
-        are "auc" for classification tasks and "mse" for regression tasks.
-    - `scaling_factor_std_dev_list` (List[float], optional): A list of scaling factors for
-        the standard deviation of the noise to be added to the input features. The default
-        values are [0.1, 0.2, 0.3, 0.4, 0.5].
-    - `performance_decay_threshold` (float, optional): The threshold for the performance
-        decay of the model. The default value is 0.05.
+    ### Signs of High Risk
+
+    - A significant drop in performance metrics with minimal noise.
+    - Performance decay values exceeding the specified threshold.
+    - Consistent failure to meet performance standards across multiple perturbation scales.
+
+    ### Strengths
+
+    - Provides insights into the model's robustness against noisy or corrupted data.
+    - Utilizes a variety of performance metrics suitable for both classification and regression tasks.
+    - Visualization helps in understanding the extent of performance degradation.
+
+    ### Limitations
+
+    - Gaussian noise might not adequately represent all types of real-world data perturbations.
+    - Performance thresholds are somewhat arbitrary and might need tuning.
+    - The test may not account for more complex or unstructured noise patterns that could affect model robustness.
     """
 
     name = "robustness"
