@@ -105,9 +105,9 @@ def Faithfulness(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["contexts", "answer", "faithfulness"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["contexts", "answer", "faithfulness"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["faithfulness"].mean(),

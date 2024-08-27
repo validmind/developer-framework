@@ -120,9 +120,9 @@ def AnswerRelevance(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "contexts", "answer", "answer_relevancy"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "contexts", "answer", "answer_relevancy"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_relevancy"].mean(),

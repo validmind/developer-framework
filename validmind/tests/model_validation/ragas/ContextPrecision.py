@@ -107,9 +107,9 @@ def ContextPrecision(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "contexts", "ground_truth", "context_precision"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "contexts", "ground_truth", "context_precision"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_precision"].mean(),
