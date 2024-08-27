@@ -188,7 +188,7 @@ def overfit_diagnosis(  # noqa: C901
     for each group and identifies regions where the difference exceeds a specified threshold.
 
     ## Test Methodology
-    
+
     This test works for both classification and regression models and with a variety of
     performance metrics. By default, it uses the AUC metric for classification models and
     the MSE metric for regression models. The threshold for identifying overfit regions

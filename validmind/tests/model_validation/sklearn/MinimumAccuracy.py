@@ -41,7 +41,7 @@ class MinimumAccuracy(ThresholdTest):
 
     - Model fails to achieve or surpass the predefined score threshold.
     - Persistent scores below the threshold, indicating a high risk of inaccurate predictions.
-      
+
     ### Strengths
 
     - Simplicity, presenting a straightforward measure of holistic model performance across all classes.

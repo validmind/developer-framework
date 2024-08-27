@@ -31,7 +31,7 @@ class TabularNumericalHistograms(Metric):
     - A high degree of skewness
     - Unexpected data distributions
     - Existence of extreme outliers in the histograms
-      
+
     These may indicate issues with the data that the model is receiving. If data for a numerical feature is expected to
     follow a certain distribution (like a normal distribution) but does not, it could lead to sub-par performance by
     the model. As such these instances should be treated as high-risk indicators.

@@ -57,6 +57,7 @@ class StabilityAnalysis(ThresholdTest):
     - Only applicable to models producing embeddings, limiting its use to specific types of models.
     - High computational cost due to the need to process perturbed datasets and calculate similarities.
     """
+
     pass
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):

@@ -36,7 +36,7 @@ def BleuScore(dataset, model):
 
     - Consistently low BLEU scores could indicate poor quality in the generated text, suggesting that the model fails
     to capture the essential content of the reference texts.
-    - Low precision scores might suggest that the generated text contains a lot of redundant or irrelevant information. 
+    - Low precision scores might suggest that the generated text contains a lot of redundant or irrelevant information.
     - Low recall scores may indicate that important information from the reference text is being omitted.
     - An imbalanced performance between precision and recall, reflected by a low BLEU score, could signal issues in the
     model's ability to balance informativeness and conciseness.
@@ -46,7 +46,7 @@ def BleuScore(dataset, model):
     - Provides a straightforward and widely-used evaluation of text quality through BLEU scores.
     - Visual representations (histograms and bar charts) make it easier to interpret the distribution and trends of the
     scores.
-    - Descriptive statistics offer a concise summary of the model's strengths and weaknesses in generating text. 
+    - Descriptive statistics offer a concise summary of the model's strengths and weaknesses in generating text.
 
     ### Limitations
 
