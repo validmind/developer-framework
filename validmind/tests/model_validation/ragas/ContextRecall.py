@@ -21,47 +21,62 @@ def ContextRecall(
     ground_truth_column: str = "ground_truth",
 ):
     """
-    Assesses the alignment of retrieved contexts with the ground truth in text-based retrieval tasks.
+    Context recall measures the extent to which the retrieved context aligns with the
+    annotated answer, treated as the ground truth. It is computed based on the `ground
+    truth` and the `retrieved context`, and the values range between 0 and 1, with higher
+    values indicating better performance.
 
-    ### Purpose
+    To estimate context recall from the ground truth answer, each sentence in the ground
+    truth answer is analyzed to determine whether it can be attributed to the retrieved
+    context or not. In an ideal scenario, all sentences in the ground truth answer
+    should be attributable to the retrieved context.
 
-    The Context Recall test evaluates how well the retrieved context aligns with the annotated ground truth in
-    text-based retrieval tasks. It quantifies the proportion of sentences in the ground truth that can be attributed to
-    the retrieved context, providing insights into the model's retrieval performance.
 
-    ### Test Mechanism
-
-    This test involves calculating the context recall using the following steps:
-
-    - Identify sentences in the ground truth answer.
-    - Check if each sentence can be attributed to the retrieved context.
-    - Calculate the context recall as the ratio of ground truth sentences attributable to the context to the total
-    number of sentences in the ground truth.
-    - Produce a histogram and box plot of the context recall values.
-
-    The formula for context recall is:
+    The formula for calculating context recall is as follows:
     $$
-    \\text{context recall} = {|\\text{GT sentences that can be attributed to context}| \\over |\\text{Number of
-    sentences in GT}|}
+    \\text{context recall} = {|\\text{GT sentences that can be attributed to context}| \\over |\\text{Number of sentences in GT}|}
     $$
 
-    ### Signs of High Risk
+    ### Configuring Columns
 
-    - Low mean or median context recall score, indicating poor alignment.
-    - High standard deviation in scores, suggesting inconsistent retrieval performance.
-    - Frequent occurrences of minimum context recall scores close to zero.
+    This metric requires the following columns in your dataset:
+    - `question` (str): The text query that was input into the model.
+    - `contexts` (List[str]): A list of text contexts which are retrieved and which
+    will be evaluated to make sure they contain all items in the ground truth.
+    - `ground_truth` (str): The ground truth text to compare with the retrieved contexts.
 
-    ### Strengths
+    If the above data is not in the appropriate column, you can specify different column
+    names for these fields using the parameters `question_column`, `contexts_column`
+    and `ground_truth_column`.
 
-    - Provides a quantitative measure of retrieval accuracy.
-    - Easy to interpret with meaningful scores ranging from 0 to 1.
-    - Visual aids (histogram and box plot) help in understanding the distribution of scores.
+    For example, if your dataset has this data stored in different columns, you can
+    pass the following parameters:
+    ```python
+    {
+        "question_column": "question",
+        "contexts_column": "context_info"
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
 
-    ### Limitations
+    If the data is stored as a dictionary in another column, specify the column and key
+    like this:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": f"{pred_col}.contexts",
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
 
-    - Depends heavily on the quality of the annotated ground truth.
-    - Specific to text-based tasks, not applicable to other types of retrieval tasks.
-    - May not fully capture the semantic relevance of retrieved contexts beyond sentence attribution.
+    For more complex situations, you can use a function to extract the data:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": lambda x: [x[pred_col]["context_message"]],
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
     """
     try:
         from ragas import evaluate

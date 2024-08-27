@@ -21,54 +21,62 @@ def ContextPrecision(
     ground_truth_column: str = "ground_truth",
 ):  # noqa: B950
     """
-    Assesses the precision of retrieved contexts in containing relevant information in response to a query input.
+    Context Precision is a metric that evaluates whether all of the ground-truth
+    relevant items present in the contexts are ranked higher or not. Ideally all the
+    relevant chunks must appear at the top ranks. This metric is computed using the
+    `question`, `ground_truth` and the `contexts`, with values ranging between 0 and 1,
+    where higher scores indicate better precision.
 
-    ### Purpose
+    $$
+    \\text{Context Precision@K} = \\frac{\\sum_{k=1}^{K} \\left( \\text{Precision@k} \\times v_k \\right)}{\\text{Total number of relevant items in the top } K \\text{ results}}
+    $$
+    $$
+    \\text{Precision@k} = {\\text{true positives@k} \\over  (\\text{true positives@k} + \\text{false positives@k})}
+    $$
 
-    The Context Precision test aims to evaluate the accuracy with which relevant information is ranked within retrieved
-    text contexts in relation to a given query. By comparing the retrieved contexts against the ground truth, this test
-    provides a precision score that reflects the relevance and correct ordering of the contexts, with higher scores
-    indicating better precision.
+    Where $K$ is the total number of chunks in contexts and $v_k \\in \\{0, 1\\}$ is the
+    relevance indicator at rank $k$.
 
-    ### Test Mechanism
+    ### Configuring Columns
 
-    This test calculates the Context Precision by:
-    - Using the `question`, `ground_truth`, and `contexts` columns from the provided dataset.
-    - Applying the following metric formula:
+    This metric requires the following columns in your dataset:
+    - `question` (str): The text query that was input into the model.
+    - `contexts` (List[str]): A list of text contexts which are retrieved and which
+    will be evaluated to make sure they contain relevant info in the correct order.
+    - `ground_truth` (str): The ground truth text to compare with the retrieved contexts.
 
-      $$
-      \\text{Context Precision@K} = \\frac{\\sum_{k=1}^{K} \\left( \\text{Precision@k} \\times v_k
-    \\right)}{\\text{Total number of relevant items in the top } K \\text{ results}}
-      $$
-      
-      $$
-      \\text{Precision@k} = {\\text{true positives@k} \\over  (\\text{true positives@k} + \\text{false positives@k})}
-      $$
-      
-      Where \( K \) is the total number of chunks in contexts and \( v_k \\in \\{0, 1\\} \) is the relevance indicator
-    at rank \( k \).
+    If the above data is not in the appropriate column, you can specify different column
+    names for these fields using the parameters `question_column`, `contexts_column`
+    and `ground_truth_column`.
 
-    - Renaming columns as specified in the parameters, if default names are not used.
-    - Calculating the precision score for each query-context-ground truth triplet.
-    - Generating visualizations including a histogram and a box plot of the precision scores.
+    For example, if your dataset has this data stored in different columns, you can
+    pass the following parameters:
+    ```python
+    {
+        "question_column": "question",
+        "contexts_column": "context_info"
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
 
-    ### Signs of High Risk
+    If the data is stored as a dictionary in another column, specify the column and key
+    like this:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": f"{pred_col}.contexts",
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
 
-    - Low mean and median precision scores across contexts.
-    - High standard deviation in precision scores, indicating inconsistency.
-    - Scores significantly lower than expected thresholds for the domain or use case.
-
-    ### Strengths
-
-    - Provides a quantitative measure of how well the retrieved contexts match the ground truth.
-    - Offers a clear perspective on the ranking quality of retrieved information.
-    - Visualization aids in quickly identifying performance distribution and outliers.
-
-    ### Limitations
-
-    - Relies on the completeness and accuracy of the ground truth data.
-    - May not capture nuances where partial relevance is significant.
-    - Assumes that contexts can be clearly distinguished as relevant or irrelevant without gray areas.
+    For more complex situations, you can use a function to extract the data:
+    ```python
+    pred_col = dataset.prediction_column(model)
+    params = {
+        "contexts_column": lambda x: [x[pred_col]["context_message"]],
+        "ground_truth_column": "my_ground_truth_col",
+    }
+    ```
     """
     try:
         from ragas import evaluate
