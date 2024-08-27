@@ -19,41 +19,45 @@ logger = get_logger(__name__)
 
 class SeasonalDecompose(Metric):
     """
-    Decomposes dataset features into observed, trend, seasonal, and residual components to identify patterns and
-    validate dataset.
+    Assesses patterns and seasonality in a time series dataset by decomposing its features into foundational components.
 
-    **Purpose**: This test utilizes the Seasonal Decomposition of Time Series by Loess (STL) method to decompose a
-    dataset into its fundamental components: observed, trend, seasonal, and residuals. The purpose is to identify
-    implicit patterns, majorly any seasonality, in the dataset's features which aid in developing a more comprehensive
-    understanding and effectively validating the dataset.
+    ### Purpose
 
-    **Test Mechanism**: The testing process exploits the `seasonal_decompose` function from the
-    `statsmodels.tsa.seasonal` library to evaluate each feature in the dataset. It isolates each feature into four
-    components: observed, trend, seasonal, and residuals, and generates essentially six subplot graphs per feature for
-    visual interpretation of the results. Prior to the seasonal decomposition, non-finite values are scrutinized and
-    removed thus, ensuring reliability in the analysis.
+    The Seasonal Decompose test aims to decompose the features of a time series dataset into their fundamental
+    components: observed, trend, seasonal, and residuals. By utilizing the Seasonal Decomposition of Time Series by
+    Loess (STL) method, the test identifies underlying patterns, predominantly seasonality, in the dataset's features.
+    This aids in developing a more comprehensive understanding of the dataset, which in turn facilitates more effective
+    model validation.
 
-    **Signs of High Risk**:
-    - **Non-Finiteness**: If a dataset carries too many non-finite values it might flag high risk as these values are
+    ### Test Mechanism
+
+    The testing process leverages the `seasonal_decompose` function from the `statsmodels.tsa.seasonal` library to
+    evaluate each feature in the dataset. It isolates each feature into four components—observed, trend, seasonal, and
+    residuals—and generates six subplot graphs per feature for visual interpretation. Prior to decomposition, the test
+    scrutinizes and removes any non-finite values, ensuring the reliability of the analysis.
+
+    ### Signs of High Risk
+
+    - **Non-Finiteness**: Datasets with a high number of non-finite values may flag as high risk since these values are
     omitted before conducting the seasonal decomposition.
-    - **Frequent Warnings**: The test could be at risk if it chronically fails to infer frequency for a scrutinized
-    feature.
-    - **High Seasonality**: A high seasonal component could potentially render forecasts unreliable due to overwhelming
-    seasonal variation.
+    - **Frequent Warnings**: Chronic failure to infer the frequency for a scrutinized feature indicates high risk.
+    - **High Seasonality**: A significant seasonal component could potentially render forecasts unreliable due to
+    overwhelming seasonal variation.
 
-    **Strengths**:
-    - **Seasonality Detection**: The code aptly discerns hidden seasonality patterns in the features of datasets.
-    - **Visualization**: The test facilitates interpretation and comprehension via graphical representations.
-    - **Unrestricted Usage**: The code is not confined to any specific regression model, thereby promoting wide-ranging
-    applicability.
+    ### Strengths
 
-    **Limitations**:
-    - **Dependence on Assumptions**: The test presumes that features in the dataset are periodically distributed. If no
-    frequency could be inferred for a variable, that feature is excluded from the test.
-    - **Handling Non-finite Values**: The test disregards non-finite values during the analysis which could potentially
-    result in incomplete understanding of the dataset.
-    - **Unreliability with Noisy Datasets**: The test tends to produce unreliable results when used with heavy noise
-    present in the dataset.
+    - **Seasonality Detection**: Accurately discerns hidden seasonality patterns in dataset features.
+    - **Visualization**: Facilitates interpretation and comprehension through graphical representations.
+    - **Unrestricted Usage**: Not confined to any specific regression model, promoting wide-ranging applicability.
+
+    ### Limitations
+
+    - **Dependence on Assumptions**: Assumes that dataset features are periodically distributed. Features with no
+    inferable frequency are excluded from the test.
+    - **Handling Non-Finite Values**: Disregards non-finite values during analysis, potentially resulting in an
+    incomplete understanding of the dataset.
+    - **Unreliability with Noisy Datasets**: Produces unreliable results when used with datasets that contain heavy
+    noise.
     """
 
     name = "seasonal_decompose"

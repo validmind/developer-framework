@@ -13,8 +13,7 @@ from validmind import tags, tasks
 @tasks("nlp")
 def Toxicity(dataset):
     """
-    Analyzes the toxicity of text data within a dataset using a pre-trained toxicity model to visualize the
-    distribution of toxicity scores.
+    Assesses the toxicity of text data within a dataset to visualize the distribution of toxicity scores.
 
     ### Purpose
 

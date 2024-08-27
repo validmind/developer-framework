@@ -23,27 +23,31 @@ class TooManyZeroValues(ThresholdTest):
     Identifies numerical columns in a dataset that contain an excessive number of zero values, defined by a threshold
     percentage.
 
-    **Purpose**:
+    ### Purpose
+
     The 'TooManyZeroValues' test is utilized to identify numerical columns in the dataset that may present a quantity
     of zero values considered excessive. The aim is to detect situations where these may implicate data sparsity or a
     lack of variation, limiting their effectiveness within a machine learning model. The definition of 'too many' is
     quantified as a percentage of total values, with a default set to 3%.
 
-    **Test Mechanism**:
+    ### Test Mechanism
+
     This test is conducted by looping through each column in the dataset and categorizing those that pertain to
     numerical data. On identifying a numerical column, the function computes the total quantity of zero values and
     their ratio to the total row count. Should the proportion exceed a pre-set threshold parameter, set by default at
-    0.03 or 3%, the column is considered to have failed the test. The results for each column are summarised and
+    0.03 or 3%, the column is considered to have failed the test. The results for each column are summarized and
     reported, indicating the count and percentage of zero values for each numerical column, alongside a status
     indicating whether the column has passed or failed the test.
 
-    **Signs of High Risk**:
-    - Indicators evidencing a high risk connected with this test would include numerical columns showing a high ratio
-    of zero values when compared to the total count of rows (exceeding a pre-determined threshold).
+    ### Signs of High Risk
+
+    - Numerical columns showing a high ratio of zero values when compared to the total count of rows (exceeding the
+    predetermined threshold).
     - Columns characterized by zero values across the board suggest a complete lack of data variation, signifying high
     risk.
 
-    **Strengths**:
+    ### Strengths
+
     - Assists in highlighting columns featuring an excess of zero values that could otherwise go unnoticed within a
     large dataset.
     - Provides the flexibility to alter the threshold that determines when the quantity of zero values becomes 'too
@@ -53,12 +57,13 @@ class TooManyZeroValues(ThresholdTest):
     - Targets specifically numerical data, thereby avoiding inappropriate application to non-numerical columns and
     mitigating the risk of false test failures.
 
-    **Limitations**:
-    - Is exclusively designed to check for zero values, and doesn’t assesses the potential impact of other values that
-    could affect the dataset, such as extremely high or low figures, missing values or outliers.
+    ### Limitations
+
+    - Is exclusively designed to check for zero values and doesn’t assess the potential impact of other values that
+    could affect the dataset, such as extremely high or low figures, missing values, or outliers.
     - Lacks the ability to detect a repetitive pattern of zeros, which could be significant in time-series or
     longitudinal data.
-    - Zero values can actually be meaningful in some contexts, therefore tagging them as 'too many' could potentially
+    - Zero values can actually be meaningful in some contexts; therefore, tagging them as 'too many' could potentially
     misinterpret the data to some extent.
     - This test does not take into consideration the context of the dataset, and fails to recognize that within certain
     columns, a high number of zero values could be quite normal and not necessarily an indicator of poor data quality.

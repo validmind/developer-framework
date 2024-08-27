@@ -59,9 +59,9 @@ class StopWords(ThresholdTest):
     ### Strengths
 
     - The ability to scrutinize and quantify the usage of stop words.
-    - Provides insights into potential noise in the text data due to stop words. This can directly aid in enhancing
-    model training efficiency.
-    - The test includes a bar chart visualization feature to easily interpret and action upon the stop words frequency
+    - Provides insights into potential noise in the text data due to stop words.
+    - Directly aids in enhancing model training efficiency.
+    - Includes a bar chart visualization feature to easily interpret and action upon the stop words frequency
     information.
 
     ### Limitations
@@ -69,8 +69,8 @@ class StopWords(ThresholdTest):
     - The test only supports English stop words, making it less effective with datasets of other languages.
     - The 'min_percent_threshold' parameter may require fine-tuning for different datasets, impacting the overall
     effectiveness of the test.
-    - Contextual use of the stop words within the dataset is not considered which may lead to overlooking their
-    significance in certain contexts.
+    - Contextual use of the stop words within the dataset is not considered, potentially overlooking their significance
+    in certain contexts.
     - The test focuses specifically on the frequency of stop words, not providing direct measures of model performance
     or predictive accuracy.
     """
