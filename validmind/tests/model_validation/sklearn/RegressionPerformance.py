@@ -123,16 +123,12 @@ class RegressionPerformance(Metric):
             raise SkipTestError(
                 "Model must be provided as a `models` parameter to compare performance"
             )
-
-        all_models = self.inputs.model
-
         results = {}
 
-        for idx, model in enumerate(all_models):
-            result = self.regression_errors(
-                y_true_test=self.inputs.dataset.y,
-                y_pred_test=self.inputs.dataset.y_pred(model),
-            )
-            results["model_" + str(idx)] = result
+        result = self.regression_errors(
+            y_true_test=self.inputs.dataset.y,
+            y_pred_test=self.inputs.dataset.y_pred(self.inputs.model),
+        )
+        results[self.inputs.model.input_id] = result
 
         return self.cache_results(results)
