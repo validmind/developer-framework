@@ -13,18 +13,42 @@ from validmind import tags, tasks
 @tasks("nlp")
 def Toxicity(dataset):
     """
-    Analyzes the toxicity of text data within a dataset using a pre-trained toxicity model.
+    Analyzes the toxicity of text data within a dataset using a pre-trained toxicity model to visualize the
+    distribution of toxicity scores.
 
-    This method loads a toxicity evaluation model and applies it to each text entry
-    in the specified column of the dataset's dataframe. It returns a KDE plot visualizing the distribution
-    of toxicity scores across the dataset.
+    ### Purpose
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            and a `text_column` attribute indicating the name of the column containing text.
+    The Toxicity test aims to evaluate the level of toxic content present in a text dataset by leveraging a pre-trained
+    toxicity model. It helps in identifying potentially harmful or offensive language that may negatively impact users
+    or stakeholders.
 
-    Returns:
-        matplotlib.figure.Figure: A KDE plot visualizing the distribution of toxicity scores.
+    ### Test Mechanism
+
+    This test uses a pre-trained toxicity evaluation model and applies it to each text entry in the specified column of
+    a dataset’s dataframe. The procedure involves:
+
+    - Loading a pre-trained toxicity model.
+    - Extracting the text from the specified column in the dataset.
+    - Computing toxicity scores for each text entry.
+    - Generating a KDE (Kernel Density Estimate) plot to visualize the distribution of these toxicity scores.
+
+    ### Signs of High Risk
+
+    - High concentration of high toxicity scores in the KDE plot.
+    - A significant proportion of text entries with toxicity scores above a predefined threshold.
+    - Wide distribution of toxicity scores, indicating inconsistency in content quality.
+
+    ### Strengths
+
+    - Provides a visual representation of toxicity distribution, making it easier to identify outliers.
+    - Uses a robust pre-trained model for toxicity evaluation.
+    - Can process large text datasets efficiently.
+
+    ### Limitations
+
+    - Depends on the accuracy and bias of the pre-trained toxicity model.
+    - Does not provide context-specific insights, which may be necessary for nuanced understanding.
+    - May not capture all forms of subtle or indirect toxic language.
     """
     toxicity = evaluate.load("toxicity")
     input_text = dataset.df[dataset.text_column]

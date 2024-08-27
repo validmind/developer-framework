@@ -17,24 +17,43 @@ from validmind import tags, tasks
 @tasks("text_classification", "text_summarization")
 def LanguageDetection(dataset):
     """
-    Detects the language of each text entry in a dataset and visualizes the distribution of languages
-    as a histogram.
+    Detects the language of each text entry in a dataset and visualizes the distribution of languages as a histogram.
 
-    This method checks for a specified text column in the dataset's dataframe, uses a language detection
-    library to determine the language of each text entry, and returns a histogram plot of the language
-    distribution.
+    ### Purpose
 
-    Args:
-        dataset (Dataset): A dataset object which must have a `df` attribute (a pandas DataFrame)
-            and a `text_column` attribute indicating the name of the column containing text. If the
-            `text_column` attribute is not set, a ValueError is raised.
+    The Language Detection test aims to identify and visualize the distribution of languages present within a textual
+    dataset. This test helps in understanding the diversity of languages in the data, which is crucial for developing
+    and validating multilingual models.
 
-    Returns:
-        plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of detected
-        languages across the dataset's text entries.
+    ### Test Mechanism
 
-    Raises:
-        ValueError: If the `text_column` is not specified in the dataset object.
+    This test operates by:
+
+    - Checking if the dataset has a specified text column.
+    - Using a language detection library to determine the language of each text entry in the dataset.
+    - Generating a histogram plot of the language distribution, with language codes on the x-axis and their frequencies
+    on the y-axis.
+
+    If the text column is not specified, a ValueError is raised to ensure proper dataset configuration.
+
+    ### Signs of High Risk
+
+    - A high proportion of entries returning "Unknown" language codes.
+    - Detection of unexpectedly diverse or incorrect language codes, indicating potential data quality issues.
+    - Significant imbalance in language distribution, which might indicate potential biases in the dataset.
+
+    ### Strengths
+
+    - Provides a visual representation of language diversity within the dataset.
+    - Helps identify data quality issues related to incorrect or unknown language detection.
+    - Useful for ensuring that multilingual models have adequate and appropriate representation from various languages.
+
+    ### Limitations
+
+    - Dependency on the accuracy of the language detection library, which may not be perfect.
+    - Languages with similar structures or limited text length may be incorrectly classified.
+    - The test returns "Unknown" for entries where language detection fails, which might mask underlying issues with
+    certain languages or text formats.
     """
     # check text column
     if not dataset.text_column:
