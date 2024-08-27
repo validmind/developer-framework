@@ -159,6 +159,7 @@ def _combine_unit_metrics(results: List[MetricResultWrapper]):
         )
         if not result.metric:
             result.metric = MetricResult(
+                ref_id="will_be_overwritten",
                 key=result.result_id,
                 value=result.scalar,
                 summary=ResultSummary(results=[table]),
