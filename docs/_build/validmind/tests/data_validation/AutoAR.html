@@ -77,7 +77,7 @@
     
             <div class="docstring"><p>Automatically identifies the optimal Autoregressive (AR) order for a time series using BIC and AIC criteria.</p>
 
-<p><strong>Purpose</strong>:</p>
+<h3 id="purpose">Purpose</h3>
 
 <p>The AutoAR test is intended to automatically identify the Autoregressive (AR) order of a time series by utilizing
 the Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC). AR order is crucial in forecasting
@@ -85,34 +85,34 @@ tasks as it dictates the quantity of prior terms in the sequence to use for pred
 objective is to select the most fitting AR model that encapsulates the trend and seasonality in the time series
 data.</p>
 
-<p><strong>Test Mechanism</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
 <p>The test mechanism operates by iterating through a possible range of AR orders up to a defined maximum. An AR model
 is fitted for each order, and the corresponding BIC and AIC are computed. BIC and AIC statistical measures are
 designed to penalize models for complexity, preferring simpler models that fit the data proficiently. To verify the
-stationarity of the time series, the Augmented Dickey-Fuller test is executed. The AR order, BIC, and AIC findings,
+stationarity of the time series, the Augmented Dickey-Fuller test is executed. The AR order, BIC, and AIC findings
 are compiled into a dataframe for effortless comparison. Then, the AR order with the smallest BIC is established as
 the desirable order for each variable.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>An augmented Dickey Fuller test p-value &gt; 0.05, indicating the time series isn't stationary, may lead to
 inaccurate results.</li>
 <li>Problems with the model fitting procedure, such as computational or convergence issues.</li>
-<li>Continuous selection of the maximum specified AR order may suggest insufficient set limit.</li>
+<li>Continuous selection of the maximum specified AR order may suggest an insufficient set limit.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The test independently pinpoints the optimal AR order, thereby reducing potential human bias.</li>
 <li>It strikes a balance between model simplicity and goodness-of-fit to avoid overfitting.</li>
-<li>Has the capability to account for stationarity in a time series, an essential aspect for dependable AR modelling.</li>
-<li>The results are aggregated into an comprehensive table, enabling an easy interpretation.</li>
+<li>Has the capability to account for stationarity in a time series, an essential aspect for dependable AR modeling.</li>
+<li>The results are aggregated into a comprehensive table, enabling an easy interpretation.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The tests need a stationary time series input.</li>

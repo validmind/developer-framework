@@ -79,52 +79,59 @@
     </div>
     <a class="headerlink" href="#RegressionModelForecastPlotLevels"></a>
     
-            <div class="docstring"><p>Compares and visualizes forecasted and actual values of regression models on both raw and transformed datasets.</p>
+            <div class="docstring"><p>Assesses the alignment between forecasted and observed values in regression models through visual plots, including
+handling data transformations.</p>
 
-<p><strong>Purpose:</strong>
-The <code><a href="#RegressionModelForecastPlotLevels">RegressionModelForecastPlotLevels</a></code> metric is designed to visually assess a series of regression models'
-performance. It achieves this by contrasting the models' forecasts with the observed data from the respective
-training and test datasets. The gauge of accuracy here involves determining the extent of closeness between
-forecasted and actual values. Accordingly, if any transformations are specified, the metric will handle
-transforming the data before making this comparison.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong>
-The <code><a href="#RegressionModelForecastPlotLevels">RegressionModelForecastPlotLevels</a></code> class in Python initiates with a <code>transformation</code> parameter, which default
-aggregates to None. Initially, the class checks for the presence of model objects and raises a <code>ValueError</code> if none
-are found. Each model is then processed, creating predictive forecasts for both its training and testing datasets.
-These forecasts are then contrasted with the actual values and plotted. In situations where a specified
-transformation, like "integrate," is specified, the class navigates the transformation steps (performing cumulative
-sums to generate a novel series, for instance). Finally, plots are produced that compare observed and forecasted
-values for both the raw and transformed datasets.</p>
+<p>The <code><a href="#RegressionModelForecastPlotLevels">RegressionModelForecastPlotLevels</a></code> test aims to visually assess the performance of a series of regression
+models by comparing their forecasted values against the actual observed values in both training and test datasets.
+This test helps determine the accuracy of the models and can handle specific data transformations before making the
+comparison, providing a comprehensive evaluation of model performance.</p>
 
-<p><strong>Signs of High Risk:</strong>
-Indications of high risk or failure in the model's performance can be derived from checking the generated plots.
-When the forecasted values dramatically deviate from the observed values in either the training or testing
-datasets, it suggests a high risk situation. A significant deviation could be a symptom of either overfitting or
-underfitting, both scenarios are worrying. Such discrepancies could inhibit the model's ability to create precise,
-generalized results.</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
-<p><strong>Strengths:</strong></p>
+<p>The test mechanism involves initializing the <code><a href="#RegressionModelForecastPlotLevels">RegressionModelForecastPlotLevels</a></code> class with an optional
+<code>transformation</code> parameter. The class then:</p>
 
 <ul>
-<li>Visual Evaluations: The metric provides a visual and comparative way of assessing multiple regression models at
-once. This allows easier interpretation and evaluation of their forecasting accuracy.</li>
-<li>Transformation Handling: This metric can handle transformations like "integrate," enhancing its breadth and
-flexibility in evaluating different models.</li>
-<li>Detailed Perspective: By looking at the performance on both datasets (training and testing), the metric may give
-a detailed overview of the model.</li>
+<li>Checks for the presence of model objects and raises a <code>ValueError</code> if none are found.</li>
+<li>Processes each model to generate predictive forecasts for both training and testing datasets.</li>
+<li>Contrasts these forecasts with the actual observed values.</li>
+<li>Produces plots to visually compare forecasted and observed values for both raw and transformed datasets.</li>
+<li>Handles specified transformations (e.g., "integrate") by performing cumulative sums to create a new series before
+plotting.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Subjectivity: Relying heavily on visual interpretations; assessments may differ from person to person.</li>
-<li>Limited Transformation Capability: Currently, only the "integrate" transformation is supported, implying complex
-transformations might go unchecked or unhandled.</li>
-<li>Overhead: The plotting mechanism may become computationally costly when applying to extensive datasets,
-increasing runtime.</li>
-<li>Numerical Measurement: Although visualization is instrumental, a corresponding numerical measure would further
-reinforce the observations. However, this metric does not provide numerical measures.</li>
+<li>Significant deviation between forecasted and observed values in training or testing datasets.</li>
+<li>Patterns suggesting overfitting or underfitting.</li>
+<li>Large discrepancies in the plotted forecasts, indicating potential issues with model generalizability and
+precision.</li>
+</ul>
+
+<h3 id="strengths">Strengths</h3>
+
+<ul>
+<li><strong>Visual Evaluations</strong>: Provides an intuitive, visual way to assess multiple regression models, aiding in easier
+interpretation and evaluation of forecast accuracy.</li>
+<li><strong>Transformation Handling</strong>: Can process specified data transformations such as "integrate," enhancing
+flexibility.</li>
+<li><strong>Detailed Perspective</strong>: Assesses performance on both training and testing datasets, offering a comprehensive
+view of model behavior.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li><strong>Subjectivity</strong>: Relies heavily on visual interpretation, which may vary between individuals.</li>
+<li><strong>Limited Transformation Capability</strong>: Supports only the "integrate" transformation; other complex
+transformations might not be handled.</li>
+<li><strong>Overhead</strong>: Plotting can be computationally intensive for large datasets, increasing runtime.</li>
+<li><strong>Numerical Measurement</strong>: Does not provide a numerical metric to quantify forecast accuracy, relying solely on
+visual assessment.</li>
 </ul>
 </div>
 

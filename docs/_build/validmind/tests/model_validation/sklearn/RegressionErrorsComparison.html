@@ -68,33 +68,45 @@
     </div>
     <a class="headerlink" href="#RegressionErrorsComparison"></a>
     
-            <div class="docstring"><p>Compare regression error metrics for each model and generate a summary table
-with the results.</p>
+            <div class="docstring"><p>Assesses multiple regression error metrics to compare model performance across different datasets, emphasizing
+systematic overestimation or underestimation and large percentage errors.</p>
 
-<p><strong>Purpose</strong>: The purpose of this function is to compare the regression errors for different models applied to various datasets.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The function iterates through each dataset-model pair, calculates various error metrics (MAE, MSE, MAPE, MBD), and generates a summary table with these results.</p>
+<p>The purpose of this test is to compare regression errors for different models applied to various datasets. It aims
+to examine model performance using multiple error metrics, thereby identifying areas where models may be
+underperforming or exhibiting bias.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The function iterates through each dataset-model pair and calculates various error metrics, including Mean Absolute
+Error (MAE), Mean Squared Error (MSE), Mean Absolute Percentage Error (MAPE), and Mean Bias Deviation (MBD). The
+results are summarized in a table, which provides a comprehensive view of each model's performance on the datasets.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>High Mean Absolute Error (MAE) or Mean Squared Error (MSE) indicates poor model performance.</li>
-<li>High Mean Absolute Percentage Error (MAPE) suggests large percentage errors, especially problematic if the true values are small.</li>
-<li>Mean Bias Deviation (MBD) significantly different from zero indicates systematic overestimation or underestimation by the model.</li>
+<li>High Mean Absolute Error (MAE) or Mean Squared Error (MSE), indicating poor model performance.</li>
+<li>High Mean Absolute Percentage Error (MAPE), suggesting large percentage errors, especially problematic if the
+true values are small.</li>
+<li>Mean Bias Deviation (MBD) significantly different from zero, indicating systematic overestimation or
+underestimation by the model.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Provides multiple error metrics to assess model performance from different perspectives.</li>
 <li>Includes a check to avoid division by zero when calculating MAPE.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Assumes that the dataset is provided as a DataFrameDataset object with <code>y</code>, <code>y_pred</code>, and <code>feature_columns</code> attributes.</li>
-<li>The function relies on the <code>logger</code> from <code>validmind.logging</code> to warn about zero values in <code>y_true</code>, which should be correctly implemented and imported.</li>
+<li>Assumes that the dataset is provided as a DataFrameDataset object with <code>y</code>, <code>y_pred</code>, and <code>feature_columns</code>
+attributes.</li>
+<li>Relies on the <code>logger</code> from <code>validmind.logging</code> to warn about zero values in <code>y_true</code>, which should be correctly
+implemented and imported.</li>
 <li>Requires that <code>dataset.y_pred(model)</code> returns the predicted values for the model.</li>
 </ul>
 </div>

@@ -78,49 +78,50 @@
     </div>
     <a class="headerlink" href="#SeasonalDecompose"></a>
     
-            <div class="docstring"><p>Decomposes dataset features into observed, trend, seasonal, and residual components to identify patterns and
-validate dataset.</p>
+            <div class="docstring"><p>Assesses patterns and seasonality in a time series dataset by decomposing its features into foundational components.</p>
 
-<p><strong>Purpose</strong>: This test utilizes the Seasonal Decomposition of Time Series by Loess (STL) method to decompose a
-dataset into its fundamental components: observed, trend, seasonal, and residuals. The purpose is to identify
-implicit patterns, majorly any seasonality, in the dataset's features which aid in developing a more comprehensive
-understanding and effectively validating the dataset.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The testing process exploits the <code>seasonal_decompose</code> function from the
-<code>statsmodels.tsa.seasonal</code> library to evaluate each feature in the dataset. It isolates each feature into four
-components: observed, trend, seasonal, and residuals, and generates essentially six subplot graphs per feature for
-visual interpretation of the results. Prior to the seasonal decomposition, non-finite values are scrutinized and
-removed thus, ensuring reliability in the analysis.</p>
+<p>The Seasonal Decompose test aims to decompose the features of a time series dataset into their fundamental
+components: observed, trend, seasonal, and residuals. By utilizing the Seasonal Decomposition of Time Series by
+Loess (STL) method, the test identifies underlying patterns, predominantly seasonality, in the dataset's features.
+This aids in developing a more comprehensive understanding of the dataset, which in turn facilitates more effective
+model validation.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The testing process leverages the <code>seasonal_decompose</code> function from the <code>statsmodels.tsa.seasonal</code> library to
+evaluate each feature in the dataset. It isolates each feature into four components—observed, trend, seasonal, and
+residuals—and generates six subplot graphs per feature for visual interpretation. Prior to decomposition, the test
+scrutinizes and removes any non-finite values, ensuring the reliability of the analysis.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li><strong>Non-Finiteness</strong>: If a dataset carries too many non-finite values it might flag high risk as these values are
+<li><strong>Non-Finiteness</strong>: Datasets with a high number of non-finite values may flag as high risk since these values are
 omitted before conducting the seasonal decomposition.</li>
-<li><strong>Frequent Warnings</strong>: The test could be at risk if it chronically fails to infer frequency for a scrutinized
-feature.</li>
-<li><strong>High Seasonality</strong>: A high seasonal component could potentially render forecasts unreliable due to overwhelming
-seasonal variation.</li>
+<li><strong>Frequent Warnings</strong>: Chronic failure to infer the frequency for a scrutinized feature indicates high risk.</li>
+<li><strong>High Seasonality</strong>: A significant seasonal component could potentially render forecasts unreliable due to
+overwhelming seasonal variation.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li><strong>Seasonality Detection</strong>: The code aptly discerns hidden seasonality patterns in the features of datasets.</li>
-<li><strong>Visualization</strong>: The test facilitates interpretation and comprehension via graphical representations.</li>
-<li><strong>Unrestricted Usage</strong>: The code is not confined to any specific regression model, thereby promoting wide-ranging
-applicability.</li>
+<li><strong>Seasonality Detection</strong>: Accurately discerns hidden seasonality patterns in dataset features.</li>
+<li><strong>Visualization</strong>: Facilitates interpretation and comprehension through graphical representations.</li>
+<li><strong>Unrestricted Usage</strong>: Not confined to any specific regression model, promoting wide-ranging applicability.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li><strong>Dependence on Assumptions</strong>: The test presumes that features in the dataset are periodically distributed. If no
-frequency could be inferred for a variable, that feature is excluded from the test.</li>
-<li><strong>Handling Non-finite Values</strong>: The test disregards non-finite values during the analysis which could potentially
-result in incomplete understanding of the dataset.</li>
-<li><strong>Unreliability with Noisy Datasets</strong>: The test tends to produce unreliable results when used with heavy noise
-present in the dataset.</li>
+<li><strong>Dependence on Assumptions</strong>: Assumes that dataset features are periodically distributed. Features with no
+inferable frequency are excluded from the test.</li>
+<li><strong>Handling Non-Finite Values</strong>: Disregards non-finite values during analysis, potentially resulting in an
+incomplete understanding of the dataset.</li>
+<li><strong>Unreliability with Noisy Datasets</strong>: Produces unreliable results when used with datasets that contain heavy
+noise.</li>
 </ul>
 </div>
 

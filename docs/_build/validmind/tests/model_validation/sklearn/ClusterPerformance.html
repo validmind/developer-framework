@@ -88,48 +88,44 @@
             <div class="docstring"><p>Evaluates and compares a clustering model's performance on training and testing datasets using multiple defined
 metrics.</p>
 
-<p><strong>Purpose:</strong> This metric, ClusterPerformance, evaluates the performance of a clustering model on both the training
-and testing datasets. It assesses how well the model defines, forms, and distinguishes clusters of data.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong> The metric is applied by first predicting the clusters of the training and testing datasets
-using the clustering model. Next, performance metrics, defined in the method <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code>, are calculated
-against the true labels of the datasets. The results for each metric for both datasets are then collated and
-returned in a summarized table form listing each metric along with its corresponding train and test values.</p>
+<p>The Cluster Performance test evaluates the performance of a clustering model on both the training and testing
+datasets. It assesses how well the model defines, forms, and distinguishes clusters of data.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves predicting the clusters of the training and testing datasets using the clustering
+model. After prediction, performance metrics defined in the <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code> method are calculated against the true
+labels of the datasets. The results for each metric for both datasets are then collated and returned in a
+summarized table form listing each metric along with its corresponding train and test values.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>High discrepancy between the performance metric values on the training and testing datasets. This could signify
-problems such as overfitting or underfitting.</li>
-<li>Low performance metric values on the training and testing datasets. There might be a problem with the model
-itself or the chosen hyperparameters.</li>
-<li>If the model's performance deteriorates consistently across different sets of metrics, this may suggest a broader
-issue with the model or the dataset.</li>
+<li>High discrepancy between the performance metric values on the training and testing datasets.</li>
+<li>Low performance metric values on both the training and testing datasets.</li>
+<li>Consistent deterioration of performance across different metrics.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Tests the model's performance on both the training and testing datasets, which helps to identify issues such as
-overfitting or underfitting.</li>
-<li>Allows for a broad range of performance metrics to be used, thus providing a comprehensive evaluation of the
-model's clustering capabilities.</li>
-<li>Returns a summarized table, which makes it easy to compare the model's performance across different metrics and
-datasets.</li>
+<li>Tests the model's performance on both training and testing datasets, helping to identify overfitting or
+underfitting.</li>
+<li>Allows for the use of a broad range of performance metrics, providing a comprehensive evaluation.</li>
+<li>Returns a summarized table, making it easy to compare performance across different metrics and datasets.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The method <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code> needs to be properly overridden in a subclass for this class to be used, and the
-metrics to be used must be manually defined.</li>
-<li>The performance metrics are calculated on predicted cluster labels, so the metric may not capture the model's
-performance well if the clusters are not well separated or if the model has difficulties with certain kinds of
-clusters.</li>
-<li>Doesn't consider the computational and time complexity of the model. While the model may perform well in terms of
-the performance metrics, it might be time or resource-intensive. This metric does not account for such scenarios.</li>
-<li>Because the comparison is binary (train and test), it might not capture scenarios where the performance changes
-drastically under different circumstances or categories within the dataset.</li>
+<li>The <code><a href="#ClusterPerformance.metric_info">metric_info()</a></code> method needs to be properly overridden in a subclass and metrics must be manually defined.</li>
+<li>The test may not capture the model's performance well if clusters are not well-separated or the model struggles
+with certain clusters.</li>
+<li>Does not consider the computational and time complexity of the model.</li>
+<li>Binary comparison (train and test) might not capture performance changes under different circumstances or dataset
+categories.</li>
 </ul>
 </div>
 

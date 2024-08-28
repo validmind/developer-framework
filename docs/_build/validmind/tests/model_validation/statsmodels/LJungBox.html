@@ -74,44 +74,45 @@
     
             <div class="docstring"><p>Assesses autocorrelations in dataset features by performing a Ljung-Box test on each feature.</p>
 
-<p><strong>Purpose</strong>: The Ljung-Box test is a type of statistical test utilized to ascertain whether there are
-autocorrelations within a given dataset that differ significantly from zero. In the context of a machine learning
-model, this test is primarily used to evaluate data utilized in regression tasks, especially those involving time
-series and forecasting.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test operates by iterating over each feature within the training dataset and applying the
-<code>acorr_ljungbox</code> function from the <code>statsmodels.stats.diagnostic</code> library. This function calculates the Ljung-Box
-statistic and p-value for each feature. These results are then stored in a dictionary where the keys are the
-feature names and the values are dictionaries containing the statistic and p-value respectively. Generally, a lower
-p-value indicates a higher likelihood of significant autocorrelations within the feature.</p>
+<p>The Ljung-Box test is a type of statistical test utilized to ascertain whether there are autocorrelations within a
+given dataset that differ significantly from zero. In the context of a machine learning model, this test is
+primarily used to evaluate data utilized in regression tasks, especially those involving time series and
+forecasting.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test operates by iterating over each feature within the training dataset and applying the <code>acorr_ljungbox</code>
+function from the <code>statsmodels.stats.diagnostic</code> library. This function calculates the Ljung-Box statistic and
+p-value for each feature. These results are then stored in a dictionary where the keys are the feature names and
+the values are dictionaries containing the statistic and p-value respectively. Generally, a lower p-value indicates
+a higher likelihood of significant autocorrelations within the feature.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>A high risk or failure in the model's performance relating to this test might be indicated by high Ljung-Box
-statistic values or low p-values.</li>
-<li>These outcomes suggest the presence of significant autocorrelations in the respective features. If not properly
-consider or handle in the machine learning model, these can negatively affect model performance or bias.</li>
+<li>High Ljung-Box statistic values or low p-values.</li>
+<li>Presence of significant autocorrelations in the respective features.</li>
+<li>Potential for negative impact on model performance or bias if autocorrelations are not properly handled.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>The Ljung-Box test is a powerful tool for detecting autocorrelations within datasets, especially in time series
-data.</li>
-<li>It provides quantitative measures (statistic and p-value) that allow for precise evaluation of autocorrelation.</li>
-<li>This test can be instrumental in avoiding issues related to autoregressive residuals and other challenges in
-regression models.</li>
+<li>Powerful tool for detecting autocorrelations within datasets, especially in time series data.</li>
+<li>Provides quantitative measures (statistic and p-value) for precise evaluation.</li>
+<li>Helps avoid issues related to autoregressive residuals and other challenges in regression models.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The Ljung-Box test cannot detect all types of non-linearity or complex interrelationships among variables.</li>
+<li>Cannot detect all types of non-linearity or complex interrelationships among variables.</li>
 <li>Testing individual features may not fully encapsulate the dynamics of the data if features interact with each
 other.</li>
-<li>It is designed more for traditional statistical models and may not be fully compatible with certain types of
-complex machine learning models.</li>
+<li>Designed more for traditional statistical models and may not be fully compatible with certain types of complex
+machine learning models.</li>
 </ul>
 </div>
 

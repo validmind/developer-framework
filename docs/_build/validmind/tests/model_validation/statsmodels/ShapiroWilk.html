@@ -74,16 +74,20 @@
     
             <div class="docstring"><p>Evaluates feature-wise normality of training data using the Shapiro-Wilk test.</p>
 
-<p><strong>Purpose</strong>: The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard
-normal distribution. This analysis is crucial in machine learning modeling because the normality of the data can
+<h3 id="purpose">Purpose</h3>
+
+<p>The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard normal
+distribution. This analysis is crucial in machine learning modeling because the normality of the data can
 profoundly impact the performance of the model. This metric is especially useful in evaluating various features of
 the dataset in both classification and regression tasks.</p>
 
-<p><strong>Test Mechanism</strong>: The Shapiro-Wilk test is conducted on each feature column of the training dataset to determine
-if the data contained fall within the normal distribution. The test presents a statistic and a p-value, with the
-p-value serving to validate or repudiate the null hypothesis, which is that the tested data is normally distributed.</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<p>The Shapiro-Wilk test is conducted on each feature column of the training dataset to determine if the data
+contained fall within the normal distribution. The test presents a statistic and a p-value, with the p-value
+serving to validate or repudiate the null hypothesis, which is that the tested data is normally distributed.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A p-value that falls below 0.05 signifies a high risk as it discards the null hypothesis, indicating that the
@@ -92,7 +96,7 @@ data does not adhere to the normal distribution.</li>
 performance or incorrect predictions.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The Shapiro-Wilk test is esteemed for its level of accuracy, thereby making it particularly well-suited to
@@ -102,7 +106,7 @@ datasets of small to moderate sizes.</li>
 not comply with the normality.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The Shapiro-Wilk test's sensitivity can be a disadvantage as it often rejects the null hypothesis (i.e., data is

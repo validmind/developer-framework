@@ -77,34 +77,38 @@
     <a class="headerlink" href="#RegressionPermutationFeatureImportance"></a>
     
             <div class="docstring"><p>Assesses the significance of each feature in a model by evaluating the impact on model performance when feature
-values are randomly rearranged. Specifically designed for use with statsmodels, this metric offers insight into the
-importance of features based on the decrease in model's predictive accuracy, typically R².</p>
+values are randomly rearranged.</p>
 
-<p><strong>Purpose</strong>: The primary purpose of this metric is to determine which features significantly impact the performance
-of a regression model developed using statsmodels. The metric measures how much the prediction accuracy deteriorates
+<h3 id="purpose">Purpose</h3>
+
+<p>The primary purpose of this metric is to determine which features significantly impact the performance of a
+regression model developed using statsmodels. The metric measures how much the prediction accuracy deteriorates
 when each feature's values are permuted.</p>
 
-<p><strong>Test Mechanism</strong>: This metric shuffles the values of each feature one at a time in the dataset, computes the model's
-performance after each permutation, and compares it to the baseline performance. A significant decrease in performance
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This metric shuffles the values of each feature one at a time in the dataset, computes the model's performance
+after each permutation, and compares it to the baseline performance. A significant decrease in performance
 indicates the importance of the feature.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Significant reliance on a feature that when permuted leads to a substantial decrease in performance, suggesting
+<li>Significant reliance on a feature that, when permuted, leads to a substantial decrease in performance, suggesting
 overfitting or high model dependency on that feature.</li>
 <li>Features identified as unimportant despite known impacts from domain knowledge, suggesting potential issues in
 model training or data preprocessing.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Directly assesses the impact of each feature on model performance, providing clear insights into model dependencies.</li>
+<li>Directly assesses the impact of each feature on model performance, providing clear insights into model
+dependencies.</li>
 <li>Model-agnostic within the scope of statsmodels, applicable to any regression model that outputs predictions.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The metric is specific to statsmodels and cannot be used with other types of models without adaptation.</li>

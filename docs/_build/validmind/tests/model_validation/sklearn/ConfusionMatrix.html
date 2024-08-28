@@ -82,18 +82,22 @@
             <div class="docstring"><p>Evaluates and visually represents the classification ML model's predictive performance using a Confusion Matrix
 heatmap.</p>
 
-<p><strong>Purpose</strong>: The Confusion Matrix tester is designed to assess the performance of a classification Machine Learning
-model. This performance is evaluated based on how well the model is able to correctly classify True Positives, True
-Negatives, False Positives, and False Negatives - fundamental aspects of model accuracy.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The mechanism used involves taking the predicted results (<code>y_test_predict</code>) from the
-classification model and comparing them against the actual values (<code>y_test_true</code>). A confusion matrix is built
-using the unique labels extracted from <code>y_test_true</code>, employing scikit-learn's metrics. The matrix is then visually
-rendered with the help of Plotly's <code>create_annotated_heatmap</code> function. A heatmap is created which provides a
-two-dimensional graphical representation of the model's performance, showcasing distributions of True Positives
-(TP), True Negatives (TN), False Positives (FP), and False Negatives (FN).</p>
+<p>The Confusion Matrix tester is designed to assess the performance of a classification Machine Learning model. This
+performance is evaluated based on how well the model is able to correctly classify True Positives, True Negatives,
+False Positives, and False Negatives - fundamental aspects of model accuracy.</p>
 
-<p><strong>Signs of High Risk</strong>: Indicators of high risk related to the model include:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The mechanism used involves taking the predicted results (<code>y_test_predict</code>) from the classification model and
+comparing them against the actual values (<code>y_test_true</code>). A confusion matrix is built using the unique labels
+extracted from <code>y_test_true</code>, employing scikit-learn's metrics. The matrix is then visually rendered with the help
+of Plotly's <code>create_annotated_heatmap</code> function. A heatmap is created which provides a two-dimensional graphical
+representation of the model's performance, showcasing distributions of True Positives (TP), True Negatives (TN),
+False Positives (FP), and False Negatives (FN).</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>High numbers of False Positives (FP) and False Negatives (FN), depicting that the model is not effectively
@@ -102,19 +106,19 @@ classifying the values.</li>
 identifying class labels.</li>
 </ul>
 
-<p><strong>Strengths</strong>: The Confusion Matrix tester brings numerous strengths:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>It provides a simplified yet comprehensive visual snapshot of the classification model's predictive performance.</li>
 <li>It distinctly brings out True Positives (TP), True Negatives (TN), False Positives (FP), and False Negatives
-(FN), thus, making it easier to focus on potential areas of improvement.</li>
+(FN), thus making it easier to focus on potential areas of improvement.</li>
 <li>The matrix is beneficial in dealing with multi-class classification problems as it can provide a simple view of
 complex model performances.</li>
 <li>It aids in understanding the different types of errors that the model could potentially make, as it provides
 in-depth insights into Type-I and Type-II errors.</li>
 </ul>
 
-<p><strong>Limitations</strong>: Despite its various strengths, the Confusion Matrix tester does exhibit some limitations:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>In cases of unbalanced classes, the effectiveness of the confusion matrix might be lessened. It may wrongly

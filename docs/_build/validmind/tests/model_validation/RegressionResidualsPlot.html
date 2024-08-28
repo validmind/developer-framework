@@ -78,19 +78,21 @@
     
             <div class="docstring"><p>Evaluates regression model performance using residual distribution and actual vs. predicted plots.</p>
 
-<p><strong>Purpose:</strong>
-The <code><a href="#RegressionResidualsPlot">RegressionResidualsPlot</a></code> metric aims to evaluate the performance of regression models. By generating and
+<h3 id="purpose">Purpose</h3>
+
+<p>The <code><a href="#RegressionResidualsPlot">RegressionResidualsPlot</a></code> metric aims to evaluate the performance of regression models. By generating and
 analyzing two plots – a distribution of residuals and a scatter plot of actual versus predicted values – this tool
 helps to visually appraise how well the model predicts and the nature of errors it makes.</p>
 
-<p><strong>Test Mechanism:</strong>
-The process begins by extracting the true output values (<code>y_true</code>) and the model's predicted values (<code>y_pred</code>).
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The process begins by extracting the true output values (<code>y_true</code>) and the model's predicted values (<code>y_pred</code>).
 Residuals are computed by subtracting predicted from true values. These residuals are then visualized using a
 histogram to display their distribution. Additionally, a scatter plot is derived to compare true values against
 predicted values, together with a "Perfect Fit" line, which represents an ideal match (predicted values equal
 actual values), facilitating the assessment of the model's predictive accuracy.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Residuals showing a non-normal distribution, especially those with frequent extreme values.</li>
@@ -101,7 +103,7 @@ accuracy.</li>
 structure adequately.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Provides a direct, visually intuitive assessment of a regression model’s accuracy and handling of data.</li>
@@ -110,7 +112,7 @@ structure adequately.</li>
 <li>Applicable across various regression model types.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Relies on visual interpretation, which can be subjective and less precise than numerical evaluations.</li>

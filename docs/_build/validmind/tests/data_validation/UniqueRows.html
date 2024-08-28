@@ -81,20 +81,22 @@
     
             <div class="docstring"><p>Verifies the diversity of the dataset by ensuring that the count of unique rows exceeds a prescribed threshold.</p>
 
-<p><strong>Purpose</strong>:
-The UniqueRows test is designed to gauge the quality of the data supplied to the machine learning model by
+<h3 id="purpose">Purpose</h3>
+
+<p>The UniqueRows test is designed to gauge the quality of the data supplied to the machine learning model by
 verifying that the count of distinct rows in the dataset exceeds a specific threshold, thereby ensuring a varied
 collection of data. Diversity in data is essential for training an unbiased and robust model that excels when faced
 with novel data.</p>
 
-<p><strong>Test Mechanism</strong>:
-The testing process starts with calculating the total number of rows in the dataset. Subsequently, the count of
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The testing process starts with calculating the total number of rows in the dataset. Subsequently, the count of
 unique rows is determined for each column in the dataset. If the percentage of unique rows (calculated as the ratio
 of unique rows to the overall row count) is less than the prescribed minimum percentage threshold given as a
-function parameter, the test is passed. The results are cached and a final pass or fail verdict is given based on
+function parameter, the test passes. The results are cached and a final pass or fail verdict is given based on
 whether all columns have successfully passed the test.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A lack of diversity in data columns, demonstrated by a count of unique rows that falls short of the preset
@@ -103,7 +105,7 @@ minimum percentage threshold, is indicative of high risk.</li>
 the model and issues with generalization, thus posing a significant risk.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The UniqueRows test is efficient in evaluating the data's diversity across each information column in the dataset.</li>
@@ -111,7 +113,7 @@ the model and issues with generalization, thus posing a significant risk.</li>
 developing effective and unbiased machine learning models.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>A limitation of the UniqueRows test is its assumption that the data's quality is directly proportionate to its

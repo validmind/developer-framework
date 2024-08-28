@@ -78,14 +78,16 @@
     
             <div class="docstring"><p>Optimizes the number of clusters in K-means models using Elbow and Silhouette methods.</p>
 
-<p><strong>Purpose:</strong>
-This metric is used to optimize the number of clusters used in K-means clustering models. It intends to measure and
+<h3 id="purpose">Purpose</h3>
+
+<p>This metric is used to optimize the number of clusters used in K-means clustering models. It intends to measure and
 evaluate the optimal number of clusters by leveraging two methodologies, namely the Elbow method and the Silhouette
 method. This is crucial as an inappropriate number of clusters can either overly simplify or overcomplicate the
 structure of the data, thereby undermining the effectiveness of the model.</p>
 
-<p><strong>Test Mechanism:</strong>
-The test mechanism involves iterating over a predefined range of cluster numbers and applying both the Elbow method
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves iterating over a predefined range of cluster numbers and applying both the Elbow method
 and the Silhouette method. The Elbow method computes the sum of the minimum euclidean distances between data points
 and their respective cluster centers (distortion). This value decreases as the number of clusters increases; the
 optimal number is typically at the 'elbow' point where the decrease in distortion becomes less pronounced.
@@ -94,7 +96,7 @@ providing a measure of how similar each item is to its own cluster compared to o
 of clusters under this method is the one that maximizes the average silhouette score. The results of both methods
 are plotted for visual inspection.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A high distortion value or a low silhouette average score for the optimal number of clusters.</li>
@@ -104,7 +106,7 @@ across different numbers of clusters, suggesting the data is not amenable to clu
 respectively.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Provides both a visual and quantitative method to determine the optimal number of clusters.</li>
@@ -113,7 +115,7 @@ the data's clusterability.</li>
 <li>Facilitates improved model performance by allowing for an informed selection of the number of clusters.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Assumes that a suitable number of clusters exists in the data, which may not always be true, especially for

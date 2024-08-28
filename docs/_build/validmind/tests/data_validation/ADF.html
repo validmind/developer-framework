@@ -81,39 +81,43 @@
     
             <div class="docstring"><p>Assesses the stationarity of a time series dataset using the Augmented Dickey-Fuller (ADF) test.</p>
 
-<p><strong>Purpose</strong>: The Augmented Dickey-Fuller (ADF) test metric is used here to determine the order of integration,
-i.e., the stationarity of a given time series data. The stationary property of data is pivotal in many machine
-learning models as it impacts the reliability and effectiveness of predictions and forecasts.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The ADF test starts by executing the ADF function from the statsmodels library on every feature
-of the dataset. Multiple outputs are generated for each run, including the ADF test statistic and p-value, count of
-lags used, the number of observations factored into the test, critical values at various confidence levels, and the
-maximized information criterion. These results are stored for each feature for subsequent analysis.</p>
+<p>The Augmented Dickey-Fuller (ADF) test metric is used to determine the order of integration, i.e., the stationarity
+of a given time series dataset. The stationary property of data is pivotal in many machine learning models as it
+impacts the reliability and effectiveness of predictions and forecasts.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
-<ul>
-<li>An inflated ADF statistic and high p-value (generally above 0.05) insinuate a high risk to the model's
-performance due to the presence of a unit root indicating non-stationarity.</li>
-<li>Such non-stationarity might result in untrustworthy or insufficient forecasts.</li>
-</ul>
+<p>The ADF test is executed using the <code>adfuller</code> function from the <code>statsmodels</code> library on each feature of the
+dataset. Multiple outputs are generated for each run, including the ADF test statistic and p-value, count of lags
+used, the number of observations considered in the test, critical values at various confidence levels, and the
+information criterion. These results are stored for each feature for subsequent analysis.</p>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>The ADF test is robust to more sophisticated correlation within the data, which empowers it to be deployed in
-settings where data might display complex stochastic behavior.</li>
-<li>The ADF test provides explicit outputs like test statistics, critical values, and information criterion, thereby
-enhancing our understanding and transparency of the model validation process.</li>
+<li>An inflated ADF statistic and high p-value (generally above 0.05) indicate a high risk to the model's performance
+due to the presence of a unit root indicating non-stationarity.</li>
+<li>Non-stationarity might result in untrustworthy or insufficient forecasts.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="strengths">Strengths</h3>
+
+<ul>
+<li>The ADF test is robust to sophisticated correlations within the data, making it suitable for settings where data
+displays complex stochastic behavior.</li>
+<li>It provides explicit outputs like test statistics, critical values, and information criterion, enhancing
+understanding and transparency in the model validation process.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The ADF test might demonstrate low statistical power, making it challenging to differentiate between a unit root
-and near-unit-root processes causing false negatives.</li>
-<li>The test assumes the data follows an autoregressive process, which might not be the case all the time.</li>
-<li>The ADF test finds it demanding to manage time series data with structural breaks.</li>
+and near-unit-root processes, potentially causing false negatives.</li>
+<li>It assumes the data follows an autoregressive process, which might not always be the case.</li>
+<li>The test struggles with time series data that have structural breaks.</li>
 </ul>
 </div>
 
