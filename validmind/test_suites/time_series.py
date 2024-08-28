@@ -119,14 +119,4 @@ class TimeSeriesModelValidation(TestSuite):
             "section_description": RegressionModelsEvaluation.__doc__,
             "section_tests": RegressionModelsEvaluation.tests,
         },
-        {
-            "section_id": TimeSeriesForecast.suite_id,
-            "section_description": TimeSeriesForecast.__doc__,
-            "section_tests": TimeSeriesForecast.tests,
-        },
-        {
-            "section_id": TimeSeriesSensitivity.suite_id,
-            "section_description": TimeSeriesSensitivity.__doc__,
-            "section_tests": TimeSeriesSensitivity.tests,
-        },
     ]
