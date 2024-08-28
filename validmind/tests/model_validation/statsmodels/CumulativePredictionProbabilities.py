@@ -80,18 +80,14 @@ class CumulativePredictionProbabilities(Metric):
 
         # Get unique classes and assign colors
         classes = sorted(df[target_col].unique())
-        colors = [
-            colormap(i / len(classes))[:3] for i in range(len(classes))
-        ]  # RGB
+        colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
         color_dict = {
             cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
             for cls, rgb in zip(classes, colors)
         }
         for class_value in sorted(df[target_col].unique()):
             # Calculate cumulative distribution for the current class
-            sorted_probs = np.sort(
-                df[df[target_col] == class_value]["probabilities"]
-            )
+            sorted_probs = np.sort(df[df[target_col] == class_value]["probabilities"])
             cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
 
             fig.add_trace(
@@ -126,9 +122,7 @@ class CumulativePredictionProbabilities(Metric):
         df["probabilities"] = y_prob
         metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])
 
-        figures = self.plot_cumulative_prob(
-            df, dataset_title, target_column, title
-        )
+        figures = self.plot_cumulative_prob(df, dataset_title, target_column, title)
 
         figures_list = [
             Figure(

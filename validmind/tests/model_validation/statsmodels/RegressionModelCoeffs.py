@@ -16,7 +16,7 @@ class RegressionModelCoeffs(Metric):
     Compares feature importance by evaluating and contrasting coefficients of different regression models.
 
     ### Purpose
-    
+
     The 'RegressionModelCoeffs' metric is utilized to evaluate and compare coefficients of different
     regression models trained on the same dataset. By examining how each model weighted the importance of different
     features during training, this metric provides key insights into which factors have the most impact on the model's
