@@ -13,32 +13,49 @@ from validmind.vm_models import Metric, ResultSummary, ResultTable
 @dataclass
 class RegressionErrors(Metric):
     """
-    **Purpose**: This metric is used to measure the performance of a regression model. It gauges the model's accuracy
-    by computing several error metrics such as Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared
-    Error (RMSE), Mean Absolute Percentage Error (MAPE), and Mean Bias Deviation (MBD) on both the training and testing
-    dataset.
+    Assesses the performance and error distribution of a regression model using various error metrics.
 
-    **Test Mechanism**: The test computes each of the aforementioned metrics. MAE calculates the average of the
-    absolute difference between the true value and the predicted value. MSE squares the difference before averaging it.
-    RMSE then takes the square root of the MSE. MAPE evaluates the average of the absolute difference between true and
-    predicted values divided by the true value, expressed as a percentage. Lastly, MBD is a measure of average bias in
-    the prediction. The results are compared between the training dataset and the testing dataset.
+    ### Purpose
 
-    **Signs of High Risk**: High values for any of the metrics, or particularly different metric outcomes for the
-    training set versus the test set, are signs of high risk. Specifically, high MAE, MSE, RMSE, or MAPE values could
-    indicate poor model performance and overfitting. If MBD is significantly different from zero, it could signify that
-    the model's predictions are systematically biased.
+    The purpose of the Regression Errors test is to measure the performance of a regression model by calculating
+    several error metrics. This evaluation helps determine the model's accuracy and potential issues like overfitting
+    or bias by analyzing differences in error metrics between the training and testing datasets.
 
-    **Strengths**: These metrics collectively provide a comprehensive view of model performance and error distribution.
-    Individually, MAE provides a linear score that could be more interpretable, while MSE gives more weight to larger
-    errors. RMSE is useful because it is in the same unit as the target variable. MAPE expresses error as a percentage,
-    making it a good measure of prediction accuracy. MBD helps to detect systematic bias in predictions.
+    ### Test Mechanism
 
-    **Limitations**: Each of these metrics has its own limitations. MAE and MSE are sensitive to outliers. While RMSE
-    is good for giving high weight to larger errors, it might too heavily penalize these errors. MAPE might be biased
-    if actual values are near zero, and MBD would not work well if the difference between predictions and actual values
-    changes with the magnitude of the actual values. Overall, these metrics will not capture all model performance
-    nuances, and they should be used with contextual understanding of the problem at hand.
+    The test computes the following error metrics:
+    - **Mean Absolute Error (MAE)**: Average of the absolute differences between true values and predicted values.
+    - **Mean Squared Error (MSE)**: Average of the squared differences between true values and predicted values.
+    - **Root Mean Squared Error (RMSE)**: Square root of the mean squared error.
+    - **Mean Absolute Percentage Error (MAPE)**: Average of the absolute differences between true values and predicted
+    values, divided by the true values, and expressed as a percentage.
+    - **Mean Bias Deviation (MBD)**: Average bias between true values and predicted values.
+
+    These metrics are calculated separately for the training and testing datasets and compared to identify
+    discrepancies.
+
+    ### Signs of High Risk
+
+    - High values for MAE, MSE, RMSE, or MAPE indicating poor model performance.
+    - Large differences in error metrics between the training and testing datasets, suggesting overfitting.
+    - Significant deviation of MBD from zero, indicating systematic bias in model predictions.
+
+    ### Strengths
+
+    - Provides a comprehensive overview of model performance through multiple error metrics.
+    - Individual metrics offer specific insights, e.g., MAE for interpretability, MSE for emphasizing larger errors.
+    - RMSE is useful for being in the same unit as the target variable.
+    - MAPE allows the error to be expressed as a percentage.
+    - MBD detects systematic bias in model predictions.
+
+    ### Limitations
+
+    - MAE and MSE are sensitive to outliers.
+    - RMSE heavily penalizes larger errors, which might not always be desirable.
+    - MAPE can be misleading when actual values are near zero.
+    - MBD may not be suitable if bias varies with the magnitude of actual values.
+    - These metrics may not capture all nuances of model performance and should be interpreted with domain-specific
+    context.
     """
 
     name = "regression_errors"

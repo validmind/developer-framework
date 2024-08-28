@@ -53,6 +53,7 @@ def AnswerRelevance(
     ### Configuring Columns
 
     This metric requires the following columns in your dataset:
+
     - `question` (str): The text query that was input into the model.
     - `contexts` (List[str]): Any contextual information retrieved by the model before
     generating an answer.
