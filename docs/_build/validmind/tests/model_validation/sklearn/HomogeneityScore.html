@@ -79,16 +79,20 @@
             <div class="docstring"><p>Assesses clustering homogeneity by comparing true and predicted labels, scoring from 0 (heterogeneous) to 1
 (homogeneous).</p>
 
-<p><strong>Purpose</strong>: The Homogeneity Score encapsulated in this performance test is used to measure the homogeneity of the
-clusters formed by a machine learning model. In simple terms, a clustering result satisfies homogeneity if all of
-its clusters contain only points which are members of a single class.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: This test uses the <code>homogeneity_score</code> function from the <code>sklearn.metrics</code> library to compare
-the ground truth class labels of the training and testing sets with the labels predicted by the given model. The
-returned score is a metric of the clustering accuracy, and ranges from 0.0 to 1.0, with 1.0 denoting the highest
-possible degree of homogeneity.</p>
+<p>The Homogeneity Score encapsulated in this performance test is used to measure the homogeneity of the clusters
+formed by a machine learning model. In simple terms, a clustering result satisfies homogeneity if all of its
+clusters contain only points which are members of a single class.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test uses the <code>homogeneity_score</code> function from the <code>sklearn.metrics</code> library to compare the ground truth
+class labels of the training and testing sets with the labels predicted by the given model. The returned score is a
+metric of the clustering accuracy, and ranges from 0.0 to 1.0, with 1.0 denoting the highest possible degree of
+homogeneity.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A score close to 0: This denotes that clusters are highly heterogenous and points within the same cluster might
@@ -98,16 +102,16 @@ overfitting, where the model has learned to perfectly match the training data bu
 data.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>It provides a simple quantitative measure of the degree to which clusters contain points from only one class.</li>
-<li>Useful for validating clustering solutions where the ground truth - class membership of points - is known.</li>
+<li>Useful for validating clustering solutions where the ground truth — class membership of points — is known.</li>
 <li>It's agnostic to the absolute labels, and cares only that the points within the same cluster have the same class
 label.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The Homogeneity Score is not useful for clustering solutions where the ground truth labels are not known.</li>

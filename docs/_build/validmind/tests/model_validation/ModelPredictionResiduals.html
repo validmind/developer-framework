@@ -68,36 +68,45 @@
     </div>
     <a class="headerlink" href="#ModelPredictionResiduals"></a>
     
-            <div class="docstring"><p>Plot the residuals and histograms for each model, and generate a summary table
-with the Kolmogorov-Smirnov normality test results.</p>
+            <div class="docstring"><p>Assesses normality and behavior of residuals in regression models through visualization and statistical tests.</p>
 
-<p><strong>Purpose</strong>: The purpose of this function is to visualize the residuals of model predictions and
-assess the normality of residuals using the Kolmogorov-Smirnov test.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The function iterates through each dataset-model pair, calculates residuals, and generates
-two figures for each model: one for the time series of residuals and one for the histogram of residuals.
-It also calculates the KS test for normality and summarizes the results in a table.</p>
+<p>The Model Prediction Residuals test aims to visualize the residuals of model predictions and assess their normality
+using the Kolmogorov-Smirnov (KS) test. It helps to identify potential issues related to model assumptions and
+effectiveness.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test involves the following steps for each dataset-model pair:</p>
 
 <ul>
-<li>If the residuals are not normally distributed, it could indicate issues with model assumptions.</li>
-<li>High skewness or kurtosis in the residuals may indicate model misspecification.</li>
+<li>Calculate the residuals by subtracting predicted values from the actual values.</li>
+<li>Generate two types of plots: a time series plot of residuals and a histogram of residuals.</li>
+<li>Perform the KS test to assess the normality of the residuals and summarize the results in a table.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Provides a clear visualization of residuals over time and their distribution.</li>
+<li>Residuals are not normally distributed, indicating potential issues with model assumptions.</li>
+<li>High skewness or kurtosis in the residuals, which may suggest model misspecification.</li>
+</ul>
+
+<h3 id="strengths">Strengths</h3>
+
+<ul>
+<li>Provides clear visualizations of residuals over time and their distribution.</li>
 <li>Includes statistical tests to assess the normality of residuals.</li>
+<li>Helps in identifying potential model misspecifications and assumption violations.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Assumes that the dataset is provided as a DataFrameDataset object with a .df attribute to access
-the pandas DataFrame.</li>
-<li>Only generates plots for datasets with a datetime index, and will raise an error for other types of indices.</li>
+<li>Assumes that the dataset is provided as a DataFrameDataset object with a .df attribute to access the pandas
+DataFrame.</li>
+<li>Only generates plots for datasets with a datetime index, resulting in errors for other types of indices.</li>
 </ul>
 </div>
 

@@ -81,20 +81,22 @@
     
             <div class="docstring"><p>Evaluates and grades the use of affirmative, proactive language over negative instructions in LLM prompts.</p>
 
-<p><strong>Purpose:</strong>
-The Negative Instruction test is utilized to scrutinize the prompts given to a Large Language Model (LLM). The
+<h3 id="purpose">Purpose</h3>
+
+<p>The Negative Instruction test is utilized to scrutinize the prompts given to a Large Language Model (LLM). The
 objective is to ensure these prompts are expressed using proactive, affirmative language. The focus is on
 instructions indicating what needs to be done rather than what needs to be avoided, thereby guiding the LLM more
 efficiently towards the desired output.</p>
 
-<p><strong>Test Mechanism:</strong>
-An LLM is employed to evaluate each prompt. The prompt is graded based on its use of positive instructions with
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>An LLM is employed to evaluate each prompt. The prompt is graded based on its use of positive instructions with
 scores ranging between 1-10. This grade reflects how effectively the prompt leverages affirmative language while
 shying away from negative or restrictive instructions. A prompt that attains a grade equal to or above a
 predetermined threshold (7 by default) is regarded as adhering effectively to the best practices of positive
 instruction. This threshold can be custom-tailored through the test parameters.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Low score obtained from the LLM analysis, indicating heavy reliance on negative instructions in the prompts.</li>
@@ -103,7 +105,7 @@ instruction. This threshold can be custom-tailored through the test parameters.<
 prompt.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Encourages the usage of affirmative, proactive language in prompts, aiding in more accurate and advantageous
@@ -112,7 +114,7 @@ model responses.</li>
 instruction best practices.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Despite an adequate score, a prompt could still be misleading or could lead to undesired responses due to factors

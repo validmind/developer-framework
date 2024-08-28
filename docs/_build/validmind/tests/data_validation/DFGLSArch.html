@@ -79,20 +79,23 @@
     </div>
     <a class="headerlink" href="#DFGLSArch"></a>
     
-            <div class="docstring"><p>Executes Dickey-Fuller GLS metric to determine order of integration and check stationarity in time series data.</p>
+            <div class="docstring"><p>Assesses stationarity in time series data using the Dickey-Fuller GLS test to determine the order of integration.</p>
 
-<p><strong>Purpose</strong>: The Dickey-Fuller GLS (DFGLS) Arch metric is utilized to determine the order of integration in time
-series data. For machine learning models dealing with time series and forecasting, this metric evaluates the
-existence of a unit root, thereby checking whether a time series is non-stationary. This analysis is a crucial
-initial step when dealing with time series data.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: This code implements the Dickey-Fuller GLS unit root test on each attribute of the dataset.
-This process involves iterating through every column of the dataset and applying the DFGLS test to assess the
-presence of a unit root. The resulting information, including the test statistic ('stat'), the p-value ('pvalue'),
-the quantity of lagged differences utilized in the regression ('usedlag'), and the number of observations ('nobs'),
-is subsequently stored.</p>
+<p>The Dickey-Fuller GLS (DFGLS) test is utilized to determine the order of integration in time series data. For
+machine learning models dealing with time series and forecasting, this metric evaluates the existence of a unit
+root, thereby checking whether a time series is non-stationary. This analysis is a crucial initial step when
+dealing with time series data.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This code implements the Dickey-Fuller GLS unit root test on each attribute of the dataset. This process involves
+iterating through every column of the dataset and applying the DFGLS test to assess the presence of a unit root.
+The resulting information, including the test statistic ('stat'), the p-value ('pvalue'), the quantity of lagged
+differences utilized in the regression ('usedlag'), and the number of observations ('nobs'), is subsequently stored.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A high p-value for the DFGLS test represents a high risk. Specifically, a p-value above a typical threshold of
@@ -100,7 +103,7 @@ is subsequently stored.</p>
 generating unreliable forecasts.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The Dickey-Fuller GLS test is a potent tool for checking the stationarity of time series data.</li>
@@ -110,7 +113,7 @@ proceeds.</li>
 machine learning models, especially those demanding the stationarity of time series data.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Despite its benefits, the DFGLS test does present some drawbacks. It can potentially lead to inaccurate

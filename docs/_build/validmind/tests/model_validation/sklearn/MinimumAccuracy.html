@@ -84,46 +84,43 @@
     
             <div class="docstring"><p>Checks if the model's prediction accuracy meets or surpasses a specified threshold.</p>
 
-<p><strong>Purpose</strong>: The Minimum Accuracy test’s objective is to verify whether the model's prediction accuracy on a
-specific dataset meets or surpasses a predetermined minimum threshold. Accuracy, which is simply the ratio of right
-predictions to total predictions, is a key metric for evaluating the model's performance. Considering binary as
-well as multiclass classifications, accurate labeling becomes indispensable.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test mechanism involves contrasting the model's accuracy score with a pre-set minimum
-threshold value, default value being 0.7. The accuracy score is computed utilizing sklearn’s <code>accuracy_score</code>
-method, where the true label <code>y_true</code> and predicted label <code>class_pred</code> are compared. If the accuracy score is above
-the threshold, the test gets a passing mark. The test returns the result along with the accuracy score and
-threshold used for the test.</p>
+<p>The Minimum Accuracy test’s objective is to verify whether the model's prediction accuracy on a specific dataset
+meets or surpasses a predetermined minimum threshold. Accuracy, which is simply the ratio of correct predictions to
+total predictions, is a key metric for evaluating the model's performance. Considering binary as well as multiclass
+classifications, accurate labeling becomes indispensable.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves contrasting the model's accuracy score with a preset minimum threshold value, with the
+default being 0.7. The accuracy score is computed utilizing sklearn’s <code>accuracy_score</code> method, where the true
+labels <code>y_true</code> and predicted labels <code>class_pred</code> are compared. If the accuracy score is above the threshold, the
+test receives a passing mark. The test returns the result along with the accuracy score and threshold used for the
+test.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>The risk level for this test surges considerably when the model is unable to achieve or surpass the predefined
-score threshold.</li>
-<li>When the model persistently scores below the threshold, it suggests a high risk of inaccurate predictions, which
-in turn affects the model’s efficiency and reliability.</li>
+<li>Model fails to achieve or surpass the predefined score threshold.</li>
+<li>Persistent scores below the threshold, indicating a high risk of inaccurate predictions.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>One of the key strengths of this test is its simplicity, presenting a straightforward measure of the holistic
-model performance across all classes.</li>
-<li>This test is particularly advantageous when classes are balanced.</li>
-<li>Another advantage of this test is its versatility as it can be implemented on both binary and multiclass
-classification tasks.</li>
+<li>Simplicity, presenting a straightforward measure of holistic model performance across all classes.</li>
+<li>Particularly advantageous when classes are balanced.</li>
+<li>Versatile, as it can be implemented on both binary and multiclass classification tasks.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>When analyzing imbalanced datasets, certain limitations of this test emerge. The accuracy score can be misleading
-when classes in the dataset are skewed considerably.</li>
-<li>This can result in favoritism towards the majority class, consequently giving an inaccurate perception of the
-model performance.</li>
-<li>Another limitation is its inability to measure the model's precision, recall, or capacity to manage false
-positives or false negatives.</li>
-<li>The test majorly focuses on overall correctness and may not be sufficient for all types of model analytics.</li>
+<li>Misleading accuracy scores when classes in the dataset are highly imbalanced.</li>
+<li>Favoritism towards the majority class, giving an inaccurate perception of model performance.</li>
+<li>Inability to measure the model's precision, recall, or capacity to manage false positives or false negatives.</li>
+<li>Focused on overall correctness and may not be sufficient for all types of model analytics.</li>
 </ul>
 </div>
 

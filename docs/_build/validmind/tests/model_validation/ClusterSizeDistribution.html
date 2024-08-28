@@ -76,48 +76,52 @@
     </div>
     <a class="headerlink" href="#ClusterSizeDistribution"></a>
     
-            <div class="docstring"><p>Compares and visualizes the distribution of cluster sizes in model predictions and actual data for assessing
-clustering model performance.</p>
+            <div class="docstring"><p>Assesses the performance of clustering models by comparing the distribution of cluster sizes in model predictions
+with the actual data.</p>
 
-<p><strong>Purpose:</strong> The purpose of the <code><a href="#ClusterSizeDistribution">ClusterSizeDistribution</a></code> metric is to assess the performance of clustering models.
-It does this by comparing the distribution of cluster sizes in the predictions made by the model and the actual
-data. Observing the cluster distribution helps gain insights into whether the model's output aligns well with the
-actual dataset distribution.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong> The testing mechanism for <code><a href="#ClusterSizeDistribution">ClusterSizeDistribution</a></code> involves first running the clustering model
-on the training dataset, storing predictions, and comparing these predictions with the actual output. The actual
-and predicted outputs are then converted into pandas dataframes, which conveniently enables the use of pandas
-built-in functions to derive cluster size distributions. Two histograms are constructed from this data: one for the
-actual distribution and one for the predicted distribution. These histograms are then plotted side-by-side for
-visual comparison.</p>
+<p>The Cluster Size Distribution test aims to assess the performance of clustering models by comparing the
+distribution of cluster sizes in the model's predictions with the actual data. This comparison helps determine if
+the clustering model's output aligns well with the true cluster distribution, providing insights into the model's
+accuracy and performance.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves the following steps:</p>
 
 <ul>
-<li>Discrepancies between the actual cluster size distribution and the predicted cluster size distribution may
-indicate high risk.</li>
-<li>An irregular distribution of data across clusters in the predicted outcomes points towards an inaccurate
-prediction model.</li>
-<li>A high number of outlier clusters could indicate that the model has trouble correctly grouping data.</li>
+<li>Run the clustering model on the provided dataset to obtain predictions.</li>
+<li>Convert both the actual and predicted outputs into pandas dataframes.</li>
+<li>Use pandas built-in functions to derive the cluster size distributions from these dataframes.</li>
+<li>Construct two histograms: one for the actual cluster size distribution and one for the predicted distribution.</li>
+<li>Plot the histograms side-by-side for visual comparison.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li><code><a href="#ClusterSizeDistribution">ClusterSizeDistribution</a></code> provides a visual and intuitive way to compare the performance of the clustering model
-against the actual data.</li>
-<li>This metric can effectively reveal where the model might be over- or underestimating cluster sizes.</li>
-<li>It works well with any clustering models, making it a versatile comparison tool.</li>
+<li>Discrepancies between the actual cluster size distribution and the predicted cluster size distribution.</li>
+<li>Irregular distribution of data across clusters in the predicted outcomes.</li>
+<li>High number of outlier clusters suggesting the model struggles to correctly group data.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>The metric assumes that the actual cluster distribution is optimal, which may not always be the case.</li>
-<li>It relies heavily on visual comparison, which might be subjective and may not provide a precise numerical measure
-of model performance.</li>
-<li>The metric might not fully capture other important aspects of clustering such as cluster density, distances
-between clusters, and the shape of clusters.</li>
+<li>Provides a visual and intuitive way to compare the clustering model's performance against actual data.</li>
+<li>Effectively reveals where the model may be over- or underestimating cluster sizes.</li>
+<li>Versatile as it works well with any clustering model.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li>Assumes that the actual cluster distribution is optimal, which may not always be the case.</li>
+<li>Relies heavily on visual comparison, which could be subjective and may not offer a precise numerical measure of
+performance.</li>
+<li>May not fully capture other important aspects of clustering, such as cluster density, distances between clusters,
+and the shape of clusters.</li>
 </ul>
 </div>
 

@@ -12,25 +12,41 @@ from validmind.utils import get_model_info
 @tasks("regression", "time_series_forecasting")
 def ModelMetadataComparison(models):
     """
-    Compare metadata of different models and generate a summary table with the results.
+    Assesses the metadata of various models to ensure consistency and compatibility, which is essential for effective
+    model deployment and management.
 
-    **Purpose**: The purpose of this function is to compare the metadata of different models, including information about their architecture, framework, framework version, and programming language.
+    ### Purpose
 
-    **Test Mechanism**: The function retrieves the metadata for each model using `get_model_info`, renames columns according to a predefined set of labels, and compiles this information into a summary table.
+    The Model Metadata Comparison test is designed to assess and compare the metadata of different models. This
+    includes comparing information such as the model's architecture, framework, framework version, and programming
+    language to ensure consistency and identify potential issues in model documentation or management.
 
-    **Signs of High Risk**:
-    - Inconsistent or missing metadata across models can indicate potential issues in model documentation or management.
-    - Significant differences in framework versions or programming languages might pose challenges in model integration and deployment.
+    ### Test Mechanism
 
-    **Strengths**:
-    - Provides a clear comparison of essential model metadata.
-    - Standardizes metadata labels for easier interpretation and comparison.
-    - Helps identify potential compatibility or consistency issues across models.
+    The test retrieves metadata for each model using the `get_model_info` function. It then renames the columns based
+    on a predefined set of labels and compiles this information into a summary table. The key steps include:
 
-    **Limitations**:
-    - Assumes that the `get_model_info` function returns all necessary metadata fields.
+    - Retrieving metadata for each model.
+    - Renaming columns to align with standardized labels.
+    - Compiling and presenting the information in a summary table for comparison.
+
+    ### Signs of High Risk
+
+    - Inconsistent or missing metadata across models, indicating potential issues in documentation or model management.
+    - Significant differences in framework versions or programming languages, which could lead to integration and
+    deployment challenges.
+
+    ### Strengths
+
+    - Provides a clear, standardized comparison of essential model metadata.
+    - Facilitates easier interpretation and comparison by standardizing metadata labels.
+    - Helps identify potential compatibility or consistency issues across different models.
+
+    ### Limitations
+
+    - Assumes the `get_model_info` function returns all necessary metadata fields.
     - Relies on the correctness and completeness of the metadata provided by each model.
-    - Does not include detailed parameter information, focusing instead on high-level metadata.
+    - Focuses on high-level metadata and does not include detailed parameter information.
     """
     column_labels = {
         "architecture": "Modeling Technique",

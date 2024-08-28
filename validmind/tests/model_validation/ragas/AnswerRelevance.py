@@ -53,6 +53,7 @@ def AnswerRelevance(
     ### Configuring Columns
 
     This metric requires the following columns in your dataset:
+
     - `question` (str): The text query that was input into the model.
     - `contexts` (List[str]): Any contextual information retrieved by the model before
     generating an answer.
@@ -120,9 +121,9 @@ def AnswerRelevance(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "contexts", "answer", "answer_relevancy"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "contexts", "answer", "answer_relevancy"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["answer_relevancy"].mean(),
@@ -130,7 +131,7 @@ def AnswerRelevance(
                     "Max Score": result_df["answer_relevancy"].max(),
                     "Min Score": result_df["answer_relevancy"].min(),
                     "Standard Deviation": result_df["answer_relevancy"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

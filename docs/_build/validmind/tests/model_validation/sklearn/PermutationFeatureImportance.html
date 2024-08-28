@@ -79,42 +79,45 @@
             <div class="docstring"><p>Assesses the significance of each feature in a model by evaluating the impact on model performance when feature
 values are randomly rearranged.</p>
 
-<p><strong>Purpose</strong>: The purpose of the Permutation Feature Importance (PFI) metric is to assess the importance of each
-feature used by the Machine Learning model. The significance is measured by evaluating the decrease in the model's
-performance when the feature's values are randomly arranged.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: PFI is calculated via the <code>permutation_importance</code> method from the <code>sklearn.inspection</code> module.
-This method shuffles the columns of the feature dataset and measures the impact on the model's performance. A
-significant decrease in performance after permutating a feature's values deems the feature as important. On the
-other hand, if performance remains the same, the feature is likely not important. The output of the PFI metric is a
-figure illustrating the importance of each feature.</p>
+<p>The Permutation Feature Importance (PFI) metric aims to assess the importance of each feature used by the Machine
+Learning model. The significance is measured by evaluating the decrease in the model's performance when the
+feature's values are randomly arranged.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>PFI is calculated via the <code>permutation_importance</code> method from the <code>sklearn.inspection</code> module. This method
+shuffles the columns of the feature dataset and measures the impact on the model's performance. A significant
+decrease in performance after permutating a feature's values deems the feature as important. On the other hand, if
+performance remains the same, the feature is likely not important. The output of the PFI metric is a figure
+illustrating the importance of each feature.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>The model heavily relies on a feature with highly variable or easily permutable values, indicating instability.</li>
-<li>A feature, deemed unimportant by the model but based on domain knowledge should have a significant effect on the
-outcome, is not influencing the model's predictions.</li>
+<li>A feature deemed unimportant by the model but expected to have a significant effect on the outcome based on
+domain knowledge is not influencing the model's predictions.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>PFI provides insights into the importance of different features and may reveal underlying data structure.</li>
-<li>It can indicate overfitting if a particular feature or set of features overly impacts the model's predictions.</li>
-<li>The metric is model-agnostic and can be used with any classifier that provides a measure of prediction accuracy
-before and after feature permutation.</li>
+<li>Provides insights into the importance of different features and may reveal underlying data structure.</li>
+<li>Can indicate overfitting if a particular feature or set of features overly impacts the model's predictions.</li>
+<li>Model-agnostic and can be used with any classifier that provides a measure of prediction accuracy before and
+after feature permutation.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The feature importance calculated does not imply causality, it only presents the amount of information that a
-feature provides for the prediction task.</li>
-<li>The metric does not account for interactions between features. If features are correlated, the permutation
-importance may allocate importance to one and not the other.</li>
-<li>PFI cannot interact with certain libraries like statsmodels, pytorch, catboost, etc, thus limiting its
-applicability.</li>
+<li>Does not imply causality; it only presents the amount of information that a feature provides for the prediction
+task.</li>
+<li>Does not account for interactions between features. If features are correlated, the permutation importance may
+allocate importance to one and not the other.</li>
+<li>Cannot interact with certain libraries like statsmodels, pytorch, catboost, etc., thus limiting its applicability.</li>
 </ul>
 </div>
 

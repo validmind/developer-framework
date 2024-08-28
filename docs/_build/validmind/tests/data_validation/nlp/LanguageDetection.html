@@ -70,32 +70,50 @@
     </div>
     <a class="headerlink" href="#LanguageDetection"></a>
     
-            <div class="docstring"><p>Detects the language of each text entry in a dataset and visualizes the distribution of languages
-as a histogram.</p>
+            <div class="docstring"><p>Assesses the diversity of languages in a textual dataset by detecting and visualizing the distribution of languages.</p>
 
-<p>This method checks for a specified text column in the dataset's dataframe, uses a language detection
-library to determine the language of each text entry, and returns a histogram plot of the language
-distribution.</p>
+<h3 id="purpose">Purpose</h3>
 
-<h6 id="arguments">Arguments:</h6>
+<p>The Language Detection test aims to identify and visualize the distribution of languages present within a textual
+dataset. This test helps in understanding the diversity of languages in the data, which is crucial for developing
+and validating multilingual models.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test operates by:</p>
 
 <ul>
-<li><strong>dataset (Dataset):</strong>  A dataset object which must have a <code>df</code> attribute (a pandas DataFrame)
-and a <code>text_column</code> attribute indicating the name of the column containing text. If the
-<code>text_column</code> attribute is not set, a ValueError is raised.</li>
+<li>Checking if the dataset has a specified text column.</li>
+<li>Using a language detection library to determine the language of each text entry in the dataset.</li>
+<li>Generating a histogram plot of the language distribution, with language codes on the x-axis and their frequencies
+on the y-axis.</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<p>If the text column is not specified, a ValueError is raised to ensure proper dataset configuration.</p>
 
-<blockquote>
-  <p>plotly.graph_objs._figure.Figure: A Plotly histogram plot showing the distribution of detected
-  languages across the dataset's text entries.</p>
-</blockquote>
-
-<h6 id="raises">Raises:</h6>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li><strong>ValueError:</strong>  If the <code>text_column</code> is not specified in the dataset object.</li>
+<li>A high proportion of entries returning "Unknown" language codes.</li>
+<li>Detection of unexpectedly diverse or incorrect language codes, indicating potential data quality issues.</li>
+<li>Significant imbalance in language distribution, which might indicate potential biases in the dataset.</li>
+</ul>
+
+<h3 id="strengths">Strengths</h3>
+
+<ul>
+<li>Provides a visual representation of language diversity within the dataset.</li>
+<li>Helps identify data quality issues related to incorrect or unknown language detection.</li>
+<li>Useful for ensuring that multilingual models have adequate and appropriate representation from various languages.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li>Dependency on the accuracy of the language detection library, which may not be perfect.</li>
+<li>Languages with similar structures or limited text length may be incorrectly classified.</li>
+<li>The test returns "Unknown" for entries where language detection fails, which might mask underlying issues with
+certain languages or text formats.</li>
 </ul>
 </div>
 

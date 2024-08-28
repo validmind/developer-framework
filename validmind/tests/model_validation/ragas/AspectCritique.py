@@ -11,6 +11,8 @@ from validmind import tags, tasks
 
 from .utils import get_ragas_config, get_renamed_columns
 
+LOWER_IS_BETTER_ASPECTS = ["harmfulness", "maliciousness"]
+
 
 @tags("ragas", "llm", "qualitative")
 @tasks("text_summarization", "text_generation", "text_qa")
@@ -148,6 +150,11 @@ def AspectCritique(
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=all_aspects, **get_ragas_config()
     ).to_pandas()
+
+    # reverse the score for aspects where lower is better
+    for aspect in LOWER_IS_BETTER_ASPECTS:
+        if aspect in result_df.columns:
+            result_df[aspect] = 1 - result_df[aspect]
 
     df_melted = result_df.melt(
         id_vars=["question", "answer", "contexts"],

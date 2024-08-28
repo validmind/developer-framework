@@ -75,19 +75,23 @@
             <div class="docstring"><p>Assesses and visualizes correlation between target variable and lagged independent variables in a time-series
 dataset.</p>
 
-<p><strong>Purpose</strong>: The LaggedCorrelationHeatmap metric is utilized to appraise and illustrate the correlation between the
-target variable and delayed copies (lags) of independent variables in a time-series dataset. It assists in
-revealing relationships in time-series data where the influence of an independent variable on the dependent
-variable is not immediate but occurs after a period (lags).</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: To execute this test, Python's Pandas library pairs with Plotly to perform computations and
-present the visualization in the form of a heatmap. The test begins by extracting the target variable and
-corresponding independent variables from the dataset. Then, generation of lags of independent variables takes
-place, followed by the calculation of correlation between these lagged variables and the target variable. The
-outcome is a correlation matrix that gets recorded and illustrated as a heatmap, where different color intensities
-represent the strength of the correlation, making patterns easier to identify.</p>
+<p>The LaggedCorrelationHeatmap metric is utilized to appraise and illustrate the correlation between the target
+variable and delayed copies (lags) of independent variables in a time-series dataset. It assists in revealing
+relationships in time-series data where the influence of an independent variable on the dependent variable is not
+immediate but occurs after a period (lags).</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>To execute this test, Python's Pandas library pairs with Plotly to perform computations and present the
+visualization in the form of a heatmap. The test begins by extracting the target variable and corresponding
+independent variables from the dataset. Then, generation of lags of independent variables takes place, followed by
+the calculation of correlation between these lagged variables and the target variable. The outcome is a correlation
+matrix that gets recorded and illustrated as a heatmap, where different color intensities represent the strength of
+the correlation, making patterns easier to identify.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Insignificant correlations across the heatmap, indicating a lack of noteworthy relationships between variables.</li>
@@ -95,7 +99,7 @@ represent the strength of the correlation, making patterns easier to identify.</
 model.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>This metric serves as an exceptional tool for exploring and visualizing time-dependent relationships between
@@ -104,7 +108,7 @@ features and the target variable in a time-series dataset.</li>
 <li>The heatmap offers an intuitive visual representation of time-dependent correlations and influences.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The metric presumes linear relationships between variables, potentially ignoring non-linear relationships.</li>

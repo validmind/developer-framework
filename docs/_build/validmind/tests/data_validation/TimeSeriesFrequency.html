@@ -81,21 +81,25 @@
     
             <div class="docstring"><p>Evaluates consistency of time series data frequency and generates a frequency plot.</p>
 
-<p><strong>Purpose</strong>: The purpose of the TimeSeriesFrequency test is to evaluate the consistency in the frequency of data
-points in a time-series dataset. This test inspects the intervals or duration between each data point to determine
-if a fixed pattern (such as daily, weekly, or monthly) exists. The identification of such patterns is crucial to
-time-series analysis as any irregularities could lead to erroneous results and hinder the model's capacity for
-identifying trends and patterns.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: Initially, the test checks if the dataframe index is in datetime format. Subsequently, it
-utilizes pandas' <code>infer_freq</code> method to identify the frequency of each data series within the dataframe. The
-<code>infer_freq</code> method attempts to establish the frequency of a time series and returns both the frequency string and
-a dictionary relating these strings to their respective labels. The test compares the frequencies of all datasets.
-If they share a common frequency, the test passes, but it fails if they do not. Additionally, Plotly is used to
-create a frequency plot, offering a visual depiction of the time differences between consecutive entries in the
-dataframe index.</p>
+<p>The purpose of the TimeSeriesFrequency test is to evaluate the consistency in the frequency of data points in a
+time-series dataset. This test inspects the intervals or duration between each data point to determine if a fixed
+pattern (such as daily, weekly, or monthly) exists. The identification of such patterns is crucial to time-series
+analysis as any irregularities could lead to erroneous results and hinder the model's capacity for identifying
+trends and patterns.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>Initially, the test checks if the dataframe index is in datetime format. Subsequently, it utilizes pandas'
+<code>infer_freq</code> method to identify the frequency of each data series within the dataframe. The <code>infer_freq</code> method
+attempts to establish the frequency of a time series and returns both the frequency string and a dictionary
+relating these strings to their respective labels. The test compares the frequencies of all datasets. If they share
+a common frequency, the test passes, but it fails if they do not. Additionally, Plotly is used to create a
+frequency plot, offering a visual depiction of the time differences between consecutive entries in the dataframe
+index.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>The test fails, indicating multiple unique frequencies within the dataset. This failure could suggest irregular
@@ -104,7 +108,7 @@ intervals between observations, potentially interrupting pattern recognition or 
 data collection process.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>This test uses a systematic approach to checking the consistency of data frequency within a time-series dataset.</li>
@@ -114,7 +118,7 @@ in time-series analysis.</li>
 which caters to visual learners and aids in interpretation and explanation.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>This test is only applicable to time-series datasets and hence not suitable for other types of datasets.</li>

@@ -74,14 +74,17 @@
     
             <div class="docstring"><p>Evaluates ARIMA models for time-series forecasting, ranking them using Bayesian and Akaike Information Criteria.</p>
 
-<p><strong>Purpose</strong>: The AutoARIMA validation test is designed to evaluate and rank AutoRegressive Integrated Moving
-Average (ARIMA) models. These models are primarily used for forecasting time-series data. The validation test
-automatically fits multiple ARIMA models, with varying parameters, to every variable within the given dataset. The
-models are then ranked based on their Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC)
-values, which provide a basis for the efficient model selection process.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>:
-This metric proceeds by generating an array of feasible combinations of ARIMA model parameters which are within a
+<p>The AutoARIMA validation test is designed to evaluate and rank AutoRegressive Integrated Moving Average (ARIMA)
+models. These models are primarily used for forecasting time-series data. The validation test automatically fits
+multiple ARIMA models, with varying parameters, to every variable within the given dataset. The models are then
+ranked based on their Bayesian Information Criterion (BIC) and Akaike Information Criterion (AIC) values, which
+provide a basis for the efficient model selection process.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This metric proceeds by generating an array of feasible combinations of ARIMA model parameters which are within a
 prescribed limit. These limits include <code>max_p</code>, <code>max_d</code>, <code>max_q</code>; they represent the autoregressive, differencing,
 and moving average components respectively. Upon applying these sets of parameters, the validation test fits each
 ARIMA model to the time-series data provided. For each model, it subsequently proceeds to calculate and record both
@@ -90,7 +93,7 @@ process, the Augmented Dickey-Fuller test for data stationarity is conducted on 
 found to be non-stationary, a warning message is sent out, given that ARIMA models necessitate input series to be
 stationary.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>If the p-value of the Augmented Dickey-Fuller test for a variable exceeds 0.05, a warning is logged. This warning
@@ -99,7 +102,7 @@ indicates that the series might not be stationary, leading to potentially inaccu
 either the data or model stability.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The AutoARIMA validation test simplifies the often complex task of selecting the most suitable ARIMA model based
@@ -110,7 +113,7 @@ ARIMA models.</li>
 identifying the best-fit model.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>This validation test can be computationally costly as it involves creating and fitting multiple ARIMA models for

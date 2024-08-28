@@ -82,21 +82,23 @@
             <div class="docstring"><p>Identifies and visualizes weak spots in a machine learning model's performance across various sections of the
 feature space.</p>
 
-<p><strong>Purpose:</strong>
-The weak spots test is applied to evaluate the performance of a machine learning model within specific regions of
+<h3 id="purpose">Purpose</h3>
+
+<p>The weak spots test is applied to evaluate the performance of a machine learning model within specific regions of
 its feature space. This test slices the feature space into various sections, evaluating the model's outputs within
 each section against specific performance metrics (e.g., accuracy, precision, recall, and F1 scores). The ultimate
 aim is to identify areas where the model's performance falls below the set thresholds, thereby exposing its
 possible weaknesses and limitations.</p>
 
-<p><strong>Test Mechanism:</strong>
-The test mechanism adopts an approach of dividing the feature space of the training dataset into numerous bins. The
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism adopts an approach of dividing the feature space of the training dataset into numerous bins. The
 model's performance metrics (accuracy, precision, recall, F1 scores) are then computed for each bin on both the
 training and test datasets. A "weak spot" is identified if any of the performance metrics fall below a
 predetermined threshold for a particular bin on the test dataset. The test results are visually plotted as bar
 charts for each performance metric, indicating the bins which fail to meet the established threshold.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Any performance metric of the model dropping below the set thresholds.</li>
@@ -106,7 +108,7 @@ of overfitting.</li>
 to handle specific types of input data adequately, resulting in potentially inaccurate predictions.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The test helps pinpoint precise regions of the feature space where the model's performance is below par, allowing
@@ -117,7 +119,7 @@ performance across different feature areas.</li>
 to the specific requirements of the application.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The binning system utilized for the feature space in the test could over-simplify the model's behavior within
