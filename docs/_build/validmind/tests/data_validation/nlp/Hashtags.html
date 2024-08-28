@@ -80,17 +80,21 @@
     
             <div class="docstring"><p>Assesses hashtag frequency in a text column, highlighting usage trends and potential dataset bias or spam.</p>
 
-<p><strong>Purpose</strong>: The Hashtags test is designed to measure the frequency of hashtags used within a given text column in
-a dataset. It is particularly useful for natural language processing tasks such as text classification and text
-summarization. The goal is to identify common trends and patterns in the use of hashtags, which can serve as
-critical indicators or features within a machine learning model.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test implements a regular expression (regex) to extract all hashtags from the specified
-text column. For each hashtag found, it makes a tally of its occurrences. It then outputs a list of the top N
-hashtags (default is 25, but customizable), sorted by their counts in descending order. The results are also
-visualized in a bar plot, with frequency counts on the y-axis and the corresponding hashtags on the x-axis.</p>
+<p>The Hashtags test is designed to measure the frequency of hashtags used within a given text column in a dataset. It
+is particularly useful for natural language processing tasks such as text classification and text summarization.
+The goal is to identify common trends and patterns in the use of hashtags, which can serve as critical indicators
+or features within a machine learning model.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test implements a regular expression (regex) to extract all hashtags from the specified text column. For each
+hashtag found, it makes a tally of its occurrences. It then outputs a list of the top N hashtags (default is 25,
+but customizable), sorted by their counts in descending order. The results are also visualized in a bar plot, with
+frequency counts on the y-axis and the corresponding hashtags on the x-axis.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A low diversity in the usage of hashtags, as indicated by a few hashtags being used disproportionately more than
@@ -100,25 +104,25 @@ others.</li>
 contain structured social media data.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>It provides a concise visual representation of the frequency of hashtags, which can be critical for understanding
+<li>Provides a concise visual representation of the frequency of hashtags, which can be critical for understanding
 trends about a particular topic in text data.</li>
-<li>It is instrumental in tasks specifically related to social media text analytics, such as opinion analysis and
-trend discovery.</li>
-<li>The test is adaptable, allowing the flexibility to determine the number of top hashtags to be analyzed.</li>
+<li>Instrumental in tasks specifically related to social media text analytics, such as opinion analysis and trend
+discovery.</li>
+<li>Adaptable, allowing the flexibility to determine the number of top hashtags to be analyzed.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The test assumes the presence of hashtags and therefore may not be applicable for text datasets that do not
-contain hashtags (e.g., formal documents, scientific literature).</li>
+<li>Assumes the presence of hashtags and therefore may not be applicable for text datasets that do not contain
+hashtags (e.g., formal documents, scientific literature).</li>
 <li>Language-specific limitations of hashtag formulations are not taken into account.</li>
-<li>It does not account for typographical errors, variations, or synonyms in hashtags.</li>
-<li>This test does not provide context or sentiment associated with the hashtags, so the information provided may
-have limited utility on its own.</li>
+<li>Does not account for typographical errors, variations, or synonyms in hashtags.</li>
+<li>Does not provide context or sentiment associated with the hashtags, so the information provided may have limited
+utility on its own.</li>
 </ul>
 </div>
 

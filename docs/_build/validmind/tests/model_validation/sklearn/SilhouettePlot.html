@@ -79,23 +79,28 @@
     </div>
     <a class="headerlink" href="#SilhouettePlot"></a>
     
-            <div class="docstring"><p>Calculates and visualizes Silhouette Score, assessing degree of data point suitability to its cluster in ML models.</p>
+            <div class="docstring"><p>Calculates and visualizes Silhouette Score, assessing the degree of data point suitability to its cluster in ML
+models.</p>
 
-<p><strong>Purpose:</strong> This test calculates the Silhouette Score, which is a model performance metric used in clustering
-applications. Primarily, the Silhouette Score evaluates how similar an object (data point) is to its own cluster
-compared to other clusters. The metric ranges between -1 and 1, where a high value indicates that the object is
-well matched to its own cluster and poorly matched to neighboring clusters. Thus, the goal is to achieve a high
-Silhouette Score, implying well-separated clusters.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong> The test first extracts the true and predicted labels from the model's training data. The test
-runs the Silhouette Score function, which takes as input the training dataset features and the predicted labels,
-subsequently calculating the average score. This average Silhouette Score is printed for reference. The script then
-calculates the silhouette coefficients for each data point, helping to form the Silhouette Plot. Each cluster is
-represented in this plot, with color distinguishing between different clusters. A red dashed line indicates the
-average Silhouette Score. The Silhouette Scores are also collected into a structured table, facilitating model
-performance analysis and comparison.</p>
+<p>This test calculates the Silhouette Score, which is a model performance metric used in clustering applications.
+Primarily, the Silhouette Score evaluates how similar a data point is to its own cluster compared to other
+clusters. The metric ranges between -1 and 1, where a high value indicates that the object is well matched to its
+own cluster and poorly matched to neighboring clusters. Thus, the goal is to achieve a high Silhouette Score,
+implying well-separated clusters.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test first extracts the true and predicted labels from the model's training data. The test runs the Silhouette
+Score function, which takes as input the training dataset features and the predicted labels, subsequently
+calculating the average score. This average Silhouette Score is printed for reference. The script then calculates
+the silhouette coefficients for each data point, helping to form the Silhouette Plot. Each cluster is represented
+in this plot, with color distinguishing between different clusters. A red dashed line indicates the average
+Silhouette Score. The Silhouette Scores are also collected into a structured table, facilitating model performance
+analysis and comparison.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A low Silhouette Score, potentially indicating that the clusters are not well separated and that data points may
@@ -104,7 +109,7 @@ not be fitting well to their respective clusters.</li>
 also suggests poor clustering performance.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The Silhouette Score provides a clear and quantitative measure of how well data points have been grouped into
@@ -114,7 +119,7 @@ assessments of model performance.</li>
 <li>It does not require ground truth labels, so it's useful when true cluster assignments are not known.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The Silhouette Score may be susceptible to the influence of outliers, which could impact its accuracy and

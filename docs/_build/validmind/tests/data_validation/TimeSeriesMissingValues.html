@@ -81,23 +81,25 @@
     
             <div class="docstring"><p>Validates time-series data quality by confirming the count of missing values is below a certain threshold.</p>
 
-<p><strong>Purpose</strong>:
-This test is designed to validate the quality of a historical time-series dataset by verifying that the number of
+<h3 id="purpose">Purpose</h3>
+
+<p>This test is designed to validate the quality of a historical time-series dataset by verifying that the number of
 missing values is below a specified threshold. As time-series models greatly depend on the continuity and
 temporality of data points, missing values could compromise the model's performance. Consequently, this test aims
 to ensure data quality and readiness for the machine learning model, safeguarding its predictive capacity.</p>
 
-<p><strong>Test Mechanism</strong>:
-The test method commences by validating if the dataset has a datetime index, if not, an error is raised. It
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test method commences by validating if the dataset has a datetime index; if not, an error is raised. It
 establishes a lower limit threshold for missing values and performs a missing values check on each column of the
 dataset. An object for the test result is created stating whether the number of missing values is within the
 specified threshold. Additionally, the test calculates the percentage of missing values alongside the raw count.</p>
 
-<p>To aid in data visualization, the test generates two plots - a bar plot and a heatmap, to better illustrate the
-distribution and quantity of missing values per variable. The test results, a count of missing values, the
-percentage of missing values, and a pass/fail status are returned in a results table.</p>
+<p>To aid in data visualization, the test generates two plots - a bar plot and a heatmap - to better illustrate the
+distribution and quantity of missing values per variable. The test results, including a count of missing values,
+the percentage of missing values, and a pass/fail status, are returned in a results table.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>The number of missing values in any column of the dataset surpasses the threshold, marking a failure and a
@@ -107,17 +109,17 @@ errors.</li>
 towards another potential risk source.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Effectively identifies missing values which could adversely affect the model's performance.</li>
+<li>Effectively identifies missing values which could adversely affect the model’s performance.</li>
 <li>Applicable and customizable through the threshold parameter across different data sets.</li>
 <li>Goes beyond raw numbers by calculating the percentage of missing values, offering a more relative understanding
 of data scarcity.</li>
 <li>Includes a robust visualization mechanism for easy and fast understanding of data quality.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Although it identifies missing values, the test does not provide solutions to handle them.</li>

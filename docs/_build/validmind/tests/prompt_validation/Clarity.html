@@ -81,41 +81,43 @@
     
             <div class="docstring"><p>Evaluates and scores the clarity of prompts in a Large Language Model based on specified guidelines.</p>
 
-<p><strong>Purpose:</strong>
-The Clarity evaluation metric is used to assess how clear the prompts of a Large Language Model (LLM) are. This
+<h3 id="purpose">Purpose</h3>
+
+<p>The Clarity evaluation metric is used to assess how clear the prompts of a Large Language Model (LLM) are. This
 assessment is particularly important because clear prompts assist the LLM in more accurately interpreting and
 responding to instructions.</p>
 
-<p><strong>Test Mechanism:</strong>
-The evaluation uses an LLM to scrutinize the clarity of prompts, factoring in considerations such as the inclusion
-of relevant details, persona adoption, step-by-step instructions, usage of examples and specification of desired
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The evaluation uses an LLM to scrutinize the clarity of prompts, factoring in considerations such as the inclusion
+of relevant details, persona adoption, step-by-step instructions, usage of examples, and specification of desired
 output length. Each prompt is rated on a clarity scale of 1 to 10, and any prompt scoring at or above the preset
 threshold (default of 7) will be marked as clear. It is important to note that this threshold can be adjusted via
 test parameters, providing flexibility in the evaluation process.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Prompts that consistently score below the clarity threshold</li>
-<li>Repeated failure of prompts to adhere to guidelines for clarity. These guidelines could include detail inclusion,
-persona adoption, explicit step-by-step instructions, use of examples, and specification of output length.</li>
+<li>Repeated failure of prompts to adhere to guidelines for clarity, including detail inclusion, persona adoption,
+explicit step-by-step instructions, use of examples, and specification of output length</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Encourages the development of more effective prompts that aid the LLM in interpreting instructions accurately.</li>
-<li>Applies a quantifiable measure (a score from 1 to 10) to evaluate the clarity of prompts.</li>
-<li>Threshold for clarity is adjustable, allowing for flexible evaluation depending on the context.</li>
+<li>Encourages the development of more effective prompts that aid the LLM in interpreting instructions accurately</li>
+<li>Applies a quantifiable measure (a score from 1 to 10) to evaluate the clarity of prompts</li>
+<li>Threshold for clarity is adjustable, allowing for flexible evaluation depending on the context</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Scoring system is subjective and relies on the AI’s interpretation of 'clarity'.</li>
+<li>Scoring system is subjective and relies on the AI’s interpretation of 'clarity'</li>
 <li>The test assumes that all required factors (detail inclusion, persona adoption, step-by-step instructions, use of
-examples, and specification of output length) contribute equally to clarity, which might not always be the case.</li>
-<li>The evaluation may not be as effective if used on non-textual models.</li>
+examples, and specification of output length) contribute equally to clarity, which might not always be the case</li>
+<li>The evaluation may not be as effective if used on non-textual models</li>
 </ul>
 </div>
 

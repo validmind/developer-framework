@@ -17,32 +17,38 @@ logger = get_logger(__name__)
 @dataclass
 class DFGLSArch(Metric):
     """
-    Executes Dickey-Fuller GLS metric to determine order of integration and check stationarity in time series data.
+    Assesses stationarity in time series data using the Dickey-Fuller GLS test to determine the order of integration.
 
-    **Purpose**: The Dickey-Fuller GLS (DFGLS) Arch metric is utilized to determine the order of integration in time
-    series data. For machine learning models dealing with time series and forecasting, this metric evaluates the
-    existence of a unit root, thereby checking whether a time series is non-stationary. This analysis is a crucial
-    initial step when dealing with time series data.
+    ### Purpose
 
-    **Test Mechanism**: This code implements the Dickey-Fuller GLS unit root test on each attribute of the dataset.
-    This process involves iterating through every column of the dataset and applying the DFGLS test to assess the
-    presence of a unit root. The resulting information, including the test statistic ('stat'), the p-value ('pvalue'),
-    the quantity of lagged differences utilized in the regression ('usedlag'), and the number of observations ('nobs'),
-    is subsequently stored.
+    The Dickey-Fuller GLS (DFGLS) test is utilized to determine the order of integration in time series data. For
+    machine learning models dealing with time series and forecasting, this metric evaluates the existence of a unit
+    root, thereby checking whether a time series is non-stationary. This analysis is a crucial initial step when
+    dealing with time series data.
 
-    **Signs of High Risk**:
+    ### Test Mechanism
+
+    This code implements the Dickey-Fuller GLS unit root test on each attribute of the dataset. This process involves
+    iterating through every column of the dataset and applying the DFGLS test to assess the presence of a unit root.
+    The resulting information, including the test statistic ('stat'), the p-value ('pvalue'), the quantity of lagged
+    differences utilized in the regression ('usedlag'), and the number of observations ('nobs'), is subsequently stored.
+
+    ### Signs of High Risk
+
     - A high p-value for the DFGLS test represents a high risk. Specifically, a p-value above a typical threshold of
     0.05 suggests that the time series data is quite likely to be non-stationary, thus presenting a high risk for
     generating unreliable forecasts.
 
-    **Strengths**:
+    ### Strengths
+
     - The Dickey-Fuller GLS test is a potent tool for checking the stationarity of time series data.
     - It helps to verify the assumptions of the models before the actual construction of the machine learning models
     proceeds.
     - The results produced by this metric offer a clear insight into whether the data is appropriate for specific
     machine learning models, especially those demanding the stationarity of time series data.
 
-    **Limitations**:
+    ### Limitations
+
     - Despite its benefits, the DFGLS test does present some drawbacks. It can potentially lead to inaccurate
     conclusions if the time series data incorporates a structural break.
     - If the time series tends to follow a trend while still being stationary, the test might misinterpret it,

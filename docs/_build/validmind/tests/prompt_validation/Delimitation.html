@@ -81,43 +81,44 @@
     
             <div class="docstring"><p>Evaluates the proper use of delimiters in prompts provided to Large Language Models.</p>
 
-<p><strong>Purpose:</strong>
-This test, dubbed the "Delimitation Test", is engineered to assess whether prompts provided to the Language
-Learning Model (LLM) correctly use delimiters to mark different sections of the input. Well-delimited prompts
-simplify the interpretation process for LLM, ensuring responses are precise and accurate.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong>
-The test employs an LLM to examine prompts for appropriate use of delimiters such as triple quotation marks, XML
-tags, and section titles. Each prompt is assigned a score from 1 to 10 based on its delimitation integrity. Those
+<p>The Delimitation Test aims to assess whether prompts provided to the Language Learning Model (LLM) correctly use
+delimiters to mark different sections of the input. Well-delimited prompts help simplify the interpretation process
+for the LLM, ensuring that the responses are precise and accurate.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test employs an LLM to examine prompts for appropriate use of delimiters such as triple quotation marks, XML
+tags, and section titles. Each prompt is assigned a score from 1 to 10 based on its delimitation integrity. Prompts
 with scores equal to or above the preset threshold (which is 7 by default, although it can be adjusted as
 necessary) pass the test.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>The test identifies prompts where a delimiter is missing, improperly placed, or incorrect, which can lead to
-misinterpretation by the LLM.</li>
-<li>A high-risk scenario may involve complex prompts with multiple tasks or diverse data where correct delimitation
-is integral to understanding.</li>
-<li>Low scores (below the threshold) are a clear indicator of high risk.</li>
+<li>Prompts missing, improperly placed, or incorrectly used delimiters, leading to misinterpretation by the LLM.</li>
+<li>High-risk scenarios with complex prompts involving multiple tasks or diverse data where correct delimitation is
+crucial.</li>
+<li>Scores below the threshold, indicating a high risk.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>This test ensures clarity in the demarcation of different components of given prompts.</li>
-<li>It helps reduce ambiguity in understanding prompts, particularly for complex tasks.</li>
-<li>Scoring allows for quantified insight into the appropriateness of delimiter usage, aiding continuous improvement.</li>
+<li>Ensures clarity in demarcating different components of given prompts.</li>
+<li>Reduces ambiguity in understanding prompts, especially for complex tasks.</li>
+<li>Provides a quantified insight into the appropriateness of delimiter usage, aiding continuous improvement.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The test only checks for the presence and placement of delimiter, not whether the correct delimiter type is used
-for the specific data or task.</li>
-<li>It may not fully reveal the impacts of poor delimitation on LLM's final performance.</li>
-<li>Depending on the complexity of the tasks and prompts, the preset score threshold may not be refined enough,
-requiring regular manual adjustment.</li>
+<li>Only checks for the presence and placement of delimiters, not whether the correct delimiter type is used for the
+specific data or task.</li>
+<li>May not fully reveal the impacts of poor delimitation on the LLM's final performance.</li>
+<li>The preset score threshold may not be refined enough for complex tasks and prompts, requiring regular manual
+adjustment.</li>
 </ul>
 </div>
 

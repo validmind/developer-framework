@@ -79,32 +79,36 @@
     </div>
     <a class="headerlink" href="#MissingValuesBarPlot"></a>
     
-            <div class="docstring"><p>Creates a bar plot showcasing the percentage of missing values in each column of the dataset with risk
-categorization based on a user-defined threshold.</p>
+            <div class="docstring"><p>Assesses the percentage and distribution of missing values in the dataset via a bar plot, with emphasis on
+identifying high-risk columns based on a user-defined threshold.</p>
 
-<p><strong>Purpose:</strong> The 'MissingValuesBarPlot' metric provides a color-coded visual representation of the percentage of
-missing values for each column in an ML model's dataset. The primary purpose of this metric is to easily identify
-and quantify missing data, which are essential steps in data preprocessing. The presence of missing data can
-potentially skew the model's predictions and decrease its accuracy. Additionally, this metric uses a pre-set
-threshold to categorize various columns into ones that contain missing data above the threshold (high risk) and
-below the threshold (less risky).</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong> The test mechanism involves scanning each column in the input dataset and calculating the
-percentage of missing values. It then compares each column's missing data percentage with the predefined threshold,
-categorizing columns with missing data above the threshold as high-risk. The test generates a bar plot in which
-columns with missing data are represented on the y-axis and their corresponding missing data percentages are
-displayed on the x-axis. The color of each bar reflects the missing data percentage in relation to the threshold:
-grey for values below the threshold and light coral for those exceeding it. The user-defined threshold is
-represented by a red dashed line on the plot.</p>
+<p>The 'MissingValuesBarPlot' metric provides a color-coded visual representation of the percentage of missing values
+for each column in an ML model's dataset. The primary purpose of this metric is to easily identify and quantify
+missing data, which are essential steps in data preprocessing. The presence of missing data can potentially skew
+the model's predictions and decrease its accuracy. Additionally, this metric uses a pre-set threshold to categorize
+various columns into ones that contain missing data above the threshold (high risk) and below the threshold (less
+risky).</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves scanning each column in the input dataset and calculating the percentage of missing
+values. It then compares each column's missing data percentage with the predefined threshold, categorizing columns
+with missing data above the threshold as high-risk. The test generates a bar plot in which columns with missing
+data are represented on the y-axis and their corresponding missing data percentages are displayed on the x-axis.
+The color of each bar reflects the missing data percentage in relation to the threshold: grey for values below the
+threshold and light coral for those exceeding it. The user-defined threshold is represented by a red dashed line on
+the plot.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Columns with higher percentages of missing values beyond the threshold are high-risk. These are visually
 represented by light coral bars on the bar plot.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Helps in quickly identifying and quantifying missing data across all columns of the dataset.</li>
@@ -113,7 +117,7 @@ represented by light coral bars on the bar plot.</li>
 <li>Supports both classification and regression tasks, sharing its versatility.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>It only considers the quantity of missing values, not differentiating between different types of missingness

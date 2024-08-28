@@ -81,17 +81,19 @@
     
             <div class="docstring"><p>Extracts and summarizes critical metadata from a machine learning model instance for comprehensive analysis.</p>
 
-<p><strong>Purpose:</strong>
-This test is designed to collect and summarize important metadata related to a particular machine learning model.
+<h3 id="purpose">Purpose</h3>
+
+<p>This test is designed to collect and summarize important metadata related to a particular machine learning model.
 Such metadata includes the model's architecture (modeling technique), the version and type of modeling framework
 used, and the programming language the model is written in.</p>
 
-<p><strong>Test Mechanism:</strong>
-The mechanism of this test consists of extracting information from the model instance. It tries to extract the
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The mechanism of this test consists of extracting information from the model instance. It tries to extract the
 model information such as the modeling technique used, the modeling framework version, and the programming
 language. It decorates this information into a data frame and returns a summary of the results.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>High risk could be determined by a lack of documentation or inscrutable metadata for the model.</li>
@@ -100,26 +102,24 @@ architectures reflect risky situations, as they could hinder future reproducibil
 model.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>The strengths of this test lie in the increased transparency and understanding it brings regarding the model's
-setup.</li>
-<li>Knowing the model's architecture, the specific modeling framework version used, and the language involved,
-provides multiple benefits: supports better error understanding and debugging, facilitates model reuse, aids
-compliance of software policies, and assists in planning for model obsolescence due to evolving or discontinuing
-software and dependencies.</li>
+<li>Increased transparency and understanding regarding the model's setup.</li>
+<li>Supports better error understanding and debugging.</li>
+<li>Facilitates model reuse.</li>
+<li>Aids compliance of software policies.</li>
+<li>Assists in planning for model obsolescence due to evolving or discontinuing software and dependencies.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Notably, this test is largely dependent on the compliance and correctness of information provided by the model or
-the model developer.</li>
-<li>If the model's built-in methods for describing its architecture, framework or language are incorrect or lack
+<li>Dependent on the compliance and correctness of information provided by the model or the model developer.</li>
+<li>If the model's built-in methods for describing its architecture, framework, or language are incorrect or lack
 necessary information, this test will hold limitations.</li>
-<li>Moreover, it is not designed to directly evaluate the performance or accuracy of the model, rather it provides
-supplementary information which aids in comprehensive analysis.</li>
+<li>Not designed to directly evaluate the performance or accuracy of the model, rather it provides supplementary
+information which aids in comprehensive analysis.</li>
 </ul>
 </div>
 

@@ -121,6 +121,22 @@ make docs
 
 The resulting docs are written to `docs/pdoc/_build`.
 
+## Generating summaries for test descriptions
+
+Use `add_test_description.py` to generate a draft descriptions for a test using ChatGPT. This will automatically insert the description into the `class` docstring.
+
+Entire directory:
+
+```bash
+poetry run python scripts/add_test_description.py review validmind/tests/example_directory/
+```
+
+Single file:
+
+```bash
+poetry run python scripts/add_test_description.py review validmind/tests/ongoing_monitoring/FeatureDrift.py
+```
+
 ## Adding a Copyright Header
 
 When adding new files to the project, you can add the ValidMind copyright header to any files that

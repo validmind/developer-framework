@@ -68,20 +68,38 @@
     </div>
     <a class="headerlink" href="#TimeSeriesPredictionWithCI"></a>
     
-            <div class="docstring"><p>Plot actual vs predicted values for a time series with confidence intervals and compute breaches.</p>
+            <div class="docstring"><p>Assesses predictive accuracy and uncertainty in time series models, highlighting breaches beyond confidence
+intervals.</p>
 
-<p><strong>Purpose</strong>: The purpose of this function is to visualize the actual versus predicted values for time series data, including confidence intervals, and to compute and report the number of breaches beyond these intervals.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The function calculates the standard deviation of prediction errors, determines the confidence intervals, and counts the number of actual values that fall outside these intervals (breaches). It then generates a plot with the actual values, predicted values, and confidence intervals, and returns a DataFrame summarizing the breach information.</p>
+<p>The purpose of the Time Series Prediction with Confidence Intervals (CI) test is to visualize the actual versus
+predicted values for time series data, including confidence intervals, and to compute and report the number of
+breaches beyond these intervals. This helps in evaluating the reliability and accuracy of the model's predictions.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The function performs the following steps:</p>
 
 <ul>
-<li>A high number of breaches indicates that the model's predictions are not reliable within the specified confidence level.</li>
-<li>Significant deviations between actual and predicted values may highlight model inadequacies or issues with data quality.</li>
+<li>Calculates the standard deviation of prediction errors.</li>
+<li>Determines the confidence intervals using a specified confidence level, typically 95%.</li>
+<li>Counts the number of actual values that fall outside the confidence intervals, referred to as breaches.</li>
+<li>Generates a plot visualizing the actual values, predicted values, and confidence intervals.</li>
+<li>Returns a DataFrame summarizing the breach information, including the total breaches, upper breaches, and lower
+breaches.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
+
+<ul>
+<li>A high number of breaches indicates that the model's predictions are not reliable within the specified confidence
+level.</li>
+<li>Significant deviations between actual and predicted values may highlight model inadequacies or issues with data
+quality.</li>
+</ul>
+
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Provides a visual representation of prediction accuracy and the uncertainty around predictions.</li>
@@ -89,7 +107,7 @@
 <li>Computes and reports breaches, offering a quantitative assessment of prediction performance.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Assumes that the dataset is provided as a DataFrameDataset object with a datetime index.</li>

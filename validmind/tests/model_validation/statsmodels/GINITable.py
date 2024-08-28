@@ -16,20 +16,24 @@ class GINITable(Metric):
     """
     Evaluates classification model performance using AUC, GINI, and KS metrics for training and test datasets.
 
-    **Purpose**: The 'GINITable' metric is designed to evaluate the performance of a classification model by
-    emphasizing its discriminatory power. Specifically, it calculates and presents three important metrics - the Area
-    under the ROC Curve (AUC), the GINI coefficient, and the Kolmogov-Smirnov (KS) statistic - for both training and
-    test datasets.
+    ### Purpose
 
-    **Test Mechanism**: Using a dictionary for storing performance metrics for both the training and test datasets, the
-    'GINITable' metric calculates each of these metrics sequentially. The Area under the ROC Curve (AUC) is calculated
-    via the `roc_auc_score` function from the Scikit-Learn library. The GINI coefficient, a measure of statistical
-    dispersion, is then computed by doubling the AUC and subtracting 1. Finally, the Kolmogov-Smirnov (KS) statistic is
+    The 'GINITable' metric is designed to evaluate the performance of a classification model by emphasizing its
+    discriminatory power. Specifically, it calculates and presents three important metrics - the Area under the ROC
+    Curve (AUC), the GINI coefficient, and the Kolmogorov-Smirnov (KS) statistic - for both training and test datasets.
+
+    ### Test Mechanism
+
+    Using a dictionary for storing performance metrics for both the training and test datasets, the 'GINITable' metric
+    calculates each of these metrics sequentially. The Area under the ROC Curve (AUC) is calculated via the
+    `roc_auc_score` function from the Scikit-Learn library. The GINI coefficient, a measure of statistical dispersion,
+    is then computed by doubling the AUC and subtracting 1. Finally, the Kolmogorov-Smirnov (KS) statistic is
     calculated via the `roc_curve` function from Scikit-Learn, with the False Positive Rate (FPR) subtracted from the
     True Positive Rate (TPR) and the maximum value taken from the resulting data. These metrics are then stored in a
     pandas DataFrame for convenient visualization.
 
-    **Signs of High Risk**:
+    ### Signs of High Risk
+
     - Low values for performance metrics may suggest a reduction in model performance, particularly a low AUC which
     indicates poor classification performance, or a low GINI coefficient, which could suggest a decreased ability to
     discriminate different classes.
@@ -38,7 +42,8 @@ class GINITable(Metric):
     - Significant discrepancies between the performance on the training dataset and the test dataset may present
     another signal of high risk.
 
-    **Strengths**:
+    ### Strengths
+
     - Offers three key performance metrics (AUC, GINI, and KS) in one test, providing a more comprehensive evaluation
     of the model.
     - Provides a direct comparison between the model's performance on training and testing datasets, which aids in
@@ -47,7 +52,8 @@ class GINITable(Metric):
     performance even when dealing with imbalanced datasets.
     - Presents the metrics in a user-friendly table format for easy comprehension and analysis.
 
-    **Limitations**:
+    ### Limitations
+
     - The GINI coefficient and KS statistic are both dependent on the AUC value. Therefore, any errors in the
     calculation of the latter will adversely impact the former metrics too.
     - Mainly suited for binary classification models and may require modifications for effective application in

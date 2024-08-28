@@ -88,20 +88,24 @@
             <div class="docstring"><p>Performs a detailed descriptive statistical analysis of both numerical and categorical data within a model's
 dataset.</p>
 
-<p><strong>Purpose</strong>: The purpose of the Descriptive Statistics metric is to provide a comprehensive summary of both
-numerical and categorical data within a dataset. This involves statistics such as count, mean, standard deviation,
-minimum and maximum values for numerical data. For categorical data, it calculates the count, number of unique
-values, most common value and its frequency, and the proportion of the most frequent value relative to the total.
-The goal is to visualize the overall distribution of the variables in the dataset, aiding in understanding the
-model's behavior and predicting its performance.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The testing mechanism utilizes two in-built functions of pandas dataframes: describe() for
-numerical fields and value_counts() for categorical fields. The describe() function pulls out several summary
-statistics, while value_counts() accounts for unique values. The resulting data is formatted into two distinct
-tables, one for numerical and another for categorical variable summaries. These tables provide a clear summary of
-the main characteristics of the variables, which can be instrumental in assessing the model's performance.</p>
+<p>The purpose of the Descriptive Statistics metric is to provide a comprehensive summary of both numerical and
+categorical data within a dataset. This involves statistics such as count, mean, standard deviation, minimum and
+maximum values for numerical data. For categorical data, it calculates the count, number of unique values, most
+common value and its frequency, and the proportion of the most frequent value relative to the total. The goal is to
+visualize the overall distribution of the variables in the dataset, aiding in understanding the model's behavior
+and predicting its performance.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The testing mechanism utilizes two in-built functions of pandas dataframes: <code>describe()</code> for numerical fields and
+<code>value_counts()</code> for categorical fields. The <code>describe()</code> function pulls out several summary statistics, while
+<code>value_counts()</code> accounts for unique values. The resulting data is formatted into two distinct tables, one for
+numerical and another for categorical variable summaries. These tables provide a clear summary of the main
+characteristics of the variables, which can be instrumental in assessing the model's performance.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Skewed data or significant outliers can represent high risk. For numerical data, this may be reflected via a
@@ -110,24 +114,24 @@ significant difference between the mean and median (50% percentile).</li>
 (high frequency of the top value) can indicate high risk.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>This metric provides a comprehensive summary of the dataset, shedding light on the distribution and
-characteristics of the variables under consideration.</li>
+<li>Provides a comprehensive summary of the dataset, shedding light on the distribution and characteristics of the
+variables under consideration.</li>
 <li>It is a versatile and robust method, applicable to both numerical and categorical data.</li>
-<li>It helps highlight crucial anomalies such as outliers, extreme skewness, or lack of diversity, which are vital in
+<li>Helps highlight crucial anomalies such as outliers, extreme skewness, or lack of diversity, which are vital in
 understanding model behavior during testing and validation.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>While this metric offers a high-level overview of the data, it may fail to detect subtle correlations or complex
 patterns.</li>
-<li>It does not offer any insights on the relationship between variables.</li>
+<li>Does not offer any insights on the relationship between variables.</li>
 <li>Alone, descriptive statistics cannot be used to infer properties about future unseen data.</li>
-<li>It should be used in conjunction with other statistical tests to provide a comprehensive understanding of the
+<li>Should be used in conjunction with other statistical tests to provide a comprehensive understanding of the
 model's data.</li>
 </ul>
 </div>

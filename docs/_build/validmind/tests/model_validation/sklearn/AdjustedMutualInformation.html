@@ -79,25 +79,29 @@
             <div class="docstring"><p>Evaluates clustering model performance by measuring mutual information between true and predicted labels, adjusting
 for chance.</p>
 
-<p><strong>1. Purpose</strong>: The purpose of this metric (Adjusted Mutual Information) is to evaluate the performance of a
-machine learning model, more specifically, a clustering model. It measures the mutual information between the true
-labels and the ones predicted by the model, adjusting for chance.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>2. Test Mechanism</strong>: The Adjusted Mutual Information (AMI) uses sklearn's <code>adjusted_mutual_info_score</code> function.
-This function calculates the mutual information between the true labels and the ones predicted while correcting for
-the chance correlation expected due to random label assignments. This test requires the model, the training
-dataset, and the test dataset as inputs.</p>
+<p>The purpose of this metric (Adjusted Mutual Information) is to evaluate the performance of a machine learning
+model, more specifically, a clustering model. It measures the mutual information between the true labels and the
+ones predicted by the model, adjusting for chance.</p>
 
-<p><strong>3. Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The Adjusted Mutual Information (AMI) uses sklearn's <code>adjusted_mutual_info_score</code> function. This function
+calculates the mutual information between the true labels and the ones predicted while correcting for the chance
+correlation expected due to random label assignments. This test requires the model, the training dataset, and the
+test dataset as inputs.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Low Adjusted Mutual Information Score: This score ranges between 0 and 1. A low score (closer to 0) can indicate
 poor model performance as the predicted labels do not align well with the true labels.</li>
-<li>In case of high dimensional data, if the algorithm shows high scores, this could also be a potential risk as AMI
+<li>In case of high-dimensional data, if the algorithm shows high scores, this could also be a potential risk as AMI
 may not perform reliably.</li>
 </ul>
 
-<p><strong>4. Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The AMI metric takes into account the randomness of the predicted labels, which makes it more robust than the
@@ -107,7 +111,7 @@ datasets or models.</li>
 <li>Good for comparing the output of clustering algorithms where the number of clusters is not known a priori.</li>
 </ul>
 
-<p><strong>5. Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Adjusted Mutual Information does not take into account the continuous nature of some data. As a result, it may
