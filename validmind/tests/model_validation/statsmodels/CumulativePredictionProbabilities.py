@@ -56,50 +56,49 @@ class CumulativePredictionProbabilities(Metric):
     """
 
     name = "cumulative_prediction_probabilities"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["classification"]
     tags = ["logistic_regression", "visualization"]
 
     default_params = {"title": "Cumulative Probabilities"}
 
     @staticmethod
-    def plot_cumulative_prob(dataframes, dataset_titles, target_col, title):
+    def plot_cumulative_prob(df, dataset_title, target_col, title):
         figures = []
 
         # Generate a colormap and convert to Plotly-accepted color format
         # Adjust 'viridis' to any other matplotlib colormap if desired
         colormap = cm.get_cmap("viridis")
 
-        for _, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
-            fig = go.Figure()
+        fig = go.Figure()
 
-            # Get unique classes and assign colors
-            classes = sorted(df[target_col].unique())
-            colors = [
-                colormap(i / len(classes))[:3] for i in range(len(classes))
-            ]  # RGB
-            color_dict = {
-                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
-                for cls, rgb in zip(classes, colors)
-            }
-            for class_value in sorted(df[target_col].unique()):
-                # Calculate cumulative distribution for the current class
-                sorted_probs = np.sort(
-                    df[df[target_col] == class_value]["probabilities"]
-                )
-                cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
+        # Get unique classes and assign colors
+        classes = sorted(df[target_col].unique())
+        colors = [
+            colormap(i / len(classes))[:3] for i in range(len(classes))
+        ]  # RGB
+        color_dict = {
+            cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+            for cls, rgb in zip(classes, colors)
+        }
+        for class_value in sorted(df[target_col].unique()):
+            # Calculate cumulative distribution for the current class
+            sorted_probs = np.sort(
+                df[df[target_col] == class_value]["probabilities"]
+            )
+            cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
 
-                fig.add_trace(
-                    go.Scatter(
-                        x=sorted_probs,
-                        y=cumulative_probs,
-                        mode="lines",
-                        name=f"{dataset_title} {target_col} = {class_value}",
-                        line=dict(
-                            color=color_dict[class_value],
-                        ),
-                    )
+            fig.add_trace(
+                go.Scatter(
+                    x=sorted_probs,
+                    y=cumulative_probs,
+                    mode="lines",
+                    name=f"{dataset_title} {target_col} = {class_value}",
+                    line=dict(
+                        color=color_dict[class_value],
+                    ),
                 )
+            )
             fig.update_layout(
                 title_text=f"{title} - {dataset_title}",
                 xaxis_title="Probability",
@@ -110,21 +109,19 @@ class CumulativePredictionProbabilities(Metric):
         return figures
 
     def run(self):
-        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
-        target_column = self.inputs.datasets[0].target_column
+        dataset_title = self.inputs.dataset.input_id
+        target_column = self.inputs.dataset.target_column
         title = self.params.get("title", self.default_params["title"])
+        dataset = self.inputs.dataset
 
-        dataframes = []
         metric_value = {"cum_prob": {}}
-        for dataset in self.inputs.datasets:
-            df = dataset.df.copy()
-            y_prob = dataset.y_prob(self.inputs.model)
-            df["probabilities"] = y_prob
-            dataframes.append(df)
-            metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])
+        df = dataset.df.copy()
+        y_prob = dataset.y_prob(self.inputs.model)
+        df["probabilities"] = y_prob
+        metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])
 
         figures = self.plot_cumulative_prob(
-            dataframes, dataset_titles, target_column, title
+            df, dataset_title, target_column, title
         )
 
         figures_list = [
