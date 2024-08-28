@@ -51,7 +51,7 @@ class ScorecardHistogram(Metric):
     """
 
     name = "scorecard_histogram"
-    required_inputs = ["datasets"]
+    required_inputs = ["dataset"]
     tasks = ["classification"]
     tags = ["tabular_data", "visualization", "credit_risk"]
 
@@ -61,37 +61,34 @@ class ScorecardHistogram(Metric):
     }
 
     @staticmethod
-    def plot_score_histogram(dataframes, dataset_titles, score_col, target_col, title):
+    def plot_score_histogram(df, dataset_title, score_col, target_col, title):
         figures = []
         # Generate a colormap and convert to Plotly-accepted color format
         # Adjust 'viridis' to any other matplotlib colormap if desired
         colormap = cm.get_cmap("viridis")
 
-        for _, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
-            fig = go.Figure()
+        fig = go.Figure()
 
-            # Get unique classes and assign colors
-            classes = sorted(df[target_col].unique())
-            colors = [
-                colormap(i / len(classes))[:3] for i in range(len(classes))
-            ]  # RGB
-            color_dict = {
-                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
-                for cls, rgb in zip(classes, colors)
-            }
+        # Get unique classes and assign colors
+        classes = sorted(df[target_col].unique())
+        colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
+        color_dict = {
+            cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+            for cls, rgb in zip(classes, colors)
+        }
 
-            for class_value in sorted(df[target_col].unique()):
-                scores_class = df[df[target_col] == class_value][score_col]
-                fig.add_trace(
-                    go.Histogram(
-                        x=scores_class,
-                        opacity=0.75,
-                        name=f"{dataset_title} {target_col} = {class_value}",
-                        marker=dict(
-                            color=color_dict[class_value],
-                        ),
-                    )
+        for class_value in sorted(df[target_col].unique()):
+            scores_class = df[df[target_col] == class_value][score_col]
+            fig.add_trace(
+                go.Histogram(
+                    x=scores_class,
+                    opacity=0.75,
+                    name=f"{dataset_title} {target_col} = {class_value}",
+                    marker=dict(
+                        color=color_dict[class_value],
+                    ),
                 )
+            )
             fig.update_layout(
                 barmode="overlay",
                 title_text=f"{title} - {dataset_title}",
@@ -105,24 +102,23 @@ class ScorecardHistogram(Metric):
     def run(self):
         title = self.params["title"]
         score_column = self.params["score_column"]
-        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
-        target_column = self.inputs.datasets[0].target_column
+        input_id = self.inputs.dataset.input_id
+        target_column = self.inputs.dataset.target_column
+        dataset = self.inputs.dataset
 
-        dataframes = []
         metric_value = {"score_histogram": {}}
-        for dataset in self.inputs.datasets:
-            if score_column not in dataset.df.columns:
-                raise ValueError(
-                    f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
-                )
-
-            dataframes.append(dataset.df.copy())
-            metric_value["score_histogram"][dataset.input_id] = list(
-                dataset.df[score_column]
+        if score_column not in dataset.df.columns:
+            raise ValueError(
+                f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
             )
 
+        dataframe = dataset.df.copy()
+        metric_value["score_histogram"][dataset.input_id] = list(
+            dataset.df[score_column]
+        )
+
         figures = self.plot_score_histogram(
-            dataframes, dataset_titles, score_column, target_column, title
+            dataframe, input_id, score_column, target_column, title
         )
 
         figures_list = [
