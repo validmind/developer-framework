@@ -22,42 +22,19 @@ logger = get_logger(__name__)
 
 
 class StabilityAnalysis(ThresholdTest):
-    """
-    Assesses the stability of text embeddings by comparing the similarity between original and perturbed datasets.
+    """Base class for embeddings stability analysis tests"""
 
-    ### Purpose
+    required_inputs = ["model", "dataset"]
+    default_params = {
+        "mean_similarity_threshold": 0.7,
+    }
+    tasks = ["feature_extraction"]
+    tags = ["llm", "text_data", "embeddings", "visualization"]
 
-    The Stability Analysis test aims to measure the resilience of a text embeddings model by evaluating the cosine
-    similarity between the embeddings of original and perturbed data. This helps in identifying how small changes in
-    input data affect the model's output, thus providing insights into the model's robustness.
-
-    ### Test Mechanism
-
-    This test operates by generating perturbed versions of the input text data, computing embeddings for both the
-    original and perturbed datasets, and then calculating the cosine similarity between corresponding embeddings. Key
-    metrics such as mean, minimum, maximum, median, and standard deviation of the cosine similarities are computed. The
-    test passes if the mean similarity exceeds a pre-defined threshold, typically 0.7.
-
-    ### Signs of High Risk
-
-    - Mean cosine similarity falling below the defined threshold (e.g., 0.7).
-    - Large disparities between the minimum and maximum similarities.
-    - High standard deviation in cosine similarities, indicating inconsistency in model response to perturbations.
-
-    ### Strengths
-
-    - Quantifies the effect of small perturbations on model output.
-    - Provides multiple metrics for a comprehensive view of model stability.
-    - Uses interpretable visualizations (histogram, density plot, box plot) to aid in analysis.
-
-    ### Limitations
-
-    - Perturbation method needs to be appropriately defined to reflect realistic scenarios.
-    - Only applicable to models producing embeddings, limiting its use to specific types of models.
-    - High computational cost due to the need to process perturbed datasets and calculate similarities.
-    """
-
-    pass
+    @abstractmethod
+    def perturb_data(self, data: str) -> str:
+        """Perturb a string of text (overriden by subclasses)"""
+        pass
 
     def summary(self, results: List[ThresholdTestResult], all_passed: bool):
         results_table = [
