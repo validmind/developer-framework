@@ -161,7 +161,7 @@ def _build_result(  # noqa: C901
                 )
             ]
         ),
-        inputs=[i if isinstance(i, str) else i.input_id for i in inputs],
+        inputs=[i if isinstance(i, str) else i.input_id for i in inputs.values()],
         params=params,
         output_template=output_template,
     )
