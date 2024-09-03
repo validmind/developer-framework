@@ -2,16 +2,19 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
 
 import plotly.graph_objects as go
 from matplotlib import cm
 
-from validmind.vm_models import Figure, Metric
+
+from validmind import tags, tasks
 
 
-@dataclass
-class PredictionProbabilitiesHistogram(Metric):
+@tags("visualization", "credit_risk", "logistic_regression")
+@tasks("classification")
+def PredictionProbabilitiesHistogram(
+    dataset, model, title="Histogram of Predictive Probabilities"
+):
     """
     Assesses the predictive probability distribution for binary classification to evaluate model performance and
     potential overfitting or bias.
@@ -54,80 +57,47 @@ class PredictionProbabilitiesHistogram(Metric):
     - Provides a robust visual representation but lacks a quantifiable measure to assess model performance.
     """
 
-    name = "prediction_probabilities_histogram"
-    required_inputs = ["model", "dataset"]
-    tasks = ["classification"]
-    tags = ["tabular_data", "visualization", "credit_risk", "logistic_regression"]
+    df = dataset.df
+    df["probabilities"] = dataset.y_prob(model)
 
-    default_params = {"title": "Histogram of Predictive Probabilities"}
+    fig = _plot_prob_histogram(df, dataset.target_column, title)
 
-    @staticmethod
-    def plot_prob_histogram(dataframes, dataset_titles, target_col, title):
-        figures = []
+    return fig
 
-        # Generate a colormap and convert to Plotly-accepted color format
-        # Adjust 'viridis' to any other matplotlib colormap if desired
-        colormap = cm.get_cmap("viridis")
 
-        for i, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
-            fig = go.Figure()
+def _plot_prob_histogram(df, target_col, title):
 
-            # Get unique classes and assign colors
-            classes = sorted(df[target_col].unique())
-            colors = [
-                colormap(i / len(classes))[:3] for i in range(len(classes))
-            ]  # RGB
-            color_dict = {
-                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
-                for cls, rgb in zip(classes, colors)
-            }
+    # Generate a colormap and convert to Plotly-accepted color format
+    # Adjust 'viridis' to any other matplotlib colormap if desired
+    colormap = cm.get_cmap("viridis")
 
-            # Ensure classes are plotted in the specified order
-            for class_value in sorted(df[target_col].unique()):
-                fig.add_trace(
-                    go.Histogram(
-                        x=df[df[target_col] == class_value]["probabilities"],
-                        opacity=0.75,
-                        name=f"{dataset_title} {target_col} = {class_value}",
-                        marker=dict(
-                            color=color_dict[class_value],
-                        ),
-                    )
-                )
-            fig.update_layout(
-                barmode="overlay",
-                title_text=f"{title} - {dataset_title}",
-                xaxis_title="Probability",
-                yaxis_title="Frequency",
+    fig = go.Figure()
+
+    # Get unique classes and assign colors
+    classes = sorted(df[target_col].unique())
+    colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
+    color_dict = {
+        cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+        for cls, rgb in zip(classes, colors)
+    }
+
+    # Ensure classes are plotted in the specified order
+    for class_value in sorted(df[target_col].unique()):
+        fig.add_trace(
+            go.Histogram(
+                x=df[df[target_col] == class_value]["probabilities"],
+                opacity=0.75,
+                name=f"{target_col} = {class_value}",
+                marker=dict(
+                    color=color_dict[class_value],
+                ),
             )
-            figures.append(fig)
-        return figures
-
-    def run(self):
-        dataset_titles = [self.inputs.dataset.input_id]
-        target_column = self.inputs.dataset.target_column
-        title = self.params.get("title", self.default_params["title"])
-
-        dataframes = []
-        metric_value = {"prob_histogram": {}}
-        dataset = self.inputs.dataset
-        df = dataset.df.copy()
-        y_prob = dataset.y_prob(self.inputs.model)
-        df["probabilities"] = y_prob
-        dataframes.append(df)
-        metric_value["prob_histogram"][dataset.input_id] = list(df["probabilities"])
-
-        figures = self.plot_prob_histogram(
-            dataframes, dataset_titles, target_column, title
         )
+    fig.update_layout(
+        barmode="overlay",
+        title_text=f"{title}",
+        xaxis_title="Probability",
+        yaxis_title="Frequency",
+    )
 
-        figures_list = [
-            Figure(
-                for_object=self,
-                key=f"prob_histogram_{title.replace(' ', '_')}_{i+1}",
-                figure=fig,
-            )
-            for i, fig in enumerate(figures)
-        ]
-
-        return self.cache_results(metric_value=metric_value, figures=figures_list)
+    return fig
