@@ -2,17 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import numpy as np
 import plotly.graph_objects as go
 from matplotlib import cm
 
-from validmind.vm_models import Figure, Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class CumulativePredictionProbabilities(Metric):
+@tags("visualization", "credit_risk", "logistic_regression")
+@tasks("classification")
+def CumulativePredictionProbabilities(dataset, model, title="Cumulative Probabilities"):
     """
     Visualizes cumulative probabilities of positive and negative classes for both training and testing in logistic
     regression models.
@@ -61,76 +60,50 @@ class CumulativePredictionProbabilities(Metric):
     provide misleading results.
     """
 
-    name = "cumulative_prediction_probabilities"
-    required_inputs = ["model", "dataset"]
-    tasks = ["classification"]
-    tags = ["logistic_regression", "visualization"]
+    df = dataset.df
+    df["probabilities"] = dataset.y_prob(model)
 
-    default_params = {"title": "Cumulative Probabilities"}
+    fig = _plot_cumulative_prob(df, dataset.target_column, title)
 
-    @staticmethod
-    def plot_cumulative_prob(df, dataset_title, target_col, title):
-        figures = []
+    return fig
 
-        # Generate a colormap and convert to Plotly-accepted color format
-        # Adjust 'viridis' to any other matplotlib colormap if desired
-        colormap = cm.get_cmap("viridis")
 
-        fig = go.Figure()
+def _plot_cumulative_prob(df, target_col, title):
 
-        # Get unique classes and assign colors
-        classes = sorted(df[target_col].unique())
-        colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
-        color_dict = {
-            cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
-            for cls, rgb in zip(classes, colors)
-        }
-        for class_value in sorted(df[target_col].unique()):
-            # Calculate cumulative distribution for the current class
-            sorted_probs = np.sort(df[df[target_col] == class_value]["probabilities"])
-            cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
+    # Generate a colormap and convert to Plotly-accepted color format
+    # Adjust 'viridis' to any other matplotlib colormap if desired
+    colormap = cm.get_cmap("viridis")
 
-            fig.add_trace(
-                go.Scatter(
-                    x=sorted_probs,
-                    y=cumulative_probs,
-                    mode="lines",
-                    name=f"{dataset_title} {target_col} = {class_value}",
-                    line=dict(
-                        color=color_dict[class_value],
-                    ),
-                )
+    fig = go.Figure()
+
+    # Get unique classes and assign colors
+    classes = sorted(df[target_col].unique())
+    colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
+    color_dict = {
+        cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+        for cls, rgb in zip(classes, colors)
+    }
+    for class_value in sorted(df[target_col].unique()):
+        # Calculate cumulative distribution for the current class
+        sorted_probs = np.sort(df[df[target_col] == class_value]["probabilities"])
+        cumulative_probs = np.cumsum(sorted_probs) / np.sum(sorted_probs)
+
+        fig.add_trace(
+            go.Scatter(
+                x=sorted_probs,
+                y=cumulative_probs,
+                mode="lines",
+                name=f"{target_col} = {class_value}",
+                line=dict(
+                    color=color_dict[class_value],
+                ),
             )
-            fig.update_layout(
-                title_text=f"{title} - {dataset_title}",
-                xaxis_title="Probability",
-                yaxis_title="Cumulative Distribution",
-                legend_title=target_col,
-            )
-            figures.append(fig)
-        return figures
+        )
+        fig.update_layout(
+            title_text=f"{title}",
+            xaxis_title="Probability",
+            yaxis_title="Cumulative Distribution",
+            # legend_title=target_col,
+        )
 
-    def run(self):
-        dataset_title = self.inputs.dataset.input_id
-        target_column = self.inputs.dataset.target_column
-        title = self.params.get("title", self.default_params["title"])
-        dataset = self.inputs.dataset
-
-        metric_value = {"cum_prob": {}}
-        df = dataset.df.copy()
-        y_prob = dataset.y_prob(self.inputs.model)
-        df["probabilities"] = y_prob
-        metric_value["cum_prob"][dataset.input_id] = list(df["probabilities"])
-
-        figures = self.plot_cumulative_prob(df, dataset_title, target_column, title)
-
-        figures_list = [
-            Figure(
-                for_object=self,
-                key=f"cumulative_prob_{title.replace(' ', '_')}_{i+1}",
-                figure=fig,
-            )
-            for i, fig in enumerate(figures)
-        ]
-
-        return self.cache_results(metric_value=metric_value, figures=figures_list)
+    return fig
