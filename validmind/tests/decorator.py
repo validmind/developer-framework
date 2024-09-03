@@ -136,6 +136,12 @@ def _build_result(  # noqa: C901
     else:
         process_result_item(results)
 
+    metric_inputs = [
+        sub_i.input_id if hasattr(sub_i, "input_id") else sub_i
+        for i in inputs.values()
+        for sub_i in (i if isinstance(i, list) else [i])
+    ]
+
     return MetricResultWrapper(
         result_id=test_id,
         scalar=scalars[0] if scalars else None,
@@ -161,7 +167,7 @@ def _build_result(  # noqa: C901
                 )
             ]
         ),
-        inputs=[i if isinstance(i, str) else i.input_id for i in inputs.values()],
+        inputs=metric_inputs,
         params=params,
         output_template=output_template,
     )
