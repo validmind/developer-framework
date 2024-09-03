@@ -103,7 +103,6 @@ def _plot_cumulative_prob(df, target_col, title):
             title_text=f"{title}",
             xaxis_title="Probability",
             yaxis_title="Cumulative Distribution",
-            # legend_title=target_col,
         )
 
     return fig
