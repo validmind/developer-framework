@@ -67,7 +67,7 @@ def ModelPredictionResiduals(
         go.Scatter(x=df.index, y=residuals, mode="markers", name="Residuals")
     )
     residuals_fig.update_layout(
-        title=f"Residuals",
+        title="Residuals",
         yaxis_title="Residuals",
         font=dict(size=16),
         showlegend=False,
@@ -78,7 +78,7 @@ def ModelPredictionResiduals(
     hist_fig = go.Figure()
     hist_fig.add_trace(go.Histogram(x=residuals, nbinsx=nbins, name="Residuals"))
     hist_fig.update_layout(
-        title=f"Histogram of Residuals",
+        title="Histogram of Residuals",
         xaxis_title="Residuals",
         yaxis_title="Frequency",
         font=dict(size=16),

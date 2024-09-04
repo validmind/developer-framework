@@ -51,14 +51,13 @@ def TimeSeriesPredictionsPlot(dataset, model):
     )
 
     # Plot predicted values for the model
-    model_name = model.input_id
     y_pred = dataset.y_pred(model)
     fig.add_trace(
         go.Scatter(
             x=time_index,
             y=y_pred,
             mode="lines",
-            name=f"Predicted",
+            name="Predicted",
             line=dict(color="orange"),  # Using a distinct color for the prediction
         )
     )
