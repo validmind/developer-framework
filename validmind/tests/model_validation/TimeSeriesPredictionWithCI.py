@@ -96,7 +96,7 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
             x=time_index,
             y=y_true,
             mode="lines",
-            name="Actual Values",
+            name="Actual",
             line=dict(color="blue"),
         )
     )
@@ -107,7 +107,7 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
             x=time_index,
             y=y_pred,
             mode="lines",
-            name=f"Predicted by {model_name}",
+            name=f"Predicted",
             line=dict(color="red"),
         )
     )
@@ -140,10 +140,9 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
 
     # Update layout
     fig.update_layout(
-        title=f"Time Series Actual vs Predicted Values for {dataset_name} and {model_name}",
+        title=f"Actual vs Predicted",
         xaxis_title="Time",
         yaxis_title="Values",
-        legend_title="Legend",
         template="plotly_white",
     )
 

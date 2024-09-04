@@ -45,7 +45,7 @@ def TimeSeriesPredictionsPlot(dataset, model):
             x=time_index,
             y=dataset.y,
             mode="lines",
-            name="Actual Values",
+            name="Actual",
             line=dict(color="blue"),
         )
     )
@@ -58,17 +58,16 @@ def TimeSeriesPredictionsPlot(dataset, model):
             x=time_index,
             y=y_pred,
             mode="lines",
-            name=f"Predicted by {model_name}",
+            name=f"Predicted",
             line=dict(color="orange"),  # Using a distinct color for the prediction
         )
     )
 
     # Update layout
     fig.update_layout(
-        title="Time Series Actual vs Predicted Values",
+        title="Actual vs Predicted",
         xaxis_title="Time",
         yaxis_title="Values",
-        legend_title="Legend",
         template="plotly_white",
     )
 

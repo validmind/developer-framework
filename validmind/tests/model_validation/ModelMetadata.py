@@ -47,7 +47,6 @@ def ModelMetadata(model):
         renamed_info = {
             column_labels.get(k, k): v for k, v in model_info.items() if k != "params"
         }
-        renamed_info["Model Name"] = model.input_id
         return renamed_info
 
     # Collect metadata for all models

@@ -67,7 +67,7 @@ def ModelPredictionResiduals(
         go.Scatter(x=df.index, y=residuals, mode="markers", name="Residuals")
     )
     residuals_fig.update_layout(
-        title=f"Residuals for {model.input_id}",
+        title=f"Residuals",
         yaxis_title="Residuals",
         font=dict(size=16),
         showlegend=False,
@@ -78,7 +78,7 @@ def ModelPredictionResiduals(
     hist_fig = go.Figure()
     hist_fig.add_trace(go.Histogram(x=residuals, nbinsx=nbins, name="Residuals"))
     hist_fig.update_layout(
-        title=f"Histogram of Residuals for {model.input_id}",
+        title=f"Histogram of Residuals",
         xaxis_title="Residuals",
         yaxis_title="Frequency",
         font=dict(size=16),
@@ -93,7 +93,6 @@ def ModelPredictionResiduals(
     ks_normality = "Normal" if p_value > p_value_threshold else "Not Normal"
 
     summary = {
-        "Model": model.input_id,
         "KS Statistic": ks_stat,
         "p-value": p_value,
         "KS Normality": ks_normality,

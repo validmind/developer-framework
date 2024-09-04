@@ -219,7 +219,7 @@ class TimeSeriesOutliers(ThresholdTest):
                 )
 
             fig.update_layout(
-                title=f"Time Series with Outliers for {col}",
+                title=f"Outliers for {col}",
                 xaxis_title="Date",
                 yaxis_title=col,
             )

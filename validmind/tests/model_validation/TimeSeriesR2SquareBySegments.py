@@ -51,9 +51,6 @@ def TimeSeriesR2SquareBySegments(dataset, model, segments=None):
     """
     results_list = []
 
-    dataset_name = dataset.input_id
-    model_name = model.input_id
-
     y_true = dataset.y
     y_pred = dataset.y_pred(model)
 
@@ -83,8 +80,6 @@ def TimeSeriesR2SquareBySegments(dataset, model, segments=None):
             r2s = metrics.r2_score(y_true_segment, y_pred_segment)
             results_list.append(
                 {
-                    "Model": model_name,
-                    "Dataset": dataset_name,
                     "Segments": f"Segment {segment_index + 1}",
                     "Start Date": start_date,
                     "End Date": end_date,
@@ -100,13 +95,13 @@ def TimeSeriesR2SquareBySegments(dataset, model, segments=None):
         results_df,
         x="Segments",
         y="R-Squared",
-        color="Model",
+        # color="Model",
         barmode="group",
-        title="R-Squared Comparison by Segment and Model",
+        title="R-Squared by Segment",
         labels={
             "R-Squared": "R-Squared Value",
             "Segments": "Time Segment",
-            "Model": "Model",
+            # "Model": "Model",
         },
     )
 

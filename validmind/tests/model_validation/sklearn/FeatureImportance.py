@@ -76,17 +76,14 @@ def FeatureImportance(dataset, model, num_features=3):
     top_features = sorted_features[:num_features]
 
     # Prepare the result for the current model and dataset
-    result = {
-        "Model": model.input_id,
-        "Dataset": dataset.input_id,
-    }
+    result = {}
 
     # Dynamically add feature columns to the result
     for i in range(num_features):
         if i < len(top_features):
-            result[
-                f"Feature {i + 1}"
-            ] = f"[{top_features[i][0]}; {top_features[i][1]:.4f}]"
+            result[f"Feature {i + 1}"] = (
+                f"[{top_features[i][0]}; {top_features[i][1]:.4f}]"
+            )
         else:
             result[f"Feature {i + 1}"] = None
 
