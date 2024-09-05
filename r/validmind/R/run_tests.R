@@ -110,17 +110,22 @@ register_test <- function(func) {
     tasks <- if (!is.null(attr(func, "__tasks__"))) attr(func, "__tasks__") else list()
     tags <- if (!is.null(attr(func, "__tags__"))) attr(func, "__tags__") else list()
     
+    # Import the tests module
+    run_method <- reticulate::import("validmind.tests.decorator", as = "vm")$`_get_run_method`
+    
     # Import the Metric class from the Python environment
     Metric <- reticulate::import("validmind.vm_models", as = "vm")$Metric
     
+    py_type <- reticulate::import_builtins()$type
+    
     # Create the metric_class in R, using the Python `type` function
-    metric_class <- reticulate::py$`type`(
+    metric_class <- py_type(
         deparse(substitute(func)),
         reticulate::tuple(Metric),
         list(
-            "run" = py$`_get_run_method`(func, py_inputs, py_params),
-            "required_inputs" = unlist(reticulate::py_to_r(py_inputs$keys())),
-            "default_params" = reticulate::py_to_r(lapply(py_params, function(x) x["default"])),
+            "run" = run_method(func, py_inputs, py_params),
+            "required_inputs" = names(inputs),
+            "default_params" = lapply(params, function(x) x[["default"]]),
             "__doc__" = description,
             "tasks" = tasks,
             "tags" = tags
@@ -134,4 +139,25 @@ register_test <- function(func) {
     test_store$register_custom_test(test_id, metric_class)
     
     return(func)
+}
+
+#' Register a Test Function
+#'
+#' This function registers a given function as a test using the `validmind` Python library through the `reticulate` package.
+#'
+#' @param func_or_id A function to be registered as a test, or an id of an existing test. The function should be compatible with the `validmind` test decorator.
+#' @return A decorator function that wraps the input function for testing purposes.
+#' @importFrom reticulate import
+#' @export
+#' @examples
+#' \dontrun{
+#' my_test_function <- function(self, a = 1, b = 2) {
+#'     return(a + b)
+#' }
+#' registered_test <- vm_test(my_test_function)
+#' }
+vm_test <- function(func_or_id) {
+    test_method <- reticulate::import("validmind.tests.decorator", as = "vm")$test
+    
+    return(test_method(func_or_id = func_or_id))
 }
