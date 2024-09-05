@@ -187,7 +187,7 @@ def _get_run_method(func, func_inputs, func_params):
             results=raw_results,
             test_id=self.test_id,
             description=inspect.getdoc(self),
-            inputs=input_kwargs,
+            inputs=[i.input_id for i in input_kwargs.values()],
             params=param_kwargs,
             output_template=self.output_template,
             generate_description=self.generate_description,
