@@ -64,7 +64,9 @@ class ClassifierPerformance(Metric):
     def multiclass_roc_auc_score(self, y_test, y_pred, average="macro"):
         lb = LabelBinarizer()
         lb.fit(y_test)
-        return roc_auc_score(lb.transform(y_test), lb.transform(y_pred), average=average)
+        return roc_auc_score(
+            lb.transform(y_test), lb.transform(y_pred), average=average
+        )
 
     def summary(self, metric_value: dict):
         """
