@@ -357,3 +357,27 @@ display_report <- function(processed_results) {
 
   return(all_widgets)
 }
+
+#' Save an R model to a temporary file
+#'
+#' This function saves a given R model object to a randomly named `.RData` file 
+#' in the `/tmp/` directory. The file is saved with a unique name generated 
+#' using random letters.
+#'
+#' @param model The R model object to be saved.
+#'
+#' @return A string representing the full file path to the saved `.RData` file.
+#' 
+#' @examples
+#' model <- lm(mpg ~ cyl, data = mtcars)
+#' file_path <- save_model(model)
+#' 
+#' @export
+save_model <- function(model) {
+  random_name <- paste(sample(letters, 10, replace = TRUE), collapse = "")
+  file_path <- paste0("/tmp/", random_name, ".RData")
+  save(model, file = file_path)
+  
+  return(file_path)
+}
+
