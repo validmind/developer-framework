@@ -11,6 +11,13 @@ from sklearn.preprocessing import LabelBinarizer
 from validmind.vm_models import Metric, ResultSummary, ResultTable, ResultTableMetadata
 
 
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = LabelBinarizer()
+    lb.fit(y_test)
+
+    return roc_auc_score(lb.transform(y_test), lb.transform(y_pred), average=average)
+
+
 @dataclass
 class ClassifierPerformance(Metric):
     """
@@ -60,13 +67,6 @@ class ClassifierPerformance(Metric):
         "multiclass_classification",
         "model_performance",
     ]
-
-    def multiclass_roc_auc_score(self, y_test, y_pred, average="macro"):
-        lb = LabelBinarizer()
-        lb.fit(y_test)
-        return roc_auc_score(
-            lb.transform(y_test), lb.transform(y_pred), average=average
-        )
 
     def summary(self, metric_value: dict):
         """
@@ -134,7 +134,7 @@ class ClassifierPerformance(Metric):
         if len(np.unique(y_true)) > 2:
             y_pred = self.inputs.dataset.y_pred(self.inputs.model)
             y_true = y_true.astype(y_pred.dtype)
-            roc_auc = self.multiclass_roc_auc_score(y_true, y_pred)
+            roc_auc = multiclass_roc_auc_score(y_true, y_pred)
         else:
             y_prob = self.inputs.dataset.y_prob(self.inputs.model)
             y_true = y_true.astype(y_prob.dtype).flatten()
