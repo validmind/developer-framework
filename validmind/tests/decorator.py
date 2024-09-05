@@ -146,7 +146,7 @@ def _build_result(  # noqa: C901
                 value="Empty",
                 summary=ResultSummary(results=tables),
             )
-            if tables
+            if tables or figures  # if tables or figures than its a traditional metric
             else None
         ),
         figures=figures,
