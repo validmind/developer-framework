@@ -160,7 +160,6 @@ def run_metric(metric_id, inputs=None, params=None, show=True, value_only=False)
     result_wrapper = _build_result(
         results=cached_result[0],
         test_id=metric_id,
-        description="",
         inputs=cached_result[1],
         params=cached_result[2],
         generate_description=False,
