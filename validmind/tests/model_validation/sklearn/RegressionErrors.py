@@ -2,16 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import numpy as np
+import pandas as pd
 from sklearn import metrics
 
-from validmind.vm_models import Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class RegressionErrors(Metric):
+@tags("time_series_data", "sklearn", "model_performance")
+@tasks("regression")
+def RegressionErrors(dataset, model):
     """
     Assesses the performance and error distribution of a regression model using various error metrics.
 
@@ -58,38 +58,29 @@ class RegressionErrors(Metric):
     context.
     """
 
-    name = "regression_errors"
-    required_inputs = ["model", "dataset"]
-    tasks = ["regression"]
-    tags = [
-        "sklearn",
-        "model_performance",
-    ]
+    y_true = dataset.y
+    y_pred = dataset.y_pred(model)
+    y_true = y_true.astype(y_pred.dtype)
 
-    def regression_errors(self, y_true_train, class_pred_train):
-        mae_train = metrics.mean_absolute_error(y_true_train, class_pred_train)
+    return _regression_errors(y_true, y_pred)
 
-        results = []
-        results.append({"Mean Absolute Error (MAE)": mae_train})
 
-        mse_train = metrics.mean_squared_error(y_true_train, class_pred_train)
-        results.append({"Mean Squared Error (MSE)": mse_train})
-        results.append({"Root Mean Squared Error (RMSE)": np.sqrt(mse_train)})
+def _regression_errors(y_true, y_pred):
+    mae_train = metrics.mean_absolute_error(y_true, y_pred)
+    mse_train = metrics.mean_squared_error(y_true, y_pred)
+    rmse_train = np.sqrt(mse_train)
+    mape_train = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+    mbd_train = np.mean(y_pred - y_true)
 
-        mape_train = (
-            np.mean(np.abs((y_true_train - class_pred_train) / y_true_train)) * 100
-        )
-        results.append({"Mean Absolute Percentage Error (MAPE)": mape_train})
+    # Create dataframe with one row and each error metric as a column
+    results_df = pd.DataFrame(
+        {
+            "Mean Absolute Error (MAE)": [mae_train],
+            "Mean Squared Error (MSE)": [mse_train],
+            "Root Mean Squared Error (RMSE)": [rmse_train],
+            "Mean Absolute Percentage Error (MAPE)": [mape_train],
+            "Mean Bias Deviation (MBD)": [mbd_train],
+        }
+    )
 
-        mbd_train = np.mean(class_pred_train - y_true_train)
-        results.append({"Mean Bias Deviation (MBD)": mbd_train})
-        return results
-
-    def run(self):
-        y_train_true = self.inputs.dataset.y
-        y_train_pred = self.inputs.dataset.y_pred(self.inputs.model)
-        y_train_true = y_train_true.astype(y_train_pred.dtype)
-
-        results = self.regression_errors(y_train_true, y_train_pred)
-
-        return self.cache_results(metric_value=results)
+    return results_df
