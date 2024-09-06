@@ -70,9 +70,9 @@ def _inspect_signature(test_func: callable):
 def _build_result(  # noqa: C901
     results: Union[Any, Tuple[Any, ...]],
     test_id: str,
-    description: str,
     inputs: List[str],
     params: Dict[str, Any],
+    description: str = None,
     output_template: str = None,
     generate_description: bool = True,
 ):
@@ -160,6 +160,8 @@ def _build_result(  # noqa: C901
                     should_generate=generate_description,
                 )
             ]
+            if tables or figures
+            else None
         ),
         inputs=[i if isinstance(i, str) else i.input_id for i in inputs],
         params=params,
