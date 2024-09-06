@@ -68,65 +68,56 @@ def convert_to_levels(diff_df, original_df, target_column):
     return levels_df
 
 
-def get_demo_test_config(test_suite=None):
+def get_demo_test_config():
 
     default_config = {}
 
     default_config["validmind.data_validation.TimeSeriesDescription"] = {
-        "inputs": {
-            "dataset": "raw_ds",
+        "input_grid": {
+            "dataset": [
+                "raw_ds",
+                "train_diff_ds",
+                "test_diff_ds",
+                "train_ds",
+                "test_ds",
+            ],
         }
     }
     default_config["validmind.data_validation.TimeSeriesLinePlot"] = {
-        "inputs": {
-            "dataset": "raw_ds",
+        "input_grid": {
+            "dataset": ["raw_ds"],
         }
     }
     default_config["validmind.data_validation.TimeSeriesMissingValues"] = {
-        "inputs": {
-            "dataset": "raw_ds",
+        "input_grid": {
+            "dataset": [
+                "raw_ds",
+                "train_diff_ds",
+                "test_diff_ds",
+                "train_ds",
+                "test_ds",
+            ],
         }
     }
     default_config["validmind.data_validation.SeasonalDecompose"] = {
-        "inputs": {
-            "dataset": "raw_ds",
+        "input_grid": {
+            "dataset": ["raw_ds"],
         }
     }
-    default_config[
-        "validmind.data_validation.TimeSeriesDescriptiveStatistics:train_diff_data"
-    ] = {
-        "inputs": {
-            "dataset": "train_diff_ds",
+    default_config["validmind.data_validation.TimeSeriesDescriptiveStatistics"] = {
+        "input_grid": {
+            "dataset": ["train_diff_ds", "test_diff_ds"],
         }
     }
-    default_config[
-        "validmind.data_validation.TimeSeriesDescriptiveStatistics:test_diff_data"
-    ] = {
-        "inputs": {
-            "dataset": "test_diff_ds",
-        }
-    }
-    default_config["validmind.data_validation.TimeSeriesOutliers:train_diff_data"] = {
-        "inputs": {
-            "dataset": "train_diff_ds",
+    default_config["validmind.data_validation.TimeSeriesOutliers"] = {
+        "input_grid": {
+            "dataset": ["train_diff_ds", "test_diff_ds"],
         },
         "params": {"zscore_threshold": 4},
     }
-    default_config["validmind.data_validation.TimeSeriesOutliers:test_diff_data"] = {
-        "inputs": {
-            "dataset": "test_diff_ds",
-        },
-        "params": {"zscore_threshold": 4},
-    }
-    default_config["validmind.data_validation.TimeSeriesHistogram:train_diff_data"] = {
-        "inputs": {
-            "dataset": "train_diff_ds",
-        },
-        "params": {"nbins": 100},
-    }
-    default_config["validmind.data_validation.TimeSeriesHistogram:test_diff_data"] = {
-        "inputs": {
-            "dataset": "test_diff_ds",
+    default_config["validmind.data_validation.TimeSeriesHistogram"] = {
+        "input_grid": {
+            "dataset": ["train_diff_ds", "test_diff_ds"],
         },
         "params": {"nbins": 100},
     }
@@ -135,20 +126,15 @@ def get_demo_test_config(test_suite=None):
             "datasets": ["train_diff_ds", "test_diff_ds"],
         }
     }
-    default_config["validmind.model_validation.ModelMetadata:random_forest"] = {
-        "inputs": {
-            "model": ["random_forests_model"],
-        }
-    }
-    default_config["validmind.model_validation.ModelMetadata:gradient_boosting"] = {
-        "inputs": {
-            "model": ["gradient_boosting_model"],
+    default_config["validmind.model_validation.ModelMetadata"] = {
+        "input_grid": {
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config["validmind.model_validation.sklearn.RegressionErrors"] = {
         "input_grid": {
-            "datasets": ["train_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config["validmind.model_validation.sklearn.RegressionR2Square"] = {
@@ -169,8 +155,8 @@ def get_demo_test_config(test_suite=None):
         "validmind.model_validation.TimeSeriesR2SquareBySegments:test_data"
     ] = {
         "input_grid": {
-            "datasets": ["test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "dataset": ["test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         },
         "params": {
             "segments": {
@@ -179,64 +165,36 @@ def get_demo_test_config(test_suite=None):
             }
         },
     }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionsPlot:train_data"
-    ] = {
+    default_config["validmind.model_validation.TimeSeriesPredictionsPlot"] = {
         "input_grid": {
-            "datasets": ["train_ds", "test_data"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionWithCI:random_forests_model"
-    ] = {
-        "inputs": {
-            "dataset": "test_ds",
-            "model": "random_forests_model",
+    default_config["validmind.model_validation.TimeSeriesPredictionWithCI"] = {
+        "input_grid": {
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
-    default_config[
-        "validmind.model_validation.TimeSeriesPredictionWithCI:gradient_boosting_model"
-    ] = {
-        "inputs": {
-            "dataset": "test_ds",
-            "model": "gradient_boosting_model",
+    default_config["validmind.model_validation.ModelPredictionResiduals"] = {
+        "input_grid": {
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
-    default_config["validmind.model_validation.ModelPredictionResiduals:train_data"] = {
-        "inputs": {
-            "datasets": ["train_ds", "train_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
-        }
-    }
-    default_config["validmind.model_validation.ModelPredictionResiduals:test_data"] = {
-        "inputs": {
-            "datasets": ["test_ds", "test_ds"],
-            "models": ["random_forests_model", "gradient_boosting_model"],
-        }
-    }
-    default_config[
-        "validmind.model_validation.sklearn.FeatureImportance:Comparison"
-    ] = {
+    default_config["validmind.model_validation.sklearn.FeatureImportance"] = {
         "input_grid": {
             "dataset": ["train_ds", "test_ds"],
             "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
     default_config[
-        "validmind.model_validation.sklearn.PermutationFeatureImportance:random_forests_model"
+        "validmind.model_validation.sklearn.PermutationFeatureImportance"
     ] = {
-        "inputs": {
-            "dataset": "test_ds",
-            "model": "random_forests_model",
-        }
-    }
-    default_config[
-        "validmind.model_validation.sklearn.PermutationFeatureImportance:gradient_boosting_model"
-    ] = {
-        "inputs": {
-            "dataset": "test_ds",
-            "model": "gradient_boosting_model",
+        "input_grid": {
+            "dataset": ["train_ds", "test_ds"],
+            "model": ["random_forests_model", "gradient_boosting_model"],
         }
     }
 
