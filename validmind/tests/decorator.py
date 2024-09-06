@@ -138,7 +138,7 @@ def _build_result(  # noqa: C901
 
     metric_inputs = [
         sub_i.input_id if hasattr(sub_i, "input_id") else sub_i
-        for i in inputs.values()
+        for i in inputs
         for sub_i in (i if isinstance(i, list) else [i])
     ]
 
