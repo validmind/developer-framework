@@ -169,10 +169,15 @@ def _build_result(  # noqa: C901
 
 def _get_run_method(func, func_inputs, func_params):
     def run(self: Metric):
-        input_kwargs = {}
+        input_kwargs = {}  # map function inputs (`dataset` etc) to actual objects
+        input_ids = []  # store input_ids used so they can be logged
         for key in func_inputs.keys():
             try:
                 input_kwargs[key] = getattr(self.inputs, key)
+                if isinstance(input_kwargs[key], list):
+                    input_ids.extend([i.input_id for i in input_kwargs[key]])
+                else:
+                    input_ids.append(input_kwargs[key].input_id)
             except AttributeError:
                 raise MissingRequiredTestInputError(f"Missing required input: {key}.")
 
@@ -187,7 +192,7 @@ def _get_run_method(func, func_inputs, func_params):
             results=raw_results,
             test_id=self.test_id,
             description=inspect.getdoc(self),
-            inputs=[i.input_id for i in input_kwargs.values()],
+            inputs=input_ids,
             params=param_kwargs,
             output_template=self.output_template,
             generate_description=self.generate_description,
