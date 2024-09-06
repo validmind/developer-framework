@@ -11,7 +11,7 @@ from validmind import tags, tasks
 
 @tags("time_series_data", "sklearn", "model_performance")
 @tasks("regression")
-def RegressionErrors(dataset, model):
+def RegressionErrors(model, dataset):
     """
     Assesses the performance and error distribution of a regression model using various error metrics.
 
