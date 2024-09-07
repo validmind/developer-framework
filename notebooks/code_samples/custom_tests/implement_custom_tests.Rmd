@@ -114,9 +114,9 @@ Next, replace this placeholder with your own code snippet:
 ```{r}
 vm_r <- vm(
   api_host = "https://api.prod.validmind.ai/api/v1/tracking",
-  api_key = "63da931fec7c3efa3137bf39b7f53eab",
-  api_secret = "bd7235e4651058d004f73f1fdbffb76371dba1aac636547af6b528afc0b4f5e8",
-  project = "cm0pisjyh08or21ih63gkf74h",
+  api_key="<your_api_key_here>",
+  api_secret="<your_api_secret_here>",
+  project="<your_project_id_here>",
   python_version = python_version
 )
 ```
