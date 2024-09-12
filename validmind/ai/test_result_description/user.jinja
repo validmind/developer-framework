@@ -1,0 +1,18 @@
+Test ID: `{{ test_name }}`
+
+<Test Docstring>
+{{ test_description }}
+</Test Docstring>
+
+{%- if summary %}
+<Test Results Table(s)>
+{{ summary }}
+</Test Results Table(s)>
+{%- endif %}
+
+{%- if figures %}
+The attached plots show the results of the test.
+{%- for b64_image_url in figures %}
+![IMAGE]({{ b64_image_url }})
+{%- endfor %}
+{%- endif %}
