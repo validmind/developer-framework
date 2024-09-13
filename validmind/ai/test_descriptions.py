@@ -8,6 +8,7 @@ from typing import Union
 
 from validmind.utils import md_to_html
 
+from ..client_config import client_config
 from ..logging import get_logger
 
 __executor = ThreadPoolExecutor()
@@ -260,10 +261,11 @@ def get_description_metadata(
     Returns:
         dict: The metadata object to be logged with the test results
     """
-    env_disabled = os.getenv("VALIDMIND_LLM_DESCRIPTIONS_ENABLED", "1") in [
-        "0",
-        "false",
-    ]
+    # Check the feature flag first, then the environment variable
+    llm_descriptions_enabled = (
+        client_config.can_generate_llm_test_descriptions()
+        and os.getenv("VALIDMIND_LLM_DESCRIPTIONS_ENABLED", "1") not in ["0", "false"]
+    )
 
     # TODO: fix circular import
     from validmind.ai.utils import is_configured
@@ -271,7 +273,7 @@ def get_description_metadata(
     if (
         should_generate
         and (summary or figures)
-        and not env_disabled
+        and llm_descriptions_enabled
         and is_configured()
     ):
         revision_name = AI_REVISION_NAME

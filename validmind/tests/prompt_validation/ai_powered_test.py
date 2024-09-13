@@ -5,6 +5,7 @@
 import re
 
 from validmind.ai.utils import get_client_and_model
+from validmind.client_config import client_config
 
 missing_prompt_message = """
 Cannot run prompt validation tests on a model with no prompt.
@@ -24,6 +25,11 @@ def call_model(
     system_prompt: str, user_prompt: str, temperature: float = 0.0, seed: int = 42
 ):
     """Call LLM with the given prompts and return the response"""
+    if not client_config.can_generate_llm_test_descriptions():
+        raise ValueError(
+            "LLM based descriptions are not enabled for your organization."
+        )
+
     client, model = get_client_and_model()
 
     return (
