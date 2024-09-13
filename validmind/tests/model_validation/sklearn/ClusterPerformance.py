@@ -13,40 +13,39 @@ class ClusterPerformance(Metric):
     Evaluates and compares a clustering model's performance on training and testing datasets using multiple defined
     metrics.
 
-    **Purpose:** This metric, ClusterPerformance, evaluates the performance of a clustering model on both the training
-    and testing datasets. It assesses how well the model defines, forms, and distinguishes clusters of data.
+    ### Purpose
 
-    **Test Mechanism:** The metric is applied by first predicting the clusters of the training and testing datasets
-    using the clustering model. Next, performance metrics, defined in the method `metric_info()`, are calculated
-    against the true labels of the datasets. The results for each metric for both datasets are then collated and
-    returned in a summarized table form listing each metric along with its corresponding train and test values.
+    The Cluster Performance test evaluates the performance of a clustering model on both the training and testing
+    datasets. It assesses how well the model defines, forms, and distinguishes clusters of data.
 
-    **Signs of High Risk:**
-    - High discrepancy between the performance metric values on the training and testing datasets. This could signify
-    problems such as overfitting or underfitting.
-    - Low performance metric values on the training and testing datasets. There might be a problem with the model
-    itself or the chosen hyperparameters.
-    - If the model's performance deteriorates consistently across different sets of metrics, this may suggest a broader
-    issue with the model or the dataset.
+    ### Test Mechanism
 
-    **Strengths:**
-    - Tests the model's performance on both the training and testing datasets, which helps to identify issues such as
-    overfitting or underfitting.
-    - Allows for a broad range of performance metrics to be used, thus providing a comprehensive evaluation of the
-    model's clustering capabilities.
-    - Returns a summarized table, which makes it easy to compare the model's performance across different metrics and
-    datasets.
+    The test mechanism involves predicting the clusters of the training and testing datasets using the clustering
+    model. After prediction, performance metrics defined in the `metric_info()` method are calculated against the true
+    labels of the datasets. The results for each metric for both datasets are then collated and returned in a
+    summarized table form listing each metric along with its corresponding train and test values.
 
-    **Limitations:**
-    - The method `metric_info()` needs to be properly overridden in a subclass for this class to be used, and the
-    metrics to be used must be manually defined.
-    - The performance metrics are calculated on predicted cluster labels, so the metric may not capture the model's
-    performance well if the clusters are not well separated or if the model has difficulties with certain kinds of
-    clusters.
-    - Doesn't consider the computational and time complexity of the model. While the model may perform well in terms of
-    the performance metrics, it might be time or resource-intensive. This metric does not account for such scenarios.
-    - Because the comparison is binary (train and test), it might not capture scenarios where the performance changes
-    drastically under different circumstances or categories within the dataset.
+    ### Signs of High Risk
+
+    - High discrepancy between the performance metric values on the training and testing datasets.
+    - Low performance metric values on both the training and testing datasets.
+    - Consistent deterioration of performance across different metrics.
+
+    ### Strengths
+
+    - Tests the model's performance on both training and testing datasets, helping to identify overfitting or
+    underfitting.
+    - Allows for the use of a broad range of performance metrics, providing a comprehensive evaluation.
+    - Returns a summarized table, making it easy to compare performance across different metrics and datasets.
+
+    ### Limitations
+
+    - The `metric_info()` method needs to be properly overridden in a subclass and metrics must be manually defined.
+    - The test may not capture the model's performance well if clusters are not well-separated or the model struggles
+    with certain clusters.
+    - Does not consider the computational and time complexity of the model.
+    - Binary comparison (train and test) might not capture performance changes under different circumstances or dataset
+    categories.
     """
 
     name = "cluster_performance_metrics"
@@ -57,7 +56,7 @@ class ClusterPerformance(Metric):
         "model_performance",
     ]
 
-    def cluser_performance_metrics(
+    def cluster_performance_metrics(
         self, y_true_train, y_pred_train, y_true_test, y_pred_test, samples, metric_info
     ):
         y_true_train = y_true_train.astype(y_pred_train.dtype).flatten()
@@ -107,7 +106,7 @@ class ClusterPerformance(Metric):
         y_true_test = y_true_test.astype(class_pred_test.dtype)
 
         samples = ["train", "test"]
-        results = self.cluser_performance_metrics(
+        results = self.cluster_performance_metrics(
             y_true_train,
             class_pred_train,
             y_true_test,

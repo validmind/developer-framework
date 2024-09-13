@@ -85,20 +85,22 @@
             <div class="docstring"><p>Compares and evaluates the performance of multiple regression models using five different metrics: MAE, MSE, RMSE,
 MAPE, and MBD.</p>
 
-<p><strong>1. Purpose:</strong>
-The Regression Models Performance Comparison metric is used to measure and compare the performance of regression
+<h3 id="purpose">Purpose</h3>
+
+<p>The Regression Models Performance Comparison metric is used to measure and compare the performance of regression
 models. It calculates multiple evaluation metrics, including Mean Absolute Error (MAE), Mean Squared Error (MSE),
 Root Mean Squared Error (RMSE), Mean Absolute Percentage Error (MAPE), and Mean Bias Deviation (MBD), thereby
 enabling a comprehensive view of model performance.</p>
 
-<p><strong>2. Test Mechanism:</strong>
-The test starts by sourcing the true and predicted values from the models. It then computes the MAE, MSE, RMSE,
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test starts by sourcing the true and predicted values from the models. It then computes the MAE, MSE, RMSE,
 MAPE, and MBD. These calculations encapsulate both the direction and the magnitude of error in predictions, thereby
 providing a multi-faceted view of model accuracy. It captures these results in a dictionary and compares the
 performance of all models using these metrics. The results are then appended to a table for presenting a
 comparative summary.</p>
 
-<p><strong>3. Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>High values of MAE, MSE, RMSE, and MAPE, which indicate a high error rate and imply a larger departure of the
@@ -108,7 +110,7 @@ model's predictions from the true values.</li>
 evaluation process itself.</li>
 </ul>
 
-<p><strong>4. Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The metric evaluates models on five different metrics offering a comprehensive analysis of model performance.</li>
@@ -116,7 +118,7 @@ evaluation process itself.</li>
 <li>It is designed to handle regression tasks and can be seamlessly integrated with libraries like sklearn.</li>
 </ul>
 
-<p><strong>5. Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The metric only evaluates regression models and does not evaluate classification models.</li>

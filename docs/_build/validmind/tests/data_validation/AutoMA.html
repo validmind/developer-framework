@@ -78,20 +78,24 @@
             <div class="docstring"><p>Automatically selects the optimal Moving Average (MA) order for each variable in a time series dataset based on
 minimal BIC and AIC values.</p>
 
-<p><strong>Purpose</strong>: The <code><a href="#AutoMA">AutoMA</a></code> metric serves an essential role of automated decision-making for selecting the optimal
-Moving Average (MA) order for every variable in a given time series dataset. The selection is dependent on the
-minimalization of BIC (Bayesian Information Criterion) and AIC (Akaike Information Criterion); these are
-established statistical tools used for model selection. Furthermore, prior to the commencement of the model fitting
-process, the algorithm conducts a stationarity test (Augmented Dickey-Fuller test) on each series.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: Starting off, the <code><a href="#AutoMA">AutoMA</a></code> algorithm checks whether the <code>max_ma_order</code> parameter has been
-provided. It consequently loops through all variables in the dataset, carrying out the Dickey-Fuller test for
-stationarity. For each stationary variable, it fits an ARIMA model for orders running from 0 to <code>max_ma_order</code>. The
-result is a list showcasing the BIC and AIC values of the ARIMA models based on different orders. The MA order,
-which yields the smallest BIC, is chosen as the 'best MA order' for every single variable. The final results
-include a table summarizing the auto MA analysis and another table listing the best MA order for each variable.</p>
+<p>The <code><a href="#AutoMA">AutoMA</a></code> metric serves an essential role of automated decision-making for selecting the optimal Moving Average
+(MA) order for every variable in a given time series dataset. The selection is dependent on the minimalization of
+BIC (Bayesian Information Criterion) and AIC (Akaike Information Criterion); these are established statistical
+tools used for model selection. Furthermore, prior to the commencement of the model fitting process, the algorithm
+conducts a stationarity test (Augmented Dickey-Fuller test) on each series.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>Starting off, the <code><a href="#AutoMA">AutoMA</a></code> algorithm checks whether the <code>max_ma_order</code> parameter has been provided. It consequently
+loops through all variables in the dataset, carrying out the Dickey-Fuller test for stationarity. For each
+stationary variable, it fits an ARIMA model for orders running from 0 to <code>max_ma_order</code>. The result is a list
+showcasing the BIC and AIC values of the ARIMA models based on different orders. The MA order, which yields the
+smallest BIC, is chosen as the 'best MA order' for every single variable. The final results include a table
+summarizing the auto MA analysis and another table listing the best MA order for each variable.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>When a series is non-stationary (p-value>0.05 in the Dickey-Fuller test), the produced result could be inaccurate.</li>
@@ -99,7 +103,7 @@ include a table summarizing the auto MA analysis and another table listing the b
 potentially indicate risks and might need further investigation.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The metric facilitates automation in the process of selecting the MA order for time series forecasting. This
@@ -109,7 +113,7 @@ significantly saves time and reduces efforts conventionally necessary for manual
 assumptions of the MA model are fulfilled.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>If the time series fails to be stationary, the metric may yield inaccurate results. Consequently, it necessitates

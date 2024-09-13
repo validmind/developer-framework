@@ -2,16 +2,19 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+from collections import defaultdict
 from dataclasses import dataclass
 from operator import add
 from typing import List, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 import seaborn as sns
 from sklearn import metrics
 
+from validmind.errors import MissingOrInvalidModelPredictFnError
+from validmind.logging import get_logger
 from validmind.vm_models import (
     Figure,
     ResultSummary,
@@ -19,292 +22,387 @@ from validmind.vm_models import (
     ResultTableMetadata,
     ThresholdTest,
     ThresholdTestResult,
+    VMDataset,
+    VMModel,
 )
+
+logger = get_logger(__name__)
+
+DEFAULT_DECAY_THRESHOLD = 0.05
+DEFAULT_STD_DEV_LIST = [0.1, 0.2, 0.3, 0.4, 0.5]
+DEFAULT_CLASSIFICATION_METRIC = "auc"
+DEFAULT_REGRESSION_METRIC = "mse"
+PERFORMANCE_METRICS = {
+    "accuracy": {
+        "function": metrics.accuracy_score,
+        "is_lower_better": False,
+    },
+    "auc": {
+        "function": metrics.roc_auc_score,
+        "is_lower_better": False,
+    },
+    "f1": {
+        "function": metrics.f1_score,
+        "is_lower_better": False,
+    },
+    "precision": {
+        "function": metrics.precision_score,
+        "is_lower_better": False,
+    },
+    "recall": {
+        "function": metrics.recall_score,
+        "is_lower_better": False,
+    },
+    "mse": {
+        "function": metrics.mean_squared_error,
+        "is_lower_better": True,
+    },
+    "mae": {
+        "function": metrics.mean_absolute_error,
+        "is_lower_better": True,
+    },
+    "r2": {
+        "function": metrics.r2_score,
+        "is_lower_better": False,
+    },
+    "mape": {
+        "function": metrics.mean_absolute_percentage_error,
+        "is_lower_better": True,
+    },
+}
+
+
+def _add_noise_std_dev(
+    values: List[float], x_std_dev: float
+) -> Tuple[List[float], float]:
+    """
+    Adds Gaussian noise to a list of values.
+    Args:
+        values (list[float]): A list of numerical values to which noise is added.
+        x_std_dev (float): A scaling factor for the standard deviation of the noise.
+    Returns:
+        tuple[list[float], float]: A tuple containing:
+            - A list of noisy values, where each value is the sum of the corresponding value
+            in the input list and a randomly generated value sampled from a Gaussian distribution
+            with mean 0 and standard deviation x_std_dev times the standard deviation of the input list.
+            - The standard deviation of the input list of values.
+    """
+    std_dev = np.std(values)
+    noise_list = np.random.normal(0, x_std_dev * std_dev, size=len(values))
+    noisy_values = list(map(add, noise_list, values))
+
+    return noisy_values
+
+
+def _compute_metric(
+    dataset: VMDataset, model: VMModel, X: pd.DataFrame, metric: str
+) -> float:
+    if metric not in PERFORMANCE_METRICS:
+        raise ValueError(
+            f"Invalid metric: {metric}, expected one of {PERFORMANCE_METRICS.keys()}"
+        )
+
+    if metric == "auc":
+        try:
+            y_proba = model.predict_proba(X)
+        except MissingOrInvalidModelPredictFnError:
+            y_proba = model.predict(X)
+        return metrics.roc_auc_score(dataset.y, y_proba)
+
+    return PERFORMANCE_METRICS[metric]["function"](dataset.y, model.predict(X))
+
+
+def _compute_gap(result: dict, metric: str) -> float:
+    if PERFORMANCE_METRICS[metric]["is_lower_better"]:
+        return result[metric.upper()][-1] - result[metric.upper()][0]
+
+    return result[metric.upper()][0] - result[metric.upper()][-1]
+
+
+def _combine_results(results: List[dict]):
+    final_results = defaultdict(list)
+
+    # Interleave rows from each dictionary
+    for i in range(len(results[0]["Perturbation Size"])):
+        for result in results:
+            for key in result.keys():
+                final_results[key].append(result[key][i])
+
+    return pd.DataFrame(final_results)
+
+
+def _plot_robustness(
+    results: pd.DataFrame, metric: str, threshold: float, columns: List[str], model: str
+):
+    fig = go.Figure()
+
+    datasets = results["Dataset"].unique()
+    pallete = [
+        f"#{int(r*255):02x}{int(g*255):02x}{int(b*255):02x}"
+        for r, g, b in sns.color_palette("husl", len(datasets))
+    ]
+
+    for i, dataset in enumerate(datasets):
+        dataset_results = results[results["Dataset"] == dataset]
+        fig.add_trace(
+            go.Scatter(
+                x=dataset_results["Perturbation Size"],
+                y=dataset_results[metric.upper()],
+                mode="lines+markers",
+                name=dataset,
+                line=dict(width=3, color=pallete[i]),
+                marker=dict(size=10),
+            )
+        )
+
+    if PERFORMANCE_METRICS[metric]["is_lower_better"]:
+        y_label = f"{metric.upper()} (lower is better)"
+    else:
+        threshold = -threshold
+        y_label = f"{metric.upper()} (higher is better)"
+
+    # add threshold lines
+    for i, dataset in enumerate(datasets):
+        baseline = results[results["Dataset"] == dataset][metric.upper()].iloc[0]
+        fig.add_trace(
+            go.Scatter(
+                x=results["Perturbation Size"].unique(),
+                y=[baseline + threshold] * len(results["Perturbation Size"].unique()),
+                mode="lines",
+                name=f"threshold_{dataset}",
+                line=dict(dash="dash", width=2, color=pallete[i]),
+                showlegend=True,
+            )
+        )
+
+    columns_lines = [""]
+    for column in columns:
+        # keep adding to the last line in list until character limit (40)
+        if len(columns_lines[-1]) + len(column) < 40:
+            columns_lines[-1] += f"{column}, "
+        else:
+            columns_lines.append(f"{column}, ")
+
+    fig.update_layout(
+        title=dict(
+            text=(
+                f"Model Robustness for '{model}'<br><sup>As determined by calculating "
+                f"{metric.upper()} decay in the presence of random gaussian noise</sup>"
+            ),
+            font=dict(size=20),
+            x=0.5,
+            xanchor="center",
+        ),
+        xaxis_title=dict(
+            text="Perturbation Size (X * Standard Deviation)",
+        ),
+        yaxis_title=dict(text=y_label),
+        plot_bgcolor="white",
+        margin=dict(t=60, b=80, r=20, l=60),
+        xaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        yaxis=dict(showgrid=True, gridcolor="lightgrey"),
+        annotations=[
+            go.layout.Annotation(
+                text=f"Perturbed Features:<br><sup>{'<br>'.join(columns_lines)}</sup>",
+                align="left",
+                font=dict(size=14),
+                bordercolor="lightgrey",
+                borderwidth=1,
+                borderpad=4,
+                showarrow=False,
+                x=1.025,
+                xref="paper",
+                xanchor="left",
+                y=-0.15,
+                yref="paper",
+            )
+        ],
+    )
+
+    return fig
+
+
+# TODO: make this a functional test instead of class-based when appropriate
+# simply have to remove the class and rename this func to OverfitDiagnosis
+def robustness_diagnosis(
+    model: VMModel,
+    datasets: List[VMDataset],
+    metric: str = None,
+    scaling_factor_std_dev_list: List[float] = DEFAULT_STD_DEV_LIST,
+    performance_decay_threshold: float = DEFAULT_DECAY_THRESHOLD,
+):
+    if not metric:
+        metric = (
+            DEFAULT_CLASSIFICATION_METRIC
+            if datasets[0].probability_column(model)
+            else DEFAULT_REGRESSION_METRIC
+        )
+        logger.info(f"Using default metric ({metric.upper()}) for robustness diagnosis")
+
+    if id(scaling_factor_std_dev_list) == id(DEFAULT_STD_DEV_LIST):
+        logger.info(
+            f"Using default scaling factors for the standard deviation of the noise: {DEFAULT_STD_DEV_LIST}"
+        )
+
+    if id(performance_decay_threshold) == id(DEFAULT_DECAY_THRESHOLD):
+        logger.info(
+            f"Using default performance decay threshold of {DEFAULT_DECAY_THRESHOLD}"
+        )
+
+    results = [{} for _ in range(len(datasets))]
+
+    # add baseline results (no perturbation)
+    for dataset, result in zip(datasets, results):
+        result["Perturbation Size"] = [0.0]
+        result["Dataset"] = [f"{dataset.input_id}"]
+        result["Row Count"] = [dataset._df.shape[0]]
+
+        result[metric.upper()] = [
+            _compute_metric(
+                dataset=dataset,
+                model=model,
+                X=dataset.x_df(),
+                metric=metric,
+            )
+        ]
+        result["Performance Decay"] = [0.0]
+        result["Passed"] = [True]
+
+    # Iterate scaling factor for the standard deviation list
+    for x_std_dev in scaling_factor_std_dev_list:
+        for dataset, result in zip(datasets, results):
+
+            result["Perturbation Size"].append(x_std_dev)
+            result["Dataset"].append(result["Dataset"][0])
+            result["Row Count"].append(result["Row Count"][0])
+
+            temp_df = dataset.x_df().copy()
+            for feature in dataset.feature_columns_numeric:
+                temp_df[feature] = _add_noise_std_dev(
+                    values=temp_df[feature].to_list(),
+                    x_std_dev=x_std_dev,
+                )
+
+            result[metric.upper()].append(
+                _compute_metric(
+                    dataset=dataset,
+                    model=model,
+                    X=temp_df,
+                    metric=metric,
+                )
+            )
+            result["Performance Decay"].append(_compute_gap(result, metric))
+            result["Passed"].append(
+                result["Performance Decay"][-1] < performance_decay_threshold
+            )
+
+    results_df = _combine_results(results)
+    fig = _plot_robustness(
+        results=results_df,
+        metric=metric,
+        threshold=performance_decay_threshold,
+        columns=datasets[0].feature_columns_numeric,
+        model=model.input_id,
+    )
+
+    # rename perturbation size for baseline
+    results_df["Perturbation Size"][
+        results_df["Perturbation Size"] == 0.0
+    ] = "Baseline (0.0)"
+
+    return results_df, fig
 
 
 @dataclass
 class RobustnessDiagnosis(ThresholdTest):
     """
-    Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
-    performance.
+    Assesses the robustness of a machine learning model by evaluating performance decay under noisy conditions.
 
-    **Purpose**:
+    ### Purpose
 
-    The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a
-    model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
-    noise—added to its input data. This test is designed to help gauge how well the model can handle potential
-    real-world scenarios where the input data might be incomplete or corrupted.
+    The Robustness Diagnosis test aims to evaluate the resilience of a machine learning model when subjected to
+    perturbations or noise in its input data. This is essential for understanding the model's ability to handle
+    real-world scenarios where data may be imperfect or corrupted.
 
-    **Test Mechanism**:
+    ### Test Mechanism
 
-    This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
-    input features of both the training and testing datasets. The model performance in the face of these perturbed
-    features is then evaluated using metrics (default: 'accuracy'). This process is iterated over a range of scale
-    factors. The resulting accuracy trend against the amount of noise introduced is illustrated with a line chart. A
-    predetermined threshold determines what level of accuracy decay due to perturbation is considered acceptable.
+    This test introduces Gaussian noise to the numeric input features of the datasets at varying scales of standard
+    deviation. The performance of the model is then measured using a specified metric. The process includes:
 
-    **Signs of High Risk**:
-    - Substantial decreases in accuracy when noise is introduced to feature inputs.
-    - The decay in accuracy surpasses the configured threshold, indicating that the model is not robust against input
-    noise.
-    - Instances where one or more elements provided in the features list don't match with the training dataset's
-    numerical feature columns.
+    - Adding Gaussian noise to numerical input features based on scaling factors.
+    - Evaluating the model's performance on the perturbed data using metrics like AUC for classification tasks and MSE
+    for regression tasks.
+    - Aggregating and plotting the results to visualize performance decay relative to perturbation size.
 
-    **Strengths**:
-    - Provides an empirical measure of the model's performance in tackling noise or data perturbations, revealing
-    insights into the model's stability.
-    - Offers flexibility with the ability to choose specific features to perturb and control the level of noise applied.
-    - Detailed results visualization helps in interpreting the outcome of robustness testing.
+    ### Signs of High Risk
 
-    **Limitations**:
-    - Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
-    analysis of robustness.
-    - The default metric used is accuracy, which might not always give the best measure of a model's success,
-    particularly for imbalanced datasets.
-    - The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
-    corruption or incompleteness in real-world scenarios.
-    - There might be a requirement to fine-tune the set decay threshold for accuracy with the help of domain knowledge
-    or specific project requisites.
-    - The robustness test might not deliver the expected results for datasets with a text column.
+    - A significant drop in performance metrics with minimal noise.
+    - Performance decay values exceeding the specified threshold.
+    - Consistent failure to meet performance standards across multiple perturbation scales.
+
+    ### Strengths
+
+    - Provides insights into the model's robustness against noisy or corrupted data.
+    - Utilizes a variety of performance metrics suitable for both classification and regression tasks.
+    - Visualization helps in understanding the extent of performance degradation.
+
+    ### Limitations
+
+    - Gaussian noise might not adequately represent all types of real-world data perturbations.
+    - Performance thresholds are somewhat arbitrary and might need tuning.
+    - The test may not account for more complex or unstructured noise patterns that could affect model robustness.
     """
 
     name = "robustness"
     required_inputs = ["model", "datasets"]
     default_params = {
-        "features_columns": None,
-        "scaling_factor_std_dev_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
-        "accuracy_decay_threshold": 4,
+        "metric": None,
+        "scaling_factor_std_dev_list": DEFAULT_STD_DEV_LIST,
+        "performance_decay_threshold": DEFAULT_DECAY_THRESHOLD,
     }
-    tasks = ["classification", "text_classification"]
+    tasks = ["classification", "regression"]
     tags = [
         "sklearn",
-        "binary_classification",
-        "multiclass_classification",
         "model_diagnosis",
         "visualization",
     ]
 
-    default_metrics = {"accuracy": metrics.accuracy_score}
-
     def run(self):
-        # Validate X std deviation parameter
-        if "scaling_factor_std_dev_list" not in self.params:
-            raise ValueError("scaling_factor_std_dev_list must be provided in params")
-        x_std_dev_list = self.params["scaling_factor_std_dev_list"]
-
-        if self.params["accuracy_decay_threshold"] is None:
-            raise ValueError("accuracy_decay_threshold must be provided in params")
-        accuracy_threshold = self.params["accuracy_decay_threshold"]
-
-        if self.inputs.model is None:
-            raise ValueError("model must of provided to run this test")
-
-        # Validate list of features columns need to be perterubed
-        if "features_columns" not in self.params:
-            raise ValueError("features_columns must be provided in params")
-
-        features_list = self.params["features_columns"]
-        if features_list is None:
-            features_list = self.inputs.datasets[0].feature_columns
-
-        # Check if all elements from features_list are present in the numerical feature columns
-        all_present = all(
-            elem in self.inputs.datasets[0].feature_columns for elem in features_list
-        )
-        if not all_present:
-            raise ValueError(
-                "The list of feature columns provided do not match with training "
-                + "dataset numerical feature columns"
-            )
-
-        if self.inputs.datasets[0].text_column in features_list:
-            raise ValueError(
-                "Skiping Robustness Diagnosis test for the dataset with text column"
-            )
-
-        train_df = self.inputs.datasets[0].x_df().copy()
-        train_y_true = self.inputs.datasets[0].y
-
-        test_df = self.inputs.datasets[1].x_df().copy()
-        test_y_true = self.inputs.datasets[1].y
-
-        test_results = []
-        test_figures = []
-
-        results_headers = ["Perturbation Size", "Dataset Type", "Records"] + list(
-            self.default_metrics.keys()
-        )
-        results = {k: [] for k in results_headers}
-        # Iterate scaling factor for the standard deviation list
-        for x_std_dev in x_std_dev_list:
-            temp_train_df = train_df.copy()
-            temp_test_df = test_df.copy()
-
-            # Add noise to numeric features columns provided by user
-            for feature in features_list:
-                temp_train_df[feature] = self._add_noise_std_dev(
-                    temp_train_df[feature].to_list(), x_std_dev
-                )
-                temp_test_df[feature] = self._add_noise_std_dev(
-                    temp_test_df[feature].to_list(), x_std_dev
-                )
-
-            self._compute_metrics(
-                results, temp_train_df, train_y_true, x_std_dev, "Training"
-            )
-            self._compute_metrics(results, temp_test_df, test_y_true, x_std_dev, "Test")
-
-        fig, df = self._plot_robustness(results, features_list)
-
-        test_figures.append(
-            Figure(
-                for_object=self,
-                key=f"{self.name}:accuracy",
-                figure=fig,
-                metadata={
-                    "metric": "accuracy",
-                    "features_list": features_list,
-                },
-            )
+        results, fig = robustness_diagnosis(
+            model=self.inputs.model,
+            datasets=self.inputs.datasets,
+            metric=self.params["metric"],
+            scaling_factor_std_dev_list=self.params["scaling_factor_std_dev_list"],
+            performance_decay_threshold=self.params["performance_decay_threshold"],
         )
 
-        train_acc = df.loc[(df["Dataset Type"] == "Training"), "accuracy"].values[0]
-        test_acc = df.loc[(df["Dataset Type"] == "Test"), "accuracy"].values[0]
-
-        df["Passed"] = np.where(
-            (df["Dataset Type"] == "Training")
-            & (df["accuracy"] >= (train_acc - accuracy_threshold)),
-            True,
-            np.where(
-                (df["Dataset Type"] == "Test")
-                & (df["accuracy"] >= (test_acc - accuracy_threshold)),
-                True,
-                False,
-            ),
-        )
-        test_results.append(
-            ThresholdTestResult(
-                test_name="accuracy",
-                column=features_list,
-                passed=True,
-                values={"records": df.to_dict("records")},
-            )
-        )
         return self.cache_results(
-            test_results, passed=df["Passed"].all(), figures=test_figures
+            passed=results["Passed"].all(),
+            test_results_list=[
+                ThresholdTestResult(
+                    test_name=self.params["metric"],
+                    passed=results["Passed"].all(),
+                    values=results.to_dict(orient="records"),
+                )
+            ],
+            figures=[
+                Figure(
+                    for_object=self,
+                    key=f"{self.name}:{self.params['metric']}",
+                    figure=fig,
+                )
+            ],
         )
 
-    def summary(self, results: List[ThresholdTestResult], all_passed: bool):
-        results_table = [
-            record for result in results for record in result.values["records"]
-        ]
+    def summary(self, results: List[ThresholdTestResult], _):
         return ResultSummary(
             results=[
                 ResultTable(
-                    data=results_table,
-                    metadata=ResultTableMetadata(title="Robustness test"),
+                    data=results[0].values,
+                    metadata=ResultTableMetadata(title="Robustness Diagnosis Results"),
                 )
             ]
         )
-
-    def _compute_metrics(
-        self,
-        results: dict,
-        df: pd.DataFrame,
-        y_true: str,
-        x_std_dev: float,
-        dataset_type: str,
-    ):
-        """
-        Compute evaluation metrics for a given perturbed dataset.
-        Args:
-        results (dict): A dictionary to store the results of the computation.
-        df (pd.DataFrame): A Pandas dataframe containing the dataset to evaluate.
-        y_true (str): A string representing the name of the column containing the true target values.
-        x_std_dev (float): A float representing the standard deviation of the perturbation applied to the dataset.
-        dataset_type (str): A string representing the type of dataset (e.g. "training", "validation", "test").
-        Returns:
-        None
-        """
-        results["Dataset Type"].append(dataset_type)
-        results["Perturbation Size"].append(x_std_dev)
-        results["Records"].append(df.shape[0])
-        y_prediction = self.inputs.model.predict(df)
-        for metric, metric_fn in self.default_metrics.items():
-            results[metric].append(metric_fn(y_true, y_prediction) * 100)
-
-    def _add_noise_std_dev(
-        self, values: List[float], x_std_dev: float
-    ) -> Tuple[List[float], float]:
-        """
-        Adds Gaussian noise to a list of values.
-        Args:
-            values (list[float]): A list of numerical values to which noise is added.
-            x_std_dev (float): A scaling factor for the standard deviation of the noise.
-        Returns:
-            tuple[list[float], float]: A tuple containing:
-                - A list of noisy values, where each value is the sum of the corresponding value
-                in the input list and a randomly generated value sampled from a Gaussian distribution
-                with mean 0 and standard deviation x_std_dev times the standard deviation of the input list.
-                - The standard deviation of the input list of values.
-        """
-        std_dev = np.std(values)
-        noise_list = np.random.normal(0, x_std_dev * std_dev, size=len(values))
-        noisy_values = list(map(add, noise_list, values))
-
-        return noisy_values
-
-    def _plot_robustness(self, results: dict, features_columns: List[str]):
-        """
-        Plots the model's accuracy under feature perturbations.
-        Args:
-            results (dict): A dictionary containing the results of the evaluation.
-                It has the following keys:
-                    - 'Dataset Type': the type of dataset evaluated, e.g. 'Training' or 'Test'.
-                    - 'Perturbation Size': the size of the perturbation applied to the features.
-                    - 'Records': the number of records evaluated.
-                    - Any other metric used for evaluation as keys, e.g. 'accuracy', 'precision', 'recall'.
-                The values of each key are lists containing the results for each evaluation.
-            features_columns (list[str]): A list containing the names of the features perturbed.
-        Returns:
-            tuple[matplotlib.figure.Figure, pd.DataFrame]: A tuple containing the matplotlib Figure object
-            and a DataFrame containing the results used to generate the plot.
-        """
-        df = pd.DataFrame(results)
-
-        # Create a bar plot using seaborn library
-        fig, ax = plt.subplots()
-        sns.lineplot(
-            data=df,
-            x="Perturbation Size",
-            y="accuracy",
-            hue="Dataset Type",
-            style="Dataset Type",
-            linewidth=3,
-            markers=True,
-            markersize=10,
-            dashes=False,
-            palette=["red", "blue"],
-            ax=ax,
-        )
-        ax.tick_params(axis="x")
-        ax.set_ylabel("Accuracy", weight="bold", fontsize=18)
-        ax.legend(fontsize=18)
-        ax.set_xlabel(
-            "Perturbation Size (X * Standard Deviation)", weight="bold", fontsize=18
-        )
-        ax.set_title(
-            f"Perturbed Features: {', '.join(features_columns)}",
-            weight="bold",
-            fontsize=20,
-            wrap=True,
-        )
-
-        # Do this if you want to prevent the figure from being displayed
-        plt.close("all")
-
-        # fig, ax = plt.subplots()
-        return fig, df
 
     def test(self):
         """Unit Test for Robustness Diagnosis Threshold Test"""
@@ -314,16 +412,8 @@ class RobustnessDiagnosis(ThresholdTest):
         # Verify test results and their type
         assert isinstance(self.result.test_results.results, list)
 
-        # Check for presence and validity of 'values' dict and 'passed' flag in each result
+        # Check for presence and validity of 'values' and 'passed' flag in each result
         for test_result in self.result.test_results.results:
             assert "values" in test_result.__dict__
             assert "passed" in test_result.__dict__
-            assert isinstance(test_result.values, dict)
-            assert "records" in test_result.values
-
-            # For unperturbed training dataset, accuracy should be present
-            if (
-                test_result.column == self.params["features_columns"]
-                and 0.0 in test_result.values["records"][0]["Perturbation Size"]
-            ):
-                assert "accuracy" in test_result.values["records"][0]
+            assert isinstance(test_result.values, list)

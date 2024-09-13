@@ -82,14 +82,18 @@
     </div>
     <a class="headerlink" href="#IQROutliersBarPlot"></a>
     
-            <div class="docstring"><p>Visualizes outlier distribution across percentiles in numerical data using Interquartile Range (IQR) method.</p>
+            <div class="docstring"><p>Visualizes outlier distribution across percentiles in numerical data using the Interquartile Range (IQR) method.</p>
 
-<p><strong>Purpose</strong>: The InterQuartile Range Outliers Bar Plot (IQROutliersBarPlot) metric aims to visually analyze and
-evaluate the extent of outliers in numeric variables based on percentiles. Its primary purpose is to clarify the
-dataset's distribution, flag possible abnormalities in it and gauge potential risks associated with processing
-potentially skewed data, which can affect the machine learning model's predictive prowess.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The examination invokes a series of steps:</p>
+<p>The InterQuartile Range Outliers Bar Plot (IQROutliersBarPlot) metric aims to visually analyze and evaluate the
+extent of outliers in numeric variables based on percentiles. Its primary purpose is to clarify the dataset's
+distribution, flag possible abnormalities in it, and gauge potential risks associated with processing potentially
+skewed data, which can affect the machine learning model's predictive prowess.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The examination invokes a series of steps:</p>
 
 <ol>
 <li>For every numeric feature in the dataset, the 25th percentile (Q1) and 75th percentile (Q3) are calculated
@@ -103,8 +107,7 @@ outlier.</li>
 across different percentiles.</li>
 </ol>
 
-<p><strong>Signs of High Risk</strong>: High risk or a potential lapse in the model's performance could be unveiled by the
-following signs:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A prevalence of outliers in the data, potentially skewing its distribution.</li>
@@ -114,7 +117,7 @@ influencing the model's performance.</li>
 contribute positively to the model's forecasting ability.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Effectively identifies outliers in the data through visual means, facilitating easier comprehension and offering
@@ -124,7 +127,7 @@ insights into the outliers' possible impact on the model.</li>
 <li>Can handle large datasets as its operation does not hinge on computationally heavy operations.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Its application is limited to numerical variables and does not extend to categorical ones.</li>

@@ -7,10 +7,13 @@ Model class wrapper module
 """
 import importlib
 import inspect
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
+from enum import Enum
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
+
+from .input import VMInput
 
 SUPPORTED_LIBRARIES = {
     "catboost": "CatBoostModel",
@@ -34,6 +37,14 @@ R_MODEL_TYPES = [
 R_MODEL_METHODS = [
     "glm.fit",
 ]
+
+
+class ModelTask(Enum):
+    """Model task enums"""
+
+    # TODO: add more tasks
+    CLASSIFICATION = "classification"
+    REGRESSION = "regression"
 
 
 class ModelPipeline:
@@ -63,6 +74,7 @@ class ModelAttributes:
     framework: str = None
     framework_version: str = None
     language: str = None
+    task: ModelTask = None
 
     @classmethod
     def from_dict(cls, data):
@@ -74,10 +86,11 @@ class ModelAttributes:
             framework=data.get("framework"),
             framework_version=data.get("framework_version"),
             language=data.get("language"),
+            task=ModelTask(data.get("task")) if data.get("task") else None,
         )
 
 
-class VMModel(ABC):
+class VMModel(VMInput):
     """
     An base class that wraps a trained model instance and its associated data.
 
@@ -106,7 +119,7 @@ class VMModel(ABC):
 
         self.name = name or self.__class__.__name__
 
-        self.attributes = attributes
+        self.attributes = attributes or ModelAttributes()
 
         # set any additional attributes passed in (likely for subclasses)
         for key, value in kwargs.items():

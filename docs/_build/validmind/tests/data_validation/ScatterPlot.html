@@ -32,13 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#ScatterPlot">ScatterPlot</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#ScatterPlot.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#ScatterPlot">ScatterPlot</a>
             </li>
     </ul>
 
@@ -63,104 +57,68 @@
                 
             </section>
                 <section id="ScatterPlot">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">ScatterPlot</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+                    <div class="attr function">
+                    <div class="decorator">@tags(&#39;tabular_data&#39;, &#39;visualization&#39;)</div>
+        <div class="decorator">@tasks(&#39;classification&#39;, &#39;regression&#39;)</div>
+
+        <span class="def">def</span>
+        <span class="name">ScatterPlot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#ScatterPlot"></a>
     
-            <div class="docstring"><p>Creates a scatter plot matrix to visually analyze feature relationships, patterns, and outliers in a dataset.</p>
+            <div class="docstring"><p>Assesses visual relationships, patterns, and outliers among features in a dataset through scatter plot matrices.</p>
 
-<p><strong>Purpose</strong>: The ScatterPlot metric is designed to offer a visual analysis of a given dataset by constructing a
-scatter plot matrix encapsulating all the dataset's features (or columns). Its primary function lies in unearthing
-relationships, patterns, or outliers across different features, thus providing both quantitative and qualitative
-insights into the multidimensional relationships within the dataset. This visual assessment aids in understanding
-the efficacy of the chosen features for model training and their overall suitability.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: Using the seaborn library, the ScatterPlot class creates the scatter plot matrix. The process
-includes retrieving all columns from the dataset, verifying their existence, and subsequently generating a pairplot
-for these columns. A kernel density estimate (kde) is utilized to present a smoother, univariate distribution along
-the grid's diagonal. The final plot is housed in an array of Figure objects, each wrapping a matplotlib figure
-instance for storage and future usage.</p>
+<p>The ScatterPlot test aims to visually analyze a given dataset by constructing a scatter plot matrix of its
+numerical features. The primary goal is to uncover relationships, patterns, and outliers across different features
+to provide both quantitative and qualitative insights into multidimensional relationships within the dataset. This
+visual assessment aids in understanding the efficacy of the chosen features for model training and their
+suitability.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>Using the Seaborn library, the ScatterPlot function creates the scatter plot matrix. The process involves
+retrieving all numerical columns from the dataset and generating a scatter matrix for these columns. The resulting
+scatter plot provides visual representations of feature relationships. The function also adjusts axis labels for
+readability and returns the final plot as a Matplotlib Figure object for further analysis and visualization.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>The emergence of non-linear or random patterns across different feature pairs. This may suggest intricate
-relationships unfit for linear presumptions.</li>
-<li>A lack of clear patterns or clusters which might point to weak or non-existent correlations among features, thus
-creating a problem for certain model types.</li>
-<li>The occurrence of outliers as visual outliers in your data can adversely influence the model's performance.</li>
+<li>The emergence of non-linear or random patterns across different feature pairs, suggesting complex relationships
+unsuitable for linear assumptions.</li>
+<li>Lack of clear patterns or clusters, indicating weak or non-existent correlations among features, which could
+challenge certain model types.</li>
+<li>Presence of outliers, as visual outliers can adversely influence the model's performance.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>It offers insight into the multidimensional relationships among multiple features.</li>
-<li>It assists in identifying trends, correlations, and outliers which could potentially affect the model's
-performance.</li>
-<li>As a diagnostic tool, it can validate whether certain assumptions made during the model-creation process, such as
-linearity, hold true.</li>
-<li>The tool's versatility extends to its application for both regression and classification tasks.</li>
+<li>Provides insight into the multidimensional relationships among multiple features.</li>
+<li>Assists in identifying trends, correlations, and outliers that could affect model performance.</li>
+<li>Validates assumptions made during model creation, such as linearity.</li>
+<li>Versatile for application in both regression and classification tasks.</li>
+<li>Using Seaborn facilitates an intuitive and detailed visual exploration of data.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Scatter plot matrices may become cluttered and hard to decipher as the number of features escalates, resulting in
-complexity and confusion.</li>
-<li>While extremely proficient in revealing pairwise relationships, these matrices may fail to illuminate complex
-interactions that involve three or more features.</li>
-<li>These matrices are primarily visual tools, so the precision of quantitative analysis may be compromised.</li>
-<li>If not clearly visible, outliers can be missed, which could negatively affect model performance.</li>
-<li>It assumes that the dataset can fit into the computer's memory, which might not always be valid particularly for
-extremely large datasets.</li>
+<li>Scatter plot matrices may become cluttered and hard to decipher as the number of features increases.</li>
+<li>Primarily reveals pairwise relationships and may fail to illuminate complex interactions involving three or more
+features.</li>
+<li>Being a visual tool, precision in quantitative analysis might be compromised.</li>
+<li>Outliers not clearly visible in plots can be missed, affecting model performance.</li>
+<li>Assumes that the dataset can fit into the computer's memory, which might not be valid for extremely large
+datasets.</li>
 </ul>
 </div>
 
 
-                            <div id="ScatterPlot.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#ScatterPlot.run"></a>
-    
-            <div class="docstring"><p>Run the calculation and cache its results</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="ScatterPlot.__init__" class="function">Metric</dd>
-                <dd id="ScatterPlot.summary" class="function">summary</dd>
-                <dd id="ScatterPlot.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="ScatterPlot.description" class="function">description</dd>
-                <dd id="ScatterPlot.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="ScatterPlot.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="ScatterPlot.dataset" class="variable">dataset</dd>
-                <dd id="ScatterPlot.model" class="variable">model</dd>
-                <dd id="ScatterPlot.models" class="variable">models</dd>
-                <dd id="ScatterPlot.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>

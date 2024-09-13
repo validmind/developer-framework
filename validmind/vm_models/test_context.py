@@ -78,13 +78,12 @@ class TestInput:
         ... (any): Any other arbitrary inputs that can be used by tests
     """
 
-    # TODO: we need to look into adding metadata for test inputs and logging that
-
     def __init__(self, inputs):
         """Initialize with either a dictionary of inputs"""
         for key, value in inputs.items():
             # 1) retrieve input object from input registry if an input_id string is provided
             # 2) check the input_id type if a list of inputs (mix of strings and objects) is provided
+            # 3) if its a dict, it should contain the `input_id` key as well as other options
             if isinstance(value, str):
                 value = input_registry.get(key=value)
             elif isinstance(value, list) or isinstance(value, tuple):
@@ -92,6 +91,14 @@ class TestInput:
                     input_registry.get(key=v) if isinstance(v, str) else v
                     for v in value
                 ]
+            elif isinstance(value, dict):
+                assert "input_id" in value, (
+                    "Input dictionary must contain an 'input_id' key "
+                    "to retrieve the input object from the input registry."
+                )
+                value = input_registry.get(key=value.get("input_id")).with_options(
+                    **{k: v for k, v in value.items() if k != "input_id"}
+                )
 
             setattr(self, key, value)
 

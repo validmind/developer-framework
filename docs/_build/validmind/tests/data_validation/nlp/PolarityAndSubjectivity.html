@@ -68,24 +68,49 @@
     </div>
     <a class="headerlink" href="#PolarityAndSubjectivity"></a>
     
-            <div class="docstring"><p>Analyzes the polarity and subjectivity of text data within a dataset.</p>
+            <div class="docstring"><p>Analyzes the polarity and subjectivity of text data within a given dataset to visualize the sentiment distribution.</p>
 
-<p>This method processes a dataset containing textual data to compute the polarity and
-subjectivity scores using TextBlob, and returns a Plotly scatter plot visualizing
-these scores.</p>
+<h3 id="purpose">Purpose</h3>
 
-<h6 id="arguments">Arguments:</h6>
+<p>The Polarity and Subjectivity test is designed to evaluate the sentiment expressed in textual data. By analyzing
+these aspects, it helps to identify the emotional tone and subjectivity of the dataset, which could be crucial in
+understanding customer feedback, social media sentiments, or other text-related data.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test uses TextBlob to compute the polarity and subjectivity scores of textual data in a given dataset. The
+mechanism includes:</p>
 
 <ul>
-<li><strong>dataset (Dataset):</strong>  A dataset object which must have a <code>df</code> attribute (a pandas DataFrame)
-and a <code>text_column</code> attribute indicating the name of the column containing text.</li>
+<li>Iterating through each text entry in the specified column of the dataset.</li>
+<li>Applying the TextBlob library to compute the polarity (ranging from -1 for negative sentiment to +1 for positive
+sentiment) and subjectivity (ranging from 0 for objective to 1 for subjective) for each entry.</li>
+<li>Creating a scatter plot using Plotly to visualize the relationship between polarity and subjectivity.</li>
 </ul>
 
-<h6 id="returns">Returns:</h6>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
-<blockquote>
-  <p>plotly.graph_objs._figure.Figure: A Plotly scatter plot of polarity vs subjectivity.</p>
-</blockquote>
+<ul>
+<li>High concentration of negative polarity values indicating prevalent negative sentiments.</li>
+<li>High subjectivity scores suggesting the text data is largely opinion-based rather than factual.</li>
+<li>Disproportionate clusters of extreme scores (e.g., many points near -1 or +1 polarity).</li>
+</ul>
+
+<h3 id="strengths">Strengths</h3>
+
+<ul>
+<li>Quantifies sentiment and subjectivity which can provide actionable insights.</li>
+<li>Visualizes sentiment distribution, aiding in easy interpretation.</li>
+<li>Utilizes well-established TextBlob library for sentiment analysis.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li>Polarity and subjectivity calculations may oversimplify nuanced text sentiments.</li>
+<li>Reliance on TextBlob which may not be accurate for all domains or contexts.</li>
+<li>Visualization could become cluttered with very large datasets, making interpretation difficult.</li>
+</ul>
 </div>
 
 

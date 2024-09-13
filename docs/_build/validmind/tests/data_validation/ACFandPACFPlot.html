@@ -75,19 +75,21 @@
             <div class="docstring"><p>Analyzes time series data using Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) plots to
 reveal trends and correlations.</p>
 
-<p><strong>Purpose</strong>: The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed
-to analyze time series data in machine learning models. It illuminates the correlation of the data over time by
-plotting the correlation of the series with its own lags (ACF), and the correlations after removing effects already
-accounted for by earlier lags (PACF). This information can identify trends, such as seasonality, degrees of
-autocorrelation, and inform the selection of order parameters for AutoRegressive Integrated Moving Average (ARIMA)
-models.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The <code><a href="#ACFandPACFPlot">ACFandPACFPlot</a></code> test accepts a dataset with a time-based index. It first confirms the
-index is of a datetime type, then handles any NaN values. The test subsequently generates ACF and PACF plots for
-each column in the dataset, producing a subplot for each. If the dataset doesn't include key columns, an error is
-returned.</p>
+<p>The ACF (Autocorrelation Function) and PACF (Partial Autocorrelation Function) plot test is employed to analyze
+time series data in machine learning models. It illuminates the correlation of the data over time by plotting the
+correlation of the series with its own lags (ACF), and the correlations after removing effects already accounted
+for by earlier lags (PACF). This information can identify trends, such as seasonality, degrees of autocorrelation,
+and inform the selection of order parameters for AutoRegressive Integrated Moving Average (ARIMA) models.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The <code><a href="#ACFandPACFPlot">ACFandPACFPlot</a></code> test accepts a dataset with a time-based index. It first confirms the index is of a datetime
+type, then handles any NaN values. The test subsequently generates ACF and PACF plots for each column in the
+dataset, producing a subplot for each. If the dataset doesn't include key columns, an error is returned.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Sudden drops in the correlation at a specific lag might signal a model at high risk.</li>
@@ -95,7 +97,7 @@ returned.</p>
 suggest that a model estimated on this data won't generalize well to future, unknown data.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>ACF and PACF plots offer clear graphical representations of the correlations in time series data.</li>
@@ -105,7 +107,7 @@ correlation patterns.</li>
 parameters.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>ACF and PACF plots are exclusively for time series data and hence, can't be applied to all ML models.</li>

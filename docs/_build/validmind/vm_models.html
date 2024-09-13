@@ -32,10 +32,22 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="class" href="#VMInput">VMInput</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#VMInput.with_options">with_options</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
                     <a class="class" href="#VMDataset">VMDataset</a>
                             <ul class="memberlist">
                         <li>
                                 <a class="function" href="#VMDataset.__init__">VMDataset</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#VMDataset.with_options">with_options</a>
                         </li>
                         <li>
                                 <a class="function" href="#VMDataset.assign_predictions">assign_predictions</a>
@@ -48,6 +60,9 @@
                         </li>
                         <li>
                                 <a class="function" href="#VMDataset.add_extra_column">add_extra_column</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#VMDataset.df">df</a>
                         </li>
                         <li>
                                 <a class="variable" href="#VMDataset.x">x</a>
@@ -337,11 +352,58 @@
                 
                 
             </section>
+                <section id="VMInput">
+                    <div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">VMInput</span><wbr>(<span class="base">abc.ABC</span>):
+
+        
+    </div>
+    <a class="headerlink" href="#VMInput"></a>
+    
+            <div class="docstring"><p>Base class for ValidMind Input types</p>
+</div>
+
+
+                            <div id="VMInput.with_options" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">with_options</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n"><a href="#VMInput">VMInput</a></span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMInput.with_options"></a>
+    
+            <div class="docstring"><p>Allows for setting options on the input object that are passed by the user
+when using the input to run a test or set of tests</p>
+
+<p>To allow options, just override this method in the subclass (see VMDataset)
+and ensure that it returns a new instance of the input with the specified options
+set.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>**kwargs:</strong>  Arbitrary keyword arguments that will be passed to the input object</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>VMInput: A new instance of the input with the specified options set</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                </section>
                 <section id="VMDataset">
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">VMDataset</span>:
+    <span class="name">VMDataset</span><wbr>(<span class="base"><a href="#VMInput">validmind.vm_models.VMInput</a></span>):
 
         
     </div>
@@ -378,7 +440,7 @@ need to work with numpy arrays and pandas dataframes in this class.</p>
                             <div id="VMDataset.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">VMDataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">raw_dataset</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">date_time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">feature_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extra_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">VMDataset</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">raw_dataset</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span>,</span><span class="param">	<span class="n">input_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n"><a href="#VMModel">VMModel</a></span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">index_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">date_time_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>,</span><span class="param">	<span class="n">columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">feature_columns</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">text_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">extra_columns</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">target_class_labels</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>
@@ -400,8 +462,56 @@ need to work with numpy arrays and pandas dataframes in this class.</p>
 <li><strong>feature_columns (str, optional):</strong>  The feature column names of the dataset. Defaults to None.</li>
 <li><strong>text_column (str, optional):</strong>  The text column name of the dataset for nlp tasks. Defaults to None.</li>
 <li><strong>target_class_labels (Dict, optional):</strong>  The class labels for the target columns. Defaults to None.</li>
-<li><strong>options (Dict, optional):</strong>  Additional options for the dataset. Defaults to None.</li>
 </ul>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.with_options" class="classattr">
+                                <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">with_options</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n"><a href="#VMDataset">VMDataset</a></span>:</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.with_options"></a>
+    
+            <div class="docstring"><p>Support options provided when passing an input to run_test or run_test_suite</p>
+
+<p>Example:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># to only use a certain subset of columns in the dataset:</span>
+<span class="n">run_test</span><span class="p">(</span>
+    <span class="s2">&quot;validmind.SomeTestID&quot;</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;input_id&quot;</span><span class="p">:</span> <span class="s2">&quot;my_dataset_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;col1&quot;</span><span class="p">,</span> <span class="s2">&quot;col2&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># behind the scenes, this retrieves the dataset object (VMDataset) from the registry</span>
+<span class="c1"># and then calls the `with_options()` method and passes `{&quot;columns&quot;: ...}`</span>
+</code></pre>
+</div>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>**kwargs:</strong>  Options:
+<ul>
+<li>columns: Filter columns in the dataset</li>
+</ul></li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>VMDataset: A new instance of the dataset with only the specified columns</p>
+</blockquote>
 </div>
 
 
@@ -481,6 +591,25 @@ need to work with numpy arrays and pandas dataframes in this class.</p>
 <li><strong>column_name (str):</strong>  The name of the extra column.</li>
 <li><strong>column_values (np.ndarray, optional):</strong>  The values of the extra column.</li>
 </ul>
+</div>
+
+
+                            </div>
+                            <div id="VMDataset.df" class="classattr">
+                                <div class="attr variable">
+            <span class="name">df</span><span class="annotation">: pandas.core.frame.DataFrame</span>
+
+        
+    </div>
+    <a class="headerlink" href="#VMDataset.df"></a>
+    
+            <div class="docstring"><p>Returns the dataset as a pandas DataFrame.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>pd.DataFrame: The dataset as a pandas DataFrame.</p>
+</blockquote>
 </div>
 
 
@@ -660,7 +789,7 @@ multi-dimensional array.</p>
                     <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">VMModel</span><wbr>(<span class="base">abc.ABC</span>):
+    <span class="name">VMModel</span><wbr>(<span class="base"><a href="#VMInput">validmind.vm_models.VMInput</a></span>):
 
         
     </div>
@@ -724,6 +853,15 @@ multi-dimensional array.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#VMInput">VMInput</a></dt>
+                                <dd id="VMModel.with_options" class="function"><a href="#VMInput.with_options">with_options</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="Figure">
@@ -819,7 +957,7 @@ on Google Colab when they are combined with ipywidgets.</p>
                             <div id="ModelAttributes.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+        <span class="name">ModelAttributes</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">framework_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">language</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">task</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">ModelTask</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
 
         
     </div>

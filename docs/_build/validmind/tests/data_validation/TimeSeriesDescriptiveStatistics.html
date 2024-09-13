@@ -68,38 +68,41 @@
     </div>
     <a class="headerlink" href="#TimeSeriesDescriptiveStatistics"></a>
     
-            <div class="docstring"><p>Generates a detailed table of descriptive statistics for the provided time series dataset.</p>
+            <div class="docstring"><p>Evaluates the descriptive statistics of a time series dataset to identify trends, patterns, and data quality issues.</p>
 
-<p><strong>Purpose</strong>: The purpose of the TimeSeriesDescriptiveStatistics function is to analyze an individual time series
-by providing a summary of key descriptive statistics. This helps in understanding trends, patterns, and data quality issues
-within the time series.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The function extracts the time series data and provides a summary of key descriptive statistics.
-The dataset is expected to have a datetime index. The function checks this and raises an error if the index is
-not in datetime format. For each variable (column) in the dataset, appropriate statistics including start date,
-end date, min, mean, max, skewness, kurtosis, and count are calculated.</p>
+<p>The purpose of the TimeSeriesDescriptiveStatistics function is to analyze an individual time series by providing a
+summary of key descriptive statistics. This analysis helps in understanding trends, patterns, and data quality
+issues within the time series dataset.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The function extracts the time series data and provides a summary of key descriptive statistics. The dataset is
+expected to have a datetime index, and the function will check this and raise an error if the index is not in a
+datetime format. For each variable (column) in the dataset, appropriate statistics, including start date, end date,
+min, mean, max, skewness, kurtosis, and count, are calculated.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>If the index of the dataset is not in datetime format, it could lead to errors in time-series analysis.</li>
 <li>Inconsistent or missing data within the dataset might affect the analysis of trends and patterns.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>This function provides a comprehensive summary of key descriptive statistics for each variable, helping to identify data quality
-issues and understand the distribution of the data.</li>
+<li>Provides a comprehensive summary of key descriptive statistics for each variable.</li>
+<li>Helps identify data quality issues and understand the distribution of the data.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>This function assumes that the dataset is provided as a DataFrameDataset object with a .df attribute to access
-the pandas DataFrame.</li>
-<li>It only analyzes datasets with a datetime index and will raise an error for other types of indices.</li>
-<li>The function does not handle large datasets efficiently, and performance may degrade with very large datasets.</li>
+<li>Assumes the dataset is provided as a DataFrameDataset object with a .df attribute to access the pandas DataFrame.</li>
+<li>Only analyzes datasets with a datetime index and will raise an error for other types of indices.</li>
+<li>Does not handle large datasets efficiently, and performance may degrade with very large datasets.</li>
 </ul>
 </div>
 

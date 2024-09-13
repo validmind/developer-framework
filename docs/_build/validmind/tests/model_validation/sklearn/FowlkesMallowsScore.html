@@ -79,29 +79,29 @@
             <div class="docstring"><p>Evaluates the similarity between predicted and actual cluster assignments in a model using the Fowlkes-Mallows
 score.</p>
 
-<p><strong>Purpose:</strong></p>
+<h3 id="purpose">Purpose</h3>
 
 <p>The FowlkesMallowsScore is a performance metric used to validate clustering algorithms within machine learning
 models. The score intends to evaluate the matching grade between two clusters. It measures the similarity between
 the predicted and actual cluster assignments, thus gauging the accuracy of the model's clustering capability.</p>
 
-<p><strong>Test Mechanism:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
 <p>The FowlkesMallowsScore method applies the <code>fowlkes_mallows_score</code> function from the <code>sklearn</code> library to evaluate
 the model's accuracy in clustering different types of data. The test fetches the datasets from the model's training
 and testing datasets as inputs then compares the resulting clusters against the previously known clusters to obtain
 a score. A high score indicates a better clustering performance by the model.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A low Fowlkes-Mallows score (near zero): This indicates that the model's clustering capability is poor and the
 algorithm isn't properly grouping data.</li>
-<li>Inconsistently low scores across different datasets: this may indicate that the model's clustering performance is
+<li>Inconsistently low scores across different datasets: This may indicate that the model's clustering performance is
 not robust and the model may fail when applied to unseen data.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The Fowlkes-Mallows score is a simple and effective method for evaluating the performance of clustering
@@ -111,7 +111,7 @@ comprehensive measure of model performance.</li>
 <li>The Fowlkes-Mallows score is non-biased meaning it treats False Positives and False Negatives equally.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>As a pairwise-based method, this score can be computationally intensive for large datasets and can become
@@ -153,7 +153,7 @@ misleading results if the predicted labels suggest a different number of cluster
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="ClusterPerformance.html#ClusterPerformance">validmind.tests.model_validation.sklearn.ClusterPerformance.ClusterPerformance</a></dt>
-                                <dd id="FowlkesMallowsScore.cluser_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluser_performance_metrics">cluser_performance_metrics</a></dd>
+                                <dd id="FowlkesMallowsScore.cluster_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluster_performance_metrics">cluster_performance_metrics</a></dd>
                 <dd id="FowlkesMallowsScore.summary" class="function"><a href="ClusterPerformance.html#ClusterPerformance.summary">summary</a></dd>
                 <dd id="FowlkesMallowsScore.run" class="function"><a href="ClusterPerformance.html#ClusterPerformance.run">run</a></dd>
 

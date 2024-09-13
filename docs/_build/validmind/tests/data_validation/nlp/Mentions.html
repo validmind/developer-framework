@@ -80,29 +80,32 @@
     
             <div class="docstring"><p>Calculates and visualizes frequencies of '@' prefixed mentions in a text-based dataset for NLP model analysis.</p>
 
-<p><strong>Purpose</strong>: This test, termed "Mentions", is designed to gauge the quality of data in a Natural Language
-Processing (NLP) or text-focused Machine Learning model. The primary objective is to identify and calculate the
-frequency of 'mentions' within a chosen text column of a dataset. A 'mention' in this context refers to individual
-text elements that are prefixed by '@'. The output of this test reveals the most frequently mentioned entities or
-usernames, which can be integral for applications such as social media analyses, customer sentiment analyses, and
-so on.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test first verifies the existence of a text column in the provided dataset. It then employs
-a regular expression pattern to extract mentions from the text. Subsequently, the frequency of each unique mention
-is calculated. The test selects the most frequent mentions based on default or user-defined parameters, the default
+<p>The "Mentions" test is designed to gauge the quality of data in a Natural Language Processing (NLP) or text-focused
+Machine Learning model. The primary objective is to identify and calculate the frequency of 'mentions' within a
+chosen text column of a dataset. A 'mention' in this context refers to individual text elements that are prefixed
+by '@'. The output of this test reveals the most frequently mentioned entities or usernames, which can be integral
+for applications such as social media analyses or customer sentiment analyses.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test first verifies the existence of a text column in the provided dataset. It then employs a regular
+expression pattern to extract mentions from the text. Subsequently, the frequency of each unique mention is
+calculated. The test selects the most frequent mentions based on default or user-defined parameters, the default
 being the top 25, for representation. This process of thresholding forms the core of the test. A treemap plot
 visualizes the test results, where the size of each rectangle corresponds to the frequency of a particular mention.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>The lack of a valid text column in the dataset, which would result in the failure of the test execution.</li>
 <li>The absence of any mentions within the text data, indicating that there might not be any text associated with
-'@'. This situation could point towards sparse or poor-quality data, thereby hampering the model's generalization
-or learning capabilities.</li>
+'@'. This situation could point toward sparse or poor-quality data, thereby hampering the model's generalization or
+learning capabilities.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The test is specifically optimized for text-based datasets which gives it distinct power in the context of NLP.</li>
@@ -110,7 +113,7 @@ or learning capabilities.</li>
 <li>It can provide crucial insights about the most frequently mentioned entities or usernames.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The test only recognizes mentions that are prefixed by '@', hence useful textual aspects not preceded by '@'

@@ -5,11 +5,17 @@
 import os
 
 from validmind.ai.utils import get_client_and_model
+from validmind.client_config import client_config
 
 EMBEDDINGS_MODEL = "text-embedding-3-small"
 
 
 def get_ragas_config():
+    if not client_config.can_generate_llm_test_descriptions():
+        raise ValueError(
+            "LLM based descriptions are not enabled in the current configuration."
+        )
+
     # import here since its an optional dependency
     try:
         from langchain_openai import ChatOpenAI, OpenAIEmbeddings

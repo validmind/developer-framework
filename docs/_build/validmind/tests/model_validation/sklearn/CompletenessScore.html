@@ -78,23 +78,26 @@
     
             <div class="docstring"><p>Evaluates a clustering model's capacity to categorize instances from a single class into the same cluster.</p>
 
-<p><strong>Purpose:</strong> The Completeness Score metric is used to assess the performance of clustering models. It measures the
-extent to which all the data points that are members of a given class are elements of the same cluster. The aim is
-to determine the capability of the model to categorize all instances from a single class into the same cluster.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism:</strong> This test takes three inputs, a model and its associated training and testing datasets. It
-invokes the <code>completeness_score</code> function from the sklearn library on the labels predicted by the model. High
-scores indicate that data points from the same class generally appear in the same cluster, while low scores suggest
-the opposite.</p>
+<p>The Completeness Score metric is used to assess the performance of clustering models. It measures the extent to
+which all the data points that are members of a given class are elements of the same cluster. The aim is to
+determine the capability of the model to categorize all instances from a single class into the same cluster.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test takes three inputs, a model and its associated training and testing datasets. It invokes the
+<code>completeness_score</code> function from the sklearn library on the labels predicted by the model. High scores indicate
+that data points from the same class generally appear in the same cluster, while low scores suggest the opposite.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Low completeness score: This suggests that the model struggles to group instances from the same class into one
 cluster, indicating poor clustering performance.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The Completeness Score provides an effective method for assessing the performance of a clustering model,
@@ -103,7 +106,7 @@ specifically its ability to group class instances together.</li>
 reliable test results.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>This metric only evaluates a specific aspect of clustering, meaning it may not provide a holistic or complete
@@ -145,7 +148,7 @@ models.</li>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="ClusterPerformance.html#ClusterPerformance">validmind.tests.model_validation.sklearn.ClusterPerformance.ClusterPerformance</a></dt>
-                                <dd id="CompletenessScore.cluser_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluser_performance_metrics">cluser_performance_metrics</a></dd>
+                                <dd id="CompletenessScore.cluster_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluster_performance_metrics">cluster_performance_metrics</a></dd>
                 <dd id="CompletenessScore.summary" class="function"><a href="ClusterPerformance.html#ClusterPerformance.summary">summary</a></dd>
                 <dd id="CompletenessScore.run" class="function"><a href="ClusterPerformance.html#ClusterPerformance.run">run</a></dd>
 

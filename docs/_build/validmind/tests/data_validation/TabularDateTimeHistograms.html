@@ -72,20 +72,25 @@
     </div>
     <a class="headerlink" href="#TabularDateTimeHistograms"></a>
     
-            <div class="docstring"><p>Generates histograms to provide graphical insight into the distribution of time intervals in model's datetime data.</p>
+            <div class="docstring"><p>Generates histograms to provide graphical insight into the distribution of time intervals in a model's datetime
+data.</p>
 
-<p><strong>Purpose</strong>: The <code><a href="#TabularDateTimeHistograms">TabularDateTimeHistograms</a></code> metric is designed to provide graphical insight into the distribution
-of time intervals in a machine learning model's datetime data. By plotting histograms of differences between
-consecutive date entries in all datetime variables, it enables an examination of the underlying pattern of time
-series data and identification of anomalies.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: This test operates by first identifying all datetime columns and extracting them from the
-dataset. For each datetime column, it next computes the differences (in days) between consecutive dates, excluding
-zero values, and visualizes these differences in a histogram. The seaborn library's histplot function is used to
-generate histograms, which are labeled appropriately and provide a graphical representation of the frequency of
-different day intervals in the dataset.</p>
+<p>The <code><a href="#TabularDateTimeHistograms">TabularDateTimeHistograms</a></code> metric is designed to provide graphical insight into the distribution of time
+intervals in a machine learning model's datetime data. By plotting histograms of differences between consecutive
+date entries in all datetime variables, it enables an examination of the underlying pattern of time series data and
+identification of anomalies.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test operates by first identifying all datetime columns and extracting them from the dataset. For each
+datetime column, it next computes the differences (in days) between consecutive dates, excluding zero values, and
+visualizes these differences in a histogram. The Plotly library's histogram function is used to generate
+histograms, which are labeled appropriately and provide a graphical representation of the frequency of different
+day intervals in the dataset.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>If no datetime columns are detected in the dataset, this would lead to a ValueError. Hence, the absence of
@@ -94,7 +99,7 @@ datetime columns signifies a high risk.</li>
 the data, such as faulty timestamps or abnormalities.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The metric offers a visual overview of time interval frequencies within the dataset, supporting the recognition
@@ -105,7 +110,7 @@ of data quality.</li>
 work with multiple datetime variables if present.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>A major weakness of this metric is its dependence on the visual examination of data, as it does not provide a

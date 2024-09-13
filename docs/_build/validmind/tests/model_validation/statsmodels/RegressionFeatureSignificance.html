@@ -78,19 +78,21 @@
     
             <div class="docstring"><p>Assesses and visualizes the statistical significance of features in a set of regression models.</p>
 
-<p><strong>Purpose</strong>:
-The Regression Feature Significance metric assesses the significance of each feature in a given set of regression
+<h3 id="purpose">Purpose</h3>
+
+<p>The Regression Feature Significance metric assesses the significance of each feature in a given set of regression
 models. It creates a visualization displaying p-values for every feature of each model, assisting model developers
 in understanding which features are most influential in their models.</p>
 
-<p><strong>Test Mechanism</strong>:
-The test mechanism involves going through each fitted regression model in a given list, extracting the model
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test mechanism involves going through each fitted regression model in a given list, extracting the model
 coefficients and p-values for each feature, and then plotting these values. The x-axis on the plot contains the
 p-values while the y-axis denotes the coefficients of each feature. A vertical red line is drawn at the threshold
 for p-value significance, which is 0.05 by default. Any features with p-values to the left of this line are
 considered statistically significant at the chosen level.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Any feature with a high p-value (greater than the threshold) is considered a potential high risk, as it suggests
@@ -99,7 +101,7 @@ the feature is not statistically significant and may not be reliably contributin
 reliability of the model predictions.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Helps identify the features that significantly contribute to a model's prediction, providing insights into the
@@ -108,7 +110,7 @@ feature importance.</li>
 <li>Facilitates comparison of feature importance across multiple models.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>This metric assumes model features are independent, which may not always be the case. Multicollinearity (high

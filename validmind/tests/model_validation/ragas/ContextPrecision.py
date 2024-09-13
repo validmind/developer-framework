@@ -40,6 +40,7 @@ def ContextPrecision(
     ### Configuring Columns
 
     This metric requires the following columns in your dataset:
+
     - `question` (str): The text query that was input into the model.
     - `contexts` (List[str]): A list of text contexts which are retrieved and which
     will be evaluated to make sure they contain relevant info in the correct order.
@@ -96,7 +97,7 @@ def ContextPrecision(
         "ground_truth": ground_truth_column,
     }
 
-    df = get_renamed_columns(dataset.df, required_columns)
+    df = get_renamed_columns(dataset._df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=[context_precision], **get_ragas_config()
@@ -107,9 +108,9 @@ def ContextPrecision(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                ["question", "contexts", "ground_truth", "context_precision"]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     ["question", "contexts", "ground_truth", "context_precision"]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_precision"].mean(),
@@ -117,7 +118,7 @@ def ContextPrecision(
                     "Max Score": result_df["context_precision"].max(),
                     "Min Score": result_df["context_precision"].min(),
                     "Standard Deviation": result_df["context_precision"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

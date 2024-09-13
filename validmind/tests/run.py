@@ -17,6 +17,7 @@ from validmind.vm_models import (
     MetricResult,
     ResultSummary,
     ResultTable,
+    ResultTableMetadata,
     TestContext,
     TestInput,
     ThresholdTestResults,
@@ -83,32 +84,47 @@ def _combine_summaries(summaries: List[Dict[str, Any]]):
     )
 
 
-def _update_plotly_titles(figures, input_groups, title_template):
-    current_title = figures[0].figure.layout.title.text
+def _get_input_id(v):
+    if isinstance(v, str):
+        return v  # If v is a string, return it as is.
+    elif isinstance(v, list) and all(hasattr(item, "input_id") for item in v):
+        # If v is a list and all items have an input_id attribute, join their input_id values.
+        return ", ".join(item.input_id for item in v)
+    elif hasattr(v, "input_id"):
+        return v.input_id  # If v has an input_id attribute, return it.
+    return str(v)  # Otherwise, return the string representation of v.
 
-    for i, figure in enumerate(figures):
+
+def _update_plotly_titles(figures, input_group, title_template):
+    for figure in figures:
+
+        current_title = figure.figure.layout.title.text
+
+        input_description = " and ".join(
+            f"{key}: {_get_input_id(value)}" for key, value in input_group.items()
+        )
+
         figure.figure.layout.title.text = title_template.format(
             current_title=f"{current_title} " if current_title else "",
-            input_description=" and ".join(
-                f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-                for k, v in input_groups[i].items()
-            ),
+            input_description=input_description,
         )
 
 
-def _update_matplotlib_titles(figures, input_groups, title_template):
-    current_title = (
-        figures[0].figure._suptitle.get_text() if figures[0].figure._suptitle else ""
-    )
+def _update_matplotlib_titles(figures, input_group, title_template):
+    for figure in figures:
 
-    for i, figure in enumerate(figures):
+        current_title = (
+            figure.figure._suptitle.get_text() if figure.figure._suptitle else ""
+        )
+
+        input_description = " and ".join(
+            f"{key}: {_get_input_id(value)}" for key, value in input_group.items()
+        )
+
         figure.figure.suptitle(
             title_template.format(
                 current_title=f"{current_title} " if current_title else "",
-                input_description=" and ".join(
-                    f"{k}: {v if isinstance(v, str) else ', '.join(item.input_id for item in v) if isinstance(v, list) and all(hasattr(item, 'input_id') for item in v) else v.input_id}"
-                    for k, v in input_groups[i].items()
-                ),
+                input_description=input_description,
             )
         )
 
@@ -120,15 +136,36 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
 
     title_template = "{current_title}({input_description})"
 
-    for figures in list(zip(*figure_lists)):
+    for idx, figures in enumerate(figure_lists):
+        input_group = input_groups[idx]
         if is_plotly_figure(figures[0].figure):
-            _update_plotly_titles(figures, input_groups, title_template)
+            _update_plotly_titles(figures, input_group, title_template)
         elif is_matplotlib_figure(figures[0].figure):
-            _update_matplotlib_titles(figures, input_groups, title_template)
+            _update_matplotlib_titles(figures, input_group, title_template)
         else:
             logger.warning("Cannot properly annotate png figures")
 
     return [figure for figures in figure_lists for figure in figures]
+
+
+def _combine_unit_metrics(results: List[MetricResultWrapper]):
+    if not results[0].scalar:
+        return
+
+    for result in results:
+        table = ResultTable(
+            data=[{"value": result.scalar}],
+            metadata=ResultTableMetadata(title="Unit Metrics"),
+        )
+        if not result.metric:
+            result.metric = MetricResult(
+                ref_id="will_be_overwritten",
+                key=result.result_id,
+                value=result.scalar,
+                summary=ResultSummary(results=[table]),
+            )
+        else:
+            result.metric.summary.results.append(table)
 
 
 def metric_comparison(
@@ -155,6 +192,9 @@ def metric_comparison(
             else:
                 raise ValueError(f"Unsupported type for value: {v}")
         input_group_strings.append(new_group)
+
+    # handle unit metrics (scalar values) by adding it to the summary
+    _combine_unit_metrics(results)
 
     merged_summary = _combine_summaries(
         [
@@ -278,6 +318,8 @@ def threshold_test_comparison(
 def run_comparison_test(
     test_id: TestID,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    name: str = None,
+    unit_metrics: List[TestID] = None,
     params: Dict[str, Any] = None,
     show: bool = True,
     output_template: str = None,
@@ -292,6 +334,8 @@ def run_comparison_test(
     results = [
         run_test(
             test_id,
+            name=name,
+            unit_metrics=unit_metrics,
             inputs=inputs,
             show=False,
             params=params,
@@ -371,33 +415,34 @@ def run_test(
             "When providing an `input_grid`, you cannot also provide `inputs` or `kwargs`"
         )
 
+    if unit_metrics:
+        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
+        test_id = f"validmind.composite_metric.{metric_id_name}" or test_id
+
     if input_grid:
         return run_comparison_test(
             test_id,
             input_grid,
+            name=name,
+            unit_metrics=unit_metrics,
             params=params,
             output_template=output_template,
             show=show,
             generate_description=__generate_description,
         )
 
-    if test_id and test_id.startswith("validmind.unit_metrics"):
+    if test_id.startswith("validmind.unit_metrics"):
         # TODO: as we move towards a more unified approach to metrics
         # we will want to make everything functional and remove the
         # separation between unit metrics and "normal" metrics
         return run_metric(test_id, inputs=inputs, params=params, show=show)
 
     if unit_metrics:
-        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        test_id = f"validmind.composite_test.{metric_id_name}"
-
         error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
         )
-
         if error:
             raise LoadTestError(error)
-
     else:
         TestClass = load_test(test_id, reload=True)
 

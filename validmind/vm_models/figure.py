@@ -157,6 +157,11 @@ class Figure:
 
             return f"data:image/png;base64,{b64_data}"
 
+        elif is_png_image(self.figure):
+            b64_data = base64.b64encode(self.figure).decode("utf-8")
+
+            return f"data:image/png;base64,{b64_data}"
+
         raise UnsupportedFigureError(
             f"Unrecognized figure type: {get_full_typename(self.figure)}"
         )

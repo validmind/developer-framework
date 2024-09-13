@@ -48,7 +48,6 @@ def init_dataset(
     index_name: str = None,
     date_time_index: bool = False,
     columns: list = None,
-    options: dict = None,
     text_column: str = None,
     target_column: str = None,
     feature_columns: list = None,
@@ -72,7 +71,6 @@ def init_dataset(
     Args:
         dataset : dataset from various python libraries
         model (VMModel): ValidMind model object
-        options (dict): A dictionary of options for the dataset
         targets (vm.vm.DatasetTargets): A list of target variables
         target_column (str): The name of the target column in the dataset
         feature_columns (list): A list of names of feature columns in the dataset
@@ -135,7 +133,8 @@ def init_dataset(
             model=model,
             index=index,
             index_name=index_name,
-            columns=columns,
+            # if no columns are passed, use the index
+            columns=columns or [i for i in range(dataset.shape[1])],
             target_column=target_column,
             feature_columns=feature_columns,
             text_column=text_column,
@@ -165,7 +164,7 @@ def init_dataset(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="dataset",
             metadata=get_dataset_info(vm_dataset),
         )
@@ -241,6 +240,11 @@ def init_model(
         vm_model = class_obj(
             pipeline=model,
             input_id=input_id,
+            attributes=(
+                ModelAttributes.from_dict(attributes)
+                if attributes
+                else ModelAttributes()
+            ),
         )
         # TODO: Add metadata for pipeline model
         metadata = get_model_info(vm_model)
@@ -249,6 +253,7 @@ def init_model(
             input_id=input_id,
             model=model,  # Trained model instance
             predict_fn=predict_fn,
+            attributes=ModelAttributes.from_dict(attributes) if attributes else None,
             **kwargs,
         )
         metadata = get_model_info(vm_model)
@@ -260,7 +265,7 @@ def init_model(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="model",
             metadata=metadata,
         )

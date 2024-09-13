@@ -81,18 +81,22 @@
             <div class="docstring"><p>Generates bar plots visualizing the default rates of categorical features for a classification machine learning
 model.</p>
 
-<p><strong>Purpose</strong>: This test, implemented as a metric, is designed to provide an intuitive, graphical summary of the
-decision-making patterns exhibited by a categorical classification machine learning model. The model's performance
-is evaluated using bar plots depicting the ratio of target rates—meaning the proportion of positive classes—for
-different categorical inputs. This allows for an easy, at-a-glance understanding of the model's accuracy.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test involves creating a pair of bar plots for each categorical feature in the dataset. The
-first plot depicts the frequency of each category in the dataset, with each category visually distinguished by its
-unique color. The second plot shows the mean target rate of each category (sourced from the "default_column").
-Plotly, a Python library, is used to generate these plots, with distinct plots created for each feature. If no
-specific columns are selected, the test will generate plots for each categorical column in the dataset.</p>
+<p>This test, implemented as a metric, is designed to provide an intuitive, graphical summary of the decision-making
+patterns exhibited by a categorical classification machine learning model. The model's performance is evaluated
+using bar plots depicting the ratio of target rates—meaning the proportion of positive classes—for different
+categorical inputs. This allows for an easy, at-a-glance understanding of the model's accuracy.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test involves creating a pair of bar plots for each categorical feature in the dataset. The first plot depicts
+the frequency of each category in the dataset, with each category visually distinguished by its unique color. The
+second plot shows the mean target rate of each category (sourced from the "default_column"). Plotly, a Python
+library, is used to generate these plots, with distinct plots created for each feature. If no specific columns are
+selected, the test will generate plots for each categorical column in the dataset.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Inconsistent or non-binary values in the "default_column" could complicate or render impossible the calculation
@@ -101,7 +105,7 @@ of average target rates.</li>
 instances of that category.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>This test offers a visually interpretable breakdown of the model's decisions, providing an easy way to spot
@@ -109,7 +113,7 @@ irregularities, inconsistencies, or patterns.</li>
 <li>Its flexibility allows for the inspection of one or multiple columns, as needed.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The test is less useful when dealing with numeric or continuous data, as it's designed specifically for

@@ -68,40 +68,51 @@
     </div>
     <a class="headerlink" href="#TimeSeriesR2SquareBySegments"></a>
     
-            <div class="docstring"><p>Plot R-Squared values for each model over specified time segments and generate a bar chart
-with the results.</p>
+            <div class="docstring"><p>Evaluates the R-Squared values of regression models over specified time segments in time series data to assess
+segment-wise model performance.</p>
 
-<p><strong>Purpose</strong>: The purpose of this function is to plot the R-Squared values for different models applied to various segments of the time series data.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Parameters</strong>:</p>
+<p>The TimeSeriesR2SquareBySegments test aims to evaluate the R-Squared values for several regression models across
+different segments of time series data. This helps in determining how well the models explain the variability in
+the data within each specific time segment.</p>
+
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test functions by:</p>
 
 <ul>
-<li>datasets: List of datasets to evaluate.</li>
-<li>models: List of models to evaluate.</li>
-<li>segments: Dictionary with 'start_date' and 'end_date' keys containing lists of start and end dates for each segments. If None, the time series will be segmented into two halves.</li>
+<li>Iterating through each dataset-model pair provided.</li>
+<li>Segmenting the time series data either as specified by the user or by splitting the data into two halves if no
+segments are provided.</li>
+<li>Calculating the R-Squared values for each segment.</li>
+<li>Generating a bar chart to visually represent the R-Squared values across different models and segments.</li>
 </ul>
 
-<p><strong>Test Mechanism</strong>: The function iterates through each dataset-model pair, calculates the R-Squared values for specified time segments, and generates a bar chart with these results.</p>
-
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>If the R-Squared values are significantly low for certain segments, it could indicate that the model is not explaining much of the variability in the dataset for those segments.</li>
+<li>Significantly low R-Squared values for certain time segments, indicating poor model performance in those periods.</li>
+<li>Large variability in R-Squared values across different segments for the same model, suggesting inconsistent
+performance.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Provides a visual representation of model performance across different time segments.</li>
-<li>Allows for identification of segments where models perform poorly.</li>
+<li>Provides a visual representation of how well models perform over different time periods.</li>
+<li>Helps identify time segments where models may need improvement or retraining.</li>
+<li>Facilitates comparison between multiple models in a straightforward manner.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Assumes that the dataset is provided as a DataFrameDataset object with <code>y</code>, <code>y_pred</code>, and <code>feature_columns</code> attributes.</li>
-<li>Requires that <code>dataset.y_pred(model)</code> returns the predicted values for the model.</li>
-<li>Assumes that <code>y_true</code> and <code>y_pred</code> are pandas Series with datetime indices.</li>
+<li>Assumes datasets are provided as DataFrameDataset objects with the attributes <code>y</code>, <code>y_pred</code>, and
+<code>feature_columns</code>.</li>
+<li>Requires that <code>dataset.y_pred(model)</code> returns predicted values for the model.</li>
+<li>Assumes that both <code>y_true</code> and <code>y_pred</code> are pandas Series with datetime indices, which may not always be the case.</li>
+<li>May not account for more nuanced temporal dependencies within the segments.</li>
 </ul>
 </div>
 

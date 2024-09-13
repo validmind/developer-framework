@@ -81,35 +81,35 @@
     
             <div class="docstring"><p>Evaluates the performance of clustering machine learning models using multiple established metrics.</p>
 
-<p><strong>Purpose:</strong></p>
+<h3 id="purpose">Purpose</h3>
 
 <p>The <code><a href="#ClusterPerformanceMetrics">ClusterPerformanceMetrics</a></code> test is used to assess the performance and validity of clustering machine learning
 models. It evaluates homogeneity, completeness, V measure score, the Adjusted Rand Index, the Adjusted Mutual
 Information, and the Fowlkes-Mallows score of the model. These metrics provide a holistic understanding of the
 model's ability to accurately form clusters of the given dataset.</p>
 
-<p><strong>Test Mechanism:</strong></p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
 <p>The <code><a href="#ClusterPerformanceMetrics">ClusterPerformanceMetrics</a></code> test runs a clustering ML model over a given dataset and then calculates six
 metrics using the Scikit-learn metrics computation functions: Homogeneity Score, Completeness Score, V Measure,
 Adjusted Rand Index (ARI), Adjusted Mutual Information (AMI), and Fowlkes-Mallows Score. It then returns the result
 as a summary, presenting the metric values for both training and testing datasets.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Low Homogeneity Score: This indicates that the clusters formed contain a variety of classes, resulting in less
-pure clusters.</li>
-<li>Low Completeness Score: This suggests that class instances are scattered across multiple clusters rather than
-being gathered in a single cluster.</li>
-<li>Low V Measure: This would report a low overall clustering performance.</li>
-<li>ARI close to 0 or Negative: This implies that clustering results are random or disagree with the true labels.</li>
-<li>AMI close to 0: It means that clustering labels are random compared with the true labels.</li>
+<li>Low Homogeneity Score: Indicates that the clusters formed contain a variety of classes, resulting in less pure
+clusters.</li>
+<li>Low Completeness Score: Suggests that class instances are scattered across multiple clusters rather than being
+gathered in a single cluster.</li>
+<li>Low V Measure: Reports a low overall clustering performance.</li>
+<li>ARI close to 0 or Negative: Implies that clustering results are random or disagree with the true labels.</li>
+<li>AMI close to 0: Means that clustering labels are random compared with the true labels.</li>
 <li>Low Fowlkes-Mallows score: Signifies less precise and poor clustering performance in terms of precision and
 recall.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Provides a comprehensive view of clustering model performance by examining multiple clustering metrics.</li>
@@ -119,10 +119,10 @@ recall.</li>
 represents.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>It only applies to clustering models; not suitable for other types of machine learning models.</li>
+<li>Only applies to clustering models; not suitable for other types of machine learning models.</li>
 <li>Does not test for overfitting or underfitting in the clustering model.</li>
 <li>All the scores rely on ground truth labels, the absence or inaccuracy of which can lead to misleading results.</li>
 <li>Does not consider aspects like computational efficiency of the model or its capability to handle high dimensional
@@ -175,7 +175,7 @@ data.</li>
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="ClusterPerformance.html#ClusterPerformance">validmind.tests.model_validation.sklearn.ClusterPerformance.ClusterPerformance</a></dt>
-                                <dd id="ClusterPerformanceMetrics.cluser_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluser_performance_metrics">cluser_performance_metrics</a></dd>
+                                <dd id="ClusterPerformanceMetrics.cluster_performance_metrics" class="function"><a href="ClusterPerformance.html#ClusterPerformance.cluster_performance_metrics">cluster_performance_metrics</a></dd>
                 <dd id="ClusterPerformanceMetrics.run" class="function"><a href="ClusterPerformance.html#ClusterPerformance.run">run</a></dd>
 
             </div>

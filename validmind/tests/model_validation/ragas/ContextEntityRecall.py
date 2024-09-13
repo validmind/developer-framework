@@ -47,6 +47,7 @@ def ContextEntityRecall(
     ### Configuring Columns
 
     This metric requires the following columns in your dataset:
+
     - `contexts` (List[str]): A list of text contexts which will be evaluated to make
     sure if they contain the entities present in the ground truth.
     - `ground_truth` (str): The ground truth text from which the entities will be
@@ -100,7 +101,7 @@ def ContextEntityRecall(
         "contexts": contexts_column,
     }
 
-    df = get_renamed_columns(dataset.df, required_columns)
+    df = get_renamed_columns(dataset._df, required_columns)
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=[context_entity_recall], **get_ragas_config()
@@ -113,13 +114,13 @@ def ContextEntityRecall(
 
     return (
         {
-            "Scores (will not be uploaded to UI)": result_df[
-                [
-                    "contexts",
-                    "ground_truth",
-                    "context_entity_recall",
-                ]
-            ],
+            # "Scores (will not be uploaded to UI)": result_df[
+            #     [
+            #         "contexts",
+            #         "ground_truth",
+            #         "context_entity_recall",
+            #     ]
+            # ],
             "Aggregate Scores": [
                 {
                     "Mean Score": result_df["context_entity_recall"].mean(),
@@ -127,7 +128,7 @@ def ContextEntityRecall(
                     "Max Score": result_df["context_entity_recall"].max(),
                     "Min Score": result_df["context_entity_recall"].min(),
                     "Standard Deviation": result_df["context_entity_recall"].std(),
-                    "Count": len(result_df),
+                    "Count": result_df.shape[0],
                 }
             ],
         },

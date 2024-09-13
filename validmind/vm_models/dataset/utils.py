@@ -10,12 +10,15 @@ import pandas as pd
 
 from validmind.errors import MissingOrInvalidModelPredictFnError
 from validmind.logging import get_logger
+from validmind.vm_models.model import ModelTask
 
 logger = get_logger(__name__)
 
 
 @dataclass
 class ExtraColumns:
+    # TODO: this now holds internal (pred, prob and group_by) cols as well as
+    # user-defined extra columns. These should probably be separated.
     """Extra columns for the dataset."""
 
     extras: Set[str] = field(default_factory=set)
@@ -116,8 +119,14 @@ def compute_predictions(model, X, **kwargs) -> tuple:
             "You can pass `prediction_values` or `prediction_columns` to use precomputed predictions"
         )
 
-    # TODO: this is really not ideal/robust and should not be handled by dataset class
-    if probability_values is None and _is_probabilties(prediction_values):
+    if model.attributes.task is ModelTask.REGRESSION:
+        logger.info("Model is configured for regression.")
+        return probability_values, prediction_values
+
+    if probability_values is None and (
+        model.attributes.task is ModelTask.CLASSIFICATION
+        or _is_probabilties(prediction_values)
+    ):
         logger.info(
             "Predict method returned probabilities instead of direct labels or regression values. "
             "This implies the model is likely configured for a classification task with probability output."

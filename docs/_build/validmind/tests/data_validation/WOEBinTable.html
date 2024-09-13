@@ -82,44 +82,46 @@
     </div>
     <a class="headerlink" href="#WOEBinTable"></a>
     
-            <div class="docstring"><p>Calculates and assesses the Weight of Evidence (WoE) and Information Value (IV) of each feature in a ML model.</p>
+            <div class="docstring"><p>Assesses the Weight of Evidence (WoE) and Information Value (IV) of each feature to evaluate its predictive power
+in a binary classification model.</p>
 
-<p><strong>Purpose</strong>: The Weight of Evidence (WoE) and Information Value (IV) test is intended to evaluate the predictive
-power of each feature in the machine learning model. The test generates binned groups of values from each feature
-in a dataset, computes the WoE value and the IV value for each bin. These values provide insights on the
-relationship between each feature and the target variable and their contribution towards the predictive output of
-the model.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The metric leverages the <code>scorecardpy.woebin</code> method to perform WoE-based automatic binning on
-the dataset. Depending on the parameter <code>breaks_adj</code>, the method adjusts the cut-off points for binning numeric
-variables. The bins are then used to calculate the WoE and IV. The metric requires a dataset with the target
-variable defined. The metric outputs a dataframe that comprises the bin boundaries, WoE, and IV values for each
-feature.</p>
+<p>The Weight of Evidence (WoE) and Information Value (IV) test is designed to evaluate the predictive power of each
+feature in a machine learning model. This test generates binned groups of values from each feature, computes the
+WoE and IV for each bin, and provides insights into the relationship between each feature and the target variable,
+illustrating their contribution to the model's predictive capabilities.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test uses the <code>scorecardpy.woebin</code> method to perform automatic binning of the dataset based on WoE. The method
+adjusts the cut-off points for binning numeric variables based on the parameter <code>breaks_adj</code>. The bins are then
+used to calculate the WoE and IV values, effectively creating a dataframe that includes the bin boundaries, WoE,
+and IV values for each feature. A target variable is required in the dataset to perform this analysis.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>High IV values, which denote variables with too much predictive power which might lead to overfitting</li>
-<li>Errors during the binning process, which might be due to inappropriate data types or poorly defined bins</li>
+<li>High IV values, indicating variables with excessive predictive power which might lead to overfitting.</li>
+<li>Errors during the binning process, potentially due to inappropriate data types or poorly defined bins.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>The WoE and IV test is highly effective for feature selection in binary classification problems, as it quantifies
-how much predictive information is packed within each feature regarding the binary outcome</li>
-<li>The WoE transformation creates a monotonic relationship between the target and independent variables</li>
+<li>Highly effective for feature selection in binary classification problems, as it quantifies the predictive
+information within each feature concerning the binary outcome.</li>
+<li>The WoE transformation creates a monotonic relationship between the target and independent variables.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Mainly designed for binary classification tasks, therefore it might not be applicable or reliable for multi-class
-classification or regression tasks</li>
-<li>If the dataset has many features or the features are not binnable or they are non-numeric, this process might
-encounter difficulties</li>
-<li>This metric doesn't help in identifying if the predictive factor being observed is a coincidence or a real
-phenomenon due to data randomness</li>
+<li>Primarily designed for binary classification tasks, making it less applicable or reliable for multi-class
+classification or regression tasks.</li>
+<li>Potential difficulties if the dataset has many features, non-binnable features, or non-numeric features.</li>
+<li>The metric does not help in distinguishing whether the observed predictive factor is due to data randomness or a
+true phenomenon.</li>
 </ul>
 </div>
 

@@ -7,7 +7,7 @@ import numpy as np
 from validmind import tags, tasks
 
 
-@tags("regression", "unit_metric")
+@tags("regression")
 @tasks("regression")
 def KolmogorovSmirnovStatistic(dataset, model):
     y_true = dataset.y.flatten()

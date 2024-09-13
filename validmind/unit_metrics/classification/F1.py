@@ -7,7 +7,7 @@ from sklearn.metrics import f1_score
 from validmind import tags, tasks
 
 
-@tags("classification", "sklearn", "unit_metric")
 @tasks("classification")
+@tags("classification")
 def F1(model, dataset, **kwargs):
     return f1_score(dataset.y, dataset.y_pred(model), **kwargs)

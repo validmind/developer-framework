@@ -81,19 +81,21 @@
             <div class="docstring"><p>Evaluates and visualizes the distribution proportions among training, testing, and validation datasets of an ML
 model.</p>
 
-<p><strong>Purpose:</strong>
-The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
+<h3 id="purpose">Purpose</h3>
+
+<p>The DatasetSplit test is designed to evaluate and visualize the distribution of data among training, testing, and
 validation datasets, if available, within a given machine learning model. The main purpose is to assess whether the
 model's datasets are split appropriately, as an imbalanced split might affect the model's ability to learn from the
 data and generalize to unseen data.</p>
 
-<p><strong>Test Mechanism:</strong>
-The DatasetSplit test first calculates the total size of all available datasets in the model. Then, for each
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The DatasetSplit test first calculates the total size of all available datasets in the model. Then, for each
 individual dataset, the methodology involves determining the size of the dataset and its proportion relative to the
 total size. The results are then conveniently summarized in a table that shows dataset names, sizes, and
 proportions. Absolute size and proportion of the total dataset size are displayed for each individual dataset.</p>
 
-<p><strong>Signs of High Risk:</strong></p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>A very small training dataset, which may result in the model not learning enough from the data.</li>
@@ -102,7 +104,7 @@ generalization to unseen data.</li>
 <li>A small or non-existent validation dataset, which might complicate the model's performance assessment.</li>
 </ul>
 
-<p><strong>Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>The DatasetSplit test provides a clear, understandable visualization of dataset split proportions, which can
@@ -112,7 +114,7 @@ highlight any potential imbalance in dataset splits quickly.</li>
 data.</li>
 </ul>
 
-<p><strong>Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The DatasetSplit test does not provide any insight into the quality or diversity of the data within each split,

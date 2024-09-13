@@ -78,18 +78,22 @@
     
             <div class="docstring"><p>Detects outliers in a dataset using the Isolation Forest algorithm and visualizes results through scatter plots.</p>
 
-<p><strong>Purpose</strong>: The <code><a href="#IsolationForestOutliers">IsolationForestOutliers</a></code> test is designed to identify anomalies or outliers in the model's
-dataset using the isolation forest algorithm. This algorithm assumes that anomalous data points can be isolated
-more quickly due to their distinctive properties. By creating isolation trees and identifying instances with
-shorter average path lengths, the test is able to pick out data points that differ from the majority.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test uses the isolation forest algorithm, which builds an ensemble of isolation trees by
-randomly selecting features and splitting the data based on random thresholds. It isolates anomalies rather than
-focusing on normal data points. For each pair of variables, a scatter plot is generated which distinguishes the
-identified outliers from the inliers. The results of the test can be visualized using these scatter plots,
-illustrating the distinction between outliers and inliers.</p>
+<p>The IsolationForestOutliers test is designed to identify anomalies or outliers in the model's dataset using the
+isolation forest algorithm. This algorithm assumes that anomalous data points can be isolated more quickly due to
+their distinctive properties. By creating isolation trees and identifying instances with shorter average path
+lengths, the test is able to pick out data points that differ from the majority.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test uses the isolation forest algorithm, which builds an ensemble of isolation trees by randomly selecting
+features and splitting the data based on random thresholds. It isolates anomalies rather than focusing on normal
+data points. For each pair of variables, a scatter plot is generated which distinguishes the identified outliers
+from the inliers. The results of the test can be visualized using these scatter plots, illustrating the distinction
+between outliers and inliers.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>The presence of high contamination, indicating a large number of anomalies</li>
@@ -98,7 +102,7 @@ illustrating the distinction between outliers and inliers.</p>
 <li>Failure to detect actual anomalies</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Ability to handle large, high-dimensional datasets</li>
@@ -109,7 +113,7 @@ distinctive properties</li>
 <li>Visually presents the test results for better understanding and interpretability</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>Difficult to detect anomalies that are close to each other or prevalent in datasets</li>

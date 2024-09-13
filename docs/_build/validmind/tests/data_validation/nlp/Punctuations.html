@@ -80,39 +80,43 @@
     
             <div class="docstring"><p>Analyzes and visualizes the frequency distribution of punctuation usage in a given text dataset.</p>
 
-<p><strong>1. Purpose:</strong> The Punctuations Metric's primary purpose is to analyze the frequency of punctuation usage within a
-given text dataset. This is often used in Natural Language Processing tasks, such as text classification and text
+<h3 id="purpose">Purpose</h3>
+
+<p>The Punctuations Metric's primary purpose is to analyze the frequency of punctuation usage within a given text
+dataset. This is often used in Natural Language Processing tasks, such as text classification and text
 summarization.</p>
 
-<p><strong>2. Test Mechanism:</strong> The test begins by verifying that the input "dataset" is of the type VMDataset. Following
-that, a corpus is created from the dataset by splitting its text on spaces. Each unique punctuation character in
-the text corpus is then tallied. Then, the frequency distribution of each punctuation symbol is visualized as a bar
-graph, with these results being stored as Figures and associated with the main Punctuations object.</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
-<p><strong>3. Signs of High Risk:</strong></p>
+<p>The test begins by verifying that the input "dataset" is of the type VMDataset. Following that, a corpus is created
+from the dataset by splitting its text on spaces. Each unique punctuation character in the text corpus is then
+tallied. The frequency distribution of each punctuation symbol is visualized as a bar graph, with these results
+being stored as Figures and associated with the main Punctuations object.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>High risk can be indicated by the excessive or unusual frequency of specific punctuation marks, potentially
-denoting dubious quality, data corruption, or skewed data.</li>
+<li>Excessive or unusual frequency of specific punctuation marks, potentially denoting dubious quality, data
+corruption, or skewed data.</li>
 </ul>
 
-<p><strong>4. Strengths:</strong></p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>The Punctuations Metric provides valuable insights into the distribution of punctuation usage in a text dataset.</li>
-<li>This insight can be important in validating the quality, consistency, and nature of the data.</li>
-<li>It can provide hints about the style or tonality of the text corpus. For example, frequent usage of exclamation
-marks may suggest a more informal and emotional context.</li>
+<li>Provides valuable insights into the distribution of punctuation usage in a text dataset.</li>
+<li>Important in validating the quality, consistency, and nature of the data.</li>
+<li>Can provide hints about the style or tonality of the text corpus, such as informal and emotional context
+indicated by frequent exclamation marks.</li>
 </ul>
 
-<p><strong>5. Limitations:</strong></p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>The metric focuses solely on punctuation usage and can miss other important textual characteristics.</li>
-<li>It's important not to make general cultural or tonality assumptions based solely on punctuation distribution,
-since these can vary greatly across different languages and contexts.</li>
-<li>The metric may be less effective with languages that use non-standard or different punctuation.</li>
-<li>The visualization may lack interpretability when there are many unique punctuation marks in the dataset.</li>
+<li>Focuses solely on punctuation usage, potentially missing other important textual characteristics.</li>
+<li>General cultural or tonality assumptions based on punctuation distribution can be misguiding, as these vary
+across different languages and contexts.</li>
+<li>Less effective with languages that use non-standard or different punctuation.</li>
+<li>Visualization may lack interpretability when there are many unique punctuation marks in the dataset.</li>
 </ul>
 </div>
 

@@ -68,33 +68,48 @@
     </div>
     <a class="headerlink" href="#ModelMetadataComparison"></a>
     
-            <div class="docstring"><p>Compare metadata of different models and generate a summary table with the results.</p>
+            <div class="docstring"><p>Assesses the metadata of various models to ensure consistency and compatibility, which is essential for effective
+model deployment and management.</p>
 
-<p><strong>Purpose</strong>: The purpose of this function is to compare the metadata of different models, including information about their architecture, framework, framework version, and programming language.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The function retrieves the metadata for each model using <code>get_model_info</code>, renames columns according to a predefined set of labels, and compiles this information into a summary table.</p>
+<p>The Model Metadata Comparison test is designed to assess and compare the metadata of different models. This
+includes comparing information such as the model's architecture, framework, framework version, and programming
+language to ensure consistency and identify potential issues in model documentation or management.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>The test retrieves metadata for each model using the <code>get_model_info</code> function. It then renames the columns based
+on a predefined set of labels and compiles this information into a summary table. The key steps include:</p>
 
 <ul>
-<li>Inconsistent or missing metadata across models can indicate potential issues in model documentation or management.</li>
-<li>Significant differences in framework versions or programming languages might pose challenges in model integration and deployment.</li>
+<li>Retrieving metadata for each model.</li>
+<li>Renaming columns to align with standardized labels.</li>
+<li>Compiling and presenting the information in a summary table for comparison.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Provides a clear comparison of essential model metadata.</li>
-<li>Standardizes metadata labels for easier interpretation and comparison.</li>
-<li>Helps identify potential compatibility or consistency issues across models.</li>
+<li>Inconsistent or missing metadata across models, indicating potential issues in documentation or model management.</li>
+<li>Significant differences in framework versions or programming languages, which could lead to integration and
+deployment challenges.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Assumes that the <code>get_model_info</code> function returns all necessary metadata fields.</li>
+<li>Provides a clear, standardized comparison of essential model metadata.</li>
+<li>Facilitates easier interpretation and comparison by standardizing metadata labels.</li>
+<li>Helps identify potential compatibility or consistency issues across different models.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li>Assumes the <code>get_model_info</code> function returns all necessary metadata fields.</li>
 <li>Relies on the correctness and completeness of the metadata provided by each model.</li>
-<li>Does not include detailed parameter information, focusing instead on high-level metadata.</li>
+<li>Focuses on high-level metadata and does not include detailed parameter information.</li>
 </ul>
 </div>
 

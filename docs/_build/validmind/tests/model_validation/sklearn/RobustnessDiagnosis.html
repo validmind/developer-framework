@@ -32,6 +32,9 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
+                    <a class="function" href="#robustness_diagnosis">robustness_diagnosis</a>
+            </li>
+            <li>
                     <a class="class" href="#RobustnessDiagnosis">RobustnessDiagnosis</a>
                             <ul class="memberlist">
                         <li>
@@ -71,6 +74,19 @@
                 
                 
             </section>
+                <section id="robustness_diagnosis">
+                    <div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">robustness_diagnosis</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">VMModel</span>,</span><span class="param">	<span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">VMDataset</span><span class="p">]</span>,</span><span class="param">	<span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">scaling_factor_std_dev_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>,</span><span class="param">	<span class="n">performance_decay_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span></span><span class="return-annotation">):</span></span>
+
+        
+    </div>
+    <a class="headerlink" href="#robustness_diagnosis"></a>
+    
+    
+
+                </section>
                 <section id="RobustnessDiagnosis">
                     <div class="attr class">
                     <div class="decorator">@dataclass</div>
@@ -82,55 +98,48 @@
     </div>
     <a class="headerlink" href="#RobustnessDiagnosis"></a>
     
-            <div class="docstring"><p>Evaluates the robustness of a machine learning model by injecting Gaussian noise to input data and measuring
-performance.</p>
+            <div class="docstring"><p>Assesses the robustness of a machine learning model by evaluating performance decay under noisy conditions.</p>
 
-<p><strong>Purpose</strong>:</p>
+<h3 id="purpose">Purpose</h3>
 
-<p>The purpose of this test code is to evaluate the robustness of a machine learning model. Robustness refers to a
-model's ability to maintain a high level of performance in the face of perturbations or changes—particularly
-noise—added to its input data. This test is designed to help gauge how well the model can handle potential
-real-world scenarios where the input data might be incomplete or corrupted.</p>
+<p>The Robustness Diagnosis test aims to evaluate the resilience of a machine learning model when subjected to
+perturbations or noise in its input data. This is essential for understanding the model's ability to handle
+real-world scenarios where data may be imperfect or corrupted.</p>
 
-<p><strong>Test Mechanism</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
 
-<p>This test is conducted by adding Gaussian noise, proportional to a particular standard deviation scale, to numeric
-input features of both the training and testing datasets. The model performance in the face of these perturbed
-features is then evaluated using metrics (default: 'accuracy'). This process is iterated over a range of scale
-factors. The resulting accuracy trend against the amount of noise introduced is illustrated with a line chart. A
-predetermined threshold determines what level of accuracy decay due to perturbation is considered acceptable.</p>
-
-<p><strong>Signs of High Risk</strong>:</p>
+<p>This test introduces Gaussian noise to the numeric input features of the datasets at varying scales of standard
+deviation. The performance of the model is then measured using a specified metric. The process includes:</p>
 
 <ul>
-<li>Substantial decreases in accuracy when noise is introduced to feature inputs.</li>
-<li>The decay in accuracy surpasses the configured threshold, indicating that the model is not robust against input
-noise.</li>
-<li>Instances where one or more elements provided in the features list don't match with the training dataset's
-numerical feature columns.</li>
+<li>Adding Gaussian noise to numerical input features based on scaling factors.</li>
+<li>Evaluating the model's performance on the perturbed data using metrics like AUC for classification tasks and MSE
+for regression tasks.</li>
+<li>Aggregating and plotting the results to visualize performance decay relative to perturbation size.</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>Provides an empirical measure of the model's performance in tackling noise or data perturbations, revealing
-insights into the model's stability.</li>
-<li>Offers flexibility with the ability to choose specific features to perturb and control the level of noise applied.</li>
-<li>Detailed results visualization helps in interpreting the outcome of robustness testing.</li>
+<li>A significant drop in performance metrics with minimal noise.</li>
+<li>Performance decay values exceeding the specified threshold.</li>
+<li>Consistent failure to meet performance standards across multiple perturbation scales.</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Only numerical features are perturbed, leaving out non-numerical features, which can lead to an incomplete
-analysis of robustness.</li>
-<li>The default metric used is accuracy, which might not always give the best measure of a model's success,
-particularly for imbalanced datasets.</li>
-<li>The test is contingent on the assumption that the added Gaussian noise sufficiently represents potential data
-corruption or incompleteness in real-world scenarios.</li>
-<li>There might be a requirement to fine-tune the set decay threshold for accuracy with the help of domain knowledge
-or specific project requisites.</li>
-<li>The robustness test might not deliver the expected results for datasets with a text column.</li>
+<li>Provides insights into the model's robustness against noisy or corrupted data.</li>
+<li>Utilizes a variety of performance metrics suitable for both classification and regression tasks.</li>
+<li>Visualization helps in understanding the extent of performance degradation.</li>
+</ul>
+
+<h3 id="limitations">Limitations</h3>
+
+<ul>
+<li>Gaussian noise might not adequately represent all types of real-world data perturbations.</li>
+<li>Performance thresholds are somewhat arbitrary and might need tuning.</li>
+<li>The test may not account for more complex or unstructured noise patterns that could affect model robustness.</li>
 </ul>
 </div>
 
@@ -166,7 +175,7 @@ or specific project requisites.</li>
                                 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">all_passed</span><span class="p">:</span> <span class="nb">bool</span></span><span class="return-annotation">):</span></span>
+        <span class="name">summary</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">threshold_test_result</span><span class="o">.</span><span class="n">ThresholdTestResult</span><span class="p">]</span>,</span><span class="param">	<span class="n">_</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
