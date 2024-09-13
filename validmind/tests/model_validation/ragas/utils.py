@@ -13,7 +13,7 @@ EMBEDDINGS_MODEL = "text-embedding-3-small"
 def get_ragas_config():
     if not client_config.can_generate_llm_test_descriptions():
         raise ValueError(
-            "LLM descriptions are not enabled in the current configuration."
+            "LLM based descriptions are not enabled in the current configuration."
         )
 
     # import here since its an optional dependency
