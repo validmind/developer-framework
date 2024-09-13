@@ -18,7 +18,9 @@ class ClientConfig:
     """
 
     project: object
+    model: object
     feature_flags: dict
+    document_type: str
     documentation_template: object
     running_on_colab: bool = False
 
@@ -34,21 +36,16 @@ class ClientConfig:
         except ImportError:
             self.running_on_colab = False
 
-    def is_json_plots_enabled(self):
-        """
-        Returns True if the JSON plots feature flag is enabled on the backend
-        """
-        return self.feature_flags.get("generate_json_plots", False)
-
-    def can_log_figures(self):
-        """Returns True if the client can log figures to the API"""
-        return self.feature_flags.get("log_figures", False)
-
-    def can_log_output_template(self):
-        """Returns True if the client can log output templates to the API"""
-        return self.feature_flags.get("output_templates", False)
+    def can_generate_llm_test_descriptions(self):
+        """Returns True if the client can generate LLM based test descriptions"""
+        return self.feature_flags.get("llm_test_descriptions", True)
 
 
 client_config = ClientConfig(
-    project=None, feature_flags={}, documentation_template=None
+    project=None,
+    model=None,
+    feature_flags={},
+    document_type="model_documentation",
+    documentation_template=None,
+    running_on_colab=False,
 )
