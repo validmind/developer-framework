@@ -128,6 +128,8 @@ class ResultWrapper(ABC):
     # id of the result, can be set by the subclass. This helps
     # looking up results later on
     result_id: str = None
+    # Text description from test or metric (docstring usually)
+    result_description: str = None
     # Text metadata about the result, can include description, etc.
     result_metadata: List[dict] = None
     # Output template to use for rendering the result
