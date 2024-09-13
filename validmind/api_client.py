@@ -186,12 +186,24 @@ def __ping() -> Dict[str, Any]:
     client_config.project = client_info["project"]
     client_config.documentation_template = client_info.get("documentation_template", {})
     client_config.feature_flags = client_info.get("feature_flags", {})
+    client_config.model = client_info.get("model", {})
+    client_config.document_type = client_info.get(
+        "document_type", "model_documentation"
+    )
 
     if ack_connected:
-        logger.info(
-            f"Connected to ValidMind... Current Model: {client_config.project['name']}"
-            f" ({client_config.project['cuid']})"
-        )
+        if client_config.model:
+            logger.info(
+                f"🎉 Connected to ValidMind!\n"
+                f"📊 Model: {client_config.model.get('name', 'N/A')} "
+                f"(ID: {client_config.model.get('cuid', 'N/A')})\n"
+                f"📁 Document Type: {client_config.document_type}"
+            )
+        else:
+            logger.info(
+                f"Connected to ValidMind... Current Model: {client_config.project['name']}"
+                f" ({client_config.project['cuid']})"
+            )
 
 
 def reload():
@@ -331,32 +343,6 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
     Returns:
         dict: The response from the API
     """
-    # this actually slows things down - better to log them in parallel
-    # if client_config.can_log_figures():  # check if the backend supports batch logging
-    #     try:
-    #         data = {}
-    #         files = {}
-    #         for figure in figures:
-    #             data.update(
-    #                 {f"{k}-{figure.key}": v for k, v in figure.serialize().items()}
-    #             )
-    #             files.update(
-    #                 {
-    #                     f"{k}-{figure.key}": v
-    #                     for k, v in figure.serialize_files().items()
-    #                 }
-    #             )
-
-    #         return await _post(
-    #             "log_figures",
-    #             data=data,
-    #             files=files,
-    #         )
-    #     except Exception as e:
-    #         logger.error("Error logging figures to ValidMind API")
-    #         raise e
-
-    # else:
     return await asyncio.gather(*[log_figure(figure) for figure in figures])
 
 
@@ -430,7 +416,7 @@ async def log_metrics(
             "inputs": inputs,
         }
 
-        if output_template and client_config.can_log_output_template():
+        if output_template:
             metric_data["output_template"] = output_template
 
         data.append(metric_data)
