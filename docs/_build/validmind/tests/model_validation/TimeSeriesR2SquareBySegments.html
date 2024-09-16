@@ -62,7 +62,7 @@
         <div class="decorator">@tasks(&#39;regression&#39;, &#39;time_series_forecasting&#39;)</div>
 
         <span class="def">def</span>
-        <span class="name">TimeSeriesR2SquareBySegments</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">datasets</span>, </span><span class="param"><span class="n">models</span>, </span><span class="param"><span class="n">segments</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
+        <span class="name">TimeSeriesR2SquareBySegments</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">segments</span><span class="o">=</span><span class="kc">None</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -79,12 +79,9 @@ the data within each specific time segment.</p>
 
 <h3 id="test-mechanism">Test Mechanism</h3>
 
-<p>This test functions by:</p>
-
 <ul>
-<li>Iterating through each dataset-model pair provided.</li>
-<li>Segmenting the time series data either as specified by the user or by splitting the data into two halves if no
-segments are provided.</li>
+<li>Provides a visual representation of model performance across different time segments.</li>
+<li>Allows for identification of segments where the model performs poorly.</li>
 <li>Calculating the R-Squared values for each segment.</li>
 <li>Generating a bar chart to visually represent the R-Squared values across different models and segments.</li>
 </ul>

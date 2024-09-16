@@ -62,27 +62,23 @@
         <div class="decorator">@tasks(&#39;regression&#39;, &#39;time_series_forecasting&#39;)</div>
 
         <span class="def">def</span>
-        <span class="name">TimeSeriesPredictionsPlot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">datasets</span>, </span><span class="param"><span class="n">models</span></span><span class="return-annotation">):</span></span>
+        <span class="name">TimeSeriesPredictionsPlot</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
     <a class="headerlink" href="#TimeSeriesPredictionsPlot"></a>
     
-            <div class="docstring"><p>Assesses the model's accuracy in predicting time series data by comparing actual versus predicted values through
-visual plots.</p>
+            <div class="docstring"><p>Plot actual vs predicted values for time series data and generate a visual comparison for the model.</p>
 
 <h3 id="purpose">Purpose</h3>
 
-<p>The purpose of this function is to visualize the actual versus predicted values for time series data across
-different models, aiding in the assessment of model performance.</p>
+<p>The purpose of this function is to visualize the actual versus predicted values for time
+series data for a single model.</p>
 
 <h3 id="test-mechanism">Test Mechanism</h3>
 
-<p>The function iterates through each dataset-model pair, plots the actual values from the dataset, and overlays the
-predicted values from each model using Plotly for interactive visualization. This enables a direct visual
-comparison between the models’ performance.</p>
-
-<h3 id="signs-of-high-risk">Signs of High Risk</h3>
+<p>The function plots the actual values from the dataset and overlays the predicted
+values from the model using Plotly for interactive visualization.</p>
 
 <ul>
 <li>Large discrepancies between actual and predicted values indicate poor model performance.</li>
@@ -94,7 +90,6 @@ comparison between the models’ performance.</p>
 <ul>
 <li>Provides a clear visual comparison of model predictions against actual values.</li>
 <li>Uses Plotly for interactive and visually appealing plots.</li>
-<li>Can handle multiple models and datasets, displaying them with distinct colors.</li>
 </ul>
 
 <h3 id="limitations">Limitations</h3>
@@ -102,7 +97,6 @@ comparison between the models’ performance.</p>
 <ul>
 <li>Assumes that the dataset is provided as a DataFrameDataset object with a datetime index.</li>
 <li>Requires that <code>dataset.y_pred(model)</code> returns the predicted values for the model.</li>
-<li>Visualization might become cluttered with a large number of models or datasets.</li>
 </ul>
 </div>
 

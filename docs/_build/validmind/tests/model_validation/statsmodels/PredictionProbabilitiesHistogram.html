@@ -32,19 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#PredictionProbabilitiesHistogram">PredictionProbabilitiesHistogram</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#PredictionProbabilitiesHistogram.__init__">PredictionProbabilitiesHistogram</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#PredictionProbabilitiesHistogram.plot_prob_histogram">plot_prob_histogram</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#PredictionProbabilitiesHistogram.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#PredictionProbabilitiesHistogram">PredictionProbabilitiesHistogram</a>
             </li>
     </ul>
 
@@ -69,11 +57,12 @@
                 
             </section>
                 <section id="PredictionProbabilitiesHistogram">
-                    <div class="attr class">
-                    <div class="decorator">@dataclass</div>
+                    <div class="attr function">
+                    <div class="decorator">@tags(&#39;visualization&#39;, &#39;credit_risk&#39;, &#39;logistic_regression&#39;)</div>
+        <div class="decorator">@tasks(&#39;classification&#39;)</div>
 
-    <span class="def">class</span>
-    <span class="name">PredictionProbabilitiesHistogram</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+        <span class="def">def</span>
+        <span class="name">PredictionProbabilitiesHistogram</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span>, </span><span class="param"><span class="n">model</span>, </span><span class="param"><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Histogram of Predictive Probabilities&#39;</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
@@ -130,70 +119,6 @@ evaluating the performance of a logistic regression model, particularly for cred
 </div>
 
 
-                            <div id="PredictionProbabilitiesHistogram.__init__" class="classattr">
-                                <div class="attr function">
-            
-        <span class="name">PredictionProbabilitiesHistogram</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">inputs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test_context</span><span class="o">.</span><span class="n">TestInput</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tasks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">tags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_ref_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">_section_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">test_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">result</span><span class="p">:</span> <span class="n">validmind</span><span class="o">.</span><span class="n">vm_models</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">result_wrapper</span><span class="o">.</span><span class="n">MetricResultWrapper</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">output_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">generate_description</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span>)</span>
-
-        
-    </div>
-    <a class="headerlink" href="#PredictionProbabilitiesHistogram.__init__"></a>
-    
-    
-
-                            </div>
-                            <div id="PredictionProbabilitiesHistogram.plot_prob_histogram" class="classattr">
-                                <div class="attr function">
-                    <div class="decorator">@staticmethod</div>
-
-        <span class="def">def</span>
-        <span class="name">plot_prob_histogram</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataframes</span>, </span><span class="param"><span class="n">dataset_titles</span>, </span><span class="param"><span class="n">target_col</span>, </span><span class="param"><span class="n">title</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PredictionProbabilitiesHistogram.plot_prob_histogram"></a>
-    
-    
-
-                            </div>
-                            <div id="PredictionProbabilitiesHistogram.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#PredictionProbabilitiesHistogram.run"></a>
-    
-            <div class="docstring"><p>Run the calculation and cache its results</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="PredictionProbabilitiesHistogram.summary" class="function">summary</dd>
-                <dd id="PredictionProbabilitiesHistogram.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="PredictionProbabilitiesHistogram.description" class="function">description</dd>
-                <dd id="PredictionProbabilitiesHistogram.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="PredictionProbabilitiesHistogram.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="PredictionProbabilitiesHistogram.dataset" class="variable">dataset</dd>
-                <dd id="PredictionProbabilitiesHistogram.model" class="variable">model</dd>
-                <dd id="PredictionProbabilitiesHistogram.models" class="variable">models</dd>
-                <dd id="PredictionProbabilitiesHistogram.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
