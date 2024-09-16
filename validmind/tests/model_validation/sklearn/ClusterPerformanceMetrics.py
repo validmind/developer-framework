@@ -60,7 +60,7 @@ class ClusterPerformanceMetrics(ClusterPerformance):
     """
 
     name = "homogeneity_score"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = ["sklearn", "model_performance"]
     default_metrics = {
@@ -121,10 +121,8 @@ class ClusterPerformanceMetrics(ClusterPerformance):
             for key, _ in result.items():
                 table_records.append(
                     {
-                        "Metric": key,
                         "Description": self.default_metrics_desc[key],
-                        "TRAIN": result[key]["train"],
-                        "TEST": result[key]["test"],
+                        key: result[key],
                     }
                 )
 

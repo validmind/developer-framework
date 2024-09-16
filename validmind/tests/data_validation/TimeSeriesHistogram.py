@@ -63,7 +63,7 @@ def TimeSeriesHistogram(dataset, nbins=30):
         )
         fig.update_layout(
             title={
-                "text": f"Histogram for {col}",
+                "text": f"{col}",
                 "y": 0.9,
                 "x": 0.5,
                 "xanchor": "center",
