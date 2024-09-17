@@ -81,17 +81,21 @@
     
             <div class="docstring"><p>Compares feature importance by evaluating and contrasting coefficients of different regression models.</p>
 
-<p><strong>Purpose</strong>: The 'RegressionModelsCoeffs' metric is utilized to evaluate and compare coefficients of different
-regression models trained on the same dataset. By examining how each model weighted the importance of different
-features during training, this metric provides key insights into which factors have the most impact on the model's
-predictions and how these patterns differ across models.</p>
+<h3 id="purpose">Purpose</h3>
 
-<p><strong>Test Mechanism</strong>: The test operates by extracting the coefficients of each regression model using the
-'regression_coefficients()' method. These coefficients are then consolidated into a dataframe, with each row
-representing a model and columns corresponding to each feature's coefficient. It must be noted that this test is
-exclusive to 'statsmodels' and 'R' models, other models will result in a 'SkipTestError'.</p>
+<p>The 'RegressionModelsCoeffs' metric is utilized to evaluate and compare coefficients of different regression models
+trained on the same dataset. By examining how each model weighted the importance of different features during
+training, this metric provides key insights into which factors have the most impact on the model's predictions and
+how these patterns differ across models.</p>
 
-<p><strong>Signs of High Risk</strong>:</p>
+<h3 id="test-mechanism">Test Mechanism</h3>
+
+<p>This test operates by extracting the coefficients of each regression model using the 'regression_coefficients()'
+method. These coefficients are then consolidated into a dataframe, with each row representing a model and columns
+corresponding to each feature's coefficient. It must be noted that this test is exclusive to 'statsmodels' and 'R'
+models, other models will result in a 'SkipTestError'.</p>
+
+<h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
 <li>Discrepancies in how different models weight the same features</li>
@@ -99,7 +103,7 @@ exclusive to 'statsmodels' and 'R' models, other models will result in a 'SkipTe
 <li>The test is inapplicable to certain models because they are not from 'statsmodels' or 'R' libraries</li>
 </ul>
 
-<p><strong>Strengths</strong>:</p>
+<h3 id="strengths">Strengths</h3>
 
 <ul>
 <li>Enables insight into the training process of different models</li>
@@ -108,7 +112,7 @@ exclusive to 'statsmodels' and 'R' models, other models will result in a 'SkipTe
 highlights significant weights and biases in the training procedure</li>
 </ul>
 
-<p><strong>Limitations</strong>:</p>
+<h3 id="limitations">Limitations</h3>
 
 <ul>
 <li>The test is only compatible with 'statsmodels' and 'R' regression models</li>

@@ -17,46 +17,47 @@ from ....vm_models import Figure, Metric, VMDataset
 @dataclass
 class TextDescription(Metric):
     """
-    Performs comprehensive textual analysis on a dataset using NLTK, evaluating various parameters and generating
+    Conducts comprehensive textual analysis on a dataset using NLTK to evaluate various parameters and generate
     visualizations.
 
-    **Purpose**: This test uses the TextDescription metric to conduct a comprehensive textual analysis of a given
-    dataset. Various parameters such as total words, total sentences, average sentence length, total paragraphs, total
-    unique words, most common words, total punctuations, and lexical diversity are evaluated. This metric aids in
-    comprehending the nature of the text and evaluating the potential challenges that machine learning algorithms
-    deployed for textual analysis, language processing, or summarization might face.
+    ### Purpose
 
-    **Test Mechanism**: The test works by parsing the given dataset and utilizes the NLTK (Natural Language Toolkit)
-    library for tokenizing the text into words, sentences, and paragraphs. Subsequently, it processes the text further
-    by eliminating stopwords declared in 'unwanted_tokens' and punctuations. Next, it determines parameters like the
-    total count of words, sentences, paragraphs, punctuations alongside the average sentence length and lexical
-    diversity. Lastly, the result from these calculations is condensed and scatter plots for certain variable
-    combinations (e.g. Total Words vs Total Sentences, Total Words vs Total Unique Words) are produced, providing a
-    visual representation of the text's structure.
+    The TextDescription test aims to conduct a thorough textual analysis of a dataset using the NLTK (Natural Language
+    Toolkit) library. It evaluates various metrics such as total words, total sentences, average sentence length, total
+    paragraphs, total unique words, most common words, total punctuations, and lexical diversity. The goal is to
+    understand the nature of the text and anticipate challenges machine learning models might face in text processing,
+    language understanding, or summarization tasks.
 
-    **Signs of High Risk**:
-    - Anomalies or an increase in complexity within the lexical diversity results.
+    ### Test Mechanism
+
+    The test works by:
+
+    - Parsing the dataset and tokenizing the text into words, sentences, and paragraphs using NLTK.
+    - Removing stopwords and unwanted tokens.
+    - Calculating parameters like total words, total sentences, average sentence length, total paragraphs, total unique
+    words, total punctuations, and lexical diversity.
+    - Generating scatter plots to visualize correlations between various metrics (e.g., Total Words vs Total Sentences).
+
+    ### Signs of High Risk
+
+    - Anomalies or increased complexity in lexical diversity.
     - Longer sentences and paragraphs.
     - High uniqueness of words.
-    - Presence of a significant amount of unwanted tokens.
+    - Large number of unwanted tokens.
     - Missing or erroneous visualizations.
-     These signs suggest potential risk in text processing ML models, indicating that the ability of the model to
-    absorb and process text could be compromised.
 
-    **Strengths**:
-    - An essential pre-processing tool, specifically for textual analysis in machine learning model data.
-    - Provides a comprehensive breakdown of a text dataset, which aids in understanding both structural and vocabulary
-    complexity.
-    - Generates visualizations of correlations between chosen variables to further comprehend the text's structure and
-    complexity.
+    ### Strengths
 
-    **Limitations**:
-    - Heavy reliance on the NLTK library, restricting its use to only the languages that NLTK supports.
-    - Limited customization capacity as the undesirable tokens and stop words are predefined.
-    - Lacks the ability to consider semantics or grammatical complexities, which could be crucial aspects in language
-    processing.
-    - Assumes that the document is well-structured (includes sentences and paragraphs); therefore, unstructured or
-    poorly formatted text may distort the results.
+    - Essential for pre-processing text data in machine learning models.
+    - Provides a comprehensive breakdown of text data, aiding in understanding its complexity.
+    - Generates visualizations to help comprehend text structure and complexity.
+
+    ### Limitations
+
+    - Highly dependent on the NLTK library, limiting the test to supported languages.
+    - Limited customization for removing undesirable tokens and stop words.
+    - Does not consider semantic or grammatical complexities.
+    - Assumes well-structured documents, which may result in inaccuracies with poorly formatted text.
     """
 
     name = "text_description"

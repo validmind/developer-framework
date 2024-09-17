@@ -20,43 +20,41 @@ from validmind.vm_models import (
 @dataclass
 class Skewness(ThresholdTest):
     """
-    Evaluates the skewness of numerical data in a machine learning model and checks if it falls below a set maximum
-    threshold.
+    Evaluates the skewness of numerical data in a dataset to check against a defined threshold, aiming to ensure data
+    quality and optimize model performance.
 
-    **Purpose**: The purpose of the Skewness test is to measure the asymmetry in the distribution of data within a
-    predictive machine learning model. Specifically, it evaluates the divergence of said distribution from a normal
-    distribution. In understanding the level of skewness, we can potentially identify issues with data quality, an
-    essential component for optimizing the performance of traditional machine learning models in both classification
-    and regression settings.
+    ### Purpose
 
-    **Test Mechanism**: This test calculates skewness of numerical columns in a dataset, which is extracted from the
-    DataFrame, specifically focusing on numerical data types. The skewness value is then contrasted against a
-    predetermined maximum threshold, set by default to 1. The skewness value under review is deemed to have passed the
-    test only if it is less than this maximum threshold; otherwise, the test is considered 'fail'. Subsequently, the
-    test results of each column, together with the skewness value and column name, are cached.
+    The purpose of the Skewness test is to measure the asymmetry in the distribution of data within a predictive
+    machine learning model. Specifically, it evaluates the divergence of said distribution from a normal distribution.
+    Understanding the level of skewness helps identify data quality issues, which are crucial for optimizing the
+    performance of traditional machine learning models in both classification and regression settings.
 
-    **Signs of High Risk**:
+    ### Test Mechanism
 
-    - The presence of substantial skewness levels that significantly exceed the maximum threshold is an indication of
-    skewed data distribution and subsequently high model risk.
-    - Persistent skewness in data could signify that the foundational assumptions of the machine learning model may not
-    be applicable, potentially leading to subpar model performance, erroneous predictions, or biased inferences.
+    This test calculates the skewness of numerical columns in the dataset, focusing specifically on numerical data
+    types. The calculated skewness value is then compared against a predetermined maximum threshold, which is set by
+    default to 1. If the skewness value is less than this maximum threshold, the test passes; otherwise, it fails. The
+    test results, along with the skewness values and column names, are then recorded for further analysis.
 
-    **Strengths**:
+    ### Signs of High Risk
 
-    - Fast and efficient identification of unequal data
-    - distributions within a machine learning model is enabled by the skewness test.
-    - The maximum threshold parameter can be adjusted to meet the user's specific needs, enhancing the test's
-    versatility.
+    - Substantial skewness levels that significantly exceed the maximum threshold.
+    - Persistent skewness in the data, indicating potential issues with the foundational assumptions of the machine
+    learning model.
+    - Subpar model performance, erroneous predictions, or biased inferences due to skewed data distributions.
 
-    **Limitations**:
+    ### Strengths
 
-    - The test only evaluates numeric columns, which means that data in non-numeric columns could still include bias or
-    problematic skewness that this test does not capture.
-    - The test inherently assumes that the data should follow a normal distribution, an expectation which may not
-    always be met in real-world data.
-    - The risk grading is largely dependent on a subjective threshold, which may result in excessive strictness or
-    leniency depending upon selection. This factor might require expert input and recurrent iterations for refinement.
+    - Fast and efficient identification of unequal data distributions within a machine learning model.
+    - Adjustable maximum threshold parameter, allowing for customization based on user needs.
+    - Provides a clear quantitative measure to mitigate model risks related to data skewness.
+
+    ### Limitations
+
+    - Only evaluates numeric columns, potentially missing skewness or bias in non-numeric data.
+    - Assumes that data should follow a normal distribution, which may not always be applicable to real-world data.
+    - Subjective threshold for risk grading, requiring expert input and recurrent iterations for refinement.
     """
 
     name = "skewness"

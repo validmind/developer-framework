@@ -32,8 +32,7 @@ plt.show = lambda: None
 # These tests are expected to fail and need to be fixed
 KNOWN_FAILING_TESTS = [
     # Only statsmodels are supported for these metrics
-    "validmind.model_validation.statsmodels.RegressionCoeffsPlot",
-    "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
+    "validmind.model_validation.statsmodels.RegressionCoeffs",
     "validmind.model_validation.statsmodels.RegressionFeatureSignificance",
     # The number of observations is too small to use the Zivot-Andrews test
     "validmind.data_validation.ZivotAndrewsArch",
@@ -63,9 +62,6 @@ CUSTOM_TEST_INPUT_ASSIGNMENTS = {
 # how to load the config for that test
 TEST_TO_PARAMS_CONFIG = {
     # TODO: features_pairs should default to all input dataset pairs
-    "validmind.data_validation.BivariateFeaturesBarPlots": "features_pairs_raw",
-    "validmind.data_validation.BivariateHistograms": "features_pairs_raw",
-    "validmind.data_validation.BivariateScatterPlots": "features_pairs_raw",
     "validmind.model_validation.statsmodels.ScorecardHistogram": "score_column",
     # TODO: "ValueError: perplexity must be less than n_samples if using defaults"
     "validmind.model_validation.embeddings.TSNEComponentsPairwisePlots": "t_sne_config",

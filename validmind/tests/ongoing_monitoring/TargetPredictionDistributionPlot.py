@@ -12,29 +12,37 @@ from validmind import tags, tasks
 @tasks("monitoring")
 def TargetPredictionDistributionPlot(datasets, model):
     """
-    **Purpose:**
-    This test provides the prediction distributions from the reference dataset and the new monitoring dataset. If there
-    are significant differences in the distributions, it might indicate different underlying data characteristics that
-    warrant further investigation into the root causes.
+    Assesses differences in prediction distributions between a reference dataset and a monitoring dataset to identify
+    potential data drift.
 
-    **Test Mechanism:**
-    The methodology involves generating Kernel Density Estimation (KDE) plots for the prediction probabilities from
-    both the reference and monitoring datasets. By comparing these KDE plots, one can visually assess any significant
-    differences in the prediction distributions between the two datasets.
+    ### Purpose
 
-    **Signs of High Risk:**
-    - Significant divergence between the distribution curves of the reference and monitoring predictions
-    - Unusual shifts or bimodal distribution in the monitoring predictions compared to the reference predictions
+    The Target Prediction Distribution Plot test aims to evaluate potential changes in the prediction distributions
+    between the reference and new monitoring datasets. It seeks to identify underlying shifts in data characteristics
+    that warrant further investigation.
 
-    **Strengths:**
-    - Visual representation makes it easy to spot differences in prediction distributions
-    - Useful for identifying potential data drift or changes in underlying data characteristics
-    - Simple and efficient to implement using standard plotting libraries
+    ### Test Mechanism
 
-    **Limitations:**
-    - Subjective interpretation of the visual plots
-    - Might not pinpoint the exact cause of distribution changes
-    - Less effective if the differences in distributions are subtle and not easily visible
+    This test generates Kernel Density Estimation (KDE) plots for prediction probabilities from both the reference and
+    monitoring datasets. By visually comparing the KDE plots, it assesses significant differences in the prediction
+    distributions between the two datasets.
+
+    ### Signs of High Risk
+
+    - Significant divergence between the distribution curves of reference and monitoring predictions.
+    - Unusual shifts or bimodal distribution in the monitoring predictions compared to the reference predictions.
+
+    ### Strengths
+
+    - Visual representation makes it easy to spot differences in prediction distributions.
+    - Useful for identifying potential data drift or changes in underlying data characteristics.
+    - Simple and efficient to implement using standard plotting libraries.
+
+    ### Limitations
+
+    - Subjective interpretation of the visual plots.
+    - Might not pinpoint the exact cause of distribution changes.
+    - Less effective if the differences in distributions are subtle and not easily visible.
     """
 
     pred_ref = datasets[0].y_prob_df(model)

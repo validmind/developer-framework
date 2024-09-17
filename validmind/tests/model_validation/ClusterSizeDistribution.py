@@ -13,40 +13,44 @@ from validmind.vm_models import Figure, Metric
 @dataclass
 class ClusterSizeDistribution(Metric):
     """
-    Compares and visualizes the distribution of cluster sizes in model predictions and actual data for assessing
-    clustering model performance.
+    Assesses the performance of clustering models by comparing the distribution of cluster sizes in model predictions
+    with the actual data.
 
-    **Purpose:** The purpose of the `ClusterSizeDistribution` metric is to assess the performance of clustering models.
-    It does this by comparing the distribution of cluster sizes in the predictions made by the model and the actual
-    data. Observing the cluster distribution helps gain insights into whether the model's output aligns well with the
-    actual dataset distribution.
+    ### Purpose
 
-    **Test Mechanism:** The testing mechanism for `ClusterSizeDistribution` involves first running the clustering model
-    on the training dataset, storing predictions, and comparing these predictions with the actual output. The actual
-    and predicted outputs are then converted into pandas dataframes, which conveniently enables the use of pandas
-    built-in functions to derive cluster size distributions. Two histograms are constructed from this data: one for the
-    actual distribution and one for the predicted distribution. These histograms are then plotted side-by-side for
-    visual comparison.
+    The Cluster Size Distribution test aims to assess the performance of clustering models by comparing the
+    distribution of cluster sizes in the model's predictions with the actual data. This comparison helps determine if
+    the clustering model's output aligns well with the true cluster distribution, providing insights into the model's
+    accuracy and performance.
 
-    **Signs of High Risk:**
-    * Discrepancies between the actual cluster size distribution and the predicted cluster size distribution may
-    indicate high risk.
-    * An irregular distribution of data across clusters in the predicted outcomes points towards an inaccurate
-    prediction model.
-    * A high number of outlier clusters could indicate that the model has trouble correctly grouping data.
+    ### Test Mechanism
 
-    **Strengths:**
-    * `ClusterSizeDistribution` provides a visual and intuitive way to compare the performance of the clustering model
-    against the actual data.
-    * This metric can effectively reveal where the model might be over- or underestimating cluster sizes.
-    * It works well with any clustering models, making it a versatile comparison tool.
+    The test mechanism involves the following steps:
+    - Run the clustering model on the provided dataset to obtain predictions.
+    - Convert both the actual and predicted outputs into pandas dataframes.
+    - Use pandas built-in functions to derive the cluster size distributions from these dataframes.
+    - Construct two histograms: one for the actual cluster size distribution and one for the predicted distribution.
+    - Plot the histograms side-by-side for visual comparison.
 
-    **Limitations:**
-    * The metric assumes that the actual cluster distribution is optimal, which may not always be the case.
-    * It relies heavily on visual comparison, which might be subjective and may not provide a precise numerical measure
-    of model performance.
-    * The metric might not fully capture other important aspects of clustering such as cluster density, distances
-    between clusters, and the shape of clusters.
+    ### Signs of High Risk
+
+    - Discrepancies between the actual cluster size distribution and the predicted cluster size distribution.
+    - Irregular distribution of data across clusters in the predicted outcomes.
+    - High number of outlier clusters suggesting the model struggles to correctly group data.
+
+    ### Strengths
+
+    - Provides a visual and intuitive way to compare the clustering model's performance against actual data.
+    - Effectively reveals where the model may be over- or underestimating cluster sizes.
+    - Versatile as it works well with any clustering model.
+
+    ### Limitations
+
+    - Assumes that the actual cluster distribution is optimal, which may not always be the case.
+    - Relies heavily on visual comparison, which could be subjective and may not offer a precise numerical measure of
+    performance.
+    - May not fully capture other important aspects of clustering, such as cluster density, distances between clusters,
+    and the shape of clusters.
     """
 
     name = "cluster_size_distribution"

@@ -12,75 +12,80 @@ from validmind import tags, tasks
 
 @tags("model_performance", "sklearn")
 @tasks("regression", "time_series_forecasting")
-def TimeSeriesR2SquareBySegments(datasets, models, segments=None):
+def TimeSeriesR2SquareBySegments(dataset, model, segments=None):
     """
-    Plot R-Squared values for each model over specified time segments and generate a bar chart
-    with the results.
+    Evaluates the R-Squared values of regression models over specified time segments in time series data to assess
+    segment-wise model performance.
 
-    **Purpose**: The purpose of this function is to plot the R-Squared values for different models applied to various segments of the time series data.
+    ### Purpose
 
-    **Parameters**:
-    - datasets: List of datasets to evaluate.
-    - models: List of models to evaluate.
-    - segments: Dictionary with 'start_date' and 'end_date' keys containing lists of start and end dates for each segments. If None, the time series will be segmented into two halves.
+    The TimeSeriesR2SquareBySegments test aims to evaluate the R-Squared values for several regression models across
+    different segments of time series data. This helps in determining how well the models explain the variability in
+    the data within each specific time segment.
 
-    **Test Mechanism**: The function iterates through each dataset-model pair, calculates the R-Squared values for specified time segments, and generates a bar chart with these results.
-
-    **Signs of High Risk**:
-    - If the R-Squared values are significantly low for certain segments, it could indicate that the model is not explaining much of the variability in the dataset for those segments.
-
-    **Strengths**:
+    ### Test Mechanism
     - Provides a visual representation of model performance across different time segments.
-    - Allows for identification of segments where models perform poorly.
+    - Allows for identification of segments where the model performs poorly.
+    - Calculating the R-Squared values for each segment.
+    - Generating a bar chart to visually represent the R-Squared values across different models and segments.
 
-    **Limitations**:
-    - Assumes that the dataset is provided as a DataFrameDataset object with `y`, `y_pred`, and `feature_columns` attributes.
-    - Requires that `dataset.y_pred(model)` returns the predicted values for the model.
-    - Assumes that `y_true` and `y_pred` are pandas Series with datetime indices.
+    ### Signs of High Risk
+
+    - Significantly low R-Squared values for certain time segments, indicating poor model performance in those periods.
+    - Large variability in R-Squared values across different segments for the same model, suggesting inconsistent
+    performance.
+
+    ### Strengths
+
+    - Provides a visual representation of how well models perform over different time periods.
+    - Helps identify time segments where models may need improvement or retraining.
+    - Facilitates comparison between multiple models in a straightforward manner.
+
+    ### Limitations
+
+    - Assumes datasets are provided as DataFrameDataset objects with the attributes `y`, `y_pred`, and
+    `feature_columns`.
+    - Requires that `dataset.y_pred(model)` returns predicted values for the model.
+    - Assumes that both `y_true` and `y_pred` are pandas Series with datetime indices, which may not always be the case.
+    - May not account for more nuanced temporal dependencies within the segments.
     """
     results_list = []
 
-    for dataset, model in zip(datasets, models):
-        dataset_name = dataset.input_id
-        model_name = model.input_id
+    y_true = dataset.y
+    y_pred = dataset.y_pred(model)
 
-        y_true = dataset.y
-        y_pred = dataset.y_pred(model)
+    # Ensure y_true and y_pred are pandas Series with the same index
+    if not isinstance(y_true, pd.Series):
+        y_true = pd.Series(y_true, index=dataset.df.index)
+    if not isinstance(y_pred, pd.Series):
+        y_pred = pd.Series(y_pred, index=dataset.df.index)
 
-        # Ensure y_true and y_pred are pandas Series with the same index
-        if not isinstance(y_true, pd.Series):
-            y_true = pd.Series(y_true, index=dataset.df.index)
-        if not isinstance(y_pred, pd.Series):
-            y_pred = pd.Series(y_pred, index=dataset.df.index)
+    index = dataset.df.index
 
-        index = dataset.df.index
+    if segments is None:
+        mid_point = len(index) // 2
+        segments = {
+            "start_date": [index.min(), index[mid_point]],
+            "end_date": [index[mid_point - 1], index.max()],
+        }
 
-        if segments is None:
-            mid_point = len(index) // 2
-            segments = {
-                "start_date": [index.min(), index[mid_point]],
-                "end_date": [index[mid_point - 1], index.max()],
-            }
+    for segment_index, (start_date, end_date) in enumerate(
+        zip(segments["start_date"], segments["end_date"])
+    ):
+        mask = (index >= start_date) & (index <= end_date)
+        y_true_segment = y_true.loc[mask]
+        y_pred_segment = y_pred.loc[mask]
 
-        for segment_index, (start_date, end_date) in enumerate(
-            zip(segments["start_date"], segments["end_date"])
-        ):
-            mask = (index >= start_date) & (index <= end_date)
-            y_true_segment = y_true.loc[mask]
-            y_pred_segment = y_pred.loc[mask]
-
-            if len(y_true_segment) > 0 and len(y_pred_segment) > 0:
-                r2s = metrics.r2_score(y_true_segment, y_pred_segment)
-                results_list.append(
-                    {
-                        "Model": model_name,
-                        "Dataset": dataset_name,
-                        "Segments": f"Segment {segment_index + 1}",
-                        "Start Date": start_date,
-                        "End Date": end_date,
-                        "R-Squared": r2s,
-                    }
-                )
+        if len(y_true_segment) > 0 and len(y_pred_segment) > 0:
+            r2s = metrics.r2_score(y_true_segment, y_pred_segment)
+            results_list.append(
+                {
+                    "Segments": f"Segment {segment_index + 1}",
+                    "Start Date": start_date,
+                    "End Date": end_date,
+                    "R-Squared": r2s,
+                }
+            )
 
     # Convert results list to a DataFrame
     results_df = pd.DataFrame(results_list)
@@ -90,13 +95,13 @@ def TimeSeriesR2SquareBySegments(datasets, models, segments=None):
         results_df,
         x="Segments",
         y="R-Squared",
-        color="Model",
+        # color="Model",
         barmode="group",
-        title="R-Squared Comparison by Segment and Model",
+        title="R-Squared by Segment",
         labels={
             "R-Squared": "R-Squared Value",
-            "Segment": "Time Segment",
-            "Model": "Model",
+            "Segments": "Time Segment",
+            # "Model": "Model",
         },
     )
 
