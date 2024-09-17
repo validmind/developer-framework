@@ -9,8 +9,6 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(validmind)
-
-python_version <- "~/.pyenv/versions/3.11.6/bin/python"
 ```
 
 <a id='toc2_'></a>
@@ -114,10 +112,10 @@ Next, replace this placeholder with your own code snippet:
 ```{r}
 vm_r <- vm(
   api_host = "https://api.prod.validmind.ai/api/v1/tracking",
-  api_key="<your_api_key_here>",
-  api_secret="<your_api_secret_here>",
-  project="<your_project_id_here>",
-  python_version = python_version
+  api_key = "...",
+  api_secret = "...",
+  project = "...",
+  python_version = "~/.pyenv/versions/3.11.10/bin/python"
 )
 ```
 
@@ -125,33 +123,9 @@ vm_r <- vm(
 
 ## Implement a Custom Test
 
-Let's start off by creating a simple custom test that creates a Confusion Matrix for a binary classification model.
+Let's start off by creating a simple custom test that creates a Confusion Matrix for a binary classification model. First, we will build the model itself.
 
-```{r}
-confusion_matrix <- function(model, dataset, response_var = "Exited") {
-  y_true <- as.factor(dataset[[response_var]])
-  y_pred <- predict(model, dataset)
-  
-  y_pred <- as.factor(ifelse(y_pred <= 0, 0, 1))
-  cm <- confusionMatrix(y_pred, y_true)
-  
-  cm_data <- as.data.frame(cm$table)
-  cm_data$Prediction <- factor(cm_data$Prediction, levels = rev(levels(cm_data$Prediction)))
-  
-  p <- ggplot(cm_data, aes(x = Prediction, y = Reference, fill = Freq)) +
-    geom_tile() +
-    geom_text(aes(label = Freq), vjust = 1) +
-    scale_fill_gradient(low = "white", high = "red") +
-    theme_minimal() +
-    labs(title = "Confusion Matrix", x = "Predicted", y = "Actual")
-  
-  print(p)  # print the plot to display it
-  
-  return(p)  # return the ggplot object
-}
-```
-
-## **Load the Demo Dataset**
+### **Load the Demo Dataset**
 
 For the purpose of this demonstration, we will use a sample dataset provided by the ValidMind library.
 
@@ -202,7 +176,8 @@ vm_test_ds = vm_r$init_dataset(
 )
 
 vm_model = vm_r$init_r_model(
-    model_path=model_path
+    model_path=model_path,
+    input_id="model"
 )
 
 # link the model to the dataset
@@ -221,11 +196,24 @@ my_test_provider = vm_r$tests$LocalTestProvider(tempdir())
 
 vm_r$tests$register_test_provider(
     namespace="my_test_provider",
-    test_provider=NULL  # TODO See how we can pass in the above
+    test_provider=my_test_provider
 )
 ```
 
 <a id='toc7_2_'></a>
+
+### Run a Built-In Test
+
+```{r}
+descriptive_stats <- vm_r$tests$run_test(
+    test_id = "validmind.data_validation.DescriptiveStatistics",
+    inputs = list("dataset" = vm_test_ds),
+    show = FALSE
+)
+
+descriptive_summary <- validmind:::summarize_metric_result(descriptive_stats)
+bind_rows(descriptive_summary$results[[1]]$data)
+```
 
 ### Run the Custom Test
 
@@ -234,16 +222,47 @@ Now that we have our model and dataset setup, we have everything we need to run 
 >Notice how the `inputs` dictionary is used to map an `input_id` which we set above to the `model` and `dataset` keys that are expected by our custom test function. This is how the ValidMind framework knows which inputs to pass to different tests and is key when using many different datasets and models.
 
 ```{r}
-descriptive_stats <- vm_r$tests$run_test(
-    test_id = "validmind.data_validation.DescriptiveStatistics",
-    inputs = list("dataset" = vm_test_ds)
+library(reticulate)
+
+# Import necessary Python modules
+Metric <- reticulate::import("validmind.vm_models", as = "vm")$Metric
+metrics <- import("sklearn.metrics")
+plt <- import("matplotlib.pyplot")
+
+# Define your confusion_matrix function in R
+confusion_matrix <- function(dataset, model) {
+    y_true <- dataset$y
+    y_pred <- dataset$y_pred(model)
+    
+    confusion_matrix <- metrics$confusion_matrix(y_true, y_pred)
+    
+    cm_display <- metrics$ConfusionMatrixDisplay(
+        confusion_matrix=confusion_matrix, display_labels=c(FALSE, TRUE)
+    )
+    cm_display$plot()
+    plt$close()
+    
+    return(cm_display$figure_)
+}
+
+# Add a description attribute to your function
+attr(confusion_matrix, "description") <- "Confusion matrix metric"
+
+# Register your confusion_matrix function
+register_result <- register_test(
+    confusion_matrix,
+    test_id = "my_custom_tests.ConfusionMatrix2",
+    description = "Confusion matrix metric",
+    required_inputs = c("dataset", "model")
+)
+
+# Import the run_test function
+run_test <- import("validmind.tests")$run_test
+
+# Run your custom test
+result <- run_test(
+    "my_custom_tests.ConfusionMatrix2",
+    inputs = list(model = vm_model, dataset = vm_test_ds),
+    show = FALSE
 )
 ```
-
-```{r}
-confusion_matrix = vm_r$tests$run_test(
-    "my_custom_tests.ConfusionMatrix",
-    inputs = list(model = model)
-)
-```
-

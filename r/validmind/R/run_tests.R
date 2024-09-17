@@ -1,163 +1,81 @@
-#' Register Test for Custom Metrics Function
+#' Register a Custom Test Function in ValidMind
 #'
-#' This function serves as a decorator to convert an R function into a custom metric class
-#' compatible with the Python environment, particularly within the context of the `validmind` package.
-#' It registers the custom metric using the test ID and relevant attributes such as tasks and tags.
+#' Registers an R function as a custom test within the ValidMind testing framework, allowing it to be used as a metric in model validation.
 #'
-#' @param func Function. The R function to be converted into a custom metric class.
-#'
-#' @return The original function, after it has been registered as a custom test in the Python environment.
+#' @param func An R function to be registered as a custom test.
+#' @param test_id A unique identifier for the test. If \code{NULL}, a default ID is generated based on the function name.
+#' @param description A description of the test. If \code{NULL}, the function's \code{description} attribute is used, or "No description" if not available.
+#' @param required_inputs A character vector specifying the required inputs for the test. If \code{NULL}, the function's formal argument names are used.
 #'
 #' @details
-#' The `register_test` function takes an R function and performs the following operations:
-#' - Converts the function name into a test ID if not provided.
-#' - Inspects the function's formal arguments and creates a list of default parameters.
-#' - Interacts with the Python environment using `reticulate` to create a corresponding Python class.
-#' - Extracts any documentation, tasks, and tags associated with the function.
-#' - Registers the custom test in the Python environment using the `test_store` object.
+#' The function converts the provided R function into a Python callable using \code{\link[reticulate]{r_to_py}}, and then defines a Python class that wraps this callable.
+#' This Python class inherits from ValidMind's \code{Metric} class and is registered in ValidMind's test store.
 #'
-#' The function uses the Python `type` function to dynamically create a metric class with the following properties:
-#' - `run`: The method to execute the function.
-#' - `required_inputs`: A list of required input arguments.
-#' - `default_params`: A list of default parameter values.
-#' - `__doc__`: The function's documentation string.
-#' - `tasks`: A list of tasks associated with the function.
-#' - `tags`: A list of tags associated with the function.
+#' The custom test can then be used within ValidMind's testing framework to validate models.
+#'
+#' @return Invisibly returns \code{NULL}. This function is called for its side effects.
+#'
+#' @examples
+#' \dontrun{
+#' # Define a custom test function in R
+#' my_custom_metric <- function(predictions, targets) {
+#'   # Custom metric logic
+#'   mean(abs(predictions - targets))
+#' }
+#'
+#' # Register the custom test
+#' register_test(
+#'   func = my_custom_metric,
+#'   test_id = "custom.mae",
+#'   description = "Custom Mean Absolute Error",
+#'   required_inputs = c("predictions", "targets")
+#' )
+#' }
+#'
+#' @seealso \code{\link[reticulate]{r_to_py}}, \code{\link[reticulate]{import_main}}, \code{\link[reticulate]{py_run_string}}
 #'
 #' @import reticulate
-#'
-#' @examples
-#'
-#' \dontrun{
-#' ### Calling a Built In Function
-#' # Load the validmind package
-#' vm_r <- vm(
-#'     api_key="<your_api_key_here>",
-#'     api_secret="<your_api_secret_here>",
-#'     project="<your_project_id_here>",
-#'     python_version=python_version,
-#'     api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
-#' )
-#' 
-#' # Run the test function with named inputs
-#' vm_raw_dataset = vm_r$init_dataset(
-#'     dataset = iris,
-#'     input_id = "iris_dataset",
-#'     target_column = "Species",
-#' )
-#' 
-#' vm_test = run_test(
-#'     test_id = "validmind.data_validation.DescriptiveStatistics",
-#'     inputs = list("dataset" = vm_raw_dataset)
-#' )
-#' 
-#' print(vm_test)
-#'
-#' ### Registering a Custom Function
-#' # Example with a more complex function
-#' library(ggplot2)
-#' library(caret)
-#'
-#' # Define a function to generate a confusion matrix and plot it
-#' confusion_matrix <- function(model, dataset, response_var = "Exited") {
-#'   y_true <- as.factor(dataset[[response_var]])
-#'   y_pred <- predict(model, dataset)
-#'   
-#'   y_pred <- as.factor(ifelse(y_pred <= 0, 0, 1))
-#'   cm <- confusionMatrix(y_pred, y_true)
-#'   
-#'   cm_data <- as.data.frame(cm$table)
-#'   cm_data$Prediction <- factor(cm_data$Prediction, levels = rev(levels(cm_data$Prediction)))
-#'   
-#'   p <- ggplot(cm_data, aes(x = Prediction, y = Reference, fill = Freq)) +
-#'     geom_tile() +
-#'     geom_text(aes(label = Freq), vjust = 1) +
-#'     scale_fill_gradient(low = "white", high = "red") +
-#'     theme_minimal() +
-#'     labs(title = "Confusion Matrix", x = "Predicted", y = "Actual")
-#'   
-#'   print(p)  # print the plot to display it
-#'   
-#'   return(p)  # return the ggplot object
-#' }
-#'
-#' result <- register_test(confusion_matrix)
-#' print(result)
-#' }
-#'
 #' @export
-register_test <- function(func) {
-    # Convert the function name to the test_id
-    test_id <- paste0("validmind.custom_metrics.", deparse(substitute(func)))
-    
-    # Inspect the R function's formals (equivalent to Python signature)
-    inputs <- formals(func)
-    params <- lapply(inputs, function(default_value) {
-        list("default" = default_value)
-    })
-    
-    # Use reticulate to access the Python environment
-    py_run_string("import inspect")
-    
-    # Since the function is in R, we'll convert the inputs and params to Python dicts manually
-    py_inputs <- reticulate::r_to_py(inputs)
-    py_params <- reticulate::r_to_py(params)
-    
-    # Extract the function description (docstring) in R
-    description <- if (!is.null(attr(func, "doc"))) attr(func, "doc") else NULL
-    
-    # Extract tasks and tags if they exist as attributes on the function
-    tasks <- if (!is.null(attr(func, "__tasks__"))) attr(func, "__tasks__") else list()
-    tags <- if (!is.null(attr(func, "__tags__"))) attr(func, "__tags__") else list()
-    
-    # Import the tests module
-    run_method <- reticulate::import("validmind.tests.decorator", as = "vm")$`_get_run_method`
-    
-    # Import the Metric class from the Python environment
-    Metric <- reticulate::import("validmind.vm_models", as = "vm")$Metric
-    
-    py_type <- reticulate::import_builtins()$type
-    
-    # Create the metric_class in R, using the Python `type` function
-    metric_class <- py_type(
-        deparse(substitute(func)),
-        reticulate::tuple(Metric),
-        list(
-            "run" = run_method(func, py_inputs, py_params),
-            "required_inputs" = names(inputs),
-            "default_params" = lapply(params, function(x) x[["default"]]),
-            "__doc__" = description,
-            "tasks" = tasks,
-            "tags" = tags
-        )
-    )
+register_test <- function(func, test_id = NULL, description = NULL, required_inputs = NULL) {
+    if (is.null(test_id)) {
+        test_id <- paste0("validmind.custom_metrics.", deparse(substitute(func)))
+    }
+    if (is.null(description)) {
+        description <- attr(func, "description")
+        if (is.null(description)) {
+            description <- "No description"
+        }
+    }
+    if (is.null(required_inputs)) {
+        required_inputs <- names(formals(func))
+    }
+    # Convert your R function to a Python callable
+    py_func <- r_to_py(func)
+    # Access the main Python namespace
+    py_main <- import_main()
+    py_main$py_func <- py_func
+    # Define a Python class that calls your R function
+    py_env <- py_run_string("
+from validmind.vm_models import Metric
+from validmind.tests._store import test_store
 
-    # Access the test_store object from the Python environment
-    test_store <- reticulate::import("validmind.tests._store", as = "vm")$test_store
-    
-    # Register the custom test using reticulate
-    test_store$register_custom_test(test_id, metric_class)
-    
-    return(func)
-}
+class CustomMetric(Metric):
+    '''Description'''
+    required_inputs = []
+    default_params = {}
 
-#' Register a Test Function
-#'
-#' This function registers a given function as a test using the `validmind` Python library through the `reticulate` package.
-#'
-#' @param func_or_id A function to be registered as a test, or an id of an existing test. The function should be compatible with the `validmind` test decorator.
-#' @return A decorator function that wraps the input function for testing purposes.
-#' @importFrom reticulate import
-#' @export
-#' @examples
-#' \dontrun{
-#' my_test_function <- function(self, a = 1, b = 2) {
-#'     return(a + b)
-#' }
-#' registered_test <- vm_test(my_test_function)
-#' }
-vm_test <- function(func_or_id) {
-    test_method <- reticulate::import("validmind.tests.decorator", as = "vm")$test
+    def run(self):
+        inputs_dict = {key: getattr(self.inputs, key) for key in self.required_inputs}
+        return py_func(**inputs_dict)
+
+", convert = TRUE)
     
-    return(test_method(func_or_id = func_or_id))
+    # Set attributes of the Python class
+    CustomMetric <- py_env$CustomMetric
+    CustomMetric$`__doc__` <- description
+    CustomMetric$required_inputs <- required_inputs
+    
+    # Register the custom test
+    test_store <- import("validmind.tests._store")$test_store
+    test_store$register_custom_test(test_id, CustomMetric)
 }

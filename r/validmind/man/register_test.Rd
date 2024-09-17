@@ -2,94 +2,49 @@
 % Please edit documentation in R/run_tests.R
 \name{register_test}
 \alias{register_test}
-\title{Register Test for Custom Metrics Function}
+\title{Register a Custom Test Function in ValidMind}
 \usage{
-register_test(func)
+register_test(func, test_id = NULL, description = NULL, required_inputs = NULL)
 }
 \arguments{
-\item{func}{Function. The R function to be converted into a custom metric class.}
+\item{func}{An R function to be registered as a custom test.}
+
+\item{test_id}{A unique identifier for the test. If \code{NULL}, a default ID is generated based on the function name.}
+
+\item{description}{A description of the test. If \code{NULL}, the function's \code{description} attribute is used, or "No description" if not available.}
+
+\item{required_inputs}{A character vector specifying the required inputs for the test. If \code{NULL}, the function's formal argument names are used.}
 }
 \value{
-The original function, after it has been registered as a custom test in the Python environment.
+Invisibly returns \code{NULL}. This function is called for its side effects.
 }
 \description{
-This function serves as a decorator to convert an R function into a custom metric class
-compatible with the Python environment, particularly within the context of the `validmind` package.
-It registers the custom metric using the test ID and relevant attributes such as tasks and tags.
+Registers an R function as a custom test within the ValidMind testing framework, allowing it to be used as a metric in model validation.
 }
 \details{
-The `register_test` function takes an R function and performs the following operations:
-- Converts the function name into a test ID if not provided.
-- Inspects the function's formal arguments and creates a list of default parameters.
-- Interacts with the Python environment using `reticulate` to create a corresponding Python class.
-- Extracts any documentation, tasks, and tags associated with the function.
-- Registers the custom test in the Python environment using the `test_store` object.
+The function converts the provided R function into a Python callable using \code{\link[reticulate]{r_to_py}}, and then defines a Python class that wraps this callable.
+This Python class inherits from ValidMind's \code{Metric} class and is registered in ValidMind's test store.
 
-The function uses the Python `type` function to dynamically create a metric class with the following properties:
-- `run`: The method to execute the function.
-- `required_inputs`: A list of required input arguments.
-- `default_params`: A list of default parameter values.
-- `__doc__`: The function's documentation string.
-- `tasks`: A list of tasks associated with the function.
-- `tags`: A list of tags associated with the function.
+The custom test can then be used within ValidMind's testing framework to validate models.
 }
 \examples{
-
 \dontrun{
-### Calling a Built In Function
-# Load the validmind package
-vm_r <- vm(
-    api_key="<your_api_key_here>",
-    api_secret="<your_api_secret_here>",
-    project="<your_project_id_here>",
-    python_version=python_version,
-    api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
-)
-
-# Run the test function with named inputs
-vm_raw_dataset = vm_r$init_dataset(
-    dataset = iris,
-    input_id = "iris_dataset",
-    target_column = "Species",
-)
-
-vm_test = run_test(
-    test_id = "validmind.data_validation.DescriptiveStatistics",
-    inputs = list("dataset" = vm_raw_dataset)
-)
-
-print(vm_test)
-
-### Registering a Custom Function
-# Example with a more complex function
-library(ggplot2)
-library(caret)
-
-# Define a function to generate a confusion matrix and plot it
-confusion_matrix <- function(model, dataset, response_var = "Exited") {
-  y_true <- as.factor(dataset[[response_var]])
-  y_pred <- predict(model, dataset)
-  
-  y_pred <- as.factor(ifelse(y_pred <= 0, 0, 1))
-  cm <- confusionMatrix(y_pred, y_true)
-  
-  cm_data <- as.data.frame(cm$table)
-  cm_data$Prediction <- factor(cm_data$Prediction, levels = rev(levels(cm_data$Prediction)))
-  
-  p <- ggplot(cm_data, aes(x = Prediction, y = Reference, fill = Freq)) +
-    geom_tile() +
-    geom_text(aes(label = Freq), vjust = 1) +
-    scale_fill_gradient(low = "white", high = "red") +
-    theme_minimal() +
-    labs(title = "Confusion Matrix", x = "Predicted", y = "Actual")
-  
-  print(p)  # print the plot to display it
-  
-  return(p)  # return the ggplot object
+# Define a custom test function in R
+my_custom_metric <- function(predictions, targets) {
+  # Custom metric logic
+  mean(abs(predictions - targets))
 }
 
-result <- register_test(confusion_matrix)
-print(result)
+# Register the custom test
+register_test(
+  func = my_custom_metric,
+  test_id = "custom.mae",
+  description = "Custom Mean Absolute Error",
+  required_inputs = c("predictions", "targets")
+)
 }
 
+}
+\seealso{
+\code{\link[reticulate]{r_to_py}}, \code{\link[reticulate]{import_main}}, \code{\link[reticulate]{py_run_string}}
 }
