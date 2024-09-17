@@ -7,7 +7,7 @@ import numpy as np
 from validmind import tags, tasks
 
 
-@tags("regression", "unit_metric")
+@tags("regression")
 @tasks("regression")
 def QuantileLoss(model, dataset, quantile=0.5):
     error = dataset.y - dataset.y_pred(model)

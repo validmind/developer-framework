@@ -9,10 +9,9 @@ from sklearn.preprocessing import LabelBinarizer
 from validmind import tags, tasks
 
 
-@tags("classification", "sklearn", "unit_metric")
 @tasks("classification")
+@tags("classification")
 def ROC_AUC(model, dataset, **kwargs):
-
     y_true = dataset.y
 
     if len(unique(y_true)) > 2:

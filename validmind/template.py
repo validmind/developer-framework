@@ -18,6 +18,7 @@ logger = get_logger(__name__)
 CONTENT_TYPE_MAP = {
     "test": "Threshold Test",
     "metric": "Metric",
+    "unit_metric": "Unit Metric",
     "metadata_text": "Metadata Text",
     "dynamic": "Dynamic Content",
     "text": "Text",

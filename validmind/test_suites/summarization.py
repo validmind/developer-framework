@@ -16,7 +16,6 @@ class SummarizationMetrics(TestSuite):
 
     suite_id = "summarization_metrics"
     tests = [
-        "validmind.model_validation.RougeMetrics",
         "validmind.model_validation.TokenDisparity",
         "validmind.model_validation.BleuScore",
         "validmind.model_validation.BertScore",
