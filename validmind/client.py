@@ -164,7 +164,7 @@ def init_dataset(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="dataset",
             metadata=get_dataset_info(vm_dataset),
         )
@@ -240,6 +240,11 @@ def init_model(
         vm_model = class_obj(
             pipeline=model,
             input_id=input_id,
+            attributes=(
+                ModelAttributes.from_dict(attributes)
+                if attributes
+                else ModelAttributes()
+            ),
         )
         # TODO: Add metadata for pipeline model
         metadata = get_model_info(vm_model)
@@ -260,7 +265,7 @@ def init_model(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="model",
             metadata=metadata,
         )

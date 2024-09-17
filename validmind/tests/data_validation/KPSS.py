@@ -16,35 +16,40 @@ logger = get_logger(__name__)
 @dataclass
 class KPSS(Metric):
     """
-    Executes KPSS unit root test to validate stationarity of time-series data in machine learning model.
+    Assesses the stationarity of time-series data in a machine learning model using the KPSS unit root test.
 
-    **Purpose**: The Kwiatkowski-Phillips-Schmidt-Shin (KPSS) unit root test is utilized to ensure the stationarity of
-    data within the machine learning model. It specifically works on time-series data to establish the order of
-    integration, which is a prime requirement for accurate forecasting, given the fundamental condition for any time
-    series model is that the series should be stationary.
+    ### Purpose
 
-    **Test Mechanism**: This metric evaluates the KPSS score for every feature present in the dataset. Within the KPSS
-    score, there are various components, namely: a statistic, a p-value, a used lag, and critical values. The core
-    scheme behind the KPSS score is to test the hypothesis that an observable time series is stationary around a
-    deterministic trend. If the computed statistic surpasses the critical value, the null hypothesis is dismissed,
-    inferring the series is non-stationary.
+    The KPSS (Kwiatkowski-Phillips-Schmidt-Shin) unit root test is utilized to ensure the stationarity of data within a
+    machine learning model. It specifically works on time-series data to establish the order of integration, which is
+    essential for accurate forecasting. A fundamental requirement for any time series model is that the series should
+    be stationary.
 
-    **Signs of High Risk**:
-    - High KPSS score represents a considerable risk, particularly if the calculated statistic is higher than the
-    critical value.
-    - If the null hypothesis is rejected and the series is recognized as non-stationary, it heavily influences the
-    model's forecasting capability rendering it less effective.
+    ### Test Mechanism
 
-    **Strengths**:
-    - The KPSS test directly measures the stationarity of a series, allowing it to fulfill a key prerequisite for many
-    time-series models, making it a valuable tool for model validation.
-    - The logics underpinning the test are intuitive and simple, making it understandable and accessible for developers
-    and risk management teams.
+    This test calculates the KPSS score for each feature in the dataset. The KPSS score includes a statistic, a
+    p-value, a used lag, and critical values. The core principle behind the KPSS test is to evaluate the hypothesis
+    that an observable time series is stationary around a deterministic trend. If the computed statistic exceeds the
+    critical value, the null hypothesis (that the series is stationary) is rejected, indicating that the series is
+    non-stationary.
 
-    **Limitations**:
-    - The KPSS test presumes the absence of a unit root in the series and does not differentiate between series that
-    are stationary and those border-lining stationarity.
-    - The test might show restricted power against specific alternatives.
+    ### Signs of High Risk
+
+    - High KPSS score, particularly if the calculated statistic is higher than the critical value.
+    - Rejection of the null hypothesis, indicating that the series is recognized as non-stationary, can severely affect
+    the model's forecasting capability.
+
+    ### Strengths
+
+    - Directly measures the stationarity of a series, fulfilling a key prerequisite for many time-series models.
+    - The underlying logic of the test is intuitive and simple, making it easy to understand and accessible for both
+    developers and risk management teams.
+
+    ### Limitations
+
+    - Assumes the absence of a unit root in the series and doesn't differentiate between series that are stationary and
+    those border-lining stationarity.
+    - The test may have restricted power against certain alternatives.
     - The reliability of the test is contingent on the number of lags selected, which introduces potential bias in the
     measurement.
     """

@@ -16,25 +16,27 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class RegressionModelsPerformanceComparison(Metric):
+class RegressionPerformance(Metric):
     """
     Compares and evaluates the performance of multiple regression models using five different metrics: MAE, MSE, RMSE,
     MAPE, and MBD.
 
-    **1. Purpose:**
+    ### Purpose
+
     The Regression Models Performance Comparison metric is used to measure and compare the performance of regression
     models. It calculates multiple evaluation metrics, including Mean Absolute Error (MAE), Mean Squared Error (MSE),
     Root Mean Squared Error (RMSE), Mean Absolute Percentage Error (MAPE), and Mean Bias Deviation (MBD), thereby
     enabling a comprehensive view of model performance.
 
-    **2. Test Mechanism:**
+    ### Test Mechanism
+
     The test starts by sourcing the true and predicted values from the models. It then computes the MAE, MSE, RMSE,
     MAPE, and MBD. These calculations encapsulate both the direction and the magnitude of error in predictions, thereby
     providing a multi-faceted view of model accuracy. It captures these results in a dictionary and compares the
     performance of all models using these metrics. The results are then appended to a table for presenting a
     comparative summary.
 
-    **3. Signs of High Risk:**
+    ### Signs of High Risk
 
     - High values of MAE, MSE, RMSE, and MAPE, which indicate a high error rate and imply a larger departure of the
     model's predictions from the true values.
@@ -42,13 +44,13 @@ class RegressionModelsPerformanceComparison(Metric):
     - If the test returns an error citing that no models were provided for comparison, it implies a risk in the
     evaluation process itself.
 
-    **4. Strengths:**
+    ### Strengths
 
     - The metric evaluates models on five different metrics offering a comprehensive analysis of model performance.
     - It compares multiple models simultaneously, aiding in the selection of the best-performing models.
     - It is designed to handle regression tasks and can be seamlessly integrated with libraries like sklearn.
 
-    **5. Limitations:**
+    ### Limitations
 
     - The metric only evaluates regression models and does not evaluate classification models.
     - The test assumes that the models have been trained and tested appropriately prior to evaluation. It does not
@@ -58,8 +60,8 @@ class RegressionModelsPerformanceComparison(Metric):
     - The test could exhibit performance limitations if a large number of models is input for comparison.
     """
 
-    name = "models_performance_comparison"
-    required_inputs = ["dataset", "models"]
+    name = "regression_performance"
+    required_inputs = ["dataset", "model"]
 
     tasks = ["regression"]
     tags = [
@@ -96,7 +98,7 @@ class RegressionModelsPerformanceComparison(Metric):
         This summary varies depending if we're evaluating a binary or multi-class model
         """
         results = []
-        metrics = metric_value["model_0"].keys()
+        metrics = metric_value[self.inputs.model.input_id].keys()
         error_table = []
         for metric_name in metrics:
             errors_dict = {}
@@ -119,20 +121,16 @@ class RegressionModelsPerformanceComparison(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.inputs.models:
+        if not self.inputs.model:
             raise SkipTestError(
-                "List of models must be provided as a `models` parameter to compare performance"
+                "Model must be provided as a `models` parameter to compare performance"
             )
-
-        all_models = self.inputs.models
-
         results = {}
 
-        for idx, model in enumerate(all_models):
-            result = self.regression_errors(
-                y_true_test=self.inputs.dataset.y,
-                y_pred_test=self.inputs.dataset.y_pred(model),
-            )
-            results["model_" + str(idx)] = result
+        result = self.regression_errors(
+            y_true_test=self.inputs.dataset.y,
+            y_pred_test=self.inputs.dataset.y_pred(self.inputs.model),
+        )
+        results[self.inputs.model.input_id] = result
 
         return self.cache_results(results)

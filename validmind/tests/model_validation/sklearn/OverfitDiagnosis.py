@@ -25,53 +25,48 @@ from validmind.vm_models import (
 
 logger = get_logger(__name__)
 
+# TODO: A couple of improvements here could be to:
+# 1. Allow the test to use multiple metrics at once
+# 2. Allow custom functions for computing performance
+
 DEFAULT_THRESHOLD = 0.04
 DEFAULT_CLASSIFICATION_METRIC = "auc"
-DEFAULT_REGRESSION_METRIC = "r2"
+DEFAULT_REGRESSION_METRIC = "mse"
 PERFORMANCE_METRICS = {
     "accuracy": {
         "function": metrics.accuracy_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "auc": {
         "function": metrics.roc_auc_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "f1": {
         "function": metrics.f1_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "precision": {
         "function": metrics.precision_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "recall": {
         "function": metrics.recall_score,
-        "is_classification": True,
         "is_lower_better": False,
     },
     "mse": {
         "function": metrics.mean_squared_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "mae": {
         "function": metrics.mean_absolute_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
     "r2": {
         "function": metrics.r2_score,
-        "is_classification": False,
         "is_lower_better": False,
     },
     "mape": {
         "function": metrics.mean_absolute_percentage_error,
-        "is_classification": False,
         "is_lower_better": True,
     },
 }
@@ -125,20 +120,13 @@ def _compute_metrics(
     if is_classification and metric == "auc":
         # if only one class is present in the data, return 0
         if len(np.unique(y_true)) == 1:
-            results[metric].append(0)
-            return
+            return results[metric].append(0)
 
-        score = metric_func(y_true, df_region[prob_column].values)
+        return results[metric].append(
+            metric_func(y_true, df_region[prob_column].values)
+        )
 
-    # All other classification metrics
-    elif is_classification:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    # Regression metrics
-    else:
-        score = metric_func(y_true, df_region[pred_column].values)
-
-    results[metric].append(score)
+    return results[metric].append(metric_func(y_true, df_region[pred_column].values))
 
 
 def _plot_overfit_regions(
@@ -199,9 +187,11 @@ def overfit_diagnosis(  # noqa: C901
     feature columns. It calculates the difference between the training and test performance
     for each group and identifies regions where the difference exceeds a specified threshold.
 
+    ## Test Methodology
+
     This test works for both classification and regression models and with a variety of
     performance metrics. By default, it uses the AUC metric for classification models and
-    the R2 metric for regression models. The threshold for identifying overfit regions
+    the MSE metric for regression models. The threshold for identifying overfit regions
     defaults to 0.04 but should be adjusted based on the specific use case.
 
     ## Inputs
@@ -221,7 +211,7 @@ def overfit_diagnosis(  # noqa: C901
     is_classification = bool(datasets[0].probability_column(model))
 
     # Set default metric if not provided
-    if metric is None:
+    if not metric:
         metric = (
             DEFAULT_CLASSIFICATION_METRIC
             if is_classification
@@ -233,19 +223,6 @@ def overfit_diagnosis(  # noqa: C901
 
     if id(cut_off_threshold) == id(DEFAULT_THRESHOLD):
         logger.info("Using default cut-off threshold of 0.04")
-
-    metric = metric.lower()
-    try:
-        _metric = PERFORMANCE_METRICS[metric.lower()]
-    except KeyError:
-        raise ValueError(
-            f"Invalid metric. Choose from: {', '.join(PERFORMANCE_METRICS.keys())}"
-        )
-
-    if is_classification and not _metric["is_classification"]:
-        raise ValueError(f"Cannot use regression metric ({metric}) for classification.")
-    elif not is_classification and _metric["is_classification"]:
-        raise ValueError(f"Cannot use classification metric ({metric}) for regression.")
 
     train_df = datasets[0].df
     test_df = datasets[1].df
@@ -333,28 +310,46 @@ def overfit_diagnosis(  # noqa: C901
 
 @dataclass
 class OverfitDiagnosis(ThresholdTest):
-    """Identify overfit regions in a model's predictions.
+    """
+    Assesses potential overfitting in a model's predictions, identifying regions where performance between training and
+    testing sets deviates significantly.
 
-    This test compares the model's performance on training versus test data, grouped by
-    feature columns. It calculates the difference between the training and test performance
-    for each group and identifies regions where the difference exceeds a specified threshold.
+    ### Purpose
 
-    This test works for both classification and regression models and with a variety of
-    performance metrics. By default, it uses the AUC metric for classification models and
-    the MSE metric for regression models. The threshold for identifying overfit regions
-    defaults to 0.04 but should be adjusted based on the specific use case.
+    The Overfit Diagnosis test aims to identify areas in a model's predictions where there is a significant difference
+    in performance between the training and testing sets. This test helps to pinpoint specific regions or feature
+    segments where the model may be overfitting.
 
-    ## Inputs
-    - `model` (VMModel): The ValidMind model object to evaluate.
-    - `datasets` (List[VMDataset]): A list of two VMDataset objects where the first dataset
-        is the training data and the second dataset is the test data.
+    ### Test Mechanism
 
-    ## Parameters
-    - `metric` (str, optional): The performance metric to use for evaluation. Choose from:
-        'accuracy', 'auc', 'f1', 'precision', 'recall', 'mse', 'mae', 'r2', 'mape'.
-        Defaults to 'auc' for classification models and 'mse' for regression models.
-    - `cut_off_threshold` (float, optional): The threshold for identifying overfit regions.
-        Defaults to 0.04.
+    This test compares the model's performance on training versus test data, grouped by feature columns. It calculates
+    the difference between the training and test performance for each group and identifies regions where this
+    difference exceeds a specified threshold:
+
+    - The test works for both classification and regression models.
+    - It defaults to using the AUC metric for classification models and the MSE metric for regression models.
+    - The threshold for identifying overfitting regions is set to 0.04 by default.
+    - The test calculates the performance metrics for each feature segment and plots regions where the performance gap
+    exceeds the threshold.
+
+    ### Signs of High Risk
+
+    - Significant gaps between training and test performance metrics for specific feature segments.
+    - Multiple regions with performance gaps exceeding the defined threshold.
+    - Higher than expected differences in predicted versus actual values in the test set compared to the training set.
+
+    ### Strengths
+
+    - Identifies specific areas where overfitting occurs.
+    - Supports multiple performance metrics, providing flexibility.
+    - Applicable to both classification and regression models.
+    - Visualization of overfitting segments aids in better understanding and debugging.
+
+    ### Limitations
+
+    - The default threshold may not be suitable for all use cases and requires tuning.
+    - May not capture more subtle forms of overfitting that do not exceed the threshold.
+    - Assumes that the binning of features adequately represents the data segments.
     """
 
     required_inputs = ["model", "datasets"]

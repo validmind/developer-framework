@@ -17,6 +17,7 @@ from validmind.vm_models import (
     MetricResult,
     ResultSummary,
     ResultTable,
+    ResultTableMetadata,
     TestContext,
     TestInput,
     ThresholdTestResults,
@@ -147,6 +148,26 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
     return [figure for figures in figure_lists for figure in figures]
 
 
+def _combine_unit_metrics(results: List[MetricResultWrapper]):
+    if not results[0].scalar:
+        return
+
+    for result in results:
+        table = ResultTable(
+            data=[{"value": result.scalar}],
+            metadata=ResultTableMetadata(title="Unit Metrics"),
+        )
+        if not result.metric:
+            result.metric = MetricResult(
+                ref_id="will_be_overwritten",
+                key=result.result_id,
+                value=result.scalar,
+                summary=ResultSummary(results=[table]),
+            )
+        else:
+            result.metric.summary.results.append(table)
+
+
 def metric_comparison(
     results: List[MetricResultWrapper],
     test_id: TestID,
@@ -172,22 +193,41 @@ def metric_comparison(
                 raise ValueError(f"Unsupported type for value: {v}")
         input_group_strings.append(new_group)
 
-    merged_summary = _combine_summaries(
-        [
-            {"inputs": input_group_strings[i], "summary": result.metric.summary}
-            for i, result in enumerate(results)
-        ]
-    )
-    merged_figures = _combine_figures(
-        [result.figures for result in results], input_groups
-    )
+    # handle unit metrics (scalar values) by adding it to the summary
+    _combine_unit_metrics(results)
 
-    # Patch figure metadata so they are connected to the comparison result
-    if merged_figures and len(merged_figures):
-        for i, figure in enumerate(merged_figures):
-            figure.key = f"{figure.key}-{i}"
-            figure.metadata["_name"] = test_id
-            figure.metadata["_ref_id"] = ref_id
+    # Check if the results list contains a result object with a metric
+    if any(
+        hasattr(result, "metric")
+        and hasattr(result.metric, "summary")
+        and result.metric.summary
+        for result in results
+    ):
+        # Compute merged summaries only if there is a result with a metric
+        merged_summary = _combine_summaries(
+            [
+                {"inputs": input_group_strings[i], "summary": result.metric.summary}
+                for i, result in enumerate(results)
+            ]
+        )
+    else:
+        merged_summary = None
+
+    # Check if the results list contains a result object with figures
+    if any(hasattr(result, "figures") and result.figures for result in results):
+        # Compute merged figures only if there is at least one result with figures
+        merged_figures = _combine_figures(
+            [result.figures for result in results],
+            input_groups,
+        )
+        # Patch figure metadata so they are connected to the comparison result
+        if merged_figures and len(merged_figures):
+            for i, figure in enumerate(merged_figures):
+                figure.key = f"{figure.key}-{i}"
+                figure.metadata["_name"] = test_id
+                figure.metadata["_ref_id"] = ref_id
+    else:
+        merged_figures = None
 
     return MetricResultWrapper(
         result_id=test_id,
@@ -196,7 +236,7 @@ def metric_comparison(
                 test_id=test_id,
                 default_description=f"Comparison test result for {test_id}",
                 summary=merged_summary.serialize() if merged_summary else None,
-                figures=merged_figures,
+                figures=merged_figures if merged_figures else None,
                 should_generate=generate_description,
             ),
         ],
@@ -294,6 +334,8 @@ def threshold_test_comparison(
 def run_comparison_test(
     test_id: TestID,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    name: str = None,
+    unit_metrics: List[TestID] = None,
     params: Dict[str, Any] = None,
     show: bool = True,
     output_template: str = None,
@@ -308,6 +350,8 @@ def run_comparison_test(
     results = [
         run_test(
             test_id,
+            name=name,
+            unit_metrics=unit_metrics,
             inputs=inputs,
             show=False,
             params=params,
@@ -387,33 +431,34 @@ def run_test(
             "When providing an `input_grid`, you cannot also provide `inputs` or `kwargs`"
         )
 
+    if unit_metrics:
+        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
+        test_id = f"validmind.composite_metric.{metric_id_name}" or test_id
+
     if input_grid:
         return run_comparison_test(
             test_id,
             input_grid,
+            name=name,
+            unit_metrics=unit_metrics,
             params=params,
             output_template=output_template,
             show=show,
             generate_description=__generate_description,
         )
 
-    if test_id and test_id.startswith("validmind.unit_metrics"):
+    if test_id.startswith("validmind.unit_metrics"):
         # TODO: as we move towards a more unified approach to metrics
         # we will want to make everything functional and remove the
         # separation between unit metrics and "normal" metrics
         return run_metric(test_id, inputs=inputs, params=params, show=show)
 
     if unit_metrics:
-        metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
-        test_id = f"validmind.composite_test.{metric_id_name}"
-
         error, TestClass = load_composite_metric(
             unit_metrics=unit_metrics, metric_name=metric_id_name
         )
-
         if error:
             raise LoadTestError(error)
-
     else:
         TestClass = load_test(test_id, reload=True)
 

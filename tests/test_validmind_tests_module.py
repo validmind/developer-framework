@@ -20,19 +20,19 @@ class TestTestsModule(TestCase):
 
     def test_list_tests_filter_2(self):
         tests = list_tests(
-            filter="validmind.model_validation.ModelMetadataComparison", pretty=False
+            filter="validmind.model_validation.ModelMetadata", pretty=False
         )
         self.assertTrue(len(tests) == 1)
 
     def test_load_test(self):
-        test = load_test("validmind.model_validation.ModelMetadataComparison")
+        test = load_test("validmind.model_validation.ModelMetadata")
         self.assertTrue(test is not None)
         self.assertTrue(issubclass(test, Test))
 
     def test_describe_test(self):
-        describe_test("validmind.model_validation.ModelMetadataComparison")
+        describe_test("validmind.model_validation.ModelMetadata")
         description = describe_test(
-            "validmind.model_validation.ModelMetadataComparison", raw=True
+            "validmind.model_validation.ModelMetadata", raw=True
         )
         self.assertIsInstance(description, dict)
         # check if description dict has "ID", "Name", "Description", "Test Type", "Required Inputs" and "Params" keys

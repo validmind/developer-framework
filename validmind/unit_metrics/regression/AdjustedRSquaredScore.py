@@ -7,7 +7,7 @@ from sklearn.metrics import r2_score as _r2_score
 from validmind import tags, tasks
 
 
-@tags("regression", "sklearn", "unit_metric")
+@tags("regression")
 @tasks("regression")
 def AdjustedRSquaredScore(model, dataset):
     r2_score = _r2_score(
