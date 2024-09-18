@@ -38,7 +38,7 @@ plotly-express = "*"
 polars = "*"
 pycocoevalcap = {version = "^1.2", optional = true}
 python-dotenv = "*"
-ragas = {version = ">=0.1.7", optional = true}
+ragas = {version = ">=0.1.19", optional = true}
 rouge = ">=1"
 rpy2 = {version = "^3.5.10", optional = true}
 scikit-learn = "*"
