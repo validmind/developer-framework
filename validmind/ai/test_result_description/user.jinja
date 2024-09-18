@@ -1,18 +1,25 @@
-Test ID: `{{ test_name }}`
+**Test ID**: `{{ test_name }}`
 
-<Test Docstring>
+**Test Description**:
+
 {{ test_description }}
-</Test Docstring>
+
+---
+
+Generate a description of the following result of the test using the instructions given in your system prompt.
 
 {%- if summary %}
-<Test Results Table(s)>
+**Test Result Tables** *(Raw Data)*:
 {{ summary }}
-</Test Results Table(s)>
 {%- endif %}
 
 {%- if figures %}
-The attached plots show the results of the test.
+The following images make up the results of the test.
 {%- for b64_image_url in figures %}
-![IMAGE]({{ b64_image_url }})
+[[IMAGE:{{ b64_image_url }}]]
 {%- endfor %}
 {%- endif %}
+
+Keep your response concise and to the point!
+Only include content in your response if its something truly insightful or interesting!
+DO NOT VERBOSELY EXPLAIN THE TEST OR THE RESULTS!!!

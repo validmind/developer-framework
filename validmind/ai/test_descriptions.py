@@ -3,8 +3,11 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import os
+import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Union
+
+from jinja2 import Template
 
 from validmind.utils import md_to_html
 
@@ -31,9 +34,37 @@ def _load_prompt():
         with open(os.path.join(folder_path, "user.jinja"), "r") as f:
             user_prompt = f.read()
 
-        __prompt = (system_prompt, user_prompt)
+        __prompt = (Template(system_prompt), Template(user_prompt))
 
     return __prompt
+
+
+def prompt_to_message(role, prompt):
+    if "[[IMAGE:" not in prompt:
+        return {"role": role, "content": prompt}
+
+    content = []
+
+    # Regex pattern to find [[IMAGE:<b64-data>]] markers
+    pattern = re.compile(r"\[\[IMAGE:(.*?)\]\]", re.DOTALL)
+
+    last_index = 0
+    for match in pattern.finditer(prompt):
+        # Text before the image marker
+        start, end = match.span()
+        if start > last_index:
+            content.append({"type": "text", "text": prompt[last_index:start]})
+
+        # Image
+        content.append({"type": "image_url", "image_url": {"url": match.group(1)}})
+
+        last_index = end
+
+    # Text after the last image
+    if last_index < len(prompt):
+        content.append({"type": "text", "text": prompt[last_index:]})
+
+    return {"role": role, "content": content}
 
 
 class DescriptionFuture:
@@ -92,26 +123,26 @@ def generate_description(
         else:
             test_summary = metric_summary
 
-    system, user = _load_prompt()
+    figures = [] if test_summary else figures
+
     input_data = {
         "test_name": test_name,
         "test_description": test_description,
         "summary": test_summary,
-        "figures": (
-            [figure._get_b64_url() for figure in figures or []] if figures else []
-        ),
+        "figures": [figure._get_b64_url() for figure in figures],
     }
+    system, user = _load_prompt()
 
-    # TODO: add support for multiple messages for images
-
-    return client.chat.completions.create(
+    response = client.chat.completions.create(
         model=model,
         temperature=0.0,
         messages=[
-            {"role": "system", "content": system.render(input_data)},
-            {"role": "user", "content": user.render(input_data)},
+            prompt_to_message("system", system.render(input_data)),
+            prompt_to_message("user", user.render(input_data)),
         ],
     )
+
+    return response.choices[0].message.content
 
 
 def background_generate_description(
