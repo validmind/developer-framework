@@ -54,7 +54,7 @@ class FowlkesMallowsScore(ClusterPerformance):
     """
 
     name = "fowlkes_mallows_score"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = [
         "sklearn",

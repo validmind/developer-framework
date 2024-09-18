@@ -53,8 +53,6 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
     - Requires that `dataset.y_pred(model)` returns the predicted values for the model.
     - The calculation of confidence intervals assumes normally distributed errors, which may not hold for all datasets.
     """
-    dataset_name = dataset.input_id
-    model_name = model.input_id
     time_index = dataset.df.index  # Assuming the index of the dataset is datetime
 
     # Get actual and predicted values
@@ -96,7 +94,7 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
             x=time_index,
             y=y_true,
             mode="lines",
-            name="Actual Values",
+            name="Actual",
             line=dict(color="blue"),
         )
     )
@@ -107,7 +105,7 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
             x=time_index,
             y=y_pred,
             mode="lines",
-            name=f"Predicted by {model_name}",
+            name="Predicted",
             line=dict(color="red"),
         )
     )
@@ -140,10 +138,9 @@ def TimeSeriesPredictionWithCI(dataset, model, confidence=0.95):
 
     # Update layout
     fig.update_layout(
-        title=f"Time Series Actual vs Predicted Values for {dataset_name} and {model_name}",
+        title="Actual vs Predicted",
         xaxis_title="Time",
         yaxis_title="Values",
-        legend_title="Legend",
         template="plotly_white",
     )
 

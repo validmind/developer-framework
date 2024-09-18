@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 
 @dataclass
-class RegressionModelsPerformanceComparison(Metric):
+class RegressionPerformance(Metric):
     """
     Compares and evaluates the performance of multiple regression models using five different metrics: MAE, MSE, RMSE,
     MAPE, and MBD.
@@ -60,8 +60,8 @@ class RegressionModelsPerformanceComparison(Metric):
     - The test could exhibit performance limitations if a large number of models is input for comparison.
     """
 
-    name = "models_performance_comparison"
-    required_inputs = ["dataset", "models"]
+    name = "regression_performance"
+    required_inputs = ["dataset", "model"]
 
     tasks = ["regression"]
     tags = [
@@ -98,7 +98,7 @@ class RegressionModelsPerformanceComparison(Metric):
         This summary varies depending if we're evaluating a binary or multi-class model
         """
         results = []
-        metrics = metric_value["model_0"].keys()
+        metrics = metric_value[self.inputs.model.input_id].keys()
         error_table = []
         for metric_name in metrics:
             errors_dict = {}
@@ -121,20 +121,16 @@ class RegressionModelsPerformanceComparison(Metric):
 
     def run(self):
         # Check models list is not empty
-        if not self.inputs.models:
+        if not self.inputs.model:
             raise SkipTestError(
-                "List of models must be provided as a `models` parameter to compare performance"
+                "Model must be provided as a `models` parameter to compare performance"
             )
-
-        all_models = self.inputs.models
-
         results = {}
 
-        for idx, model in enumerate(all_models):
-            result = self.regression_errors(
-                y_true_test=self.inputs.dataset.y,
-                y_pred_test=self.inputs.dataset.y_pred(model),
-            )
-            results["model_" + str(idx)] = result
+        result = self.regression_errors(
+            y_true_test=self.inputs.dataset.y,
+            y_pred_test=self.inputs.dataset.y_pred(self.inputs.model),
+        )
+        results[self.inputs.model.input_id] = result
 
         return self.cache_results(results)

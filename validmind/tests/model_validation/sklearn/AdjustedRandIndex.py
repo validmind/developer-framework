@@ -51,7 +51,7 @@ class AdjustedRandIndex(ClusterPerformance):
     """
 
     name = "adjusted_rand_index"
-    required_inputs = ["model", "datasets"]
+    required_inputs = ["model", "dataset"]
     tasks = ["clustering"]
     tags = [
         "sklearn",

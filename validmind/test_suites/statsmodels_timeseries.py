@@ -28,6 +28,6 @@ class RegressionModelsEvaluation(TestSuite):
 
     suite_id = "regression_models_evaluation"
     tests = [
-        "validmind.model_validation.statsmodels.RegressionModelsCoeffs",
+        "validmind.model_validation.statsmodels.RegressionModelCoeffs",
         "validmind.model_validation.sklearn.RegressionModelsPerformanceComparison",
     ]
