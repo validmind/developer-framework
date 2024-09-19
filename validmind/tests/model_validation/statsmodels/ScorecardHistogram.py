@@ -2,16 +2,15 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
 import plotly.graph_objects as go
 from matplotlib import cm
 
-from validmind.vm_models import Figure, Metric
+from validmind import tags, tasks
 
 
-@dataclass
-class ScorecardHistogram(Metric):
+@tags("visualization", "credit_risk", "logistic_regression")
+@tasks("classification")
+def ScorecardHistogram(dataset, title="Histogram of Scores", score_column="score"):
     """
     The Scorecard Histogram test evaluates the distribution of credit scores between default and non-default instances,
     providing critical insights into the performance and generalizability of credit-risk models.
@@ -58,88 +57,49 @@ class ScorecardHistogram(Metric):
     judgment of the characteristics and implications of the plot.
     """
 
-    name = "scorecard_histogram"
-    required_inputs = ["datasets"]
-    tasks = ["classification"]
-    tags = ["tabular_data", "visualization", "credit_risk"]
-
-    default_params = {
-        "title": "Histogram of Scores",
-        "score_column": "score",
-    }
-
-    @staticmethod
-    def plot_score_histogram(dataframes, dataset_titles, score_col, target_col, title):
-        figures = []
-        # Generate a colormap and convert to Plotly-accepted color format
-        # Adjust 'viridis' to any other matplotlib colormap if desired
-        colormap = cm.get_cmap("viridis")
-
-        for _, (df, dataset_title) in enumerate(zip(dataframes, dataset_titles)):
-            fig = go.Figure()
-
-            # Get unique classes and assign colors
-            classes = sorted(df[target_col].unique())
-            colors = [
-                colormap(i / len(classes))[:3] for i in range(len(classes))
-            ]  # RGB
-            color_dict = {
-                cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
-                for cls, rgb in zip(classes, colors)
-            }
-
-            for class_value in sorted(df[target_col].unique()):
-                scores_class = df[df[target_col] == class_value][score_col]
-                fig.add_trace(
-                    go.Histogram(
-                        x=scores_class,
-                        opacity=0.75,
-                        name=f"{dataset_title} {target_col} = {class_value}",
-                        marker=dict(
-                            color=color_dict[class_value],
-                        ),
-                    )
-                )
-            fig.update_layout(
-                barmode="overlay",
-                title_text=f"{title} - {dataset_title}",
-                xaxis_title="Score",
-                yaxis_title="Frequency",
-                legend_title=target_col,
-            )
-            figures.append(fig)
-        return figures
-
-    def run(self):
-        title = self.params["title"]
-        score_column = self.params["score_column"]
-        dataset_titles = [dataset.input_id for dataset in self.inputs.datasets]
-        target_column = self.inputs.datasets[0].target_column
-
-        dataframes = []
-        metric_value = {"score_histogram": {}}
-        for dataset in self.inputs.datasets:
-            if score_column not in dataset.df.columns:
-                raise ValueError(
-                    f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
-                )
-
-            dataframes.append(dataset.df.copy())
-            metric_value["score_histogram"][dataset.input_id] = list(
-                dataset.df[score_column]
-            )
-
-        figures = self.plot_score_histogram(
-            dataframes, dataset_titles, score_column, target_column, title
+    if score_column not in dataset.df.columns:
+        raise ValueError(
+            f"The required column '{score_column}' is not present in the dataset with input_id {dataset.input_id}"
         )
 
-        figures_list = [
-            Figure(
-                for_object=self,
-                key=f"score_histogram_{title.replace(' ', '_')}_{i+1}",
-                figure=fig,
-            )
-            for i, fig in enumerate(figures)
-        ]
+    df = dataset.df
 
-        return self.cache_results(metric_value=metric_value, figures=figures_list)
+    fig = _plot_score_histogram(df, score_column, dataset.target_column, title)
+
+    return fig
+
+
+def _plot_score_histogram(df, score_col, target_col, title):
+    # Generate a colormap and convert to Plotly-accepted color format
+    # Adjust 'viridis' to any other matplotlib colormap if desired
+    colormap = cm.get_cmap("viridis")
+
+    fig = go.Figure()
+
+    # Get unique classes and assign colors
+    classes = sorted(df[target_col].unique())
+    colors = [colormap(i / len(classes))[:3] for i in range(len(classes))]  # RGB
+    color_dict = {
+        cls: f"rgb({int(rgb[0]*255)}, {int(rgb[1]*255)}, {int(rgb[2]*255)})"
+        for cls, rgb in zip(classes, colors)
+    }
+
+    for class_value in sorted(df[target_col].unique()):
+        scores_class = df[df[target_col] == class_value][score_col]
+        fig.add_trace(
+            go.Histogram(
+                x=scores_class,
+                opacity=0.75,
+                name=f"{target_col} = {class_value}",
+                marker=dict(
+                    color=color_dict[class_value],
+                ),
+            )
+        )
+        fig.update_layout(
+            barmode="overlay",
+            title_text=f"{title}",
+            xaxis_title="Score",
+            yaxis_title="Frequency",
+        )
+    return fig

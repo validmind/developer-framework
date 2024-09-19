@@ -63,15 +63,44 @@ def TabularDescriptionTables(dataset):
     categorical_fields = get_categorical_columns(dataset)
     datetime_fields = get_datetime_columns(dataset)
 
-    summary_stats_numerical = get_summary_statistics_numerical(
-        dataset, numerical_fields
+    summary_stats_numerical = (
+        get_summary_statistics_numerical(dataset, numerical_fields)
+        if numerical_fields
+        else pd.DataFrame()
     )
-    summary_stats_categorical = get_summary_statistics_categorical(
-        dataset, categorical_fields
+    summary_stats_categorical = (
+        get_summary_statistics_categorical(dataset, categorical_fields)
+        if categorical_fields
+        else pd.DataFrame()
     )
-    summary_stats_datetime = get_summary_statistics_datetime(dataset, datetime_fields)
+    summary_stats_datetime = (
+        get_summary_statistics_datetime(dataset, datetime_fields)
+        if datetime_fields
+        else pd.DataFrame()
+    )
 
-    return (summary_stats_numerical, summary_stats_categorical, summary_stats_datetime)
+    # Replace empty DataFrames with None
+    summary_stats_numerical = (
+        summary_stats_numerical if not summary_stats_numerical.empty else None
+    )
+    summary_stats_categorical = (
+        summary_stats_categorical if not summary_stats_categorical.empty else None
+    )
+    summary_stats_datetime = (
+        summary_stats_datetime if not summary_stats_datetime.empty else None
+    )
+
+    # Return a tuple with only non-None values (tables with data)
+    return tuple(
+        filter(
+            lambda x: x is not None,
+            (
+                summary_stats_numerical,
+                summary_stats_categorical,
+                summary_stats_datetime,
+            ),
+        )
+    )
 
 
 def get_summary_statistics_numerical(dataset, numerical_fields):

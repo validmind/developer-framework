@@ -196,22 +196,38 @@ def metric_comparison(
     # handle unit metrics (scalar values) by adding it to the summary
     _combine_unit_metrics(results)
 
-    merged_summary = _combine_summaries(
-        [
-            {"inputs": input_group_strings[i], "summary": result.metric.summary}
-            for i, result in enumerate(results)
-        ]
-    )
-    merged_figures = _combine_figures(
-        [result.figures for result in results], input_groups
-    )
+    # Check if the results list contains a result object with a metric
+    if any(
+        hasattr(result, "metric")
+        and hasattr(result.metric, "summary")
+        and result.metric.summary
+        for result in results
+    ):
+        # Compute merged summaries only if there is a result with a metric
+        merged_summary = _combine_summaries(
+            [
+                {"inputs": input_group_strings[i], "summary": result.metric.summary}
+                for i, result in enumerate(results)
+            ]
+        )
+    else:
+        merged_summary = None
 
-    # Patch figure metadata so they are connected to the comparison result
-    if merged_figures and len(merged_figures):
-        for i, figure in enumerate(merged_figures):
-            figure.key = f"{figure.key}-{i}"
-            figure.metadata["_name"] = test_id
-            figure.metadata["_ref_id"] = ref_id
+    # Check if the results list contains a result object with figures
+    if any(hasattr(result, "figures") and result.figures for result in results):
+        # Compute merged figures only if there is at least one result with figures
+        merged_figures = _combine_figures(
+            [result.figures for result in results],
+            input_groups,
+        )
+        # Patch figure metadata so they are connected to the comparison result
+        if merged_figures and len(merged_figures):
+            for i, figure in enumerate(merged_figures):
+                figure.key = f"{figure.key}-{i}"
+                figure.metadata["_name"] = test_id
+                figure.metadata["_ref_id"] = ref_id
+    else:
+        merged_figures = None
 
     return MetricResultWrapper(
         result_id=test_id,
@@ -220,7 +236,7 @@ def metric_comparison(
                 test_id=test_id,
                 default_description=f"Comparison test result for {test_id}",
                 summary=merged_summary.serialize() if merged_summary else None,
-                figures=merged_figures,
+                figures=merged_figures if merged_figures else None,
                 should_generate=generate_description,
             ),
         ],
