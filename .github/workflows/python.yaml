@@ -39,14 +39,15 @@ jobs:
       - name: Install poetry
         run: pipx install poetry
 
-      - name: Set up Python 3.9
+      - name: Set up Python 3.8
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.8'
           cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry env use python3.9 && poetry run pip install pyarrow==17.0.0 && poetry install --all-extras
+        # TODO: figure out why pyarrow will only install with pip and not poetry
+        run: poetry env use python3.8 && poetry run pip install pyarrow==17.0.0 && poetry install --all-extras
 
       - name: Install PyTorch CPU
         run: poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu
