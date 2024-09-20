@@ -175,7 +175,7 @@ class TextDescription(Metric):
             raise ValueError("TextDescription requires a validmind Dataset object")
 
         # download nltk data
-        nltk.download("punkt", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
 
         df_text_description = self.text_description_table(
             self.inputs.dataset.df, self.params
