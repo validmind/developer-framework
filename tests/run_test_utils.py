@@ -162,7 +162,6 @@ def setup_time_series_test_inputs(test_inputs={}, test_config={}):
         test_config (dict): Global test config to be updated
     """
     df = fred_timeseries.load_data()
-    df = df.sample(1000, random_state=42)
 
     target_column = fred_timeseries.target_column
 
@@ -179,7 +178,6 @@ def setup_time_series_test_inputs(test_inputs={}, test_config={}):
 
     # Extract the features and target variable from the test set
     X_diff_test = test_diff_df.drop(target_column, axis=1)
-    y_diff_test = test_diff_df[target_column]
 
     # Fit the random forest model
     model_rf = RandomForestRegressor(n_estimators=1500, random_state=0)
@@ -200,6 +198,7 @@ def setup_time_series_test_inputs(test_inputs={}, test_config={}):
     vm_model_rf = vm.init_model(
         model_rf,
         input_id="random_forests_model",
+        __log=False,
     )
 
     # Datasets
@@ -245,7 +244,7 @@ def setup_time_series_test_inputs(test_inputs={}, test_config={}):
         "single_model": {
             "model": vm_model_rf,
         },
-        "dataset_and_model": {
+        "model_and_dataset": {
             "dataset": vm_test_ds,
             "model": vm_model_rf,
         },
