@@ -59,7 +59,7 @@ def ContextualRecall(dataset, model):
     """
 
     # download nltk data
-    nltk.download("punkt", quiet=True)
+    nltk.download("punkt_tab", quiet=True)
 
     y_true = dataset.y
     y_pred = dataset.y_pred(model)
