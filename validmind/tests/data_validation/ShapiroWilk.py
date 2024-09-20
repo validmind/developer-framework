@@ -2,12 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from scipy import stats
 
-from validmind.vm_models import Metric
+from validmind import tags, tasks
 
 
-class ShapiroWilk(Metric):
+@tasks("classification", "regression")
+@tags("tabular_data", "data_distribution", "statistical_test")
+def ShapiroWilk(dataset):
     """
     Evaluates feature-wise normality of training data using the Shapiro-Wilk test.
 
@@ -49,23 +53,18 @@ class ShapiroWilk(Metric):
     - Lastly, the Shapiro-Wilk test is not optimally suited for processing data with pronounced skewness or kurtosis.
     """
 
-    name = "shapiro_wilk"
-    required_inputs = ["dataset"]
-    tasks = ["classification", "regression"]
-    tags = ["tabular_data", "data_distribution", "statistical_test"]
+    df = dataset.df[dataset.feature_columns_numeric]
 
-    def run(self):
-        """
-        Calculates Shapiro-Wilk test for each of the dataset features.
-        """
-        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
-        sw_values = {}
-        for col in x_train.columns:
-            sw_stat, sw_pvalue = stats.shapiro(x_train[col].values)
+    sw_values = {}
+    for col in df.columns:
+        sw_stat, sw_pvalue = stats.shapiro(df[col].values)
+        sw_values[col] = {
+            "stat": sw_stat,
+            "pvalue": sw_pvalue,
+        }
 
-            sw_values[col] = {
-                "stat": sw_stat,
-                "pvalue": sw_pvalue,
-            }
+    sw_df = pd.DataFrame.from_dict(sw_values, orient="index")
+    sw_df.reset_index(inplace=True)
+    sw_df.columns = ["column", "stat", "pvalue"]
 
-        return self.cache_results(sw_values)
+    return sw_df
