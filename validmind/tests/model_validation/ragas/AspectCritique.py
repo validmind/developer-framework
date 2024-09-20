@@ -103,8 +103,8 @@ def AspectCritique(
     """
     try:
         from ragas import evaluate
-        from ragas.metrics.critique import AspectCritique as _AspectCritique
-        from ragas.metrics.critique import (
+        from ragas.metrics import AspectCritic
+        from ragas.metrics._aspect_critic import (
             coherence,
             conciseness,
             correctness,
@@ -114,7 +114,7 @@ def AspectCritique(
     except ImportError:
         raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
-    aspect_map = {
+    built_in_aspects = {
         "coherence": coherence,
         "conciseness": conciseness,
         "correctness": correctness,
@@ -136,16 +136,15 @@ def AspectCritique(
 
     df = get_renamed_columns(dataset._df, required_columns)
 
-    built_in_aspects = [aspect_map[aspect] for aspect in aspects]
     custom_aspects = (
         [
-            _AspectCritique(name=name, definition=description)
+            AspectCritic(name=name, definition=description)
             for name, description in additional_aspects
         ]
         if additional_aspects
         else []
     )
-    all_aspects = [*built_in_aspects, *custom_aspects]
+    all_aspects = [built_in_aspects[aspect] for aspect in aspects] + custom_aspects
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=all_aspects, **get_ragas_config()
