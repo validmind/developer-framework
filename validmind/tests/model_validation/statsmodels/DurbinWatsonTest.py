@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import pandas as pd
-import numpy as np
 
 from statsmodels.stats.stattools import durbin_watson
 
