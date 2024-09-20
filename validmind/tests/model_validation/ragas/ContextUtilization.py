@@ -21,10 +21,18 @@ def ContextUtilization(
     answer_column: str = "answer",
 ):  # noqa: B950
     """
-    Context Precision is a reference(ground-truth)-free version of `validmind.model_validation.ragas.ContextPrecision.
-    It evaluates whether all of the answer-relevant items present in the `contexts` are ranked higher or not. Ideally,
-    all the relevant chunks of context should appear at the top ranks. This metric is computed using the `question`,
-    `answer` and the `contexts` columns, with values ranging between 0 and 1, where higher scores are better.
+    Assesses how effectively relevant context chunks are utilized in generating answers by evaluating their ranking
+    within the provided contexts.
+
+    ### Purpose
+
+    The Context Utilization test evaluates whether all of the answer-relevant items present in the contexts are ranked
+    higher within the provided retrieval results. This metric is essential for assessing the performance of models,
+    especially those involved in tasks such as text QA, text generation, text summarization, and text classification.
+
+    ### Test Mechanism
+
+    The test calculates Context Utilization using the formula:
 
     $$
     \\text{Context Utilization@K} = \\frac{\\sum_{k=1}^{K} \\left( \\text{Precision@k} \\times v_k \\right)}{\\text{Total number of relevant items in the top } K \\text{ results}}
@@ -35,7 +43,11 @@ def ContextUtilization(
 
     Where $K$ is the total number of chunks in `contexts` and $v_k \\in \\{0, 1\\}$ is the relevance indicator at rank $k$.
 
-    ### Configuring Columns
+
+    This test uses columns for questions, contexts, and answers from the dataset and computes context utilization
+    scores, generating a histogram and box plot for visualization.
+
+    #### Configuring Columns
 
     This metric requires the following columns in your dataset:
 
@@ -76,6 +88,24 @@ def ContextUtilization(
         "ground_truth_column": "my_ground_truth_col",
     }
     ```
+
+    ### Signs of High Risk
+
+    - Very low mean or median context utilization scores, indicating poor usage of retrieved contexts.
+    - High standard deviation, suggesting inconsistent model performance.
+    - Low or minimal max scores, pointing to the model's failure to rank relevant contexts at top positions.
+
+    ### Strengths
+
+    - Quantifies the rank of relevant context chunks in generating responses.
+    - Provides clear visualizations through histograms and box plots for ease of interpretation.
+    - Adapts to different dataset schema by allowing configurable column names.
+
+    ### Limitations
+
+    - Assumes the relevance of context chunks is binary and may not capture nuances of partial relevance.
+    - Requires proper context retrieval to be effective; irrelevant context chunks can skew the results.
+    - Dependent on large sample sizes to provide stable and reliable estimates of utilization performance.
     """
     try:
         from ragas import evaluate

@@ -21,26 +21,28 @@ def NoiseSensitivity(
     ground_truth_column="ground_truth",
 ):
     """
-    Noise sensitivity measures how often an LLM provides incorrect responses when utilizing relevant retrieved
-    contextual information. The score ranges from 0 to 1, with lower values indicating better performance.
+    Assesses the sensitivity of a Large Language Model (LLM) to noise in retrieved context by measuring how often it
+    generates incorrect responses.
 
-    Noise sensitivity is computed using the question, ground truth, answer, and the retrieved context.
+    ### Purpose
 
-    To estimate the sensitivity of a model to the noise in the retrieved documents (i.e. context chunks that
-    contain relevant information), then an LLM extracts "claims" from the answer and ground truth that can be
-    attributed to information in the relevant retrieved context. If the answer contains claims that are not
-    present in the ground truth then that claim is considered incorrect. The final score is calculated using
-    the following formula:
+    The Noise Sensitivity test aims to measure how sensitive an LLM is to irrelevant or noisy information within the
+    contextual data used to generate its responses. A lower noise sensitivity score suggests better model robustness in
+    generating accurate answers from given contexts.
+
+    ### Test Mechanism
+
+    This test evaluates the model's answers by comparing the claims made in the generated response against the ground
+    truth and the retrieved context. The noise sensitivity score is calculated as:
 
     $$
     \\text{noise sensitivity} = {|\\text{Number of incorrect claims in answer}| \\over |\\text{Number of total claims in answer}|}
     $$
 
-    This score can be interpreted as "sensitivity to noise" since it measures how well the llm is able to
-    "identify" the information in the context that it should use to generate an answer. This metric is really
-    only useful when the ground truth is an answer that was also generated from the same contexts.
+    The formula computes the fraction of incorrect claims to the total claims in the answer, using a dataset where
+    'answer', 'context', and 'ground_truth' columns are specified.
 
-    ### Configuring Columns
+    #### Configuring Columns
 
     This metric requires the following columns in your dataset:
 
@@ -78,7 +80,25 @@ def NoiseSensitivity(
         "contexts_column": lambda row: [row[pred_col]["context_message"]],
         "answer_column": lambda row: "\\n\\n".join(row[pred_col]["messages"]),
     }
-    ```
+
+    ### Signs of High Risk
+
+    - High noise sensitivity scores across multiple samples.
+    - Significant deviation between mean and median noise sensitivity scores.
+    - High standard deviation indicating inconsistency in the model's performance.
+
+    ### Strengths
+
+    - Provides a quantitative measure of how well the LLM handles noisy or irrelevant context.
+    - Easy integration and configuration using column parameters.
+    - Utilizes both histogram and box plot visualizations to analyze score distribution.
+
+    ### Limitations
+
+    - Requires accurate ground truth that aligns with the generated answers.
+    - Assumes the context provided is sufficiently granular to assess noise sensitivity.
+    - Primarily applicable to tasks like text QA, text generation, and text summarization where contextual relevance is
+    critical.
     """
     try:
         from ragas import evaluate
