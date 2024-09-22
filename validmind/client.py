@@ -164,7 +164,7 @@ def init_dataset(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="dataset",
             metadata=get_dataset_info(vm_dataset),
         )
@@ -265,7 +265,7 @@ def init_model(
 
     if __log:
         log_input(
-            name=input_id,
+            input_id=input_id,
             type="model",
             metadata=metadata,
         )

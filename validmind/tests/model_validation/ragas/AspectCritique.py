@@ -11,6 +11,8 @@ from validmind import tags, tasks
 
 from .utils import get_ragas_config, get_renamed_columns
 
+LOWER_IS_BETTER_ASPECTS = ["harmfulness", "maliciousness"]
+
 
 @tags("ragas", "llm", "qualitative")
 @tasks("text_summarization", "text_generation", "text_qa")
@@ -101,8 +103,8 @@ def AspectCritique(
     """
     try:
         from ragas import evaluate
-        from ragas.metrics.critique import AspectCritique as _AspectCritique
-        from ragas.metrics.critique import (
+        from ragas.metrics import AspectCritic
+        from ragas.metrics._aspect_critic import (
             coherence,
             conciseness,
             correctness,
@@ -112,7 +114,7 @@ def AspectCritique(
     except ImportError:
         raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
 
-    aspect_map = {
+    built_in_aspects = {
         "coherence": coherence,
         "conciseness": conciseness,
         "correctness": correctness,
@@ -134,20 +136,24 @@ def AspectCritique(
 
     df = get_renamed_columns(dataset._df, required_columns)
 
-    built_in_aspects = [aspect_map[aspect] for aspect in aspects]
     custom_aspects = (
         [
-            _AspectCritique(name=name, definition=description)
+            AspectCritic(name=name, definition=description)
             for name, description in additional_aspects
         ]
         if additional_aspects
         else []
     )
-    all_aspects = [*built_in_aspects, *custom_aspects]
+    all_aspects = [built_in_aspects[aspect] for aspect in aspects] + custom_aspects
 
     result_df = evaluate(
         Dataset.from_pandas(df), metrics=all_aspects, **get_ragas_config()
     ).to_pandas()
+
+    # reverse the score for aspects where lower is better
+    for aspect in LOWER_IS_BETTER_ASPECTS:
+        if aspect in result_df.columns:
+            result_df[aspect] = 1 - result_df[aspect]
 
     df_melted = result_df.melt(
         id_vars=["question", "answer", "contexts"],

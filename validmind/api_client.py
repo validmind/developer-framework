@@ -186,12 +186,24 @@ def __ping() -> Dict[str, Any]:
     client_config.project = client_info["project"]
     client_config.documentation_template = client_info.get("documentation_template", {})
     client_config.feature_flags = client_info.get("feature_flags", {})
+    client_config.model = client_info.get("model", {})
+    client_config.document_type = client_info.get(
+        "document_type", "model_documentation"
+    )
 
     if ack_connected:
-        logger.info(
-            f"Connected to ValidMind... Current Model: {client_config.project['name']}"
-            f" ({client_config.project['cuid']})"
-        )
+        if client_config.model:
+            logger.info(
+                f"🎉 Connected to ValidMind!\n"
+                f"📊 Model: {client_config.model.get('name', 'N/A')} "
+                f"(ID: {client_config.model.get('cuid', 'N/A')})\n"
+                f"📁 Document Type: {client_config.document_type}"
+            )
+        else:
+            logger.info(
+                f"Connected to ValidMind... Current Model: {client_config.project['name']}"
+                f" ({client_config.project['cuid']})"
+            )
 
 
 def reload():
@@ -331,32 +343,6 @@ async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
     Returns:
         dict: The response from the API
     """
-    # this actually slows things down - better to log them in parallel
-    # if client_config.can_log_figures():  # check if the backend supports batch logging
-    #     try:
-    #         data = {}
-    #         files = {}
-    #         for figure in figures:
-    #             data.update(
-    #                 {f"{k}-{figure.key}": v for k, v in figure.serialize().items()}
-    #             )
-    #             files.update(
-    #                 {
-    #                     f"{k}-{figure.key}": v
-    #                     for k, v in figure.serialize_files().items()
-    #                 }
-    #             )
-
-    #         return await _post(
-    #             "log_figures",
-    #             data=data,
-    #             files=files,
-    #         )
-    #     except Exception as e:
-    #         logger.error("Error logging figures to ValidMind API")
-    #         raise e
-
-    # else:
     return await asyncio.gather(*[log_figure(figure) for figure in figures])
 
 
@@ -416,11 +402,11 @@ async def log_metrics(
     Returns:
         dict: The response from the API
     """
-    params = {}
+    request_params = {}
     if section_id:
-        params["section_id"] = section_id
+        request_params["section_id"] = section_id
     if position is not None:
-        params["position"] = position
+        request_params["position"] = position
 
     data = []
 
@@ -430,7 +416,7 @@ async def log_metrics(
             "inputs": inputs,
         }
 
-        if output_template and client_config.can_log_output_template():
+        if output_template:
             metric_data["output_template"] = output_template
 
         data.append(metric_data)
@@ -438,7 +424,7 @@ async def log_metrics(
     try:
         return await _post(
             "log_metrics",
-            params=params,
+            params=request_params,
             data=json.dumps(data, cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
@@ -469,16 +455,16 @@ async def log_test_result(
     Returns:
         dict: The response from the API
     """
-    params = {}
+    request_params = {}
     if section_id:
-        params["section_id"] = section_id
+        request_params["section_id"] = section_id
     if position is not None:
-        params["position"] = position
+        request_params["position"] = position
 
     try:
         return await _post(
             "log_test_results",
-            params=params,
+            params=request_params,
             data=json.dumps(
                 {
                     **result.serialize(),
@@ -503,7 +489,7 @@ def log_test_results(
 
     Args:
         results (list): A list of ThresholdTestResults objects
-        inputs (list): A list of input keys (names) that were used to run the test
+        inputs (list): A list of input IDs that were used to run the test
 
     Raises:
         Exception: If the API call fails
@@ -522,11 +508,11 @@ def log_test_results(
     return responses
 
 
-def log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+def log_input(input_id: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
     """Logs input information - internal use for now (don't expose via public API)
 
     Args:
-        name (str): The name of the input
+        input_id (str): The input_id of the input
         type (str): The type of the input
         metadata (dict): The metadata of the input
 
@@ -542,7 +528,7 @@ def log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
             "log_input",
             data=json.dumps(
                 {
-                    "name": name,
+                    "name": input_id,
                     "type": type,
                     "metadata": metadata,
                 },
@@ -553,6 +539,66 @@ def log_input(name: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         logger.error("Error logging input to ValidMind API")
         raise e
+
+
+async def alog_metric(
+    key: str,
+    value: float,
+    inputs: Optional[List[str]] = None,
+    params: Optional[Dict[str, Any]] = None,
+    recorded_at: Optional[str] = None,
+) -> None:
+    """See log_metric for details"""
+    if not key or not isinstance(key, str):
+        raise ValueError("`key` must be a non-empty string")
+
+    if not value or not isinstance(value, (int, float)):
+        raise ValueError("`value` must be a scalar (int or float)")
+
+    try:
+        return await _post(
+            "log_unit_metric",
+            data=json.dumps(
+                {
+                    "key": key,
+                    "value": value,
+                    "inputs": inputs or [],
+                    "params": params or {},
+                    "recorded_at": recorded_at,
+                },
+                cls=NumpyEncoder,
+                allow_nan=False,
+            ),
+        )
+    except Exception as e:
+        logger.error("Error logging metric to ValidMind API")
+        raise e
+
+
+def log_metric(
+    key: str,
+    value: float,
+    inputs: Optional[List[str]] = None,
+    params: Optional[Dict[str, Any]] = None,
+    recorded_at: Optional[str] = None,
+) -> None:
+    """Logs a unit metric
+
+    Unit metrics are key-value pairs where the key is the metric name and the value is
+    a scalar (int or float). These key-value pairs are associated with the currently
+    selected model (inventory model in the ValidMind Platform) and keys can be logged
+    to over time to create a history of the metric. On the platform, these metrics
+    will be used to create plots/visualizations for documentation and dashboards etc.
+
+    Args:
+        key (str): The metric key
+        value (float): The metric value
+        inputs (list, optional): A list of input IDs that were used to compute the metric.
+        params (dict, optional): Dictionary of parameters used to compute the metric.
+        recorded_at (str, optional): The timestamp of the metric. Server will use
+            current time if not provided.
+    """
+    run_async(alog_metric, key, value, inputs, params, recorded_at)
 
 
 def start_run() -> str:
