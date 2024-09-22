@@ -32,7 +32,7 @@ nltk = "^3.8.1"
 numba = "<0.59.0" # TODO: https://github.com/validmind/developer-framework/pull/28
 numpy = "*"
 openai = ">=1"
-pandas = "2.0.3"
+pandas = ">=1.1,<2" # TODO: small issues blocking 2.0 but it would speed things up to use arrow backend
 plotly = "*"
 plotly-express = "*"
 polars = "*"
