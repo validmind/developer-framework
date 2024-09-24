@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 14.7.0"/>
-    <title>validmind.tests.model_validation.statsmodels.LJungBox API documentation</title>
+    <title>validmind.tests.data_validation.ShapiroWilk API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,11 +17,11 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>            <a class="pdoc-button module-list-button" href="../statsmodels.html">
+        <div>            <a class="pdoc-button module-list-button" href="../data_validation.html">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-</svg>                &nbsp;validmind.tests.model_validation.statsmodels</a>
+</svg>                &nbsp;validmind.tests.data_validation</a>
 
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
@@ -32,13 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#LJungBox">LJungBox</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#LJungBox.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#ShapiroWilk">ShapiroWilk</a>
             </li>
     </ul>
 
@@ -55,107 +49,72 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../model_validation.html">model_validation</a><wbr>.<a href="./../statsmodels.html">statsmodels</a><wbr>.LJungBox    </h1>
+<a href="./../../../validmind.html">validmind</a><wbr>.<a href="./../../tests.html">tests</a><wbr>.<a href="./../data_validation.html">data_validation</a><wbr>.ShapiroWilk    </h1>
 
                 
                 
                 
                 
             </section>
-                <section id="LJungBox">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">LJungBox</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+                <section id="ShapiroWilk">
+                    <div class="attr function">
+                    <div class="decorator">@tasks(&#39;classification&#39;, &#39;regression&#39;)</div>
+        <div class="decorator">@tags(&#39;tabular_data&#39;, &#39;data_distribution&#39;, &#39;statistical_test&#39;)</div>
+
+        <span class="def">def</span>
+        <span class="name">ShapiroWilk</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#LJungBox"></a>
+    <a class="headerlink" href="#ShapiroWilk"></a>
     
-            <div class="docstring"><p>Assesses autocorrelations in dataset features by performing a Ljung-Box test on each feature.</p>
+            <div class="docstring"><p>Evaluates feature-wise normality of training data using the Shapiro-Wilk test.</p>
 
 <h3 id="purpose">Purpose</h3>
 
-<p>The Ljung-Box test is a type of statistical test utilized to ascertain whether there are autocorrelations within a
-given dataset that differ significantly from zero. In the context of a machine learning model, this test is
-primarily used to evaluate data utilized in regression tasks, especially those involving time series and
-forecasting.</p>
+<p>The Shapiro-Wilk test is utilized to investigate whether a particular dataset conforms to the standard normal
+distribution. This analysis is crucial in machine learning modeling because the normality of the data can
+profoundly impact the performance of the model. This metric is especially useful in evaluating various features of
+the dataset in both classification and regression tasks.</p>
 
 <h3 id="test-mechanism">Test Mechanism</h3>
 
-<p>The test operates by iterating over each feature within the training dataset and applying the <code>acorr_ljungbox</code>
-function from the <code>statsmodels.stats.diagnostic</code> library. This function calculates the Ljung-Box statistic and
-p-value for each feature. These results are then stored in a dictionary where the keys are the feature names and
-the values are dictionaries containing the statistic and p-value respectively. Generally, a lower p-value indicates
-a higher likelihood of significant autocorrelations within the feature.</p>
+<p>The Shapiro-Wilk test is conducted on each feature column of the training dataset to determine if the data
+contained fall within the normal distribution. The test presents a statistic and a p-value, with the p-value
+serving to validate or repudiate the null hypothesis, which is that the tested data is normally distributed.</p>
 
 <h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>High Ljung-Box statistic values or low p-values.</li>
-<li>Presence of significant autocorrelations in the respective features.</li>
-<li>Potential for negative impact on model performance or bias if autocorrelations are not properly handled.</li>
+<li>A p-value that falls below 0.05 signifies a high risk as it discards the null hypothesis, indicating that the
+data does not adhere to the normal distribution.</li>
+<li>For machine learning models built on the presumption of data normality, such an outcome could result in subpar
+performance or incorrect predictions.</li>
 </ul>
 
 <h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Powerful tool for detecting autocorrelations within datasets, especially in time series data.</li>
-<li>Provides quantitative measures (statistic and p-value) for precise evaluation.</li>
-<li>Helps avoid issues related to autoregressive residuals and other challenges in regression models.</li>
+<li>The Shapiro-Wilk test is esteemed for its level of accuracy, thereby making it particularly well-suited to
+datasets of small to moderate sizes.</li>
+<li>It proves its versatility through its efficient functioning in both classification and regression tasks.</li>
+<li>By separately testing each feature column, the Shapiro-Wilk test can raise an alarm if a specific feature does
+not comply with the normality.</li>
 </ul>
 
 <h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Cannot detect all types of non-linearity or complex interrelationships among variables.</li>
-<li>Testing individual features may not fully encapsulate the dynamics of the data if features interact with each
-other.</li>
-<li>Designed more for traditional statistical models and may not be fully compatible with certain types of complex
-machine learning models.</li>
+<li>The Shapiro-Wilk test's sensitivity can be a disadvantage as it often rejects the null hypothesis (i.e., data is
+normally distributed), even for minor deviations, especially in large datasets. This may lead to unwarranted 'false
+alarms' of high risk by deeming the data as not normally distributed even if it approximates normal distribution.</li>
+<li>Exceptional care must be taken in managing missing data or outliers prior to testing as these can greatly skew
+the results.</li>
+<li>Lastly, the Shapiro-Wilk test is not optimally suited for processing data with pronounced skewness or kurtosis.</li>
 </ul>
 </div>
 
 
-                            <div id="LJungBox.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#LJungBox.run"></a>
-    
-            <div class="docstring"><p>Calculates Ljung-Box test for each of the dataset features</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="LJungBox.__init__" class="function">Metric</dd>
-                <dd id="LJungBox.summary" class="function">summary</dd>
-                <dd id="LJungBox.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="LJungBox.description" class="function">description</dd>
-                <dd id="LJungBox.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="LJungBox.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="LJungBox.dataset" class="variable">dataset</dd>
-                <dd id="LJungBox.model" class="variable">model</dd>
-                <dd id="LJungBox.models" class="variable">models</dd>
-                <dd id="LJungBox.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
@@ -210,7 +169,7 @@ machine learning models.</li>
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "../../../../search.js";
+                script.src = "../../../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -252,7 +211,7 @@ machine learning models.</li>
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `../../../../${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../../../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }

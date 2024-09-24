@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="pdoc 14.7.0"/>
-    <title>validmind.tests.model_validation.statsmodels.JarqueBera API documentation</title>
+    <title>validmind.tests.data_validation.RunsTest API documentation</title>
             <link rel="icon" href="https://vmai.s3.us-west-1.amazonaws.com/favicon.ico"/>
 
     <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
@@ -17,11 +17,11 @@
     <nav class="pdoc">
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
-        <div>            <a class="pdoc-button module-list-button" href="../statsmodels.html">
+        <div>            <a class="pdoc-button module-list-button" href="../data_validation.html">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
-</svg>                &nbsp;validmind.tests.model_validation.statsmodels</a>
+</svg>                &nbsp;validmind.tests.data_validation</a>
 
             <img src="https://vmai.s3.us-west-1.amazonaws.com/vm-logo.svg" class="logo" alt="project logo"/>
 
@@ -32,13 +32,7 @@
             <h3>High Level API</h3>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#JarqueBera">JarqueBera</a>
-                            <ul class="memberlist">
-                        <li>
-                                <a class="function" href="#JarqueBera.run">run</a>
-                        </li>
-                </ul>
-
+                    <a class="function" href="#RunsTest">RunsTest</a>
             </li>
     </ul>
 
@@ -55,108 +49,75 @@
     <main class="pdoc">
             <section class="module-info">
                     <h1 class="modulename">
-<a href="./../../../../validmind.html">validmind</a><wbr>.<a href="./../../../tests.html">tests</a><wbr>.<a href="./../../model_validation.html">model_validation</a><wbr>.<a href="./../statsmodels.html">statsmodels</a><wbr>.JarqueBera    </h1>
+<a href="./../../../validmind.html">validmind</a><wbr>.<a href="./../../tests.html">tests</a><wbr>.<a href="./../data_validation.html">data_validation</a><wbr>.RunsTest    </h1>
 
                 
                 
                 
                 
             </section>
-                <section id="JarqueBera">
-                    <div class="attr class">
-            
-    <span class="def">class</span>
-    <span class="name">JarqueBera</span><wbr>(<span class="base">validmind.vm_models.test.metric.Metric</span>):
+                <section id="RunsTest">
+                    <div class="attr function">
+                    <div class="decorator">@tasks(&#39;classification&#39;, &#39;regression&#39;)</div>
+        <div class="decorator">@tags(&#39;tabular_data&#39;, &#39;statistical_test&#39;, &#39;statsmodels&#39;)</div>
+
+        <span class="def">def</span>
+        <span class="name">RunsTest</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">dataset</span></span><span class="return-annotation">):</span></span>
 
         
     </div>
-    <a class="headerlink" href="#JarqueBera"></a>
+    <a class="headerlink" href="#RunsTest"></a>
     
-            <div class="docstring"><p>Assesses normality of dataset features in an ML model using the Jarque-Bera test.</p>
+            <div class="docstring"><p>Executes Runs Test on ML model to detect non-random patterns in output data sequence.</p>
 
 <h3 id="purpose">Purpose</h3>
 
-<p>The purpose of the Jarque-Bera test as implemented in this metric is to determine if the features in the dataset of
-a given Machine Learning model follow a normal distribution. This is crucial for understanding the distribution and
-behavior of the model's features, as numerous statistical methods assume normal distribution of the data.</p>
+<p>The Runs Test is a statistical procedure used to determine whether the sequence of data extracted from the ML model
+behaves randomly or not. Specifically, it analyzes runs, sequences of consecutive positives or negatives, in the
+data to check if there are more or fewer runs than expected under the assumption of randomness. This can be an
+indication of some pattern, trend, or cycle in the model's output which may need attention.</p>
 
 <h3 id="test-mechanism">Test Mechanism</h3>
 
-<p>The test mechanism involves computing the Jarque-Bera statistic, p-value, skew, and kurtosis for each feature in
-the dataset. It utilizes the 'jarque_bera' function from the 'statsmodels' library in Python, storing the results
-in a dictionary. The test evaluates the skewness and kurtosis to ascertain whether the dataset follows a normal
-distribution. A significant p-value (typically less than 0.05) implies that the data does not possess normal
-distribution.</p>
+<p>The testing mechanism applies the Runs Test from the statsmodels module on each column of the training dataset. For
+every feature in the dataset, a Runs Test is executed, whose output includes a Runs Statistic and P-value. A low
+P-value suggests that data arrangement in the feature is not likely to be random. The results are stored in a
+dictionary where the keys are the feature names, and the values are another dictionary storing the test statistic
+and the P-value for each feature.</p>
 
 <h3 id="signs-of-high-risk">Signs of High Risk</h3>
 
 <ul>
-<li>A high Jarque-Bera statistic and a low p-value (usually less than 0.05) indicate high-risk conditions.</li>
-<li>Such results suggest the data significantly deviates from a normal distribution. If a machine learning model
-expects feature data to be normally distributed, these findings imply that it may not function as intended.</li>
+<li>High risk is indicated when the P-value is close to zero.</li>
+<li>If the P-value is less than a predefined significance level (like 0.05), it suggests that the runs (series of
+positive or negative values) in the model's output are not random and are longer or shorter than what is expected
+under a random scenario.</li>
+<li>This would mean there's a high risk of non-random distribution of errors or model outcomes, suggesting potential
+issues with the model.</li>
 </ul>
 
 <h3 id="strengths">Strengths</h3>
 
 <ul>
-<li>Provides insights into the shape of the data distribution, helping determine whether a given set of data follows
-a normal distribution.</li>
-<li>Particularly useful for risk assessment for models that assume a normal distribution of data.</li>
-<li>By measuring skewness and kurtosis, it provides additional insights into the nature and magnitude of a
-distribution's deviation.</li>
+<li>Straightforward and fast for detecting non-random patterns in data sequence.</li>
+<li>Validates assumptions of randomness, which is valuable for checking error distributions in regression models,
+trendless time series data, and ensuring a classifier doesn't favor one class over another.</li>
+<li>Can be applied to both classification and regression tasks, making it versatile.</li>
 </ul>
 
 <h3 id="limitations">Limitations</h3>
 
 <ul>
-<li>Only checks for normality in the data distribution. It cannot provide insights into other types of distributions.</li>
-<li>Datasets that aren't normally distributed but follow some other distribution might lead to inaccurate risk
-assessments.</li>
-<li>Highly sensitive to large sample sizes, often rejecting the null hypothesis (that data is normally distributed)
-even for minor deviations in larger datasets.</li>
+<li>Assumes that the data is independently and identically distributed (i.i.d.), which might not be the case for many
+real-world datasets.</li>
+<li>The conclusion drawn from the low P-value indicating non-randomness does not provide information about the type
+or the source of the detected pattern.</li>
+<li>Sensitive to extreme values (outliers), and overly large or small run sequences can influence the results.</li>
+<li>Does not provide model performance evaluation; it is used to detect patterns in the sequence of outputs only.</li>
 </ul>
 </div>
 
 
-                            <div id="JarqueBera.run" class="classattr">
-                                <div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">run</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">):</span></span>
-
-        
-    </div>
-    <a class="headerlink" href="#JarqueBera.run"></a>
-    
-            <div class="docstring"><p>Calculates JB for each of the dataset features</p>
-</div>
-
-
-                            </div>
-                            <div class="inherited">
-                                <h5>Inherited Members</h5>
-                                <dl>
-                                    <div><dt>validmind.vm_models.test.metric.Metric</dt>
-                                <dd id="JarqueBera.__init__" class="function">Metric</dd>
-                <dd id="JarqueBera.summary" class="function">summary</dd>
-                <dd id="JarqueBera.cache_results" class="function">cache_results</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test.test.Test</dt>
-                                <dd id="JarqueBera.description" class="function">description</dd>
-                <dd id="JarqueBera.log" class="function">log</dd>
-
-            </div>
-            <div><dt>validmind.vm_models.test_context.TestUtils</dt>
-                                <dd id="JarqueBera.get_accessed_inputs" class="function">get_accessed_inputs</dd>
-                <dd id="JarqueBera.dataset" class="variable">dataset</dd>
-                <dd id="JarqueBera.model" class="variable">model</dd>
-                <dd id="JarqueBera.models" class="variable">models</dd>
-                <dd id="JarqueBera.validate_inputs" class="function">validate_inputs</dd>
-
-            </div>
-                                </dl>
-                            </div>
                 </section>
     </main>
 <script>
@@ -211,7 +172,7 @@ even for minor deviations in larger datasets.</li>
                 script.async = true;
                 script.onload = () => resolve(window.pdocSearch);
                 script.onerror = (e) => reject(e);
-                script.src = "../../../../search.js";
+                script.src = "../../../search.js";
                 document.getElementsByTagName("head")[0].appendChild(script);
             });
         } catch (e) {
@@ -253,7 +214,7 @@ even for minor deviations in larger datasets.</li>
             }
             for (let result of results.slice(0, 10)) {
                 let doc = result.doc;
-                let url = `../../../../${doc.modulename.replaceAll(".", "/")}.html`;
+                let url = `../../../${doc.modulename.replaceAll(".", "/")}.html`;
                 if (doc.qualname) {
                     url += `#${doc.qualname}`;
                 }
