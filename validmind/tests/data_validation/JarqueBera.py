@@ -2,12 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from statsmodels.stats.stattools import jarque_bera
 
-from validmind.vm_models import Metric
+from validmind import tags, tasks
 
 
-class JarqueBera(Metric):
+@tasks("classification", "regression")
+@tags("tabular_data", "data_distribution", "statistical_test", "statsmodels")
+def JarqueBera(dataset):
     """
     Assesses normality of dataset features in an ML model using the Jarque-Bera test.
 
@@ -48,31 +52,20 @@ class JarqueBera(Metric):
     even for minor deviations in larger datasets.
     """
 
-    name = "jarque_bera"
-    required_inputs = ["dataset"]
-    tasks = ["classification", "regression"]
-    tags = [
-        "tabular_data",
-        "data_distribution",
-        "statistical_test",
-        "statsmodels",
-    ]
+    df = dataset.df[dataset.feature_columns_numeric]
 
-    def run(self):
-        """
-        Calculates JB for each of the dataset features
-        """
-        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
+    jb_values = {}
+    for col in df.columns:
+        jb_stat, jb_pvalue, jb_skew, jb_kurtosis = jarque_bera(df[col].values)
+        jb_values[col] = {
+            "stat": jb_stat,
+            "pvalue": jb_pvalue,
+            "skew": jb_skew,
+            "kurtosis": jb_kurtosis,
+        }
 
-        jb_values = {}
-        for col in x_train.columns:
-            jb_stat, jb_pvalue, jb_skew, jb_kurtosis = jarque_bera(x_train[col].values)
+    jb_df = pd.DataFrame.from_dict(jb_values, orient="index")
+    jb_df.reset_index(inplace=True)
+    jb_df.columns = ["column", "stat", "pvalue", "skew", "kurtosis"]
 
-            jb_values[col] = {
-                "stat": jb_stat,
-                "pvalue": jb_pvalue,
-                "skew": jb_skew,
-                "kurtosis": jb_kurtosis,
-            }
-
-        return self.cache_results(jb_values)
+    return jb_df

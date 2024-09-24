@@ -2,12 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from statsmodels.stats.diagnostic import acorr_ljungbox
 
-from validmind.vm_models import Metric
+from validmind import tags, tasks
 
 
-class BoxPierce(Metric):
+@tasks("regression")
+@tags("time_series_data", "forecasting", "statistical_test", "statsmodels")
+def BoxPierce(dataset):
     """
     Detects autocorrelation in time-series data through the Box-Pierce test to validate model performance.
 
@@ -51,25 +55,18 @@ class BoxPierce(Metric):
     - Applicability is limited to time-series data, which limits its overall utility.
     """
 
-    name = "box_pierce"
-    required_inputs = ["dataset"]
-    tasks = ["regression"]
-    tags = ["time_series_data", "forecasting", "statistical_test", "statsmodels"]
+    df = dataset.df
 
-    def run(self):
-        """
-        Calculates Box-Pierce test for each of the dataset features
-        """
-        x_train = self.inputs.dataset.df
+    box_pierce_values = {}
+    for col in df.columns:
+        bp_results = acorr_ljungbox(df[col].values, boxpierce=True, return_df=True)
+        box_pierce_values[col] = {
+            "stat": bp_results.iloc[0]["lb_stat"],
+            "pvalue": bp_results.iloc[0]["lb_pvalue"],
+        }
 
-        box_pierce_values = {}
-        for col in x_train.columns:
-            bp_results = acorr_ljungbox(
-                x_train[col].values, boxpierce=True, return_df=True
-            )
-            box_pierce_values[col] = {
-                "stat": bp_results.iloc[0]["lb_stat"],
-                "pvalue": bp_results.iloc[0]["lb_pvalue"],
-            }
+    box_pierce_df = pd.DataFrame.from_dict(box_pierce_values, orient="index")
+    box_pierce_df.reset_index(inplace=True)
+    box_pierce_df.columns = ["column", "stat", "pvalue"]
 
-        return self.cache_results(box_pierce_values)
+    return box_pierce_df

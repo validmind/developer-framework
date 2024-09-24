@@ -2,12 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import pandas as pd
+
 from statsmodels.sandbox.stats.runs import runstest_1samp
 
-from validmind.vm_models import Metric
+from validmind import tags, tasks
 
 
-class RunsTest(Metric):
+@tasks("classification", "regression")
+@tags("tabular_data", "statistical_test", "statsmodels")
+def RunsTest(dataset):
     """
     Executes Runs Test on ML model to detect non-random patterns in output data sequence.
 
@@ -52,24 +56,18 @@ class RunsTest(Metric):
     - Does not provide model performance evaluation; it is used to detect patterns in the sequence of outputs only.
     """
 
-    name = "runs_test"
-    required_inputs = ["dataset"]
-    tasks = ["classification", "regression"]
-    tags = ["tabular_data", "statistical_test", "statsmodels"]
+    df = dataset.df[dataset.feature_columns_numeric]
 
-    def run(self):
-        """
-        Calculates the run test for each of the dataset features
-        """
-        x_train = self.inputs.dataset.df[self.inputs.dataset.feature_columns_numeric]
+    runs_test_values = {}
+    for col in df.columns:
+        runs_stat, runs_p_value = runstest_1samp(df[col].values)
+        runs_test_values[col] = {
+            "stat": runs_stat,
+            "pvalue": runs_p_value,
+        }
 
-        runs_test_values = {}
-        for col in x_train.columns:
-            runs_stat, runs_p_value = runstest_1samp(x_train[col].values)
+    runs_test_df = pd.DataFrame.from_dict(runs_test_values, orient="index")
+    runs_test_df.reset_index(inplace=True)
+    runs_test_df.columns = ["feature", "stat", "pvalue"]
 
-            runs_test_values[col] = {
-                "stat": runs_stat,
-                "pvalue": runs_p_value,
-            }
-
-        return self.cache_results(runs_test_values)
+    return runs_test_df
