@@ -111,11 +111,10 @@ Next, replace this placeholder with your own code snippet:
 
 ```{r}
 vm_r <- vm(
-  api_host = "https://api.prod.validmind.ai/api/v1/tracking",
   api_key = "...",
   api_secret = "...",
   project = "...",
-  python_version = "~/.pyenv/versions/3.11.10/bin/python"
+  python_version = "..."
 )
 ```
 
@@ -211,6 +210,8 @@ descriptive_stats <- vm_r$tests$run_test(
     show = FALSE
 )
 
+descriptive_stats$log()
+
 descriptive_summary <- validmind:::summarize_metric_result(descriptive_stats)
 bind_rows(descriptive_summary$results[[1]]$data)
 ```
@@ -249,20 +250,18 @@ confusion_matrix <- function(dataset, model) {
 attr(confusion_matrix, "description") <- "Confusion matrix metric"
 
 # Register your confusion_matrix function
-register_result <- register_test(
+register_result <- register_custom_test(
     confusion_matrix,
-    test_id = "my_custom_tests.ConfusionMatrix2",
+    test_id = "my_custom_tests.ConfusionMatrix",
     description = "Confusion matrix metric",
     required_inputs = c("dataset", "model")
 )
 
-# Import the run_test function
-run_test <- import("validmind.tests")$run_test
-
-# Run your custom test
-result <- run_test(
-    "my_custom_tests.ConfusionMatrix2",
-    inputs = list(model = vm_model, dataset = vm_test_ds),
-    show = FALSE
+test_result <- run_custom_test(
+  "my_custom_tests.ConfusionMatrix",
+  inputs = list(dataset = vm_test_ds, model = vm_model),
+  test_register = register_result
 )
+
+test_result$log()
 ```

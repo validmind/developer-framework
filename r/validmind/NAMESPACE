@@ -2,7 +2,8 @@
 
 export(display_report)
 export(process_result)
-export(register_test)
+export(register_custom_test)
+export(run_custom_test)
 export(save_model)
 export(vm)
 import(reticulate)
