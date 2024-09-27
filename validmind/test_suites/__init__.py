@@ -42,7 +42,6 @@ from .time_series import (
     TimeSeriesDataset,
     TimeSeriesModelValidation,
     TimeSeriesMultivariate,
-    TimeSeriesSensitivity,
     TimeSeriesUnivariate,
 )
 
@@ -78,7 +77,6 @@ core_test_suites = {
     TimeSeriesDataset.suite_id: TimeSeriesDataset,
     TimeSeriesModelValidation.suite_id: TimeSeriesModelValidation,
     TimeSeriesMultivariate.suite_id: TimeSeriesMultivariate,
-    TimeSeriesSensitivity.suite_id: TimeSeriesSensitivity,
     TimeSeriesUnivariate.suite_id: TimeSeriesUnivariate,
 }
 

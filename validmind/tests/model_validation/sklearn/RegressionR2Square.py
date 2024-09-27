@@ -2,16 +2,16 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from dataclasses import dataclass
-
+import pandas as pd
 from sklearn import metrics
 
+from validmind import tags, tasks
 from validmind.tests.model_validation.statsmodels.statsutils import adj_r2_score
-from validmind.vm_models import Metric, ResultSummary, ResultTable
 
 
-@dataclass
-class RegressionR2Square(Metric):
+@tags("sklearn", "model_performance")
+@tasks("regression")
+def RegressionR2Square(dataset, model):
     """
     Assesses the overall goodness-of-fit of a regression model by evaluating R-squared (R2) and Adjusted R-squared (Adj
     R2) scores to determine the model's explanatory power over the dependent variable.
@@ -52,66 +52,16 @@ class RegressionR2Square(Metric):
     - Does not provide insight on whether the correct regression model was used or if key assumptions have been met.
     """
 
-    name = "regression_errors_r2_square"
-    required_inputs = ["model", "datasets"]
-    tasks = ["regression"]
-    tags = [
-        "sklearn",
-        "model_performance",
-    ]
+    y_true = dataset.y
+    y_pred = dataset.y_pred(model)
+    y_true = y_true.astype(y_pred.dtype)
 
-    def summary(self, raw_results):
-        """
-        Returns a summarized representation of the dataset split information
-        """
-        table_records = []
-        for result in raw_results:
-            for key, _ in result.items():
-                table_records.append(
-                    {
-                        "Metric": key,
-                        "TRAIN": result[key]["train"],
-                        "TEST": result[key]["test"],
-                    }
-                )
+    r2s = metrics.r2_score(y_true, y_pred)
+    adj_r2 = adj_r2_score(y_true, y_pred, len(y_true), len(dataset.feature_columns))
 
-        return ResultSummary(results=[ResultTable(data=table_records)])
+    # Create dataframe with R2 and Adjusted R2 in one row
+    results_df = pd.DataFrame(
+        {"R-squared (R2) Score": [r2s], "Adjusted R-squared (R2) Score": [adj_r2]}
+    )
 
-    def run(self):
-        y_train_true = self.inputs.datasets[0].y
-        y_train_pred = self.inputs.datasets[0].y_pred(self.inputs.model)
-        y_train_true = y_train_true.astype(y_train_pred.dtype)
-
-        y_test_true = self.inputs.datasets[1].y
-        y_test_pred = self.inputs.datasets[1].y_pred(self.inputs.model)
-        y_test_true = y_test_true.astype(y_test_pred.dtype)
-
-        r2s_train = metrics.r2_score(y_train_true, y_train_pred)
-        r2s_test = metrics.r2_score(y_test_true, y_test_pred)
-
-        results = []
-        results.append(
-            {
-                "R-squared (R2) Score": {
-                    "train": r2s_train,
-                    "test": r2s_test,
-                }
-            }
-        )
-
-        X_columns = self.inputs.datasets[0].feature_columns
-        adj_r2_train = adj_r2_score(
-            y_train_true, y_train_pred, len(y_train_true), len(X_columns)
-        )
-        adj_r2_test = adj_r2_score(
-            y_test_true, y_test_pred, len(y_test_true), len(X_columns)
-        )
-        results.append(
-            {
-                "Adjusted R-squared (R2) Score": {
-                    "train": adj_r2_train,
-                    "test": adj_r2_test,
-                }
-            }
-        )
-        return self.cache_results(metric_value=results)
+    return results_df
