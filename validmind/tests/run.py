@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import itertools
 from itertools import product
 from typing import Any, Dict, List, Union
 from uuid import uuid4
@@ -137,7 +138,7 @@ def _combine_figures(figure_lists: List[List[Any]], input_groups: List[Dict[str,
     title_template = "{current_title}({input_description})"
 
     for idx, figures in enumerate(figure_lists):
-        input_group = input_groups[idx]
+        input_group = input_groups[idx]["inputs"]
         if is_plotly_figure(figures[0].figure):
             _update_plotly_titles(figures, input_group, title_template)
         elif is_matplotlib_figure(figures[0].figure):
@@ -171,24 +172,32 @@ def _combine_unit_metrics(results: List[MetricResultWrapper]):
 def metric_comparison(
     results: List[MetricResultWrapper],
     test_id: TestID,
-    input_groups: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    input_params_groups: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
     output_template: str = None,
     generate_description: bool = True,
 ):
     """Build a comparison result for multiple metric results"""
     ref_id = str(uuid4())
 
+    # Treat param_groups and input_groups as empty lists if they are None or empty
+    input_params_groups = input_params_groups or [{}]
+
     input_group_strings = []
 
-    for group in input_groups:
+    for input_params in input_params_groups:
         new_group = {}
-        for k, v in group.items():
-            if isinstance(v, str):
-                new_group[k] = v
-            elif hasattr(v, "input_id"):
-                new_group[k] = v.input_id
-            elif isinstance(v, list) and all(hasattr(item, "input_id") for item in v):
-                new_group[k] = ", ".join([item.input_id for item in v])
+        for param_k, param_v in input_params["params"].items():
+            new_group[param_k] = param_v
+        for metric_k, metric_v in input_params["inputs"].items():
+            # Process values in the input group
+            if isinstance(metric_v, str):
+                new_group[metric_k] = metric_v
+            elif hasattr(metric_v, "input_id"):
+                new_group[metric_k] = metric_v.input_id
+            elif isinstance(metric_v, list) and all(
+                hasattr(item, "input_id") for item in metric_v
+            ):
+                new_group[metric_k] = ", ".join([item.input_id for item in metric_v])
             else:
                 raise ValueError(f"Unsupported type for value: {v}")
         input_group_strings.append(new_group)
@@ -196,38 +205,22 @@ def metric_comparison(
     # handle unit metrics (scalar values) by adding it to the summary
     _combine_unit_metrics(results)
 
-    # Check if the results list contains a result object with a metric
-    if any(
-        hasattr(result, "metric")
-        and hasattr(result.metric, "summary")
-        and result.metric.summary
-        for result in results
-    ):
-        # Compute merged summaries only if there is a result with a metric
-        merged_summary = _combine_summaries(
-            [
-                {"inputs": input_group_strings[i], "summary": result.metric.summary}
-                for i, result in enumerate(results)
-            ]
-        )
-    else:
-        merged_summary = None
+    merged_summary = _combine_summaries(
+        [
+            {"inputs": input_group_strings[i], "summary": result.metric.summary}
+            for i, result in enumerate(results)
+        ]
+    )
+    merged_figures = _combine_figures(
+        [result.figures for result in results], input_params_groups
+    )
 
-    # Check if the results list contains a result object with figures
-    if any(hasattr(result, "figures") and result.figures for result in results):
-        # Compute merged figures only if there is at least one result with figures
-        merged_figures = _combine_figures(
-            [result.figures for result in results],
-            input_groups,
-        )
-        # Patch figure metadata so they are connected to the comparison result
-        if merged_figures and len(merged_figures):
-            for i, figure in enumerate(merged_figures):
-                figure.key = f"{figure.key}-{i}"
-                figure.metadata["_name"] = test_id
-                figure.metadata["_ref_id"] = ref_id
-    else:
-        merged_figures = None
+    # Patch figure metadata so they are connected to the comparison result
+    if merged_figures and len(merged_figures):
+        for i, figure in enumerate(merged_figures):
+            figure.key = f"{figure.key}-{i}"
+            figure.metadata["_name"] = test_id
+            figure.metadata["_ref_id"] = ref_id
 
     return MetricResultWrapper(
         result_id=test_id,
@@ -236,14 +229,14 @@ def metric_comparison(
                 test_id=test_id,
                 default_description=f"Comparison test result for {test_id}",
                 summary=merged_summary.serialize() if merged_summary else None,
-                figures=merged_figures if merged_figures else None,
+                figures=merged_figures,
                 should_generate=generate_description,
             ),
         ],
         inputs=[
             item.input_id if hasattr(item, "input_id") else item
-            for group in input_groups
-            for input in group.values()
+            for group in input_params_groups
+            for input in group["inputs"].values()
             for item in (input if isinstance(input, list) else [input])
             if hasattr(item, "input_id") or isinstance(item, str)
         ],
@@ -333,39 +326,63 @@ def threshold_test_comparison(
 
 def run_comparison_test(
     test_id: TestID,
-    input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]],
+    input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]] = None,
+    inputs: Dict[str, Any] = None,
     name: str = None,
     unit_metrics: List[TestID] = None,
+    param_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]] = None,
     params: Dict[str, Any] = None,
     show: bool = True,
     output_template: str = None,
     generate_description: bool = True,
 ):
     """Run a comparison test"""
-    if isinstance(input_grid, dict):
-        input_groups = _cartesian_product(input_grid)
+    if input_grid:
+        if isinstance(input_grid, dict):
+            input_groups = _cartesian_product(input_grid)
+        else:
+            input_groups = input_grid
     else:
-        input_groups = input_grid
+        input_groups = list(inputs) if inputs else []
 
+    if param_grid:
+        if isinstance(param_grid, dict):
+            param_groups = _cartesian_product(param_grid)
+        else:
+            param_groups = param_grid
+    else:
+        param_groups = list(params) if inputs else []
+
+    input_groups = input_groups or [{}]
+    param_groups = param_groups or [{}]
+    # Use itertools.product to compute the Cartesian product
+    inputs_params_product = [
+        {
+            "inputs": item1,
+            "params": item2,
+        }  # Merge dictionaries from input_groups and param_groups
+        for item1, item2 in itertools.product(input_groups, param_groups)
+    ]
     results = [
         run_test(
             test_id,
             name=name,
             unit_metrics=unit_metrics,
-            inputs=inputs,
+            inputs=inputs_params["inputs"],
             show=False,
-            params=params,
+            params=inputs_params["params"],
             __generate_description=False,
         )
-        for inputs in input_groups
+        for inputs_params in (inputs_params_product or [{}])
     ]
-
     if isinstance(results[0], MetricResultWrapper):
         func = metric_comparison
     else:
         func = threshold_test_comparison
 
-    result = func(results, test_id, input_groups, output_template, generate_description)
+    result = func(
+        results, test_id, inputs_params_product, output_template, generate_description
+    )
 
     if show:
         result.show()
@@ -376,6 +393,7 @@ def run_comparison_test(
 def run_test(
     test_id: TestID = None,
     params: Dict[str, Any] = None,
+    param_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]] = None,
     inputs: Dict[str, Any] = None,
     input_grid: Union[Dict[str, List[Any]], List[Dict[str, Any]]] = None,
     name: str = None,
@@ -431,10 +449,26 @@ def run_test(
             "When providing an `input_grid`, you cannot also provide `inputs` or `kwargs`"
         )
 
+    if (param_grid and kwargs) or (param_grid and params):
+        raise ValueError(
+            "When providing an `param_grid`, you cannot also provide `params` or `kwargs`"
+        )
+
     if unit_metrics:
         metric_id_name = "".join(word[0].upper() + word[1:] for word in name.split())
         test_id = f"validmind.composite_metric.{metric_id_name}" or test_id
 
+    if input_grid and param_grid:
+        return run_comparison_test(
+            test_id,
+            input_grid,
+            name=name,
+            unit_metrics=unit_metrics,
+            param_grid=param_grid,
+            output_template=output_template,
+            show=show,
+            generate_description=__generate_description,
+        )
     if input_grid:
         return run_comparison_test(
             test_id,
@@ -442,6 +476,17 @@ def run_test(
             name=name,
             unit_metrics=unit_metrics,
             params=params,
+            output_template=output_template,
+            show=show,
+            generate_description=__generate_description,
+        )
+    if param_grid:
+        return run_comparison_test(
+            test_id,
+            inputs=inputs,
+            name=name,
+            unit_metrics=unit_metrics,
+            param_grid=param_grid,
             output_template=output_template,
             show=show,
             generate_description=__generate_description,
