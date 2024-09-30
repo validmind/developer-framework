@@ -54,33 +54,28 @@ def ProtectedClassesThresholdOptimizer(
     - Requires access to protected attribute information at prediction time.
     - The effectiveness can vary depending on the chosen fairness constraint and objective.
     """
+    test_df = dataset.df
+
     threshold_optimizer = initialize_and_fit_optimizer(
-        pipeline, X_train, y_train, protected_classes
+        pipeline, X_train, y_train, X_train[protected_classes]
     )
 
     fig = plot_thresholds(threshold_optimizer)
 
-    test_df = dataset.df
     target = dataset.target_column
     y_pred_opt = make_predictions(threshold_optimizer, test_df, protected_classes)
 
     fairness_metrics = calculate_fairness_metrics(
         test_df, target, y_pred_opt, protected_classes
     )
-    group_metrics = calculate_group_metrics(
-        test_df, target, y_pred_opt, protected_classes
-    )
-    thresholds_df = get_thresholds_by_group(threshold_optimizer)
 
     return (
         {"DPR and EOR Table": fairness_metrics.reset_index()},
-        {"FPR, TPR, FNR and Count table": group_metrics.reset_index()},
-        {"Threshold By Group Table": thresholds_df.reset_index()},
         fig,
     )
 
 
-def initialize_and_fit_optimizer(pipeline, X_train, y_train, protected_classes):
+def initialize_and_fit_optimizer(pipeline, X_train, y_train, protected_classes_df):
     threshold_optimizer = ThresholdOptimizer(
         estimator=pipeline,
         objective="balanced_accuracy_score",
@@ -88,9 +83,7 @@ def initialize_and_fit_optimizer(pipeline, X_train, y_train, protected_classes):
         predict_method="predict_proba",
         prefit=False,
     )
-    threshold_optimizer.fit(
-        X_train, y_train, sensitive_features=X_train[protected_classes]
-    )
+    threshold_optimizer.fit(X_train, y_train, sensitive_features=protected_classes_df)
     return threshold_optimizer
 
 

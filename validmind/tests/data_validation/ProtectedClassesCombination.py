@@ -18,7 +18,7 @@ from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
 import pandas as pd
 
 
-def ProtectedClassesCombination(dataset, protected_classes):
+def ProtectedClassesCombination(dataset, model, protected_classes):
     """
     Visualizes combinations of protected classes and their corresponding error metric differences.
 
@@ -54,8 +54,6 @@ def ProtectedClassesCombination(dataset, protected_classes):
     - Visualization alone may not capture all nuances of intersectional fairness.
     """
 
-    full_test_df = dataset._df
-
     # Construct a function dictionary for figures
     my_metrics = {
         "fpr": false_positive_rate,
@@ -64,31 +62,12 @@ def ProtectedClassesCombination(dataset, protected_classes):
         "count": count,
     }
 
-    # Construct a function dictionary for table
-    my_metrics2 = {
-        "fnr": false_negative_rate,
-        "fpr": false_positive_rate,
-        "tpr": true_positive_rate,
-        "tnr": true_negative_rate,
-        "Balanced_Accuracy": balanced_accuracy_score,
-        "selection rate": selection_rate,
-        "count": count,
-    }
-
     # Construct a MetricFrame for figures
     mf = MetricFrame(
         metrics=my_metrics,
-        y_true=full_test_df[dataset.target_column],
-        y_pred=full_test_df["model_prediction"],
-        sensitive_features=full_test_df[protected_classes],
-    )
-
-    # Construct a MetricFrame for table
-    mf2 = MetricFrame(
-        metrics=my_metrics2,
-        y_true=full_test_df[dataset.target_column],
-        y_pred=full_test_df["model_prediction"],
-        sensitive_features=full_test_df[protected_classes],
+        y_true=dataset.y,
+        y_pred=dataset.y_pred(model),
+        sensitive_features=dataset._df[protected_classes],
     )
 
     # Combine protected class columns to create a single multi-class category for the x-axis
@@ -170,49 +149,33 @@ def ProtectedClassesCombination(dataset, protected_classes):
     for l in protected_classes:
         m_dpr.append(
             demographic_parity_ratio(
-                y_true=full_test_df[dataset.target_column],
-                y_pred=full_test_df["model_prediction"],
-                sensitive_features=full_test_df[[l]],
+                y_true=dataset.y,
+                y_pred=dataset.y_pred(model),
+                sensitive_features=dataset._df[[l]],
             )
         )
         m_eqo.append(
             equalized_odds_ratio(
-                y_true=full_test_df[dataset.target_column],
-                y_pred=full_test_df["model_prediction"],
-                sensitive_features=full_test_df[[l]],
+                y_true=dataset.y,
+                y_pred=dataset.y_pred(model),
+                sensitive_features=dataset._df[[l]],
             )
         )
 
     # Create a DataFrame for the demographic parity and equalized odds ratio
-    df2 = pd.DataFrame(
+    dpr_eor_df = pd.DataFrame(
         columns=protected_classes,
         index=["demographic parity ratio", "equal odds ratio"],
     )
 
     for i in range(len(m_dpr)):
-        df2[protected_classes[i]]["demographic parity ratio"] = round(m_dpr[i], 2)
-        df2[protected_classes[i]]["equal odds ratio"] = round(m_eqo[i], 2)
-
-    # Rename columns to avoid data security issues
-    metrics_by_group.rename(
-        columns={
-            "Gender": "Gender_",
-            "Race": "Race_",
-            "Marital_Status": "Marital_Status_",
-        },
-        inplace=True,
-    )
-    df2.rename(
-        columns={
-            "Gender": "Gender_",
-            "Race": "Race_",
-            "Marital_Status": "Marital_Status_",
-        },
-        inplace=True,
-    )
+        dpr_eor_df[protected_classes[i]]["demographic parity ratio"] = round(
+            m_dpr[i], 2
+        )
+        dpr_eor_df[protected_classes[i]]["equal odds ratio"] = round(m_eqo[i], 2)
 
     return (
         {"Class Combination Table": metrics_by_group},
-        {"DPR and EOR table": df2},
+        {"DPR and EOR table": dpr_eor_df},
         fig,
     )

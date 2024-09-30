@@ -300,33 +300,40 @@ class MetricResultWrapper(ResultWrapper):
         return VBox(vbox_children)
 
     def _get_filtered_summary(self):
-        """Check if the metric summary has columns from input datasets"""
-        dataset_columns = set()
+        """Check if the metric summary has columns from input datasets with matching row counts"""
+        dataset_columns = {}
 
         for input in self.inputs:
             input_id = input if isinstance(input, str) else input.input_id
             input_obj = input_registry.get(input_id)
             if isinstance(input_obj, VMDataset):
-                dataset_columns.update(input_obj.columns)
+                for column in input_obj.columns:
+                    dataset_columns[column] = len(input_obj.df)
 
         for table in [*self.metric.summary.results]:
-            columns = set()
+            table_columns = {}
 
             if isinstance(table.data, pd.DataFrame):
-                columns.update(table.data.columns)
+                for column in table.data.columns:
+                    table_columns[column] = len(table.data)
             elif isinstance(table.data, list):
-                columns.update(table.data[0].keys())
+                for column in table.data[0].keys():
+                    table_columns[column] = len(table.data)
             else:
                 raise ValueError("Invalid data type in summary table")
 
-            if bool(columns.intersection(dataset_columns)):
+            sensitive_columns = []
+            for column, row_count in table_columns.items():
+                if column in dataset_columns and row_count == dataset_columns[column]:
+                    sensitive_columns.append(column)
+
+            if sensitive_columns:
                 logger.warning(
                     "Sensitive data in metric summary table. Not logging to API automatically."
                     " Pass `unsafe=True` to result.log() method to override manually."
                 )
                 logger.warning(
-                    f"The following columns are present in the table: {columns}"
-                    f" and also present in the dataset: {dataset_columns}"
+                    f"The following columns are present in the table with matching row counts: {sensitive_columns}"
                 )
 
                 self.metric.summary.results.remove(table)

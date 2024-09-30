@@ -59,7 +59,7 @@ def ProtectedClassesDescription(dataset, protected_classes):
     figures = []
     all_stats = []
 
-    df = dataset.df
+    df = dataset._df
     target = dataset.target_column
 
     for protected_class in protected_classes:
