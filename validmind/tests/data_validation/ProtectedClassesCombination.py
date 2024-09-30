@@ -9,11 +9,8 @@ from fairlearn.metrics import (
     count,
     false_positive_rate,
     selection_rate,
-    false_negative_rate,
     true_positive_rate,
-    true_negative_rate,
 )
-from sklearn.metrics import balanced_accuracy_score
 from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
 import pandas as pd
 
@@ -146,19 +143,19 @@ def ProtectedClassesCombination(dataset, model, protected_classes):
     # Extract demographic parity ratio and equalized odds ratio
     m_dpr = []
     m_eqo = []
-    for l in protected_classes:
+    for protected_class in protected_classes:
         m_dpr.append(
             demographic_parity_ratio(
                 y_true=dataset.y,
                 y_pred=dataset.y_pred(model),
-                sensitive_features=dataset._df[[l]],
+                sensitive_features=dataset._df[[protected_class]],
             )
         )
         m_eqo.append(
             equalized_odds_ratio(
                 y_true=dataset.y,
                 y_pred=dataset.y_pred(model),
-                sensitive_features=dataset._df[[l]],
+                sensitive_features=dataset._df[[protected_class]],
             )
         )
 

@@ -300,45 +300,60 @@ class MetricResultWrapper(ResultWrapper):
         return VBox(vbox_children)
 
     def _get_filtered_summary(self):
-        """Check if the metric summary has columns from input datasets with matching row counts"""
-        dataset_columns = {}
+        """Check if the metric summary has columns from input datasets with matching row counts."""
+        dataset_columns = self._get_dataset_columns()
+        filtered_results = []
 
-        for input in self.inputs:
-            input_id = input if isinstance(input, str) else input.input_id
-            input_obj = input_registry.get(input_id)
-            if isinstance(input_obj, VMDataset):
-                for column in input_obj.columns:
-                    dataset_columns[column] = len(input_obj.df)
-
-        for table in [*self.metric.summary.results]:
-            table_columns = {}
-
-            if isinstance(table.data, pd.DataFrame):
-                for column in table.data.columns:
-                    table_columns[column] = len(table.data)
-            elif isinstance(table.data, list):
-                for column in table.data[0].keys():
-                    table_columns[column] = len(table.data)
-            else:
-                raise ValueError("Invalid data type in summary table")
-
-            sensitive_columns = []
-            for column, row_count in table_columns.items():
-                if column in dataset_columns and row_count == dataset_columns[column]:
-                    sensitive_columns.append(column)
+        for table in self.metric.summary.results:
+            table_columns = self._get_table_columns(table)
+            sensitive_columns = self._find_sensitive_columns(
+                dataset_columns, table_columns
+            )
 
             if sensitive_columns:
-                logger.warning(
-                    "Sensitive data in metric summary table. Not logging to API automatically."
-                    " Pass `unsafe=True` to result.log() method to override manually."
-                )
-                logger.warning(
-                    f"The following columns are present in the table with matching row counts: {sensitive_columns}"
-                )
+                self._log_sensitive_data_warning(sensitive_columns)
+            else:
+                filtered_results.append(table)
 
-                self.metric.summary.results.remove(table)
-
+        self.metric.summary.results = filtered_results
         return self.metric.summary
+
+    def _get_dataset_columns(self):
+        dataset_columns = {}
+        for input_item in self.inputs:
+            input_id = (
+                input_item if isinstance(input_item, str) else input_item.input_id
+            )
+            input_obj = input_registry.get(input_id)
+            if isinstance(input_obj, VMDataset):
+                dataset_columns.update(
+                    {col: len(input_obj.df) for col in input_obj.columns}
+                )
+        return dataset_columns
+
+    def _get_table_columns(self, table):
+        if isinstance(table.data, pd.DataFrame):
+            return {col: len(table.data) for col in table.data.columns}
+        elif isinstance(table.data, list) and table.data:
+            return {col: len(table.data) for col in table.data[0].keys()}
+        else:
+            raise ValueError("Invalid data type in summary table")
+
+    def _find_sensitive_columns(self, dataset_columns, table_columns):
+        return [
+            col
+            for col, row_count in table_columns.items()
+            if col in dataset_columns and row_count == dataset_columns[col]
+        ]
+
+    def _log_sensitive_data_warning(self, sensitive_columns):
+        logger.warning(
+            "Sensitive data in metric summary table. Not logging to API automatically. "
+            "Pass `unsafe=True` to result.log() method to override manually."
+        )
+        logger.warning(
+            f"The following columns are present in the table with matching row counts: {sensitive_columns}"
+        )
 
     async def log_async(
         self, section_id: str = None, position: int = None, unsafe=False

@@ -5,7 +5,6 @@
 from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.plotting import Plot
-import aequitas.plot as ap
 import io
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -72,9 +71,9 @@ def ProtectedClassesDisparity(
 
     df = dataset._df
 
-    for l in protected_classes:
+    for protected_class in protected_classes:
         # make the dataset compatible for the python package of interest
-        df[l] = pd.Categorical(df[l]).astype("object")
+        df[protected_class] = pd.Categorical(df[protected_class]).astype("object")
 
     df["score"] = dataset.y_pred(model).astype(int)
     df["label_value"] = df[dataset.target_column].astype(int)
@@ -82,8 +81,10 @@ def ProtectedClassesDisparity(
     # let map the attributes for each protected class
     # default use reference that is most observable for dictionary
     attributes_and_reference_groups = {}
-    for l in protected_classes:
-        attributes_and_reference_groups.update({l: df[l].value_counts().idxmax()})
+    for protected_class in protected_classes:
+        attributes_and_reference_groups[protected_class] = (
+            df[protected_class].value_counts().idxmax()
+        )
 
     attributes_to_audit = list(attributes_and_reference_groups.keys())
 
@@ -107,8 +108,10 @@ def ProtectedClassesDisparity(
     )
 
     plots = []
-    for l in protected_classes:
-        plot = ap.disparity(bdf, metrics, l, fairness_threshold=disparity_tolerance)
+    for protected_class in protected_classes:
+        plot = aqp.plot_disparity(
+            bdf, metrics, protected_class, fairness_threshold=disparity_tolerance
+        )
 
         buf = io.BytesIO()  # create a bytes array to save the image into in memory
         plot.save(
