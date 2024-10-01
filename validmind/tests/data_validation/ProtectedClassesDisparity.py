@@ -5,9 +5,9 @@
 from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.plotting import Plot
-import io
+import aequitas.plot as ap
 import pandas as pd
-import matplotlib.pyplot as plt
+import io
 
 
 def ProtectedClassesDisparity(
@@ -18,72 +18,60 @@ def ProtectedClassesDisparity(
     metrics=["fnr", "fpr", "tpr"],
 ):
     """
-    Investigates disparities in model outcomes across protected classes using various fairness metrics.
+    Investigates disparities in model performance across different protected class segments.
 
     ### Purpose
 
-    This test aims to identify and quantify potential biases in model outcomes across different demographic groups
-    or protected classes. It helps ensure that the model's predictions are fair and do not disproportionately
-    disadvantage any particular group.
+    This test aims to identify and quantify potential biases in model outcomes by comparing various performance metrics
+    across different segments of protected classes. It helps in assessing whether the model produces discriminatory
+    outcomes for certain groups, which is crucial for ensuring fairness in machine learning models.
 
     ### Test Mechanism
 
-    The test calculates and compares various fairness metrics across different segments of protected classes:
-
-    1. Computes metrics such as False Negative Rate (FNR), False Positive Rate (FPR), and True Positive Rate (TPR)
-       for each group within the protected classes.
-    2. Calculates disparity ratios between groups for each metric.
-    3. Compares these ratios against a specified disparity tolerance threshold.
-    4. Generates visualizations to highlight disparities.
-
-    The test also provides additional metrics in the output table:
-
-    - True Positive Rate (TPR): Fraction of true positives within label positive entities of a group.
-    - True Negative Rate (TNR): Fraction of true negatives within label negative entities of a group.
-    - False Negative Rate (FNR): Fraction of false negatives within label positive entities of a group.
-    - False Positive Rate (FPR): Fraction of false positives within label negative entities of a group.
-    - Precision: Fraction of true positives within predicted positive entities of a group.
-    - Negative Predictive Value (NPV): Fraction of true negatives within predicted negative entities of a group.
-    - False Discovery Rate (FDR): Fraction of false positives within predicted positive entities of a group.
-    - False Omission Rate (FOR): Fraction of false negatives within predicted negative entities of a group.
-    - Predicted Positive (PPR): Number of entities within a group where the decision is positive.
-    - Predicted Prevalence (PPREV): Fraction of entities within a group predicted as positive.
+    The test performs the following steps:
+    1. Calculates performance metrics (e.g., false negative rate, false positive rate, true positive rate) for each segment
+       of the specified protected classes.
+    2. Computes disparity ratios by comparing these metrics between different segments and a reference group.
+    3. Generates visualizations showing the disparities and their relation to a user-defined disparity tolerance threshold.
+    4. Produces a comprehensive table with various disparity metrics for detailed analysis.
 
     ### Signs of High Risk
 
-    - Disparity ratios exceeding the specified tolerance threshold for any metric.
-    - Consistent patterns of disparity across multiple metrics for a particular group.
-    - Large variations in false positive or false negative rates between groups.
+    - Disparity ratios exceeding the specified disparity tolerance threshold.
+    - Consistent patterns of higher error rates or lower performance for specific protected class segments.
+    - Statistically significant differences in performance metrics across segments.
 
     ### Strengths
 
-    - Provides a comprehensive view of fairness across multiple metrics.
-    - Allows for customizable disparity tolerance thresholds.
-    - Generates visual representations to easily identify areas of concern.
+    - Provides a comprehensive view of model fairness across multiple protected attributes and metrics.
+    - Allows for easy identification of problematic disparities through visual and tabular representations.
+    - Customizable disparity tolerance threshold to align with specific use-case requirements.
+    - Applicable to various performance metrics, offering a multi-faceted analysis of model fairness.
 
     ### Limitations
 
-    - Relies on pre-defined protected classes, which may not capture all relevant demographic factors.
-    - Does not account for intersectionality or compounding effects of multiple protected attributes.
-    - The choice of reference group can influence the interpretation of results.
-
+    - Relies on a predefined reference group for each protected class, which may not always be the most appropriate choice.
+    - Does not account for intersectionality between different protected attributes.
+    - The interpretation of results may require domain expertise to understand the implications of observed disparities.
     """
 
-    df = dataset._df
+    full_test_df = dataset._df
 
     for protected_class in protected_classes:
         # make the dataset compatible for the python package of interest
-        df[protected_class] = pd.Categorical(df[protected_class]).astype("object")
+        full_test_df[protected_class] = pd.Categorical(
+            full_test_df[protected_class]
+        ).astype("object")
 
-    df["score"] = dataset.y_pred(model).astype(int)
-    df["label_value"] = df[dataset.target_column].astype(int)
+    full_test_df["score"] = dataset.y_pred(model).astype(int)
+    full_test_df["label_value"] = full_test_df[dataset.target_column].astype(int)
 
     # let map the attributes for each protected class
     # default use reference that is most observable for dictionary
     attributes_and_reference_groups = {}
     for protected_class in protected_classes:
-        attributes_and_reference_groups[protected_class] = (
-            df[protected_class].value_counts().idxmax()
+        attributes_and_reference_groups.update(
+            {protected_class: full_test_df[protected_class].value_counts().idxmax()}
         )
 
     attributes_to_audit = list(attributes_and_reference_groups.keys())
@@ -98,10 +86,12 @@ def ProtectedClassesDisparity(
     )
 
     # get_crosstabs returns a dataframe of the group counts and group value bias metrics.
-    xtab, _ = g.get_crosstabs(df[columns_to_include], attr_cols=attributes_to_audit)
+    xtab, _ = g.get_crosstabs(
+        full_test_df[columns_to_include], attr_cols=attributes_to_audit
+    )
     bdf = b.get_disparity_predefined_groups(
         xtab,
-        original_df=df[columns_to_include],
+        original_df=full_test_df[columns_to_include],
         ref_groups_dict=attributes_and_reference_groups,
         alpha=0.05,
         mask_significance=True,
@@ -109,7 +99,7 @@ def ProtectedClassesDisparity(
 
     plots = []
     for protected_class in protected_classes:
-        plot = aqp.plot_disparity(
+        plot = ap.disparity(
             bdf, metrics, protected_class, fairness_threshold=disparity_tolerance
         )
 
@@ -123,16 +113,7 @@ def ProtectedClassesDisparity(
     metrics_adj = [x + string for x in metrics]
 
     table = bdf[["attribute_name", "attribute_value"] + b.list_disparities(bdf)]
-
-    # Convert the disparity_all plot to bytes
-    all_disparity_plot = aqp.plot_disparity_all(bdf, metrics=metrics_adj)
-    buf = io.BytesIO()
-    all_disparity_plot.savefig(buf, format="png")
-    buf.seek(0)  # Move the cursor to the beginning of the buffer
-    plots.append(buf.getvalue())
-
-    plt.close(all_disparity_plot)  # Close the figure to free up memory
-
+    plots.append(aqp.plot_disparity_all(bdf, metrics=metrics_adj))
     plots_return = tuple(plots)
 
     return (table, *plots_return)
