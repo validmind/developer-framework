@@ -13,7 +13,7 @@ readme = "README.pypi.md"
 version = "2.5.17"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = ">=3.8.1,<3.12"
 aiohttp = {extras = ["speedups"], version = "*"}
 arch = "*"
 bert-score = ">=0.3.13"
@@ -32,7 +32,7 @@ nltk = "^3.8.1"
 numba = "<0.59.0" # TODO: https://github.com/validmind/developer-framework/pull/28
 numpy = "*"
 openai = ">=1"
-pandas = ">=1.1,<=2.0.3" # TODO: small issues blocking 2.0 but it would speed things up to use arrow backend
+pandas = ">=1.1,<2.0.3"
 plotly = "*"
 plotly-express = "*"
 polars = "*"
