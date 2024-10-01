@@ -13,7 +13,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = os.path.join(current_path, "datasets")
 
 # URLs or file paths for online and offline data
-data_file = "/Users/juanvalidmind/Downloads/lending_club_biased.csv"
+data_file = os.path.join(dataset_path, "lending_club_biased.csv.gz")
 
 target_column = "loan_status"
 protected_classes = ["Gender", "Race", "Marital_Status"]
@@ -34,7 +34,12 @@ def load_data():
     :return: DataFrame containing the loaded data.
     """
 
-    df = pd.read_csv(data_file)
+    print(f"Loading data from: {data_file}")
+    # Since we know the offline_data_file path ends with '.zip', we replace it with '.csv.gz'
+    gzip_file_path = data_file.replace(".zip", ".csv.gz")
+    # Read the CSV file directly from the .gz archive
+    df = pd.read_csv(gzip_file_path, compression="gzip")
+    print("Data loaded successfully.")
     df = _clean_data(df)
 
     return df
