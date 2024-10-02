@@ -77,10 +77,12 @@ class Hashtags(ThresholdTest):
             line = re.findall(r"(?<=#)\w+", text)
             return " ".join(line)
 
+        # Extract hashtags from the text column and count occurrences
         temp = (
             self.inputs.dataset.df[text_column]
             .apply(lambda x: find_hash(x))
-            .value_counts()[:][1 : self.params["top_hashtags"]]
+            .value_counts()
+            .head(self.params["top_hashtags"])
         )
         temp = (
             temp.to_frame()
