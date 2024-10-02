@@ -63,7 +63,7 @@ def ProtectedClassesDescription(dataset, protected_classes=None):
         logger.warning(
             "No protected classes provided. Please pass the 'protected_classes' parameter to run this test."
         )
-        return
+        return pd.DataFrame()
 
     figures = []
     all_stats = []

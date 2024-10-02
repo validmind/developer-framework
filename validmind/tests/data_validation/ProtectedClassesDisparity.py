@@ -68,7 +68,7 @@ def ProtectedClassesDisparity(
         logger.warning(
             "No protected classes provided. Please pass the 'protected_classes' parameter to run this test."
         )
-        return
+        return pd.DataFrame()
 
     if sys.version_info < (3, 9):
         raise RuntimeError("This test requires Python 3.9 or higher.")

@@ -79,7 +79,7 @@ def ProtectedClassesThresholdOptimizer(
         logger.warning(
             "Missing required parameters. Please provide pipeline, protected_classes, X_train, and y_train."
         )
-        return
+        return pd.DataFrame()
 
     test_df = dataset.df
 
