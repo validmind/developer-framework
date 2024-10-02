@@ -11,7 +11,11 @@ from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.plotting import Plot
 
+from validmind import tags, tasks
 
+
+@tags("bias_and_fairness")
+@tasks("classification", "regression")
 def ProtectedClassesDisparity(
     dataset,
     model,

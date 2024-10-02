@@ -15,7 +15,11 @@ from fairlearn.metrics import (
 )
 from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
 
+from validmind import tags, tasks
 
+
+@tags("bias_and_fairness")
+@tasks("classification", "regression")
 def ProtectedClassesCombination(dataset, model, protected_classes):
     """
     Visualizes combinations of protected classes and their corresponding error metric differences.

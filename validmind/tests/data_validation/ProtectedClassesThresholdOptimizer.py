@@ -19,7 +19,11 @@ from fairlearn.metrics import (
     true_positive_rate,
 )
 
+from validmind import tags, tasks
 
+
+@tags("bias_and_fairness")
+@tasks("classification", "regression")
 def ProtectedClassesThresholdOptimizer(
     dataset, pipeline, protected_classes, X_train, y_train
 ):
