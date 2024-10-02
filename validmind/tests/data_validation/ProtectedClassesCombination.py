@@ -14,13 +14,15 @@ from fairlearn.metrics import (
     true_positive_rate,
 )
 from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
-
+from validmind.logging import get_logger
 from validmind import tags, tasks
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness")
 @tasks("classification", "regression")
-def ProtectedClassesCombination(dataset, model, protected_classes):
+def ProtectedClassesCombination(dataset, model, protected_classes=None):
     """
     Visualizes combinations of protected classes and their corresponding error metric differences.
 
@@ -58,6 +60,12 @@ def ProtectedClassesCombination(dataset, model, protected_classes):
 
     if sys.version_info < (3, 9):
         raise RuntimeError("This test requires Python 3.9 or higher.")
+
+    if protected_classes is None:
+        logger.warning(
+            "No protected classes provided. Please pass the 'protected_classes' parameter to run this test."
+        )
+        return
 
     # Construct a function dictionary for figures
     my_metrics = {

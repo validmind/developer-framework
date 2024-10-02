@@ -12,6 +12,9 @@ from aequitas.bias import Bias
 from aequitas.plotting import Plot
 
 from validmind import tags, tasks
+from validmind.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness")
@@ -19,8 +22,8 @@ from validmind import tags, tasks
 def ProtectedClassesDisparity(
     dataset,
     model,
-    protected_classes,
-    disparity_tolerance,
+    protected_classes=None,
+    disparity_tolerance=1.25,
     metrics=["fnr", "fpr", "tpr"],
 ):
     """
@@ -60,6 +63,12 @@ def ProtectedClassesDisparity(
     - Does not account for intersectionality between different protected attributes.
     - The interpretation of results may require domain expertise to understand the implications of observed disparities.
     """
+
+    if protected_classes is None:
+        logger.warning(
+            "No protected classes provided. Please pass the 'protected_classes' parameter to run this test."
+        )
+        return
 
     if sys.version_info < (3, 9):
         raise RuntimeError("This test requires Python 3.9 or higher.")

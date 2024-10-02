@@ -2,15 +2,19 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+
 import plotly.graph_objects as go
 import pandas as pd
 
 from validmind import tags, tasks
+from validmind.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness", "descriptive_statistics")
 @tasks("classification", "regression")
-def ProtectedClassesDescription(dataset, protected_classes):
+def ProtectedClassesDescription(dataset, protected_classes=None):
     """
     Visualizes the distribution of protected classes in the dataset relative to the target variable
     and provides descriptive statistics.
@@ -54,6 +58,12 @@ def ProtectedClassesDescription(dataset, protected_classes):
     - Interpretation may require domain expertise to understand the implications of observed disparities.
     - Does not account for intersectionality or complex interactions between multiple protected attributes.
     """
+
+    if protected_classes is None:
+        logger.warning(
+            "No protected classes provided. Please pass the 'protected_classes' parameter to run this test."
+        )
+        return
 
     figures = []
     all_stats = []
@@ -117,5 +127,4 @@ def ProtectedClassesDescription(dataset, protected_classes):
         ["Protected Class", "Count"], ascending=[True, False]
     )
 
-    # return stats_df
     return (stats_df, *tuple(figures))

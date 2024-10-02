@@ -20,12 +20,15 @@ from fairlearn.metrics import (
 )
 
 from validmind import tags, tasks
+from validmind.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness")
 @tasks("classification", "regression")
 def ProtectedClassesThresholdOptimizer(
-    dataset, pipeline, protected_classes, X_train, y_train
+    dataset, pipeline=None, protected_classes=None, X_train=None, y_train=None
 ):
     """
     Obtains a classifier by applying group-specific thresholds to the provided estimator.
@@ -66,6 +69,17 @@ def ProtectedClassesThresholdOptimizer(
 
     if sys.version_info < (3, 9):
         raise RuntimeError("This test requires Python 3.9 or higher.")
+
+    if (
+        pipeline is None
+        or protected_classes is None
+        or X_train is None
+        or y_train is None
+    ):
+        logger.warning(
+            "Missing required parameters. Please provide pipeline, protected_classes, X_train, and y_train."
+        )
+        return
 
     test_df = dataset.df
 
