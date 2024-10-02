@@ -2,8 +2,10 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import sys
 import plotly.graph_objects as go
 import plotly.subplots as sp
+import pandas as pd
 from fairlearn.metrics import MetricFrame
 from fairlearn.metrics import (
     count,
@@ -12,7 +14,6 @@ from fairlearn.metrics import (
     true_positive_rate,
 )
 from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
-import pandas as pd
 
 
 def ProtectedClassesCombination(dataset, model, protected_classes):
@@ -50,6 +51,9 @@ def ProtectedClassesCombination(dataset, model, protected_classes):
     - Does not provide statistical significance of observed differences.
     - Visualization alone may not capture all nuances of intersectional fairness.
     """
+
+    if sys.version_info < (3, 9):
+        raise RuntimeError("This test requires Python 3.9 or higher.")
 
     # Construct a function dictionary for figures
     my_metrics = {

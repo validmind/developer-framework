@@ -2,6 +2,7 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import sys
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
@@ -58,6 +59,10 @@ def ProtectedClassesThresholdOptimizer(
     - Requires access to protected attribute information at prediction time.
     - The effectiveness can vary depending on the chosen fairness constraint and objective.
     """
+
+    if sys.version_info < (3, 9):
+        raise RuntimeError("This test requires Python 3.9 or higher.")
+
     test_df = dataset.df
 
     threshold_optimizer = initialize_and_fit_optimizer(

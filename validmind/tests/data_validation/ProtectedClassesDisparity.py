@@ -2,12 +2,14 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import sys
+import io
+import pandas as pd
+import aequitas.plot as ap
+
 from aequitas.group import Group
 from aequitas.bias import Bias
 from aequitas.plotting import Plot
-import aequitas.plot as ap
-import pandas as pd
-import io
 
 
 def ProtectedClassesDisparity(
@@ -55,23 +57,24 @@ def ProtectedClassesDisparity(
     - The interpretation of results may require domain expertise to understand the implications of observed disparities.
     """
 
-    full_test_df = dataset._df
+    if sys.version_info < (3, 9):
+        raise RuntimeError("This test requires Python 3.9 or higher.")
+
+    df = dataset._df
 
     for protected_class in protected_classes:
         # make the dataset compatible for the python package of interest
-        full_test_df[protected_class] = pd.Categorical(
-            full_test_df[protected_class]
-        ).astype("object")
+        df[protected_class] = pd.Categorical(df[protected_class]).astype("object")
 
-    full_test_df["score"] = dataset.y_pred(model).astype(int)
-    full_test_df["label_value"] = full_test_df[dataset.target_column].astype(int)
+    df["score"] = dataset.y_pred(model).astype(int)
+    df["label_value"] = df[dataset.target_column].astype(int)
 
     # let map the attributes for each protected class
     # default use reference that is most observable for dictionary
     attributes_and_reference_groups = {}
     for protected_class in protected_classes:
         attributes_and_reference_groups.update(
-            {protected_class: full_test_df[protected_class].value_counts().idxmax()}
+            {protected_class: df[protected_class].value_counts().idxmax()}
         )
 
     attributes_to_audit = list(attributes_and_reference_groups.keys())
@@ -86,12 +89,10 @@ def ProtectedClassesDisparity(
     )
 
     # get_crosstabs returns a dataframe of the group counts and group value bias metrics.
-    xtab, _ = g.get_crosstabs(
-        full_test_df[columns_to_include], attr_cols=attributes_to_audit
-    )
+    xtab, _ = g.get_crosstabs(df[columns_to_include], attr_cols=attributes_to_audit)
     bdf = b.get_disparity_predefined_groups(
         xtab,
-        original_df=full_test_df[columns_to_include],
+        original_df=df[columns_to_include],
         ref_groups_dict=attributes_and_reference_groups,
         alpha=0.05,
         mask_significance=True,
