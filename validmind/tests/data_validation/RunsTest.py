@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import pandas as pd
-
 from statsmodels.sandbox.stats.runs import runstest_1samp
 
 from validmind import tags, tasks
