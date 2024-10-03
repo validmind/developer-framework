@@ -3,19 +3,22 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 import sys
+
+import pandas as pd
 import plotly.graph_objects as go
 import plotly.subplots as sp
-import pandas as pd
-from fairlearn.metrics import MetricFrame
 from fairlearn.metrics import (
+    MetricFrame,
     count,
+    demographic_parity_ratio,
+    equalized_odds_ratio,
     false_positive_rate,
     selection_rate,
     true_positive_rate,
 )
-from fairlearn.metrics import demographic_parity_ratio, equalized_odds_ratio
-from validmind.logging import get_logger
+
 from validmind import tags, tasks
+from validmind.logging import get_logger
 
 logger = get_logger(__name__)
 

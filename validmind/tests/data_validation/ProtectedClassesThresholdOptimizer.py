@@ -2,22 +2,21 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import sys
-import pandas as pd
 import json
+import sys
+
 import matplotlib.pyplot as plt
-from fairlearn.postprocessing import ThresholdOptimizer, plot_threshold_optimizer
+import pandas as pd
 from fairlearn.metrics import (
     MetricFrame,
+    count,
     demographic_parity_ratio,
     equalized_odds_ratio,
-)
-from fairlearn.metrics import (
-    count,
-    false_positive_rate,
     false_negative_rate,
+    false_positive_rate,
     true_positive_rate,
 )
+from fairlearn.postprocessing import ThresholdOptimizer, plot_threshold_optimizer
 
 from validmind import tags, tasks
 from validmind.logging import get_logger

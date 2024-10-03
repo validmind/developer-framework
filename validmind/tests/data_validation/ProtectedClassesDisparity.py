@@ -2,13 +2,13 @@
 # See the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-import sys
 import io
-import pandas as pd
-import aequitas.plot as ap
+import sys
 
-from aequitas.group import Group
+import aequitas.plot as ap
+import pandas as pd
 from aequitas.bias import Bias
+from aequitas.group import Group
 from aequitas.plotting import Plot
 
 from validmind import tags, tasks

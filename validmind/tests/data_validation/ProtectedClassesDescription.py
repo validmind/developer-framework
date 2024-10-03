@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 
-import plotly.graph_objects as go
 import pandas as pd
+import plotly.graph_objects as go
 
 from validmind import tags, tasks
 from validmind.logging import get_logger
