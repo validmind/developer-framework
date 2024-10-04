@@ -12,7 +12,6 @@ os.environ["VM_API_KEY"] = "your_api_key"
 os.environ["VM_API_SECRET"] = "your_api_secret"
 os.environ["VM_API_HOST"] = "your_api_host"
 os.environ["VM_API_MODEL"] = "your_model"
-os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind.api_client as api_client
 from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
@@ -137,7 +136,6 @@ class TestAPIClient(unittest.TestCase):
                 "X-API-SECRET": os.environ["VM_API_SECRET"],
                 "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
                 "X-MONITORING": "False",
-
             },
         )
 
@@ -245,47 +243,6 @@ class TestAPIClient(unittest.TestCase):
                 call(results[0], ["input1"]),
                 call(results[1], ["input1"]),
             ]
-        )
-
-    @patch("requests.post")
-    def test_start_run_successful(self, mock_requests_post):
-        mock_response = Mock(status_code=200)
-        mock_response.json.return_value = {"cuid": "1234qwerty"}
-        mock_requests_post.return_value = mock_response
-
-        run_cuid = api_client.start_run()
-        self.assertEqual(run_cuid, "1234qwerty")
-
-        mock_requests_post.assert_called_once_with(
-            f"{os.environ['VM_API_HOST']}/start_run",
-            headers={
-                "X-API-KEY": os.environ["VM_API_KEY"],
-                "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
-            },
-        )
-
-        # reset the run cuid
-        api_client._run_cuid = os.environ["VM_RUN_CUID"]
-
-    @patch("requests.post")
-    def test_start_run_unsuccessful(self, mock_requests_post):
-        mock_response = Mock(status_code=500)
-        mock_response.text = "Internal Server Error"
-        mock_requests_post.return_value = mock_response
-
-        with self.assertRaises(Exception) as cm:
-            api_client.start_run()
-
-        self.assertEqual(str(cm.exception), "Internal Server Error")
-
-        mock_requests_post.assert_called_once_with(
-            f"{os.environ['VM_API_HOST']}/start_run",
-            headers={
-                "X-API-KEY": os.environ["VM_API_KEY"],
-                "X-API-SECRET": os.environ["VM_API_SECRET"],
-                "X-PROJECT-CUID": os.environ["VM_API_MODEL"],
-            },
         )
 
 
