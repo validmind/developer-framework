@@ -403,7 +403,46 @@ def run_test(
     __generate_description: bool = True,
     **kwargs,
 ) -> Union[MetricResultWrapper, ThresholdTestResultWrapper]:
-    """Run a test by test ID."""
+    """Run a test by test ID.
+    test_id (TestID, optional): The test ID to run. Not required if `unit_metrics` is provided.
+    params (dict, optional): A dictionary of parameters to pass into the test. Params
+        are used to customize the test behavior and are specific to each test. See the
+        test details for more information on the available parameters. Defaults to None.
+    input_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional): To run
+        a comparison test, provide either a dictionary of parameters where the keys are
+        the parameter names and the values are lists of different parameters, or a list of
+        dictionaries where each dictionary is a set of parameters to run the test with.
+        This will run the test multiple times with different sets of parameters and then
+        combine the results into a single output. When passing a dictionary, the grid
+        will be created by taking the Cartesian product of the parameter lists. Its simply
+        a more convenient way of forming the param grid as opposed to passing a list of
+        all possible combinations. Defaults to None.
+    inputs (Dict[str, Any], optional): A dictionary of test inputs to pass into the
+        test. Inputs are either models or datasets that have been initialized using
+        vm.init_model() or vm.init_dataset(). Defaults to None.
+    input_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional): To run
+        a comparison test, provide either a dictionary of inputs where the keys are
+        the input names and the values are lists of different inputs, or a list of
+        dictionaries where each dictionary is a set of inputs to run the test with.
+        This will run the test multiple times with different sets of inputs and then
+        combine the results into a single output. When passing a dictionary, the grid
+        will be created by taking the Cartesian product of the input lists. Its simply
+        a more convenient way of forming the input grid as opposed to passing a list of
+        all possible combinations. Defaults to None.
+    name (str, optional): The name of the test (used to create a composite metric
+        out of multiple unit metrics) - required when running multiple unit metrics
+    unit_metrics (list, optional): A list of unit metric IDs to run as a composite
+        metric - required when running multiple unit metrics
+    output_template (str, optional): A jinja2 html template to customize the output
+        of the test. Defaults to None.
+    show (bool, optional): Whether to display the results. Defaults to True.
+    **kwargs: Keyword inputs to pass into the test (same as `inputs` but as keyword
+        args instead of a dictionary):
+        - dataset: A validmind Dataset object or a Pandas DataFrame
+        - model: A model to use for the test
+        - models: A list of models to use for the test
+        - dataset: A validmind Dataset object or a Pandas DataFrame
+    """
 
     # Validate input arguments with helper functions
     validate_test_inputs(test_id, name, unit_metrics)
