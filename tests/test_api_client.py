@@ -81,7 +81,6 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(config["VM_API_SECRET"], "your_api_secret")
         self.assertEqual(config["VM_API_HOST"], "your_api_host")
         self.assertEqual(config["VM_API_MODEL"], "your_model")
-        self.assertEqual(config["VM_RUN_CUID"], "your_run_cuid")
 
     def test_get_api_host(self):
         host = api_client.get_api_host()
@@ -148,7 +147,7 @@ class TestAPIClient(unittest.TestCase):
         response = self.run_async(api_client.get_metadata, "content_id")
 
         url = f"{os.environ['VM_API_HOST']}/get_metadata/content_id"
-        url += f"?run_cuid={os.environ['VM_RUN_CUID']}"
+        url += f""
         mock_get.assert_called_with(url)
 
         self.assertEqual(response, res_json)
@@ -160,7 +159,7 @@ class TestAPIClient(unittest.TestCase):
 
         self.run_async(api_client.log_figure, mock_figure())
 
-        url = f"{os.environ['VM_API_HOST']}/log_figure?run_cuid={os.environ['VM_RUN_CUID']}"
+        url = f"{os.environ['VM_API_HOST']}/log_figure"
         mock_post.assert_called_once()
         self.assertEqual(mock_post.call_args[0][0], url)
         self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
@@ -173,7 +172,7 @@ class TestAPIClient(unittest.TestCase):
 
     #     self.run_async(api_client.log_figures, [mock_figure(), mock_figure()])
 
-    #     url = f"{os.environ['VM_API_HOST']}/log_figures?run_cuid={os.environ['VM_RUN_CUID']}"
+    #     url = f"{os.environ['VM_API_HOST']}/log_figures"
     #     mock_post.assert_called_once()
     #     self.assertEqual(len(mock_post.call_args), 2)
     #     self.assertEqual(mock_post.call_args[0][0], url)
@@ -191,7 +190,7 @@ class TestAPIClient(unittest.TestCase):
             _json={"key": "value"},
         )
 
-        url = f"{os.environ['VM_API_HOST']}/log_metadata?run_cuid={os.environ['VM_RUN_CUID']}"
+        url = f"{os.environ['VM_API_HOST']}/log_metadata"
         mock_post.assert_called_with(
             url,
             data=json.dumps(
@@ -212,7 +211,7 @@ class TestAPIClient(unittest.TestCase):
 
         self.run_async(api_client.log_metrics, metrics, inputs=["input1"])
 
-        url = f"{os.environ['VM_API_HOST']}/log_metrics?run_cuid={os.environ['VM_RUN_CUID']}"
+        url = f"{os.environ['VM_API_HOST']}/log_metrics"
         mock_post.assert_called_with(
             url, data=json.dumps([{"key": "value", "inputs": ["input1"]}])
         )
@@ -227,7 +226,6 @@ class TestAPIClient(unittest.TestCase):
         self.run_async(api_client.log_test_result, result, ["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_test_results"
-        url += f"?run_cuid={os.environ['VM_RUN_CUID']}"
 
         mock_post.assert_called_with(
             url, data=json.dumps({"key": "value", "inputs": ["input1"]})
