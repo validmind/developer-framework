@@ -408,7 +408,7 @@ def run_test(
     params (dict, optional): A dictionary of parameters to pass into the test. Params
         are used to customize the test behavior and are specific to each test. See the
         test details for more information on the available parameters. Defaults to None.
-    input_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional): To run
+    param_grid (Union[Dict[str, List[Any]], List[Dict[str, Any]]], optional): To run
         a comparison test, provide either a dictionary of parameters where the keys are
         the parameter names and the values are lists of different parameters, or a list of
         dictionaries where each dictionary is a set of parameters to run the test with.
