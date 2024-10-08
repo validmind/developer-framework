@@ -23,7 +23,7 @@ You use the ValidMind Developer Framework to automate documentation and validati
 
 ### Before you begin
 
-This notebook assumes you have basic familiarity with Python, including an understanding of how functions work. If you are new to Python, you can still run the notebook but we recommend further familiarizing yourself with the language. 
+This notebook assumes you have basic familiarity with Python, including an understanding of how functions work. If you are new to Python, you can still run the notebook but we recommend further familiarizing yourself with the language.
 
 If you encounter errors due to missing modules in your Python environment, install the modules with `pip install`, and then re-run the notebook. For more help, refer to [Installing Python Modules](https://docs.python.org/3/installing/index.html).
 
@@ -110,11 +110,15 @@ Get your code snippet:
 Next, replace this placeholder with your own code snippet:
 
 ```{r}
+# Find the path to your Python runtime by running `python -V` in your terminal
+# python_version <- "<path_to_python_version>"
+
 vm_r <- vm(
+  api_host = "https://api.prod.validmind.ai/api/v1/tracking",
   api_key = "...",
   api_secret = "...",
-  project = "...",
-  python_version = "..."
+  model = "...",
+  python_version = python_version
 )
 ```
 
@@ -234,15 +238,15 @@ plt <- import("matplotlib.pyplot")
 confusion_matrix <- function(dataset, model) {
     y_true <- dataset$y
     y_pred <- dataset$y_pred(model)
-    
+
     confusion_matrix <- metrics$confusion_matrix(y_true, y_pred)
-    
+
     cm_display <- metrics$ConfusionMatrixDisplay(
         confusion_matrix=confusion_matrix, display_labels=c(FALSE, TRUE)
     )
     cm_display$plot()
     plt$close()
-    
+
     return(cm_display$figure_)
 }
 
