@@ -14,6 +14,12 @@ You can also install the package from GitHub using the `devtools` package:
 devtools::install_github("validmind/developer-framework", subdir="r/validmind")
 ```
 
+Or you can install the package from source. Ensure you are in the `r/validmind` directory:
+
+```r
+devtools::install()
+```
+
 ## Quick Start
 
 You can connect to your ValidMind profile by providing the appropriate credentials:
