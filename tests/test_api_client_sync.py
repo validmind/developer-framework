@@ -14,7 +14,6 @@ os.environ["VM_API_KEY"] = "your_api_key"
 os.environ["VM_API_SECRET"] = "your_api_secret"
 os.environ["VM_API_HOST"] = "your_api_host"
 os.environ["VM_API_MODEL"] = "your_model"
-os.environ["VM_RUN_CUID"] = "your_run_cuid"
 
 import validmind as vm
 from validmind.vm_models.figure import Figure
@@ -51,7 +50,7 @@ class TestAPIClient(unittest.TestCase):
         figure = Figure(key="key", figure=fig, metadata={"asdf": 1234})
         vm.log_figure(figure)
 
-        url = f"{os.environ['VM_API_HOST']}/log_figure?run_cuid={os.environ['VM_RUN_CUID']}"
+        url = f"{os.environ['VM_API_HOST']}/log_figure"
         mock_post.assert_called_once()
         self.assertEqual(mock_post.call_args[0][0], url)
         self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
@@ -65,7 +64,7 @@ class TestAPIClient(unittest.TestCase):
 
         vm.log_metrics(metrics, inputs=["input1"])
 
-        url = f"{os.environ['VM_API_HOST']}/log_metrics?run_cuid={os.environ['VM_RUN_CUID']}"
+        url = f"{os.environ['VM_API_HOST']}/log_metrics"
         mock_post.assert_called_with(
             url, data=json.dumps([{"key": "value", "inputs": ["input1"]}])
         )

@@ -33,7 +33,6 @@ _api_key = os.getenv("VM_API_KEY")
 _api_secret = os.getenv("VM_API_SECRET")
 _api_host = os.getenv("VM_API_HOST")
 _model_cuid = os.getenv("VM_API_MODEL")
-_run_cuid = os.getenv("VM_RUN_CUID")
 _monitoring = False
 
 __api_session: aiohttp.ClientSession = None
@@ -57,7 +56,6 @@ def get_api_config() -> Dict[str, Optional[str]]:
         "VM_API_SECRET": _api_secret,
         "VM_API_HOST": _api_host,
         "VM_API_MODEL": _model_cuid,
-        "VM_RUN_CUID": _run_cuid,
         "X-MONITORING": _monitoring,
     }
 
@@ -105,7 +103,7 @@ def init(
     Raises:
         ValueError: If the API key and secret are not provided
     """
-    global _api_key, _api_secret, _api_host, _run_cuid, _model_cuid, _monitoring
+    global _api_key, _api_secret, _api_host, _model_cuid, _monitoring
 
     if api_key == "...":
         # special case to detect when running a notebook with the standard init snippet
@@ -127,8 +125,6 @@ def init(
     _api_host = api_host or os.getenv(
         "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking/"
     )
-
-    _run_cuid = os.getenv("VM_RUN_CUID", None)
 
     _monitoring = monitoring
 
@@ -162,7 +158,7 @@ def _get_session() -> aiohttp.ClientSession:
 def __ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
-        __get_url("ping", should_start_run=False),
+        __get_url("ping"),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
@@ -221,17 +217,10 @@ def reload():
 def __get_url(
     endpoint: str,
     params: Optional[Dict[str, str]] = None,
-    should_start_run: bool = True,
 ) -> str:
     global _api_host
 
     params = params or {}
-
-    if not _run_cuid and should_start_run:
-        start_run()
-
-    if should_start_run:
-        params["run_cuid"] = _run_cuid
 
     if not _api_host.endswith("/"):
         _api_host += "/"
@@ -247,7 +236,6 @@ async def _get(
 ) -> Dict[str, Any]:
     url = __get_url(endpoint, params)
     session = _get_session()
-    session.headers.update({"X-RUN-CUID": _run_cuid})
 
     async with session.get(url) as r:
         if r.status != 200:
@@ -264,7 +252,6 @@ async def _post(
 ) -> Dict[str, Any]:
     url = __get_url(endpoint, params)
     session = _get_session()
-    session.headers.update({"X-RUN-CUID": _run_cuid})
 
     if not isinstance(data, (dict)) and files is not None:
         raise ValueError("Cannot pass both non-json data and file objects to _post")
@@ -601,43 +588,10 @@ def log_metric(
     run_async(alog_metric, key, value, inputs, params, recorded_at)
 
 
-def start_run() -> str:
-    """Starts a new test run
-
-    This function will take care of updating the api client with the new run CUID
-    and will be called automatically when logging starts if no run CUID is set.
-
-    Raises:
-        Exception: If the API call fails
-
-    Returns:
-        str: The test run CUID
-    """
-    global _run_cuid
-
-    r = requests.post(
-        __get_url("start_run", should_start_run=False),
-        headers={
-            "X-API-KEY": _api_key,
-            "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _model_cuid,
-        },
-    )
-
-    if r.status_code != 200:
-        logger.error("Could not start data logging run with ValidMind API")
-        raise_api_error(r.text)
-
-    test_run = r.json()
-    _run_cuid = test_run["cuid"]
-
-    return test_run["cuid"]
-
-
 def get_ai_key() -> str:
     """Calls the api to get an api key for our LLM proxy"""
     r = requests.get(
-        __get_url("ai/key", should_start_run=False),
+        __get_url("ai/key"),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
