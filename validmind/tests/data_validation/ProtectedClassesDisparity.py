@@ -5,16 +5,24 @@
 import io
 import sys
 
-import aequitas.plot as ap
 import pandas as pd
-from aequitas.bias import Bias
-from aequitas.group import Group
-from aequitas.plotting import Plot
 
 from validmind import tags, tasks
+from validmind.errors import MissingDependencyError
 from validmind.logging import get_logger
 
 logger = get_logger(__name__)
+
+try:
+    import aequitas.plot as ap
+    from aequitas.bias import Bias
+    from aequitas.group import Group
+    from aequitas.plotting import Plot
+except ImportError as e:
+    raise MissingDependencyError(
+        "Missing required package `aequitas` for ProtectedClassesDisparity.",
+        required_dependencies=["aequitas"],
+    ) from e
 
 
 @tags("bias_and_fairness")

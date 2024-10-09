@@ -15,7 +15,7 @@ from uuid import uuid4
 import pandas as pd
 from ipywidgets import HTML, Accordion
 
-from ..errors import LoadTestError
+from ..errors import LoadTestError, MissingDependencyError
 from ..html_templates.content_blocks import test_content_block_html
 from ..logging import get_logger
 from ..unit_metrics.composite import load_composite_metric
@@ -88,10 +88,17 @@ def list_tests(
     Returns:
         list or pandas.DataFrame: A list of all tests or a formatted table.
     """
-    tests = {
-        test_id: load_test(test_id, reload=True)
-        for test_id in test_store.get_test_ids()
-    }
+    # tests = {
+    #     test_id: load_test(test_id, reload=True)
+    #     for test_id in test_store.get_test_ids()
+    # }
+    tests = {}
+    for test_id in test_store.get_test_ids():
+        try:
+            tests[test_id] = load_test(test_id, reload=True)
+        except MissingDependencyError:
+            # skip tests that have missing dependencies
+            continue
 
     # first search by the filter string since it's the most general search
     if filter is not None:

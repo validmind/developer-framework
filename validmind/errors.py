@@ -207,6 +207,16 @@ class MissingRequiredTestInputError(BaseError):
     pass
 
 
+class MissingDependencyError(BaseError):
+    """
+    When a required dependency is missing.
+    """
+
+    def __init__(self, message="", required_dependencies=None):
+        super().__init__(message)
+        self.required_dependencies = required_dependencies or []
+
+
 class MissingRExtrasError(BaseError):
     """
     When the R extras have not been installed.
