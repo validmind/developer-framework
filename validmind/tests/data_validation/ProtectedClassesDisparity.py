@@ -5,11 +5,7 @@
 import io
 import sys
 
-import aequitas.plot as ap
 import pandas as pd
-from aequitas.bias import Bias
-from aequitas.group import Group
-from aequitas.plotting import Plot
 
 from validmind import tags, tasks
 from validmind.logging import get_logger
@@ -63,6 +59,15 @@ def ProtectedClassesDisparity(
     - Does not account for intersectionality between different protected attributes.
     - The interpretation of results may require domain expertise to understand the implications of observed disparities.
     """
+    try:
+        import aequitas.plot as ap
+        from aequitas.bias import Bias
+        from aequitas.group import Group
+        from aequitas.plotting import Plot
+    except ImportError:
+        raise RuntimeError(
+            "Required dependencies (aequitas) are not installed. Please install them with `pip install aequitas` to run this test."
+        )
 
     if protected_classes is None:
         logger.warning(
