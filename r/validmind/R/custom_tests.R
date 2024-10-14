@@ -132,22 +132,25 @@ run_custom_test <- function(test_id, inputs, test_register, show = FALSE) {
     )
     
     # Run the test and create a figure from the result
-    res <- test$run()
-    fig <- Figure(key = test_id, figure = res)
-    test$result <- fig
+    test$result <- test$run()
     
     # Optionally display the result
     if (show) {
         test$result$show()
     }
     
-    # Import the log function and attach it to the result
-    log_module <- reticulate::import("validmind", as = "vm")$log_figure
-    test$result$log <- function() {
-        log_module(test$result)
-    }
+    # Import the build_result function from Python
+    build_result <- import("validmind.tests.decorator", convert = TRUE)$`_build_result`
     
-    # Return the test result object
-    return(test$result)
-}
+    # Log the test result
+    result_wrapper <- build_result(
+        results=test$result,
+        test_id=test_id,
+        inputs=list(),
+        params=NULL,
+        generate_description=FALSE,
+    )
 
+    # Return the test result object
+    return(result_wrapper)
+}
