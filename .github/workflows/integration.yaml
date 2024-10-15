@@ -49,7 +49,7 @@ jobs:
         run: python -m venv sdist-venv
 
       - name: Install Built Package
-        run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[all]"
+        run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[llm,huggingface]"
 
       - name: Install Additional Dependencies
         run: sdist-venv/bin/pip install nbformat papermill jupyter

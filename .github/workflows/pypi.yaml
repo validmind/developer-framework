@@ -28,9 +28,7 @@ jobs:
           cache: 'poetry'
 
       - name: Install Dependencies
-        run: |
-          poetry env use python3.11
-          poetry install
+        run: poetry env use python3.11 && poetry install
 
       - name: Update twine
         run: poetry run pip install --upgrade twine
