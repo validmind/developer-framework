@@ -34,14 +34,14 @@ Response Format:
 Score: <score>
 Explanation: <explanation>
 ```
-""".strip()
+"""
 
-USER = '''
+USER = """
 Prompt:
-"""
+'''
 {prompt_to_test}
+'''
 """
-'''.strip()
 
 
 @tags("llm", "zero_shot", "few_shot")
@@ -78,7 +78,7 @@ def Clarity(model, min_threshold=7):
 
     ### Limitations
 
-    - Scoring system is subjective and relies on the AI's interpretation of 'clarity'
+    - Scoring system is subjective and relies on the AI’s interpretation of 'clarity'
     - The test assumes that all required factors (detail inclusion, persona adoption, step-by-step instructions, use of
     examples, and specification of output length) contribute equally to clarity, which might not always be the case
     - The evaluation may not be as effective if used on non-textual models
