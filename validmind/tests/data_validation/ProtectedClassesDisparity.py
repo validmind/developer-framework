@@ -11,8 +11,6 @@ from validmind import tags, tasks
 from validmind.errors import MissingDependencyError
 from validmind.logging import get_logger
 
-logger = get_logger(__name__)
-
 try:
     import aequitas.plot as ap
     from aequitas.bias import Bias
@@ -23,6 +21,8 @@ except ImportError as e:
         "Missing required package `aequitas` for ProtectedClassesDisparity.",
         required_dependencies=["aequitas"],
     ) from e
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness")

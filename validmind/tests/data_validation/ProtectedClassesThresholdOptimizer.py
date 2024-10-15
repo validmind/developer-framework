@@ -12,8 +12,6 @@ from validmind import tags, tasks
 from validmind.errors import MissingDependencyError
 from validmind.logging import get_logger
 
-logger = get_logger(__name__)
-
 try:
     from fairlearn.metrics import (
         MetricFrame,
@@ -30,6 +28,8 @@ except ImportError as e:
         "Missing required package `fairlearn` for ProtectedClassesThresholdOptimizer.",
         required_dependencies=["fairlearn"],
     ) from e
+
+logger = get_logger(__name__)
 
 
 @tags("bias_and_fairness")

@@ -10,6 +10,8 @@ from datasets import Dataset
 from validmind import tags, tasks
 from validmind.errors import MissingDependencyError
 
+from .utils import get_ragas_config, get_renamed_columns
+
 try:
     from ragas import evaluate
     from ragas.metrics import context_recall
@@ -20,8 +22,6 @@ except ImportError as e:
         required_dependencies=["ragas"],
         extra="llm",
     ) from e
-
-from .utils import get_ragas_config, get_renamed_columns
 
 
 @tags("ragas", "llm", "retrieval_performance")
