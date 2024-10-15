@@ -212,9 +212,16 @@ class MissingDependencyError(BaseError):
     When a required dependency is missing.
     """
 
-    def __init__(self, message="", required_dependencies=None):
+    def __init__(self, message="", required_dependencies=None, extra=None):
+        """
+        Args:
+            message (str): The error message.
+            required_dependencies (list): A list of required dependencies.
+            extra (str): The particular validmind `extra` that will install the missing dependencies.
+        """
         super().__init__(message)
         self.required_dependencies = required_dependencies or []
+        self.extra = extra
 
 
 class MissingRExtrasError(BaseError):

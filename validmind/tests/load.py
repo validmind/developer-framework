@@ -99,9 +99,18 @@ def list_tests(
         except MissingDependencyError as e:
             # skip tests that have missing dependencies
             logger.debug(str(e))
-            logger.info(
-                f"Skipping `{test_id}` as it requires missing dependencies: {e.required_dependencies}"
-            )
+
+            if e.extra:
+                logger.info(
+                    f"Skipping `{test_id}` as it requires extra dependencies: {e.required_dependencies}."
+                    f" Please run `pip install validmind[{e.extra}]` to view and run this test."
+                )
+            else:
+                logger.info(
+                    f"Skipping `{test_id}` as it requires missing dependencies: {e.required_dependencies}."
+                    " Please install the missing dependencies to view and run this test."
+                )
+
             continue
 
     # first search by the filter string since it's the most general search

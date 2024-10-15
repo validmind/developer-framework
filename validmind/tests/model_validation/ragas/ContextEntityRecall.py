@@ -18,6 +18,7 @@ except ImportError as e:
         "Missing required package `ragas` for ContextEntityRecall. "
         "Please run `pip install validmind[llm]` to use LLM tests",
         required_dependencies=["ragas"],
+        extra="llm",
     ) from e
 
 from .utils import get_ragas_config, get_renamed_columns
