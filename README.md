@@ -157,5 +157,3 @@ poetry add wheel
 poetry update wheel
 poetry install
 ```
-
-If there are lightgbm errors partway through, run `remove lightgbm`, followed by `poetry update wheel` and `poetry install`.
