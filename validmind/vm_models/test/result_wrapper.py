@@ -21,10 +21,8 @@ from ...logging import get_logger
 from ...utils import NumpyEncoder, display, run_async, test_id_to_name
 from ..dataset import VMDataset
 from ..figure import Figure
-from .metric_result import MetricResult
 from .output_template import OutputTemplate
 from .result_summary import ResultSummary
-from .threshold_test_result import ThresholdTestResults
 
 logger = get_logger(__name__)
 
@@ -151,55 +149,6 @@ class ResultWrapper(ABC):
 
         return self.to_widget()
 
-    def _validate_section_id_for_block(self, section_id: str, position: int = None):
-        """
-        Validate the section_id exits on the template before logging. We validate
-        if the section exists and if the user provided position is within the bounds
-        of the section. When the position is None, we assume it goes to the end of the section.
-        """
-        if section_id is None:
-            return
-
-        api_client.reload()
-        found = False
-        client_config = api_client.client_config
-
-        for section in client_config.documentation_template["sections"]:
-            if section["id"] == section_id:
-                found = True
-                break
-
-        if not found:
-            raise ValueError(
-                f"Section with id {section_id} not found in the model's document"
-            )
-
-        # Check if the block already exists in the section
-        block_definition = {
-            "content_id": self.result_id,
-            "content_type": (
-                "metric" if isinstance(self, MetricResultWrapper) else "test"
-            ),
-        }
-        blocks = section.get("contents", [])
-        for block in blocks:
-            if (
-                block["content_id"] == block_definition["content_id"]
-                and block["content_type"] == block_definition["content_type"]
-            ):
-                logger.info(
-                    f"Test driven block with content_id {block_definition['content_id']} already exists in the document's section"
-                )
-                return
-
-        # Validate that the position is within the bounds of the section
-        if position is not None:
-            num_blocks = len(blocks)
-            if position < 0 or position > num_blocks:
-                raise ValueError(
-                    f"Invalid position {position}. Must be between 0 and {num_blocks}"
-                )
-
     def show(self):
         """Display the result... May be overridden by subclasses"""
         display(self.to_widget())
@@ -237,17 +186,16 @@ class FailedResultWrapper(ResultWrapper):
 
 
 @dataclass
-class MetricResultWrapper(ResultWrapper):
-    """
-    Result wrapper for metrics that run as part of a test suite
-    """
+class TestResultWrapper(ResultWrapper):
+    """Test result wrapper"""
 
-    name: str = "Metric"
+    name: str = "Test"
     scalar: Optional[Union[int, float]] = None
-    metric: Optional[MetricResult] = None
+    summary: Optional[ResultSummary] = None
     figures: Optional[List[Figure]] = None
+    params: Optional[dict] = None
+    passed: Optional[bool] = None
     inputs: List[str] = None  # List of input ids
-    params: Dict = None
 
     def __repr__(self) -> str:
         if self.metric:
@@ -255,51 +203,52 @@ class MetricResultWrapper(ResultWrapper):
         else:
             return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
 
-    def to_widget(self):
-        if self.metric and self.metric.key == "dataset_description":
-            return ""
+    def _validate_section_id_for_block(self, section_id: str, position: int = None):
+        """
+        Validate the section_id exits on the template before logging. We validate
+        if the section exists and if the user provided position is within the bounds
+        of the section. When the position is None, we assume it goes to the end of the section.
+        """
+        if section_id is None:
+            return
 
-        vbox_children = [
-            HTML(f"<h1>{test_id_to_name(self.result_id)}</h1>"),
-        ]
+        api_client.reload()
+        found = False
+        client_config = api_client.client_config
 
-        if self.result_metadata:
-            metric_description = self.result_metadata[0].get("text", "")
-            if isinstance(metric_description, DescriptionFuture):
-                metric_description = metric_description.get_description()
-                self.result_metadata[0]["text"] = metric_description
+        for section in client_config.documentation_template["sections"]:
+            if section["id"] == section_id:
+                found = True
+                break
 
-            vbox_children.append(HTML(metric_description))
-
-        if self.scalar is not None:
-            vbox_children.append(
-                HTML(
-                    "<h3>Unit Metrics</h3>"
-                    f"<p>{test_id_to_name(self.result_id)} "
-                    f"(<i>{self.result_id}</i>): "
-                    f"<code>{self.scalar}</code></p>"
-                )
+        if not found:
+            raise ValueError(
+                f"Section with id {section_id} not found in the model's document"
             )
 
-        if self.metric:
-            vbox_children.append(HTML("<h3>Tables</h3>"))
-            if self.output_template:
-                vbox_children.append(
-                    HTML(
-                        OutputTemplate(self.output_template).render(
-                            value=self.metric.value
-                        )
-                    )
+        # Check if the block already exists in the section
+        block_definition = {
+            "content_id": self.result_id,
+            "content_type": "test",
+        }
+        blocks = section.get("contents", [])
+        for block in blocks:
+            if (
+                block["content_id"] == block_definition["content_id"]
+                and block["content_type"] == block_definition["content_type"]
+            ):
+                logger.info(
+                    f"Test driven block with content_id {block_definition['content_id']} already exists in the document's section"
                 )
-            elif self.metric.summary:
-                vbox_children.extend(_summary_tables_to_widget(self.metric.summary))
+                return
 
-        if self.figures:
-            vbox_children.append(HTML("<h3>Plots</h3>"))
-            plot_widgets = plot_figures(self.figures)
-            vbox_children.append(plot_widgets)
-
-        return VBox(vbox_children)
+        # Validate that the position is within the bounds of the section
+        if position is not None:
+            num_blocks = len(blocks)
+            if position < 0 or position > num_blocks:
+                raise ValueError(
+                    f"Invalid position {position}. Must be between 0 and {num_blocks}"
+                )
 
     def _get_filtered_summary(self):
         """Check if the metric summary has columns from input datasets with matching row counts."""
@@ -357,6 +306,65 @@ class MetricResultWrapper(ResultWrapper):
             f"The following columns are present in the table with matching row counts: {sensitive_columns}"
         )
 
+    def to_widget(self):
+        if self.metric and self.metric.key == "dataset_description":
+            return ""
+
+        vbox_children = []
+
+        if self.passed is not None:
+            title_html = f"""
+            <h1>{test_id_to_name(self.result_id)} {"✅" if self.passed else "❌"}</h1>
+            """
+            vbox_children.append(HTML(title_html))
+        else:
+            vbox_children.append(HTML(f"<h1>{test_id_to_name(self.result_id)}</h1>"))
+
+        if self.result_metadata:
+            metric_description = self.result_metadata[0].get("text", "")
+            if isinstance(metric_description, DescriptionFuture):
+                metric_description = metric_description.get_description()
+                self.result_metadata[0]["text"] = metric_description
+
+            vbox_children.append(HTML(metric_description))
+
+        if self.params:
+            params_html = f"""
+            <h4>Test Parameters</h4>
+            <pre>{json.dumps(self.params, cls=NumpyEncoder, indent=2)}</pre>
+            """
+            vbox_children.append(HTML(params_html))
+
+        if self.scalar is not None:
+            vbox_children.append(
+                HTML(
+                    "<h3>Unit Metrics</h3>"
+                    f"<p>{test_id_to_name(self.result_id)} "
+                    f"(<i>{self.result_id}</i>): "
+                    f"<code>{self.scalar}</code></p>"
+                )
+            )
+
+        if self.metric:
+            vbox_children.append(HTML("<h3>Tables</h3>"))
+            if self.output_template:
+                vbox_children.append(
+                    HTML(
+                        OutputTemplate(self.output_template).render(
+                            value=self.metric.value
+                        )
+                    )
+                )
+            elif self.metric.summary:
+                vbox_children.extend(_summary_tables_to_widget(self.metric.summary))
+
+        if self.figures:
+            vbox_children.append(HTML("<h3>Plots</h3>"))
+            plot_widgets = plot_figures(self.figures)
+            vbox_children.append(plot_widgets)
+
+        return VBox(vbox_children)
+
     async def log_async(
         self, section_id: str = None, position: int = None, unsafe=False
     ):
@@ -406,83 +414,3 @@ class MetricResultWrapper(ResultWrapper):
                 )
 
         return await asyncio.gather(*tasks)
-
-
-@dataclass
-class ThresholdTestResultWrapper(ResultWrapper):
-    """
-    Result wrapper for test results produced by the tests that run as part of a test suite
-    """
-
-    name: str = "Threshold Test"
-    figures: Optional[List[Figure]] = None
-    test_results: ThresholdTestResults = None
-    inputs: List[str] = None
-
-    def __repr__(self) -> str:
-        if self.test_results:
-            return (
-                f'{self.__class__.__name__}(result_id="{self.result_id}", test_results)'
-            )
-        else:
-            return f'{self.__class__.__name__}(result_id="{self.result_id}", figures)'
-
-    def to_widget(self):
-        vbox_children = []
-        description_html = []
-
-        description_html.append(
-            f"""
-            <h1>{test_id_to_name(self.test_results.test_name)} {"✅" if self.test_results.passed else "❌"}</h1>
-            """
-        )
-
-        if self.result_metadata:
-            metric_description = self.result_metadata[0].get("text", "")
-            if isinstance(metric_description, DescriptionFuture):
-                metric_description = metric_description.get_description()
-                self.result_metadata[0]["text"] = metric_description
-
-            description_html.append(metric_description)
-
-        test_params = json.dumps(self.test_results.params, cls=NumpyEncoder, indent=2)
-        description_html.append(
-            f"""
-                <h4>Test Parameters</h4>
-                <pre>{test_params}</pre>
-            """
-        )
-
-        vbox_children.append(HTML("".join(description_html)))
-
-        if self.test_results.summary:
-            vbox_children.append(HTML("<h3>Tables</h3>"))
-            vbox_children.extend(_summary_tables_to_widget(self.test_results.summary))
-
-        if self.figures:
-            vbox_children.append(HTML("<h3>Plots</h3>"))
-            plot_widgets = plot_figures(self.figures)
-            vbox_children.append(plot_widgets)
-
-        return VBox(vbox_children)
-
-    async def log_async(self, section_id: str = None, position: int = None):
-        tasks = [
-            api_client.log_test_result(
-                self.test_results, self.inputs, section_id, position
-            )
-        ]
-
-        if self.figures:
-            tasks.append(api_client.log_figures(self.figures))
-
-        if hasattr(self, "result_metadata") and self.result_metadata:
-            description = self.result_metadata[0].get("text", "")
-            if isinstance(description, DescriptionFuture):
-                description = description.get_description()
-                self.result_metadata[0]["text"] = description
-
-            for metadata in self.result_metadata:
-                tasks.append(update_metadata(metadata["content_id"], metadata["text"]))
-
-        await asyncio.gather(*tasks)
