@@ -4,16 +4,16 @@
 \alias{run_custom_test}
 \title{Run a Custom Test using the ValidMind Framework}
 \usage{
-run_custom_test(test_id, inputs, test_register, show = FALSE)
+run_custom_test(test_id, inputs, test_registry, show = FALSE)
 }
 \arguments{
 \item{test_id}{A string representing the ID of the custom test to run.}
 
 \item{inputs}{A list of inputs required for the custom test.}
 
-\item{test_register}{A reference to the test register object which provides the custom test class.}
+\item{test_registry}{A reference to the test register object which provides the custom test class.}
 
-\item{show}{A logical value. If TRUE, the resulting figure will be displayed. Defaults to FALSE.}
+\item{show}{A logical value. If TRUE, the result will be displayed. Defaults to FALSE.}
 }
 \value{
 An object representing the result of the test, with an additional log function.

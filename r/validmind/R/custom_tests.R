@@ -99,8 +99,8 @@ class CustomMetric(Metric):
 #'
 #' @param test_id A string representing the ID of the custom test to run.
 #' @param inputs A list of inputs required for the custom test.
-#' @param test_register A reference to the test register object which provides the custom test class.
-#' @param show A logical value. If TRUE, the resulting figure will be displayed. Defaults to FALSE.
+#' @param test_registry A reference to the test register object which provides the custom test class.
+#' @param show A logical value. If TRUE, the result will be displayed. Defaults to FALSE.
 #' 
 #' @return An object representing the result of the test, with an additional log function.
 #' 
@@ -111,18 +111,17 @@ class CustomMetric(Metric):
 #' \dontrun{
 #' result <- run_custom_test("test123", my_inputs, test_registry, show = TRUE)
 #' }
-run_custom_test <- function(test_id, inputs, test_register, show = FALSE) {
+run_custom_test <- function(test_id, inputs, test_registry, show = FALSE) {
     
     # Import necessary classes from Python's validmind.vm_models
     TestContext <- reticulate::import("validmind.vm_models", as = "vm")$TestContext
     TestInput <- reticulate::import("validmind.vm_models", as = "vm")$TestInput
-    Figure <- reticulate::import("validmind.vm_models", as = "vm")$Figure
-    
+
     # Prepare the inputs for the test
     my_inputs <- TestInput(inputs = inputs)
     
     # Retrieve the custom test class using the test_id
-    TestClass <- test_register$get_custom_test(test_id)
+    TestClass <- test_registry$get_custom_test(test_id)
     
     # Initialize the test with the context and inputs
     test <- TestClass(

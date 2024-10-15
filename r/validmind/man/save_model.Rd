@@ -13,8 +13,8 @@ save_model(model)
 A string representing the full file path to the saved `.RData` file.
 }
 \description{
-This function saves a given R model object to a randomly named `.RData` file 
-in the `/tmp/` directory. The file is saved with a unique name generated 
+This function saves a given R model object to a randomly named `.RData` file
+in the `/tmp/` directory. The file is saved with a unique name generated
 using random letters.
 }
 \examples{
