@@ -8,6 +8,24 @@ import plotly.express as px
 from datasets import Dataset
 
 from validmind import tags, tasks
+from validmind.errors import MissingDependencyError
+
+try:
+    from ragas import evaluate
+    from ragas.metrics import AspectCritic
+    from ragas.metrics._aspect_critic import (
+        coherence,
+        conciseness,
+        correctness,
+        harmfulness,
+        maliciousness,
+    )
+except ImportError as e:
+    raise MissingDependencyError(
+        "Missing required package `ragas` for AspectCritique. "
+        "Please run `pip install validmind[llm]` to use LLM tests",
+        required_dependencies=["ragas"],
+    ) from e
 
 from .utils import get_ragas_config, get_renamed_columns
 
@@ -101,19 +119,6 @@ def AspectCritique(
     )
     ```
     """
-    try:
-        from ragas import evaluate
-        from ragas.metrics import AspectCritic
-        from ragas.metrics._aspect_critic import (
-            coherence,
-            conciseness,
-            correctness,
-            harmfulness,
-            maliciousness,
-        )
-    except ImportError:
-        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
-
     built_in_aspects = {
         "coherence": coherence,
         "conciseness": conciseness,

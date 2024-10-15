@@ -8,6 +8,17 @@ import plotly.express as px
 from datasets import Dataset
 
 from validmind import tags, tasks
+from validmind.errors import MissingDependencyError
+
+try:
+    from ragas import evaluate
+    from ragas.metrics import answer_correctness
+except ImportError as e:
+    raise MissingDependencyError(
+        "Missing required package `ragas` for AnswerCorrectness. "
+        "Please run `pip install validmind[llm]` to use LLM tests",
+        required_dependencies=["ragas"],
+    ) from e
 
 from .utils import get_ragas_config, get_renamed_columns
 
@@ -88,12 +99,6 @@ def AnswerCorrectness(
     }
     ```
     """
-    try:
-        from ragas import evaluate
-        from ragas.metrics import answer_correctness
-    except ImportError:
-        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
-
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

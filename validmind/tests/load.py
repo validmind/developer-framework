@@ -96,8 +96,12 @@ def list_tests(
     for test_id in test_store.get_test_ids():
         try:
             tests[test_id] = load_test(test_id, reload=True)
-        except MissingDependencyError:
+        except MissingDependencyError as e:
             # skip tests that have missing dependencies
+            logger.debug(str(e))
+            logger.info(
+                f"Skipping `{test_id}` as it requires missing dependencies: {e.required_dependencies}"
+            )
             continue
 
     # first search by the filter string since it's the most general search

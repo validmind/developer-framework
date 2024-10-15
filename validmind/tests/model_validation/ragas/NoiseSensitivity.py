@@ -8,6 +8,17 @@ import plotly.express as px
 from datasets import Dataset
 
 from validmind import tags, tasks
+from validmind.errors import MissingDependencyError
+
+try:
+    from ragas import evaluate
+    from ragas.metrics import noise_sensitivity_relevant
+except ImportError as e:
+    raise MissingDependencyError(
+        "Missing required package `ragas` for NoiseSensitivity. "
+        "Please run `pip install validmind[llm]` to use LLM tests",
+        required_dependencies=["ragas"],
+    ) from e
 
 from .utils import get_ragas_config, get_renamed_columns
 
@@ -100,12 +111,6 @@ def NoiseSensitivity(
     - Primarily applicable to tasks like text QA, text generation, and text summarization where contextual relevance is
     critical.
     """
-    try:
-        from ragas import evaluate
-        from ragas.metrics import noise_sensitivity_relevant
-    except ImportError:
-        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
-
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,

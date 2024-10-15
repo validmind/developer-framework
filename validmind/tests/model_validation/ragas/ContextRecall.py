@@ -8,6 +8,17 @@ import plotly.express as px
 from datasets import Dataset
 
 from validmind import tags, tasks
+from validmind.errors import MissingDependencyError
+
+try:
+    from ragas import evaluate
+    from ragas.metrics import context_recall
+except ImportError as e:
+    raise MissingDependencyError(
+        "Missing required package `ragas` for ContextRecall. "
+        "Please run `pip install validmind[llm]` to use LLM tests",
+        required_dependencies=["ragas"],
+    ) from e
 
 from .utils import get_ragas_config, get_renamed_columns
 
@@ -79,12 +90,6 @@ def ContextRecall(
     }
     ```
     """
-    try:
-        from ragas import evaluate
-        from ragas.metrics import context_recall
-    except ImportError:
-        raise ImportError("Please run `pip install validmind[llm]` to use LLM tests")
-
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,
