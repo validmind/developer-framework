@@ -7,6 +7,7 @@ from typing import List
 
 import pandas as pd
 
+from validmind import tags, tasks
 from validmind.errors import MissingRequiredTestInputError
 from validmind.vm_models import (
     ResultSummary,
@@ -149,3 +150,32 @@ Prompt:
         ]
 
         return self.cache_results(results, passed=passed)
+
+
+@tags("llm", "zero_shot", "few_shot")
+@tasks("text_classification", "text_summarization")
+def Conciseness(model, min_threshold=7):
+    """
+    Analyzes and grades the conciseness of prompts provided to a Large Language Model.
+    """
+    if not hasattr(model, "prompt"):
+        raise MissingRequiredTestInputError(missing_prompt_message)
+
+    response = call_model(
+        system_prompt=SYSTEM,
+        user_prompt=USER.format(prompt_to_test=model.prompt.template),
+    )
+    score = get_score(response)
+    explanation = get_explanation(response)
+
+    passed = score > min_threshold
+    result = [
+        {
+            "Score": score,
+            "Threshold": min_threshold,
+            "Explanation": explanation,
+            "Pass/Fail": "Pass" if passed else "Fail",
+        }
+    ]
+
+    return result, passed
