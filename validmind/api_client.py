@@ -10,6 +10,7 @@ the configuration and session across the entire project regardless of where the 
 import asyncio
 import atexit
 import json
+import logging
 import os
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -24,6 +25,11 @@ from .errors import MissingAPICredentialsError, MissingModelIdError, raise_api_e
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
+
+logging.basicConfig(level=logging.DEBUG)
+aiohttp_logger = logging.getLogger("aiohttp")
+aiohttp_logger.setLevel(logging.DEBUG)
+
 
 # TODO: can't import types from vm_models because of circular dependency
 
@@ -40,14 +46,18 @@ __api_session: Optional[aiohttp.ClientSession] = None
 
 @atexit.register
 def _close_session():
-    """Closes the async client session"""
+    """Closes the async client session at exit"""
     global __api_session
 
-    if __api_session is not None:
+    if __api_session and not __api_session.closed:
         try:
-            asyncio.run(__api_session.close())
-        except Exception:
-            pass
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(__api_session.close())
+            else:
+                loop.run_until_complete(__api_session.close())
+        except Exception as e:
+            logger.exception("Error closing aiohttp session at exit: %s", e)
 
 
 def get_api_host() -> Optional[str]:
@@ -71,9 +81,8 @@ def _get_session() -> aiohttp.ClientSession:
     """Initializes the async client session"""
     global __api_session
 
-    if __api_session is None:
+    if not __api_session or __api_session.closed:
         __api_session = aiohttp.ClientSession(
-            loop=asyncio.get_event_loop(),
             headers=_get_api_headers(),
             timeout=aiohttp.ClientTimeout(total=30),
         )
