@@ -26,9 +26,9 @@ from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
-logging.basicConfig(level=logging.DEBUG)
-aiohttp_logger = logging.getLogger("aiohttp")
-aiohttp_logger.setLevel(logging.DEBUG)
+# uncomment to see debug logs from aiohttp
+# aiohttp_logger = logging.getLogger("aiohttp")
+# aiohttp_logger.setLevel(logging.DEBUG)
 
 
 # TODO: can't import types from vm_models because of circular dependency

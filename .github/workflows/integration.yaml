@@ -71,6 +71,7 @@ jobs:
           NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
+          VALIDMIND_LLM_DESCRIPTIONS_ENABLED: 0
 
       # - name: Failure Notification
       #   if: failure()
