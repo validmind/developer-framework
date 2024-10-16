@@ -14,7 +14,7 @@ os.environ["VM_API_HOST"] = "your_api_host"
 os.environ["VM_API_MODEL"] = "your_model"
 
 import validmind.api_client as api_client
-from validmind.errors import MissingAPICredentialsError, MissingProjectIdError
+from validmind.errors import MissingAPICredentialsError, MissingModelIdError
 from validmind.utils import md_to_html
 from validmind.vm_models.figure import Figure
 
@@ -75,13 +75,6 @@ class TestAPIClient(unittest.TestCase):
             },
         )
 
-    def test_get_api_config(self):
-        config = api_client.get_api_config()
-        self.assertEqual(config["VM_API_KEY"], "your_api_key")
-        self.assertEqual(config["VM_API_SECRET"], "your_api_secret")
-        self.assertEqual(config["VM_API_HOST"], "your_api_host")
-        self.assertEqual(config["VM_API_MODEL"], "your_model")
-
     def test_get_api_host(self):
         host = api_client.get_api_host()
         self.assertEqual(host, "your_api_host")
@@ -95,7 +88,7 @@ class TestAPIClient(unittest.TestCase):
         mock_requests_get.return_value = Mock()
 
         project = os.environ.pop("VM_API_MODEL")
-        with self.assertRaises(MissingProjectIdError):
+        with self.assertRaises(MissingModelIdError):
             api_client.init(project=None)
 
         os.environ["VM_API_MODEL"] = project

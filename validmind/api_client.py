@@ -20,7 +20,7 @@ import requests
 from aiohttp import FormData
 
 from .client_config import client_config
-from .errors import MissingAPICredentialsError, MissingProjectIdError, raise_api_error
+from .errors import MissingAPICredentialsError, MissingModelIdError, raise_api_error
 from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
@@ -35,7 +35,7 @@ _api_host = os.getenv("VM_API_HOST")
 _model_cuid = os.getenv("VM_API_MODEL")
 _monitoring = False
 
-__api_session: aiohttp.ClientSession = None
+__api_session: Optional[aiohttp.ClientSession] = None
 
 
 @atexit.register
@@ -50,16 +50,6 @@ def _close_session():
             pass
 
 
-def get_api_config() -> Dict[str, Optional[str]]:
-    return {
-        "VM_API_KEY": _api_key,
-        "VM_API_SECRET": _api_secret,
-        "VM_API_HOST": _api_host,
-        "VM_API_MODEL": _model_cuid,
-        "X-MONITORING": _monitoring,
-    }
-
-
 def get_api_host() -> Optional[str]:
     return _api_host
 
@@ -68,73 +58,13 @@ def get_api_model() -> Optional[str]:
     return _model_cuid
 
 
-def get_api_headers() -> Dict[str, str]:
+def _get_api_headers() -> Dict[str, str]:
     return {
         "X-API-KEY": _api_key,
         "X-API-SECRET": _api_secret,
-        "X-PROJECT-CUID": _model_cuid,
-        "X-MONITORING": _monitoring,
+        "X-MODEL-CUID": _model_cuid,
+        "X-MONITORING": str(_monitoring),
     }
-
-
-def init(
-    project: Optional[str] = None,
-    api_key: Optional[str] = None,
-    api_secret: Optional[str] = None,
-    api_host: Optional[str] = None,
-    model: Optional[str] = None,
-    monitoring=False,
-):
-    """
-    Initializes the API client instances and calls the /ping endpoint to ensure
-    the provided credentials are valid and we can connect to the ValidMind API.
-
-    If the API key and secret are not provided, the client will attempt to
-    retrieve them from the environment variables `VM_API_KEY` and `VM_API_SECRET`.
-
-    Args:
-        project (str, optional): The project CUID. Alias for model. Defaults to None.
-        model (str, optional): The model CUID. Defaults to None.
-        api_key (str, optional): The API key. Defaults to None.
-        api_secret (str, optional): The API secret. Defaults to None.
-        api_host (str, optional): The API host. Defaults to None.
-        monitoring (str, optional): The ongoing monitoring flag. Defaults to False.
-
-    Raises:
-        ValueError: If the API key and secret are not provided
-    """
-    global _api_key, _api_secret, _api_host, _model_cuid, _monitoring
-
-    if api_key == "...":
-        # special case to detect when running a notebook with the standard init snippet
-        # will override with environment variables so we don't have to keep updating
-        # the notebook
-        api_host = api_key = api_secret = project = None
-
-    _model_cuid = project or model or os.getenv("VM_API_MODEL")
-
-    if _model_cuid is None:
-        raise MissingProjectIdError()
-
-    _api_key = api_key or os.getenv("VM_API_KEY")
-    _api_secret = api_secret or os.getenv("VM_API_SECRET")
-
-    if _api_key is None or _api_secret is None:
-        raise MissingAPICredentialsError()
-
-    _api_host = api_host or os.getenv(
-        "VM_API_HOST", "http://127.0.0.1:5000/api/v1/tracking/"
-    )
-
-    _monitoring = monitoring
-
-    try:
-        __ping()
-    except Exception as e:
-        # if the api host is https, assume we're not in dev mode and send to sentry
-        if _api_host.startswith("https://"):
-            send_single_error(e)
-        raise e
 
 
 def _get_session() -> aiohttp.ClientSession:
@@ -142,29 +72,85 @@ def _get_session() -> aiohttp.ClientSession:
     global __api_session
 
     if __api_session is None:
-        __api_session = aiohttp.ClientSession(loop=asyncio.get_event_loop())
-        __api_session.headers.update(
-            {
-                "X-API-KEY": _api_key,
-                "X-API-SECRET": _api_secret,
-                "X-PROJECT-CUID": _model_cuid,
-                "X-MONITORING": str(_monitoring),
-            }
+        __api_session = aiohttp.ClientSession(
+            loop=asyncio.get_event_loop(),
+            headers=_get_api_headers(),
+            timeout=aiohttp.ClientTimeout(total=30),
         )
 
     return __api_session
 
 
-def __ping() -> Dict[str, Any]:
+def _get_url(
+    endpoint: str,
+    params: Optional[Dict[str, str]] = None,
+) -> str:
+    global _api_host
+
+    params = params or {}
+
+    if not _api_host.endswith("/"):
+        _api_host += "/"
+
+    if params:
+        return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
+
+    return urljoin(_api_host, endpoint)
+
+
+async def _get(
+    endpoint: str, params: Optional[Dict[str, str]] = None
+) -> Dict[str, Any]:
+    url = _get_url(endpoint, params)
+    session = _get_session()
+
+    async with session.get(url) as r:
+        if r.status != 200:
+            raise_api_error(await r.text())
+
+        return await r.json()
+
+
+async def _post(
+    endpoint: str,
+    params: Optional[Dict[str, str]] = None,
+    data: Optional[Union[dict, FormData]] = None,
+    files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
+) -> Dict[str, Any]:
+    url = _get_url(endpoint, params)
+    session = _get_session()
+
+    if not isinstance(data, (dict)) and files is not None:
+        raise ValueError("Cannot pass both non-json data and file objects to _post")
+
+    if files:
+        _data = FormData()
+
+        for key, value in (data or {}).items():
+            _data.add_field(key, value)
+
+        for key, file_info in (files or {}).items():
+            _data.add_field(
+                key,
+                file_info[1],
+                filename=file_info[0],
+                content_type=file_info[2] if len(file_info) > 2 else None,
+            )
+    else:
+        _data = data
+
+    async with session.post(url, data=_data) as r:
+        if r.status != 200:
+            raise_api_error(await r.text())
+
+        return await r.json()
+
+
+def _ping() -> Dict[str, Any]:
     """Validates that we can connect to the ValidMind API (does not use the async session)"""
     r = requests.get(
-        __get_url("ping"),
-        headers={
-            "X-API-KEY": _api_key,
-            "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _model_cuid,
-            "X-MONITORING": str(_monitoring),
-        },
+        url=_get_url("ping"),
+        headers=_get_api_headers(),
     )
     if r.status_code != 200:
         raise_api_error(r.text)
@@ -202,81 +188,67 @@ def __ping() -> Dict[str, Any]:
             )
 
 
+def init(
+    project: Optional[str] = None,
+    api_key: Optional[str] = None,
+    api_secret: Optional[str] = None,
+    api_host: Optional[str] = None,
+    model: Optional[str] = None,
+    monitoring=False,
+):
+    """
+    Initializes the API client instances and calls the /ping endpoint to ensure
+    the provided credentials are valid and we can connect to the ValidMind API.
+
+    If the API key and secret are not provided, the client will attempt to
+    retrieve them from the environment variables `VM_API_KEY` and `VM_API_SECRET`.
+
+    Args:
+        project (str, optional): The project CUID. Alias for model. Defaults to None. [DEPRECATED]
+        model (str, optional): The model CUID. Defaults to None.
+        api_key (str, optional): The API key. Defaults to None.
+        api_secret (str, optional): The API secret. Defaults to None.
+        api_host (str, optional): The API host. Defaults to None.
+        monitoring (str, optional): The ongoing monitoring flag. Defaults to False.
+
+    Raises:
+        ValueError: If the API key and secret are not provided
+    """
+    global _api_key, _api_secret, _api_host, _model_cuid, _monitoring
+
+    if api_key == "...":
+        # special case to detect when running a notebook placeholder (...)
+        # will override with environment variables for easier local development
+        api_host = api_key = api_secret = project = None
+
+    _model_cuid = project or model or os.getenv("VM_API_MODEL")
+    if _model_cuid is None:
+        raise MissingModelIdError()
+
+    _api_key = api_key or os.getenv("VM_API_KEY")
+    _api_secret = api_secret or os.getenv("VM_API_SECRET")
+    if _api_key is None or _api_secret is None:
+        raise MissingAPICredentialsError()
+
+    _api_host = api_host or os.getenv(
+        "VM_API_HOST", "http://localhost:5000/api/v1/tracking/"
+    )
+
+    _monitoring = monitoring
+
+    reload()
+
+
 def reload():
     """Reconnect to the ValidMind API and reload the project configuration"""
 
     try:
-        __ping()
+        _ping()
     except Exception as e:
         # if the api host is https, assume we're not in dev mode and send to sentry
         if _api_host.startswith("https://"):
             send_single_error(e)
         raise e
-
-
-def __get_url(
-    endpoint: str,
-    params: Optional[Dict[str, str]] = None,
-) -> str:
-    global _api_host
-
-    params = params or {}
-
-    if not _api_host.endswith("/"):
-        _api_host += "/"
-
-    if params:
-        return f"{urljoin(_api_host, endpoint)}?{urlencode(params)}"
-
-    return urljoin(_api_host, endpoint)
-
-
-async def _get(
-    endpoint: str, params: Optional[Dict[str, str]] = None
-) -> Dict[str, Any]:
-    url = __get_url(endpoint, params)
-    session = _get_session()
-
-    async with session.get(url) as r:
-        if r.status != 200:
-            raise_api_error(await r.text())
-
-        return await r.json()
-
-
-async def _post(
-    endpoint: str,
-    params: Optional[Dict[str, str]] = None,
-    data: Optional[Union[dict, FormData]] = None,
-    files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
-) -> Dict[str, Any]:
-    url = __get_url(endpoint, params)
-    session = _get_session()
-
-    if not isinstance(data, (dict)) and files is not None:
-        raise ValueError("Cannot pass both non-json data and file objects to _post")
-
-    if files:
-        _data = FormData()
-
-        for key, value in (data or {}).items():
-            _data.add_field(key, value)
-
-        for key, file_info in (files or {}).items():
-            _data.add_field(
-                key,
-                file_info[1],
-                filename=file_info[0],
-                content_type=file_info[2] if len(file_info) > 2 else None,
-            )
-    else:
-        _data = data
-
-    async with session.post(url, data=_data) as r:
-        if r.status != 200:
-            raise_api_error(await r.text())
-
-        return await r.json()
 
 
 async def get_metadata(content_id: str) -> Dict[str, Any]:
@@ -591,7 +563,7 @@ def log_metric(
 def get_ai_key() -> str:
     """Calls the api to get an api key for our LLM proxy"""
     r = requests.get(
-        __get_url("ai/key"),
+        _get_url("ai/key"),
         headers={
             "X-API-KEY": _api_key,
             "X-API-SECRET": _api_secret,
