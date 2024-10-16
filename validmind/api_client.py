@@ -10,6 +10,9 @@ the configuration and session across the entire project regardless of where the 
 import asyncio
 import atexit
 import json
+
+# uncomment to see debug logs from aiohttp
+import logging
 import os
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -25,10 +28,8 @@ from .logging import get_logger, init_sentry, send_single_error
 from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
-# uncomment to see debug logs from aiohttp
-# import logging
-# aiohttp_logger = logging.getLogger("aiohttp")
-# aiohttp_logger.setLevel(logging.DEBUG)
+aiohttp_logger = logging.getLogger("aiohttp")
+aiohttp_logger.setLevel(logging.DEBUG)
 
 
 # TODO: can't import types from vm_models because of circular dependency
