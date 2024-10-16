@@ -378,7 +378,7 @@ class MetricResultWrapper(ResultWrapper):
                 self.metric.summary = self._get_filtered_summary()
 
             tasks.append(
-                api_client.log_metric(
+                api_client.log_metric_result(
                     metric=self.metric,
                     inputs=self.inputs,
                     output_template=self.output_template,

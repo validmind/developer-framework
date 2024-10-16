@@ -314,7 +314,7 @@ async def log_metadata(
         raise e
 
 
-async def log_metric(
+async def log_metric_result(
     metric: MetricResult,
     inputs: List[str],
     output_template: str = None,

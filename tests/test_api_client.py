@@ -2,7 +2,7 @@ import asyncio
 import json
 import os
 import unittest
-from unittest.mock import call, MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import matplotlib.pyplot as plt
 from aiohttp.formdata import FormData
@@ -96,8 +96,8 @@ class TestAPIClient(unittest.TestCase):
         mock_requests_get.assert_not_called()
 
     @patch("requests.get")
-    def test_init_missing_api_key_secret(self, mock_requests_get):
-        mock_requests_get.return_value = Mock()
+    def test_init_missing_api_key_secret(self, mock_get):
+        mock_get.return_value = Mock()
 
         api_key = os.environ.pop("VM_API_KEY")
         api_secret = os.environ.pop("VM_API_SECRET")
@@ -108,20 +108,18 @@ class TestAPIClient(unittest.TestCase):
         os.environ["VM_API_KEY"] = api_key
         os.environ["VM_API_SECRET"] = api_secret
 
-        mock_requests_get.assert_not_called()
+        mock_get.assert_not_called()
 
     @patch("requests.get")
-    def test_init_unsuccessful_ping(self, mock_requests_get):
-        mock_response = Mock(status_code=500)
-        mock_response.text = "Internal Server Error"
-        mock_requests_get.return_value = mock_response
+    def test_init_unsuccessful_ping(self, mock_get):
+        mock_get.return_value = MockResponse(500, text="Internal Server Error")
 
         with self.assertRaises(Exception) as cm:
             api_client.init()
 
         self.assertEqual(str(cm.exception), "Internal Server Error")
 
-        mock_requests_get.assert_called_once_with(
+        mock_get.assert_called_once_with(
             f"{os.environ['VM_API_HOST']}/ping",
             headers={
                 "X-API-KEY": os.environ["VM_API_KEY"],
@@ -134,8 +132,7 @@ class TestAPIClient(unittest.TestCase):
     @patch("aiohttp.ClientSession.get")
     def test_get_metadata(self, mock_get: MagicMock):
         res_json = [{"cuid": "1234"}]
-        mock_response = MockResponse(200, json=res_json)
-        mock_get.return_value = mock_response
+        mock_get.return_value = MockResponse(200, json=res_json)
 
         response = self.run_async(api_client.get_metadata, "content_id")
 
@@ -147,8 +144,7 @@ class TestAPIClient(unittest.TestCase):
 
     @patch("aiohttp.ClientSession.post")
     def test_log_figure_matplot(self, mock_post: MagicMock):
-        mock_response = MockResponse(200, json={"cuid": "1234"})
-        mock_post.return_value = mock_response
+        mock_post.return_value = MockResponse(200, json={"cuid": "1234"})
 
         self.run_async(api_client.log_figure, mock_figure())
 
@@ -157,24 +153,9 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(mock_post.call_args[0][0], url)
         self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
 
-    # @patch("aiohttp.ClientSession.post")
-    # def test_log_figures(self, mock_post: MagicMock):
-    #     mock_response = MockResponse(200, json=[{"cuid": "1234"}, {"cuid": "5678"}])
-    #     mock_post.return_value = mock_response
-    #     api_client.client_config.feature_flags["log_figures"] = True
-
-    #     self.run_async(api_client.log_figures, [mock_figure(), mock_figure()])
-
-    #     url = f"{os.environ['VM_API_HOST']}/log_figures"
-    #     mock_post.assert_called_once()
-    #     self.assertEqual(len(mock_post.call_args), 2)
-    #     self.assertEqual(mock_post.call_args[0][0], url)
-    #     self.assertIsInstance(mock_post.call_args[1]["data"], FormData)
-
     @patch("aiohttp.ClientSession.post")
     def test_log_metadata(self, mock_post: MagicMock):
-        mock_response = MockResponse(200, json={"cuid": "abc1234"})
-        mock_post.return_value = mock_response
+        mock_post.return_value = MockResponse(200, json={"cuid": "abc1234"})
 
         self.run_async(
             api_client.log_metadata,
@@ -196,13 +177,12 @@ class TestAPIClient(unittest.TestCase):
         )
 
     @patch("aiohttp.ClientSession.post")
-    def test_log_metrics(self, mock_post):
-        metrics = [Mock(serialize=MagicMock(return_value={"key": "value"}))]
+    def test_log_metric_result(self, mock_post):
+        metric = Mock(serialize=MagicMock(return_value={"key": "value"}))
 
-        mock_response = MockResponse(200, json={"cuid": "abc1234"})
-        mock_post.return_value = mock_response
+        mock_post.return_value = MockResponse(200, json={"cuid": "abc1234"})
 
-        self.run_async(api_client.log_metric, metrics, inputs=["input1"])
+        self.run_async(api_client.log_metric_result, metric, inputs=["input1"])
 
         url = f"{os.environ['VM_API_HOST']}/log_metrics"
         mock_post.assert_called_with(
@@ -213,8 +193,7 @@ class TestAPIClient(unittest.TestCase):
     def test_log_test_result(self, mock_post):
         result = Mock(serialize=MagicMock(return_value={"key": "value"}))
 
-        mock_response = MockResponse(200, json={"cuid": "abc1234"})
-        mock_post.return_value = mock_response
+        mock_post.return_value = MockResponse(200, json={"cuid": "abc1234"})
 
         self.run_async(api_client.log_test_result, result, ["input1"])
 
