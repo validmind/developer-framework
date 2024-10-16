@@ -10,7 +10,6 @@ the configuration and session across the entire project regardless of where the 
 import asyncio
 import atexit
 import json
-import logging
 import os
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -27,6 +26,7 @@ from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 # uncomment to see debug logs from aiohttp
+# import logging
 # aiohttp_logger = logging.getLogger("aiohttp")
 # aiohttp_logger.setLevel(logging.DEBUG)
 
