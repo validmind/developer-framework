@@ -12,7 +12,7 @@ import atexit
 import json
 import os
 from io import BytesIO
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode, urljoin
 
 import aiohttp
@@ -160,12 +160,8 @@ def _ping() -> Dict[str, Any]:
     init_sentry(client_info.get("sentry_config", {}))
 
     # Only show this confirmation the first time we connect to the API
-    ack_connected = False
-    if client_config.project is None:
-        ack_connected = True
+    ack_connected = not client_config.model
 
-    # TODO: use model object when backend moves away from project
-    client_config.project = client_info["project"]
     client_config.documentation_template = client_info.get("documentation_template", {})
     client_config.feature_flags = client_info.get("feature_flags", {})
     client_config.model = client_info.get("model", {})
@@ -174,18 +170,12 @@ def _ping() -> Dict[str, Any]:
     )
 
     if ack_connected:
-        if client_config.model:
-            logger.info(
-                f"🎉 Connected to ValidMind!\n"
-                f"📊 Model: {client_config.model.get('name', 'N/A')} "
-                f"(ID: {client_config.model.get('cuid', 'N/A')})\n"
-                f"📁 Document Type: {client_config.document_type}"
-            )
-        else:
-            logger.info(
-                f"Connected to ValidMind... Current Model: {client_config.project['name']}"
-                f" ({client_config.project['cuid']})"
-            )
+        logger.info(
+            f"🎉 Connected to ValidMind!\n"
+            f"📊 Model: {client_config.model.get('name', 'N/A')} "
+            f"(ID: {client_config.model.get('cuid', 'N/A')})\n"
+            f"📁 Document Type: {client_config.document_type}"
+        )
 
 
 def init(
@@ -251,22 +241,6 @@ def reload():
         raise e
 
 
-async def get_metadata(content_id: str) -> Dict[str, Any]:
-    """Gets a metadata object from ValidMind API.
-
-    Args:
-        content_id (str): Unique content identifier for the metadata
-
-    Raises:
-        Exception: If the API call fails
-
-    Returns:
-        dict: Metadata object
-    """
-    # TODO: add a more accurate type hint/documentation
-    return await _get(f"get_metadata/{content_id}")
-
-
 async def log_figure(figure: Figure) -> Dict[str, Any]:
     """Logs a figure
 
@@ -290,19 +264,20 @@ async def log_figure(figure: Figure) -> Dict[str, Any]:
         raise e
 
 
-async def log_figures(figures: List[Figure]) -> Dict[str, Any]:
-    """Logs a list of figures
+async def get_metadata(content_id: str) -> Dict[str, Any]:
+    """Gets a metadata object from ValidMind API.
 
     Args:
-        figures (list): A list of Figure objects
+        content_id (str): Unique content identifier for the metadata
 
     Raises:
         Exception: If the API call fails
 
     Returns:
-        dict: The response from the API
+        dict: Metadata object
     """
-    return await asyncio.gather(*[log_figure(figure) for figure in figures])
+    # TODO: add a more accurate type hint/documentation
+    return await _get(f"get_metadata/{content_id}")
 
 
 async def log_metadata(
@@ -339,8 +314,8 @@ async def log_metadata(
         raise e
 
 
-async def log_metrics(
-    metrics: List[MetricResult],
+async def log_metric(
+    metric: MetricResult,
     inputs: List[str],
     output_template: str = None,
     section_id: str = None,
@@ -349,7 +324,7 @@ async def log_metrics(
     """Logs metrics to ValidMind API.
 
     Args:
-        metrics (list): A list of MetricResult objects
+        metric (MetricResult): A MetricResult object
         inputs (list): A list of input keys (names) that were used to run the test
         output_template (str): The optional output template for the test
         section_id (str): The section ID add a test driven block to the documentation
@@ -367,24 +342,18 @@ async def log_metrics(
     if position is not None:
         request_params["position"] = position
 
-    data = []
-
-    for metric in metrics:
-        metric_data = {
-            **metric.serialize(),
-            "inputs": inputs,
-        }
-
-        if output_template:
-            metric_data["output_template"] = output_template
-
-        data.append(metric_data)
+    metric_data = {
+        **metric.serialize(),
+        "inputs": inputs,
+    }
+    if output_template:
+        metric_data["output_template"] = output_template
 
     try:
         return await _post(
             "log_metrics",
             params=request_params,
-            data=json.dumps(data, cls=NumpyEncoder, allow_nan=False),
+            data=json.dumps([metric_data], cls=NumpyEncoder, allow_nan=False),
         )
     except Exception as e:
         logger.error("Error logging metrics to ValidMind API")
@@ -438,35 +407,6 @@ async def log_test_result(
         raise e
 
 
-def log_test_results(
-    results: List[ThresholdTestResults], inputs
-) -> List[Callable[..., Dict[str, Any]]]:
-    """Logs test results information
-
-    This method will be called automatically be any function
-    running tests but can also be called directly if the user wants to run tests on their own.
-
-    Args:
-        results (list): A list of ThresholdTestResults objects
-        inputs (list): A list of input IDs that were used to run the test
-
-    Raises:
-        Exception: If the API call fails
-
-    Returns:
-        list: list of responses from the API
-    """
-    try:
-        responses = []  # TODO: use asyncio.gather
-        for result in results:
-            responses.append(run_async(log_test_result, result, inputs))
-    except Exception as e:
-        logger.error("Error logging test results to ValidMind API")
-        raise e
-
-    return responses
-
-
 def log_input(input_id: str, type: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
     """Logs input information - internal use for now (don't expose via public API)
 
@@ -506,7 +446,7 @@ async def alog_metric(
     inputs: Optional[List[str]] = None,
     params: Optional[Dict[str, Any]] = None,
     recorded_at: Optional[str] = None,
-) -> None:
+):
     """See log_metric for details"""
     if not key or not isinstance(key, str):
         raise ValueError("`key` must be a non-empty string")
@@ -540,7 +480,7 @@ def log_metric(
     inputs: Optional[List[str]] = None,
     params: Optional[Dict[str, Any]] = None,
     recorded_at: Optional[str] = None,
-) -> None:
+):
     """Logs a unit metric
 
     Unit metrics are key-value pairs where the key is the metric name and the value is
@@ -560,15 +500,11 @@ def log_metric(
     run_async(alog_metric, key, value, inputs, params, recorded_at)
 
 
-def get_ai_key() -> str:
+def get_ai_key() -> Dict[str, Any]:
     """Calls the api to get an api key for our LLM proxy"""
     r = requests.get(
-        _get_url("ai/key"),
-        headers={
-            "X-API-KEY": _api_key,
-            "X-API-SECRET": _api_secret,
-            "X-PROJECT-CUID": _model_cuid,
-        },
+        url=_get_url("ai/key"),
+        headers=_get_api_headers(),
     )
 
     if r.status_code != 200:
