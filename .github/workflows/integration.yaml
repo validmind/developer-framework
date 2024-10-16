@@ -9,6 +9,7 @@ on:
       - main
       - prod
       - release-v1
+      - john/fix-failing-gh-workflow
 
 permissions:
   contents: read
