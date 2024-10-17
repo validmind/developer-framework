@@ -12,6 +12,7 @@ import atexit
 import json
 import logging
 import os
+import time
 from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode, urljoin
@@ -86,6 +87,17 @@ def _get_session() -> aiohttp.ClientSession:
             headers=_get_api_headers(),
             timeout=aiohttp.ClientTimeout(total=300),
         )
+
+        # Add a custom adapter to include a 1-second sleep after each request
+        class SleepingAdapter(HTTPAdapter):
+            def send(self, request, **kwargs):
+                response = super().send(request, **kwargs)
+                time.sleep(1)
+                return response
+
+        sleeping_adapter = SleepingAdapter()
+        __api_session.mount("http://", sleeping_adapter)
+        __api_session.mount("https://", sleeping_adapter)
 
     return __api_session
 
