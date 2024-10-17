@@ -16,9 +16,9 @@ from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode, urljoin
 
+import aiohttp
 import requests
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+from aiohttp import FormData
 
 from .client_config import client_config
 from .errors import MissingAPICredentialsError, MissingModelIdError, raise_api_error
@@ -27,6 +27,8 @@ from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 logging.basicConfig(level=logging.DEBUG)
+aiohttp_logger = logging.getLogger("aiohttp")
+aiohttp_logger.setLevel(logging.DEBUG)
 
 
 # TODO: can't import types from vm_models because of circular dependency
@@ -39,15 +41,23 @@ _api_host = os.getenv("VM_API_HOST")
 _model_cuid = os.getenv("VM_API_MODEL")
 _monitoring = False
 
-__api_session: Optional[requests.Session] = None
+__api_session: Optional[aiohttp.ClientSession] = None
 
 
 @atexit.register
 def _close_session():
-    """Closes the requests session at exit"""
+    """Closes the async client session at exit"""
     global __api_session
-    if __api_session:
-        __api_session.close()
+
+    if __api_session and not __api_session.closed:
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                loop.create_task(__api_session.close())
+            else:
+                loop.run_until_complete(__api_session.close())
+        except Exception as e:
+            logger.exception("Error closing aiohttp session at exit: %s", e)
 
 
 def get_api_host() -> Optional[str]:
@@ -67,22 +77,15 @@ def _get_api_headers() -> Dict[str, str]:
     }
 
 
-def _get_session() -> requests.Session:
-    """Initializes the requests session"""
+def _get_session() -> aiohttp.ClientSession:
+    """Initializes the async client session"""
     global __api_session
 
-    if not __api_session:
-        __api_session = requests.Session()
-        __api_session.headers.update(_get_api_headers())
-
-        retry_strategy = Retry(
-            total=3,
-            backoff_factor=0.1,
-            status_forcelist=[429, 500, 502, 503, 504],
+    if not __api_session or __api_session.closed:
+        __api_session = aiohttp.ClientSession(
+            headers=_get_api_headers(),
+            timeout=aiohttp.ClientTimeout(total=30),
         )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        __api_session.mount("http://", adapter)
-        __api_session.mount("https://", adapter)
 
     return __api_session
 
@@ -110,34 +113,46 @@ async def _get(
     url = _get_url(endpoint, params)
     session = _get_session()
 
-    def _sync_get():
-        r = session.get(url)
-        if r.status_code != 200:
-            raise_api_error(r.text)
-        return r.json()
+    async with session.get(url) as r:
+        if r.status != 200:
+            raise_api_error(await r.text())
 
-    return await asyncio.to_thread(_sync_get)
+        return await r.json()
 
 
 async def _post(
     endpoint: str,
     params: Optional[Dict[str, str]] = None,
-    data: Optional[Union[dict, Dict[str, Any]]] = None,
+    data: Optional[Union[dict, FormData]] = None,
     files: Optional[Dict[str, Tuple[str, BytesIO, str]]] = None,
 ) -> Dict[str, Any]:
     url = _get_url(endpoint, params)
     session = _get_session()
 
-    if not isinstance(data, dict) and files is not None:
+    if not isinstance(data, (dict)) and files is not None:
         raise ValueError("Cannot pass both non-json data and file objects to _post")
 
-    def _sync_post():
-        r = session.post(url, data=data, files=files)
-        if r.status_code != 200:
-            raise_api_error(r.text)
-        return r.json()
+    if files:
+        _data = FormData()
 
-    return await asyncio.to_thread(_sync_post)
+        for key, value in (data or {}).items():
+            _data.add_field(key, value)
+
+        for key, file_info in (files or {}).items():
+            _data.add_field(
+                key,
+                file_info[1],
+                filename=file_info[0],
+                content_type=file_info[2] if len(file_info) > 2 else None,
+            )
+    else:
+        _data = data
+
+    async with session.post(url, data=_data) as r:
+        if r.status != 200:
+            raise_api_error(await r.text())
+
+        return await r.json()
 
 
 def _ping() -> Dict[str, Any]:
