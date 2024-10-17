@@ -76,15 +76,6 @@ def _get_session() -> requests.Session:
         __api_session = requests.Session()
         __api_session.headers.update(_get_api_headers())
 
-        retry_strategy = Retry(
-            total=3,
-            backoff_factor=0.1,
-            status_forcelist=[429, 500, 502, 503, 504],
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        __api_session.mount("http://", adapter)
-        __api_session.mount("https://", adapter)
-
         # Add a custom adapter to include a 1-second sleep after each request
         class SleepingAdapter(HTTPAdapter):
             def send(self, request, **kwargs):
