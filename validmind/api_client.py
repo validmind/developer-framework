@@ -16,9 +16,7 @@ from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlencode, urljoin
 
-import aiohttp
 import requests
-from aiohttp import FormData
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -29,8 +27,6 @@ from .utils import NumpyEncoder, run_async
 from .vm_models import Figure, MetricResult, ThresholdTestResults
 
 logging.basicConfig(level=logging.DEBUG)
-aiohttp_logger = logging.getLogger("aiohttp")
-aiohttp_logger.setLevel(logging.DEBUG)
 
 
 # TODO: can't import types from vm_models because of circular dependency
