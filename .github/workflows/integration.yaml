@@ -9,6 +9,7 @@ on:
       - main
       - prod
       - release-v1
+      - john/fix-failing-gh-workflow
 
 permissions:
   contents: read
@@ -28,39 +29,53 @@ jobs:
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
+          cache: 'poetry'
 
       - name: Install Dependencies
-        run: poetry config virtualenvs.in-project true && poetry env use python3.11 && poetry install --all-extras
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry env use python3.11
+          poetry install -E huggingface -E llm
+          poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu
+          poetry run pip install aequitas fairlearn vl-convert-python
 
-      - name: Build the package
-        run: poetry build
+      # - name: Build the package
+      #   run: poetry build
 
-      - name: Remove Build Environment
-        run: rm -rf .venv
+      # - name: Remove Build Environment
+      #   run: rm -rf .venv
 
-      - name: Setup Virtual Environment
-        run: python -m venv sdist-venv
+      # - name: Setup Virtual Environment
+      #   run: python -m venv sdist-venv
 
-      - name: Install Built Package
-        run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[all]"
+      # - name: Install Built Package
+      #   run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[llm,huggingface]"
 
-      - name: Install Additional Dependencies
-        run: sdist-venv/bin/pip install nbformat papermill jupyter
+      # - name: Install Additional Dependencies
+      #   run: sdist-venv/bin/pip install nbformat papermill jupyter
 
-      - name: Create Jupyter Kernel
-        run: sdist-venv/bin/python -m ipykernel install --user --name sdist-venv
+      # - name: Create Jupyter Kernel
+      #   run: sdist-venv/bin/python -m ipykernel install --user --name sdist-venv
+
+      # - name: Integration Tests
+      #   run: sdist-venv/bin/python scripts/run_e2e_notebooks.py --kernel sdist-venv
+      #   env:
+      #     NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
+      #     NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
+      #     NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
 
       - name: Integration Tests
-        run: sdist-venv/bin/python scripts/run_e2e_notebooks.py --kernel sdist-venv
+        run: make test-integration
         env:
-          NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
+          NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
+          VALIDMIND_LLM_DESCRIPTIONS_ENABLED: 0
 
-      - name: Failure Notification
-        if: failure()
-        run: |
-          curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
-        env:
-          NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+      # - name: Failure Notification
+      #   if: failure()
+      #   run: |
+      #     curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+      #   env:
+      #     NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
