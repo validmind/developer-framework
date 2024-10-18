@@ -70,11 +70,11 @@ jobs:
           NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
-        # print with spaces in between to avoid github from masking the output
+        # print with 'x' in between to avoid github from masking the output
         run: |
-          echo $NOTEBOOK_RUNNER_API_SECRET | sed 's/./* /g'
-          echo $NOTEBOOK_RUNNER_API_KEY | sed 's/./* /g'
-          echo $NOTEBOOK_RUNNER_DEFAULT_MODEL | sed 's/./* /g'
+          echo $NOTEBOOK_RUNNER_API_SECRET | sed 's/./&x/g'
+          echo $NOTEBOOK_RUNNER_API_KEY | sed 's/./&x/g'
+          echo $NOTEBOOK_RUNNER_DEFAULT_MODEL | sed 's/./&x/g'
 
       - name: Integration Tests
         run: make test-integration
