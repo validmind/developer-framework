@@ -2,9 +2,9 @@
 
 ![ValidMind logo](images/ValidMind-logo-color.svg "ValidMind logo")
 
-ValidMind's Developer Framework is a library of developer tools and methods designed to run validation tests and automate the documentation of your models. The Developer Framework provides a rich suite of documentation tools and test suites, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
+The ValidMind Library is a suite of developer tools and methods designed to run validation tests and automate the documentation of your models. The ValidMind Library provides a rich suite of documentation tools and test suites, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
 
-The Developer Framework includes the Python client library, which is designed to be model agnostic. If your model is built in Python, ValidMind's Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
+The ValidMind Library includes the Python client library, which is designed to be model agnostic. If your model is built in Python, the ValidMind library will provide all the standard functionality without requiring your developers to rewrite any functions.
 
 ## Contributing to the ValidMind Library
 
@@ -12,7 +12,7 @@ We believe in the power of collaboration and welcome contributions to the ValidM
 
 - Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](https://docs.validmind.ai/about/contributing/join-community.html)!
 
-- For more information about ValidMind's open source tests and Jupyter notebooks, read the [Developer Framework docs](https://docs.validmind.ai/developer/get-started-developer-framework.html).
+- For more information about ValidMind's open source tests and Jupyter notebooks, read the [ValidMind Library docs](https://docs.validmind.ai/developer/get-started-developer-framework.html).
 
 ## Getting started
 
@@ -74,7 +74,7 @@ This will install the dependencies and git hooks for the project.
 a new kernel with Jupyter:
 
 ```bash
-poetry run python -m ipykernel install --user --name dev-framework --display-name "Developer Framework"
+poetry run python -m ipykernel install --user --name dev-framework --display-name "ValidMind Library"
 ```
 
 ### Installing LLM validation dependencies

@@ -3,14 +3,14 @@
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
 """
-ValidMind’s Python Developer Framework is a library of developer tools and methods designed to automate
+The ValidMind Library is a suite of developer tools and methods designed to automate
 the documentation and validation of your models.
 
-The Developer Framework is designed to be model agnostic. If your model is built in Python, ValidMind's
+The ValidMind Library is designed to be model agnostic. If your model is built in Python, ValidMind's
 Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
 
-The Developer Framework provides a rich suite of documentation tools and test suites, from documenting
-descriptions of your dataset to testing your models for weak spots and overfit areas. The Developer Framework
+The ValidMind Library provides a rich suite of documentation tools and test suites, from documenting
+descriptions of your dataset to testing your models for weak spots and overfit areas. The ValidMind Library
 helps you automate the generation of model documentation by feeding the ValidMind platform with documentation
 artifacts and test results to the ValidMind platform.
 
@@ -35,7 +35,7 @@ vm.init(
 ```
 
 After you have pasted the code snippet into your development source code and executed the code, the Python client
-library will register with ValidMind. You can now use the Developer Framework to document and test your models,
+library will register with ValidMind. You can now use the ValidMind Library to document and test your models,
 and to upload to the ValidMind Platform.
 """
 import warnings

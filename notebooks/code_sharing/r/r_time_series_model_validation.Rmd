@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The Time Series Data Validation Full Suite notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **Developer Framework**.
+The Time Series Data Validation Full Suite notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **ValidMind Library**.
 
 In this demo, we will use the `time_series_model_validation` **test suite** to run multiple model validation tests on several pre-trained time series models.
 

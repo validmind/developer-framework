@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-The Time Series Data Validation Demo notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **Developer Framework**. Ensuring the quality and an a robust exploratory data analysis of time series data is essential for accurate model predictions and robust decision-making processes.
+The Time Series Data Validation Demo notebook aims to demonstrate the application of various data validation tests using the **ValidMind MRM Platform** and **ValidMind Library**. Ensuring the quality and an a robust exploratory data analysis of time series data is essential for accurate model predictions and robust decision-making processes.
 
 In this demo, we will walk through different **data validation suites of tests** tailored for time series data, showcasing how these tools can assist you in identifying potential issues and inconsistencies in the data.
 
