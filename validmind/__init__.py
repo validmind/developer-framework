@@ -97,7 +97,7 @@ def log_figure(figure):
 
 __all__ = [  # noqa
     "__version__",
-    # Framework High Level API
+    # Framework Python Library API
     "datasets",
     "errors",
     "get_test_suite",
