@@ -14,7 +14,8 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: ubuntu-vm-large
 
     steps:
       # TODO figure out why dev-framework requires so much disk space and fix that
