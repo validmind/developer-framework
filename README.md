@@ -1,4 +1,4 @@
-# ValidMind Developer Framework
+# ValidMind Library
 
 ![ValidMind logo](images/ValidMind-logo-color.svg "ValidMind logo")
 
@@ -6,9 +6,9 @@ ValidMind's Developer Framework is a library of developer tools and methods desi
 
 The Developer Framework includes the Python client library, which is designed to be model agnostic. If your model is built in Python, ValidMind's Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
 
-## Contributing to the ValidMind Developer Framework
+## Contributing to the ValidMind Library
 
-We believe in the power of collaboration and welcome contributions to the ValidMind Developer Framework. If you've noticed a bug, have a feature request, or want to contribute a test, please create a pull request or submit an issue and refer to the [contributing guide](README.md#how-to-contribute) below.
+We believe in the power of collaboration and welcome contributions to the ValidMind Library. If you've noticed a bug, have a feature request, or want to contribute a test, please create a pull request or submit an issue and refer to the [contributing guide](README.md#how-to-contribute) below.
 
 - Interested in connecting with fellow AI model risk practitioners? Join our [Community Slack](https://docs.validmind.ai/about/contributing/join-community.html)!
 
@@ -18,7 +18,7 @@ We believe in the power of collaboration and welcome contributions to the ValidM
 
 ### Install from PyPI
 
-To install the ValidMind Developer Framework and all optional dependencies, run:
+To install the ValidMind Library and all optional dependencies, run:
 
 ```bash
 pip install validmind[all]
@@ -87,7 +87,7 @@ poetry install --extras llm
 
 ### Installing R dependencies
 
-If you want to use the R support that is provided by the ValidMind Developer Framework, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. On a Mac, you can install R using Homebrew:
+If you want to use the R support that is provided by the ValidMind Library, you must have R installed on your machine. You can download R from <https://cran.r-project.org/>. On a Mac, you can install R using Homebrew:
 
 ```bash
 brew install r

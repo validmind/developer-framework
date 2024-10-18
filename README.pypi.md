@@ -1,4 +1,4 @@
-# ValidMind Developer Framework
+# ValidMind Library
 
 ValidMind’s Python Developer Framework is a library of developer tools and methods designed to automate
 the documentation and validation of your models.
@@ -13,7 +13,7 @@ documentation artifacts and test results to the ValidMind platform.
 
 ## Installation
 
-To install the ValidMind Developer Framework and all optional dependencies, run:
+To install the ValidMind Library and all optional dependencies, run:
 
 ```bash
 pip install validmind[all]
