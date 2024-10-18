@@ -1,5 +1,8 @@
 # ValidMind Developer Framework
 
+[![Code Quality](https://github.com/validmind/developer-framework/actions/workflows/python.yaml/badge.svg)](https://github.com/validmind/developer-framework/actions/workflows/python.yaml)
+[![Integration Tests](https://github.com/validmind/developer-framework/actions/workflows/integration.yaml/badge.svg)](https://github.com/validmind/developer-framework/actions/workflows/integration.yaml)
+
 ![ValidMind logo](images/ValidMind-logo-color.svg "ValidMind logo")
 
 ValidMind's Developer Framework is a library of developer tools and methods designed to run validation tests and automate the documentation of your models. The Developer Framework provides a rich suite of documentation tools and test suites, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
