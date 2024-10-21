@@ -77,7 +77,7 @@ The code snippet can be copied and pasted directly in the cell below to initiali
 vm_r <- vm(
   api_key="b34dfe4dcb5491212be3eefe77c85cd6",
   api_secret="40f8d2d583baa9e730a7f8872dd57e2f4657c7918c13fa259ba7ccda8a60e858",
-  project="clmp6k8e800ds19mot0zu8o34",
+  model="clmp6k8e800ds19mot0zu8o34",
   python_version=python_version,
   api_host="https://api.dev.vm.validmind.ai/api/v1/tracking"
 )
