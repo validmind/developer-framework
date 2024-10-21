@@ -41,7 +41,7 @@ DEFAULT_MODEL_CUID = os.getenv(
 NOTEBOOKS_TO_RUN = [
     {
         "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
-        "model": "cm2dl8sfi00cs14ajsnp1vd2i",  # Demo Account Dev Customer Churn Model
+        "model": "cltnl28x600001omg9wu8wfty",  # Demo Account Dev Customer Churn Model
     },
     {
         "path": "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
@@ -57,6 +57,8 @@ NOTEBOOKS_TO_RUN = [
 ]
 
 INIT_CELL_CODE = """
+import os
+os.environ["VALIDMIND_LLM_DESCRIPTIONS_ENABLED"] = "0"
 import validmind as vm
 
 vm.init(
@@ -85,7 +87,19 @@ logger.info("Site-packages path: " + str(site.getsitepackages()))
 @click.option(
     "--kernel", default="python3", help="Kernel to use when executing notebooks."
 )
-def main(kernel):
+@click.option(
+    "--log-output",
+    is_flag=True,
+    default=False,
+    help="Log the output of the notebook to the console.",
+)
+@click.option(
+    "--progress-bar",
+    is_flag=True,
+    default=True,
+    help="Show the progress bar when executing notebooks.",
+)
+def main(kernel, log_output=False, progress_bar=True):
     """Run notebooks from the specified directory for end-to-end testing."""
     for notebook_file in NOTEBOOKS_TO_RUN:
         if isinstance(notebook_file, dict):
@@ -100,7 +114,12 @@ def main(kernel):
         try:
             update_vm_init_cell(notebook_path, model)
             click.echo(f"\n -------- Executing {notebook_path} ---------- \n")
-            run_notebook(notebook_path, kernel)
+            run_notebook(
+                notebook_path=notebook_path,
+                kernel_name=kernel,
+                log_output=log_output,
+                progress_bar=progress_bar,
+            )
             click.echo(f" -------- Finished executing {notebook_path} ---------- \n")
         except Exception as e:
             click.echo(f"Error running {notebook_path}: {e}")
@@ -111,7 +130,7 @@ def main(kernel):
         restore_notebook(notebook_path)
 
 
-def run_notebook(notebook_path, kernel_name):
+def run_notebook(notebook_path, kernel_name, log_output=False, progress_bar=True):
     output_path = notebook_path.replace(".ipynb", ".out.ipynb")
 
     is_gh_actions = os.getenv("GITHUB_ACTIONS") == "true"
@@ -120,8 +139,8 @@ def run_notebook(notebook_path, kernel_name):
         input_path=notebook_path,
         output_path=output_path,
         kernel_name=kernel_name,
-        log_output=is_gh_actions,
-        progress_bar=(not is_gh_actions),
+        log_output=log_output or is_gh_actions,
+        progress_bar=progress_bar or (not is_gh_actions and not log_output),
         cwd=os.path.dirname(notebook_path),
     )
 
