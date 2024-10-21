@@ -4,7 +4,7 @@ All ValidMind Tests are in the `validmind/tests/` directory. Each file should be
 
 The tests are separated into subdirectories based on the category and type of test. For example, `validmind/tests/model_validation/sklearn` contains all of the model validation tests for sklearn-compatible models. There are two subdirectories in this folder: `metrics/` and `threshold_tests/` that contain the different types of tests. Any sub category can be used here and the `__init__.py` file will automatically pick up the tests.
 
-Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples and to learn about how the directory relates to the test's ID which is used across the ValidMind platform.
+Please see the notebook `listing-and-loading-tests.ipynb` for more information and examples and to learn about how the directory relates to the test's ID which is used across the ValidMind Platform.
 
 To create a new test, you can use the create_new_test.py script to generate a metric or threshold test. This script will create a new test file in the appropriate directory and will also create a new test class in that file. It is registered as a custom Poetry script in the `pyproject.toml` and it can be used as follows:
 

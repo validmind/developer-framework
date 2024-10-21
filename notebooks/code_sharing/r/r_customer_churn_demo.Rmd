@@ -38,7 +38,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## **Initializing the ValidMind Client Library**
 
-Log in to the ValidMind platform with your registered email address, and navigate to the Documentation Projects page.
+Log in to the ValidMind Platform with your registered email address, and navigate to the Documentation Projects page.
 
 ### **Creating a new Documentation Project**
 

@@ -11,8 +11,8 @@ Python library will provide all the standard functionality without requiring you
 
 The ValidMind Library provides a rich suite of documentation tools and test suites, from documenting
 descriptions of your dataset to testing your models for weak spots and overfit areas. The ValidMind Library
-helps you automate the generation of model documentation by feeding the ValidMind platform with documentation
-artifacts and test results to the ValidMind platform.
+helps you automate the generation of model documentation by feeding the ValidMind Platform with documentation
+artifacts and test results.
 
 To install the client library:
 
