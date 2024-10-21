@@ -2,7 +2,7 @@
 
 ![ValidMind logo](images/ValidMind-logo-color.svg "ValidMind logo")
 
-ValidMind's Library is a library of developer tools and methods designed to run validation tests and automate the documentation of your models. The Library provides a rich suite of documentation tools and test suites, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
+ValidMind's Library includes developer tools and methods designed to run validation tests and automate the documentation of your models. The Library provides a rich suite of documentation tools and test suites, from documenting descriptions of your dataset to testing your models for weak spots and overfit areas.
 
 The Library includes the Python client library, which is designed to be model agnostic. If your model is built in Python, ValidMind's Python library will provide all the standard functionality without requiring your developers to rewrite any functions.
 

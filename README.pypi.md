@@ -1,6 +1,6 @@
 # ValidMind Library
 
-ValidMind’s Python Library is a library of developer tools and methods designed to automate
+ValidMind’s Python Library includes developer tools and methods designed to automate
 the documentation and validation of your models.
 
 The Library is designed to be model agnostic. If your model is built in Python, ValidMind's
