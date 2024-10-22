@@ -78,7 +78,7 @@ def _get_session() -> aiohttp.ClientSession:
     if not __api_session or __api_session.closed:
         __api_session = aiohttp.ClientSession(
             headers=_get_api_headers(),
-            timeout=aiohttp.ClientTimeout(total=30),
+            timeout=aiohttp.ClientTimeout(total=60),
         )
 
     return __api_session
