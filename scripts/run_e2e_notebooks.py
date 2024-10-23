@@ -39,17 +39,9 @@ DEFAULT_MODEL_CUID = os.getenv(
 )  # Demo Account Dev Customer Churn Model
 
 NOTEBOOKS_TO_RUN = [
-    {
-        "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
-    },
-    {
-        "path": "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
-        "model": "cltnl8byl001e1omgfpei9f97",  # Demo Account Dev Time-Series Model
-    },
-    {
-        "path": "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
-        "model": "cltnl7swd000s1omg6t4ul5bn",  # Demo Account Dev Regression Model
-    },
+    "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
+    "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
+    "notebooks/code_samples/regression/quickstart_regression_full_suite.ipynb",
     "notebooks/how_to/run_unit_metrics.ipynb",
     "notebooks/code_samples/custom_tests/integrate_external_test_providers.ipynb",
     "notebooks/code_samples/custom_tests/implement_custom_tests.ipynb",
