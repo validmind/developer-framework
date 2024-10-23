@@ -1,4 +1,4 @@
-"""Script to run notebooks for integration testing the dev framework.
+"""Script to run notebooks for integration testing the library.
 
 Usage:
     python scripts/run_e2e_notebooks.py
