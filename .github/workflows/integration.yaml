@@ -9,7 +9,6 @@ on:
       - main
       - prod
       - release-v1
-      - john/fix-failing-gh-workflow
 
 permissions:
   contents: read
@@ -40,55 +39,37 @@ jobs:
           poetry run pip install torch==2.0.1 --extra-index-url https://download.pytorch.org/whl/cpu
           poetry run pip install aequitas fairlearn vl-convert-python
 
-      # - name: Build the package
-      #   run: poetry build
+      - name: Build the package
+        run: poetry build
 
-      # - name: Remove Build Environment
-      #   run: rm -rf .venv
+      - name: Remove Build Environment
+        run: rm -rf .venv
 
-      # - name: Setup Virtual Environment
-      #   run: python -m venv sdist-venv
+      - name: Setup Virtual Environment
+        run: python -m venv sdist-venv
 
-      # - name: Install Built Package
-      #   run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[llm,huggingface]"
+      - name: Install Built Package
+        run: sdist-venv/bin/pip install --no-cache-dir "$(ls dist/validmind*.whl | head -n 1)[llm,huggingface]"
 
-      # - name: Install Additional Dependencies
-      #   run: sdist-venv/bin/pip install nbformat papermill jupyter
+      - name: Install Additional Dependencies
+        run: sdist-venv/bin/pip install nbformat papermill jupyter
 
-      # - name: Create Jupyter Kernel
-      #   run: sdist-venv/bin/python -m ipykernel install --user --name sdist-venv
-
-      # - name: Integration Tests
-      #   run: sdist-venv/bin/python scripts/run_e2e_notebooks.py --kernel sdist-venv
-      #   env:
-      #     NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
-      #     NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
-      #     NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
-
-      - name: View Environment Variables
-        env:
-          NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
-          NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
-          NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
-        # print with ' ' in between to avoid github from masking the output
-        run: |
-          echo $NOTEBOOK_RUNNER_API_SECRET | sed 's/./& /g'
-          echo $NOTEBOOK_RUNNER_API_KEY | sed 's/./& /g'
-          echo $NOTEBOOK_RUNNER_DEFAULT_MODEL | sed 's/./& /g'
+      - name: Create Jupyter Kernel
+        run: sdist-venv/bin/python -m ipykernel install --user --name sdist-venv
 
       - name: Integration Tests
-        run: make test-integration
+        run: sdist-venv/bin/python scripts/run_e2e_notebooks.py --kernel sdist-venv
         env:
           NOTEBOOK_RUNNER_DEFAULT_MODEL: ${{ secrets.NOTEBOOK_RUNNER_DEFAULT_PROJECT_ID }}
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
-          NOTEBOOK_RUNNER_API_HOST: "https://api.dev.vm.validmind.ai/api/v1/tracking"
-          VM_API_HOST: "https://api.dev.vm.validmind.ai/api/v1/tracking"
+          NOTEBOOK_RUNNER_API_HOST: 'https://api.dev.vm.validmind.ai/api/v1/tracking'
+          VM_API_HOST: 'https://api.dev.vm.validmind.ai/api/v1/tracking'
           VALIDMIND_LLM_DESCRIPTIONS_ENABLED: 0
 
-      # - name: Failure Notification
-      #   if: failure()
-      #   run: |
-      #     curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
-      #   env:
-      #     NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+      - name: Failure Notification
+        if: failure()
+        run: |
+          curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+        env:
+          NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
