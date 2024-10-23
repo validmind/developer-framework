@@ -41,7 +41,6 @@ DEFAULT_MODEL_CUID = os.getenv(
 NOTEBOOKS_TO_RUN = [
     {
         "path": "notebooks/code_samples/quickstart_customer_churn_full_suite.ipynb",
-        "model": "cltnl28x600001omg9wu8wfty",  # Demo Account Dev Customer Churn Model
     },
     {
         "path": "notebooks/code_samples/time_series/quickstart_time_series_full_suite.ipynb",
