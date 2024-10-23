@@ -56,14 +56,14 @@ class TestFrameworkInit(unittest.TestCase):
         self.api_secret = (
             os.environ.pop("VM_API_SECRET") if "VM_API_SECRET" in os.environ else ""
         )
-        self.api_project = (
+        self.api_model = (
             os.environ.pop("VM_API_MODEL") if "VM_API_MODEL" in os.environ else ""
         )
 
     def tearDown(self):
         os.environ["VM_API_KEY"] = self.api_key
         os.environ["VM_API_SECRET"] = self.api_secret
-        os.environ["VM_API_MODEL"] = self.api_project
+        os.environ["VM_API_MODEL"] = self.api_model
 
     def test_no_args(self):
         """
@@ -72,14 +72,14 @@ class TestFrameworkInit(unittest.TestCase):
         with self.assertRaises(MissingModelIdError) as err:
             vm.init()
 
-        self.assertIn("Project ID must be provided", str(err.exception))
+        self.assertIn("Model ID must be provided", str(err.exception))
 
-    def test_project_id_only(self):
+    def test_model_id_only(self):
         """
-        Test that init() raises a ValueError when only a project is passed.
+        Test that init() raises a ValueError when only a model is passed.
         """
         with self.assertRaises(MissingAPICredentialsError) as err:
-            vm.init(project="test")
+            vm.init(model="test")
 
         self.assertIn("API key", str(err.exception))
 
