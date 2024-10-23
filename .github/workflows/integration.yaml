@@ -9,6 +9,7 @@ on:
       - main
       - prod
       - release-v1
+      - john/fix-failing-gh-workflow
 
 permissions:
   contents: read
@@ -17,7 +18,9 @@ jobs:
   integration:
     # Don't rerun the integration tests after docs were generated
     if: "!contains(github.event.head_commit.message, 'Generate docs')"
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on:
+      group: ubuntu-vm-large
 
     steps:
       - uses: actions/checkout@v4
@@ -64,12 +67,11 @@ jobs:
           NOTEBOOK_RUNNER_API_KEY: ${{ secrets.NOTEBOOK_RUNNER_API_KEY }}
           NOTEBOOK_RUNNER_API_SECRET: ${{ secrets.NOTEBOOK_RUNNER_API_SECRET }}
           NOTEBOOK_RUNNER_API_HOST: 'https://api.dev.vm.validmind.ai/api/v1/tracking'
-          VM_API_HOST: 'https://api.dev.vm.validmind.ai/api/v1/tracking'
           VALIDMIND_LLM_DESCRIPTIONS_ENABLED: 0
 
-      - name: Failure Notification
-        if: failure()
-        run: |
-          curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
-        env:
-          NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+      #- name: Failure Notification
+      #  if: failure()
+      #  run: |
+      #    curl https://hooks.slack.com/triggers/T0313C4GBC5/6083618566112/${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
+      #  env:
+      #    NOTEBOOK_RUNNER_HOOK_ID: ${{ secrets.NOTEBOOK_RUNNER_HOOK_ID }}
