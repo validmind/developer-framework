@@ -24,7 +24,9 @@ class StatefulHTMLRenderer:
     def _render_table_cell(value: Any) -> Any:
         """Render structured table cells as HTML for notebook display."""
         if not isinstance(value, dict) or "value" not in value:
-            # pandas requires formatters to return strings
+            # pandas requires formatters to return strings. A column that holds
+            # a styled cell is object dtype, so there is no column-wide float
+            # padding to match; plain cells here render with str() on purpose.
             return str(value)
 
         css_properties = {
