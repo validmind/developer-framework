@@ -172,6 +172,27 @@ class TestResultClasses(unittest.TestCase):
         self.assertIn("font-weight: 600", html)
         self.assertNotIn("{'value': '0.8%'", html)
 
+    def test_table_output_handler_styler_keeps_rounding(self):
+        """Styler tables keep the 4-decimal rounding, styled or not."""
+        test_result = TestResult(result_id="test_1")
+        df = pd.DataFrame(
+            {
+                "styled_col": [1.23456789, 2.3456789],
+                "untouched_col": [10.111111, 20.222222],
+            }
+        )
+        styler = df.style.map(
+            lambda value: "background-color: red" if value > 2 else "",
+            subset=["styled_col"],
+        )
+
+        TableOutputHandler().process(styler, test_result)
+
+        rows = test_result.tables[0].serialize()["data"]
+        self.assertEqual(rows[0], {"styled_col": 1.2346, "untouched_col": 10.1111})
+        self.assertEqual(rows[1]["untouched_col"], 20.2222)
+        self.assertEqual(rows[1]["styled_col"], {"value": 2.3457, "bgcolor": "red"})
+
     def test_test_result_add_figure(self):
         """Test adding figures to TestResult"""
         test_result = TestResult(result_id="test_1")

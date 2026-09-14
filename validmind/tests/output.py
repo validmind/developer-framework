@@ -109,7 +109,11 @@ class TableOutputHandler(OutputHandler):
         """Convert a pandas Styler to a DataFrame with portable cell styles."""
         styler._compute()
 
-        df = styler.data.copy(deep=True).astype(object)
+        # Round while still numeric: ResultTable's .round(4) is a no-op on the
+        # object dtype we need below, so it would otherwise silently skip the
+        # whole table. Formatters still see the original, unrounded value.
+        source = styler.data
+        df = source.round(4).astype(object)
         display_funcs = getattr(styler, "_display_funcs", {})
 
         style_key_map = {
@@ -131,11 +135,12 @@ class TableOutputHandler(OutputHandler):
             if not cell_styles:
                 continue
 
-            value = df.iat[row_idx, col_idx]
             formatter = display_funcs.get((row_idx, col_idx))
-
-            if formatter:
-                value = formatter(value)
+            value = (
+                formatter(source.iat[row_idx, col_idx])
+                if formatter
+                else df.iat[row_idx, col_idx]
+            )
 
             df.iat[row_idx, col_idx] = {"value": value, **cell_styles}
 
