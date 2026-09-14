@@ -20,6 +20,7 @@ from validmind.vm_models.result.utils import (
 
 from validmind.vm_models.figure import Figure
 from validmind.errors import InvalidParameterError
+from validmind.tests.output import TableOutputHandler
 from validmind.tests.run import run_test
 from validmind.utils import md_to_html
 
@@ -55,7 +56,7 @@ class TestResultClasses(unittest.TestCase):
 
     def test_raw_data_initialization(self):
         """Test RawData initialization and methods"""
-        raw_data = RawData(log=True, dataset_duplicates=pd.DataFrame({'col1': [1, 2]}))
+        raw_data = RawData(log=True, dataset_duplicates=pd.DataFrame({"col1": [1, 2]}))
 
         self.assertTrue(raw_data.log)
         self.assertIsInstance(raw_data.dataset_duplicates, pd.DataFrame)
@@ -133,6 +134,88 @@ class TestResultClasses(unittest.TestCase):
         test_result.add_table(df, title="Test Table")
         self.assertEqual(len(test_result.tables), 1)
         self.assertEqual(test_result.tables[0].title, "Test Table")
+
+    def test_table_output_handler_plain_dataframe_is_unchanged(self):
+        """Plain DataFrame tables serialize and render exactly as before Styler support."""
+        test_result = TestResult(result_id="test_1")
+        df = pd.DataFrame(
+            {"Check": ["Missing values", "Outliers"], "Score": [0.91234, 1.0]}
+        )
+
+        TableOutputHandler().process(df, test_result)
+
+        self.assertEqual(
+            test_result.tables[0].serialize()["data"],
+            [
+                {"Check": "Missing values", "Score": 0.9123},
+                {"Check": "Outliers", "Score": 1.0},
+            ],
+        )
+        html = test_result.to_html()
+        self.assertIn(">Missing values<", html)
+        self.assertIn(">0.9123<", html)
+        self.assertNotIn("<div style=", html)
+
+    def test_table_output_handler_converts_pandas_styler(self):
+        """Test pandas Styler table outputs preserve portable cell styles."""
+        test_result = TestResult(result_id="test_1")
+        df = pd.DataFrame(
+            {
+                "Check": ["Missing values", "Outlier rate"],
+                "Observed": [0.008, 0.027],
+            }
+        )
+        styler = df.style.format({"Observed": "{:.1%}"}).map(
+            lambda value: (
+                "background-color: #EAF4FF; color: #083E44; "
+                "font-weight: 600; text-align: center"
+                if isinstance(value, float)
+                else ""
+            )
+        )
+
+        TableOutputHandler().process(styler, test_result)
+
+        serialized_table = test_result.tables[0].serialize()["data"]
+        self.assertEqual(serialized_table[0]["Check"], "Missing values")
+        self.assertEqual(
+            serialized_table[0]["Observed"],
+            {
+                "value": "0.8%",
+                "bgcolor": "#EAF4FF",
+                "color": "#083E44",
+                "fontWeight": "600",
+                "textAlign": "center",
+            },
+        )
+        html = test_result.to_html()
+        self.assertIn("background-color: #EAF4FF", html)
+        self.assertIn("font-weight: 600", html)
+        self.assertNotIn("{'value': '0.8%'", html)
+
+    def test_table_output_handler_styler_keeps_rounding(self):
+        """Styler tables keep the 4-decimal rounding, styled or not."""
+        test_result = TestResult(result_id="test_1")
+        df = pd.DataFrame(
+            {
+                "styled_col": [1.23456789, 2.3456789],
+                "untouched_col": [10.111111, 20.222222],
+            }
+        )
+        styler = df.style.map(
+            lambda value: "background-color: red" if value > 2 else "",
+            subset=["styled_col"],
+        )
+
+        TableOutputHandler().process(styler, test_result)
+
+        rows = test_result.tables[0].serialize()["data"]
+        self.assertEqual(rows[0], {"styled_col": 1.2346, "untouched_col": 10.1111})
+        self.assertEqual(rows[1]["untouched_col"], 20.2222)
+        self.assertEqual(rows[1]["styled_col"], {"value": 2.3457, "bgcolor": "red"})
+        html = test_result.to_html()
+        self.assertIn(">1.2346<", html)
+        self.assertIn("background-color: red", html)
 
     def test_test_result_add_figure(self):
         """Test adding figures to TestResult"""
@@ -326,7 +409,9 @@ class TestResultClasses(unittest.TestCase):
         )
 
     @patch("validmind.vm_models.result.result.api_client.alog_text")
-    async def test_text_generation_result_log_async_with_section_id(self, mock_log_text):
+    async def test_text_generation_result_log_async_with_section_id(
+        self, mock_log_text
+    ):
         """Test async logging of TextGenerationResult forwards section_id"""
         text_result = TextGenerationResult(
             result_id="text_1",
@@ -387,7 +472,9 @@ class TestResultClasses(unittest.TestCase):
             section_id=None,
         )
 
-    async def test_text_generation_result_log_async_requires_section_id_for_new_block(self):
+    async def test_text_generation_result_log_async_requires_section_id_for_new_block(
+        self,
+    ):
         """Test new generated text requires a section_id for placement"""
         text_result = TextGenerationResult(
             result_id="text_1",
@@ -579,26 +666,44 @@ class TestResultClasses(unittest.TestCase):
                 try:
                     html = figure.to_html()
                     self.assertIsInstance(html, str)
-                    self.assertIn("vm-plotly-data", html, "Default should include plotly data")
+                    self.assertIn(
+                        "vm-plotly-data", html, "Default should include plotly data"
+                    )
                     self.assertIn("vm-plotly-test_key", html)
                 finally:
                     if env_backup is not None:
                         os.environ["VALIDMIND_INTERACTIVE_FIGURES"] = env_backup
             else:
-                with patch.dict(os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": value}, clear=False):
+                with patch.dict(
+                    os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": value}, clear=False
+                ):
                     html = figure.to_html()
                     self.assertIsInstance(html, str)
-                    self.assertIn("vm-plotly-data", html, f"Should include plotly data for value: {value}")
+                    self.assertIn(
+                        "vm-plotly-data",
+                        html,
+                        f"Should include plotly data for value: {value}",
+                    )
                     self.assertIn("vm-plotly-test_key", html)
 
         # Test disabled values
         disabled_values = ["false", "False", "FALSE", "0", "no", "No", "NO"]
         for value in disabled_values:
-            with patch.dict(os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": value}, clear=False):
+            with patch.dict(
+                os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": value}, clear=False
+            ):
                 html = figure.to_html()
                 self.assertIsInstance(html, str)
-                self.assertNotIn("vm-plotly-data", html, f"Should exclude plotly data for value: {value}")
-                self.assertNotIn("vm-plotly-test_key", html, f"Should exclude plotly container for value: {value}")
+                self.assertNotIn(
+                    "vm-plotly-data",
+                    html,
+                    f"Should exclude plotly data for value: {value}",
+                )
+                self.assertNotIn(
+                    "vm-plotly-test_key",
+                    html,
+                    f"Should exclude plotly container for value: {value}",
+                )
                 # Should still contain the static image
                 self.assertIn("data:image/png;base64", html)
                 self.assertIn("vm-img-test_key", html)
@@ -611,7 +716,9 @@ class TestResultClasses(unittest.TestCase):
 
         # Test that matplotlib figures never include plotly data regardless of setting
         # Only need to test once since behavior is identical for all values
-        with patch.dict(os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": "true"}, clear=False):
+        with patch.dict(
+            os.environ, {"VALIDMIND_INTERACTIVE_FIGURES": "true"}, clear=False
+        ):
             html = figure.to_html()
             self.assertIsInstance(html, str)
             self.assertNotIn("vm-plotly-data", html)
@@ -627,9 +734,7 @@ class TestResultClasses(unittest.TestCase):
         plotly_fig = go.Figure(data=go.Scatter(x=[1, 2, 3], y=[4, 5, 6]))
 
         # With a title -> metadata.caption is set
-        titled = Figure(
-            key="k", figure=plotly_fig, ref_id="r1", title="My Cool Chart"
-        )
+        titled = Figure(key="k", figure=plotly_fig, ref_id="r1", title="My Cool Chart")
         payload = titled.serialize()
         meta = _json.loads(payload["metadata"])
         self.assertEqual(meta["_ref_id"], "r1")
