@@ -24,7 +24,8 @@ class StatefulHTMLRenderer:
     def _render_table_cell(value: Any) -> Any:
         """Render structured table cells as HTML for notebook display."""
         if not isinstance(value, dict) or "value" not in value:
-            return value
+            # pandas requires formatters to return strings
+            return str(value)
 
         css_properties = {
             "bgcolor": "background-color",
@@ -183,8 +184,12 @@ class StatefulHTMLRenderer:
 
         title_html = f"<h4>{title}</h4>" if title else ""
 
+        # Only columns holding a styled cell get the formatter, so plain
+        # columns keep pandas' default rendering exactly as before.
         formatters = {
-            column: StatefulHTMLRenderer._render_table_cell for column in data.columns
+            column: StatefulHTMLRenderer._render_table_cell
+            for position, column in enumerate(data.columns)
+            if any(isinstance(cell, dict) for cell in data.iloc[:, position])
         }
 
         # Convert DataFrame to HTML with styling

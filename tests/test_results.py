@@ -135,6 +135,27 @@ class TestResultClasses(unittest.TestCase):
         self.assertEqual(len(test_result.tables), 1)
         self.assertEqual(test_result.tables[0].title, "Test Table")
 
+    def test_table_output_handler_plain_dataframe_is_unchanged(self):
+        """Plain DataFrame tables serialize and render exactly as before Styler support."""
+        test_result = TestResult(result_id="test_1")
+        df = pd.DataFrame(
+            {"Check": ["Missing values", "Outliers"], "Score": [0.91234, 1.0]}
+        )
+
+        TableOutputHandler().process(df, test_result)
+
+        self.assertEqual(
+            test_result.tables[0].serialize()["data"],
+            [
+                {"Check": "Missing values", "Score": 0.9123},
+                {"Check": "Outliers", "Score": 1.0},
+            ],
+        )
+        html = test_result.to_html()
+        self.assertIn(">Missing values<", html)
+        self.assertIn(">0.9123<", html)
+        self.assertNotIn("<div style=", html)
+
     def test_table_output_handler_converts_pandas_styler(self):
         """Test pandas Styler table outputs preserve portable cell styles."""
         test_result = TestResult(result_id="test_1")
@@ -192,6 +213,9 @@ class TestResultClasses(unittest.TestCase):
         self.assertEqual(rows[0], {"styled_col": 1.2346, "untouched_col": 10.1111})
         self.assertEqual(rows[1]["untouched_col"], 20.2222)
         self.assertEqual(rows[1]["styled_col"], {"value": 2.3457, "bgcolor": "red"})
+        html = test_result.to_html()
+        self.assertIn(">1.2346<", html)
+        self.assertIn("background-color: red", html)
 
     def test_test_result_add_figure(self):
         """Test adding figures to TestResult"""
@@ -710,9 +734,7 @@ class TestResultClasses(unittest.TestCase):
         plotly_fig = go.Figure(data=go.Scatter(x=[1, 2, 3], y=[4, 5, 6]))
 
         # With a title -> metadata.caption is set
-        titled = Figure(
-            key="k", figure=plotly_fig, ref_id="r1", title="My Cool Chart"
-        )
+        titled = Figure(key="k", figure=plotly_fig, ref_id="r1", title="My Cool Chart")
         payload = titled.serialize()
         meta = _json.loads(payload["metadata"])
         self.assertEqual(meta["_ref_id"], "r1")
