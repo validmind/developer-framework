@@ -259,10 +259,12 @@ def format_records(df: pd.DataFrame) -> List[Dict[str, Any]]:
 
     We do this for display purposes before sending data to ValidMind. Rules:
 
-    - Check if we are rendering "big" numbers greater than 10 or just numbers between 0 and 1
-    - If the column's smallest number has more decimals 6, use that number's precision
-      so we can avoid rendering a 0 instead
-    - If the column's smallest number has less decimals than 6, use 6 decimal places
+    - Non-numeric columns (text in any dtype, datetimes, categoricals) are left unchanged
+    - Rounding is decided by the column's smallest non-zero number
+    - If it is 10 or greater, round to 2 decimal places
+    - If it has more than 4 decimals, round to 4 decimal places
+    - Otherwise round to that number's own decimal places, so it is never rendered as 0
+    - If the column has no finite non-zero number, round to 4 decimal places
     """
     for col in df.columns:
         if not pd.api.types.is_numeric_dtype(df[col]):
