@@ -168,7 +168,7 @@ def scan_df(df: pd.DataFrame) -> bool:
         return True
 
     # Scan all string/object columns
-    columns = [col for col in df.columns if df[col].dtype == "object"]
+    columns = [col for col in df.columns if pd.api.types.is_string_dtype(df[col].dtype)]
 
     if not columns:
         return True
