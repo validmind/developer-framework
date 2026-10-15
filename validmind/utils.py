@@ -265,7 +265,7 @@ def format_records(df: pd.DataFrame) -> List[Dict[str, Any]]:
     - If the column's smallest number has less decimals than 6, use 6 decimal places
     """
     for col in df.columns:
-        if df[col].dtype == "object":
+        if not pd.api.types.is_numeric_dtype(df[col]):
             continue
         not_zero = df[col][df[col] != 0]
         min_number = not_zero.min()
