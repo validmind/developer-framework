@@ -39,6 +39,9 @@ jobs:
           enable-cache: true
           # Keep downloaded wheels between runs (the default prunes them before saving)
           prune-cache: false
+          # Key on pyproject.toml, not uv.lock, so lock-only bumps reuse the cache. On Python 3.9
+          # blis and thinc have no wheels and take ~8 min to compile on every cache miss.
+          cache-dependency-glob: pyproject.toml
 
       - name: Install Dependencies
         run: |
