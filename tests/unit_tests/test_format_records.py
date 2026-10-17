@@ -19,6 +19,14 @@ class TestFormatRecords(unittest.TestCase):
         self.assertEqual([r["Name"] for r in records], ["a", "b"])
         self.assertEqual(records[0]["Value"], 0.1235)
 
+    def test_all_missing_nullable_column_is_left_missing(self):
+        df = pd.DataFrame({"Value": pd.array([None, 0.0], dtype="Float64")})
+
+        records = format_records(df)
+
+        self.assertIsNone(records[0]["Value"])
+        self.assertEqual(records[1]["Value"], 0.0)
+
     def test_numeric_rounding_is_unchanged(self):
         df = pd.DataFrame(
             {

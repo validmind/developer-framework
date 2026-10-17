@@ -263,15 +263,15 @@ def format_records(df: pd.DataFrame) -> List[Dict[str, Any]]:
     - Rounding is decided by the column's smallest non-zero number
     - If it is 10 or greater, round to 2 decimal places
     - If it has more than 4 decimals, round to 4 decimal places
-    - Otherwise round to that number's own decimal places, so it is never rendered as 0
-    - If the column has no finite non-zero number, round to 4 decimal places
+    - Otherwise round to that number's own decimal places
+    - If that number is missing or infinite, round to 4 decimal places
     """
     for col in df.columns:
         if not pd.api.types.is_numeric_dtype(df[col]):
             continue
         not_zero = df[col][df[col] != 0]
         min_number = not_zero.min()
-        if math.isnan(min_number) or math.isinf(min_number):
+        if pd.isna(min_number) or math.isinf(min_number):
             df[col] = df[col].round(DEFAULT_SMALL_NUMBER_DECIMALS)
             continue
 
