@@ -1,0 +1,11 @@
+name,purpose,tiering,business_unit
+Retail Credit Scorecard,Scores retail credit card applications for approval.,1,Retail Banking
+SME Probability of Default,Estimates 12-month default probability for small business loans.,1,Commercial Banking
+Mortgage Prepayment Model,Forecasts prepayment rates for the residential mortgage book.,2,Retail Banking
+Card Fraud Detection,Flags potentially fraudulent card transactions in real time.,1,Retail Banking
+Deposit Balance Forecast,Projects deposit balances for liquidity planning.,2,Finance
+Customer Churn Propensity,Predicts which retail customers are likely to close their accounts.,3,Retail Banking
+Collections Prioritisation,Ranks overdue accounts by expected recovery.,2,Retail Banking
+AML Transaction Monitoring,Scores transactions for anti-money laundering review.,1,Risk Management
+Interest Rate Risk Model,Measures the impact of rate shocks on net interest income.,1,Finance
+Customer Support Assistant,LLM assistant that drafts replies to customer service queries.,2,Operations
