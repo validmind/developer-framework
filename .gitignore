@@ -107,6 +107,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Rows the bulk upload notebook could not upload
+notebooks/how_to/inventory/failed_rows.csv
+
 # Environments
 .env
 .Renviron
