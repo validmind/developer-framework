@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 import unittest
 from unittest.mock import patch
@@ -313,6 +314,47 @@ class TestResultClasses(unittest.TestCase):
 
         self.assertEqual(cached_at_upload, [True])
         plt.close(fig)
+
+    @patch("validmind.vm_models.result.result.update_metadata")
+    @patch("validmind.api_client.alog_test_result")
+    @patch("validmind.api_client.alog_figure")
+    def test_test_result_log_async_sends_each_figures_position(
+        self, mock_figure, mock_test_result, mock_update_metadata
+    ):
+        """Each figure sends its position, so a re-run can be matched to it"""
+        mock_test_result.return_value = {"cuid": "123"}
+        mock_update_metadata.return_value = None
+        sent = []
+
+        async def record(figure):
+            sent.append((figure.key, json.loads(figure.serialize()["metadata"])))
+            return {"cuid": "456"}
+
+        mock_figure.side_effect = record
+
+        figs = [plt.subplots()[0] for _ in range(2)]
+        test_result = TestResult(
+            result_id="test_1",
+            inputs={},
+            figures=[
+                Figure(key=f"test_1:{tag}", figure=fig, ref_id="ref_1")
+                for tag, fig in zip(("b2c4", "0a1f"), figs)
+            ],
+        )
+
+        # Sync test + asyncio.run: an async test method on a plain TestCase
+        # is never awaited, so it would pass without running.
+        asyncio.run(test_result.log_async(section_id="section_1", position=0))
+
+        self.assertEqual(
+            sorted(sent),
+            [
+                ("test_1:0a1f", {"_ref_id": "ref_1", "_index": 1}),
+                ("test_1:b2c4", {"_ref_id": "ref_1", "_index": 0}),
+            ],
+        )
+        for fig in figs:
+            plt.close(fig)
 
     def test_text_generation_result(self):
         """Test TextGenerationResult initialization and methods"""

@@ -59,12 +59,16 @@ class Figure:
         title: Optional caption/title for the figure. When set, it is sent to
             the platform as ``metadata.caption`` and rendered by the document
             media registry as ``Figure N. <title>``.
+        index: The figure's position in its test result, set when the result
+            is logged and sent as ``metadata._index``. Keys change on every
+            run, so the platform uses it to find the same figure in a re-run.
     """
 
     key: str
     figure: Union[matplotlib.figure.Figure, go.Figure, go.FigureWidget, bytes]
     ref_id: str  # used to link figures to results
     title: Optional[str] = None  # caption/title used by the document media registry
+    index: Optional[int] = None  # position in the test result, set when logged
 
     _type: str = "plot"  # for now this is the only figure type
     _cached_png_bytes: bytes = None  # cached PNG bytes for async-safe serialization
@@ -142,6 +146,8 @@ class Figure:
         metadata = {"_ref_id": self.ref_id}
         if self.title:
             metadata["caption"] = self.title
+        if self.index is not None:
+            metadata["_index"] = self.index
 
         return {
             "type": self._type,

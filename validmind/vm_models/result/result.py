@@ -567,7 +567,10 @@ class TestResult(Result):
         outright (ZD-626). log() calls this outside the loop; log_async() calls
         it too because the test-suite runner awaits log_async() directly.
         """
-        for figure in self.figures or []:
+        for index, figure in enumerate(self.figures or []):
+            # The platform matches a figure across runs by its position: the
+            # key changes on every run, and uploads run concurrently.
+            figure.index = index
             figure.pre_serialize()
 
     async def log_async(
