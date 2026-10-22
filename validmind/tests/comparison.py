@@ -2,6 +2,7 @@
 # Refer to the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
+import json
 from itertools import product
 from typing import Any, Dict, List, Tuple, Union
 
@@ -219,12 +220,27 @@ def _update_figure_title(figure: Any, input_param_str: str) -> None:
         raise ValueError(f"Unsupported figure type: {type(figure)}")
 
 
+def _variant_key(result: TestResult) -> str:
+    """The input and param combination a sub-result ran with, as a stable string."""
+    inputs = {
+        name: _get_input_key(input_obj)
+        for name, input_obj in (result.inputs or {}).items()
+    }
+    return json.dumps(
+        {"inputs": inputs, "params": result.params or {}}, sort_keys=True, default=str
+    )
+
+
 def _combine_figures(results: List[TestResult], show_params: bool) -> List[Any]:
     """Combine figures from multiple test results (gets raw figure objects, not vm Figures)"""
     combined_figures = []
 
     for result in results:
+        variant = _variant_key(result)
         for figure in result.figures or []:
+            # Positions shift when the combinations come in another order; the
+            # platform checks this too before it reuses a figure's position.
+            figure.variant = variant
             # update the figure object in-place with the new title
             _update_figure_title(
                 figure=figure.figure,
