@@ -6,13 +6,26 @@ from typing import Tuple
 
 import pandas as pd
 import plotly.graph_objects as go
-from transformers import MarianMTModel, MarianTokenizer
 
 from validmind import RawData, tags, tasks
+from validmind.errors import MissingDependencyError
 from validmind.logging import get_logger
 from validmind.vm_models import VMDataset, VMModel
 
 from .utils import create_stability_analysis_result
+
+try:
+    from transformers import MarianMTModel, MarianTokenizer
+except ImportError as e:
+    if "transformers" in str(e):
+        raise MissingDependencyError(
+            "Missing required package `transformers` for StabilityAnalysisTranslation. "
+            "Please run `pip install validmind[nlp]` to use NLP tests",
+            required_dependencies=["transformers"],
+            extra="nlp",
+        ) from e
+
+    raise e
 
 logger = get_logger(__name__)
 

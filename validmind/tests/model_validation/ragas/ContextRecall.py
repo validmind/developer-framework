@@ -7,7 +7,6 @@ from typing import Dict, Tuple
 
 import plotly.express as px
 import plotly.graph_objects as go
-from datasets import Dataset
 
 from validmind import RawData, tags, tasks
 from validmind.errors import MissingDependencyError
@@ -16,14 +15,15 @@ from validmind.vm_models import VMDataset
 from .utils import get_ragas_config, get_renamed_columns
 
 try:
+    from datasets import Dataset
     from ragas import evaluate
     from ragas.metrics import LLMContextRecall as context_recall
 except ImportError as e:
-    if "ragas" in str(e):
+    if "ragas" in str(e) or "datasets" in str(e):
         raise MissingDependencyError(
-            "Missing required package `ragas` for ContextRecall. "
+            "Missing required packages `ragas` and `datasets` for ContextRecall. "
             "Please run `pip install validmind[llm]` to use LLM tests",
-            required_dependencies=["ragas"],
+            required_dependencies=["ragas", "datasets"],
             extra="llm",
         ) from e
 
