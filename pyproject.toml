@@ -195,3 +195,6 @@ profile = "black"
 
 [tool.uv]
 exclude-newer = "7 days"
+exclude-newer-package = { certifi = "2026-10-21" }
+# Security floor: certifi>=2026.10.19 distrusts compromised eMudhra intermediates (Mozilla bug 2083449)
+constraint-dependencies = ["certifi>=2026.10.19"]
