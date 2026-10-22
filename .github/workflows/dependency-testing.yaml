@@ -89,6 +89,8 @@ jobs:
             python -m pip install "${WHEEL}" jinja2
             pip check
             python -c 'import sklearn, validmind; print(f"ValidMind {validmind.__version__} with scikit-learn {sklearn.__version__}")'
+            # a filter forces list_tests to import every test, so an unguarded optional import fails here
+            python -c 'import validmind as vm; print(len(vm.tests.list_tests(filter="classification", pretty=False)), "classification tests")'
             python -m unittest \
               tests.unit_tests.model_validation.sklearn.test_ROCCurve \
               tests.unit_tests.model_validation.sklearn.test_PrecisionRecallCurve \
