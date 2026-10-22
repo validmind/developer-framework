@@ -4,6 +4,7 @@ Unit tests for ValidMind tests module
 
 import unittest
 from unittest import TestCase
+from unittest.mock import patch
 from typing import Callable, List
 
 import pandas as pd
@@ -84,6 +85,31 @@ class TestTestsModule(TestCase):
         )
         self.assertTrue(len(tests) == 1)
         self.assertTrue(tests[0].startswith("validmind.model_validation.ModelMetadata"))
+
+    def test_list_tests_skips_unguarded_missing_import(self):
+        from validmind.errors import LoadTestError
+        from validmind.tests import load as load_module
+
+        broken_id = "validmind.model_validation.ModelMetadata"
+        real_load_test = load_module.load_test
+
+        def fake_load_test(test_id, *args, **kwargs):
+            if test_id == broken_id:
+                raise LoadTestError(
+                    "Unable to load test",
+                    original_error=ModuleNotFoundError(
+                        "No module named 'fakepkg'", name="fakepkg"
+                    ),
+                )
+            return real_load_test(test_id, *args, **kwargs)
+
+        with patch.object(load_module, "load_test", fake_load_test):
+            with self.assertLogs(load_module.logger, level="WARNING") as logs:
+                tests = list_tests(filter="validmind.model_validation", pretty=False)
+
+        self.assertNotIn(broken_id, tests)
+        self.assertTrue(len(tests) > 0)
+        self.assertIn("`fakepkg` (1 tests)", "\n".join(logs.output))
 
     def test_list_tests_tasks(self):
         task = list_tasks()[0]

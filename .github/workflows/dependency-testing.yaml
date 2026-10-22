@@ -83,12 +83,11 @@ jobs:
             # Exercise the unbounded core dependency set separately from the
             # constrained optional extras (for example, latest scikit-learn).
             WHEEL=$(ls dist/*.whl | head -n 1)
-            # Jinja2 is currently imported by the library but is only present
-            # transitively through optional extras. Install it as test tooling
-            # so this leg can exercise the otherwise unbounded core set.
-            python -m pip install "${WHEEL}" jinja2
+            python -m pip install "${WHEEL}"
             pip check
             python -c 'import sklearn, validmind; print(f"ValidMind {validmind.__version__} with scikit-learn {sklearn.__version__}")'
+            # a filter forces list_tests to import every test, so an unguarded optional import fails here
+            python -c 'import validmind as vm; print(len(vm.tests.list_tests(filter="classification", pretty=False)), "classification tests")'
             python -m unittest \
               tests.unit_tests.model_validation.sklearn.test_ROCCurve \
               tests.unit_tests.model_validation.sklearn.test_PrecisionRecallCurve \

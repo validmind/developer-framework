@@ -248,11 +248,18 @@ def _list_test_ids() -> List[str]:
 def _load_tests(test_ids: List[str]) -> Dict[str, Callable[..., Any]]:
     """Load a set of tests, handling missing dependencies."""
     tests = {}
+    unguarded_missing = {}
 
     for test_id in test_ids:
         try:
             tests[test_id] = load_test(test_id)
         except LoadTestError as e:
+            # an optional import without a MissingDependencyError guard: skip the test
+            # instead of failing the whole listing, but warn so a broken import is visible
+            if isinstance(e.original_error, ModuleNotFoundError):
+                unguarded_missing.setdefault(e.original_error.name, []).append(test_id)
+                continue
+
             if not e.original_error or not isinstance(
                 e.original_error, MissingDependencyError
             ):
@@ -272,6 +279,16 @@ def _load_tests(test_ids: List[str]) -> Dict[str, Callable[..., Any]]:
                     f"Skipping `{test_id}` as it requires missing dependencies: {e.required_dependencies}."
                     " Please install the missing dependencies to view and run this test."
                 )
+
+    if unguarded_missing:
+        logger.warning(
+            "Skipping tests that import packages that aren't installed: "
+            + "; ".join(
+                f"`{module}` ({len(ids)} tests)"
+                for module, ids in sorted(unguarded_missing.items())
+            )
+        )
+        logger.debug(f"Skipped tests by missing package: {unguarded_missing}")
 
     return tests
 

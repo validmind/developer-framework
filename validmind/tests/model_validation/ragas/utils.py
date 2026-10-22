@@ -2,9 +2,21 @@
 # Refer to the LICENSE file in the root of this repository for details.
 # SPDX-License-Identifier: AGPL-3.0 AND ValidMind Commercial
 
-from langchain_core.outputs import ChatGeneration
-
 from validmind.ai.utils import get_judge_config
+from validmind.errors import MissingDependencyError
+
+try:
+    from langchain_core.outputs import ChatGeneration
+except ImportError as e:
+    if "langchain_core" in str(e):
+        raise MissingDependencyError(
+            "Missing required package `langchain-core` for ragas tests. "
+            "Please run `pip install validmind[llm]` to use LLM tests",
+            required_dependencies=["langchain-core"],
+            extra="llm",
+        ) from e
+
+    raise e
 
 EMBEDDINGS_MODEL = "text-embedding-3-small"
 
