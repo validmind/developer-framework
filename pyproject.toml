@@ -195,6 +195,9 @@ profile = "black"
 
 [tool.uv]
 exclude-newer = "7 days"
+exclude-newer-package = { certifi = "2026-10-21" }
+# Security floor: certifi>=2026.10.19 distrusts compromised eMudhra intermediates (Mozilla bug 2083449)
+constraint-dependencies = ["certifi>=2026.10.19"]
 
 # CPU-only torch for this repo's own installs (dev, CI). CI runners have no GPU, and PyPI's Linux
 # torch pulls ~3 GB of NVIDIA libraries. uv-only setting: the published package still depends on

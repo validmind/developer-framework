@@ -78,3 +78,22 @@ class TestDescriptiveStatistics(unittest.TestCase):
             categorical_stats["category2"]["Top Value Frequency"], 2
         )  # 'X' appears twice
         self.assertEqual(categorical_stats["category2"]["Top Value Frequency %"], 40.0)
+
+    def test_string_dtype_column_names(self):
+        # pandas 3 stores text as a string dtype by default; pandas 2 does when the
+        # column index is string-typed. The "Name" column must not be rounded.
+        df = self.vm_dataset.df.copy()
+        df.columns = df.columns.astype("string")
+        vm_dataset = vm.init_dataset(
+            input_id="test_dataset_string_columns",
+            dataset=df,
+            __log=False,
+        )
+
+        result = DescriptiveStatistics(vm_dataset)
+
+        self.assertIn("Numerical Variables", result)
+        self.assertIn("Categorical Variables", result)
+        numerical_stats = {stat["Name"]: stat for stat in result["Numerical Variables"]}
+        self.assertEqual(numerical_stats["numeric1"]["Mean"], 3.0)
+        self.assertEqual(numerical_stats["numeric1"]["Max"], 5.0)
