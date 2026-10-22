@@ -315,6 +315,16 @@ class TestResultClasses(unittest.TestCase):
         self.assertEqual(cached_at_upload, [True])
         plt.close(fig)
 
+    def test_figure_serialize_omits_index_until_logged(self):
+        """A figure that was never logged has no position to send"""
+        fig, _ = plt.subplots()
+        figure = Figure(key="test_1:b2c4", figure=fig, ref_id="ref_1")
+
+        self.assertNotIn("_index", json.loads(figure.serialize()["metadata"]))
+        figure.index = 0
+        self.assertEqual(json.loads(figure.serialize()["metadata"])["_index"], 0)
+        plt.close(fig)
+
     @patch("validmind.vm_models.result.result.update_metadata")
     @patch("validmind.api_client.alog_test_result")
     @patch("validmind.api_client.alog_figure")
