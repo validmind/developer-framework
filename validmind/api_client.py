@@ -50,6 +50,7 @@ _oidc_expires_at: Optional[str] = None
 _oidc_refresh_lock = threading.Lock()
 
 __api_session: Optional[aiohttp.ClientSession] = None
+__api_session_loop: Optional[asyncio.AbstractEventLoop] = None
 
 
 def _invalidate_async_session() -> None:
@@ -72,23 +73,10 @@ def _invalidate_async_session() -> None:
 @atexit.register
 def _close_session():
     """Closes the async client session at exit."""
-    if __api_session and not __api_session.closed:
-        try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                loop.create_task(__api_session.close())
-            else:
-                loop.run_until_complete(__api_session.close())
-        except RuntimeError as e:
-            # ignore RuntimeError when closing the session from the main thread
-            if "no current event loop in thread" in str(e):
-                pass
-            elif "Event loop is closed" in str(e):
-                pass
-            else:
-                raise e
-        except Exception as e:
-            logger.exception("Error closing aiohttp session at exit: %s", e)
+    try:
+        _invalidate_async_session()
+    except Exception as e:
+        logger.exception("Error closing aiohttp session at exit: %s", e)
 
 
 def get_api_host() -> Optional[str]:
@@ -120,8 +108,14 @@ def _get_api_headers() -> Dict[str, str]:
 
 
 def _get_session() -> aiohttp.ClientSession:
-    """Initializes the async client session."""
-    global __api_session
+    """Initializes the async client session for the running event loop."""
+    global __api_session, __api_session_loop
+
+    # An aiohttp session only works on the loop it was created on, and outside a
+    # notebook run_async starts a new loop (asyncio.run) for every call.
+    loop = asyncio.get_running_loop()
+    if __api_session_loop is not loop:
+        _invalidate_async_session()
 
     if not __api_session or __api_session.closed:
         __api_session = aiohttp.ClientSession(
@@ -129,6 +123,7 @@ def _get_session() -> aiohttp.ClientSession:
             timeout=aiohttp.ClientTimeout(total=int(os.getenv("VM_API_TIMEOUT", 30))),
             trust_env=True,
         )
+        __api_session_loop = loop
 
     return __api_session
 

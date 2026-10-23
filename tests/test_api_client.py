@@ -2,7 +2,9 @@ import asyncio
 import json
 import logging
 import os
+import threading
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from unittest.mock import MagicMock, Mock, patch
 
 import matplotlib.pyplot as plt
@@ -22,7 +24,7 @@ from validmind.errors import (
     MissingModelIdError,
     ValidMindAuthError,
 )
-from validmind.utils import md_to_html
+from validmind.utils import md_to_html, run_async
 from validmind.vm_models.figure import Figure
 from validmind.vm_models.result.utils import update_metadata
 
@@ -557,6 +559,42 @@ class TestAPIClient(unittest.TestCase):
         self.assertEqual(mock_get.call_count, 2)
         self.assertEqual(mock_ensure.call_count, 2)
         mock_ensure.assert_any_call(force=True)
+
+
+class TestAsyncSessionAcrossEventLoops(unittest.TestCase):
+    """Outside a notebook, run_async uses a new event loop (asyncio.run) per call."""
+
+    def setUp(self):
+        class Handler(BaseHTTPRequestHandler):
+            def do_POST(self):
+                self.rfile.read(int(self.headers.get("Content-Length", 0)))
+                body = b'{"ok": true}'
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                pass
+
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        self.addCleanup(self.server.server_close)
+        self.addCleanup(self.server.shutdown)
+        patcher = patch.object(
+            api_client, "_api_host", f"http://127.0.0.1:{self.server.server_port}/"
+        )
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.addCleanup(api_client._invalidate_async_session)
+        api_client._invalidate_async_session()
+
+    @patch("validmind.api_client._ensure_fresh_oidc_token")
+    def test_post_works_on_each_new_event_loop(self, mock_ensure):
+        # e.g. vm.init() followed by result.log() in a plain Python script
+        self.assertEqual(run_async(api_client._post, "endpoint"), {"ok": True})
+        self.assertEqual(run_async(api_client._post, "endpoint"), {"ok": True})
 
 
 class TestAPIClientOIDC(unittest.TestCase):
